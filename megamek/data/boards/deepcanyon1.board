@@ -15,7 +15,7 @@ hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
@@ -51,7 +51,7 @@ hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_4" PLAINS "boring/beige_plains_4.gif" 4
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_4" PLAINS "boring/beige_plains_4.gif" 4
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
@@ -79,7 +79,7 @@ hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_4" PLAINS "boring/beige_plains_4.gif" 4
 hex "beige_plains_4" PLAINS "boring/beige_plains_4.gif" 4
@@ -114,7 +114,7 @@ hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
@@ -140,7 +140,7 @@ hex "beige_sinkhole_1" PLAINS "data/hexes/boring/beige_sinkhole_1.gif" -1
 hex "beige_sinkhole_1" PLAINS "data/hexes/boring/beige_sinkhole_1.gif" -1
 hex "beige_sinkhole_1" PLAINS "data/hexes/boring/beige_sinkhole_1.gif" -1
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
@@ -216,7 +216,7 @@ hex "light_forest_1" FOREST_LITE "boring/light_forest_1.gif" 1
 hex "light_forest_0" FOREST_LITE "boring/light_forest_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_4" PLAINS "boring/beige_plains_4.gif" 4
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_1" PLAINS "boring/beige_plains_1.gif" 1
@@ -224,7 +224,7 @@ hex "beige_plains_1" PLAINS "boring/beige_plains_1.gif" 1
 hex "beige_plains_1" PLAINS "boring/beige_plains_1.gif" 1
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
-hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_1" PLAINS "boring/beige_plains_1.gif" 1
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
@@ -250,7 +250,7 @@ hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
 hex "beige_plains_0" PLAINS "boring/beige_plains_0.gif" 0
-hex "beige_rough_0" ROUGH "boring/beige_rough_0.gif" 0
+hex "beige_rough_0" ROUGH "data/hexes/boring/beige_rough_0.gif" 0
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_2" PLAINS "boring/beige_plains_2.gif" 2
 hex "beige_plains_1" PLAINS "boring/beige_plains_1.gif" 1

@@ -202,7 +202,7 @@ public class GAAttack extends GA {
       enemy.resetPossibleDamage();
     }
     //should be moved
-    int capacity = attacker.entity.getHeatCapacityWithWater(game);
+    int capacity = attacker.entity.getHeatCapacityWithWater();
     int currentHeat = attacker.entity.heatBuildup + attacker.entity.heat;
     int overheat = currentHeat + heat_total - capacity;
     //bonus for cooling down

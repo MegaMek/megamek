@@ -97,12 +97,10 @@ public abstract class Entity
     private int[]               orig_internal;
     public int                  damageThisPhase;
 
-    protected Vector               equipmentList = new Vector();
-    protected Vector               weaponList = new Vector();
-    protected Vector               ammoList = new Vector();
-    protected Vector               miscList = new Vector();
-
-    protected int               heatSinks = 10;
+    protected Vector            equipmentList = new Vector();
+    protected Vector            weaponList = new Vector();
+    protected Vector            ammoList = new Vector();
+    protected Vector            miscList = new Vector();
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
@@ -1077,19 +1075,17 @@ public abstract class Entity
     }
     
     
-    /**
+    /**`
      * Returns the about of heat that the entity can sink each 
      * turn.
      */
-    public int getHeatCapacity() {
-        return 10 + heatSinks;
-    }
+    public abstract int getHeatCapacity();
   
     /**
      * Returns the about of heat that the entity can sink each 
      * turn, factoring in whether the entity is standing in water.
      */
-    public abstract int getHeatCapacityWithWater(Game game);
+    public abstract int getHeatCapacityWithWater();
   
     /**
      * Returns a critical hit slot
@@ -1340,9 +1336,6 @@ public abstract class Entity
             if (mounted.getLocation() == loc
             && mounted.getType().hasFlag(MiscType.F_CASE)
             && !mounted.isDestroyed()) {
-                
-                System.out.println("Found CASE");
-                
                 return true;
             }
         }

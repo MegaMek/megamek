@@ -105,6 +105,8 @@ public class MiscType extends EquipmentType {
         
         // Start of Level2 stuff
         EquipmentType.addType(createDoubleHeatSink());
+        EquipmentType.addType(createISDoubleHeatSink());
+        EquipmentType.addType(createCLDoubleHeatSink());
         EquipmentType.addType(createISCASE());
         EquipmentType.addType(createCLCASE());
     }
@@ -221,9 +223,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "Double Heat Sink";
-        misc.internalName = "ISDouble Heat Sink";
-        misc.mepName = misc.internalName;
-        misc.mtfName = misc.internalName;
+        misc.internalName = "ISDoubleHeatSink";
+        misc.mepName = "IS Double Heat Sink";
+        misc.mtfName = "ISDouble Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = 3;
         misc.flags |= F_DOUBLE_HEAT_SINK;
@@ -236,9 +238,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "Double Heat Sink";
-        misc.internalName = "CLDouble Heat Sink";
-        misc.mepName = misc.internalName;
-        misc.mtfName = misc.internalName;
+        misc.internalName = "CLDoubleHeatSink";
+        misc.mepName = "Clan Double Heat Sink";
+        misc.mtfName = "CLDouble Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = 2;
         misc.flags |= F_DOUBLE_HEAT_SINK;

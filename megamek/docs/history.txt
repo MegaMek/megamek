@@ -93,6 +93,8 @@ v next
 + fixed a few new clubbing bugs
 + added flags for equipment
 + fixed logic with needing a roll to stand up
++ 553907: BV of flamer is 6, not 9
++ 552182: switching back to primary target doesn't get secondary targetting mod
 
 v 0.25.4 (05-03-02, 8:20pm)
 + use ammo and build heat for automatic misses, none for impossible shots

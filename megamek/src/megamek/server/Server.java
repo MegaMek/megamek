@@ -1663,8 +1663,11 @@ public class Server
     private void resolveWeaponAttack(WeaponAttackAction waa, int lastEntityId) {
         final Entity ae = game.getEntity(waa.getEntityId());
         final Entity te = game.getEntity(waa.getTargetId());
-        final Mounted mounted = ae.getEquipment(waa.getWeaponId());
-        final WeaponType wtype = (WeaponType)mounted.getType();
+        final Mounted weapon = ae.getEquipment(waa.getWeaponId());
+        final WeaponType wtype = (WeaponType)weapon.getType();
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
+        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
 
         if (lastEntityId != waa.getEntityId()) {
             phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");
@@ -1673,23 +1676,20 @@ public class Server
         phaseReport.append("    " + wtype.getName() + " at " + te.getDisplayName());
         
         // has this weapon fired already?
-        if (mounted.isUsedThisRound()) {
+        if (weapon.isUsedThisRound()) {
             phaseReport.append(" but the weapon has already fired this round!\n");
             return;
         }
 
         // is the weapon functional?
-        if (mounted.isDestroyed()) {
+        if (weapon.isDestroyed()) {
             phaseReport.append(" but the weapon has been destroyed in a previous round!\n");
             return;
         }
 
-        // check ammo
-        if (mounted.getLinked() != null) {
-            if (mounted.getLinked().getShotsLeft() == 0) {
-                // try reloading?
-                ae.loadWeapon(mounted);
-            }
+        // try reloading
+        if (usesAmmo && ammo != null && ammo.getShotsLeft() == 0) {
+            ae.loadWeapon(weapon);
         }
 
         // should we even bother?
@@ -1713,11 +1713,11 @@ public class Server
         ae.heatBuildup += wtype.getHeat();
 
         // set the weapon as having fired
-        mounted.setUsedThisRound(true);
+        weapon.setUsedThisRound(true);
         
-        // use ammo
-        if (mounted.getLinked() != null) {
-            mounted.getLinked().setShotsLeft(mounted.getLinked().getShotsLeft() - 1);
+        // use up ammo (if weapon is out of ammo, we shouldn't be here)
+        if (usesAmmo) {
+            ammo.setShotsLeft(ammo.getShotsLeft() - 1);
         }
 
         // roll

@@ -388,8 +388,15 @@ public class FiringDisplay
         || !(ce().getEquipment(wn).getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
+        Mounted m = ce().getEquipment(wn);
+        
+        WeaponAttackAction waa = new WeaponAttackAction(cen, ten, wn);
+        
+        if (((WeaponType)m.getType()).getAmmoType() != AmmoType.T_NA) {
+            waa.setAmmoId(ce().getEquipmentNum(m.getLinked()));
+        }
     
-        attacks.addElement(new WeaponAttackAction(cen, ten, wn));
+        attacks.addElement(waa);
     
         ce().getEquipment(wn).setUsedThisRound(true);
         selectedWeapon = ce().getNextWeapon(wn);

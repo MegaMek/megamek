@@ -21,6 +21,7 @@ public class WeaponAttackAction
     extends AbstractAttackAction
 {
     private int weaponId;
+    private int ammoId = -1;
     
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
@@ -31,7 +32,15 @@ public class WeaponAttackAction
         return weaponId;
     }
     
+    public int getAmmoId() {
+        return ammoId;
+    }
+    
     public void setWeaponId(int weaponId) {
         this.weaponId = weaponId;
+    }
+    
+    public void setAmmoId(int ammoId) {
+        this.ammoId = ammoId;
     }
 }

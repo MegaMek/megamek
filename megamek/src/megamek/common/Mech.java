@@ -65,11 +65,10 @@ public class Mech
     
     public static final String[] locationNames = {"Head",
         "Center Torso", "Right Torso", "Left Torso", 
-//        "Center Torso Rear", "Right Torso Rear", "Left Torso Rear", 
         "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
     
     public static final String[] locationAbbrs = {"HD", "CT", "RT",
-        "LT", /*"CTR", "RTR", "LTR",*/ "RA", "LA", "RL", "LL"};
+        "LT", "RA", "LA", "RL", "LL"};
     
     // critical hit slots
     public static final int[] noOfSlots = {6, 12, 12, 12, 12, 12, 6, 6};

@@ -33,7 +33,8 @@ public abstract class Entity
     public static final int        MOVE_JUMP           = 3;
 
     public static final int        ARMOR_NA            = -1;
-    public static final int        ARMOR_DESTROYED     = -2;
+    public static final int        ARMOR_DOOMED        = -2;
+    public static final int        ARMOR_DESTROYED     = -3;
 
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
@@ -536,7 +537,7 @@ public abstract class Entity
     * Is this location destroyed?
     */
     public boolean isLocationDestroyed(int loc) {
-        return getInternal(loc) <= 0;
+        return getInternal(loc) == ARMOR_DESTROYED;
     }
     
     /**
@@ -783,6 +784,21 @@ public abstract class Entity
     }
     
     /**
+     * Slightly different from getHitableCriticals; returns true if this 
+     * location can be critically hit this phase, false if criticals should
+     * transfer.
+     */
+    public boolean hasHitableCriticals(int loc) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            if (getCritical(loc, i) != null 
+               && getCritical(loc, i).isDestroyed() == false) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Returns the number of operational critical slots of the specified type
      * in the location
      */
@@ -831,7 +847,7 @@ public abstract class Entity
     }
     
     /**
-     * Number of slots doomed or destroyed
+     * Number of slots doomed, missing or destroyed
      */
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;

@@ -382,15 +382,25 @@ public class Server
                 w.setReady(weaponOK);
             }
 
-            // destroy doomed criticals
+            // destroy criticals that were hit last phase
             for (int i = 0; i < entity.locations(); i++) {
                 for (int j = 0; j < entity.getNumberOfCriticals(i); j++) {
                     final CriticalSlot cs = entity.getCritical(i, j);
                     if (cs != null) {
-                        cs.setDestroyed(cs.isDestroyed() | cs.isDoomed());
+                        cs.setDestroyed(cs.isHit());
                     }
                 }
             }
+            
+            // destroy armor/internals if the section was removed
+            for (int i = 0; i < entity.locations(); i++) {
+                if (entity.getInternal(i) == Entity.ARMOR_DOOMED) {
+                    entity.setArmor(Entity.ARMOR_DESTROYED, i);
+                    entity.setArmor(Entity.ARMOR_DESTROYED, i, true);
+                    entity.setInternal(Entity.ARMOR_DESTROYED, i);
+                }
+            }
+            
             // reset damage this phase
             entity.damageThisPhase = 0;
 
@@ -2311,7 +2321,7 @@ public class Server
             desc += " 3 locations.";
         }
         // transfer criticals, if needed
-        if (hits > 0 && en.getHitableCriticals(loc) <= 0
+        if (hits > 0 && !en.hasHitableCriticals(loc)
                 && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
             loc = en.getTransferLocation(new HitData(loc)).getLocation();
             desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
@@ -2386,11 +2396,11 @@ public class Server
      * Marks all equipment in a location on an entity as destroyed.
      */
     private void destroyLocation(Entity en, int loc) {
-        // mark armor, internal as destroyed
-        en.setArmor(Entity.ARMOR_DESTROYED, loc, false);
-        en.setInternal(Entity.ARMOR_DESTROYED, loc);
+        // mark armor, internal as doomed
+        en.setArmor(Entity.ARMOR_DOOMED, loc, false);
+        en.setInternal(Entity.ARMOR_DOOMED, loc);
         if (en.hasRearArmor(loc)) {
-            en.setArmor(Entity.ARMOR_DESTROYED, loc, true);
+            en.setArmor(Entity.ARMOR_DOOMED, loc, true);
         }
         // weapons destroyed
         for (int i = 0; i < en.weapons.size(); i++) {
@@ -2404,11 +2414,11 @@ public class Server
                 en.getAmmo(i).exploded = true;
             }
         }
-        // all critical slots destroyed
+        // all critical slots set as missing
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
-                cs.setDoomed(true);
+                cs.setMissing(true);
             }
         }
         // dependent locations destroyed

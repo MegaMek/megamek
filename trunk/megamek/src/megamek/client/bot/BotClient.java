@@ -131,6 +131,13 @@ public abstract class BotClient extends Client {
                 break;
             case GameEvent.GAME_NEW_SETTINGS :
                 break;
+            case GameEvent.GAME_REPORT :
+                if (game.getPhase() == Game.PHASE_INITIATIVE) {
+                    //Opponent has used tactical genius, must press
+                    // "Done" again to advance past initiative report.
+                    sendDone(true);
+                }
+                break;
         }
     }
 

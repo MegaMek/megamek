@@ -11432,8 +11432,8 @@ implements Runnable, ConnectionHandler {
     // Easter eggs.  Happy April Fool's Day!!
     private static final String DUNE_CALL = "They tried and failed?";
     private static final String DUNE_RESPONSE = "They tried and died!";
-    private static final String STAR_WARS_CALL = "I'd rather kiss a Wookie.";
-    private static final String STAR_WARS_RESPONSE = "That can be arranged!";
+    private static final String STAR_WARS_CALL = "I'd just as soon kiss a Wookiee.";
+    private static final String STAR_WARS_RESPONSE = "I can arrange that!";
 
     /**
      * Process a packet from a connection.

@@ -984,7 +984,8 @@ public boolean isPassworded() {
      * @param towards another point that the deployed mechs will face towards
      */
     private boolean deploy(Entity entity, Coords pos, Coords towards, int recurse) {
-        if (game.board.contains(pos) && game.getEntity(pos) == null) {
+        if (game.board.contains(pos) && game.getEntity(pos) == null 
+                && !entity.isHexProhibited(game.board.getHex(pos))) {
             placeEntity(entity, pos, pos.direction(towards));
             return true;
         }

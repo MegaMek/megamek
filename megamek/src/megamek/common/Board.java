@@ -417,6 +417,9 @@ implements Serializable {
      * @param be        the board event.
      */
     public void processBoardEvent(BoardEvent be) {
+        if (boardListeners == null) {
+            return;
+        }
         for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
             BoardListener l = (BoardListener)e.nextElement();
             switch(be.getType()) {

@@ -1,11 +1,11 @@
-The Great MegaMek Feature list. 8th February 2004. MegaMek Version 29.26. Best viewed in 1024x768.
+The Great MegaMek Feature list. 2nd June 2004.  MegaMek Version 29.36. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
 Components (Units)
 
 - Battlemechs			Yes		None
-- Protomechs			Partial         Missing: fire declaration as a point, Physicals, Bot support
+- Protomechs			Partial         Missing: Physicals, Bot support
 - Vehicles			Partial		No VTOL's or Naval Units.
 - Infantry			Yes		None
 
@@ -18,7 +18,7 @@ Components (Mapsheets)
 - Water				Yes		None
 - Pavement			Yes		None
 - Roads				Yes		None
-- Bridges			Yes		Cannot be collapsed
+- Bridges			No		Cannot be collapsed; at same level as water.
 - Buildings			Partial		See Buildings Section below for more information.
 - Rubble			Yes		None
 - Fire				Yes		None
@@ -66,7 +66,7 @@ Movement (Stacking)
 Movement (Pavement)
 
 - Roads 			Yes		None
-- Bridge Movement		Partial		No CF for bridges. Cannot be attacked. No maximum capacity.
+- Bridge Movement		Partial		No CF for bridges. Cannot be attacked. No maximum capacity. Same level as water.
 - Skidding			Yes		Units may not step out of the way of a skidding unit.
 
 Movement (Piloting Skill Roles)
@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			Mostly		Fire declaration *should* be as a point
+- Protomechs			Yes             Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -150,14 +150,14 @@ Buildings
 
 Buildings (Movement Effects)
 
-- Entering Buildings		Partial		Units may only enter a building on the ground floor.
+- Entering Buildings		Partial		Units may only enter a building on the ground floor. Units may not climb buildings.
 
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
 - Attacking Units inside Bldgs	Yes             None
 - Combat Within Buildings	Partial		Needs to be debugged.
-- Collapse			Partial		Buildings will not collapse due to maximum weight being exceeded.
+- Collapse			Partial		Units may not climb buildings.
 
 Buildings (Basements)
 
@@ -169,7 +169,7 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			Partial		Missing: fire declaration as a point, Physicals, Bot support
+- ProtoMechs			Partial		Missing: Physicals, Bot support
 
 ProtoMechs (Combat)
 
@@ -194,7 +194,7 @@ Infantry (Movement)
 
 - Movement			Yes		Infantry cannot change floors in a building
 - Infantry Carriers		Yes		When Deploying infantry carriers, select "Load" to start Infantry inside.
-- Mechanised Battle Armor	Yes		When Delpoying OmniMechs, select load to start Btt Armor attached to a Mech.
+- Mechanised Battle Armor	Yes		When Delpoying OmniMechs, select "Load" to start BA squad attached to a Mech.
 
 Infantry (Combat)
 
@@ -205,13 +205,13 @@ Clan Battle Armor Variants
 
 - Gnome				Yes		None
 - Salamander			Yes		None
-- Slyph				No		None
-- Undine			No		None
+- Slyph				No		Waiting on VTOL movement.
+- Undine			No		Waiting on underwater movement.
 
 Innersphere Battle Armor Variants
 
 - Achileus			Yes		None
-- Fa Shih			Partial		Cannot lay minefields
+- Fa Shih			Partial		Cannot lay or clear minefields
 - Fenrir			Yes		None
 - Gray Death Light		Yes		None
 - Infiltrator			Yes		None
@@ -229,13 +229,13 @@ Special Case Rules (Anti Mech Infantry)
 
 Special Case Rules (Artillery)
 
-- Setup				No		None
-- Targeting			No		None
-- Damage			No		None
+- Setup				Partial		Need to designate 5 auto-hit hexes.  Offboard setup.
+- Targeting			Yes		None
+- Damage			Yes		None
 - Smoke Rounds			No		None
-- Onboard Artillery		No		None
-- Arrows IV Artillery		No		None
-- Arrows IV Munitions		No		None
+- Onboard Artillery		Yes		None
+- Arrows IV Artillery		Partial		Only standard munitions available.
+- Arrows IV Munitions		No		Special munitions appear as standard.
 
 Special Case Rules (Miscellaneous)
 
@@ -245,7 +245,7 @@ Special Case Rules (Miscellaneous)
 - Dropping Troops		No		None
 - Dumping Ammo			Yes		None
 - Ejecting			Partial		No Auto-Ejecting. A Pilot who ejects is removed from the game.
-- Improved Positions		No 		None
+- Improved Positions		No 		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None 
 
@@ -260,8 +260,8 @@ Special Case Rules (Fire)
 
 Special Case Rules (Flak)
 
-- Artillery Flak		No		None
-- LB-X Cluster Flak		No		None
+- Artillery Flak		No		Waiting on VTOL implementation.
+- LB-X Cluster Flak		No		Waiting on VTOL implementation.
 
 Special Case Rules (Four Legged Battlemechs)
 
@@ -277,17 +277,17 @@ Special Case Rules (Hidden Units)
 Special Case Rules (Hostile Environments)
 
 - Extreme Temperatures		Yes		Infantry can deploy in extreme temperatures, but dies at end of turn if not sheltered
-- Ice				Partial		Skiding on Ice has been implement.
+- Ice				Partial		Skiding on Ice has been simulated with pavement (*not* the same rules!!)
 - High /Low Gravity		Yes		None
 - Swamp				Partial		Swamp Hex tileset implemented.
-- Vacuum			No		None
+- Vacuum			No		Breach rules in place, but buggy.
 
 Special Case Rules (Minefields)
 
 - Conventional Minefields	Yes		None	
 - Command Detonated Minefields	No		None
 - Vibra Bomb Minefields		Yes		None
-- Clearing Minefields		Yes		None
+- Clearing Minefields		Partial		The UI does not have a way of adding a ClearMinefieldAction.
 
 Special Case Rules (Night Combat)
 
@@ -305,11 +305,11 @@ Special Case Rules (Scavenging and Repairs)
 
 Special Case Rules (Underwater Operations)
 
-- Movement			Yes		None
+- Movement			Yes		Buggy.
 - Line Of Sight			Yes		None
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
-- Hull Integrity		Yes		None
+- Hull Integrity		Yes		Buggy.
 
 Equipment
 
@@ -317,8 +317,8 @@ Equipment
 - Anti-Missile System		Yes		AMS target is selected for the player.
 - Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
-- Artillery Weapons		No		None
-- Autocannon Munitions		Partial		Incendiary Ammo notlemented.
+- Artillery Weapons		Partial		Need Sniper, Thumper, Longtom, and non-standard ammo.
+- Autocannon Munitions		Partial		Incendiary Ammo not implemented.
 - C3 Computers			Yes    		All bug reports on C3 need to be re-confirmed
 - Cargo Space			No		None
 - CASE				Yes		None

@@ -54,7 +54,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
      */
     
     public void removeBgDrawer(BackGroundDrawer bd){
-         bgDrawers.remove(bd);
+         bgDrawers.removeElement(bd);
     }
 
      /**

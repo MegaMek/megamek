@@ -2821,7 +2821,7 @@ public class BoardView1
             tipStrings[0] = entity.getChassis() + " (" + entity.getOwner().getName() + "); "
                 + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
             if (entity.getCrew().countAdvantages() > 0) {
-                tipStrings[0] = tipStrings[0].concat("*");
+                tipStrings[0] = tipStrings[0].concat(" <"+new Integer(entity.getCrew().countAdvantages()).toString()+" advs>");
             };
 
             tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance

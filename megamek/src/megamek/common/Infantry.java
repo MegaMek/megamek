@@ -251,15 +251,17 @@ public class Infantry
     /**
      * Infantry have only one speed.
      */
-    public int getRunMP() {
-        return applyGravityEffectsOnMP(this.getWalkMP());
+    
+    public int getRunMP(boolean gravity) {
+        if (gravity) return applyGravityEffectsOnMP(this.getWalkMP());
+        else return this.getWalkMP();
     }
 
     /**
      * Infantry don't have MASC
      */
-    public int getRunMPwithoutMASC() {
-        return getRunMP();
+    public int getRunMPwithoutMASC(boolean gravity) {
+        return getRunMP(gravity);
     }
 
     /**

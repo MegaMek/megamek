@@ -393,8 +393,8 @@ public class Protomech
     	return false;
     }
 
-     public int getRunMPwithoutMASC() {
-        return getRunMP();
+     public int getRunMPwithoutMASC(boolean gravity) {
+        return getRunMP(gravity);
     }
 
 

@@ -857,11 +857,19 @@ public abstract class Entity
      * Returns this entity's running/flank mp modified for heat.
      */
     public int getRunMP() {
-        return (int)Math.ceil(getWalkMP() * 1.5);
+        return getRunMP(true);
+    }
+    
+    public int getRunMP(boolean gravity) {
+        return (int)Math.ceil(getWalkMP(gravity) * 1.5);
     }
 
-    public abstract int getRunMPwithoutMASC();
-
+    public int getRunMPwithoutMASC() {
+        return getRunMPwithoutMASC(true);
+    }
+        
+    public abstract int getRunMPwithoutMASC(boolean gravity);
+    
     /**
      * Returns this entity's running/flank mp as a string.
      */

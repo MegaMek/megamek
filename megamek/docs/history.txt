@@ -85,11 +85,13 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v next
-+ a few more hovercraft movement fixes
+v 0.26.11 (08-30-02, 10pm)
++ 598824: a few more hovercraft movement fixes
++ physical attacks by dead or disabled mechs prevented
 + blk format now supports both mtf and mep equipment designations
 + can now select which ton of ammo to use on each shot
 + added fake mtf codes to distinguish lbx cluster ammo in mtf files
++ "fire mode" button allows switching between single and double ultra AC modes
 
 v 0.26.10 (08-16-02, 10pm)
 + big horkin' vehicle patch.  Ground vehicles are mostly implemented

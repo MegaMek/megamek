@@ -246,6 +246,7 @@ public class Compute
         int distance = 0;
         boolean isProne = entity.isProne();
         boolean hasJustStood = false;
+        boolean firstStep = true;
         
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
@@ -302,7 +303,8 @@ public class Compute
                 distance += 1;
                 break;
             case MovementData.STEP_GET_UP :
-                stepMp = 2;
+                // mechs with 1 MP are allowed to get up
+                stepMp = entity.getWalkMP() == 1 ? 1 : 2;
                 hasJustStood = true;
                 break;
             default :
@@ -337,6 +339,7 @@ public class Compute
         
         // second pass: set moveType, illegal, trouble flags
         curPos = new Coords(entity.getPosition());
+        firstStep = true;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             
@@ -364,6 +367,16 @@ public class Compute
                            && !isRunProhibited) {
                     moveType = Entity.MOVE_RUN;
                 }
+            }
+            
+            // mechs with 1 MP are allowed to get up
+            if (step.getType() == MovementData.STEP_GET_UP && entity.getWalkMP() == 1) {
+                moveType = Entity.MOVE_RUN;
+            }
+            
+            // amnesty for the first step
+            if (firstStep && moveType == Entity.MOVE_ILLEGAL && step.getType() == MovementData.STEP_FORWARDS) {
+                moveType = Entity.MOVE_RUN;
             }
             
             // check if this movement is illegal for reasons other than points
@@ -394,6 +407,8 @@ public class Compute
             
             // set past danger
             isPastDanger |= isDanger;
+            
+            firstStep = false;
         }
         
         // third pass (sigh) : avoid stacking violations

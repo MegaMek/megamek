@@ -155,7 +155,7 @@ public class Infantry
             else if ( INF_MOTORIZED == type )
                 this.movePoints= 3;
             else if ( INF_JUMP == type )
-                this.movePoints= 4;
+                this.movePoints= 3; // Pg. 61 of BMR(r)
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + type );
@@ -487,15 +487,17 @@ public class Infantry
      * platoon's movement type.
      */
     public void autoSetInternal() {
+
+	// Clan platoons have 25 men.
+	if ( this.isClan() ) {
+	    this.initializeInternal( INF_PLT_CLAN_LEG_MAX_MEN,
+				     LOC_INFANTRY );
+	    return;
+	}
+
+	// IS platoon strength is based upon movement type.
         switch (this.getMovementType()) {
         case INF_LEG:
-            // Clan leg platoons have less men (???)...
-            if ( this.isClan() ) {
-                this.initializeInternal( INF_PLT_CLAN_LEG_MAX_MEN,
-					 LOC_INFANTRY );
-                return;
-            }
-            // ... otherwise, fall through.
         case INF_MOTORIZED:
             this.initializeInternal( INF_PLT_MAX_MEN, LOC_INFANTRY );
             break;

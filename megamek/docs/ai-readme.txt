@@ -7,8 +7,8 @@ it to stop responding.  When this happens, start again from the last saved game.
   Starting A Game Against The Bot
     To play against the bot, host a game.
     Go to the players list and click add bot.
-    Selecting that bot from the players list will allow you to change its team or remove it 
-    You can then select the bot's starting position by selecting it from the starting 
+    Selecting that bot from the players list will allow you to change its team or remove it. 
+    Set the bot's starting position by selecting it from the starting 
     position list, then click change start.
     As you use the add unit dialog, just assign some mechs to the bot.
     Hit done and have fun!
@@ -36,8 +36,9 @@ vehicles and automatic deployment.
   Spurred on by taking an AI class, the original bot was improved to have a more
 robust utility model and a polynomial movement exploration algorithm.  The movement
 algorithm was further enhanced to a hierarchical filtering process that included limited
-look ahead and planning.  Also, firing determination and lance movement were changed to 
-use genetic algorithms.  
+look ahead and planning.  Entities go through a characterization phase to have fast approximations
+available for the first stages of the filtering.  Also, firing determination and lance movement were 
+changed to use genetic algorithms.  
 
 .1 The Original - Michael Hanson
   Semi-utility based with an exponential movement exploration algorithm. No movement
@@ -60,7 +61,7 @@ Other Possibilities:
     range fighting yourself.
 
   Bot Vs. Bot
-    Because the bot connects like a normal client, you can connect two seperate
+    Because the bot connects like a normal client, you can start two seperate
     bots and they will fight against each other.  If you do not want to play, 
     you can start a dedicated server (see the readme) and connect two bots to it.
     This is not recommended however, since for small forces (4 on 4) the bots 
@@ -90,3 +91,10 @@ MegaMek by itself currently needs about 40MB + .5MB for each entity.  Some numbe
 need about 15MB + 2MB for each entity.  It is quite possible for a lance on lance battle
 to generate an OutOfMemory error after several rounds.  We are working on reducing
 this overhead, but until then make sure to give the JVM enough heap space. 
+
+Next Steps:
+
+Reuse the new pathing code.
+Intellegent deployment and mine placement.
+More strategy: have the bots concentrate on controlling specified locations.
+Attempt to be as good as an intermidiate player on a 4x4 map in an 

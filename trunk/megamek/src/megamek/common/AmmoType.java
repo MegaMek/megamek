@@ -31,6 +31,7 @@ public class AmmoType extends EquipmentType {
     public AmmoType() {
         criticals = 1;
         tonnage = 1.0f;
+        explosive = true;
     }
     
     public int getAmmoType() {

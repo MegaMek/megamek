@@ -872,6 +872,24 @@ public class Compute
         final Mounted mounted = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)mounted.getType();
         final Coords[] in = intervening(ae.getPosition(), te.getPosition());
+        boolean usesAmmo;
+        Mounted amounted;
+        AmmoType atype;
+        
+        // check if weapon uses ammo
+        if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+            usesAmmo = true;
+            amounted = mounted.getLinked();
+            if (amounted != null) {
+                atype = (AmmoType)amounted.getType();
+            } else {
+                atype = null;
+            }
+        } else {
+            usesAmmo = false;
+            amounted = null;
+            atype = null;
+        }
         
         ToHitData toHit;
         boolean pc = false; // partial cover
@@ -880,6 +898,11 @@ public class Compute
         // weapon operational?
         if (mounted.isDestroyed()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
+        }
+        
+        // got ammo?
+        if (usesAmmo && (amounted == null || amounted.getShotsLeft() == 0)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
         }
         
         // sensors operational?
@@ -1127,6 +1150,16 @@ public class Compute
                 toHit.addModifier(1, "target prone and at range");
             }
         }
+        
+        // weapon to-hit modifier
+        if (wtype.getToHitModifier() != 0) {
+            toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
+        }        
+        
+        // ammo to-hit modifier
+        if (usesAmmo && atype.getToHitModifier() != 0) {
+            toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
+        }        
         
         // factor in target side
         toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),

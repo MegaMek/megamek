@@ -239,6 +239,10 @@ public class BoardView1
             if (sprite.getImage() == null) {
                 sprite.draw();
             }
+            // check again
+            if (sprite.getImage() == null) {
+                System.err.println("BoardView.drawSprite: could not acquire image; cancelling");
+            }
             backGraph.drawImage(sprite.getImage(), drawX, drawY, this);
         }
     }
@@ -1101,6 +1105,7 @@ public class BoardView1
             Image tempImage = createImage(bounds.width, bounds.height);
             if (tempImage == null) {
                 // argh!  but I want it!
+                System.err.println("BoardView.EntitySprite: could not acquire image");
                 return;
             }
             Graphics graph = tempImage.getGraphics();

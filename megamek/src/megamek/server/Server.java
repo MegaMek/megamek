@@ -3771,133 +3771,131 @@ implements Runnable, ConnectionHandler {
         } else return;
     }
 
-	/**
-	 * Checks to see if an entity sets off any vibrabombs.
-	 */ 
-	private void checkVibrabombs(Entity entity, Coords coords, boolean displaced) {
-		checkVibrabombs(entity, coords, displaced, null, null);
-	}
+    /**
+     * Checks to see if an entity sets off any vibrabombs.
+     */ 
+    private void checkVibrabombs(Entity entity, Coords coords, boolean displaced) {
+        checkVibrabombs(entity, coords, displaced, null, null);
+    }
 
-	private void checkVibrabombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos) {
-		// Only mechs can set off vibrabombs.
-		if (!(entity instanceof Mech)) {
-			return;
-		}
+    private void checkVibrabombs(Entity entity, Coords coords, boolean displaced, Coords lastPos, Coords curPos) {
+        // Only mechs can set off vibrabombs.
+        if (!(entity instanceof Mech)) {
+            return;
+        }
 
-		int mass = (int) entity.getWeight();
+        int mass = (int) entity.getWeight();
 
-		Enumeration e = game.getVibrabombs().elements();
+        Enumeration e = game.getVibrabombs().elements();
 
-		while (e.hasMoreElements()) {
-			Minefield mf = (Minefield) e.nextElement();
+        while (e.hasMoreElements()) {
+            Minefield mf = (Minefield) e.nextElement();
 
-			
             // Bug 954272: Mines shouldn't work underwater, and BMRr says Vibrabombs are mines
-			if (game.board.getHex(mf.getCoords()).contains(Terrain.WATER) && !game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
-				continue;
-			}
-			
-			// Mech weighing 10 tons or less can't set off the bomb
-			if (mass <= mf.getSetting() - 10) {
-				continue;
-			}
+            if (game.board.getHex(mf.getCoords()).contains(Terrain.WATER) && !game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
+                continue;
+            }
 
-			int effectiveDistance = (mass - mf.getSetting()) / 10;
-			int actualDistance = coords.distance(mf.getCoords());
+            // Mech weighing 10 tons or less can't set off the bomb
+            if (mass <= mf.getSetting() - 10) {
+                continue;
+            }
 
-			if (actualDistance <= effectiveDistance) {
-				phaseReport.append("\n" + entity.getShortName() + " sets off a vibrabomb in hex " + mf.getCoords().getBoardNum() + ".\n");
-				explodeVibrabomb(mf);
-			}
+            int effectiveDistance = (mass - mf.getSetting()) / 10;
+            int actualDistance = coords.distance(mf.getCoords());
 
-			// Hack; when moving, the Mech isn't in the hex during
-			// the movement.
-			if (!displaced && actualDistance == 0) {
-				phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
-		        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-		        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+            if (actualDistance <= effectiveDistance) {
+                phaseReport.append("\n" + entity.getShortName() + " sets off a vibrabomb in hex " + mf.getCoords().getBoardNum() + ".\n");
+                explodeVibrabomb(mf);
+            }
 
-	           	resolvePilotingRolls(entity, true, lastPos, curPos);
-			}
-		}
-	}
+            // Hack; when moving, the Mech isn't in the hex during
+            // the movement.
+            if (!displaced && actualDistance == 0) {
+                phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
+                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+                resolvePilotingRolls(entity, true, lastPos, curPos);
+            }
+        }
+    }
 
-	/**
-	 * Removes the	minefield from the game.
-	 */ 
-	private void removeMinefield(Minefield mf) {
-		if (game.containsVibrabomb(mf)) {
-			game.removeVibrabomb(mf);
-		}
-		game.removeMinefield(mf);
+    /**
+     * Removes the minefield from the game.
+     */ 
+    private void removeMinefield(Minefield mf) {
+        if (game.containsVibrabomb(mf)) {
+            game.removeVibrabomb(mf);
+        }
+        game.removeMinefield(mf);
 
-		Enumeration players = game.getPlayers();
-		while (players.hasMoreElements()) {
-			Player player = (Player) players.nextElement();
-          	removeMinefield(player, mf);
-		}
-	}
+        Enumeration players = game.getPlayers();
+        while (players.hasMoreElements()) {
+            Player player = (Player) players.nextElement();
+            removeMinefield(player, mf);
+        }
+    }
 
-	/** 
-	 * Removes the minfield from a player.
-	 * @param player
-	 * @param mf
-	 */
-	private void removeMinefield(Player player, Minefield mf) {
-		if (player.containsMinefield(mf)) {
-			player.removeMinefield(mf);
-			send(player.getId(), new Packet(Packet.COMMAND_REMOVE_MINEFIELD, mf));
-		}
-	}
+    /** 
+     * Removes the minfield from a player.
+     * @param player
+     * @param mf
+     */
+    private void removeMinefield(Player player, Minefield mf) {
+        if (player.containsMinefield(mf)) {
+            player.removeMinefield(mf);
+            send(player.getId(), new Packet(Packet.COMMAND_REMOVE_MINEFIELD, mf));
+        }
+    }
 
-	/**
-	 * Reveals a minefield for all players. 
-	 * @param mf
-	 */
-	private void revealMinefield(Minefield mf) {
-		Enumeration players = game.getPlayers();
-		while (players.hasMoreElements()) {
-			Player player = (Player) players.nextElement();
-          	revealMinefield(player, mf);
-		}
-	}
+    /**
+     * Reveals a minefield for all players. 
+     * @param mf
+     */
+    private void revealMinefield(Minefield mf) {
+        Enumeration players = game.getPlayers();
+        while (players.hasMoreElements()) {
+            Player player = (Player) players.nextElement();
+            revealMinefield(player, mf);
+        }
+    }
 
-	/**
-	 * Reveals a minefield for a player.
-	 * @param player
-	 * @param mf
-	 * 
-	 */
-	private void revealMinefield(Player player, Minefield mf) {
-		if (!player.containsMinefield(mf)) {
-			player.addMinefield(mf);
-			send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
-		}
-	}
+    /**
+     * Reveals a minefield for a player.
+     * @param player
+     * @param mf
+     * 
+     */
+    private void revealMinefield(Player player, Minefield mf) {
+        if (!player.containsMinefield(mf)) {
+            player.addMinefield(mf);
+            send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
+        }
+    }
 
-	/**
-	 * Explodes a vibrabomb.
-	 */ 
-	private void explodeVibrabomb(Minefield mf) {
-		Enumeration targets = game.getEntities(mf.getCoords());
+    /**
+     * Explodes a vibrabomb.
+     */ 
+    private void explodeVibrabomb(Minefield mf) {
+        Enumeration targets = game.getEntities(mf.getCoords());
 
-		while (targets.hasMoreElements()) {
-			Entity entity = (Entity) targets.nextElement();
+        while (targets.hasMoreElements()) {
+            Entity entity = (Entity) targets.nextElement();
 
-			phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
-	        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-	        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+            phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
+            HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+            phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
 
-           	resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
-           	send(createEntityPacket(entity.getId()));
-		}
+            resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
+            send(createEntityPacket(entity.getId()));
+        }
 
         if (!mf.isOneUse()) {
-        	revealMinefield(mf);
+            revealMinefield(mf);
         } else {
-        	removeMinefield(mf);
+            removeMinefield(mf);
         }
-	}
+    }
 
     private void drownSwarmer(Entity entity, Coords pos) {
         // Any swarming infantry will be destroyed.
@@ -3977,8 +3975,8 @@ implements Runnable, ConnectionHandler {
             if (entity instanceof Mech && !entity.isProne()
                 && hex.levelOf(Terrain.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                	if (game.getOptions().booleanOption("vacuum"))
-                		entity.setLocationStatus(loop, Entity.LOC_VACUUM);
+                    if (game.getOptions().booleanOption("vacuum"))
+                        entity.setLocationStatus(loop, Entity.LOC_VACUUM);
                     else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
                 }
                 // BMRr, page 94 says that only Meks standing in Level 2 water,
@@ -4001,7 +3999,7 @@ implements Runnable, ConnectionHandler {
         }else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getOptions().booleanOption("vacuum"))
-                	entity.setLocationStatus(loop, Entity.LOC_VACUUM);
+                    entity.setLocationStatus(loop, Entity.LOC_VACUUM);
                 else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
             }
         }
@@ -4411,14 +4409,14 @@ implements Runnable, ConnectionHandler {
     }
 
     private void doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest) {
-    	if (game.containsMinefield(dest)) {
-    		Enumeration minefields = game.getMinefields(dest).elements();
-    		while (minefields.hasMoreElements()) {
-    			Minefield mf = (Minefield) minefields.nextElement();
-	    		enterMinefield(entity, mf, src, dest, false);
-	    	}
-    	}
-    	checkVibrabombs(entity, dest, true);
+        if (game.containsMinefield(dest)) {
+            Enumeration minefields = game.getMinefields(dest).elements();
+            while (minefields.hasMoreElements()) {
+                Minefield mf = (Minefield) minefields.nextElement();
+                enterMinefield(entity, mf, src, dest, false);
+            }
+        }
+        checkVibrabombs(entity, dest, true);
     }
 
     /**
@@ -4485,7 +4483,7 @@ implements Runnable, ConnectionHandler {
     }
 
     private void receiveDeployMinefields(Packet packet, int connId) {
-    	Vector minefields = (Vector) packet.getObject(0);
+        Vector minefields = (Vector) packet.getObject(0);
 
         // is this the right phase?
         if (game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
@@ -4499,8 +4497,8 @@ implements Runnable, ConnectionHandler {
     }
 
     private void processDeployMinefields(Vector minefields) {
-    	int playerId = Player.PLAYER_NONE;
-    	for (int i = 0; i < minefields.size(); i++) {
+        int playerId = Player.PLAYER_NONE;
+        for (int i = 0; i < minefields.size(); i++) {
             Minefield mf = (Minefield) minefields.elementAt(i);
             playerId = mf.getPlayerId();
 
@@ -4508,10 +4506,10 @@ implements Runnable, ConnectionHandler {
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 game.addVibrabomb(mf);
             }
-    	}
+        }
 
         Player player = game.getPlayer( playerId );
-    	if ( null != player ) {
+        if ( null != player ) {
             int teamId = player.getTeam();
 
             if (teamId != Player.TEAM_NONE) {
@@ -4533,7 +4531,7 @@ implements Runnable, ConnectionHandler {
             } else {
                 player.addMinefields(minefields);
             }
-    	}
+        }
     }
     /**
      * Gets a bunch of entity attacks from the packet.  If valid, processess
@@ -4748,89 +4746,89 @@ implements Runnable, ConnectionHandler {
     }
 
     private void resolveClearMinefieldAttempts(Vector clearAttempts) {
-    	boolean[] doneWith = new boolean[clearAttempts.size()];
+        boolean[] doneWith = new boolean[clearAttempts.size()];
 
-    	for (int i = 0; i < clearAttempts.size(); i++) {
-    		Vector temp = new Vector();
-    		Entity e = (Entity) clearAttempts.elementAt(i);
-    		Coords pos = e.getPosition();
-    		temp.addElement(e);
+        for (int i = 0; i < clearAttempts.size(); i++) {
+            Vector temp = new Vector();
+            Entity e = (Entity) clearAttempts.elementAt(i);
+            Coords pos = e.getPosition();
+            temp.addElement(e);
 
-    		for (int j = i + 1; j < clearAttempts.size(); j++) {
-    			Entity ent = (Entity) clearAttempts.elementAt(j);
-    			if (ent.getPosition().equals(pos)) {
-    				temp.addElement(ent);
-    				clearAttempts.removeElement(ent);
-    			}
-    		}
+            for (int j = i + 1; j < clearAttempts.size(); j++) {
+                Entity ent = (Entity) clearAttempts.elementAt(j);
+                if (ent.getPosition().equals(pos)) {
+                    temp.addElement(ent);
+                    clearAttempts.removeElement(ent);
+                }
+            }
 
-    		boolean accident = false;
-    		boolean cleared = false;
-    		for (int j = 0; j < temp.size(); j++) {
-    			Entity ent = (Entity) temp.elementAt(j);
-    			int roll = Compute.d6(2);
-			int clear = Minefield.CLEAR_NUMBER_INFANTRY;
-			int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
+            boolean accident = false;
+            boolean cleared = false;
+            for (int j = 0; j < temp.size(); j++) {
+                Entity ent = (Entity) temp.elementAt(j);
+                int roll = Compute.d6(2);
+                int clear = Minefield.CLEAR_NUMBER_INFANTRY;
+                int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
 
-			// Does the entity has a minesweeper?
-			Enumeration equip = ent.getMisc();
-			while ( equip.hasMoreElements() ) {
-			    Mounted mounted = (Mounted) equip.nextElement();
-			    if ( mounted.getType()
-				 .hasFlag(MiscType.F_MINESWEEPER) ) {
-				clear = Minefield.CLEAR_NUMBER_SWEEPER;
-				boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
-				break;
-			    }
-			}
-    			phaseReport.append( ent.getShortName() )
-			    .append( " attempts to clear mines in hex " )
-			    .append( pos.getBoardNum() )
-			    .append( "; needs a " )
-			    .append( clear )
-			    .append( ", rolls " )
-			    .append( roll );
-    			if (roll >= clear) {
-    				phaseReport.append(" and is successful!\n");
-    				cleared = true;
-    			} else if (roll <= boom) {
-    				phaseReport.append(" and accidently sets it off!\n");
-    				accident = true;
-    			} else {
-    				phaseReport.append(" and fails!\n");
-    			}
-    		}
-    		if (accident) {
-    			Enumeration minefields = game.getMinefields(pos).elements();
-    			while (minefields.hasMoreElements()) {
-    				Minefield mf = (Minefield) minefields.nextElement();
-    				switch (mf.getType()) {
-    					case (Minefield.TYPE_CONVENTIONAL) :
-    					case (Minefield.TYPE_THUNDER) :
-    					for (int j = 0; j < temp.size(); j++) {
-    						Entity entity = (Entity) temp.elementAt(j);
-							phaseReport.append(entity.getShortName() + " is damaged in minefield accident.");
-					        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-					        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
-    					}
-    					break;
-    					case (Minefield.TYPE_VIBRABOMB) :
-    					explodeVibrabomb(mf);
-    					break;
-    				}
-    			}
-    		}
-    		if (cleared) {
-    			Enumeration minefields = game.getMinefields(pos).elements();
-    			while (minefields.hasMoreElements()) {
-    				Minefield mf = (Minefield) minefields.nextElement();
-    				removeMinefield(mf);
-    			}
-    		}
+                // Does the entity has a minesweeper?
+                Enumeration equip = ent.getMisc();
+                while ( equip.hasMoreElements() ) {
+                    Mounted mounted = (Mounted) equip.nextElement();
+                    if ( mounted.getType().hasFlag(MiscType.F_MINESWEEPER) ) {
+                        clear = Minefield.CLEAR_NUMBER_SWEEPER;
+                        boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
+                        break;
+                    }
+                }
+                phaseReport.append( ent.getShortName() )
+                           .append( " attempts to clear mines in hex " )
+                           .append( pos.getBoardNum() )
+                           .append( "; needs a " )
+                           .append( clear )
+                           .append( ", rolls " )
+                           .append( roll );
+                if (roll >= clear) {
+                    phaseReport.append(" and is successful!\n");
+                    cleared = true;
+                } else if (roll <= boom) {
+                    phaseReport.append(" and accidently sets it off!\n");
+                    accident = true;
+                } else {
+                    phaseReport.append(" and fails!\n");
+                }
+            }
+            if (accident) {
+                Enumeration minefields = game.getMinefields(pos).elements();
+                while (minefields.hasMoreElements()) {
+                    Minefield mf = (Minefield) minefields.nextElement();
+                    switch (mf.getType()) {
+                        case (Minefield.TYPE_CONVENTIONAL) :
+                        case (Minefield.TYPE_THUNDER) :
+                            for (int j = 0; j < temp.size(); j++) {
+                                Entity entity = (Entity) temp.elementAt(j);
+                                phaseReport.append(entity.getShortName() + " is damaged in minefield accident.");
+                                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                                phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+                            }
+                            break;
+                        case (Minefield.TYPE_VIBRABOMB) :
+                            explodeVibrabomb(mf);
+                            break;
+                    }
+                }
+            }
+            if (cleared) {
+                Enumeration minefields = game.getMinefields(pos).elements();
+                while (minefields.hasMoreElements()) {
+                    Minefield mf = (Minefield) minefields.nextElement();
+                    removeMinefield(mf);
+                }
+            }
         }
     }
 
-    /** Called during the fire phase to resolve all (and only) weapon attacks
+    /** 
+     * Called during the fire phase to resolve all (and only) weapon attacks
      */
     private void resolveOnlyWeaponAttacks() {
         Vector results = new Vector(game.actionsSize());
@@ -5219,8 +5217,8 @@ implements Runnable, ConnectionHandler {
 
                 wr.amsShotDown[x]    = amsHits;
                 wr.amsShotDownTotal += amsHits;
-            };
-        };
+            }
+        }
 
         return wr;
     }
@@ -5362,73 +5360,65 @@ implements Runnable, ConnectionHandler {
       Building bldg = game.board.getBuildingAt(target.getPosition());
 
       if (lastEntityId != ae.getId()) {
-        phaseReport.append("\nWeapons fire for ").append(ae.getDisplayName()).
-            append("\n");
+          phaseReport.append("\nWeapons fire for ").append(ae.getDisplayName()).
+              append("\n");
       }
 
       // Swarming infantry can stop during any weapons phase after start.
       if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
-        // ... but only as their *only* attack action.
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-          phaseReport.append("Swarm attack can not be ended (" +
-                             toHit.getDesc()).append(")\n");
-          return;
-        }
-        else {
-          phaseReport.append("Swarm attack ended.\n");
-          // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-          if (ae.getSwarmTargetId() != target.getTargetId()) {
-            Entity other = game.getEntity(ae.getSwarmTargetId());
-            other.setSwarmAttackerId(Entity.NONE);
+          // ... but only as their *only* attack action.
+          if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+              phaseReport.append("Swarm attack can not be ended (" +
+                   toHit.getDesc()).append(")\n");
+              return;
+          } else {
+              phaseReport.append("Swarm attack ended.\n");
+              // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+              if (ae.getSwarmTargetId() != target.getTargetId()) {
+                  Entity other = game.getEntity(ae.getSwarmTargetId());
+                  other.setSwarmAttackerId(Entity.NONE);
+              } else {
+                  entityTarget.setSwarmAttackerId(Entity.NONE);
+              }
+              ae.setSwarmTargetId(Entity.NONE);
+              return;
           }
-          else {
-            entityTarget.setSwarmAttackerId(Entity.NONE);
-          }
-          ae.setSwarmTargetId(Entity.NONE);
-          return;
-        }
       }
 
       // Report weapon attack and its to-hit value.
       phaseReport.append("    ").append(wtype.getName()).append(" at ").append(
           target.getDisplayName());
       if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-        phaseReport.append(", but the shot is impossible (").append(toHit.getDesc()).
-            append(")\n");
-        return;
-      }
-      else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-        phaseReport.append(", the shot is an automatic miss (").append(toHit.
-            getDesc()).append("), ");
-      }
-      else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-        phaseReport.append(", the shot is an automatic hit (").append(toHit.
-            getDesc()).append("), ");
-      }
-      else {
-        phaseReport.append("; needs ").append(toHit.getValue()).append(", ");
+          phaseReport.append(", but the shot is impossible (").append(toHit.getDesc()).
+              append(")\n");
+          return;
+      } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+          phaseReport.append(", the shot is an automatic miss (").append(toHit.
+              getDesc()).append("), ");
+      } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+          phaseReport.append(", the shot is an automatic hit (").append(toHit.
+              getDesc()).append("), ");
+      } else {
+          phaseReport.append("; needs ").append(toHit.getValue()).append(", ");
       }
 
       // if firing an HGR unbraced, schedule a PSR
       if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
-        // the mod is weight-based
-        int nMod;
-        if (ae.getWeight() <= Entity.WEIGHT_LIGHT) {
-          nMod = 2;
-        }
-        else if (ae.getWeight() <= Entity.WEIGHT_MEDIUM) {
-          nMod = 1;
-        }
-        else if (ae.getWeight() <= Entity.WEIGHT_HEAVY) {
-          nMod = 0;
-        }
-        else {
-          nMod = -1;
-        }
-        PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
-                                                    "fired HeavyGauss unbraced");
-        psr.setCumulative(false);
-        game.addPSR(psr);
+          // the mod is weight-based
+          int nMod;
+          if (ae.getWeight() <= Entity.WEIGHT_LIGHT) {
+              nMod = 2;
+          } else if (ae.getWeight() <= Entity.WEIGHT_MEDIUM) {
+              nMod = 1;
+          } else if (ae.getWeight() <= Entity.WEIGHT_HEAVY) {
+              nMod = 0;
+          } else {
+              nMod = -1;
+          }
+          PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
+                                          "fired HeavyGauss unbraced");
+          psr.setCumulative(false);
+          game.addPSR(psr);
       }
 
       // dice have been rolled, thanks
@@ -5437,32 +5427,29 @@ implements Runnable, ConnectionHandler {
       // check for AC jams
       int nShots = weapon.howManyShots();
       if (nShots > 1) {
-        int jamCheck = 0;
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
-            weapon.curMode().equals("Ultra")) {
-          jamCheck = 2;
-        }
-        else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-          if (nShots == 2) {
-            jamCheck = 2;
+          int jamCheck = 0;
+          if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
+              weapon.curMode().equals("Ultra")) {
+              jamCheck = 2;
+          } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+              if (nShots == 2) {
+                  jamCheck = 2;
+              } else if (nShots == 4) {
+                  jamCheck = 3;
+              } else if (nShots == 6) {
+                  jamCheck = 4;
+              }
           }
-          else if (nShots == 4) {
-            jamCheck = 3;
-          }
-          else if (nShots == 6) {
-            jamCheck = 4;
-          }
-        }
 
-        if (jamCheck > 0 && wr.roll <= jamCheck) {
-          phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
-          weapon.setJammed(true);
-          // ultras are destroyed by jamming
-          if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
-            weapon.setHit(true);
+          if (jamCheck > 0 && wr.roll <= jamCheck) {
+              phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+              weapon.setJammed(true);
+              // ultras are destroyed by jamming
+              if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                  weapon.setHit(true);
+              }
+              return;
           }
-          return;
-        }
       }
 
       // do we hit?
@@ -5770,8 +5757,8 @@ implements Runnable, ConnectionHandler {
 
         // special case NARC hits.  No damage, but a beacon is appended
         if (!bMissed &&
-        	wtype.getAmmoType() == AmmoType.T_NARC &&
-        	atype.getMunitionType() != AmmoType.M_NARC_EX) {
+            wtype.getAmmoType() == AmmoType.T_NARC &&
+            atype.getMunitionType() != AmmoType.M_NARC_EX) {
 
             if (wr.amsShotDownTotal > 0) {
                 phaseReport.append("would hit, but...");
@@ -5789,24 +5776,24 @@ implements Runnable, ConnectionHandler {
             return;
         }
 
-		// attempt to clear minefield by LRM/MRM fire.
+        // attempt to clear minefield by LRM/MRM fire.
         if (!bMissed && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
-        	int clearAttempt = Compute.d6(2);
+            int clearAttempt = Compute.d6(2);
 
-        	if (clearAttempt >= Minefield.CLEAR_NUMBER_WEAPON) {
-        		phaseReport.append("\n\thits and clears it.\n");
-        		Coords coords = target.getPosition();
+            if (clearAttempt >= Minefield.CLEAR_NUMBER_WEAPON) {
+                phaseReport.append("\n\thits and clears it.\n");
+                Coords coords = target.getPosition();
 
-        		Enumeration minefields = game.getMinefields(coords).elements();
-        		while (minefields.hasMoreElements()) {
-        			Minefield mf = (Minefield) minefields.nextElement();
+                Enumeration minefields = game.getMinefields(coords).elements();
+                while (minefields.hasMoreElements()) {
+                    Minefield mf = (Minefield) minefields.nextElement();
 
-        			removeMinefield(mf);
-        		}
-        	} else {
-        		phaseReport.append("\n\thits, but fails to clear it.\n");
-        	}
-        	return;
+                    removeMinefield(mf);
+                }
+            } else {
+                phaseReport.append("\n\thits, but fails to clear it.\n");
+            }
+            return;
         }
 
         // yeech.  handle damage. . different weapons do this in very different ways
@@ -6411,9 +6398,9 @@ implements Runnable, ConnectionHandler {
                 // weapons that can't normally start fires.  that's weird.
                 // Buildings can't be accidentally ignited.
                 if ( bldg == null) {
-                	boolean alreadyIgnited = game.board.getHex(target.getPosition()).contains(Terrain.FIRE);
-                	boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
-					if (!alreadyIgnited && ignited) return;
+                    boolean alreadyIgnited = game.board.getHex(target.getPosition()).contains(Terrain.FIRE);
+                    boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
+                    if (!alreadyIgnited && ignited) return;
                 }
 
                 int tn = 14 - nDamage;
@@ -6525,7 +6512,7 @@ implements Runnable, ConnectionHandler {
                     phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).
                             append( entityTarget.getLocationAbbr(hit));
                     if (hit.hitAimedLocation()) {
-                    	phaseReport.append("(hit aimed location)");
+                        phaseReport.append("(hit aimed location)");
                     }
                 }
 
@@ -6564,16 +6551,16 @@ implements Runnable, ConnectionHandler {
                             .append( entityTarget.getDisplayName() )
                             .append( " suffers no damage." );
                     } else if (bFragmentation) {
-                    	// If it's a frag missile...
+                        // If it's a frag missile...
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 1) );
                     } else if (bFlechette) {
-                    	// If it's a frag missile...
+                        // If it's a frag missile...
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 2) );
                     } else {
-                    	if ((atype != null) && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
-                    		hit.makeArmorPiercing(atype);
+                        if ((atype != null) && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
+                            hit.makeArmorPiercing(atype);
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
                     }
@@ -6692,7 +6679,7 @@ implements Runnable, ConnectionHandler {
      */
     private void resolvePunchAttack(PhysicalResult pr, int lastEntityId) {
         final PunchAttackAction paa = (PunchAttackAction)pr.aaa;
-    	final Entity ae = game.getEntity(paa.getEntityId());
+        final Entity ae = game.getEntity(paa.getEntityId());
         final Targetable target = game.getTarget(paa.getTargetType(), paa.getTargetId());
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -6702,11 +6689,11 @@ implements Runnable, ConnectionHandler {
         ? "Left Arm" : "Right Arm";
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT
-		? pr.damage : pr.damageRight;
+        ? pr.damage : pr.damageRight;
         final ToHitData toHit = paa.getArm() == PunchAttackAction.LEFT
-		? pr.toHit : pr.toHitRight;
+        ? pr.toHit : pr.toHitRight;
         int roll = paa.getArm() == PunchAttackAction.LEFT
-		? pr.roll : pr.rollRight;
+        ? pr.roll : pr.rollRight;
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
         // Which building takes the damage?
@@ -6797,7 +6784,7 @@ implements Runnable, ConnectionHandler {
      * Handle a kick attack
      */
     private void resolveKickAttack(PhysicalResult pr, int lastEntityId) {
-    	KickAttackAction kaa = (KickAttackAction)pr.aaa;
+        KickAttackAction kaa = (KickAttackAction)pr.aaa;
         final Entity ae = game.getEntity(kaa.getEntityId());
         final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
         Entity te = null;
@@ -6910,7 +6897,7 @@ implements Runnable, ConnectionHandler {
      */
     
     private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
-    	final ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)pr.aaa;
+        final ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)pr.aaa;
         final Entity ae = game.getEntity(ppaa.getEntityId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
@@ -7009,7 +6996,7 @@ implements Runnable, ConnectionHandler {
      */
     private void resolveBrushOffAttack( PhysicalResult pr,
                                         int lastEntityId ) {
-    	final BrushOffAttackAction baa = (BrushOffAttackAction)pr.aaa;
+        final BrushOffAttackAction baa = (BrushOffAttackAction)pr.aaa;
         final Entity ae = game.getEntity(baa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "brush off".
         final Entity te = game.getEntity(baa.getTargetId());
@@ -7019,11 +7006,11 @@ implements Runnable, ConnectionHandler {
         // get damage, ToHitData and roll from the PhysicalResult
         // ASSUMPTION: buildings can't absorb *this* damage.
         int damage = baa.getArm() == BrushOffAttackAction.LEFT
-		? pr.damage : pr.damageRight;
+        ? pr.damage : pr.damageRight;
         final ToHitData toHit = baa.getArm() == BrushOffAttackAction.LEFT
-		? pr.toHit : pr.toHitRight;
+        ? pr.toHit : pr.toHitRight;
         int roll = baa.getArm() == BrushOffAttackAction.LEFT
-		? pr.roll : pr.rollRight;
+        ? pr.roll : pr.rollRight;
         
         if (lastEntityId != baa.getEntityId()) {
             phaseReport.append( "\nPhysical attacks for " )
@@ -7086,7 +7073,7 @@ implements Runnable, ConnectionHandler {
      */
     private void resolveThrashAttack( PhysicalResult pr,
                                         int lastEntityId ) {
-    	final ThrashAttackAction taa = (ThrashAttackAction)pr.aaa;
+        final ThrashAttackAction taa = (ThrashAttackAction)pr.aaa;
         final Entity ae = game.getEntity(taa.getEntityId());
         
         // get damage, ToHitData and roll from the PhysicalResult
@@ -7175,7 +7162,7 @@ implements Runnable, ConnectionHandler {
      * Handle a club attack
      */
     private void resolveClubAttack(PhysicalResult pr, int lastEntityId) {
-    	final ClubAttackAction caa = (ClubAttackAction)pr.aaa;
+        final ClubAttackAction caa = (ClubAttackAction)pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
@@ -7284,7 +7271,7 @@ implements Runnable, ConnectionHandler {
      * Handle a push attack
      */
     private void resolvePushAttack(PhysicalResult pr, int lastEntityId) {
-    	final PushAttackAction paa = (PushAttackAction)pr.aaa;    	
+        final PushAttackAction paa = (PushAttackAction)pr.aaa;    	
         final Entity ae = game.getEntity(paa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "push".
         final Entity te = game.getEntity(paa.getTargetId());

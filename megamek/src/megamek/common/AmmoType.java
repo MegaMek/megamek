@@ -171,6 +171,9 @@ public class AmmoType extends EquipmentType {
     public int getFireTN() {
         return 9;
     }
+    
+    public void resolveAttack(Game game, WeaponResult wr, UsesAmmoType weap,
+    		                  EquipmentState weap_state) {}
 
     // By default, adds no new modifiers (these are for ammo based modifiers)
     public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {

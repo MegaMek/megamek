@@ -2008,8 +2008,11 @@ public class BoardView1
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
-            // draw entity image
-            graph.drawImage(tileManager.wreckMarkerFor(entity), 0, 0, this);
+            // Draw wreck image,if we've got one.
+            Image wreck = tileManager.wreckMarkerFor(entity);
+            if ( null != wreck ) {
+                graph.drawImage( wreck, 0, 0, this );
+            }
 
             // draw box with shortName
             Color text = Color.lightGray;

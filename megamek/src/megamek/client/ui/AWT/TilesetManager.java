@@ -103,6 +103,7 @@ public class TilesetManager {
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
+                return;
             }            
         }
         return entityImage.getWreckFacing(entity.getFacing());
@@ -367,10 +368,10 @@ public class TilesetManager {
 
             if (wreck != null) {
             	wreck = applyColor(wreck);
-	            for (int i = 0; i < 6; i++) {
-	                ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-	                wreckFacings[i] = comp.createImage(rotSource);
-	            }
+                for (int i = 0; i < 6; i++) {
+                    ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
+                    wreckFacings[i] = comp.createImage(rotSource);
+                }
             }
         }
         

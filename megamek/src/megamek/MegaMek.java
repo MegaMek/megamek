@@ -29,7 +29,7 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.29.38-dev";
+    public static String VERSION = "0.29.38";
     public static long TIMESTAMP = new File("timestamp").lastModified();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
@@ -78,14 +78,14 @@ public class MegaMek implements ActionListener {
                            + " ("
                            + System.getProperty("os.arch")
                            + ")");
-        // BEGIN DEBUG memory
+        /*/ BEGIN DEBUG memory
         if ( System.getProperties().getProperty( "java.version" ).charAt(2)
              >= '4' ) {
             long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
             System.out.println("Total memory available to MegaMek: " 
                                + MegaMek.commafy.format(maxMemory) + " kB");
         }
-        //  END  DEBUG memory 
+        //  END  DEBUG memory */ 
         System.out.println();
 
         // set visible on middle of screen

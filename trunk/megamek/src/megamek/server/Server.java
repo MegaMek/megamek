@@ -7627,11 +7627,13 @@ implements Runnable, ConnectionHandler {
                         if ( te instanceof Protomech ) {
                             int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
                                 ((Protomech)te).getPilotDamageTaken(hit.getLocation());
-                            desc.append( "\n" )
-                                 .append( damageCrew( te, hits ) );
-                            ((Protomech)te).setPilotDamageTaken
-                                 (hit.getLocation(),
-                                  Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                            if ( hits > 0 ) {
+                                desc.append( "\n" )
+                                     .append( damageCrew( te, hits ) );
+                                ((Protomech)te).setPilotDamageTaken
+                                     (hit.getLocation(),
+                                      Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                            }
                         }
 
                         // Destroy the location.
@@ -8058,21 +8060,20 @@ implements Runnable, ConnectionHandler {
                             }
                             else {
                                 int tweapRoll=Compute.d6(1);
+                                Mounted weapon = null;
                                 switch (tweapRoll) {
                                 case 1:
                                 case 2:
-                                    if ( ((Protomech)en).bHasTorsoAGun ) {
-                                        Mounted weapon = en.getEquipment
-                                            ( ((Protomech)en).TorsoAGunNum );
+                                    weapon =( (Protomech) en ).getTorsoWeapon(true);
+                                    if ( null != weapon ) {
                                         weapon.setHit(true);
                                         desc.append("\n Torso A weapon destroyed");
                                     }
                                     break;
                                 case 3:
                                 case 4:
-                                    if ( ((Protomech)en).bHasTorsoBGun ) {
-                                        Mounted weapon = en.getEquipment
-                                            ( ((Protomech)en).TorsoBGunNum);
+                                    weapon = ( (Protomech) en ).getTorsoWeapon(false);
+                                    if ( null != weapon ) {
                                         weapon.setHit(true);
                                         desc.append("\n Torso B weapon destroyed");
                                     }

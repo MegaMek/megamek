@@ -397,6 +397,13 @@ public class EntityListFile {
                 output.write( "\" advantages=\"" );
                 output.write( String.valueOf(crew.getAdvantageList("::")) );
             }
+            if (entity instanceof Mech) {
+                if ( ((Mech)entity).isAutoEject() ) {
+                    output.write( "\" autoeject=\"true" );
+                } else {
+                    output.write ("\" autoeject=\"false" );
+                }
+            }
             output.write( "\"/>" );
             output.write( Settings.NL );
 

@@ -6,6 +6,7 @@ v0.29.56 (CVS)
 + Patch 1065371: Show status of auto-eject in General tab of Unit Display.
 + RFE 1058008: Players now have a setting to disable auto-eject by default.
 + Bug 1070257: Duplicate pilot ejecting
++ Patch 1069530: Save autoeject status when saving a unit list
 
 v0.29.55 (2004-11-07 11:00pm)
 + Bug 1057995: Correctly handle configuring auto-ejection.

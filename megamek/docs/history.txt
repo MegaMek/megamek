@@ -126,6 +126,7 @@ v 0.29.6 (CVS)
 + Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
 + Added a LOS tool setting dialog.
 + Added delayed deployment code
++ Patch 781242: Applied BobTheDull's patch, fixing a few water issues
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay

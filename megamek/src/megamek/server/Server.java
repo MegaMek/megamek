@@ -2688,8 +2688,7 @@ implements Runnable {
             //in water, may or may not be a new hex, neccessary to check during movement, for breach damage, and always, to set dry if appropriate
             //if NOT possible to flood armorless locations while moving, this can be removed
             //TODO: possibly make the locations local and set later
-            doSetLocationsExposure(entity, curHex, isPavementStep);
-            //TODO: loop all locations:              phaseReport.append(breachCheck(entity, loc, 0));  //check for breaches while moving
+            doSetLocationsExposure(entity, curHex, isPavementStep, step.getMovementType() == Entity.MOVE_JUMP);
 
             // Handle loading units.
             if ( step.getType() == MovementData.STEP_LOAD ) {
@@ -2953,7 +2952,7 @@ implements Runnable {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.board.getHex(curPos), game.board.getHex(curPos).surface() <= entity.getElevation() );
+        doSetLocationsExposure(entity, game.board.getHex(curPos), game.board.getHex(curPos).surface() <= entity.getElevation(), false);
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() 
@@ -3074,23 +3073,23 @@ implements Runnable {
         }
     }
 
-    public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep) {
+    public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep, boolean isJump) {
         String desc = new String(); //if NOT possible to flood armorless locations while moving, this and all "desc" references can be removed
         if ( hex.levelOf(Terrain.WATER) > 0
             && entity.getMovementType() != Entity.MovementType.HOVER
-            && !isPavementStep) {
+            && !isPavementStep &&!isJump) {
             if (entity instanceof Mech && !entity.isProne() && hex.levelOf(Terrain.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, Entity.LOC_NORMAL);  //this will need to adjust for VACUUM, and add a breachCheck
                 }
                 entity.setLocationStatus(Mech.LOC_RLEG, Entity.LOC_WET);
                 entity.setLocationStatus(Mech.LOC_LLEG, Entity.LOC_WET);
-                desc += breachCheck(entity, Mech.LOC_RLEG, 0); 
-                desc += breachCheck(entity, Mech.LOC_LLEG, 0); 
+                desc += breachCheck(entity, Mech.LOC_RLEG, 0, true); 
+                desc += breachCheck(entity, Mech.LOC_LLEG, 0, true); 
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, Entity.LOC_WET);
-                    desc += breachCheck(entity, loop, 0); 
+                    desc += breachCheck(entity, loop, 0, true);
                 }
             }
         }else {
@@ -6620,7 +6619,7 @@ implements Runnable {
                     te.damageThisPhase += damage;
                     damage = 0;
                     desc += " " + te.getArmor(hit) + " Armor remaining";
-                    desc += breachCheck(te, hit.getLocation(), 1);
+                    desc += breachCheck(te, hit.getLocation(), 1, false);
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
@@ -6628,7 +6627,7 @@ implements Runnable {
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
                     desc += " Armor destroyed,";
-                    desc += breachCheck(te, hit.getLocation(), 1);
+                    desc += breachCheck(te, hit.getLocation(), 1, false);
                 }
             }
             
@@ -7074,7 +7073,7 @@ implements Runnable {
     /**
      * Checks for location breach and returns phase logging
      */
-    private String breachCheck(Entity entity, int loc, int hitflag) {
+    private String breachCheck(Entity entity, int loc, int hitflag, boolean isMoving) {
         String desc = new String();
         if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) { //covers both water and vacuum
             int breachroll = hitflag;
@@ -7083,7 +7082,7 @@ implements Runnable {
                 desc += "\n            Possible breach on " + entity.getLocationAbbr(loc) + ". Roll = " + breachroll +".";
             }
             if (breachroll >= 10 || !(entity.getArmor(loc) > 0) || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true) ) {//breach by damage or no armor
-                desc += breachLocation(entity, loc);
+                desc += breachLocation(entity, loc, isMoving);
             }
         }
         return desc;
@@ -7092,13 +7091,12 @@ implements Runnable {
     /**
      * Marks all equipment in a location on an entity as useless.
      */
-    private String breachLocation(Entity en, int loc) {
+    private String breachLocation(Entity en, int loc, boolean isMoving) {
         String desc = new String();
         if (en.getInternal(loc) < 0 || en.getLocationStatus(loc) < Entity.LOC_NORMAL) { //already destroyed or breached? don't bother
             return desc;
         }
         desc += "<<<" + en.getLocationAbbr(loc) + " BREACHED>>>";
-        en.setLocationStatus(loc, Entity.LOC_BREACHED);
         //equipment and crits will be marked in applyDamage?
         // equipment marked missing
         for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
@@ -7107,7 +7105,7 @@ implements Runnable {
                 mounted.setBreached(true);
             }
         }
-        // all critical slots set as missing
+        // all critical slots set as useless
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
@@ -7115,23 +7113,26 @@ implements Runnable {
             }
         }
 
-        //if it's a leg, the entity falls
-        if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
-            game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg breached"));
+        //if it's a leg, apply PSRs for actuators
+        if ((loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) && isMoving) {
+            PilotingRollData rollTarget = en.checkWaterMove(game.board.getHex(en.getPosition()).levelOf(Terrain.WATER));
+            doSkillCheckInPlace(en, rollTarget);
         }
         //Check location for engine/cockpit breach and report accordingly
        if (loc == Mech.LOC_CT) {
-             desc += destroyEntity(en, "hull breach");
+            desc += destroyEntity(en, "hull breach");
         }
         if (loc == Mech.LOC_HEAD) {
             en.crew.setDoomed(true);
             desc += destroyEntity(en, "hull breach");
             desc += "\n*** " + en.getDisplayName() + " Pilot Drowned! ***";
         }
-        // dependent locations considered breached
-        if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
-            desc += breachLocation(en, en.getDependentLocation(loc));
-        }
+        //// dependent locations ARE NOT considered breached
+        //if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
+        //    desc += breachLocation(en, en.getDependentLocation(loc));
+        //}
+        en.setLocationStatus(loc, Entity.LOC_BREACHED);
+
         return desc;
     }
 

@@ -25,6 +25,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.bot.BotClient;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -79,7 +80,7 @@ public class Client implements Runnable {
         this.host = host;
         this.port = port;
 
-        if (Settings.keepServerlog) {
+        if (Settings.keepServerlog && !(this instanceof BotClient)) {
             // we need to keep a copy of the log
             serverlog = new megamek.server.ServerLog(Settings.serverlogFilename, true, (new Integer(Settings.serverlogMaxSize).longValue() * 1024 * 1024) );
         };

@@ -4722,8 +4722,10 @@ implements Runnable, ConnectionHandler {
         	wtype.getAmmoType() == AmmoType.T_NARC && 
         	atype.getMunitionType() != AmmoType.M_NARC_EX) {
 
-            // TODO: AMS can shoot down NARC pods too.
-            if (entityTarget == null) {
+            if (wr.amsShotDown > 0) {
+                phaseReport.append("would hit, but...\n\tAMS engages, firing ")
+                    .append(wr.amsShotDown).append(" shots and destroying the pod.\n");
+            } else if (entityTarget == null) {
                 phaseReport.append("hits, but doesn't do anything.\n");
             } else {
                 entityTarget.setNarcedBy(ae.getOwner().getTeam());

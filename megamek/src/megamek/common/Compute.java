@@ -762,10 +762,16 @@ public class Compute
             if(boardRange>wtype.getLongRange()) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect artillery attack out of range");
             }
-            if(distance<=17) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes.");
+            if(distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes unless no LOS.");
             }
             toHit.addModifier(7, "indirect artillery modifier");
+            int adjust = ae.aTracker.getModifier(weapon,target.getPosition());
+            if(adjust==ToHitData.AUTOMATIC_SUCCESS) {
+                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
+            } else if(adjust!=0) {
+                toHit.addModifier(adjust, "adjusted fire");
+            }
             return toHit;
 
         }

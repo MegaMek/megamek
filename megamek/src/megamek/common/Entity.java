@@ -145,6 +145,7 @@ public abstract class Entity
      * The object that tracks this unit's Inferno round hits.
      */
     public InfernoTracker       infernos = new InfernoTracker();
+    public ArtilleryTracker     aTracker= new ArtilleryTracker();
 
     protected String            C3NetIdString = null;
     protected int               C3Master = NONE;
@@ -1305,6 +1306,9 @@ public abstract class Entity
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {
             weaponList.addElement(mounted);
+            if(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                aTracker.addWeapon(mounted);
+            }
         }
         if (mounted.getType() instanceof AmmoType) {
             ammoList.addElement(mounted);
@@ -1647,7 +1651,7 @@ public abstract class Entity
 
         return hits;
     }
-    
+
 
     /**
      * Number of slots doomed, missing or destroyed
@@ -2903,7 +2907,7 @@ public abstract class Entity
             }
 
         } // Handle the next transporter
-            
+
     }
 
     /**
@@ -3421,7 +3425,7 @@ public abstract class Entity
     public char getUnitNumber() {
         return this.unitNumber;
     }
-    
+
 	/**
 	 * Returns whether an entity can flee from its current position.  Currently
 	 * returns true if the entity is on the edge of the board.

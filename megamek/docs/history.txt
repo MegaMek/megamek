@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.29.33 (CVS)
 + Bug 937996: Fix NPE when starting a scenario against the bot
 + Bug 937431: fix race condition.
++ Artillery bugfixes and neatening of code; spotters implemented. Battle-ready?
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

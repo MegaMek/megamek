@@ -4177,9 +4177,9 @@ public class WeaponType extends EquipmentType {
       weapon.rackSize = 20;
       weapon.ammoType = AmmoType.T_ARROW_IV;
       weapon.minimumRange = 0;
-      weapon.shortRange = 4;
-      weapon.mediumRange = 5;
-      weapon.longRange = 6;
+      weapon.shortRange = 1;
+      weapon.mediumRange = 2;
+      weapon.longRange = 5;
       weapon.tonnage = 15f;
       weapon.criticals = 15;
       weapon.bv = 171;
@@ -4198,8 +4198,8 @@ public class WeaponType extends EquipmentType {
       weapon.rackSize = 20;
       weapon.ammoType = AmmoType.T_ARROW_IV;
       weapon.minimumRange = 0;
-      weapon.shortRange = 4;
-      weapon.mediumRange = 5;
+      weapon.shortRange = 1;  //
+      weapon.mediumRange = 2;
       weapon.longRange = 6;
       weapon.tonnage = 12f;
       weapon.criticals = 12;

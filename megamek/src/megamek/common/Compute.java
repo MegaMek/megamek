@@ -3620,7 +3620,7 @@ public class Compute
         IdealHex iDest = IdealHex.get(dest);
         
         int[] directions = new int[3];
-        directions[2] = (int)Math.round((double)src.degree(dest) / 60.0) % 6; // center last
+        directions[2] = src.direction(dest); // center last
         directions[1] = (directions[2] + 5) % 6;
         directions[0] = (directions[2] + 1) % 6;
         
@@ -3629,17 +3629,10 @@ public class Compute
         
         hexes.addElement(current);
         while(!dest.equals(current)) {
-            try {
-                current = nextHex(current, iSrc, iDest, directions);
-            } catch(RuntimeException ex) {
-                System.err.println("ERROR: no next hex");
-                System.err.println("src = " + src + ", dest = " + dest);
-                System.err.println("current = " + current + ", pri dir = " + directions[2]);
-                throw(ex);
-            }
+            current = nextHex(current, iSrc, iDest, directions);
             hexes.addElement(current);
         }
-        
+
         Coords[] hexArray = new Coords[hexes.size()];
         hexes.copyInto(hexArray);
         return hexArray;

@@ -297,6 +297,7 @@ public class TestBot extends BotClientWrapper {
   int my_mechs_moved = 0;
   
   public void calculateMoveTurn() {
+    long enter = System.currentTimeMillis();
     int initiative = 0;
     EntityState min = null;
 
@@ -411,6 +412,9 @@ public class TestBot extends BotClientWrapper {
     min.centity.moved = true;
     min.centity.old = min;
     min.centity.last = min;
+    
+    long exit = System.currentTimeMillis();
+    System.out.println("move turn took " + (exit - enter) + " ms");
   }
   
   class MoveThread extends Thread {

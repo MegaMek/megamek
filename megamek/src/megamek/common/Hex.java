@@ -266,6 +266,15 @@ public class Hex
     }
     
     /**
+     * @return true if there is pavement, a road or a bridge in the hex.
+     */
+    public boolean hasPavement() {
+        return contains(Terrain.PAVEMENT)
+            || contains(Terrain.ROAD)
+            || contains(Terrain.BRIDGE);
+    }
+    
+    /**
      * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
      *  terrain is not present in the hex
      */

@@ -261,82 +261,59 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         
         // some flags
-        int curFacing = entity.getFacing();
-        Coords lastPos;
-        Coords curPos = new Coords(entity.getPosition());
-        int mpUsed = entity.mpUsed;
-        int distance = entity.delta_distance;
-        boolean hasJustStood = false;
-        boolean lastWasBackwards = false;
-        boolean thisStepBackwards = false;
-        int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
-        boolean isRunProhibited = false;
         boolean isInfantry = (entity instanceof Infantry);
-        boolean onlyPavement = false;   // Entire move on pavement or road
-        boolean isPavementStep = false; // This step on pavement or road
         boolean isUsingManAce = false;
         
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
-            overallMoveType = Entity.MOVE_JUMP;
             isJumping = true;
         } else {
-          isUsingManAce = entity.getCrew().getOptions().booleanOption("maneuvering_ace");
+            isUsingManAce = entity.getCrew().getOptions().booleanOption("maneuvering_ace");
         }
         
+        // transform lateral shifts for quads or maneuverability aces
         if (((entity instanceof QuadMech) || isUsingManAce) && !isJumping) {
             md.transformLateralShifts();
             md.transformLateralShiftsBackwards();
         }
 
-        // check for backwards movement
-        if (md.contains(MovementData.STEP_BACKWARDS)
-            || md.contains(MovementData.STEP_LATERAL_LEFT_BACKWARDS)
-            || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
-            isRunProhibited = true;
-        }
-
-        // If the movement starts on pavement,
-        // the entire move may be on pavement.
-        if ( curPos != null ) {
-            Hex curHex = game.board.getHex( curPos );
-            if ( curHex.contains(Terrain.PAVEMENT) ||
-                 curHex.contains(Terrain.ROAD) ||
-                 curHex.contains(Terrain.BRIDGE) ) {
-                onlyPavement = true;
-                isPavementStep = true;
-            }
-        }
-
         // first pass: set position, facing and mpUsed; figure out overallMoveType
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            MovementData.Step step = (MovementData.Step)i.nextElement();
+            MovementData.Step prev = step.getPrev();
             
-            int stepMp = 0;
+            MovementData.MovementState state = step.getState();
+            MovementData.MovementState prevState;
+            if (prev == null) {
+                prevState = new MovementData.MovementState();
+                prevState.setFromEntity(entity, game); 
+            } else {
+                prevState = prev.getState();
+            }
             
-            lastPos = new Coords(curPos);
+            state.setFromPrev(prevState);
 
             // 
             switch(step.getType()) {
             case MovementData.STEP_UNLOAD:
             // TODO: Can immobilized transporters unload?
             case MovementData.STEP_LOAD:
-                stepMp = 1;
+                state.setMp(1);
                 break;
             case MovementData.STEP_TURN_LEFT :
             case MovementData.STEP_TURN_RIGHT :
                 // Check for pavement movement.
-                if ( canMoveOnPavement(game, lastPos, curPos) ) {
-                    isPavementStep = true;
+                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
+                    state.setPavementStep(true);
                 } else {
-                    isPavementStep = false;
-                    onlyPavement = false;
+                    state.setPavementStep(false);
+                    state.setOnlyPavement(false);
                 }
 
                 // Infantry can turn for free.
-                stepMp = (isJumping || hasJustStood || isInfantry) ? 0 : 1;
-                curFacing = MovementData.getAdjustedFacing(curFacing, step.getType());
+                state.setMp((state.isJumping() || state.isHasJustStood() || isInfantry) ? 0 : 1);
+                state.adjustFacing(step.getType());
                 break;
             case MovementData.STEP_FORWARDS :
             case MovementData.STEP_BACKWARDS :
@@ -344,35 +321,35 @@ public class Compute
             case MovementData.STEP_DFA :
                 // step forwards or backwards
                 if (step.getType() == MovementData.STEP_BACKWARDS) {
-                    curPos = curPos.translated((curFacing + 3) % 6);
-                    thisStepBackwards = true;
+                    state.moveInDir((state.getFacing() + 3) % 6);
+                    state.setThisStepBackwards(true);
+                    state.setRunProhibited(true);
                 } else {
-                    curPos = curPos.translated(curFacing);
-                    thisStepBackwards = false;
+                    state.moveInDir(state.getFacing());
+                    state.setThisStepBackwards(false);
                 }
 
                 // Check for pavement movement.
-                if ( canMoveOnPavement(game, lastPos, curPos) ) {
-                    isPavementStep = true;
+                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
+                    state.setPavementStep(true);
                 } else {
-                    isPavementStep = false;
-                    onlyPavement = false;
+                    state.setPavementStep(false);
+                    state.setOnlyPavement(false);
                 }
 
-                stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
-                                            overallMoveType);
+                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(), state.isJumping()));
 
                 // check for water
-                if ( !isPavementStep &&
-                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 &&
-                     entity.getMovementType() != Entity.MovementType.HOVER ) {
-                    isRunProhibited = true;
+                if (!state.isPavementStep()
+                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0
+                    && entity.getMovementType() != Entity.MovementType.HOVER) {
+                    state.setRunProhibited(true);
                 }
-                hasJustStood = false;
-                if (lastWasBackwards != thisStepBackwards) {
-                    distance = 0; //start over after shifting gears
+                state.setHasJustStood(false);
+                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
+                    state.setDistance(0); //start over after shifting gears
                 }
-                distance += 1;
+                state.addDistance(1);
                 break;
             case MovementData.STEP_LATERAL_LEFT :
             case MovementData.STEP_LATERAL_RIGHT :
@@ -380,83 +357,64 @@ public class Compute
             case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
                 if (step.getType() == MovementData.STEP_LATERAL_LEFT_BACKWARDS 
                     || step.getType() == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) {
-                    curPos = curPos.translated((MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
-                    thisStepBackwards = true;
+                    state.moveInDir((MovementData.getAdjustedFacing(state.getFacing(), MovementData.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
+                    state.setThisStepBackwards(true);
+                    state.setRunProhibited(true);
                 } else {
-                    curPos = curPos.translated(MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShift(step.getType())));
-                    thisStepBackwards = false;
+                    state.moveInDir(MovementData.getAdjustedFacing(state.getFacing(), MovementData.turnForLateralShift(step.getType())));
+                    state.setThisStepBackwards(false);
                 }
 
                 // Check for pavement movement.
-                if ( canMoveOnPavement(game, lastPos, curPos) ) {
-                    isPavementStep = true;
+                if ( canMoveOnPavement(game, prevState.getPosition(), state.getPosition()) ) {
+                    state.setPavementStep(true);
                 } else { 
-                    isPavementStep = false;
-                    onlyPavement = false;
+                    state.setPavementStep(false);
+                    state.setOnlyPavement(false);
                 }
 
-                stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
-                                            overallMoveType) + 1;
+                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(),
+                state.isJumping()) + 1);
                 // check for water
-                if ( !isPavementStep &&
-                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 ) {
-                    isRunProhibited = true;
+                if (!state.isPavementStep()
+                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0) {
+                        state.setRunProhibited(true);
                 }
-                hasJustStood = false;
-                if (lastWasBackwards != thisStepBackwards) {  
-                    distance = 0;  //start over after shifting gears
+                state.setHasJustStood(false);
+                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
+                    state.setDistance(0); //start over after shifting gears
                 }
-                distance += 1;
+                state.addDistance(1);
                 break;
             case MovementData.STEP_GET_UP :
                 // mechs with 1 MP are allowed to get up
-                stepMp = entity.getRunMP() == 1 ? 1 : 2;
-                hasJustStood = true;
+                state.setMp(entity.getRunMP() == 1 ? 1 : 2);
+                state.setHasJustStood(true);
                 break;
             case MovementData.STEP_GO_PRONE :
-                stepMp = 1;
+                state.setMp(1);
+                break;
+            case MovementData.STEP_START_JUMP :
+                state.setJumping(true);
                 break;
             default :
-                stepMp = 0;
+                state.setMp(0);
             }
             
-            mpUsed += stepMp;
+            state.addMpUsed(state.getMp());
 
-            // Check for running or flank speed
-            if ( overallMoveType == Entity.MOVE_WALK 
-                 && mpUsed > entity.getWalkMP() ) {
-
-                // This normally means we're running (or moving flank).
-                overallMoveType = Entity.MOVE_RUN;
-
-                // If the entire move is on pavement,
-                // a vehicle can get a road bonus.
-                if ( entity instanceof Tank && onlyPavement &&
-                     mpUsed == entity.getWalkMP() + 1 ) {
-                    overallMoveType = Entity.MOVE_WALK;
-                }
-
-            }
-
-            // set flags
-            step.setPosition(curPos);
-            step.setFacing(curFacing);
-            step.setMpUsed(mpUsed);
-            step.setDistance(distance);
-            step.setPavementStep( isPavementStep );
-            lastWasBackwards = thisStepBackwards;
         }
         
         // running with gyro or hip hit is dangerous!
-        if (!isRunProhibited && overallMoveType == Entity.MOVE_RUN
-            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-                || entity.hasHipCrit())) {
-            md.getStep(0).setDanger(true);
-        }
+        // but we can't show it right now.  check officially moved anyhow.
+//        if (overallMoveType == Entity.MOVE_RUN
+//            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
+//                || entity.hasHipCrit())) {
+//            md.getStep(0).setDanger(true);
+//        }
         
         // set moveType, illegal, trouble flags
-        compileIllegal( game, entityId, md,
-                        overallMoveType, isRunProhibited, onlyPavement );
+        compileIllegal(game, entityId, md);
 
         // Check the last step for legality.
         compileLastStep(game, entityId, md);
@@ -472,11 +430,7 @@ public class Compute
     /**
      * Go thru movement data and set the moveType, illegal and danger flags.
      */
-    private static void compileIllegal( Game game, int entityId,
-                                        MovementData md,
-                                        int overallMoveType,
-                                        boolean runProhibited,
-                                        boolean onlyPavement ) {
+    private static void compileIllegal(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
 
         Coords curPos = new Coords(entity.getPosition());
@@ -487,7 +441,6 @@ public class Compute
         boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
-        /* Bug 754610: Revert fix for bug 702735. */
         boolean prevStepOnPavement = false;
         boolean isProne = entity.isProne();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
@@ -499,24 +452,18 @@ public class Compute
             Coords lastPos = new Coords(curPos);
             curPos = step.getPosition();
 
-            // If all movement is on pavement, say so in all steps.
-            if ( onlyPavement && !step.isPavementStep() ) {
-                step.setPavementStep( true );
-            }
-
             // guilty until proven innocent
             int moveType = Entity.MOVE_ILLEGAL;
             
             // check for valid jump mp
-            if (overallMoveType == Entity.MOVE_JUMP 
+            if (step.isJumping() 
                 && step.getMpUsed() <= entity.getJumpMPWithTerrain()
                 && !isProne) {
                 moveType = Entity.MOVE_JUMP;
             }
             
             // check for valid walk/run mp
-            if ( (overallMoveType == Entity.MOVE_WALK ||
-                  overallMoveType == Entity.MOVE_RUN)
+            if ( !step.isJumping()
                 && (!isProne || md.contains(MovementData.STEP_GET_UP)
                     || stepType == MovementData.STEP_TURN_LEFT 
                     || stepType == MovementData.STEP_TURN_RIGHT)) {
@@ -525,22 +472,22 @@ public class Compute
                 // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
-                } else if ( entity instanceof Tank && onlyPavement &&
+                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
                             step.getMpUsed() == entity.getWalkMP() + 1 ) {
                     moveType = Entity.MOVE_WALK;
                 } else if ( step.getMpUsed() <= entity.getRunMPwithoutMASC() &&
-                            !runProhibited ) {
+                            !step.isRunProhibited() ) {
                     moveType = Entity.MOVE_RUN;
                 } else if ( step.getMpUsed() <= entity.getRunMP() &&
-                            !runProhibited ) {
+                            !step.isRunProhibited() ) {
                     step.setUsingMASC(true);
                     Mech m = (Mech)entity;
                     step.setTargetNumberMASC(m.getMASCTarget());
                     moveType = Entity.MOVE_RUN;
-                } else if ( entity instanceof Tank && onlyPavement &&
+                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
                             step.getMpUsed() <= entity.getRunMP() + 
                             (isOdd(entity.getWalkMP()) ? 1 : 2) &&
-                            !runProhibited ) {
+                            !step.isRunProhibited() ) {
                     moveType = Entity.MOVE_RUN;
                 }
             }
@@ -590,9 +537,8 @@ public class Compute
             }
 
             // Can't run or jump if unjamming a RAC.
-            if ( isUnjammingRAC && 
-                 ( overallMoveType == Entity.MOVE_RUN ||
-                   overallMoveType == Entity.MOVE_JUMP ) ) {
+            if (isUnjammingRAC
+                && (moveType == Entity.MOVE_RUN || step.isJumping())) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
 
@@ -619,11 +565,8 @@ public class Compute
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
                                              curPos, moveType,
-                                             isTurning, overallMoveType,
+                                             isTurning,
                                              prevStepOnPavement );
-            /* Bug 754610: Revert fix for bug 702735.
-                                             isTurning, overallMoveType );
-            */
 
             // getting up is also danger
             if (stepType == MovementData.STEP_GET_UP) {
@@ -811,12 +754,12 @@ public class Compute
      */
     public static int getMovementCostFor(Game game, int entityId, 
                                              Coords src, Coords dest,
-                                             int movementType) {
+                                             boolean isJumping) {
         final Entity entity = game.getEntity(entityId);
         final int moveType = entity.getMovementType();
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-  final boolean isInfantry = (entity instanceof Infantry);
+        final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = canMoveOnPavement( game, src, dest );
         
         // arguments valid?
@@ -831,7 +774,7 @@ public class Compute
         }
         
         // jumping always costs 1
-        if (movementType == Entity.MOVE_JUMP) {
+        if (isJumping) {
             return 1;
         }
         
@@ -879,10 +822,10 @@ public class Compute
             int delta_e = Math.abs(nSrcEl - nDestEl);
             
             // Infantry and ground vehicles are charged double.
-            if ( isInfantry ||
-     (nMove == Entity.MovementType.TRACKED ||
-      nMove == Entity.MovementType.WHEELED ||
-      nMove == Entity.MovementType.HOVER) ) {
+            if (isInfantry
+                || (nMove == Entity.MovementType.TRACKED
+                    || nMove == Entity.MovementType.WHEELED
+                    || nMove == Entity.MovementType.HOVER)) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -1105,19 +1048,15 @@ public class Compute
     /** 
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(Game game, int entityId, 
+    public static boolean isPilotingSkillNeeded(Game game, int entityId,
                                                 Coords src, Coords dest,
                                                 int movementType,
-            boolean isTurning,
-            int overallMoveType,
+                                                boolean isTurning,
                                                 boolean prevStepIsOnPavement) {
-            /* Bug 754610: Revert fix for bug 702735.
-            int overallMoveType) {
-            */
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-  final boolean isInfantry = ( entity instanceof Infantry );
+        final boolean isInfantry = ( entity instanceof Infantry );
         final boolean isPavementStep = canMoveOnPavement( game, src, dest );
 
         // arguments valid?
@@ -1136,7 +1075,7 @@ public class Compute
         // check for rubble
         if (movementType != Entity.MOVE_JUMP
             && destHex.levelOf(Terrain.RUBBLE) > 0
-      && !isInfantry) {
+            && !isInfantry) {
             return true;
         }
         
@@ -1158,7 +1097,8 @@ public class Compute
                srcHex.contains(Terrain.BRIDGE) ) 
         */
         if ( prevStepIsOnPavement
-             && overallMoveType == Entity.MOVE_RUN
+        //   && overallMoveType == Entity.MOVE_RUN
+             && movementType == Entity.MOVE_RUN
              && isTurning
              && !isInfantry ) {
             return true;
@@ -1900,7 +1840,7 @@ public class Compute
             targEl = target.absHeight();
         }
 
-        if (ae.getLocationStatus(weapon.getLocation()) == ae.LOC_WET) {
+        if (ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET) {
             weaponRanges = wtype.getWRanges();
             //HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
@@ -2992,7 +2932,7 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-        if (entity.getLocationStatus(armLoc) == entity.LOC_WET) {
+        if (entity.getLocationStatus(armLoc) == Entity.LOC_WET) {
             multiplier /= 2.0f;
         }
         return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
@@ -3264,7 +3204,7 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-        if (entity.getLocationStatus(legLoc) == entity.LOC_WET) {
+        if (entity.getLocationStatus(legLoc) == Entity.LOC_WET) {
             multiplier /= 2.0f;
         }
         return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
@@ -4079,14 +4019,14 @@ public class Compute
   * Damage that a mech does with a successful charge, given it will move a certain way
   */
   public static int getChargeDamageFor(Entity entity, int hexesMoved) {
-         return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1)==entity.LOC_WET ? 0.5 : 1) );
+         return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
   };
 
     /**
      * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int) Math.ceil( target.getWeight() / 10.0 * (entity.getLocationStatus(1)==entity.LOC_WET ? 0.5 : 1) );
+        return (int) Math.ceil( target.getWeight() / 10.0 * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
     }
 
     /**

@@ -58,14 +58,12 @@ public class MepFile implements MechLoader {
     String eqSlots;
     
     String[] critData;
-    
-    boolean ioerror = false;
-    
-    public MepFile(String filename) {
+
+    public MepFile(String filename) throws EntityLoadingException {
         this(new File(filename));
     }
     
-    public MepFile(File file) {
+    public MepFile(File file) throws EntityLoadingException {
         try {
             BufferedReader r = new BufferedReader(new FileReader(file));
             
@@ -132,17 +130,17 @@ public class MepFile implements MechLoader {
             
             r.close();
         } catch (IOException ex) {
-            ioerror = true;
+            throw new EntityLoadingException("I/O error occured during file read");
+        } catch (StringIndexOutOfBoundsException ex) {
+            throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
+        } catch (NumberFormatException ex) {
+            throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
     
     public Mech getMech() throws EntityLoadingException {
         try {
             Mech mech;
-            
-            if (ioerror) {
-                throw new EntityLoadingException("I/O error occured during file read");
-            }
             
             if ("Quad".equals(chassisType.trim())) {
                 mech = new QuadMech();

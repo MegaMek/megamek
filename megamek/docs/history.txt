@@ -7,8 +7,10 @@ v0.29.39
 + Bug 830715: Breach locations when Mechs are displaced into water
 + Bug 954272: Mines shouldn't work underwater
 + Bug 878766: Mines should trigger only when entering hex
-+ Bug 944326: remaining ammunition shown in MechDisplay is wrong
-    when Mech has ammo for weapons that only differ in size, eg. LRM 20 and LRM 5.
++ Bug 944326: remaining ammunition shown in MechDisplay is wrong when
+    Mech has ammo for weapons that only differ in size, eg. LRM 20 and LRM 5.
++ Bug 845271, 876771, 917814: The offscreen buffer wasn't resizing with window.
++ MechDisplay.SystemPanel#getSelectedEquipment() didn't handle empty slots.
 
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages

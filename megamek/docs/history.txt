@@ -19,6 +19,7 @@ v0.29.60 (CVS)
 + Bug 1097537: flooded ammo can be fired
 + Added "no_premove_vibra" option, if set, vibrabombs that would damage a 'Mech
     that has not yet moved do not damage it.
++ Added pics for Verfolger and Rabid Coyote
 
 v0.29.59 (2005-01-02 3:00pm)
 + Bug 762436, 839980: Domino Effect not able to displace off the board

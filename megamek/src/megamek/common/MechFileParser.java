@@ -14,7 +14,8 @@
 
 package megamek.common;
 
-import java.io.File;
+import java.io.*;
+import java.util.zip.*;
 import megamek.common.util.BuildingBlock;
 
  /*
@@ -22,25 +23,48 @@ import megamek.common.util.BuildingBlock;
   */
 
 public class MechFileParser {
-    private File m_file;
     private Entity m_entity = null;
     
     public MechFileParser(File f) throws EntityLoadingException {
-        parse(f);
+        this(f, null);
+    }
+    
+    public MechFileParser(File f, String entryName) throws EntityLoadingException {
+        if (entryName == null) {
+            // try normal file
+            try {
+                parse(new FileInputStream(f), f.getName());
+            } catch (FileNotFoundException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        } else {
+            // try zip file
+            ZipFile zFile;
+            try {
+                zFile = new ZipFile(f);
+                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
+            } catch (Exception ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        }
+    }
+    
+    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
+        parse(is, fileName);
     }
     
     public Entity getEntity() { return m_entity; }
     
-    private void parse(File f) throws EntityLoadingException {
-        m_file = f;
+    public void parse(InputStream is, String fileName) throws EntityLoadingException {
+        String lowerName = fileName.toLowerCase();
         MechLoader loader;
-        
-        if (f.getName().toLowerCase().endsWith(".mep")) {
-            loader = new MepFile(f);
-        } else if (f.getName().toLowerCase().endsWith(".mtf")) {
-            loader = new MtfFile(f);
-        } else if (f.getName().toLowerCase().endsWith(".blk")) {
-            BuildingBlock bb = new BuildingBlock(f.getPath());
+
+        if (lowerName.endsWith(".mep")) {
+            loader = new MepFile(is);
+        } else if (lowerName.endsWith(".mtf")) {
+            loader = new MtfFile(is);
+        } else if (lowerName.endsWith(".blk")) {
+            BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
                 String sType = bb.getDataAsString("UnitType")[0];
                 if (sType.equals("Tank")) {

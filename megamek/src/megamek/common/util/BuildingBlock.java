@@ -72,46 +72,19 @@ public class BuildingBlock {
         rawData = data;
     }
     
-    
-    /** Creates a buildingBlock and fills it with the data inside the given <I>fileName</I>.
-     * @param fileName This should be a buildingBlock data file.
-     */    
-    public BuildingBlock(String fileName) {
+    public BuildingBlock(InputStream is) {
         rawData = new Vector();
-        this.readFile(fileName);
-    
-    }
-    
-    //reads the file passed to it...
-    public BuildingBlock(File file) {
-        rawData = new Vector();
-        
-        
-        this.readFile(file.getPath());
-    
+
+        this.readInputStream(is);
     }
     
     
-    /** Loads a buildingBlock datafile.
-     * @param fileName The name of the file to load.
-     * @return Returns true on success, and false on failure.
-     */    
-    public boolean readFile(String fileName) {
-     
+    public boolean readInputStream(InputStream is) {
         String data;
         BufferedReader in;
         
-        File file = new File(fileName);
-        
-        try {
-            in = new BufferedReader(new FileReader(file));
-        }catch (FileNotFoundException fnfe) {
-         
-            System.err.println("File "+fileName+" not found");
-            return false;
-            
-        }
-        
+        in = new BufferedReader(new InputStreamReader(is));
+    
         //empty the rawData holder...
         rawData.clear();
         
@@ -134,9 +107,9 @@ public class BuildingBlock {
             
             };
             
-        }catch (IOException e) {
+        } catch (IOException e) {
             
-            System.err.println("An IO Exception occured while attempting to read "+fileName);
+            System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream.");
             return false;
             
         }

@@ -87,6 +87,7 @@ VERSION HISTORY:
 ----------------
 v (next)
 + fixed crashbug when no ammo was available to a weapon
++ mech selector now additionally looks inside .zip files
 
 v 0.26.11 (08-30-02, 10pm)
 + 598824: a few more hovercraft movement fixes

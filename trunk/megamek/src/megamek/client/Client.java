@@ -564,7 +564,10 @@ public class Client extends Panel
      */
     protected void receiveAttack(Packet c) {
         Object o = c.getObject(0);
-        if (o instanceof AttackAction) {
+        if (o instanceof TorsoTwistAction) {
+            TorsoTwistAction tta = (TorsoTwistAction)o;
+            game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+        } else if (o instanceof AttackAction) {
             bv.addAttack((AttackAction)o);
         }
     }

@@ -3281,7 +3281,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR |F_NO_FIRES;
 
         return weapon;
     }

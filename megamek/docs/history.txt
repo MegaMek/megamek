@@ -87,6 +87,8 @@ v CVS
 + no more player "done" transmitted in phases with turns
 + entity "done" implicit instead of seperately transmitted
 + "devestated" = "devastated"
++ updated AMS reporting
++ no more NullPointerExceptions in UpdateRACButton
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

@@ -2020,6 +2020,17 @@ implements Runnable {
                     platoon = (Infantry) ae;
                     hits = platoon.getDamage( platoon.getShootingStrength() );
                     hitType = " shot(s)";
+
+		    // Flamer-equipped infantry can do heat damage.
+		    if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
+			 game.getOptions().booleanOption("flamer_heat") ) {
+			phaseReport.append("hits; target gains " + hits +
+					   " more heat during heat phase.");
+			te.heatBuildup += hits;
+			// That's all for this weapon.
+			return;
+		    }
+
                 } else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     hits = wtype.getRackSize();
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
@@ -2106,6 +2117,18 @@ implements Runnable {
         } else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
             phaseReport.append("hits; target gains 2 more heat during heat phase.");
             te.heatBuildup += 2;
+	} else if ( (wtype.getAmmoType() == AmmoType.T_MG ||
+		     wtype.getAmmoType() == AmmoType.T_MG_LIGHT ||
+		     wtype.getAmmoType() == AmmoType.T_MG_HEAVY) &&
+		    !isWeaponInfantry && 
+		    (te instanceof Infantry) ) {
+	    // Mech and Vehicle MGs do *DICE* of damage to PBI.
+	    int mgDamage = Compute.d6( wtype.getDamage() );
+	    HitData hit = te.rollHitLocation( toHit.getHitTable(),
+					      toHit.getSideTable() );
+	    phaseReport.append( "riddles the target with " + mgDamage +
+				" shot(s)" );
+	    phaseReport.append( damageEntity(te, hit, mgDamage) );
         } else {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());

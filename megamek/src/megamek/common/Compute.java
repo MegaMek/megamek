@@ -1111,7 +1111,12 @@ public class Compute
         } else if (range > wtype.getShortRange()) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
-	} else if ( isAttackerInfantry && 0 == range ) {
+	} else if ( 0 == range ) {
+	    // Only Infantry shoot at zero range.
+	    if ( !isAttackerInfantry ) {
+		return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infantry shoot at zero range");
+	    }
+
 	    // Infantry can attack in the same hex with a base of 2.
 	    // Except for flamers and SRMs, which have a base of 3.
 	    if ( (wtype.getFlags() & WeaponType.F_FLAMER) ==
@@ -1771,7 +1776,8 @@ public class Compute
         }
         
         // check range
-        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+        final int range = ae.getPosition().distance(te.getPosition());
+        if ( range > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
@@ -1798,6 +1804,11 @@ public class Compute
         
         // okay, modifiers...
         toHit = new ToHitData(3, "base");
+
+	// BMR(r), page 42. +3 modifier for kicking infantry in same hex.
+	if ( 0 == range && (te instanceof Infantry) ) {
+	    toHit.addModifier( 3, "Stomping Infantry" );
+	}
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));

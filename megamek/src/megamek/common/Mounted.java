@@ -78,6 +78,24 @@ public class Mounted implements Serializable{
         return type.getName();
     }
     
+    public String getDesc() {
+        StringBuffer desc = new StringBuffer(type.getDesc());
+        if (destroyed) {
+            desc.insert(0, "*");
+        } else if (usedThisTurn) {
+            desc.insert(0, "+");
+        }
+        if (rearMounted) {
+            desc.append(" (R)");
+        }
+        if (type instanceof AmmoType) {
+            desc.append(" (");
+            desc.append(shotsLeft);
+            desc.append(")");
+        }
+        return desc.toString();
+    }
+    
     public boolean isReady() {
         return !usedThisTurn && !destroyed;
     }

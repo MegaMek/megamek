@@ -1,6 +1,9 @@
 
 CODE IDEAS:
 -----------
+- new map format to support all sorts of wacky terrain
+- don't have the image file name set with the terrain 
+
 could almost be combined:
 - boardlisteners listen to boardview, not board
 - seperate client and gui, allowing for other guis

@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1088,30 +1089,41 @@ public class TestBot extends BotClient {
         Iterator i = foes.iterator();
 
         if (friends.size() > 1) {
-            if (Strategy.MainTarget == null || null == game.getEntity(Strategy.MainTarget.getEntity().getId())) {
+            if ( Strategy.MainTarget == null
+                 || null == game.getEntity
+                 (Strategy.MainTarget.getEntity().getId()) ) {
                 Strategy.MainTarget = max_foe;
             }
-            Strategy.MainTarget.strategy.target += .2;
-            while (i.hasNext()) {
-                CEntity centity = (CEntity) i.next();
-                // good turn, keep up the work, but randomize to reduce
-                // predictability
-                if (friend_sum - foe_sum
-                    >= .9
+            // TODO : Handle this better.
+            if (null == Strategy.MainTarget)
+                System.err.println
+                    ( "TestBot#initMovement() - no main target for bot" );
+            else if (null == Strategy.MainTarget.strategy)
+                System.err.println
+                    ( "TestBot#initMovement() - no strategy for main target" );
+            else {
+                Strategy.MainTarget.strategy.target += .2;
+                while (i.hasNext()) {
+                    CEntity centity = (CEntity) i.next();
+                    // good turn, keep up the work, but randomize to reduce
+                    // predictability
+                    if (friend_sum - foe_sum
+                        >= .9
                         * (((Double) this.unit_values.getLast()).doubleValue()
-                            - ((Double) this.enemy_values.getLast()).doubleValue())) {
-                    if (Compute.randomInt(2) == 1) {
+                           - ((Double) this.enemy_values.getLast()).doubleValue())) {
+                        if (Compute.randomInt(2) == 1) {
+                            centity.strategy.target += .3;
+                        }
+                        //lost that turn, but still in the fight, just get a
+                        // little more aggressive
+                    } else if (friend_sum > .9 * foe_sum) {
+                        centity.strategy.target += .15;
+                        //lost that turn and loosing
+                    } else if (centity.strategy.target < 2) { //go for the gusto
                         centity.strategy.target += .3;
                     }
-                    //lost that turn, but still in the fight, just get a
-                    // little more aggressive
-                } else if (friend_sum > .9 * foe_sum) {
-                    centity.strategy.target += .15;
-                    //lost that turn and loosing
-                } else if (centity.strategy.target < 2) { //go for the gusto
-                    centity.strategy.target += .3;
+                    System.out.println(centity.getEntity().getShortName() + " " + centity.strategy.target);
                 }
-                System.out.println(centity.getEntity().getShortName() + " " + centity.strategy.target);
             }
         }
 

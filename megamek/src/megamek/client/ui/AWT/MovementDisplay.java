@@ -548,7 +548,7 @@ public class MovementDisplay
      *  currently selected movement.  This code is basically a
      *  simplified version of Server.processMovement(), except
      *  that it just reads information (no writing).  Note that
-     *  MovePath.compileLastStep() is called though, which changes the
+     *  MovePath.clipToPossible() is called though, which changes the
      *  md object.
      */
     private String doPSRCheck(MovePath md) {
@@ -572,7 +572,7 @@ public class MovementDisplay
         PilotingRollData rollTarget;
         
         // Compile the move
-        md.compileLastStep();
+        md.clipToPossible();
 
         overallMoveType = md.getLastStepMovementType();
         

@@ -1703,7 +1703,7 @@ public class Board
     */
     private HashSet extendRiverToSide(Point hexloc, int width,
                                       int direction, HashMap reverseHex) {
-        Point current = (Point)hexloc.clone();
+        Point current = new Point(hexloc);
         HashSet result = new HashSet();
         Hex hex;
 		

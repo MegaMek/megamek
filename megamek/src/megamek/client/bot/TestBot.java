@@ -362,10 +362,10 @@ public class TestBot extends BotClient {
         for (int j = 0; j < move_array.length && friends > 2; j++) {
             MoveOption option = (MoveOption) move_array[j];
             for (int e = 0; e < enemy_array.size(); e++) {
-                Entity en = (Entity) enemy_array.get(e);
+                Entity en = (Entity) enemy_array.elementAt(e);
                 CEntity enemy = centities.get(en);
-                for (java.util.Iterator f = entities.iterator(); f.hasNext();) {
-                    Entity other = (Entity) f.next();
+                for (Enumeration f = entities.elements(); f.hasMoreElements();) {
+                    Entity other = (Entity) f.nextElement();
                     if (other.isEnemyOf(self.entity)) {
                         continue;
                     }
@@ -399,7 +399,7 @@ public class TestBot extends BotClient {
             double adjustment = 0;
             double temp_adjustment = 0;
             for (int e = 0; e < enemy_array.size(); e++) { // for each enemy
-                Entity en = (Entity) enemy_array.get(e);
+                Entity en = (Entity) enemy_array.elementAt(e);
                 CEntity enemy = centities.get(en);
                 int current_range = self.current.getFinalCoords().distance(enemy.current.getFinalCoords());
                 int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
@@ -472,7 +472,7 @@ public class TestBot extends BotClient {
             //close the range if nothing else and healthy
             if (option.damage < .25 * self.RangeDamages[self.Range] && adjustment < self.RangeDamages[self.Range]) {
                 for (int e = 0; e < enemy_array.size(); e++) {
-                    Entity en = (Entity) enemy_array.get(e);
+                    Entity en = (Entity) enemy_array.elementAt(e);
                     CEntity enemy = centities.get(en);
                     int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                     if (range > 5)
@@ -514,7 +514,7 @@ public class TestBot extends BotClient {
 		 * fourth pass, speculation on top moves use averaging to filter
 		 **********************************************************************/
         for (int e = 0; e < enemy_array.size(); e++) { // for each enemy
-            Entity en = (Entity) enemy_array.get(e);
+            Entity en = (Entity) enemy_array.elementAt(e);
             CEntity enemy = centities.get(en);
             //engage in speculation on "best choices" when you loose iniative
             if (enemy.canMove()) {
@@ -686,7 +686,7 @@ public class TestBot extends BotClient {
                 }
                 for (int e = 0; e < enemy_array.size(); e++) { // for each
                     // enemy
-                    Entity en = (Entity) enemy_array.get(e);
+                    Entity en = (Entity) enemy_array.elementAt(e);
                     CEntity enemy = centities.get(en);
                     if (!enemy.canMove()) {
                         option.setThreat(enemy, (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
@@ -771,7 +771,7 @@ public class TestBot extends BotClient {
     protected void initFiring() {
         java.util.Vector entities = game.getEntitiesVector();
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.get(i);
+            Entity entity = (Entity) entities.elementAt(i);
             CEntity centity = centities.get(entity);
             centity.reset();
             centity.enemy_num = i;
@@ -949,7 +949,7 @@ public class TestBot extends BotClient {
         //maximum already selected (or default)
         Entity en = game.getEntity(best_entity);
         if (results != null) {
-            Entity primary_target = (Entity) game.getEntitiesVector().get(results[results.length - 1]);
+            Entity primary_target = (Entity) game.getEntitiesVector().elementAt(results[results.length - 1]);
             TreeMap tm = new TreeMap(new AttackOption.Sorter(centities.get(primary_target)));
             for (int i = 0; i < results.length - 1; i++) {
                 AttackOption a = (AttackOption) ((Vector) winner.elementAt(i)).elementAt(results[i]);
@@ -959,7 +959,7 @@ public class TestBot extends BotClient {
                     tm.put(a, a);
                 }
             }
-            com.sun.java.util.collections.Iterator i = tm.values().iterator();
+            Iterator i = tm.values().iterator();
             while (i.hasNext()) {
                 AttackOption a = (AttackOption) i.next();
                 av.addElement(
@@ -994,7 +994,7 @@ public class TestBot extends BotClient {
         double max_foe_bv = 0;
         CEntity max_foe = null;
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.get(i);
+            Entity entity = (Entity) entities.elementAt(i);
             CEntity centity = centities.get(entity);
             centity.enemy_num = i;
             double old_value = centity.bv * (centity.overall_armor_percent + 1);

@@ -14,6 +14,7 @@ v 0.29.25 (CVS)
 + Ignore .log files in the data/mechfiles folder
 + RFE 810540: added client settings for board hex popup and tooltip delay
 + RFE 697418: New client option for confirming "done".
++ Bug 864751: Java 1.1 issues.
 
 v 0.29.24 (2004-01-31 12:45pm)
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)

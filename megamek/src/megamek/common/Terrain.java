@@ -24,26 +24,21 @@ public class Terrain
   implements Serializable
 {
     public static final int        TERRAIN_FIRST    = 0;
-    public static final int        TERRAIN_LAST    = 12;
+    public static final int        TERRAIN_LAST     = 8;
   
-    public static final int        PLAINS            = 0;
-    public static final int        FOREST_LITE        = 1;
-    public static final int        FOREST_HVY        = 2;
+    public static final int        PLAINS           = 0;
+    public static final int        FOREST_LITE      = 1;
+    public static final int        FOREST_HVY       = 2;
     public static final int        WATER            = 3;
     public static final int        ROUGH            = 4;
-    public static final int        FERROCRETE        = 5;
-    public static final int        BUILDING_LITE    = 6;
-    public static final int        BUILDING_MED    = 7;
-    public static final int        BUILDING_HVY    = 8;
-    public static final int        BUILDING_HARD    = 9;
-    public static final int        ICE                = 10;
-    public static final int        ROAD            = 11;
-    public static final int        RUBBLE            = 12;
+    public static final int        FERROCRETE       = 5;
+    public static final int        RUBBLE           = 6;
+    public static final int        MOON             = 7;
+    public static final int        MOON_ROUGH       = 8;
     
     public static final String[] TERRAIN_NAMES    = 
     {"PLAINS", "FOREST_LITE", "FOREST_HVY", "WATER",
-     "ROUGH", "FERROCRETE", "BUILDING_LITE", "BUILDING_MED",
-     "BUILDING_HVY", "BUILDING_HARD", "ICE", "ROAD", "RUBBLE"};
+     "ROUGH", "FERROCRETE", "RUBBLE", "MOON", "MOON_ROUGH"};
 
   public String name;
   int type;

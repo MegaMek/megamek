@@ -82,7 +82,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         m_dialog.show();
         m_nPixWidth = getSize().width / m_game.board.width;
         m_nPixHeight = getSize().height / m_game.board.height;
-        m_mapImage = createImage(getSize().width, getSize().height);
+        m_mapImage = createImage(Math.max(1, getSize().width), Math.max(1, getSize().height)); // area must be > 0
         drawMap();
     }
     

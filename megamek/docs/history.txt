@@ -92,6 +92,13 @@ v next
 + 532080: jumping into water provokes a PSR
 + mech selector defaults to 3025
 + fixed movement to-hit penalty when a mech gets up and doesn't otherwise move
++ 567940: hatchets (not clubs) can now "swing" into arm arcs
++ torso twisting now affects club & hatchet arcs
++ 568526: when resizing weapon display, weapon list resizes too
++ 566267: fix to prevent minimap resize lockups
++ 577408: double movement due to lag prevented
++ 581000: if victory is on, it is triggered when there are no mechs left
++ one player on no team and one player on a team no longer causes team victory
 
 v 0.26.8 (07-26-02, 2:30pm)
 + Can now host a game from a user-editable scenario file

@@ -252,6 +252,11 @@ public class EquipmentType {
         addType(new CLGaussRifle());
         addType(new ISLGaussRifle());
         addType(new ISHGaussRifle());
+        //MGs
+        addType(new ISMG());
+        addType(new CLMG());
+        addType(new CLLMG());
+        addType(new CLHMG());
     }
     
 }

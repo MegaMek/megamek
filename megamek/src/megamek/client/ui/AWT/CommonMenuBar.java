@@ -270,10 +270,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         viewZoomOut.setActionCommand(ClientGUI.VIEW_ZOOM_OUT);
         menu.add( viewZoomOut );
         menu.addSeparator();
+
         viewTurnReport = new MenuItem( "Turn Report" );
         viewTurnReport.addActionListener( this );
         viewTurnReport.setActionCommand( "viewTurnReport" );
+        viewTurnReport.setShortcut(new MenuShortcut(KeyEvent.VK_R));
         menu.add( viewTurnReport );
+
         viewInitiativeReport = new MenuItem( "Initiative Report" );
         viewInitiativeReport.addActionListener( this );
         viewInitiativeReport.setActionCommand( "viewInitiativeReport" );

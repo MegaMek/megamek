@@ -38,5 +38,6 @@ public class PilotOptions extends Options implements Serializable {
 //        addOption(adv, new GameOption("sixth_sense", "Sixth Sense", "NOTE: Not implemented. Enables a pilot to move his/her initiative all the way to the end of the list one time per fight.", false));
 //        addOption(adv, new GameOption("speed_demon", "Speed Demon", "NOTE: Not implemented. Enables a pilot to add one to his/her running/flank speed. Enabling this disallows any weapons or physical attacks for the round.", false));
         addOption(adv, new GameOption("tactical_genius", "Tactical Genius", "A player who has a Tactical Genius may reroll their initiative once per turn.  The second roll must be accepted.\n\nNote: Only one Tactical Genius may be utilized per team.", false));
+        addOption(adv, new GameOption("weapon_specialist", "Weapon Specialist", "A player who specializes in a particular weapon receives a -2 to hit modifier on all attacks with that weapon.", new Vector()));
     }
 }

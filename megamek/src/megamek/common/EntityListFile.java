@@ -379,7 +379,7 @@ public class EntityListFile {
             }
             if ( crew.countAdvantages() > 0 ) {
                 output.write( "\" advantages=\"" );
-                output.write( String.valueOf(crew.getAdvantageList(" ")) );
+                output.write( String.valueOf(crew.getAdvantageList("::")) );
             }
             output.write( "\"/>" );
             output.write( Settings.NL );

@@ -21,6 +21,7 @@
 package megamek.common.options;
 
 import java.io.*;
+import java.util.Vector;
 
 /**
  * The base class for a settable option. The settable option is used for game
@@ -39,6 +40,7 @@ public class GameOption implements Serializable {
     public static final int     INTEGER = 1;
     public static final int     FLOAT   = 2;
     public static final int     STRING  = 3;
+    public static final int     CHOICE  = 4;
     
     private String shortName;
     private String fullName;
@@ -62,6 +64,9 @@ public class GameOption implements Serializable {
     }
     public GameOption(String shortName, String fullName, String desc, float defaultValue) {
         this(shortName, fullName, desc, FLOAT, new Float(defaultValue));
+    }
+    public GameOption(String shortName, String fullName, String desc, Vector defaultValue) {
+        this(shortName, fullName, desc, CHOICE, "");
     }
     
     /** Creates new GameOption */
@@ -119,7 +124,15 @@ public class GameOption implements Serializable {
     }
 
     public boolean booleanValue() {
-        return ((Boolean)value).booleanValue();
+        if (type == CHOICE || type == STRING) {
+            if (value.equals("None") || value.equals("")) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return ((Boolean)value).booleanValue();
+        }
     }
 
     public int intValue() {
@@ -143,7 +156,7 @@ public class GameOption implements Serializable {
     }
     
     public void setValue(String value) {
-        if (type == STRING) {
+        if (type == STRING || type == CHOICE) {
             this.value = value;
         } else {
             throw new IllegalArgumentException("Tried to give String value to non-String option.");
@@ -173,10 +186,11 @@ public class GameOption implements Serializable {
             throw new IllegalArgumentException("Tried to give float value to non-float option.");
         }
     }
-    
+
     private boolean isValidValue(Object object) {
         switch (type) {
             case STRING : 
+            case CHOICE : 
                 return object instanceof String;
             case BOOLEAN : 
                 return object instanceof Boolean;

@@ -195,11 +195,34 @@ public class Pilot
             }
             
             adv.append(option.getShortName());
+            if (option.getType() == GameOption.STRING ||
+                option.getType() == GameOption.CHOICE) {
+                adv.append(" ").append(option.stringValue());
+            }
           }
         }
       }
       
       return adv.toString();
+    }
+
+    // Helper function to reverse getAdvantageList() above
+    public static String parseAdvantageName(String s) {
+        s = s.trim();
+        int index = s.indexOf(" ");
+        if (index == -1)
+            index = s.length();
+        return s.substring(0,index);
+    }
+
+    // Helper function to reverse getAdvantageList() above
+    public static Object parseAdvantageValue(String s) {
+        s = s.trim();
+        int index = s.indexOf(" ");
+        if (index == -1)
+            return new Boolean(true);
+        else
+            return s.substring(index + 1,s.length());
     }
     
     public String getDesc() {
@@ -233,7 +256,7 @@ public class Pilot
      */
     public double getBVSkillMultiplier() {
         double multiplier = 1.0;
-        
+        /*        
         if (gunnery < 4) {
             multiplier += 0.20 * (4 - gunnery);
         } else {
@@ -241,7 +264,7 @@ public class Pilot
         }
         
         multiplier += 0.05 * (5 - piloting);
-         
+        */         
         return multiplier;
     }
 }

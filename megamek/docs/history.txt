@@ -1,7 +1,7 @@
 
 CODE IDEAS:
 -----------
-PLANNED NEAR-TERM CODE CHANGES:
+SHORTER TERM CODE CHANGES:
 
 could almost be combined:
 - boardlisteners listen to boardview, not board
@@ -9,7 +9,6 @@ could almost be combined:
 - somehow improve board display, especially on sun java
 
 - clean up report generation in Server.java
-- clean up the stupidness in BoardView.java
 
 - improve code readibility, commenting; break up 80+ character lines, etc.
 - make fields private, classes encapsulated
@@ -28,7 +27,7 @@ RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
 - connects/disconnects mid-game need to be handled better
-? have server only send entity add/deletes in lounge
+? have server only send entity add/deletes in lounge, not entire list
 - double reports when firing phase happens and physical phase is skipped
 
 board display:
@@ -77,6 +76,9 @@ physical attacks:
 - show the to-hit numbers
 - opposing pushes should counter each other
 
+pilots:
+- successive conciousness checks should be made from low rolls to high
+
 falling:
 - account for water
 
@@ -108,13 +110,14 @@ v next
 + now counting upper leg crits for piloting roll purposes (thx jerrymeander)
 + now applying immobile modifier to unconcious pilots (jerrymeander again)
 + fixed a keyboard problem on the Mac (thx Michael Flynn)
++ keyboard scrolling in new board display
 
 v 0.23.2 (03-06-02, 10pm)
 + fast-drawin' cursors
 + image filters for tint, transparency (slower?)
-+ movement now showing
++ movement now showing on new board
 + new scrolling cache system
-+ buggy LOS back to normal levels of buggyness
+++ buggy LOS back to normal levels of buggyness
 + player name in title bar
 + tooltips for entities include armor & internals
 + tooltips for attacks show weapons used
@@ -126,7 +129,6 @@ v 0.23.2 (03-06-02, 10pm)
 v 0.23.1 (03-04-02, 4:48pm)
 + new board display stuff
 + tooltips on board, mechs, attacks
-- movement not showing up yet
 
 v 0.23.0 (03-02-02, 6:30pm)
 + falling does damage again (oops)

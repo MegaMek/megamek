@@ -7,7 +7,8 @@ v0.29.58 (CVS)
 + Bug 1090370: impossible to eject/abandon from immobile vehicles
 + Bug 1090781: vehicle breached in vacuum not destroyed
 + Bug 1057834: Weapons report & auto-eject (confusing order of events)
-+ Bug 1088365: Mek Pilots Ejected during Movement don't immediately show Up
++ Bug 1088365: Mek Pilots Ejected during Movement don't immediately show up
++ Bug 1083617: Ejected Pilot does not die in vaccuum
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

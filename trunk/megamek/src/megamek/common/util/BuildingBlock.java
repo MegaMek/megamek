@@ -27,7 +27,7 @@
 package megamek.common.util; //add to this package so BLKMechFile can read it's files...
 
 import java.io.*;
-import java.util.*;
+import com.sun.java.util.collections.*;
 
 
 /** buildingBlock is based on a file format I used in an
@@ -362,7 +362,7 @@ public class BuildingBlock {
          
             try {
             
-                data[dataRecord] = Float.parseFloat(rawData.get(rawRecord).toString());
+                data[dataRecord] = Float.valueOf(rawData.get(rawRecord).toString()).floatValue();
                 dataRecord++;
         
             }catch (NumberFormatException oops) {
@@ -571,7 +571,7 @@ public boolean writeBlockData(String blockName, String [] blockData) {
         
         try {
             
-        file.createNewFile();
+//        file.createNewFile();
         
         
         BufferedWriter out = new BufferedWriter(new FileWriter(file));

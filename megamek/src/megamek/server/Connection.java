@@ -161,11 +161,11 @@ public class Connection {
             return packet;
         } catch (IOException ex) {
             System.err.println("server(" + id + "): IO error reading command");
-            server.disconnected(id);
+            server.disconnected(this);
             return null;
         } catch (ClassNotFoundException ex) {
             System.err.println("server(" + id + "): class not found error reading command");
-            server.disconnected(id);
+            server.disconnected(this);
             return null;
         }
     }
@@ -188,7 +188,7 @@ public class Connection {
             System.err.println("server(" + id + "): error sending command.  dropping player");
             System.err.println(ex);
             System.err.println(ex.getMessage());
-            server.disconnected(id);
+            server.disconnected(this);
         }
     }
     

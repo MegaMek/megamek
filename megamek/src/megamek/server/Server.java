@@ -1608,16 +1608,16 @@ implements Runnable {
         final int fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         int direction = src.direction(dest);
         // check entity in target hex
-        Entity target = game.getEntity(dest);
+        Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         // check if we can fall in that hex
-        if (target != null && !target.equals(entity)
-        && !Compute.isValidDisplacement(game, target.getId(), src, dest)) {
+        if (violation != null
+        && !Compute.isValidDisplacement(game, violation.getId(), src, dest)) {
             // if target can't be displaced, fall in source hex.
             // NOTE: source hex should never contain a non-displacable entity
             Coords temp = dest;
             dest = src;
             src = temp;
-            target = game.getEntity(dest);
+            violation = Compute.stackingViolation(game, entity.getId(), dest);
         }
         
         // falling mech falls
@@ -1626,7 +1626,7 @@ implements Runnable {
         + dest.getBoardNum() + ".\n");
         
         // if hex was empty, deal damage and we're done
-        if (target == null || target.equals(entity)) {
+        if (violation == null) {
             doEntityFall(entity, dest, fallElevation, roll);
             return;
         }
@@ -1638,7 +1638,7 @@ implements Runnable {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);
             // target gets displaced
-            doEntityDisplacement(target, dest, dest.translated(direction), new PilotingRollData(target.getId(), 0, "domino effect"));
+            doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
         }
     }
     
@@ -1654,7 +1654,7 @@ implements Runnable {
         final Hex destHex = game.board.getHex(dest);
         final int direction = src.direction(dest);
         int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
-        Entity target = game.getEntity(dest);
+        Entity violation =Compute.stackingViolation(game, entity.getId(), dest);
         
         // can't fall upwards
         if (fallElevation < 0) {
@@ -1662,7 +1662,7 @@ implements Runnable {
         }
         
         // if destination is empty, this could be easy...
-        if (target == null || target.equals(entity)) {
+        if (violation == null) {
             if (fallElevation < 2) {
                 // no cliff: move and roll normally
                 phaseReport.append(entity.getDisplayName()
@@ -1694,25 +1694,25 @@ implements Runnable {
             // domino effect: move & displace target
             phaseReport.append(entity.getDisplayName()
             + " is displaced into hex "
-            + dest.getBoardNum() + ", occupied by "
-            + target.getDisplayName() + ".\n");
+            + dest.getBoardNum() + ", violating stacking with "
+            + violation.getDisplayName() + ".\n");
             entity.setPosition(dest);
             if (roll != null) {
                 pilotRolls.addElement(roll);
             }
-            doEntityDisplacement(target, dest, dest.translated(direction), new PilotingRollData(target.getId(), 0, "domino effect"));
+            doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
             return;
         } else {
             // accidental fall from above: havoc!
             phaseReport.append(entity.getDisplayName() + " falls "
             + fallElevation + " levels into hex "
-            + dest.getBoardNum() + ", occupied by "
-            + target.getDisplayName() + ".\n");
+            + dest.getBoardNum() + ", violating stacking with "
+            + violation.getDisplayName() + ".\n");
             
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
-            toHit.append(Compute.getTargetMovementModifier(game, target.getId()));
-            toHit.append(Compute.getTargetTerrainModifier(game, target.getId()));
+            toHit.append(Compute.getTargetMovementModifier(game, violation.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, violation.getId()));
             
             // roll dice
             final int diceRoll = Compute.d6(2);
@@ -1722,12 +1722,12 @@ implements Runnable {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
                 int damage = (int)Math.ceil(entity.getWeight() / 10);
-                phaseReport.append(target.getDisplayName() + " takes "
+                phaseReport.append(violation.getDisplayName() + " takes "
                 + damage + " from the collision.");
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
-                    HitData hit = target.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                    phaseReport.append(damageEntity(target, hit, cluster));
+                    HitData hit = violation.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                    phaseReport.append(damageEntity(violation, hit, cluster));
                     damage -= cluster;
                 }
                 phaseReport.append("\n");
@@ -1739,14 +1739,14 @@ implements Runnable {
                 doEntityFall(entity, dest, fallElevation, 3, pilotRoll);
                 
                 // defender pushed away, or destroyed
-                Coords targetDest = Compute.getValidDisplacement(game, target.getId(), dest, direction);
+                Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                 if (targetDest != null) {
-                    doEntityDisplacement(target, dest, targetDest, new PilotingRollData(target.getId(), 2, "fallen on"));
+                    doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
                 } else {
                     // ack!  automatic death!
-                    phaseReport.append("*** " + target.getDisplayName()
+                    phaseReport.append("*** " + violation.getDisplayName()
                     + " DESTROYED due to impossible displacement! ***");
-                    target.setDoomed(true);
+                    violation.setDoomed(true);
                 }
             } else {
                 phaseReport.append(", misses.\n");

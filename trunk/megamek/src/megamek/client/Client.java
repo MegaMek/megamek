@@ -691,6 +691,10 @@ public class Client extends Panel
         case Game.PHASE_VICTORY :
             switchPanel(new ReportDisplay(this));
             setMapVisible(false);
+
+            // nemchenk, 2004-01-01 -- hide MechDisplay at the end
+            mechW.setVisible(false);
+
             break;
         }
         menuBar.setPhase( phase );

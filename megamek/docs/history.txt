@@ -15,6 +15,7 @@ v0.29.33 (CVS)
 + Bug 911777: Artillery attacks now resolve on correct side table.
 + Brought ChatterBox2.java up-to-date with recent commits
 + Corrected some more stray references to client.bv
++ Refinement to the earlier fix for Bug 937734
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

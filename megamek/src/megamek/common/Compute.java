@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -973,7 +973,8 @@ public class Compute
                 break;
             }
         }
-        if (bDumping && entityMoveType == Entity.MOVE_RUN) {
+        if ( bDumping && ( entityMoveType == Entity.MOVE_RUN ||
+                           entityMoveType == Entity.MOVE_JUMP ) ) {
             return false;
         }
         
@@ -1398,10 +1399,19 @@ public class Compute
         }
         
         // got ammo?
-        if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
+        if ( usesAmmo && (ammo == null || ammo.getShotsLeft() == 0) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
         }
-        
+
+        // Are we dumping that ammo?
+        if ( usesAmmo && ammo.isDumping() ) {
+            ae.loadWeapon( weapon );
+            if ( ammo.getShotsLeft() == 0 || ammo.isDumping() ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE,
+                                      "Dumping remaining ammo." );
+            }
+        }
+
         // sensors operational?
         final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if (sensorHits > 1) {

@@ -29,11 +29,11 @@ public class Game
     public static final int PHASE_SELECTION         = 2;
     public static final int PHASE_EXCHANGE          = 3;
     public static final int PHASE_INITIATIVE        = 4;
-    public static final int PHASE_MOVEMENT            = 5;
+    public static final int PHASE_MOVEMENT          = 5;
     public static final int PHASE_MOVEMENT_REPORT   = 6;
     public static final int PHASE_FIRING            = 7;
     public static final int PHASE_FIRING_REPORT     = 8;
-    public static final int PHASE_PHYSICAL            = 9;
+    public static final int PHASE_PHYSICAL          = 9;
     public static final int PHASE_END               = 10;
     
     public int phase = PHASE_UNKNOWN;

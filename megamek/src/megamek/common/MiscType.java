@@ -962,6 +962,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "BeagleActiveProbe";
         misc.mepName = "Beagle Active Probe";
         misc.mtfName = "ISBeagleActiveProbe";
+        misc.tdbName = "IS Beagle Active Probe";
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.hittable = true;
@@ -979,6 +980,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLActiveProbe";
         misc.mepName = "Active Probe";
         misc.mtfName = "CLActiveProbe";
+        misc.tdbName = "Clan Active Probe";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.hittable = true;
@@ -996,6 +998,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLLightActiveProbe";
         misc.mepName = "CL Light Active Probe";
         misc.mtfName = "Light Active Probe";
+        misc.tdbName = "Clan Light Active Probe";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1013,6 +1016,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISTAG";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "IS TAG";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1030,6 +1034,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISLightTAG";
         misc.mepName = "Light TAG";
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1047,6 +1052,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLTAG";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Clan TAG";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1064,6 +1070,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLLightTAG";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Clan Light TAG";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1081,6 +1088,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISAPPod";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "IS A-Pod";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1098,6 +1106,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLAntiPersonnelPod";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Clan A-Pod";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;

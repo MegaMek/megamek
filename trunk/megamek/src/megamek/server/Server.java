@@ -132,7 +132,7 @@ implements Runnable, ConnectionHandler {
             Entity ent = (Entity)e.nextElement();
             ent.setGame(game);
         }
-
+        game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
             Player p = (Player)e.nextElement();
             p.setGame(game);

@@ -393,12 +393,6 @@ discrepancies, please contact the author (see "CONTACT" below.)
     
 - When kicking, you automatically use the leg with the better chance to hit.
 
-- Pushing... this is a rule breaker any way you look at it.  The way it's
-    handled now is that pushing, and the accompanying unit displacement,
-    happen as it's resolved, in the same phase as other physical attacks.
-    This means pushing could interrupt an attack from a mech that "won"
-    initiative, which seems wrong.  Any suggestions?
-
 - There are several situations, notably death from above, where a unit is
     displaced out of a hex, and that unit's owner may pick the hex to move to.
     MegaMek currently picks the hex for you, choosing high elevations over low

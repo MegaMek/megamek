@@ -4291,7 +4291,8 @@ implements Runnable, ConnectionHandler {
         if (violation == null) {
             if (fallElevation < 2) {
                 // no cliff: move and roll normally
-                phaseReport.append(entity.getDisplayName()
+                phaseReport.append("    "
+                ).append( entity.getDisplayName()
                 ).append( " is displaced into hex "
                 ).append( dest.getBoardNum() ).append( ".\n");
                 entity.setPosition(dest);
@@ -4306,7 +4307,8 @@ implements Runnable, ConnectionHandler {
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
-                phaseReport.append(entity.getDisplayName() ).append( " falls "
+                phaseReport.append("    "
+                ).append( entity.getDisplayName() ).append( " falls "
                 ).append( fallElevation ).append( " levels into hex "
                 ).append( dest.getBoardNum() ).append( ".\n");
                 // only given a modifier, so flesh out into a full piloting roll
@@ -4324,7 +4326,8 @@ implements Runnable, ConnectionHandler {
         System.err.println("server.doEntityDisplacement: destination occupied");
         if (fallElevation < 2) {
             // domino effect: move & displace target
-            phaseReport.append(entity.getDisplayName()
+            phaseReport.append("    "
+            ).append( entity.getDisplayName()
             ).append( " is displaced into hex "
             ).append( dest.getBoardNum() ).append( ", violating stacking with "
             ).append( violation.getDisplayName() ).append( ".\n");
@@ -4339,7 +4342,8 @@ implements Runnable, ConnectionHandler {
             return;
         } else {
             // accidental fall from above: havoc!
-            phaseReport.append(entity.getDisplayName() ).append( " falls "
+            phaseReport.append("    "
+            ).append( entity.getDisplayName() ).append( " falls "
             ).append( fallElevation ).append( " levels into hex "
             ).append( dest.getBoardNum() ).append( ", violating stacking with "
             ).append( violation.getDisplayName() ).append( ".\n");
@@ -4351,13 +4355,14 @@ implements Runnable, ConnectionHandler {
 
             // roll dice
             final int diceRoll = Compute.d6(2);
-            phaseReport.append("Collision occurs on a " ).append( toHit.getValue()
+            phaseReport.append("    Collision occurs on a " ).append( toHit.getValue()
             ).append( " or greater.  Rolls " ).append( diceRoll);
             if (diceRoll >= toHit.getValue()) {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
                 int damage = Compute.getAffaDamageFor(entity);
-                phaseReport.append(violation.getDisplayName() ).append( " takes "
+                phaseReport.append("    "
+                ).append( violation.getDisplayName() ).append( " takes "
                 ).append( damage ).append( " from the collision.");
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
@@ -7541,7 +7546,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("hits.");
-        phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
+        phaseReport.append("\n    Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             damage -= cluster;
@@ -7562,7 +7567,7 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append(damageEntity(te, hit, cluster));
             }
         }
-        phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
+        phaseReport.append("\n    Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
@@ -7713,7 +7718,7 @@ implements Runnable, ConnectionHandler {
 
         // Target isn't building.
         else {
-            phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
+            phaseReport.append("\n    Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -7722,7 +7727,7 @@ implements Runnable, ConnectionHandler {
             }
         }
 
-        phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
+        phaseReport.append("\n    Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);

@@ -190,6 +190,11 @@ public class Infantry
 
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
+    
+    /**
+     * Is the Infanrty unit an ejected Mechwarrior?
+     */
+    private boolean mechWarrior = false;
 
     /**
      * Returns the number of locations in this platoon (i.e. one).
@@ -845,4 +850,16 @@ public class Infantry
         return false;
     };
 
+    /**
+     * is the entity a ejected MechWarrior?
+     */
+    public boolean isMechWarrior() {
+        return mechWarrior;
+    }
+    /**
+     * sets wether the unit is a ejected MechWarrior or not
+     */
+    public void setMechWarrior(boolean mechWarrior) {
+        this.mechWarrior = mechWarrior;
+    }
 } // End class Infantry

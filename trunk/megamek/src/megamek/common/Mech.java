@@ -73,7 +73,8 @@ public abstract class Mech
     // Has masc been used?
     private boolean usedMASC = false;
     private int sinksOn;
-    private boolean sinksChanged=false;
+    private boolean sinksChanged = false;
+    private boolean autoEject = true;
 
     /**
      * Construct a new, blank, mech.
@@ -1966,5 +1967,17 @@ public abstract class Mech
             sinksChanged=false;
         }
         sinksOn=sinks;
+    }
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        return autoEject;
+    }
+    /**
+     * @param autoEject The autoEject to set.
+     */
+    public void setAutoEject(boolean autoEject) {
+        this.autoEject = autoEject;
     }
 }

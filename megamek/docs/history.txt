@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.48 (CVS)
+
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.
 + Bug 988798: Mechs with dodge ability auto-dodge when appropriate.

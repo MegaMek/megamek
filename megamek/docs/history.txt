@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.26.14 (09-14-02, 9:30pm)
 + 609840: immobilized vehicles can't complete their charges
 + 609356: vehicles do not make piloting skill rolls to avoid falling
 + 609201: fixed crash when a charging vehicle is destroyed by weapons fire

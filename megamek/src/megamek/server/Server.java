@@ -4558,6 +4558,9 @@ implements Runnable, ConnectionHandler {
     private void doEntityDisplacement(Entity entity, Coords src, Coords dest,
     PilotingRollData roll) {
         if (!game.board.contains(dest)) {
+            // set position anyway, for pushes moving through and stuff like
+            // that
+            entity.setPosition(dest);
             if (!entity.isDoomed()) {
                 game.removeEntity(entity.getId(),
                         Entity.REMOVE_PUSHED);

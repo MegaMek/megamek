@@ -245,7 +245,9 @@ public class ClientGUI
         });
 
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        unitLoadingDialog.show();
+        if (!MechSummaryCache.isInitialized()) {
+            unitLoadingDialog.show();
+        }
 
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);

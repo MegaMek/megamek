@@ -110,7 +110,7 @@ public class MechSelectorDialog
         m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12));
         add(m_mechViewRight, BorderLayout.EAST);
         
-        clearMechPreview();
+        //clearMechPreview();
         
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
@@ -138,7 +138,6 @@ public class MechSelectorDialog
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
             UnitFailureDialog unitFailureDialog = new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing dialog
         }
-        m_client.setMechsLoaded(true);
     }
     
     
@@ -302,7 +301,7 @@ public class MechSelectorDialog
         m_mechViewRight.setText("");
 
 		// Remove preview image.        
-		if (!unitLoadingDialog.isVisible()) {
+		if (MechSummaryCache.isInitialized()) {
         	m_pPreview.removeBgDrawers();
 			m_pPreview.paint(m_pPreview.getGraphics());
 		}

@@ -52,8 +52,6 @@ public class Client implements Runnable {
     private MapSettings mapSettings;
     public String eotr;
     
-    private boolean mechsLoaded = false;
-    
     private Thread pump;
 
     // I send out game events!
@@ -940,14 +938,6 @@ public class Client implements Runnable {
     
     public String getName() {
         return name;
-    }
-
-    public boolean areMechsLoaded() {
-        return mechsLoaded;
-    }
-
-    public void setMechsLoaded(boolean mechsLoaded) {
-        this.mechsLoaded = mechsLoaded;
     }
 
 }

@@ -614,6 +614,7 @@ public class HmpFile
     criticals.put(new Long(0x09), "Heat Sink");
     criticals.put(new Long(0x0B), "Jump Jet");
     criticals.put(new Long(0x11), "Hatchet");
+    criticals.put(new Long(0x1F), "Sword");
     criticals.put(new Long(0x16), "Triple Strength Myomer");
 
     // inner sphere criticals

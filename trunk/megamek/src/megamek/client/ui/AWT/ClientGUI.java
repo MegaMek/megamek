@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.Iterator;
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.TreeMap;
 
@@ -1329,7 +1329,12 @@ public class ClientGUI
 
     public void gameEnd(GameEvent e) {
         this.bv.clearMovementData();
-
+        
+		for (Iterator i = getBots().values().iterator(); i.hasNext();) {
+			((Client)i.next()).die();
+		}
+		getBots().clear();
+		
         // Make a list of the player's living units.
         Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
 

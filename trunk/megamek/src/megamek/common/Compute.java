@@ -829,9 +829,9 @@ public class Compute
         return roll;
     }
     
-    public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
+    public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa, Vector prevAttacks) {
         return toHitWeapon(game, waa.getEntityId(), waa.getTargetId(), 
-                           waa.getWeaponId());
+                           waa.getWeaponId(), prevAttacks);
     }
     
     /**
@@ -843,7 +843,8 @@ public class Compute
      * @param weaponId      the weapon id number
      */
     public static ToHitData toHitWeapon(Game game, int attackerId, 
-                                        int targetId, int weaponId) {
+                                        int targetId, int weaponId, 
+                                        Vector prevAttacks) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         final MountedWeapon w = ae.getWeapon(weaponId);
@@ -986,7 +987,29 @@ public class Compute
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
-        //TODO: multiple targets...
+        // secondary targets modifier
+        for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+            Object o = i.nextElement();
+            if (!(o instanceof WeaponAttackAction)) {
+                continue;
+            }
+            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+            // stop when we get to this weaponattack (does this always work?)
+            if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+                break;
+            }
+            // check for secondary target
+            if (prevAttack.getEntityId() == attackerId && prevAttack.getTargetId() != targetId) {
+                if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD)) {
+                    toHit.addModifier(1, "secondary target modifier");
+                    break;
+                } else {
+                    toHit.addModifier(2, "secondary target modifier");
+                    break;
+                }
+            }
+        }
+
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -1025,13 +1048,30 @@ public class Compute
         // attacker prone
         if (ae.isProne()) {
             // must have an arm intact
-            //TODO: can only fire from one arm, other used for prop
             if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and both arms destroyed");
             }
-            if ((ae.isLocationDestroyed(Mech.LOC_LARM) && w.getLocation() == Mech.LOC_RARM)
-                || (ae.isLocationDestroyed(Mech.LOC_RARM) && w.getLocation() == Mech.LOC_LARM)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and opposite arm destroyed");
+            // arm-mounted weapons have addidional trouble
+            if (w.getLocation() == Mech.LOC_RARM || w.getLocation() == Mech.LOC_LARM) {
+                int otherArm = w.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+                if (ae.isLocationDestroyed(otherArm)) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and opposite arm destroyed");
+                }
+                // check previous attacks for weapons fire from the other arm
+                for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+                    Object o = i.nextElement();
+                    if (!(o instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                    // stop when we get to this weaponattack (does this always work?)
+                    if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+                        break;
+                    }
+                    if (prevAttack.getEntityId() == attackerId && ae.getWeapon(prevAttack.getWeaponId()).getLocation() == otherArm) {
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already");
+                    }
+                }
             }
             // can't fire leg weapons
             if (w.getLocation() == Mech.LOC_LLEG && w.getLocation() == Mech.LOC_RLEG) {

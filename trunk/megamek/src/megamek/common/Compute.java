@@ -2675,6 +2675,12 @@ public class Compute
      */
     public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, MovePath md) {
         final Entity ae = game.getEntity(attackerId);
+
+        // Do to pretreatment of physical attacks, the target may be null.
+        if (target == null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is null");
+        }
+
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
@@ -2684,7 +2690,7 @@ public class Compute
 
         // Infantry CAN'T dfa!!!
         if ( ae instanceof Infantry ) {
-        	return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
         }
 
         // let's just check this
@@ -2753,6 +2759,17 @@ public class Compute
      */
     public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
+
+        // arguments legal?
+        if ( ae == null ) {
+            throw new IllegalArgumentException("Attacker is null");
+        }
+
+        // Do to pretreatment of physical attacks, the target may be null.
+        if (target == null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is null");
+        }
+
         int targetId = Entity.NONE;
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
@@ -2761,11 +2778,6 @@ public class Compute
         }
         final boolean targetInBuilding = isInBuilding( game, te );
         ToHitData toHit = null;
-
-        // arguments legal?
-        if ( ae == null || target == null ) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
 
         // can't target yourself
         if (ae.equals(te)) {

@@ -54,9 +54,20 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      */
     public ToHitData toHitCharge(Game game, Targetable target, Coords src, int movement) {
         final Entity ae = getEntity(game);
+
+        // arguments legal?
+        if (ae == null) {
+            throw new IllegalStateException("Attacker is null");
+        }
+
+        // Do to pretreatment of physical attacks, the target may be null.
+        if (target == null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is null");
+        }
+
         int targetId = Entity.NONE;
         Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
@@ -64,17 +75,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation();
         final int targetHeight = target.absHeight();
-        final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        Building bldg = null;
-        if (targetInBuilding) {
-            bldg = game.board.getBuildingAt(te.getPosition());
-        }
+        Building bldg = game.board.getBuildingAt( this.getTargetPos() );
         ToHitData toHit = null;
-
-        // arguments legal?
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -145,7 +147,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target units in buildings (from the outside).
-        if (targetInBuilding) {
+        if (null != bldg) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building");
             } else if (!game.board.getBuildingAt(ae.getPosition()).equals(bldg)) {

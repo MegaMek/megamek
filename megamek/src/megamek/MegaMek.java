@@ -406,6 +406,7 @@ class HostDialog extends Dialog implements ActionListener {
         add(cancelB);
         
         pack();
+        setResizable(false);
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
     }
@@ -515,6 +516,7 @@ class ConnectDialog extends Dialog implements ActionListener {
         add(cancelB);
         
         pack();
+        setResizable(false);
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
     }

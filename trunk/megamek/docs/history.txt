@@ -133,6 +133,7 @@ v 0.29 release candidate 1 (06-16-03, 1am)
 + Bug 754610: Revert fix for bug 702735.
 + Bug 720322: Apply defensive systems, targ comp, and C3 BV logic to Tanks.
 + Added "Unit Loading Failures" dialog.
++ Added ability for scenario system to support multiple people on one team using 'Team_<name>=#' attribute
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly

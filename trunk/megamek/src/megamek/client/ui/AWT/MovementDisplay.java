@@ -224,6 +224,7 @@ public class MovementDisplay
         butBackup.setEnabled(ce().getWalkMP() > 0);
         butCharge.setEnabled(ce().getWalkMP() > 0);
         butDfa.setEnabled(ce().getJumpMP() > 0);
+        butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
         if (ce().isProne()) {
             butUp.setEnabled(true);
         } else {
@@ -272,6 +273,7 @@ public class MovementDisplay
         butWalk.setEnabled(false);
         butJump.setEnabled(false);
         butBackup.setEnabled(false);
+        butTurn.setEnabled(false);
         butUp.setEnabled(false);
         butDown.setEnabled(false);
         butCharge.setEnabled(false);
@@ -314,7 +316,7 @@ public class MovementDisplay
      * Returns new MovementData for the currently selected movement type
      */
     private MovementData currentMove(Coords src, int facing, Coords dest) {
-        if (shiftheld) {
+        if (shiftheld || gear == Compute.GEAR_TURN) {
             return Compute.rotatePathfinder(facing, src.direction(dest));
         } else if (gear == Compute.GEAR_LAND || gear == Compute.GEAR_JUMP) {
             return Compute.lazyPathfinder(src, facing, dest);
@@ -346,12 +348,17 @@ public class MovementDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-        if (!client.isMyTurn() 
-            || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        // ignore buttons other than 1
+        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
         }
+        // check for shifty goodness
+        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        }
+        
         if (b.getType() == b.BOARD_HEX_DRAGGED) {
-            if (!b.getCoords().equals(client.game.board.lastCursor)) {
+            if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == Compute.GEAR_TURN) {
                 client.game.board.cursor(b.getCoords());
 
                 // either turn or move
@@ -361,12 +368,17 @@ public class MovementDisplay
         } else if (b.getType() == b.BOARD_HEX_CLICKED) {
             final Entity target = client.game.getEntity(b.getCoords());
 
-            client.game.board.select(b.getCoords());
-
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
             md = new MovementData(cmd);
             
+            client.game.board.select(b.getCoords());
+
+            if (shiftheld || gear == Compute.GEAR_TURN) {
+                butDone.setLabel("Move");
+                return;
+            }
+
             if (gear == Compute.GEAR_CHARGE) {
                 // check if target is valid
                 if (target == null || target.equals(ce())) {
@@ -422,8 +434,6 @@ public class MovementDisplay
             }
             
             butDone.setLabel("Move");
-            butDone.setEnabled(true);
-
         }
     }
 
@@ -482,7 +492,6 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = Compute.GEAR_LAND;
-            butJump.setEnabled(ce().getJumpMP() > 0);
         } else if (ev.getSource() == butJump) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
@@ -491,22 +500,18 @@ public class MovementDisplay
                 md.addStep(MovementData.STEP_START_JUMP);
             }
             gear = Compute.GEAR_JUMP;
-            butWalk.setEnabled(true);
-            butBackup.setEnabled(true);
+        } else if (ev.getSource() == butTurn) {
+            gear = Compute.GEAR_TURN;
         } else if (ev.getSource() == butBackup) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;
-            butWalk.setEnabled(true);
-            butJump.setEnabled(ce().getJumpMP() > 0);
         } else if (ev.getSource() == butCharge) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_CHARGE;
-            butWalk.setEnabled(true);
-            butJump.setEnabled(ce().getJumpMP() > 0);
         } else if (ev.getSource() == butDfa) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
@@ -515,8 +520,6 @@ public class MovementDisplay
             if (!md.contains(MovementData.STEP_START_JUMP)) {
                 md.addStep(MovementData.STEP_START_JUMP);
             }
-            butWalk.setEnabled(true);
-            butBackup.setEnabled(true);
         } else if (ev.getSource() == butUp) {
             clearAllMoves();
             gear = Compute.GEAR_LAND;
@@ -525,7 +528,6 @@ public class MovementDisplay
             }
             client.bv.drawMovementData(ce(), cmd);
             butDone.setLabel("Move");
-            butDone.setEnabled(true);
         }
     }
     

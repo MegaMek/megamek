@@ -328,17 +328,22 @@ public abstract class Entity
     public void setSecondaryFacing(int sec_facing) {
         this.sec_facing = sec_facing;
     }
-  
-  /**
-   * Can this entity torso/turret twist the given direction?
-   */
-  public abstract boolean isValidSecondaryFacing(int dir);
     
     /**
-    * Returns the closest valid secondary facing to the given direction.
-    * 
-    * @returns the the closest valid secondary facing.
-    */
+     * Can this entity change secondary facing at all?
+     */
+    public abstract boolean canChangeSecondaryFacing();
+  
+    /**
+     * Can this entity torso/turret twist the given direction?
+     */
+    public abstract boolean isValidSecondaryFacing(int dir);
+    
+    /**
+     * Returns the closest valid secondary facing to the given direction.
+     *
+     * @returns the the closest valid secondary facing.
+     */
     public abstract int clipSecondaryFacing(int dir);
     
     /**

@@ -2,12 +2,9 @@ package megamek.test.entities;
 
 import megamek.common.*;
 import megamek.common.Mech;
-import megamek.common.MechSummaryCache;
 
-import java.util.Vector;
 import java.util.Enumeration;
 import java.lang.StringBuffer;
-import java.io.File;
 
 public abstract class TestEntity implements TestEntityOption
 {

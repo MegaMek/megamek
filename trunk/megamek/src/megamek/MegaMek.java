@@ -38,7 +38,6 @@ public class MegaMek
         this.frame = frame;
         frame.addWindowListener(this);
     
-        Settings.load();
         if(Settings.windowSizeHeight != 0) {
             frame.setLocation(Settings.windowPosX, Settings.windowPosY);
             frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
@@ -260,6 +259,7 @@ public class MegaMek
     }
     
     public static void main(String[] args) {
+        Settings.load();
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {
                 testDice();

@@ -16,7 +16,7 @@ package megamek.common;
 
 /**
  * Represents a hex, not in the game but in an ideal coordinate system.  Used 
- * for some calcuations.
+ * for some calcuations.  This ideal hex is 2.0 tall.
  */
 public class IdealHex 
 {
@@ -44,8 +44,8 @@ public class IdealHex
         x[0] = ox + XCONST;
         x[1] = ox + (XCONST * 3);
         x[2] = ox + (XCONST * 4);
-        x[3] = x[2];
-        x[4] = x[1];
+        x[3] = x[1];
+        x[4] = x[0];
         x[5] = ox;
                 
         y[0] = oy;

@@ -1917,8 +1917,9 @@ public class Compute
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
         }        
         
-        // targeting computer
-        if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+        // Targeting computer isn't used with LBX cluster munitions.
+        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+             (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
             toHit.addModifier(-1, "targeting computer");
         }
         

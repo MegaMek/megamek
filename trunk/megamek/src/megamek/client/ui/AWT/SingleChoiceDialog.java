@@ -80,7 +80,30 @@ public class SingleChoiceDialog
             Panel choiceArea = new Panel( new GridLayout(0, 1) );
             c.gridy++;
             c.insets = new Insets(0, 5, 0, 5);
-            add( choiceArea, c );
+
+            // If there are many choices, display them in a scroll pane.
+            if ( choices.length > 5 ) {
+
+                // Save the current value of c.fill; change it to HORIZONTAL.
+                int saveFill = c.fill;
+                c.fill = GridBagConstraints.HORIZONTAL;
+
+                // Place the choice area in the center
+                // of another panel that is scrolled.
+                ScrollPane scroller = new ScrollPane();
+                Panel scrollee = new Panel( new GridBagLayout() );
+                GridBagConstraints center = new GridBagConstraints();
+                center.anchor = GridBagConstraints.CENTER;
+                scrollee.add( choiceArea, center );
+                scroller.add( scrollee );
+                add( scroller, c );
+
+                // Restore the saved value of c.fill.
+                c.fill = saveFill;
+
+            } else {
+                add( choiceArea, c );
+            }
 
             CheckboxGroup radioGroup = new CheckboxGroup();
             this.checkboxes = new Checkbox[ choices.length ];

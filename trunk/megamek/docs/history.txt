@@ -5,6 +5,7 @@ v0.29.71 (CVS)
 + Patch 1168935: Extract AIM_MODE_* constants to interface.
 + LRM one-shot weapons should be able to fire indirectly
 + Patch 1169668, Bug 1115621: Falling debris: wrong amount applied.
++ Data 1165321: added grass, lunar, and mars themes.
 
 v0.29.70 (2005-03-20 4:00pm)
 + Bug 1163060: Warhawk variant images not showing.

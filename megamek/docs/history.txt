@@ -100,6 +100,7 @@ v 0.28.10-dev
 + Internal structure for tanks should round all fractions up.
 + prefer attacker partial cover slightly in split LOS situations
 + 704999: actuator hits on other leg count with one hip hit
++ 702760: going prone in water can wash off inferno gel
 
 v 0.28.9 (03-15-03, 5pm)
 + Added XML parsing to MegaMek.

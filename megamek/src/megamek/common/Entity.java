@@ -1598,7 +1598,7 @@ public abstract class Entity
                 for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {
                     WeaponAttackAction waa = (WeaponAttackAction)i.nextElement();
                     if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon), waa.getEntityId())) {
-                        vAttacksInArc.add(waa);
+                        vAttacksInArc.addElement(waa);
                     }
                 }
                 // find the most dangerous salvo by expected damage

@@ -4062,7 +4062,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Removes the minfield from a player.
-     * @param player The <code>Player</code> who's minefiled should be removed
+     * @param player The <code>Player</code> who's minefield should be removed
      * @param mf The <code>Minefield</code> to be removed
      */
     private void removeMinefield(Player player, Minefield mf) {

@@ -640,10 +640,30 @@ public class MovementDisplay
                       }
                 } else if (entity instanceof Tank) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                        if (step.getMpUsed() > entity.getRunMP(false)) {
+//                      // For Tanks, we need to check if the tank had more MPs because it was moving along a road
+                        if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
+                            }    
+                        } else if (step.getMovementType() == Entity.MOVE_WALK) {
+                            // If the tank was just cruising, he got a flat +1 road bonus
+                            if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
+                                rollTarget = entity.checkMovedTooFast(step);
+                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                    nagReport.append(addNag(rollTarget));
+                                }
+                            }
+                        } else if (step.getMovementType() == Entity.MOVE_RUN) {
+                            // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
+                            // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
+                            // cruising speed, thus possibly gaining 2 flanking MPs
+                            int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
+                            if (step.getMpUsed() > entity.getRunMP(false) + k) {
+                                rollTarget = entity.checkMovedTooFast(step);
+                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                    nagReport.append(addNag(rollTarget));
+                                }
                             }
                         }
                     }   

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -513,7 +513,16 @@ public class FiringDisplay
                 target.getTargetId(), weaponNum);
 
         if (((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA) {
-            waa.setAmmoId(ce().getEquipmentNum(mounted.getLinked()));
+            Mounted ammoMount = mounted.getLinked();
+            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+            if ( ((AmmoType)(ammoMount.getType())).getMunitionType() ==
+                 AmmoType.M_THUNDER_VIBRABOMB )
+            {
+                VibrabombSettingDialog vsd  =
+                    new VibrabombSettingDialog( client.frame );
+                vsd.show();
+                waa.setOtherAttackInfo(vsd.getSetting());
+            }
         }
 
         if (ash.allowAimedShotWith(mounted) &&

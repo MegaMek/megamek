@@ -1804,7 +1804,9 @@ public boolean isPassworded() {
                 // hmm, error
             }
         }
-
+        
+        // and clear the attacks Vector
+        attacks.removeAllElements();
     }
     
     /**

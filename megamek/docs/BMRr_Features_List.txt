@@ -339,7 +339,7 @@ Equipment
 - Sword				Yes		None
 - TAG				Yes		Requires Homing Arrow IV implementation to work.
 - Targeting Computers		Yes		None
-- Triple Strength Myomer	Yes		Cannot shut off heat sinks in the end phase to overheat battlemech.
+- Triple Strength Myomer	Yes		None
 
 Battle Value System
 

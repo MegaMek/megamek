@@ -342,6 +342,8 @@ public class Compute
         boolean isRunProhibited = false;
 	boolean isInfantry = (entity instanceof Infantry);
 	MovementData.Step prevStep = null;
+        boolean onlyPavement = false;   // Entire move on pavement or road
+        boolean isPavementStep = false; // This step on pavement or road
 
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
@@ -360,7 +362,19 @@ public class Compute
             || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
             isRunProhibited = true;
         }
-        
+
+        // If the movement starts on pavement,
+        // the entire move may be on pavement.
+        if ( curPos != null ) {
+            Hex curHex = game.board.getHex( curPos );
+            if ( curHex.contains(Terrain.PAVEMENT) ||
+                 curHex.contains(Terrain.ROAD) ||
+                 curHex.contains(Terrain.BRIDGE) ) {
+                onlyPavement = true;
+                isPavementStep = true;
+            }
+        }
+
         // first pass: set position, facing and mpUsed; figure out overallMoveType
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -395,11 +409,21 @@ public class Compute
                     thisStepBackwards = false;
                 }
 
+                // Check for pavement movement.
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
+                } else {
+                    isPavementStep = false;
+                    onlyPavement = false;
+                }
+
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
                                             overallMoveType);
+
                 // check for water
-                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 
-                        && entity.getMovementType() != Entity.MovementType.HOVER) {
+                if ( !isPavementStep &&
+                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 &&
+                     entity.getMovementType() != Entity.MovementType.HOVER ) {
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
@@ -421,10 +445,19 @@ public class Compute
                     thisStepBackwards = false;
                 }
 
+                // Check for pavement movement.
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
+                } else { 
+                    isPavementStep = false;
+                    onlyPavement = false;
+                }
+
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
                                             overallMoveType) + 1;
                 // check for water
-                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0) {
+                if ( !isPavementStep &&
+                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 ) {
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
@@ -443,18 +476,29 @@ public class Compute
             }
             
             mpUsed += stepMp;
-            
-            // check for running
-            if (overallMoveType == Entity.MOVE_WALK 
-                && mpUsed > entity.getWalkMP()) {
+
+            // Check for running or flank speed
+            if ( overallMoveType == Entity.MOVE_WALK 
+                 && mpUsed > entity.getWalkMP() ) {
+
+                // This normally means we're running (or moving flank).
                 overallMoveType = Entity.MOVE_RUN;
+
+                // If the entire move is on pavement,
+                // a vehicle can get a road bonus.
+                if ( entity instanceof Tank && onlyPavement &&
+                     mpUsed == entity.getWalkMP() + 1 ) {
+                    overallMoveType = Entity.MOVE_WALK;
+                }
+
             }
-            
+
             // set flags
             step.setPosition(curPos);
             step.setFacing(curFacing);
             step.setMpUsed(mpUsed);
             step.setDistance(distance);
+            step.setOnPavement( isPavementStep );
             lastWasBackwards = thisStepBackwards;
         }
         
@@ -466,9 +510,10 @@ public class Compute
         }
         
         // set moveType, illegal, trouble flags
-        compileIllegal(game, entityId, md, overallMoveType, isRunProhibited);
+        compileIllegal( game, entityId, md,
+                        overallMoveType, isRunProhibited, onlyPavement );
 
-        // check the last step for legality
+        // Check the last step for legality.
         compileLastStep(game, entityId, md);
         
         // check for illegal jumps
@@ -485,7 +530,8 @@ public class Compute
     private static void compileIllegal( Game game, int entityId,
                                         MovementData md,
                                         int overallMoveType,
-                                        boolean runProhibited ) {
+                                        boolean runProhibited,
+                                        boolean onlyPavement ) {
         final Entity entity = game.getEntity(entityId);
 
         Coords curPos = new Coords(entity.getPosition());
@@ -496,7 +542,7 @@ public class Compute
 	boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
-	MovementData.Step prevStep = null;
+	boolean prevStepOnPavement = false;
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -504,7 +550,12 @@ public class Compute
             
             Coords lastPos = new Coords(curPos);
             curPos = step.getPosition();
-            
+
+            // If all movement is on pavement, say so in all steps.
+            if ( onlyPavement && !step.isOnPavement() ) {
+                step.setOnPavement( true );
+            }
+
             // guilty until proven innocent
             int moveType = Entity.MOVE_ILLEGAL;
             
@@ -521,9 +572,20 @@ public class Compute
                 && (!entity.isProne() || md.contains(MovementData.STEP_GET_UP)
                     || stepType == MovementData.STEP_TURN_LEFT 
                     || stepType == MovementData.STEP_TURN_RIGHT)) {
+
+                // Vehicles moving along pavement get "road bonus" of 1 MP.
+                // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
+                } else if ( entity instanceof Tank && onlyPavement &&
+                            step.getMpUsed() == entity.getWalkMP() + 1 ) {
+                    moveType = Entity.MOVE_WALK;
                 } else if ( step.getMpUsed() <= entity.getRunMP() &&
+                            !runProhibited ) {
+                    moveType = Entity.MOVE_RUN;
+                } else if ( entity instanceof Tank && onlyPavement &&
+                            step.getMpUsed() <= entity.getRunMP() + 
+                            (isOdd(entity.getWalkMP()) ? 1 : 2) &&
                             !runProhibited ) {
                     moveType = Entity.MOVE_RUN;
                 }
@@ -573,14 +635,14 @@ public class Compute
             if (moveType == Entity.MOVE_ILLEGAL) {
                 legal = false;
             }
-            
+
             // check for danger
-            // BUG: skid danger should really go on the prevStep, not on step.
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
                                              curPos, moveType,
-                                             isTurning, overallMoveType );
-            
+                                             isTurning, overallMoveType,
+                                             prevStepOnPavement );
+
             // getting up is also danger
             if (stepType == MovementData.STEP_GET_UP) {
                 danger = true;
@@ -617,8 +679,8 @@ public class Compute
 		firstStep = true;
 	    }
 
-	    // Record the step just taken.
-	    prevStep = step;
+	    // Record if the step just taken was along pavement or a road.
+	    prevStepOnPavement = step.isOnPavement();
         }
     }
     
@@ -650,8 +712,9 @@ public class Compute
                 continue;
             }
             
-            // check again for illegal terrain, in case of jumping
-            if (entity.isHexProhibited(destHex)) {
+            // Check again for illegal terrain, in case of jumping.  We're
+            // allowed to enter prohibited terrain via a road or bridge.
+            if ( entity.isHexProhibited(destHex) && !step.isOnPavement() ) {
                 step.setMovementType(Entity.MOVE_ILLEGAL);
                 continue;
             }
@@ -748,6 +811,7 @@ public class Compute
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
 	final boolean isInfantry = (entity instanceof Infantry);
+        final boolean isPavementStep = canMoveOnPavement( game, src, dest );
         
         // arguments valid?
         if (entity == null) {
@@ -766,28 +830,32 @@ public class Compute
         }
         
         int mp = 1;
-        
-        // account for terrain
-        if (destHex.levelOf(Terrain.ROUGH) > 0) {
-            mp++;
-        }
-        if (destHex.levelOf(Terrain.RUBBLE) > 0) {
-            mp++;
-        }
-        if (destHex.levelOf(Terrain.WOODS) == 1) {
-            mp++;
-        } else if (destHex.levelOf(Terrain.WOODS) > 1) {
-            mp += 2;
-        }
-        
-        // non-hovers check for water depth
-        if (moveType != Entity.MovementType.HOVER) {
-            if (destHex.levelOf(Terrain.WATER) == 1) {
+
+        // Account for terrain, unless we're moving along a road.
+        if ( !isPavementStep ) {
+
+            if (destHex.levelOf(Terrain.ROUGH) > 0) {
                 mp++;
-            } else if (destHex.levelOf(Terrain.WATER) > 1) {
-                mp += 3;
             }
-        }
+            if (destHex.levelOf(Terrain.RUBBLE) > 0) {
+                mp++;
+            }
+            if (destHex.levelOf(Terrain.WOODS) == 1) {
+                mp++;
+            } else if (destHex.levelOf(Terrain.WOODS) > 1) {
+                mp += 2;
+            }
+
+            // non-hovers check for water depth
+            if (moveType != Entity.MovementType.HOVER) {
+                if (destHex.levelOf(Terrain.WATER) == 1) {
+                    mp++;
+                } else if (destHex.levelOf(Terrain.WATER) > 1) {
+                    mp += 3;
+                }
+            }
+
+        } // End not-along-road
         
         // account for elevation?
         int nSrcEl = entity.elevationOccupied(srcHex);
@@ -797,9 +865,8 @@ public class Compute
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
             
-            // ground vehicles are charged double            
-	    // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
-            if ( !isInfantry &&
+            // Infantry and ground vehicles are charged double.
+            if ( isInfantry ||
 		 (nMove == Entity.MovementType.TRACKED ||
 		  nMove == Entity.MovementType.WHEELED ||
 		  nMove == Entity.MovementType.HOVER) ) {
@@ -826,6 +893,7 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
+        final boolean isPavementStep = canMoveOnPavement( game, src, dest );
         
         // arguments valid?
         if (entity == null) {
@@ -919,10 +987,12 @@ public class Compute
             || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && nSrcEl != nDestEl) {
             return false;
         }
-        // can't run into water (unless hovering)
+
+        // Can't run into water unless hovering, or using a bridge.
         if (entityMoveType == Entity.MOVE_RUN 
             && nMove != Entity.MovementType.HOVER
-            && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
+            && destHex.levelOf(Terrain.WATER) > 0 && 
+            !firstStep && !isPavementStep) {
             return false;
         }
         
@@ -956,12 +1026,21 @@ public class Compute
             return false;
         }
         
-        // certain movement types have terrain restrictions
-        if (entityMoveType != Entity.MOVE_JUMP 
-        && entity.isHexProhibited(destHex)) {
+        // Certain movement types have terrain restrictions; terrain
+        // restrictions are lifted when moving along a road or bridge.
+        if (entityMoveType != Entity.MOVE_JUMP
+            && entity.isHexProhibited(destHex) 
+            && !isPavementStep) {
             return false;
         }
-        
+
+        // If we are *in* restricted terrain, we can only leave via roads.
+        if ( entityMoveType != Entity.MOVE_JUMP
+             && entity.isHexProhibited(srcHex)
+             && !isPavementStep ) {
+            return false;
+        }
+
         return true;
     }
     
@@ -1005,12 +1084,14 @@ public class Compute
                                                 Coords src, Coords dest,
                                                 int movementType,
 						boolean isTurning,
-						int overallMoveType) {
+						int overallMoveType,
+                                                boolean prevStepIsOnPavement) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
 	final boolean isInfantry = ( entity instanceof Infantry );
-        
+        final boolean isPavementStep = canMoveOnPavement( game, src, dest );
+
         // arguments valid?
         if (entity == null) {
             throw new IllegalArgumentException("Entity invalid.");
@@ -1031,25 +1112,26 @@ public class Compute
             return true;
         }
         
-        // check for water
+        // Check for water unless we're a hovercraft or using a bridge.
         if (movementType != Entity.MOVE_JUMP
             && entity.getMovementType() != Entity.MovementType.HOVER
-            && destHex.levelOf(Terrain.WATER) > 0) {
+            && destHex.levelOf(Terrain.WATER) > 0
+            && !isPavementStep) {
             return true;
         }
 
-        // Check for skids.
-	if ( movementType != Entity.MOVE_JUMP
-	     && srcHex.contains(Terrain.PAVEMENT)
-	     && overallMoveType == Entity.MOVE_RUN
+        // Check for skid.  Please note, the skid will be rolled on the
+        // current step, but starts from the previous step's location.
+        if ( prevStepIsOnPavement
+             && overallMoveType == Entity.MOVE_RUN
              && isTurning
-	     && !isInfantry ) {
-	    return true;
-	}
-        
+             && !isInfantry ) {
+            return true;
+        }
+
         return false;
     }
-    
+
     /**
      * Can the defending unit be displaced from the source to the destination?
      */
@@ -3270,7 +3352,8 @@ public class Compute
         
         if (movement == Entity.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
-        } else if (movement == Entity.MOVE_RUN) {
+        } else if (movement == Entity.MOVE_RUN ||
+                   movement == Entity.MOVE_SKID) {
             toHit.addModifier(2, "attacker ran");
         } else if (movement == Entity.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
@@ -3284,6 +3367,12 @@ public class Compute
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
+
+        // Did the target skid this turn?
+        if ( entity.moved == Entity.MOVE_SKID ) {
+            return new ToHitData( 2, "target skidding" );
+        }
+
         return getTargetMovementModifier(entity.delta_distance, 
                                          entity.moved == Entity.MOVE_JUMP);
     }
@@ -4492,6 +4581,66 @@ public class Compute
      */
     public static int getBrushOffDamageFor(Entity entity, int arm) {
         return getPunchDamageFor( entity, arm );
+    }
+
+    /**
+     * Can movement between the two coordinates be on pavement (which includes
+     * roads and bridges)?  If so it will override prohibited terrain, it may
+     * change movement costs, and it may lead to skids.
+     *
+     * @param   game - the <code>Game</code> object.
+     * @param   src - the <code>Coords</code> being left.
+     * @param   dest - the <code>Coords</code> being entered.
+     * @return  <code>true</code> if movement between <code>src</code> and
+     *          <code>dest</code> can be on pavement; <code>false</code>
+     *          otherwise.
+     */
+    public static boolean canMoveOnPavement( Game game,
+                                             Coords src, Coords dest ) {
+        final Hex srcHex = game.board.getHex(src);
+        final Hex destHex = game.board.getHex(dest);
+        final int src2destDir = src.direction1(dest);
+        final int dest2srcDir = (src2destDir + 3) % 6;
+        Terrain terr = null;
+        boolean result = false;
+
+        // We may be moving in the same hex.
+        if ( src.equals(dest) &&
+             ( srcHex.contains(Terrain.PAVEMENT) ||
+               srcHex.contains(Terrain.ROAD) ||
+               srcHex.contains(Terrain.BRIDGE) ) ) {
+            result = true;
+        }
+
+        // If the source is a pavement hex, then see if the destination
+        // hex is also a pavement hex or has a road or bridge that exits
+        // into the source hex.
+        else if ( srcHex.contains(Terrain.PAVEMENT) &&
+             ( destHex.contains(Terrain.PAVEMENT) ||
+               destHex.containsTerrainExit(Terrain.ROAD, dest2srcDir) ||
+               destHex.containsTerrainExit(Terrain.BRIDGE, dest2srcDir) ) ) {
+            result = true;
+        }
+
+        // See if the source hex has a road or bridge that exits into the
+        // destination hex.
+        else if ( srcHex.containsTerrainExit(Terrain.ROAD, src2destDir) ||
+                  srcHex.containsTerrainExit(Terrain.BRIDGE, src2destDir) ) {
+            result = true;
+        }
+
+        return result;
+    }
+
+    /**
+     * Determine if the passed numer is odd.
+     *
+     * @param   number - the <code>int</code> to be checked.
+     * @return  <code>true</code> if the number is odd, <code>false</code> if
+     *          it is even.
+     */
+    public static boolean isOdd( int number ) {
+        return ( (number & 1) == 1 );
     }
 
 } // End public class Compute

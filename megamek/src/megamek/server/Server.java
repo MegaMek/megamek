@@ -92,9 +92,13 @@ implements Runnable {
         
         // display server start text
         System.out.println("s: starting a new server...");
+
         try {
             String host = InetAddress.getLocalHost().getHostName();
-            System.out.println("s: hostname = '" + host + "', port = " + serverSocket.getLocalPort());
+            System.out.print("s: hostname = '" );
+            System.out.print( host );
+            System.out.print( "' port = " );
+            System.out.println( serverSocket.getLocalPort() );
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (int i = 0; i < addresses.length; i++) {
                 System.out.println("s: hosting on address = " + addresses[i].getHostAddress());
@@ -102,6 +106,7 @@ implements Runnable {
         } catch (UnknownHostException  e) {
             // oh well.
         }
+
         System.out.println("s: password = " + this.password);
         
         connector = new Thread(this);
@@ -1761,9 +1766,11 @@ implements Runnable {
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
+        MovementData.Step prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             wasProne = entity.isProne();
+            boolean isPavementStep = step.isOnPavement();
             
             // stop for illegal movement
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
@@ -1835,7 +1842,7 @@ implements Runnable {
             // Check for skid.
 	    if ( moveType != Entity.MOVE_JUMP
 		 && prevHex != null
-		 && prevHex.contains(Terrain.PAVEMENT)
+		 && prevStep.isOnPavement()
 		 && overallMoveType == Entity.MOVE_RUN
 		 && prevFacing != curFacing
 		 && !lastPos.equals(curPos)
@@ -1868,10 +1875,9 @@ implements Runnable {
                     // the pre-skid move distance.
 		    entity.delta_distance = distance-1;
 
-                    // BUG: all attacks against a skidding target are at +2,
-                    //          and are *NOT* based upon distance moved at all.
-                    // TODO: add Entity.MOVE_SKID constant and update the
-                    //          Compute#getTargetMovementModifier methods.
+                    // All attacks against a skidding target are at +2,
+                    // and are *NOT* based upon distance moved at all.
+                    moveType = Entity.MOVE_SKID;
 
 		    // What is the first hex in the skid?
 		    nextPos = curPos.translated( prevFacing );
@@ -1894,7 +1900,9 @@ implements Runnable {
                                                   Game.UNIT_IN_RETREAT);
 				send(createRemoveEntityPacket(entity.getId(),
                                                               Game.UNIT_IN_RETREAT));
-				phaseReport.append("*** " ).append( entity.getDisplayName() ).append( " has skidded off the field. ***\n");
+				phaseReport.append("*** " )
+                                    .append( entity.getDisplayName() )
+                                    .append( " has skidded off the field. ***\n");
 
 			    } else {
 				// Nope.  Update the report.
@@ -1904,14 +1912,19 @@ implements Runnable {
 			    break;
 			}
 
-			// Can the skiding entity enter the hex?
-			if ( entity.isHexProhibited(nextHex) ) {
+			// Can the skiding entity enter the next hex from this?
+                        // N.B. can skid along roads.
+			if ( ( entity.isHexProhibited(curHex) ||
+                               entity.isHexProhibited(nextHex) ) &&
+                             !Compute.canMoveOnPavement(game, curPos, nextPos)
+                             ) {
 			    // Update report.
-			    phaseReport.append( "   Can't skid into hex " ).append( 
-						nextPos.getBoardNum() +
-						".\n" );
+			    phaseReport.append( "   Can't skid into hex " )
+                                .append( nextPos.getBoardNum() )
+                                .append( ".\n" );
 
 			    // TODO: inflict any damage
+                            // N.B. the BMRr pg. 22 doesn't mention any.
 
 			    // Stay in the current hex and stop skidding.
 			    break;
@@ -1919,7 +1932,7 @@ implements Runnable {
 
                         // BMRr pg. 22 - Can't skid uphill,
                         //      but can skid downhill.
-			curElevation = game.board.getHex(curPos).floor();
+			curElevation = curHex.floor();
 			nextElevation = nextHex.floor();
                         // Hovercraft can "skid" over water.
                         if ( entity instanceof Tank &&
@@ -2177,9 +2190,10 @@ implements Runnable {
 
             // check if we've moved into water
             if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && curHex.levelOf(Terrain.WATER) > 0
-            && entity.getMovementType() != Entity.MovementType.HOVER) {
+                && step.getMovementType() != Entity.MOVE_JUMP
+                && curHex.levelOf(Terrain.WATER) > 0
+                && entity.getMovementType() != Entity.MovementType.HOVER
+                && !isPavementStep) {
                 if (curHex.levelOf(Terrain.WATER) == 1) {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
                 } else if (curHex.levelOf(Terrain.WATER) == 2) {
@@ -2308,8 +2322,9 @@ implements Runnable {
                 break;
             }
             
-            // update lastPos, prevFacing & prevHex
+            // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
+            prevStep = step;
             if (!curHex.equals(prevHex)) {
                 prevFacing = curFacing;
             }
@@ -5126,7 +5141,7 @@ implements Runnable {
         HitData nextHit = null;
 
         // Is the infantry in the open?
-        // TODO : do infantry take double damage in Swamp or Smoke
+        // TODO : do infantry take double damage in Swamp or Smoke?
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
             te_hex = game.board.getHex( te.getPosition() );
             if ( te_hex != null &&

@@ -229,11 +229,18 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       }
       // We need the previous step.
       MovementData.Step prevStep = null;
+      boolean lastStepOnPavement = false;
       if (this.length() > 1) {
 	  prevStep = (MovementData.Step)getStep(length() - 1);
+          lastStepOnPavement = prevStep.isOnPavement();
       }
       // check for danger
-      isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType, isTurning, overallMoveType) || step_type == MovementData.STEP_GET_UP);
+      isDanger = (Compute.isPilotingSkillNeeded(game, entityId,
+                                                lastPos, curPos,
+                                                moveType, isTurning,
+                                                overallMoveType,
+                                                lastStepOnPavement)
+                  || step_type == MovementData.STEP_GET_UP);
 
       // Record if we're turning *after* check for danger,
       // because the danger lies in moving *after* turn.

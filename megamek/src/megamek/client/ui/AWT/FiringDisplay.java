@@ -64,7 +64,7 @@ public class FiringDisplay
     private Button            butFlipArms;
     private Button            butSpot;
     
-    private Button            butReport;
+//    private Button            butReport;
     private Button            butSpace;
     private Button            butFireMode; // Fire Mode - Add a Fire Mode Button - Rasia
     
@@ -148,11 +148,6 @@ public class FiringDisplay
         butSpot.setActionCommand(FIRE_SPOT);
         butSpot.setEnabled(false);
         
-        butReport = new Button("Report..");
-        butReport.addActionListener(this);
-        butReport.setActionCommand(FIRE_REPORT);
-        butReport.setEnabled(true);
-        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
 
@@ -223,22 +218,22 @@ public class FiringDisplay
         
         switch (buttonLayout) {
         case 0 :
+            panButtons.add(butNext);
             panButtons.add(butFire);
             panButtons.add(butSkip);
             panButtons.add(butNextTarg);
-            panButtons.add(butNext);
             panButtons.add(butTwist);
-            panButtons.add(butReport);
+            panButtons.add(butFireMode);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
-            panButtons.add(butFire);
-            panButtons.add(butFindClub);
-            panButtons.add(butFlipArms);
             panButtons.add(butNext);
+            panButtons.add(butFire);
+            panButtons.add(butFlipArms);
+            panButtons.add(butFindClub);
             panButtons.add(butSpot);
-            panButtons.add(butFireMode);
+            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;

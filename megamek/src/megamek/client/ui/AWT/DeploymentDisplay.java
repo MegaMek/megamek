@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -41,8 +40,10 @@ public class DeploymentDisplay
     private Button            butNext;
     private Button            butTurn;
     private Button            butSpace;
-    private Button              butLoad;
-    private Button              butUnload;
+    private Button            butSpace2;
+    private Button            butSpace3;
+    private Button            butLoad;
+    private Button            butUnload;
     private Button            butDone;
 
     private int                cen;    // current entity number
@@ -72,6 +73,12 @@ public class DeploymentDisplay
         butSpace = new Button(".");
         butSpace.setEnabled(false);
 
+        butSpace2 = new Button(".");
+        butSpace2.setEnabled(false);
+
+        butSpace3 = new Button(".");
+        butSpace3.setEnabled(false);
+
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
         butLoad.setActionCommand(DEPLOY_LOAD);
@@ -94,11 +101,13 @@ public class DeploymentDisplay
         // layout button grid
         panButtons = new Panel();
         panButtons.setLayout(new GridLayout(1, 6));
+        panButtons.add(butNext);
         panButtons.add(butTurn);
         panButtons.add(butLoad);
-        panButtons.add(butNext);
-        panButtons.add(butSpace);
         panButtons.add(butUnload);
+        panButtons.add(butSpace);
+        panButtons.add(butSpace2);
+        panButtons.add(butSpace3);
         panButtons.add(butDone);
 
         // layout screen

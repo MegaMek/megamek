@@ -238,10 +238,17 @@ public class Client extends Panel
      * Called when the user selects the "View->Player List" menu item.
      */
     private void showPlayerList() {
-    	if (playerListDialog == null) {
-    		playerListDialog = new PlayerListDialog(frame, this);
-    	}
-    	playerListDialog.show();
+        if (playerListDialog == null) {
+            playerListDialog = new PlayerListDialog(frame, this);
+        }
+        playerListDialog.show();
+    }
+
+    /**
+     * Called when the user selects the "View->Turn Report" menu item.
+     */
+    private void showTurnReport() {
+        new MiniReportDisplay(frame, eotr).show(); ;
     }
 
     /**
@@ -262,6 +269,9 @@ public class Client extends Panel
         }
         if(event.getActionCommand().equalsIgnoreCase("viewPlayerList")) {
             showPlayerList();
+        }
+        if(event.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
+            showTurnReport();
         }
     }
     

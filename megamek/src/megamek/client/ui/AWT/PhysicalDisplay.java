@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -27,7 +26,7 @@ public class PhysicalDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener, BoardViewListener
 {
-    private static final int    NUM_BUTTON_LAYOUTS = 3;
+    private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
     private Client          client;
         
@@ -42,13 +41,13 @@ public class PhysicalDisplay
     private Button            butThrash;
     private Button            butDodge;
     
-    private Button            butReport;
-   
     private Button            butNext;
     private Button            butDone;
     private Button            butMore;
     
     private Button            butSpace;
+    private Button            butSpace2;
+    private Button            butSpace3;
 
     private int               buttonLayout;
         
@@ -73,8 +72,14 @@ public class PhysicalDisplay
 
         setupStatusBar("Waiting to begin Physical Attack phase...");
             
-        butSpace = new Button("");
+        butSpace = new Button(".");
         butSpace.setEnabled(false);
+
+        butSpace2 = new Button(".");
+        butSpace2.setEnabled(false);
+
+        butSpace3 = new Button(".");
+        butSpace3.setEnabled(false);
 
         butPunch = new Button("Punch");
         butPunch.addActionListener(this);
@@ -104,10 +109,6 @@ public class PhysicalDisplay
         butDodge.addActionListener(this);
         butDodge.setEnabled(false);
 
-        butReport = new Button("Report..");
-        butReport.addActionListener(this);
-        butReport.setEnabled(true);
-        
         butDone = new Button("Done");
         butDone.addActionListener(this);
         butDone.setEnabled(false);
@@ -161,26 +162,22 @@ public class PhysicalDisplay
         
         switch (buttonLayout) {
         case 0 :
+            panButtons.add(butNext);
             panButtons.add(butPunch);
             panButtons.add(butKick);
-            panButtons.add(butNext);
-            panButtons.add(butReport);
+            panButtons.add(butPush);
+            panButtons.add(butClub);
+            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butBrush);
             panButtons.add(butThrash);
-            panButtons.add(butPush);
-            panButtons.add(butClub);
-            panButtons.add(butMore);
-            panButtons.add(butDone);
-            break;
-        case 2 :
             panButtons.add(butDodge);
             panButtons.add(butSpace);
-            panButtons.add(butSpace);
-            panButtons.add(butSpace);
+            panButtons.add(butSpace2);
+            panButtons.add(butSpace3);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -646,11 +643,11 @@ public class PhysicalDisplay
         }
         if (client.isMyTurn()
             && (b.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
-            if (b.getType() == b.BOARD_HEX_DRAGGED) {
+            if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(client.game.board.lastCursor)) {
                     client.game.board.cursor(b.getCoords());
                 }
-            } else if (b.getType() == b.BOARD_HEX_CLICKED) {
+            } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
                 client.game.board.select(b.getCoords());
             }
         }
@@ -774,8 +771,6 @@ public class PhysicalDisplay
         }
         if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getSource() == butReport) {
-            new MiniReportDisplay(client.frame, client.eotr).show(); 
         } else if (ev.getSource() == butPunch) {
             punch();
         } else if (ev.getSource() == butKick) {
@@ -807,9 +802,9 @@ public class PhysicalDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == ev.VK_ESCAPE) {
+        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearattacks();
-        } else if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
+        } else if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 //
             }

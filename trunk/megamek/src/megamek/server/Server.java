@@ -230,6 +230,28 @@ implements Runnable {
     }
     
     /**
+     * Returns a free connection id.
+     */
+    public int getFreeConnectionId() {
+        while (getPendingConnection(connectionCounter) != null 
+        || getConnection(connectionCounter) != null 
+        || getPlayer(connectionCounter) != null) {
+            connectionCounter++;
+        }
+        return connectionCounter;
+    }
+    
+    /**
+     * Returns a free entity id.  Perhaps this should be in Game instead.
+     */
+    public int getFreeEntityId() {
+        while (game.getEntity(entityCounter) != null) {
+            entityCounter++;
+        }
+        return entityCounter;
+    }
+    
+    /**
      * Allow the player to set whatever parameters he is able to
      */
     private void receivePlayerInfo(Packet packet, int connId) {
@@ -6313,7 +6335,7 @@ implements Runnable {
 
         // Only assign an entity ID when the client hasn't.
         if ( Entity.NONE == entity.getId() ) { 
-            entity.setId(entityCounter++); 
+            entity.setId(getFreeEntityId()); 
         }
         game.addEntity(entity.getId(), entity);
         
@@ -6837,7 +6859,7 @@ implements Runnable {
             try {
                 Socket s = serverSocket.accept();
                 
-                int id = connectionCounter++;
+                int id = getFreeConnectionId();
                 System.out.println("s: accepting player connection #" + id + " ...");
                 
                 connectionsPending.addElement(new Connection(this, s, id));

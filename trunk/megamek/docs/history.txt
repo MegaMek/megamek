@@ -83,6 +83,7 @@ v (next)
 + lobby lists re-enabled (disabled lists are hard to read)
 + crash in board loading fixed
 + 649303: charging movement distance for weapon hit fixed
++ a few mech pics fixed
 
 v 0.27.10 (12-06-02, 11:25pm)
 + new naming system for mechset.txt, allowing omnimechs, etc

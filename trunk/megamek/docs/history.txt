@@ -116,6 +116,7 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 v 0.28.16 CVS
++ Bug 724556: Fixed Multiple MASC failure checks 
 + RNG type changable in game options
 + RNG type changes print message to the logs
 + "Loading mechs..." dialog added.

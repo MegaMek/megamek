@@ -125,6 +125,7 @@ public abstract class Mech
         super.newRound();
         
         setSecondaryFacing(getFacing());
+        
     }
     
     

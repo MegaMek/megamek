@@ -36,7 +36,8 @@ v0.29.58 (CVS)
   as it should always have, that reducing the roll below 2 reduces the number
   of missiles to 1.
 + RFE 1022884, Patch 1061868: MaxTech Glancing Blows rule. Hits that roll exactly the required to-hit-number
-  do less damage.  
+  do less damage.
++ Data 1083453: Pictures for Akuma and Bloodkite
   
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

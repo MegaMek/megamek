@@ -4,6 +4,8 @@ v 0.29.29 (CVS)
 + Bug 802115: Failed MASC now marks mech as "done".
 + Bug 915164: Cust. Mech button disabled for other players mechs in blind drop.
 + RFE 916248: Right-clicking no longer scrolls the board.
++ RFE 916953: Board can now be scrolled by holding down the shift key
+        while moving the mouse.
 
 v 0.29.28 (2004-03-14 3:30pm)
 + Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.
@@ -19,8 +21,6 @@ v 0.29.28 (2004-03-14 3:30pm)
 + Data 914815: updated readme.txt and readme
 + Bug 802867: Game save bug finally quashed.
 + Patch 914025: use different minimap icons for different unit types.
-+ RFE 916953: Board can now be scrolled by holding down the shift key
-        while moving the mouse.
 
 v 0.29.27 (2004-03-07 9:35pm)
 + Bug 897585: Initiative phase bug fixed.

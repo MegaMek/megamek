@@ -94,6 +94,7 @@ v 0.28.7 (CVS)
 + cache IdealHexes for Compute.intervening()
 + fixed null exception in boardview
 + replaced old bot LOS evaluation
++ unit list file save & load now includes & obeys a file path
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

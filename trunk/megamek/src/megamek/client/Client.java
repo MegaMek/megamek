@@ -1026,6 +1026,9 @@ public class Client extends Panel
                     }
                 } );
 
+            // use base directory by default
+            dlgSaveList.setDirectory(".");
+
             // Default to the player's name.
             dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
         }
@@ -1034,11 +1037,12 @@ public class Client extends Panel
         dlgLoadList.show();
 
         // Did the player select a file?
+        String unitPath = dlgLoadList.getDirectory();
         String unitFile = dlgLoadList.getFile();
         if ( null != unitFile ) {
             try {
                 // Read the units from the file.
-                Vector loadedUnits = EntityListFile.loadFrom( unitFile );
+                Vector loadedUnits = EntityListFile.loadFrom( unitPath, unitFile );
 
                 // Clear the player's current units.
                 Vector currentUnits =
@@ -1095,6 +1099,9 @@ public class Client extends Panel
                     }
                 } );
 
+            // use base directory by default
+            dlgSaveList.setDirectory(".");
+                
             // Default to the player's name.
             dlgSaveList.setFile( getLocalPlayer().getName() + ".mul" );
         }
@@ -1103,11 +1110,12 @@ public class Client extends Panel
         dlgSaveList.show();
 
         // Did the player select a file?
+        String unitPath = dlgSaveList.getDirectory();
         String unitFile = dlgSaveList.getFile();
         if ( null != unitFile ) {
             try {
                 // Save the player's entities to the file.
-                EntityListFile.saveTo( unitFile, unitList );
+                EntityListFile.saveTo( unitPath, unitFile, unitList );
             } catch ( IOException excep ) {
                 excep.printStackTrace( System.err );
                 doAlertDialog( "Error Saving File", excep.getMessage() );

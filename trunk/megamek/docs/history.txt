@@ -13,6 +13,7 @@ v0.29.48 (CVS)
     JVM was rasied from 64 to 128MB.
 + Bug 1018169: Incorrect loading of TDB mixed-tech double heat sinks fixed.
 + Vacuum hull integrity rules implemented, see page 85 BMRr
++ Bug 1018791: Hover charge against mech in depth 1 water, wrong hit table
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

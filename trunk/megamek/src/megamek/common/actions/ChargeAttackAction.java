@@ -207,11 +207,14 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // determine hit direction
         toHit.setSideTable(Compute.targetSideTable(src, te.getPosition(), te.getFacing(), te instanceof Tank));
 
-        // all charges resolved against full-body table, except vehicles.
-        if (ae.getHeight() < target.getHeight()) {
+        // all charges resolved against full-body table, except vehicles
+        // and charges against mechs in water partial cover
+        if (targHex.levelOf(Terrain.WATER) == te.height() && te.height() > 0) {
+        	toHit.setHitTable(ToHitData.HIT_PUNCH);
+        } else if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
         } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        	toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
 
         // done!

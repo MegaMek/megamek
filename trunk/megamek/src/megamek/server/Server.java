@@ -4695,7 +4695,8 @@ implements Runnable {
                         bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         bCheckedECM = true;
                     }
-                    if (!bECMAffected && !bMekStealthActive) {
+                    // also no artemis for IDF
+                    if (!bECMAffected && !bMekStealthActive && !weapon.curMode().equals("Indirect")) {
                         nSalvoBonus += 2;
                     }
                 } else if (entityTarget != null && entityTarget.isNarcedBy(ae.getOwner().getTeam())) {

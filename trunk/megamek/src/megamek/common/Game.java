@@ -268,13 +268,9 @@ public class Game implements Serializable
         return turnVector.size() > (turnIndex + 1);
     }
     
-    /** Inserts a turn in front of the current one */
-    public void insertTurn(GameTurn turn) {
-        turnVector.insertElementAt(turn, turnIndex);
-    }
-
+    /** Inserts a turn that will come directly after the current one */
     public void insertNextTurn(GameTurn turn) {
-	turnVector.insertElementAt(turn, turnIndex +1);
+	turnVector.insertElementAt(turn, turnIndex + 1);
     }
 
     /** Returns an Enumeration of the current turn list */
@@ -627,12 +623,15 @@ public class Game implements Serializable
      *		graveyard, <code>false</code> otherwise.
      */
     public boolean isOutOfGame( int id ) {
-        final Entity entity = getEntity(id);
-        if (entity == null) {
-	    // Unknown entity ID
-	    return false;
-	}
-	return isOutOfGame( entity );
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            
+            if (entity.getId() == id) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -643,10 +642,7 @@ public class Game implements Serializable
      *		graveyard, <code>false</code> otherwise.
      */
     public boolean isOutOfGame( Entity entity ) {
-        if (entity == null) {
-	    return false;
-	}
-	return vOutOfGame.contains( entity );
+        return isOutOfGame(entity.getId());
     }
     
     /**

@@ -59,6 +59,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_ENDO_STEEL        = 0x08000000;
     public static final int     F_AP_POD            = 0x10000000;
     public static final int     F_SEARCHLIGHT       = 0x20000000;
+    public static final int     F_SWORD             = 0x40000000;
 
     // Define constants for Ferro-Fibrous and Endo-Steel.
     public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
@@ -86,6 +87,8 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_SWORD)) {
+            return (float)(Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
                 return (float)Math.round(entity.getWeight() / 25.0f);
@@ -133,7 +136,7 @@ public class MiscType extends EquipmentType {
             return criticals;
         }
         // check for known formulas
-        if (hasFlag(F_HATCHET)) {
+        if (hasFlag(F_HATCHET) || hasFlag(F_SWORD)) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         } else if ( hasFlag(F_DOUBLE_HEAT_SINK) ) {
             if ( entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2 ) {
@@ -187,7 +190,9 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
-            return ((float)Math.ceil(entity.getWeight() / 5.0) * 1.5f);
+            return Math.ceil(entity.getWeight() / 5.0) * 1.5;
+        } else if (hasFlag(F_SWORD)) {
+            return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;
@@ -203,9 +208,9 @@ public class MiscType extends EquipmentType {
                 }
             }
             if (fFrontBV > fRearBV) {
-                return (float)(fFrontBV * 0.2 + fRearBV * 0.1);
+                return fFrontBV * 0.2 + fRearBV * 0.1;
             } else {
-                return (float)(fRearBV * 0.2 + fFrontBV * 0.1);
+                return fRearBV * 0.2 + fFrontBV * 0.1;
             }
         }
         // maybe it's 0
@@ -256,6 +261,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLLightTAG());
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createCLAPPod());
+        EquipmentType.addType(createSword());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -626,6 +632,22 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
+        
+        return misc;
+    }
+
+    public static MiscType createSword() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Sword";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = misc.name;
+        misc.tdbName = "Sword";
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.flags |= F_SWORD;
+        misc.bv = BV_VARIABLE;
         
         return misc;
     }

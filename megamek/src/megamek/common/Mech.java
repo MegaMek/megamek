@@ -1484,13 +1484,14 @@ public abstract class Mech
             weaponBV += (weaponsBVFront * 0.5);
         }
         
-        // add offensive misc. equipment BV (hatchets, BAP, AP pods, TAG)
+        // add offensive misc. equipment BV (hatchets, swords, BAP, AP pods, TAG)
         double oEquipmentBV = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             MiscType mtype = (MiscType)mounted.getType();
             
             if ( mtype.hasFlag(MiscType.F_HATCHET) ||
+                 mtype.hasFlag(MiscType.F_SWORD) ||
                  mtype.hasFlag(MiscType.F_BAP) ||
                  mtype.hasFlag(MiscType.F_TAG) ||
                  mtype.hasFlag(MiscType.F_AP_POD) ) {

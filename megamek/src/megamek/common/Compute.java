@@ -2984,7 +2984,11 @@ public class Compute
         }
 
         // okay, modifiers...
-        toHit = new ToHitData(4, "base");
+        if (club.getType().hasFlag(MiscType.F_SWORD)) {
+            toHit = new ToHitData(3, "base");
+        } else {
+            toHit = new ToHitData(4, "base");
+        }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -3068,6 +3072,9 @@ public class Compute
     public static int getClubDamageFor(Entity entity, Mounted club) {
         
         int nDamage = (int)Math.floor(entity.getWeight() / 5.0);
+        if (club.getType().hasFlag(MiscType.F_SWORD)) {
+            nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
+        }
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -4251,7 +4258,7 @@ public class Compute
     public static Mounted clubMechHas(Entity entity) {
         for (Enumeration i = entity.getMisc(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_CLUB) || mounted.getType().hasFlag(MiscType.F_HATCHET)) {
+            if (mounted.getType().hasFlag(MiscType.F_CLUB) || mounted.getType().hasFlag(MiscType.F_HATCHET) || mounted.getType().hasFlag(MiscType.F_SWORD)) {
                 return mounted;
             }
         }

@@ -254,11 +254,10 @@ public class ChatLounge extends AbstractPhaseDisplay
 		fldCommandDetonated = new TextField(1);
 		fldVibrabomb = new TextField(1);
 		
-		fldCommandDetonated.setEnabled(false);
-		labCommandDetonated.setEnabled(false);
-		
 		butMinefield = new Button("Update");
 		butMinefield.addActionListener(this);
+
+		enableMinefields(client.game.getOptions().booleanOption("minefields"));
 
 		// layout
 		GridBagLayout gridbag = new GridBagLayout();
@@ -315,6 +314,19 @@ public class ChatLounge extends AbstractPhaseDisplay
 		
 		refreshMinefield();
     }
+
+	public void enableMinefields(boolean enable) {
+		fldConventional.setEnabled(enable);
+		labConventional.setEnabled(enable);
+
+		fldCommandDetonated.setEnabled(false);
+		labCommandDetonated.setEnabled(false);
+		
+		fldVibrabomb.setEnabled(enable);
+		labVibrabomb.setEnabled(enable);
+		
+		butMinefield.setEnabled(enable);
+	}
 
     /**
      * Sets up the board settings panel

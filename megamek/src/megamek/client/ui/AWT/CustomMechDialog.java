@@ -252,6 +252,11 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     bTechMatch = true;
                 }
 
+                if (!client.game.getOptions().booleanOption("minefields") &&
+                	AmmoType.canDeliverMinefield(atCheck)) {
+                	continue;
+                }
+
                 // Battle Armor ammo can't be selected.
                 if ( bTechMatch &&
                      atCheck.getRackSize() == at.getRackSize() &&

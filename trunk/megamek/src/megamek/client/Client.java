@@ -256,9 +256,14 @@ public class Client extends Panel
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            // not a big deal, just never connected
         }
         
         frame.setVisible(false);
+        frame.dispose();
+        
+        System.out.println("client: died");
     }
     
     /**
@@ -268,6 +273,7 @@ public class Client extends Panel
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
         alert.show();
         
+        frame.setVisible(false);
         die();
     }
     

@@ -371,6 +371,9 @@ public class MegaMek
             public void windowClosing(WindowEvent e) {
                 unlaunch();
             }
+            public void windowClosed(WindowEvent e) {
+                unlaunch();
+            }
         });
         // hide menu frame
         frame.setVisible(false);

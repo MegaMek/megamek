@@ -180,10 +180,15 @@ public abstract class Entity
      */
     private Vector                transports = new Vector();
 
+    /** 
+     * The ids of the MechWarriors this entity has picked up
+     */
+    private Vector                pickedUpMechWarriors = new Vector();
+    
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
      */
-    private int                 conveyance = Entity.NONE;
+    int                 conveyance = Entity.NONE;
 
     /**
      * Set to <code>true</code> if this unit was unloaded this turn.
@@ -3074,6 +3079,10 @@ public abstract class Entity
                                             " can not load " +
                                             unit.getShortName() );
     }
+    
+    public void pickUp (MechWarrior mw) {
+        pickedUpMechWarriors.addElement(new Integer(mw.getId()));
+    }
 
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
@@ -3843,5 +3852,8 @@ public abstract class Entity
             setDeployed( true );
             break;
         }
+    }
+    public Vector getPickedUpMechWarriors() {
+        return pickedUpMechWarriors;
     }
 }

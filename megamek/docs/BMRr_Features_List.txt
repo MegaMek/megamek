@@ -244,7 +244,10 @@ Special Case Rules (Miscellaneous)
 - Clearing Woods		Yes		None
 - Dropping Troops		No		None
 - Dumping Ammo			Yes		None
-- Ejecting			Partial		Ejected pilots can't be picked up by other units.
+- Ejecting			Yes 	Currently, MegaMek chooses which units will pick up
+                            an ejected pilot, giving preference to the units that
+                            are controlled by the player that is controlling the 
+                            ejected MechWarrior.
 - Improved Positions		No		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None 

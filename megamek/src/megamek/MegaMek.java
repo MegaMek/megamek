@@ -185,6 +185,8 @@ public class MegaMek
         if(hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+        // kick off a RNG check
+        megamek.common.Compute.d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
         // initialize client
@@ -208,6 +210,9 @@ public class MegaMek
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+        // kick off a RNG check
+        megamek.common.Compute.d6();
+        // start server
         server = new Server(hd.serverPass, hd.port);
         if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
             new AlertDialog(frame, "Load a Game", "Error: unable to load game file.").show();
@@ -266,6 +271,8 @@ public class MegaMek
             return;
         }
 
+        // kick off a RNG check
+        megamek.common.Compute.d6();
         // start server
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
@@ -430,6 +437,9 @@ public class MegaMek
             }
             else if (args[i].equals("-dedicated")) {
                 Settings.load();
+                // kick off a RNG check
+                megamek.common.Compute.d6();
+                // start server
                 new Server(Settings.lastServerPass, Settings.lastServerPort);
                 return;
             }
@@ -470,8 +480,6 @@ public class MegaMek
             }
         } // End log-to-file
 
-        // kick off a RNG check as quick as possible, since init can take a while
-        megamek.common.Compute.d6();
         Settings.load();
         new MegaMek();
     }

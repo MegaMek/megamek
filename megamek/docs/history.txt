@@ -124,6 +124,10 @@ v 0.29.8-dev
 + RFE 675994: "I.S. Equipment Limits" option allows TL2 ammo in TL1 units
 + RFE 762234: Support "Mixed" tech base in MTF files
 + New wood images.
++ RFE 730456: "Load Unit List..." now appends.
++ RFE 730457: Added a "Delete All" to compensate.
++ Bug 735499: Delay RNG start until beginning to host.
++ Updated BMRr Feature List.
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

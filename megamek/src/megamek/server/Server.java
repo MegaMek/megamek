@@ -2856,6 +2856,13 @@ implements Runnable {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
                 Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+
+                // Only entities can have AMS.
+                if ( Targetable.TYPE_ENTITY != waa.getTargetType() ) {
+                    continue;
+                }
+
+                // Can only use AMS versus missles.
                 if (((WeaponType)weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
                     Entity target = game.getEntity(waa.getTargetId());
                     Vector v = (Vector)htAttacks.get(target);
@@ -4950,7 +4957,7 @@ implements Runnable {
                 phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) and automatically fails (" ).append( roll.getDesc() ).append( ").\n");
                 doEntityFall(entity, roll);
             } else {
-                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) (" ).append( reasons ).append( ").\n");
+                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) (" ).append( reasons.toString() ).append( ").\n");
                 phaseReport.append("The target is " ).append( roll.getValueAsString() ).append( " [" ).append( roll.getDesc() ).append( "].\n");
                 for (int j = 0; j < rolls; j++) {
                     final int diceRoll = Compute.d6(2);

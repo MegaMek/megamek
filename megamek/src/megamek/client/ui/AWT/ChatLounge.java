@@ -47,7 +47,11 @@ public class ChatLounge extends AbstractPhaseDisplay
     private List lisBoardsSelected;
     private Button butChangeBoard;
     private Panel panBoardSettings;
-      
+
+    private Button butLoadList;
+    private Label  lblPlaceholder;
+    private Button butSaveList;
+
     private Button butLoad;
     private Button butDelete;
     private Button butCustom;
@@ -320,6 +324,17 @@ public class ChatLounge extends AbstractPhaseDisplay
         lisEntities.addActionListener(this);
         lisEntities.addItemListener(this);
 
+        butLoadList = new Button("Load Unit List...");
+        butLoadList.setActionCommand("load_list");
+        butLoadList.addActionListener(this);
+
+        lblPlaceholder = new Label();
+
+        butSaveList = new Button("Save Unit List...");
+        butSaveList.setActionCommand("save_list");
+        butSaveList.addActionListener(this);
+        butSaveList.setEnabled(false);
+
         butLoad = new Button("Add A Mech...");
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
@@ -360,6 +375,19 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
+
+        c.gridwidth = 1;
+        c.gridy = GridBagConstraints.RELATIVE;
+        gridbag.setConstraints( butLoadList, c );
+        panEntities.add( butLoadList );
+
+        c.gridwidth = 1;
+        gridbag.setConstraints( lblPlaceholder, c );
+        panEntities.add( lblPlaceholder );
+
+        c.gridwidth = 1;
+        gridbag.setConstraints( butSaveList, c );
+        panEntities.add( butSaveList );
     }
     
     /**
@@ -488,6 +516,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             + " BV=" + entity.calculateBattleValue() + TreeView);
             entityCorrespondance[listIndex++] = entity.getId();
         }
+        boolean unitListEmpty = ( 0 == lisEntities.getItemCount() );
+        butSaveList.setEnabled( !unitListEmpty );
     }
     
     /**
@@ -720,6 +750,17 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             client.getStartingPositionDialog().update();
             client.getStartingPositionDialog().show();
+        }
+        else if ( ev.getSource() == butLoadList ) {
+            // Allow the player to replace their current
+            // list of entities with a list from a file.
+            client.loadListFile();
+        }
+        else if ( ev.getSource() == butSaveList ) {
+            // Allow the player to save their current
+            // list of entities to a file.
+            client.saveListFile
+                ( client.game.getPlayerEntities(client.getLocalPlayer()) );
         }
     }
 

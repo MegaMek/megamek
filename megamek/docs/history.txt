@@ -66,14 +66,12 @@ physical attacks:
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
 
-ammo explosions:
-- should only be applied to the internal structure of a mech (mean!)
-
 pilots:
 - successive consciousness checks should be made from low rolls to high
 
 falling:
 - only fall to surface of water
+- during automatic fall, the pilot rolls against mech damage, not auto-fail
 
 
 FUTURE VERSION PLANS:
@@ -100,6 +98,8 @@ v next
 + weapons on sections that are destroyed are again counted as destroyed
 + unified equiment (weapons/ammo/misc) in the code more
 + changed a few functions dealing with equipment/criticals
++ code now has more checks to prevent double weapons fire
++ ammo explosion damage applied to only the internals of a mech (lethal!)
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

@@ -2405,13 +2405,22 @@ public class Server
         }
     }
 
+    private String damageEntity(Entity te, HitData hit, int damage) {
+        return damageEntity(te, hit, damage, false);
+    }
+    
     /**
      * Deals the listed damage to a mech.  Returns a description
      * string for the log.
      *
      * Currently mech only.
+     *
+     * @param te the target entity
+     * @param hit the hit data for the location hit
+     * @param damage the damage to apply
+     * @param internalOnly whether the damage should be applied to only the internal structures
      */
-    private String damageEntity(Entity te, HitData hit, int damage) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean internalOnly) {
         String desc = new String();
 
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
@@ -2423,7 +2432,7 @@ public class Server
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
 
             // is there armor in the location hit?
-            if (te.getArmor(hit) > 0) {
+            if (!internalOnly && te.getArmor(hit) > 0) {
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
@@ -2664,7 +2673,7 @@ public class Server
             return "";
         }
         AmmoType atype = (AmmoType)mounted.getType();
-        if (mounted.isHit()) {
+        if (mounted.isHit() || mounted.isDestroyed()) {
             System.err.println("server: explodeAmmo called on already exploded ammo"
                                + " crititical slot (" + loc + " , " + slot + ")");
             return "";
@@ -2676,7 +2685,7 @@ public class Server
         // if there is damage, it's probably a lot
         desc += "\n*** AMMO EXPLOSION!  " + damage + " DAMAGE! ***";
         mounted.setHit(true);
-        desc += damageEntity(en, new HitData(loc), damage) + "\n\n";
+        desc += damageEntity(en, new HitData(loc), damage, true) + "\n\n";
         // if the mech survives, the pilot takes damage
         if (!en.isDoomed() && !en.isDestroyed()) {
             desc += damageCrew(en, 2) + "\n";

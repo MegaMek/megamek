@@ -513,18 +513,7 @@ public boolean isPassworded() {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity entity = (Entity)e.nextElement();
 
-            entity.delta_distance = 0;
-            entity.moved = Entity.MOVE_NONE;
-            
-            entity.setDisplacementAttack(null);
-            entity.setFindingClub(false);
-
-            entity.crew.setKoThisRound(false);
-
-            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-                Mounted mounted = (Mounted)i.nextElement();
-                mounted.setUsedThisRound(false);
-            }
+            entity.newRound();
         }
     }
 
@@ -1843,13 +1832,11 @@ public boolean isPassworded() {
         Mounted ammo = null;
         if (usesAmmo) {
             if (waa.getAmmoId() > -1) {
-                System.out.println(waa.getAmmoId());
                 ammo = ae.getEquipment(waa.getAmmoId());
             }
             else {
                 ammo = weapon.getLinked();
             }
-            System.out.println("Resolving with ammo: " + ammo.getDesc());
         }
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
                 
@@ -1968,8 +1955,8 @@ public boolean isPassworded() {
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
                     // I'm going to assume these are MRMs
                     hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
-		} else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
-			hits = Compute.missilesHit(2);
+                } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                    hits = Compute.missilesHit(2);
                 } else {
                     hits = Compute.missilesHit(wtype.getRackSize());
                 }
@@ -2953,6 +2940,21 @@ public boolean isPassworded() {
                     }
                 }
             }
+            
+            // resolve special results
+            if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
+                desc += "\n            Movement system damaged!";
+                te.setOriginalWalkMP(Math.min(0, te.getOriginalWalkMP() - 1));
+            }
+            else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
+                desc += "\n            Movement system destroyed!";
+                te.setOriginalWalkMP(0);
+            }
+            else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
+                desc += "\n            Turret locked!";
+                ((Tank)te).lockTurret();
+            }            
+            
             // roll all critical hits against this location
             for (int i = 0; i < crits; i++) {
                 desc += "\n" + criticalEntity(te, hit.getLocation());
@@ -2990,7 +2992,10 @@ public boolean isPassworded() {
             hits = 2;
             desc += " 2 locations.";
         } else if (roll == 12) {
-            if (en.locationIsLeg(loc)) {
+            if (en instanceof Tank) {
+                hits = 3;
+                desc += " 3 locations.";
+            } else if (en.locationIsLeg(loc)) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
                 if (en.getInternal(loc) > 0) {
                     destroyLocation(en, loc);
@@ -3012,85 +3017,124 @@ public boolean isPassworded() {
                 desc += " 3 locations.";
             }
         }
-        // transfer criticals, if needed
-        if (hits > 0 && !en.hasHitableCriticals(loc)
-                && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
-            loc = en.getTransferLocation(new HitData(loc)).getLocation();
-            desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
-
-            // may need to transfer crits twice--if you are shooting a CDA-3C Cicada and get lucky on the left arm two turns in a row
+        
+        // vehicle handle crits in their own 'special' way
+        if (en instanceof Tank) {
+            Tank tank = (Tank)en;
+            for (int x = 0; x < hits && !tank.isDoomed(); x++) {
+                switch (Compute.d6(1)) {
+                    case 1 :
+                        desc += "\n            <<<CRITICAL HIT>>> Crew stunned for 3 turns";
+                        tank.stunCrew();
+                        break;
+                    case 2 :
+                        // this one's ridiculous.  the 'main weapon' jams.
+                        Mounted mWeap = tank.getMainWeapon();
+                        if (mWeap == null) {
+                            desc += "\n            No main weapon crit, because no main weapon!";
+                        }
+                        else {
+                            desc += "\n            <<<CRITICAL HIT>>> " + mWeap.getName() +
+                                    " jams.";
+                            tank.setJammedWeapon(mWeap);
+                        }
+                        break;
+                    case 3 :
+                        desc += "\n            <<<CRITICAL HIT>>> Engine destroyed.  Immobile.";
+                        tank.setOriginalWalkMP(0);
+                        break;
+                    case 4 :
+                        desc += "\n            <<<CRITICAL HIT>>> Crew killed";
+                    case 5 :
+                        desc += "\n            <<<CRITICAL HIT>>> Fuel tank hit.  BOOM!";
+                    case 6 :
+                        desc += "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!";
+                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
+                        tank.setDoomed(true);
+                }
+            }
+        }
+        else {
+            // transfer criticals, if needed
             if (hits > 0 && !en.hasHitableCriticals(loc)
                     && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
                 loc = en.getTransferLocation(new HitData(loc)).getLocation();
                 desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
+    
+                // may need to transfer crits twice--if you are shooting a CDA-3C Cicada and get lucky on the left arm two turns in a row
+                if (hits > 0 && !en.hasHitableCriticals(loc)
+                        && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
+                    loc = en.getTransferLocation(new HitData(loc)).getLocation();
+                    desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
+                }
             }
-        }
-        // roll criticals
-        while (hits > 0) {
-            if (en.getHitableCriticals(loc) <= 0) {
-                desc += "\n            Location empty.";
-                break;
-            }
-            int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
-            CriticalSlot cs = en.getCritical(loc, slot);
-            if (cs == null || !cs.isHitable()) {
-                continue;
-            }
-            cs.setHit(true);
-            switch(cs.getType()) {
-            case CriticalSlot.TYPE_SYSTEM :
-                desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
-                switch(cs.getIndex()) {
-                case Mech.SYSTEM_COCKPIT :
-                    // boink!
-                    en.crew.setDead(true);
-                    desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
-                    break;
-                case Mech.SYSTEM_ENGINE :
-					int numEngineHits = 0;
-					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-					if (numEngineHits > 2) {
-                        // third engine hit
-                        en.setDoomed(true);
-                        desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
-                    }
-                    break;
-                case Mech.SYSTEM_GYRO :
-                    if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
-                        // gyro destroyed
-                        pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
-                    } else {
-                        // first gyro hit
-                        pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                    }
-                    break;
-                case Mech.ACTUATOR_UPPER_LEG :
-                case Mech.ACTUATOR_LOWER_LEG :
-                case Mech.ACTUATOR_FOOT :
-                    // leg/foot actuator piloting roll
-                    pilotRolls.addElement(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
-                    break;
-                case Mech.ACTUATOR_HIP :
-                    // hip piloting roll
-                    pilotRolls.addElement(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+            // roll criticals
+            while (hits > 0) {
+                if (en.getHitableCriticals(loc) <= 0) {
+                    desc += "\n            Location empty.";
                     break;
                 }
-                break;
-            case CriticalSlot.TYPE_EQUIPMENT :
-                Mounted mounted = en.getEquipment(cs.getIndex());
-                EquipmentType eqType = mounted.getType();
-                boolean hitBefore = mounted.isHit();
-                desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
-                mounted.setHit(true);
-                if (eqType.isExplosive() && !hitBefore) {
-                    desc += explodeEquipment(en, loc, slot);
+                int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
+                CriticalSlot cs = en.getCritical(loc, slot);
+                if (cs == null || !cs.isHitable()) {
+                    continue;
                 }
-                break;
+                cs.setHit(true);
+                switch(cs.getType()) {
+                case CriticalSlot.TYPE_SYSTEM :
+                    desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
+                    switch(cs.getIndex()) {
+                    case Mech.SYSTEM_COCKPIT :
+                        // boink!
+                        en.crew.setDead(true);
+                        desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
+                        break;
+                    case Mech.SYSTEM_ENGINE :
+    					int numEngineHits = 0;
+    					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+    					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+    					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+    					if (numEngineHits > 2) {
+                            // third engine hit
+                            en.setDoomed(true);
+                            desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
+                        }
+                        break;
+                    case Mech.SYSTEM_GYRO :
+                        if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
+                            // gyro destroyed
+                            pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
+                        } else {
+                            // first gyro hit
+                            pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                        }
+                        break;
+                    case Mech.ACTUATOR_UPPER_LEG :
+                    case Mech.ACTUATOR_LOWER_LEG :
+                    case Mech.ACTUATOR_FOOT :
+                        // leg/foot actuator piloting roll
+                        pilotRolls.addElement(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                        break;
+                    case Mech.ACTUATOR_HIP :
+                        // hip piloting roll
+                        pilotRolls.addElement(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+                        break;
+                    }
+                    break;
+                case CriticalSlot.TYPE_EQUIPMENT :
+                    Mounted mounted = en.getEquipment(cs.getIndex());
+                    EquipmentType eqType = mounted.getType();
+                    boolean hitBefore = mounted.isHit();
+                    desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
+                    mounted.setHit(true);
+                    if (eqType.isExplosive() && !hitBefore) {
+                        desc += explodeEquipment(en, loc, slot);
+                    }
+                    break;
+                }
+                hits--;
+    //                System.err.println("s: critical loop, " + hits + " remaining");
             }
-            hits--;
-//                System.err.println("s: critical loop, " + hits + " remaining");
         }
 
         return desc;

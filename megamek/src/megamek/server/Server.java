@@ -2967,7 +2967,7 @@ implements Runnable, ConnectionHandler {
                             // building and displace the entity inside.
                             // ASSUMPTION: you don't charge the building
                             //             if Tanks or Mechs were charged.
-                            int chargeDamage = ChargeAttackAction.getChargeDamageFor
+                            int chargeDamage = ChargeAttackAction.getDamageFor
                                 ( entity );
                             if ( !bldgSuffered ) {
                                 phaseReport.append( "      " )
@@ -2975,7 +2975,7 @@ implements Runnable, ConnectionHandler {
                                                              chargeDamage ) );
 
                                 // Apply damage to the attacker.
-                                int toAttacker = ChargeAttackAction.getChargeDamageTakenBy
+                                int toAttacker = ChargeAttackAction.getDamageTakenBy
                                     ( entity, bldg );
                                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
                                                                       Compute.targetSideTable(curPos, nextPos, entity.getFacing(), false)
@@ -5274,7 +5274,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // compute to-hit
-        wr.toHit = Compute.toHitWeapon(game, waa);
+        wr.toHit = WeaponAttackAction.toHit(game, waa);
 
         // roll dice
         wr.roll = Compute.d6(2);
@@ -7758,7 +7758,7 @@ implements Runnable, ConnectionHandler {
             this.damageInfantryIn( bldg, damage );
 
             // Apply damage to the attacker.
-            int toAttacker = ChargeAttackAction.getChargeDamageTakenBy( ae, bldg );
+            int toAttacker = ChargeAttackAction.getDamageTakenBy( ae, bldg );
             HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
                                               Compute.targetSideTable(target.getPosition(), ae.getPosition(), ae.getFacing(), false)
                                                   );
@@ -7786,8 +7786,8 @@ implements Runnable, ConnectionHandler {
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing) {
 
         // we hit...
-        int damage = ChargeAttackAction.getChargeDamageFor(ae);
-        int damageTaken = ChargeAttackAction.getChargeDamageTakenBy(ae, te, game.getOptions().booleanOption("maxtech_charge_damage"));
+        int damage = ChargeAttackAction.getDamageFor(ae);
+        int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game.getOptions().booleanOption("maxtech_charge_damage"));
         PilotingRollData chargePSR = null;
 
         // Is the target inside a building?
@@ -7947,7 +7947,7 @@ implements Runnable, ConnectionHandler {
 
         // we hit...
         // Can't DFA a target inside of a building.
-        int damageTaken = Compute.getDfaDamageTakenBy(ae);
+        int damageTaken = DfaAttackAction.getDamageTakenBy(ae);
 
         phaseReport.append("hits.");
 
@@ -12871,43 +12871,43 @@ implements Runnable, ConnectionHandler {
             BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
             int arm = baa.getArm();
             baa.setArm(BrushOffAttackAction.LEFT);
-            toHit = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.LEFT);
+            toHit = BrushOffAttackAction.toHit(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.LEFT);
             baa.setArm(BrushOffAttackAction.RIGHT);
-            pr.toHitRight = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.RIGHT);
-            damage = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.LEFT);
-            pr.damageRight = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.RIGHT);
+            pr.toHitRight = BrushOffAttackAction.toHit(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.RIGHT);
+            damage = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.LEFT);
+            pr.damageRight = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.RIGHT);
             baa.setArm(arm);
             pr.rollRight = Compute.d6(2);
         } else if (aaa instanceof ChargeAttackAction) {
             ChargeAttackAction caa = (ChargeAttackAction)aaa;
             toHit = caa.toHit(game);
-            damage = ChargeAttackAction.getChargeDamageFor(ae);
+            damage = ChargeAttackAction.getDamageFor(ae);
         } else if (aaa instanceof ClubAttackAction) {
             ClubAttackAction caa = (ClubAttackAction)aaa;
-            toHit = Compute.toHitClub(game, caa);
-            damage = Compute.getClubDamageFor(ae, caa.getClub());
+            toHit = caa.toHit(game);
+            damage = ClubAttackAction.getDamageFor(ae, caa.getClub());
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction)aaa;
-            toHit = Compute.toHitDfa(game, daa);
-            damage = Compute.getDfaDamageFor(ae);
+            toHit = daa.toHit(game);
+            damage = DfaAttackAction.getDamageFor(ae);
         } else if (aaa instanceof KickAttackAction) {
             KickAttackAction kaa = (KickAttackAction)aaa;
-            toHit = Compute.toHitKick(game, kaa);
-            damage = Compute.getKickDamageFor(ae, kaa.getLeg());
+            toHit = kaa.toHit(game);
+            damage = KickAttackAction.getDamageFor(ae, kaa.getLeg());
         } else if (aaa instanceof ProtomechPhysicalAttackAction) {
             ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction)aaa;
-            toHit = Compute.toHitProto(game, paa);
-            damage = Compute.getProtoPhysicalDamageFor(ae);
+            toHit = paa.toHit(game);
+            damage = ProtomechPhysicalAttackAction.getDamageFor(ae);
         } else if (aaa instanceof PunchAttackAction) {
             PunchAttackAction paa = (PunchAttackAction)aaa;
             int arm = paa.getArm();
             int damageRight = 0;
             paa.setArm(PunchAttackAction.LEFT);
-            toHit = Compute.toHitPunch(game, paa);
+            toHit = paa.toHit(game);
             paa.setArm(PunchAttackAction.RIGHT);
-            ToHitData toHitRight = Compute.toHitPunch(game, paa);
-            damage = Compute.getPunchDamageFor(ae, PunchAttackAction.LEFT);
-            damageRight = Compute.getPunchDamageFor(ae, PunchAttackAction.RIGHT);
+            ToHitData toHitRight = paa.toHit(game);
+            damage = PunchAttackAction.getDamageFor(ae, PunchAttackAction.LEFT);
+            damageRight = PunchAttackAction.getDamageFor(ae, PunchAttackAction.RIGHT);
             paa.setArm(arm);
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.
@@ -12924,11 +12924,11 @@ implements Runnable, ConnectionHandler {
             pr.rollRight = Compute.d6(2);
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction)aaa;
-            toHit = Compute.toHitPush(game, paa);
+            toHit = paa.toHit(game);
         } else if (aaa instanceof ThrashAttackAction) {
             ThrashAttackAction taa = (ThrashAttackAction)aaa;
             toHit = taa.toHit(game);
-            damage = ThrashAttackAction.getThrashDamageFor(ae);
+            damage = ThrashAttackAction.getDamageFor(ae);
         }
         pr.toHit = toHit;
         pr.damage = damage;

@@ -46,13 +46,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHitCharge(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved);
+        return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved);
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHitCharge(Game game, Targetable target, Coords src, int movement) {
+    public ToHitData toHit(Game game, Targetable target, Coords src, int movement) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -272,18 +272,18 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
 
-        return toHitCharge(game, target, chargeSrc, chargeStep.getMovementType());
+        return toHit(game, target, chargeSrc, chargeStep.getMovementType());
     }
 
     /**
       * Damage that a mech does with a successful charge.  Assumes that 
       * delta_distance is correct.
       */
-    public static int getChargeDamageFor(Entity entity) {
-        return getChargeDamageFor(entity, entity.delta_distance);
+    public static int getDamageFor(Entity entity) {
+        return getDamageFor(entity, entity.delta_distance);
     }
 
-    public static int getChargeDamageFor(Entity entity, int hexesMoved) {
+    public static int getDamageFor(Entity entity, int hexesMoved) {
         return (int) Math.ceil(
             (entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
     }
@@ -291,20 +291,20 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Damage that a mech suffers after a successful charge.
      */
-    public static int getChargeDamageTakenBy(Entity entity, Building bldg) {
+    public static int getDamageTakenBy(Entity entity, Building bldg) {
         // ASSUMPTION: 10% of buildings CF at start of phase, round up.
         return (int) Math.ceil(bldg.getPhaseCF() / 10.0);
     }
 
-    public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return getChargeDamageTakenBy (entity, target, false, 0);
+    public static int getDamageTakenBy(Entity entity, Entity target) {
+        return getDamageTakenBy (entity, target, false, 0);
     }
     
-    public static int getChargeDamageTakenBy(Entity entity, Entity target, boolean maxtech) {
-        return getChargeDamageTakenBy (entity, target, maxtech, entity.delta_distance);
+    public static int getDamageTakenBy(Entity entity, Entity target, boolean maxtech) {
+        return getDamageTakenBy (entity, target, maxtech, entity.delta_distance);
     }
     
-    public static int getChargeDamageTakenBy(Entity entity, Entity target, boolean maxtech, int distance) {
+    public static int getDamageTakenBy(Entity entity, Entity target, boolean maxtech, int distance) {
         if (!maxtech) {
             return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
         } else {

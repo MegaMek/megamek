@@ -29,6 +29,7 @@ import megamek.common.Terrain;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 
@@ -293,11 +294,11 @@ public class TestBot extends BotClient {
                                 if (option.isJumping()) {
                                     self.current.setState();
                                     toHit =
-                                        Compute.toHitDfa(game, option.getEntity().getId(), target.getEntity(), option);
-                                    damage = 2 * Compute.getDfaDamageFor(option.getEntity());
+                                        DfaAttackAction.toHit(game, option.getEntity().getId(), target.getEntity(), option);
+                                    damage = 2 * DfaAttackAction.getDamageFor(option.getEntity());
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
-                                            Compute.getDfaDamageTakenBy(option.getEntity()),
+                                            DfaAttackAction.getDamageTakenBy(option.getEntity()),
                                     ToHitData.SIDE_REAR)
                                             * Compute.oddsAbove(toHit.getValue())
                                             / 100;
@@ -313,12 +314,12 @@ public class TestBot extends BotClient {
                                             game,
                                             option);
                                     damage =
-                                        ChargeAttackAction.getChargeDamageFor(
+                                        ChargeAttackAction.getDamageFor(
                                             option.getEntity(),
                                             option.getHexesMoved());
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
-                                            ChargeAttackAction.getChargeDamageTakenBy(
+                                            ChargeAttackAction.getDamageTakenBy(
                                                 option.getEntity(),
                                                 target.getEntity()),
                                     ToHitData.SIDE_FRONT)
@@ -821,7 +822,7 @@ public class TestBot extends BotClient {
         while (ents.hasMoreElements()) {
             Entity e = (Entity) ents.nextElement();
             CEntity enemy = centities.get(e);
-            ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);
+            ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID);
             if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
                 double expectedDmg;
                 // Are we an Infantry platoon?

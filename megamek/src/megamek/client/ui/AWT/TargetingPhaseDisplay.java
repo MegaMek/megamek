@@ -521,7 +521,7 @@ public class TargetingPhaseDisplay
         if (target != null && weaponId != -1) {
             ToHitData toHit;
 
-              toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
+              toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));

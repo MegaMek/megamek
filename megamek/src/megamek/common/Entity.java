@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -25,7 +25,7 @@ import megamek.common.MovementData.Step;
  * terrain.
  */
 public abstract class Entity 
-    implements Serializable, Transporter, Targetable
+    implements Serializable, Transporter, Targetable, RoundUpdated
 {
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?

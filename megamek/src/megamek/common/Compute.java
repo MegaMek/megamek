@@ -4516,7 +4516,7 @@ public class Compute
     /**
      * Maintain backwards compatability.
      *
-     * @param   missles - the <code>int</code> number of missles in the pack.
+     * @param   missiles - the <code>int</code> number of missiles in the pack.
      */
     public static int missilesHit(int missiles) {
         return missilesHit(missiles, 0);
@@ -4526,9 +4526,9 @@ public class Compute
      * Roll the number of missiles (or whatever) on the missile
      * hit table, with the specified mod to the roll.
      *
-     * @param   missles - the <code>int</code> number of missles in the pack.
+     * @param   missiles - the <code>int</code> number of missiles in the pack.
      * @param   nMod - the <code>int</code> modifier to the roll for number
-     *          of missles that hit.
+     *          of missiles that hit.
      */
     public static int missilesHit(int missiles, int nMod) {
         int nRoll = d6(2) + nMod;

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -24,7 +24,7 @@ import java.io.*;
  * constants: <code>STANDARD_ROUND</code> and <code>ARROW_IV_ROUND</code>.
  */
 public class InfernoTracker
-	implements Serializable
+	implements Serializable, RoundUpdated
 {
     // Private helper classes, methods, and attributes.
 

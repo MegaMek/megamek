@@ -27,8 +27,8 @@ import megamek.common.options.GameOption;
 public class GeneralInfoMapSet implements DisplayMapSet{
     private Component comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL, weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3, curMoveR, heatR;
+    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL, weightL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL, movementTypeL;
+    private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
@@ -128,13 +128,17 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 		heatR = createLabel("***", fm, heatL.getSize().width + 10, 175);
 		content.addArea(heatR);
 
+                movementTypeL = createLabel("Type:", fm, 0, 190);
+		content.addArea(movementTypeL);
+		movementTypeR = createLabel("***", fm, movementTypeL.getSize().width + 10, 190);
+		content.addArea(movementTypeR);
 
-        pilotL = createLabel("Pilot:", fm, 0, 200);
+        pilotL = createLabel("Pilot:", fm, 0, 215);
         content.addArea(pilotL);
-        pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 200);
+        pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 215);
         content.addArea(pilotR);
 
-        int vSpace = 215;
+        int vSpace = 230;
         advantagesR = new PMSimpleLabel[6];
         for (int i=0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, vSpace);
@@ -210,8 +214,15 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         	heatL.setVisible(false);
         	heatR.setVisible(false);
         }
-    
-    
+
+        if (en instanceof Tank) {
+            movementTypeL.setVisible(true);
+            movementTypeR.setString(en.getMovementTypeAsString());
+            movementTypeR.setVisible(true);
+        } else {
+            movementTypeL.setVisible(false);
+            movementTypeR.setVisible(false);
+        }
     }
         
 	public PMAreasGroup getContentGroup(){

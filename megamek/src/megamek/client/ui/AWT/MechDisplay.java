@@ -305,7 +305,7 @@ class MovementPanel
         this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();
-        int heatCapWater = en.getHeatCapacityWithWater(game);
+        int heatCapWater = en.getHeatCapacityWithWater();
         String heatCapacityStr = Integer.toString(heatCap);
         
         if ( heatCap < heatCapWater ) {

@@ -2666,7 +2666,7 @@ public class Server
             }
         }
         // dependent locations destroyed
-        if (en.getDependentLocation(loc)) {
+        if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
     }

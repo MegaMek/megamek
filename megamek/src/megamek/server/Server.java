@@ -2674,7 +2674,7 @@ implements Runnable {
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
             toHit.append(Compute.getTargetMovementModifier(game, violation.getId()));
-            toHit.append(Compute.getTargetTerrainModifier(game, violation.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, violation));
             
             // roll dice
             final int diceRoll = Compute.d6(2);
@@ -3143,11 +3143,15 @@ implements Runnable {
      */
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
         final Entity ae = game.getEntity(wr.waa.getEntityId());
-        final Entity te = game.getEntity(wr.waa.getTargetId());
+        final Targetable target = game.getTarget(wr.waa.getTargetType(), wr.waa.getTargetId());
+        Entity entityTarget = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            entityTarget = (Entity)target;
+        }
         final Mounted weapon = ae.getEquipment(wr.waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
         final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-	// 2002-09-16 Infantry weapons have unlimited ammo.
+        // 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
@@ -3173,11 +3177,11 @@ implements Runnable {
             } else {
                 phaseReport.append( "Swarm attack ended.\n" );
                 // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-                if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
+                if ( ae.getSwarmTargetId() != target.getTargetID() ) {
                     Entity other = game.getEntity( ae.getSwarmTargetId() );
                     other.setSwarmAttackerId( Entity.NONE );
                 } else {
-                    te.setSwarmAttackerId( Entity.NONE );
+                    entityTarget.setSwarmAttackerId( Entity.NONE );
                 }
                 ae.setSwarmTargetId( Entity.NONE );
                 return;
@@ -3185,7 +3189,7 @@ implements Runnable {
         }
 
         // Report weapon attack and its to-hit value.
-        phaseReport.append("    " ).append( wtype.getName() ).append( " at " ).append( te.getDisplayName());
+        phaseReport.append("    " ).append( wtype.getName() ).append( " at " ).append( target.getDisplayName());
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the shot is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
@@ -3257,7 +3261,7 @@ implements Runnable {
             // If the target is in the woods and the weapon misses,
             // and the weapon is a large weapon, set the woods on fire,
             // unless the weapon is a Streak SRM.
-            Coords targetCoords = te.getPosition();
+            Coords targetCoords = target.getPosition();
             Hex targetHex = game.getBoard().getHex(targetCoords);
 
             // Inferno rounds always cause fires.
@@ -3288,7 +3292,7 @@ implements Runnable {
                 if ( wtype.getFireTN() != TargetRoll.IMPOSSIBLE &&
                      burn(targetHex, 11) == true )
                 {
-                    sendChangedHex(te.getPosition());
+                    sendChangedHex(targetCoords);
                     phaseReport.append
                         ("           Missed shot sets the woods on fire! \n");
                 }
@@ -3298,8 +3302,12 @@ implements Runnable {
         
         // special case NARC hits.  No damage, but a beacon is appended
         if (wtype.getAmmoType() == AmmoType.T_NARC) {
-            te.setNarcedBy(ae.getOwner().getTeam());
-            phaseReport.append("hits.  Pod attached.\n");
+            if (entityTarget == null) {
+                phaseReport.append("hits, but doesn't do anything.\n");
+            } else {
+                entityTarget.setNarcedBy(ae.getOwner().getTeam());
+                phaseReport.append("hits.  Pod attached.\n");
+            }
             return;
         }
 
@@ -3317,13 +3325,13 @@ implements Runnable {
         // Mek swarms attach the attacker to the target.
         if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             // Is the target already swarmed?
-            if ( Entity.NONE != te.getSwarmAttackerId() ) {
+            if ( Entity.NONE != entityTarget.getSwarmAttackerId() ) {
                 phaseReport.append( "succeds, but the defender is " );
                 phaseReport.append( "already swarmed by another unit.\n" );
             } else {
                 phaseReport.append( "succeeds!  Defender swarmed.\n" );
                 ae.setSwarmTargetId( wr.waa.getTargetId() );
-                te.setSwarmAttackerId( wr.waa.getEntityId() );
+                entityTarget.setSwarmAttackerId( wr.waa.getEntityId() );
             }
             return;
         }
@@ -3418,21 +3426,21 @@ implements Runnable {
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
                         } else {
-                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         }
                         bCheckedECM = true;
                     }
                     if (!bECMAffected && !bMekStealthActive) {
                         nSalvoBonus += 2;
                     }
-                } else if (te.isNarcedBy(ae.getOwner().getTeam())) {
+                } else if (entityTarget != null && entityTarget.isNarcedBy(ae.getOwner().getTeam())) {
                     // check ECM interference
                     if (!bCheckedECM) {
                         // Attacking Meks using stealth suffer ECM effects.
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
                         } else {
-                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         }
                         bCheckedECM = true;
                     }
@@ -3501,8 +3509,8 @@ implements Runnable {
             bSalvo = true;
             hits = Compute.missilesHit(nShots);
         } else if (atype != null && atype.hasFlag(AmmoType.F_MG) &&
-                   !isWeaponInfantry && (te instanceof Infantry) &&
-                   !(te instanceof BattleArmor) ) {
+                   !isWeaponInfantry && (target instanceof Infantry) &&
+                   !(target instanceof BattleArmor) ) {
             // Mech and Vehicle MGs do *DICE* of damage to PBI.
             // 2002-10-24 Suvarov454 : no need for so many lines in the report.
             nDamPerHit = Compute.d6(wtype.getDamage());
@@ -3511,7 +3519,7 @@ implements Runnable {
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
             // HGR does range-dependent damage
-            int nRange = ae.getPosition().distance(te.getPosition());
+            int nRange = ae.getPosition().distance(target.getPosition());
             if (nRange <= wtype.getShortRange()) {
                 nDamPerHit = 25;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -3535,7 +3543,7 @@ implements Runnable {
 
         // Battle Armor MGs do one die of damage per hit to PBI.
         if ( wtype.getAmmoType() == AmmoType.T_BA_MG &&
-             (te instanceof Infantry) && !(te instanceof BattleArmor) ) {
+             (target instanceof Infantry) && !(target instanceof BattleArmor) ) {
             nDamPerHit = Compute.d6(hits);
             phaseReport.append( "riddles the target with " ).append( 
                 nDamPerHit ).append( sSalvoType ).append( "and " );
@@ -3591,8 +3599,8 @@ implements Runnable {
                 //       targets for Infernos in Compute#toHitWeapon()
                 // Infernos cannot attack infantry directly so instead
                 // they attack hits the hex and sets it on fire.
-                if ( (te instanceof Infantry) ) {
-                    Coords c = te.getPosition();
+                if (target instanceof Infantry) {
+                    Coords c = target.getPosition();
                     Hex h = game.getBoard().getHex(c);
                     phaseReport.append("hits!\n");
                     phaseReport.append(" Fire started in hex!\n");
@@ -3604,8 +3612,9 @@ implements Runnable {
                 }
 
                 // targeting a hex
-                if(te instanceof HexEntity) {
-                    Coords c = te.getPosition();
+                if(target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+                    target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+                    Coords c = target.getPosition();
                     Hex h = game.getBoard().getHex(c);
 
                     phaseReport.append( "hits with " )
@@ -3619,8 +3628,8 @@ implements Runnable {
                     return;
                 }
                 // Targeting something other than infantry or a hex.
-                else {
-                    te.infernos.add( InfernoTracker.STANDARD_ROUND,
+                else if (entityTarget != null ) {
+                    entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
                                      hits );
                     if ( !bSalvo ) {
                         phaseReport.append( "hits with " )
@@ -3628,13 +3637,13 @@ implements Runnable {
                             .append( " inferno missles." );
                     }
                     phaseReport.append("\n        " )
-                        .append( te.getDisplayName() )
+                        .append( target.getDisplayName() )
                         .append( " now on fire for ")
-                        .append( te.infernos.getTurnsLeftToBurn() )
+                        .append( entityTarget.infernos.getTurnsLeftToBurn() )
                         .append(" turns.\n");
 
                     // start a fire in the targets hex
-                    Coords c = te.getPosition();
+                    Coords c = target.getPosition();
                     Hex h = game.getBoard().getHex(c);
 
                     phaseReport.append(" Fire started in hex!\n");
@@ -3648,11 +3657,13 @@ implements Runnable {
             } // End is-inferno
 
             // if we're targeting a hex, then 
-            if(te instanceof HexEntity) {
+            // should be able to split up targeting for clear and targeting for ignite now
+            if(target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+                target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
               nDamage = nDamPerHit * hits;
               phaseReport.append("hits!\n");
               phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
-              Coords c = te.getPosition();
+              Coords c = target.getPosition();
               Hex h = game.getBoard().getHex(c);
               if(!h.contains(Terrain.WOODS)) return; // only woods can be lit on fire or cleared at the moment
               int TN = 14 - nDamage;
@@ -3698,16 +3709,16 @@ implements Runnable {
 
             // Battle Armor squads equipped with fire protection
             // gear automatically avoid flaming death.
-            if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
-                 te instanceof BattleArmor ) {
-                for ( Enumeration iter = te.getMisc();
+            if ( wtype.hasFlag(WeaponType.F_FLAMER) && 
+                 target instanceof BattleArmor ) {
+                for ( Enumeration iter = entityTarget.getMisc();
                       iter.hasMoreElements(); ) {
                     Mounted mount = (Mounted) iter.nextElement();
                     EquipmentType equip = mount.getType();
                     if ( BattleArmor.ASSAULT_CLAW.equals
                          (equip.getInternalName()) ) {
                         phaseReport.append( "hits, but " )
-                            .append(te.getDisplayName() )
+                            .append(target.getDisplayName() )
                             .append( " is protected from the flamer by its gear.\n" );
                         return;
                     }
@@ -3715,19 +3726,19 @@ implements Runnable {
             } // End target-may-be-immune
 
             // Flamers do heat, not damage.
-            else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+            else if (entityTarget != null && wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
                 nDamage = nDamPerHit * hits;
                 phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
-                te.heatBuildup += nDamage;
+                entityTarget.heatBuildup += nDamage;
                 hits = 0;
             }
-            else {
-                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            else if (entityTarget != null) {
+                HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
 
                 // If a leg attacks hit a leg that isn't
                 // there, then hit the other leg.
                 if ( wtype.getInternalName().equals("LegAttack") &&
-                     te.getInternal(hit) <= 0 ) {
+                     entityTarget.getInternal(hit) <= 0 ) {
                     if ( hit.getLocation() == Mech.LOC_RLEG ) {
                         hit = new HitData( Mech.LOC_LLEG );
                     }
@@ -3739,7 +3750,7 @@ implements Runnable {
                 // Mine Launchers automatically hit the
                 // CT of a Mech or the front of a Tank.
                 if ( wtype.getInternalName().equals("BAMineLauncher") ) {
-                    if ( te instanceof Mech ) {
+                    if ( target instanceof Mech ) {
                         hit = new HitData( Mech.LOC_CT );
                     }
                     else { // te instanceof Tank
@@ -3749,17 +3760,18 @@ implements Runnable {
 
                 // Each hit in the salvo get's its own hit location.
                 if (!bSalvo) {
-                    phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
+                    phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).
+                            append( entityTarget.getLocationAbbr(hit));
                 }
 
                 // Special weapons do criticals instead of damage.
                 if ( nDamPerHit == WeaponType.DAMAGE_SPECIAL ) {
                     // Do criticals.
-                    String specialDamage = criticalEntity( te, hit.getLocation() );
+                    String specialDamage = criticalEntity( entityTarget, hit.getLocation() );
 
                     // Replace "no effect" results with 4 points of damage.
                     if ( specialDamage.endsWith(" no effect.") ) {
-                        specialDamage = damageEntity(te, hit, 4);
+                        specialDamage = damageEntity(entityTarget, hit, 4);
                     }
                     else {
                         specialDamage = "\n" + specialDamage;
@@ -3771,7 +3783,7 @@ implements Runnable {
                 else {
                     // Resolve damage normally.
                     nDamage = nDamPerHit * Math.min(nCluster, hits);
-                    phaseReport.append(damageEntity(te, hit, nDamage));
+                    phaseReport.append(damageEntity(entityTarget, hit, nDamage));
                 }
                 hits -= nCluster;
             }

@@ -425,6 +425,11 @@ public class Client extends Panel
                 final Entity entity = (Entity)i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
+            // can also target the hex
+            if (curPanel instanceof FiringDisplay) {
+                popup.add(new TargetMenuItem(new HexTarget(coords, false)));
+                popup.add(new TargetMenuItem(new HexTarget(coords, true)));
+            }
         }
     }
     
@@ -996,19 +1001,19 @@ public class Client extends Panel
      * do so
      */
     private class TargetMenuItem extends MenuItem implements ActionListener {
-        Entity entity;
+        Targetable target;
         
-        public TargetMenuItem(Entity entity) {
-            super("Target " + entity.getDisplayName());
-            this.entity = entity;
+        public TargetMenuItem(Targetable t) {
+            super("Target " + t.getDisplayName());
+            target = t;
             addActionListener(this);
         }
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay)curPanel).target(entity.getId());
+                ((FiringDisplay)curPanel).target(target);
             } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay)curPanel).target(entity.getId());
+                ((PhysicalDisplay)curPanel).target(target.getTargetID());
             }
         }        
     }

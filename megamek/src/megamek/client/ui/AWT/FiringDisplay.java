@@ -60,7 +60,7 @@ public class FiringDisplay
 
     // let's keep track of what we're shooting and at what, too
     private int                cen;        // current entity number
-    private int                ten;        // target entity number
+    private Targetable         target;        // target 
     private int       selectedWeapon;
   
     // shots we have so far.
@@ -292,7 +292,7 @@ public class FiringDisplay
 
 	    } // End check-inf_move_multi
 
-            target(Entity.NONE);
+            target(null);
             client.game.board.highlight(ce().getPosition());
             client.game.board.select(null);
             client.game.board.cursor(null);
@@ -316,7 +316,7 @@ public class FiringDisplay
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        ten = Entity.NONE;
+        target = null;
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
@@ -334,8 +334,7 @@ public class FiringDisplay
     private void endMyTurn() {
         // end my turn, then.
         cen = Entity.NONE;
-        ten = Entity.NONE;
-        target(Entity.NONE);
+        target(null);
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
@@ -459,7 +458,7 @@ public class FiringDisplay
 
         client.bv.centerOnHex(targ.getPosition());
         client.game.board.select(targ.getPosition());
-        target(targ.getId());
+        target(targ);
     }
     
     /**
@@ -486,13 +485,14 @@ public class FiringDisplay
      */
     private void fire() {
         int wn = client.mechD.wPan.getSelectedWeaponNum();
-        if (ce() == null || te() == null || ce().getEquipment(wn) == null 
+        if (ce() == null || target == null || ce().getEquipment(wn) == null 
         || !(ce().getEquipment(wn).getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
         Mounted m = ce().getEquipment(wn);
         
-        WeaponAttackAction waa = new WeaponAttackAction(cen, ten, wn);
+        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
+                target.getTargetID(), wn);
         
         if (((WeaponType)m.getType()).getAmmoType() != AmmoType.T_NA) {
             waa.setAmmoId(ce().getEquipmentNum(m.getLinked()));
@@ -572,15 +572,15 @@ public class FiringDisplay
     }
     
     /**
-     * Targets an entity
+     * Targets something
      */
-    void target(int en) {
-        this.ten = en;
+    void target(Targetable t) {
+        this.target = t;
         updateTarget();
     }
     
     /**
-     * Targets an entity
+     * Targets something
      */
     private void updateTarget() {
         butFire.setEnabled(false);
@@ -592,10 +592,10 @@ public class FiringDisplay
         
         // update target panel
         final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
-        if (ten != Entity.NONE && weaponId != -1) {
-            ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, weaponId, attacks);
-            client.mechD.wPan.wTargetR.setText(te().getDisplayName());
-            client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(te().getPosition()));
+        if (target != null && weaponId != -1) {
+            ToHitData toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, attacks);
+            client.mechD.wPan.wTargetR.setText(target.getDisplayName());
+            client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 client.mechD.wPan.wToHitR.setText("Already fired");
@@ -646,14 +646,7 @@ public class FiringDisplay
     private Entity ce() {
         return client.game.getEntity(cen);
     }
-    
-    /**
-     * Returns the target entity.
-     */
-    private Entity te() {
-        return client.game.getEntity(ten);
-    }
-    
+        
     /**
      * Moves the mech display window to the proper position.
      */
@@ -690,15 +683,14 @@ public class FiringDisplay
             client.game.board.select(b.getCoords());
         }
     }
+    
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (client.game.getFirstEntity(b.getCoords()) != null) {
-                target(client.game.getFirstEntity(b.getCoords()).getId());
-            } else {
-              target(client.game.CoordsToId(b.getCoords()));
+                target(client.game.getFirstEntity(b.getCoords()));
             }
         }
     }

@@ -1080,42 +1080,169 @@ public class Server
                            + " (" + roll.getDesc() + ")"
                            + ", rolls " + diceRoll + " : "); 
 		if (diceRoll < roll.getValue()) {
-            phaseReport.append("falls in  hex " + (fallsInPlace ? src.getBoardNum() : dest.getBoardNum()) + ".\n");
-            doEntityFall(entity, (fallsInPlace ? src : dest), fallElevation, roll.getValue());
+            phaseReport.append("falls.\n");
+            doEntityFallsInto(entity, (fallsInPlace ? src : dest), (fallsInPlace ? dest : src), roll.getValue());
+            //doEntityFall(entity, (fallsInPlace ? src : dest), fallElevation, roll.getValue());
         } else {
             phaseReport.append("succeeds.\n");
         }
     }
     
     /**
-     * Displace a unit in the direction specified.  Please check if such
-     * movement is possible first.
+     * The entity falls into the hex specified.  Check for any conflicts and 
+     * resolve them.  Deal damage to faller.
      */
-    private void doEntityDisplacement(Entity entity, int direction) {
-        final Coords src = entity.getPosition();
-        final Coords dest = src.translated(direction);
+    private void doEntityFallsInto(Entity entity, Coords src, Coords dest, int roll) {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
+        final int fallElevation = Math.abs(destHex.getElevation() - srcHex.getElevation());
+        int direction = src.direction(dest);
+        // check entity in target hex
+        Entity target = game.getEntity(dest);
+        // check if we can fall in that hex
+        if (target != null && !target.equals(entity)
+            && !Compute.isValidDisplacement(game, target.getId(), src, dest)) {
+            // if target can't be displaced, fall in source hex.
+            // NOTE: source hex should never contain a non-displacable entity
+            Coords temp = dest;
+            dest = src;
+            src = temp;
+            target = game.getEntity(dest);
+        }
         
-        if (srcHex.getElevation() - destHex.getElevation() > 1) {
-            
+        // falling mech falls
+		phaseReport.append(entity.getDisplayName() + " falls " 
+                           + fallElevation + " level(s) into hex " 
+                           + dest.getBoardNum() + ".\n");
+        
+        // if hex was empty, deal damage and we're done
+        if (target == null || target.equals(entity)) {
+            doEntityFall(entity, dest, fallElevation, roll);
+            return;
+        }
+        
+        // hmmm... somebody there... problems.
+        if (fallElevation >= 2) {
+            // accidental death from above
+        } else {
+            // damage as normal
+            doEntityFall(entity, dest, fallElevation, roll);
+            // target gets displaced
+            doEntityDisplacement(target, dest, dest.translated(direction), new PilotingRollData(target.getId(), 0, "domino effect"));
         }
     }
     
     /**
-     * Accidental fall from above
+     * Displace a unit in the direction specified.  The unit moves in that
+     * direction, and the piloting skill roll is used to determine if it 
+     * falls.  The roll may be unnecessary as certain situations indicate an
+     * automatic fall.  Rolls are added to the piloting roll list.
      */
-    private void doFallFromAbove(Entity entity, int direction) {
+    private void doEntityDisplacement(Entity entity, Coords src, Coords dest,
+                                      PilotingRollData roll) {
+        final Hex srcHex = game.board.getHex(src);
+        final Hex destHex = game.board.getHex(dest);
+        final int direction = src.direction(dest);
+        int fallElevation = srcHex.getElevation() - destHex.getElevation();
+        Entity target = game.getEntity(dest);
         
-    }
-	
-     /**
-     * Does the domino effect of doom
-     */
-    private void doDominoEffect(Entity attacker, Entity target, Coords attackSrc) {
+        // can't fall upwards
+        if (fallElevation < 0) {
+            fallElevation = 0;
+        }
         
+        // if destination is empty, this could be easy...
+        if (target == null || target.equals(entity)) {
+            if (fallElevation < 2) {
+                // no cliff: move and roll normally
+        		phaseReport.append(entity.getDisplayName() 
+                                   + " is displaced into hex " 
+                                   + dest.getBoardNum() + ".\n");
+                entity.setPosition(dest);
+		        pilotRolls.addElement(roll);
+                return;
+            } else {
+                // cliff: fall off it, deal damage, prone immediately
+        		phaseReport.append(entity.getDisplayName() + " falls " 
+                                   + fallElevation + " levels into hex " 
+                                   + dest.getBoardNum() + ".\n");
+                doEntityFall(entity, dest, fallElevation, PilotingRollData.AUTOMATIC_FALL);
+                return;
+            }
+        }
+        
+        // okay, destination occupied.  hmmm...
+        System.err.println("server.doEntityDisplacement: destination occupied");
+        if (fallElevation < 2) {
+            // domino effect: move & displace target
+        	phaseReport.append(entity.getDisplayName() 
+                               + " is displaced into hex " 
+                               + dest.getBoardNum() + ", occupied by " 
+                               + target.getDisplayName() + ".\n");
+            entity.setPosition(dest);
+		    pilotRolls.addElement(roll);
+            doEntityDisplacement(target, dest, dest.translated(direction), new PilotingRollData(target.getId(), 0, "domino effect"));
+            return;
+        } else {
+            // accidental fall from above: havoc!
+        	phaseReport.append(entity.getDisplayName() + " falls " 
+                               + fallElevation + " levels into hex " 
+                               + dest.getBoardNum() + ", occupied by " 
+                               + target.getDisplayName() + ".\n");
+            
+            // determine to-hit number
+            ToHitData toHit = new ToHitData(7, "7 (base)");
+            toHit.append(Compute.getTargetMovementModifier(game, target.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, target.getId()));
+            
+            // roll dice
+            final int diceRoll = Compute.d6(2);
+        	phaseReport.append("Collision occurs on a " + toHit.getValue() 
+                               + " or greater.  Rolls " + diceRoll);
+			if (diceRoll >= toHit.getValue()) {
+                phaseReport.append(", hits!\n");
+                // deal damage to target
+		        int damage = (int)Math.ceil(entity.getWeight() / 10);
+		        phaseReport.append(target.getDisplayName() + " takes " 
+                                   + damage + " from the collision.");
+		        while (damage > 0) {
+		        	int cluster = Math.min(5, damage);
+		        	HitData hit = entity.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+		        	phaseReport.append(damageEntity(target, hit, cluster));
+		        	damage -= cluster;
+		        }
+                phaseReport.append("\n");
+                
+                // attacker falls as normal, on his back
+                doEntityFall(entity, dest, fallElevation, 3, PilotingRollData.AUTOMATIC_FALL);
+                
+                // defender pushed away, or destroyed
+                Coords targetDest = Compute.getValidDisplacement(game, target.getId(), dest, direction);
+                if (targetDest != null) {
+                    doEntityDisplacement(target, dest, targetDest, new PilotingRollData(target.getId(), 2, "fallen on"));
+                } else {
+                    // ack!  automatic death!
+                    phaseReport.append("*** " + target.getDisplayName() 
+                                       + " DESTROYED due to impossible displacement! ***");
+                    target.setDoomed(true);
+                }
+            } else {
+                phaseReport.append(", misses.\n");
+                //TODO: this is not quite how the rules go
+                Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+                if (targetDest != null) {
+                    doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.AUTOMATIC_FALL, "pushed off a cliff"));
+                } else {
+                    // ack!  automatic death!
+                    phaseReport.append("*** " + entity.getDisplayName() 
+                                       + " DESTROYED due to impossible displacement! ***");
+                    entity.setDoomed(true);
+                }
+            }
+            return;
+        }
     }
-	
+    
     /**
      * Gets a bunch of entity actions from the packet
      */
@@ -1305,6 +1432,10 @@ public class Server
                 KickAttackAction kaa = (KickAttackAction)o;
                 resolveKickAttack(kaa, cen);
                 cen = kaa.getEntityId();
+            } else if (o instanceof PushAttackAction) {
+                PushAttackAction paa = (PushAttackAction)o;
+                resolvePushAttack(paa, cen);
+                cen = paa.getEntityId();
             } else {
                 // hmm, error.
             }
@@ -1448,6 +1579,63 @@ public class Server
 		phaseReport.append(damageEntity(te, hit, damage));
                 
 		pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
+
+        phaseReport.append("\n");
+    }
+    
+    /**
+     * Handle a push attack
+     */
+    private void resolvePushAttack(PushAttackAction paa, int lastEntityId) {
+		final Entity ae = game.getEntity(paa.getEntityId());
+		final Entity te = game.getEntity(paa.getTargetId());
+        
+		if (lastEntityId != paa.getEntityId()) {
+			phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+		}
+    
+		phaseReport.append("    Pushing " + te.getDisplayName());
+        
+		// should we even bother?
+		if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+            phaseReport.append(" but the target is already destroyed!\n");
+            return;
+        }
+        
+        // compute to-hit
+		ToHitData toHit = Compute.toHitPush(game, paa);
+		phaseReport.append("; needs " + toHit.getValue() + ", ");
+
+        // roll
+		int roll = Compute.d6(2);
+		phaseReport.append("rolls " + roll + " : ");
+      
+		// do we hit?
+		if (roll < toHit.getValue()) {
+			phaseReport.append("misses.\n");
+            return;
+        }
+        
+        // we hit...
+        int direction = ae.getFacing();
+        
+        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
+            Coords src = te.getPosition();
+            Coords dest = src.translated(direction);
+            phaseReport.append("succeeds: target is pushed into hex " 
+                               + dest.getBoardNum()
+                               + "\n");
+            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
+            
+            // if push actually moved the target, attacker follows thru
+            if (game.getEntity(src) == null) {
+                ae.setPosition(src);
+            }
+        } else {
+			phaseReport.append("succeeds, but target can't be moved.\n");
+		    pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
+        }
+        
 
         phaseReport.append("\n");
     }
@@ -2017,7 +2205,8 @@ public class Server
     /**
      * Makes a mech fall.
      */
-    private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, int roll) {
+    private void doEntityFall(Entity entity, Coords fallPos, int height, 
+                              int facing, int roll) {
         // facing after fall
 		String side;
 		int table;
@@ -2081,7 +2270,8 @@ public class Server
 	/**
 	 * The mech falls into an unoccupied hex from the given height above
 	 */
-	private void doEntityFall(Entity entity, Coords fallPos, int height, int roll) {
+	private void doEntityFall(Entity entity, Coords fallPos, int height, 
+                              int roll) {
         doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll);
 	}
 	

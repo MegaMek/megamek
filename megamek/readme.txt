@@ -1,3 +1,17 @@
+
+INTRODUCTION
+------------
+MegaMek is a version of BattleTech that you can play with your friends 
+over the internet.  It it written in Java.  All of the level 1 (3025) 
+equipment and nearly all of the level 1 rules are functioning. When these 
+are done, work will begin on the level 2 rules and equipment. 
+
+If you would like information about how to play the game, see the "PLAYING
+THE GAME" section, below.  If you're having trouble getting MegaMek started, 
+see "RUNNING MEGAMEK," further below.
+
+
+
 PLAYING THE GAME
 ----------------
 
@@ -8,6 +22,7 @@ declare starting positions, and change your player's color.  When everybody
 has at least one mech, you may all hit "ready" to start the game.  Most
 changes to the game parameters will cancel your ready status, so you should
 wait for everybody to finish choosing their mechs and positions.
+
 
 Initiative Report:
 
@@ -116,15 +131,32 @@ DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------
 Although MegaMek tries to be faithful to the original board game rules.  In
 some cases, due to technical or design limitations, this is not possible.
-These differences are not considered "bugs."
+These differences are not considered "bugs."  If you spot any more 
+discrepancies, please contact the author (see "CONTACT" below.)
 
 - You can jump in any path, not just the shortest one.
+
 - You can only get up at the beginning of your turn.  If you fall during
     movement, you're down for the round.
+    
+- If the line of fire lies along the edge of two hexes, in the board game,
+    the defender chooses which hex to use.  Currenty, MegaMek uses the
+    modifiers for both hexes.  I'd like it eventually to choose one or the
+    other, favoring the defender.
+    
 - When punching, you automatically punch with both arms, if possible.  This
     means you can not punch two different targets in the same round.
+    
 - When kicking, you automatically use the leg with the better chance to hit.
+
+- Pushing... this is a rule breaker any way you look at it.  The way it's
+    handled now is that pushing, and the accompanying unit displacement,
+    happen as it's resolved, in the same phase as other physical attacks.
+    This means pushing could interrupt an attack from a mech that "won"
+    initiative, which seems wrong.
+    
 - Some more that I've forgotten...
+
 
 
 RUNNING MEGAMEK
@@ -153,6 +185,7 @@ run:
 java -cp classes megamek/MegaMek
 
 
+
 INSTALLING OR UPDATING YOUR JAVA RUNTIME
 ----------------------------------------
 If your system did not come with a Java VM, or you need to update your Java
@@ -170,4 +203,35 @@ external way to update your Java VM.
 
 Earlier Mac OS versions:
 http://developer.apple.com/java/download.html
+
+
+
+CONTACT & FURTHER INFORMATION
+-----------------------------
+For more information, and to get the latest version of MegaMek, visit the
+website at:
+http://megamek.sourceforge.net/
+
+For more information about the BattleTech board game, visit it's website at:
+http://www.classicbattletech.com/
+
+
+To contact the author with bug reports, suggestions, or anything else, visit 
+the contact page on the MegaMek website, or send email to bmazur@sev.org
+
+
+
+COPYRIGHT & LICENSE INFORMATION
+-------------------------------
+MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+  
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the Free 
+Software Foundation; either version 2 of the License, or (at your option) 
+any later version.
+  
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+for more details.
 

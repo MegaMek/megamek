@@ -258,6 +258,14 @@ public class PhysicalDisplay
         }
         ready();
     }
+    
+    /**
+     * Push that target!
+     */
+    private void push() {
+        attacks.addElement(new PushAttackAction(cen, ten));
+        ready();
+    }
 	
 	/**
 	 * Targets an entity
@@ -286,6 +294,10 @@ public class PhysicalDisplay
             boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
             butKick.setEnabled(canKick);
+            
+            // how about push?
+            ToHitData push = Compute.toHitPush(client.game, cen, ten);
+            butPush.setEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
         } else {
             butPunch.setEnabled(false);
             butKick.setEnabled(false);
@@ -383,14 +395,13 @@ public class PhysicalDisplay
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equalsIgnoreCase("ready") && client.isMyTurn()) {
 			ready();
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("punch") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("punch") && client.isMyTurn()) {
             punch();
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("kick") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("kick") && client.isMyTurn()) {
             kick();
-		}
-		if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
+		} else if (ev.getActionCommand().equalsIgnoreCase("push") && client.isMyTurn()) {
+            push();
+		} else if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
 			selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
 		}
 	}
@@ -402,8 +413,7 @@ public class PhysicalDisplay
 	public void keyPressed(KeyEvent ev) {
 		if (ev.getKeyCode() == ev.VK_ESCAPE) {
 			clearattacks();
-		}
-		if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
+		} else if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
 			if (client.isMyTurn()) {
 				//
 			}

@@ -10187,25 +10187,45 @@ implements Runnable, ConnectionHandler {
         int waterDepth = fallHex.levelOf(Terrain.WATER);
         int damageHeight = height;
 
+        
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
         if (waterDepth > 0) {
             damageHeight = Math.max(height - waterDepth, 0);
         }
 
-        // calculate damage
+        // calculate damage for hitting the surface
         int damage = (int)Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
-
-        // half damage for water falls
+        // calculate damage for hitting the ground, but only if we actually fell
+        // into water
+        // if we fell onto the water surface, that damage is halved.
+        int waterDamage = 0;
         if (waterDepth > 0) {
-            damage = (int)Math.ceil(damage / 2.0);
+            damage /= 2;
+            waterDamage = (int)Math.round(entity.getWeight() / 10.0) * (waterDepth + 1) /2;
         }
-        
+
+        // If the waterDepth is larger than the fall height,
+        // we fell underwater
+        if (waterDepth > height) {
+            damage = 0;
+            waterDamage = (int)Math.round(entity.getWeight() / 10.0) * (height + 1) /2;
+        }
         // adjust damage for gravity
         damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
+        waterDamage = (int)Math.round(waterDamage * game.getOptions().floatOption("gravity"));
 
         // report falling
-        phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
+        if (waterDamage == 0) {
+            phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
+        } else if (damage > 0) {
+            phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage when hitting the water surface and ")
+                       .append(waterDamage).append(" when hitting the ground");
+        } else {
+            phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( waterDamage ).append( " damage.");
+        }
+        
+        damage += waterDamage;
 
         // Any swarming infantry will be dislodged, but we don't want to
         // interrupt the fall's report.  We have to get the ID now because

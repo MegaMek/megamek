@@ -123,7 +123,7 @@ public abstract class Entity
      */
     public InfernoTracker       infernos = new InfernoTracker();
 
-    protected String            C3NetIDString = null;
+    protected String            C3NetIdString = null;
     protected int               C3Master = NONE;
 
     protected Vector            equipmentList = new Vector();
@@ -184,7 +184,7 @@ public abstract class Entity
         for (int i = 0; i < locations(); i++) {
             this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
-        setC3NetID(this);
+        setC3NetId(this);
     }
     
     /**
@@ -358,7 +358,7 @@ public abstract class Entity
     
     // Targetable interface
     public int getTargetType() { return Targetable.TYPE_ENTITY; }
-    public int getTargetID() { return getId(); }
+    public int getTargetId() { return getId(); }
     public int getHeight() { return height(); }
     // End Targetable interface
     
@@ -512,7 +512,7 @@ public abstract class Entity
     /**
      * Returns the elevation of this entity.
      */
-    public int elevation() {
+    public int getElevation() {
         Coords  pos = getPosition();
 
         if ( Entity.NONE != this.getTransportId() ) {
@@ -544,7 +544,7 @@ public abstract class Entity
      * Returns the absolute height of the entity
      */
     public int absHeight() {
-        return elevation() + height();
+        return getElevation() + height();
     }
     
     /**
@@ -1712,14 +1712,14 @@ public abstract class Entity
         return false;
     }
 
-    public String getC3NetID() {
-        if(C3NetIDString == null) C3NetIDString = "C3." + getId() + "." + Compute.randomInt(1000);
-        return C3NetIDString;
+    public String getC3NetId() {
+        if(C3NetIdString == null) C3NetIdString = "C3." + getId() + "." + Compute.randomInt(1000);
+        return C3NetIdString;
     }
 
-    public void setC3NetID(Entity e) {
+    public void setC3NetId(Entity e) {
         if (isEnemyOf(e)) return;
-        C3NetIDString = e.C3NetIDString;
+        C3NetIdString = e.C3NetIdString;
     }
 
     public int calculateFreeC3Nodes() {
@@ -1815,18 +1815,18 @@ public abstract class Entity
         }
         if(hasC3()) C3Master = entityId;
         if(hasC3() && entityId == NONE) {
-            C3NetIDString = "C3." + id + "." +  Compute.randomInt(1000);
+            C3NetIdString = "C3." + id + "." +  Compute.randomInt(1000);
         }
         else if(hasC3i() && entityId == NONE) 
         {
-            C3NetIDString = "C3i." + id + "." +  Compute.randomInt(1000);
+            C3NetIdString = "C3i." + id + "." +  Compute.randomInt(1000);
         }
         else if((hasC3() || hasC3i())) 
-            C3NetIDString = game.getEntity(entityId).getC3NetID();
+            C3NetIdString = game.getEntity(entityId).getC3NetId();
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            if(e.C3MasterIs(this) && !equals(e)) e.C3NetIDString = C3NetIDString;
+            if(e.C3MasterIs(this) && !equals(e)) e.C3NetIdString = C3NetIdString;
         }
 
 
@@ -1843,7 +1843,7 @@ public abstract class Entity
 
 
       // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
-      if(hasC3i() && e.hasC3i() && getC3NetID().equals(e.getC3NetID())) {
+      if(hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
         // check for ECM interference
         return !(Compute.isAffectedByECM(e, e.getPosition(), getPosition()));
       }

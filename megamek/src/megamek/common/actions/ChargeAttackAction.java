@@ -37,4 +37,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     public ChargeAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);
     }
+
+    public ChargeAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+        super(entityId, targetType, targetId, targetPos);
+    }
+
 }

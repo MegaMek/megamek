@@ -305,7 +305,8 @@ public class Coords
      * @return  The <code>int</code> hash code for these coords.
      */
     public int hashCode() {
-        return (x * 131) ^ y;
+        // Allow at most 15 boards (255 hexes) in the 'y' direction.
+        return (x << 8) ^ y;
     }
 
     public String toString() {

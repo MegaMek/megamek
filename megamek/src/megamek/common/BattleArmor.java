@@ -318,15 +318,13 @@ public class BattleArmor
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
         // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
-        // pg. 25, Randall Wills says "previously destroyed refers to a
+        // pg. 25, Randall Bills says "previously destroyed refers to a
         // previous turn and/or phase" for rolling hits on a squad
         while ( loc >= this.locations() ||
                 Entity.ARMOR_NA == this.getInternal(loc) ||
                 Entity.ARMOR_DESTROYED == this.getInternal(loc) ) {
-            System.err.println( "Re-roll location for " + loc );//killme
             loc = Compute.d6();
         }
-        System.err.println( "The location is " + loc );//killme
 
         // Hit that trooper.
         return new HitData( loc );

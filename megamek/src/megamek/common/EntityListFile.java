@@ -282,6 +282,10 @@ public class EntityListFile {
     public static void saveTo( String filePath, String fileName, Vector list )
         throws IOException {
 
+        /*
+        ** The EXE can't seem to handle UTF-8 files.  Possible build problem.
+        ** TODO: restore UTF-8 once root cause solved.
+        **
         // Open up the file.  Produce UTF-8 output.
         Writer output = new BufferedWriter( new OutputStreamWriter
             ( new FileOutputStream(new File(filePath, fileName)), "UTF-8" )
@@ -289,6 +293,15 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
+        */
+
+        // Open up the file.
+        Writer output = new BufferedWriter( new OutputStreamWriter
+            ( new FileOutputStream(new File(filePath, fileName)) )
+            );
+
+        // Output the doctype and header stuff.
+        output.write( "<?xml version=\"1.0\"?>" );
         output.write( NL );
         output.write( NL );
         output.write( "<unit>" );

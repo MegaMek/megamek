@@ -325,7 +325,47 @@ public class Game implements Serializable
         this.entities = entities;
         reindexEntities();
     }
-    
+
+    /**
+     * Returns a <code>Hashtable</code> that maps the <code>Coords</code>
+     * of each unit in this <code>Game</code> to a <code>Vector</code>
+     * of <code>Entity</code>s at that positions.  Units that have no
+     * position (e.g. loaded units) will not be in the map.
+     *
+     * @return  a <code>Hashtable</code> that maps the <code>Coords</code>
+     *          positions or each unit in the game to a <code>Vector</code>
+     *          of <code>Entity</code>s at that position.
+     */
+    public Hashtable getPositionMap() {
+        Hashtable positionMap = new Hashtable();
+        Vector atPos = null;
+
+        // Walk through the entities in this game.
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+
+            // Get the vector for this entity's position.
+            final Coords coords = entity.getPosition();
+            if ( coords != null ) {
+                atPos = (Vector) positionMap.get( coords );
+
+                // If this is the first entity at this position,
+                // create the vector and add it to the map.
+                if ( atPos == null ) {
+                    atPos = new Vector();
+                    positionMap.put( coords, atPos );
+                }
+
+                // Add the entity to the vector for this position.
+                atPos.addElement( entity );
+
+            }
+        } // Handle the next entity.
+
+        // Return the map.
+        return positionMap;                
+    }
+
     /**
      * Returns an enumeration of entities in the graveyard
      */
@@ -363,7 +403,11 @@ public class Game implements Serializable
                 return getEntity(nID);
             case Targetable.TYPE_HEX_CLEAR :
             case Targetable.TYPE_HEX_IGNITE :
-                return new HexTarget(HexTarget.idToCoords(nID), nType);
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_BUILDING :
+            case Targetable.TYPE_BLDG_IGNITE :
+                return new BuildingTarget
+                    ( BuildingTarget.idToCoords(nID), board, nType );
             default :
                 return null;
         }

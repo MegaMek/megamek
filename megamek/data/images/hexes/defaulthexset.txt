@@ -85,6 +85,13 @@ super * "fluff:9:09" "" "fluff/maglevtrain4.gif"
 super * "fluff:9:10" "" "fluff/maglevtrain5.gif"
 super * "fluff:9:11" "" "fluff/maglevtrain6.gif"
 
+super * "building:1;bldg_elev:1" "" "boring/cropped_farm.png"
+super * "building:1;bldg_elev:2" "" "boring/cropped_church.png"
+super * "building:1;bldg_elev:3" "" "boring/light_bldg.png"
+super * "building:2;bldg_elev:3" "" "boring/cropped_cannon_tower.png"
+super * "building:3;bldg_elev:3" "" "boring/cropped_refinery.png"
+super * "building:3;bldg_elev:4" "" "boring/cropped_mage_tower.png"
+
 super * "rubble:1" "" "boring/rubble_light.gif"
 super * "rubble:2" "" "boring/rubble_medium.gif"
 super * "rubble:3" "" "boring/rubble_heavy.gif"

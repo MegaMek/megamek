@@ -311,11 +311,11 @@ extends Dialog implements ActionListener {
             }
             if(e.hasC3i()) {
                 if (entity.onSameC3NetworkAs(e)) {
-                    choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetID() + ": " + (nodes - 1)  + " free]");
+                    choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetId() + ": " + (nodes - 1)  + " free]");
                     choC3.select(listIndex);
                 }
                 else {
-                    choC3.add("Join " + e.getDisplayName() + " (netid " + e.getC3NetID() + ": " + nodes + " free)");
+                    choC3.add("Join " + e.getDisplayName() + " (netid " + e.getC3NetId() + ": " + nodes + " free)");
                 }
                 entityCorrespondance[listIndex++] = e.getId();
             }
@@ -362,7 +362,7 @@ extends Dialog implements ActionListener {
                 entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
-                entity.setC3NetID(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+                entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
             
             // update munitions selections

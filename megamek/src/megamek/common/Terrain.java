@@ -95,6 +95,11 @@ implements Serializable {
         if (firstColon == lastColon) {
             this.level = Integer.parseInt(terrain.substring(firstColon + 1));
             this.exitsSpecified = false;
+
+            // Buildings *never* use implicit exits.
+            if ( this.type == Terrain.BUILDING ) {
+                this.exitsSpecified = true;
+            }
         } else {
             this.level = Integer.parseInt(terrain.substring(firstColon + 1, lastColon));
             this.exitsSpecified = true;

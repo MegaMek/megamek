@@ -578,7 +578,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         // We can only view the LOS/Range tool setting and
         // the mini map in certain phases.
-        if ( this.phase == Game.PHASE_DEPLOY_MINEFIELDS ||
+        if ( this.phase == Game.PHASE_SET_ARTYAUTOHITHEXES ||
+             this.phase == Game.PHASE_DEPLOY_MINEFIELDS ||
              this.phase == Game.PHASE_MOVEMENT ||
              this.phase == Game.PHASE_FIRING ||
              this.phase == Game.PHASE_PHYSICAL ||

@@ -18,6 +18,7 @@ v0.29.58 (CVS)
 + Bug 1021324: Hull breached on the beach
 + Bug 1069709: Display Bug with Auto Eject and Pilot Skills
 + Possible fix for Bug 1066354: Ejected MW represented with wrong graphic & color
++ Bug 1069925: minimap not shown in artillery auto hithex selection phase
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

@@ -85,7 +85,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.10-dev
+v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar
 + attacks now clear correctly again if there is no physical attack phase
 + 668491: pop-up "view" menu item works any time

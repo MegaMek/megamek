@@ -51,6 +51,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private TextField texPass = new TextField(15);
     
     private Panel panButtons = new Panel();
+    private Button butSave = new Button("Save");
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
     
@@ -122,6 +123,23 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         }
     }
     
+    public void doSave() {
+      Vector options = new Vector();
+      
+      for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+        
+        GameOption option = comp.getOption().deepCopy();
+        option.setValue(comp.getValue());
+        
+        options.addElement(option);
+      }
+      
+      GameOptions.saveOptions(options);
+      
+      new AlertDialog(client.frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.").show();
+    }
+    
     private void refreshOptions() {
         panOptions.removeAll();
         optionComps = new Vector();
@@ -173,6 +191,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     
     
     private void setupButtons() {
+        butSave.addActionListener(this);
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         
@@ -190,8 +209,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         gridbag.setConstraints(butOkay, c);
         panButtons.add(butOkay);
             
-        c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(butSave, c);
+        panButtons.add(butSave);
+            
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
@@ -207,7 +230,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
             send();
+        } else if (e.getSource() == butSave) {
+          doSave();
+          
+          return;
         }
+        
         this.setVisible(false);
     }
 }

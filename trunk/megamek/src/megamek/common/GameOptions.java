@@ -15,9 +15,15 @@
 package megamek.common;
 
 import java.io.*;
-import java.util.*;
 
-import megamek.common.options.*;
+import gd.xml.ParseException;
+import gd.xml.tiny.ParsedXML;
+import gd.xml.tiny.TinyParser;
+import java.util.Enumeration;
+import java.util.Vector;
+import megamek.client.Client;
+import megamek.common.options.GameOption;
+import megamek.common.options.OptionGroup;
 
 /**
  * Contains the options determining play in the current game.
@@ -25,6 +31,8 @@ import megamek.common.options.*;
  * @author Ben
  */
 public class GameOptions extends Options implements Serializable {
+    private static final String NL = "\r\n";
+    private static final String GAME_OPTIONS_FILE_NAME = "gameoptions.xml";
     
     public void initialize() {
         // set up game options
@@ -52,13 +60,149 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("pilot_advantages", "MaxTech pilot advantages", "If checked, players can add additional advantages to their pilots through the 'configure mech' window.", false));
         addOption(level3, new GameOption("maxtech_physical_BTH", "MaxTech physical BTHs", "If checked, BTHs for physical attacks will use MaxTech levels. These levels take into account the piloting skill of the attacking unit.", false));
         addOption(level3, new GameOption("maxtech_round_damage", "MaxTech damage per round", "If checked, units will have +1 to their piloting skill roll for every 20 damage taken, not just the first damage. Also, BTH is altered by weight class. Lights get +1 to BTH where as assaults get -2. Mediums and heavies are in between.", false));
+//        addOption(level3, new GameOption("maxtech_prone_fire", "MaxTech firing while prone", "If checked, mechs that are prone can fire if they are missing one arm. Standard rules disallow firing when prone and missing an arm. All weapons are +1 BTH.", false));
         
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);
         addOption(ruleBreakers, new GameOption("no_tac", "No through-armor criticals", "If checked, rolls of '2' on hit location will only result in a torso hit, and no critical roll.  Only applies to mechs.  Supercedes the floating criticals option.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_immobile_vehicles", "Vehicles not immobilized by crits", "If checked, vehicles with a drive or engine hit will not be counted as 'immobile' for purposes of determining to-hit numbers.\n\nUnchecked by default.", false));
-  addOption(ruleBreakers, new GameOption("inf_move_last", "Infantry move after Meks and Vehicles", "If checked, all Meks and Vehicles will move before the first Infantry platoon.  The move order of Meks and Vehicles ignores the presence of Infantry.\n\nMutually exclusive with \"" + Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle\".\n\nUnchecked by default.", false));
-  addOption(ruleBreakers, new GameOption("inf_move_multi", Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle", "If checked, " + Game.INF_MOVE_MULTI + " platoons will have to move in place of a single Mek or Vehicle.  If there are less than " + Game.INF_MOVE_MULTI + " platoons remaining, they all must move.  The move order includes the presence of Infantry.\n\nMutually exclusive with \"Infantry move after Meks and Vehicles\".\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("inf_move_last", "Infantry move after Meks and Vehicles", "If checked, all Meks and Vehicles will move before the first Infantry platoon.  The move order of Meks and Vehicles ignores the presence of Infantry.\n\nMutually exclusive with \"" + Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle\".\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("inf_move_multi", Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle", "If checked, " + Game.INF_MOVE_MULTI + " platoons will have to move in place of a single Mek or Vehicle.  If there are less than " + Game.INF_MOVE_MULTI + " platoons remaining, they all must move.  The move order includes the presence of Infantry.\n\nMutually exclusive with \"Infantry move after Meks and Vehicles\".\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("blind_drop", "Blind Drop", "If checked, the configuration of a Mech won't be shown in the Chatroom to your opponents.", false)); 
+    }
+
+    public void loadOptions(Client client, String password) {
+      ParsedXML root = null;
+      InputStream is = null;
+      
+      try {
+        is = new FileInputStream(new File(GAME_OPTIONS_FILE_NAME));
+      } catch (FileNotFoundException e) {
+        return;
+      }
+
+      try {
+        root = TinyParser.parseXML(is);
+      } catch (ParseException e) {
+        System.out.println("Error parsing game options xml file."); 
+        e.printStackTrace(System.out);
+      }
+    
+      Enumeration rootChildren = root.elements();
+      ParsedXML optionsNode = (ParsedXML)rootChildren.nextElement();
+      
+      if ( optionsNode.getName().equals("options") ) {
+        Enumeration children = optionsNode.elements();
+        Vector changedOptions = new Vector();
+        
+        while (children.hasMoreElements()) {
+          GameOption option = parseOptionNode((ParsedXML)children.nextElement());
+          
+          if ( null != option )
+            changedOptions.addElement(option);
+        } 
+        
+        if ( changedOptions.size() > 0 ) {
+          client.sendGameOptions(password, changedOptions);
+        }
+      } else {
+        System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'");
+      }  
+    }
+    
+    private GameOption parseOptionNode(ParsedXML node) {
+      GameOption option = null;
+      
+      if ( node.getName().equals("gameoption") ) {
+        Enumeration children = node.elements();
+        String name = null;
+        Object value = null;
+        
+        while (children.hasMoreElements()) {
+          ParsedXML child = (ParsedXML)children.nextElement();
+          
+          if ( child.getName().equals("optionname") ) {
+            name = ((ParsedXML)child.elements().nextElement()).getContent();
+          } else if ( child.getName().equals("optionvalue") ) {
+            value = ((ParsedXML)child.elements().nextElement()).getContent();
+          }
+        }
+        
+        if ( (null != name) && (null != value) ) {
+          GameOption tempOption = this.getOption(name);
+          
+          if ( null != tempOption ) {
+            if ( !tempOption.getValue().toString().equals(value.toString()) ) {
+              try {
+                switch ( tempOption.getType() ) {
+                  case GameOption.STRING:
+                    tempOption.setValue((String)value);
+                    break;
+                    
+                  case GameOption.BOOLEAN:
+                    tempOption.setValue(new Boolean(value.toString()));
+                    break;
+                    
+                  case GameOption.INTEGER:
+                    tempOption.setValue(new Integer(value.toString()));
+                    break;
+                    
+                  case GameOption.FLOAT:
+                    tempOption.setValue(new Float(value.toString()));
+                    break;
+                }
+                
+                System.out.println("Set option '" + name + "' to '" + value + "'.");
+                
+                option = tempOption;
+              } catch ( IllegalArgumentException iaEx ) {
+                System.out.println("Error trying to load option '" + name + "' with a value of '" + value + "'.");
+              }
+            }
+          } else {
+            System.out.println("Invalid option '" + name + "' when trying to load options file.");
+          }
+        }
+      }
+      
+      return option;
+    }
+    
+    public static void saveOptions( Vector options ) {
+      try {
+        Writer output = new BufferedWriter( new OutputStreamWriter ( new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME)) ) );
+
+        // Output the doctype and header stuff.
+          output.write( "<?xml version=\"1.0\"?>" );
+          output.write( NL );
+          output.write( "<options>" );
+          output.write( NL );
+  
+        // Now the options themselves
+          for ( int i = 0; i < options.size(); i++ ) {
+            final GameOption option = (GameOption) options.elementAt(i);
+  
+            output.write( "   <gameoption>" );
+
+            output.write( NL );
+            output.write( "      <optionname>" );
+            output.write( option.getShortName() );
+            output.write( "</optionname>" );
+            output.write( NL );
+            output.write( "      <optionvalue>" );
+            output.write( option.getValue().toString() );
+            output.write( "</optionvalue>" );
+            output.write( NL );
+  
+            output.write( "   </gameoption>" );
+            output.write( NL );
+          }
+  
+        // Finish writing.
+          output.write( "</options>" );
+          output.write( NL );
+          output.flush();
+          output.close();
+      } catch (IOException e) {}
     }
 }

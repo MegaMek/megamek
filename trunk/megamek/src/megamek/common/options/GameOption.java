@@ -189,4 +189,9 @@ public class GameOption implements Serializable {
         }
     }
 
+    public GameOption deepCopy() {
+      GameOption newOption = new GameOption(getShortName(), getFullName(), getDesc(), getType(), getDefault());
+      
+      return newOption;
+    }
 }

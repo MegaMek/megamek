@@ -13,6 +13,7 @@ v0.29.53 (CVS)
     unit that has an artillery weapon, you can select to deploy it off-board,
     select the map-edge behind which it should be positioned, and select the
     distance from the board.
++ Bug 1047592: Configure Unit dialogue broken
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

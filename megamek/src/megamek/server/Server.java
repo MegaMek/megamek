@@ -359,19 +359,23 @@ implements Runnable {
     private void sendCurrentInfo(int connId) {
         transmitAllPlayerConnects(connId);
         send(connId, createGameSettingsPacket());
-        if (doBlind()) {
-            send(connId, createFilteredEntitiesPacket(getPlayer(connId)));
-        }
-        else {
-            send(connId, createEntitiesPacket());
-        }
 
-		Player player = game.getPlayer(connId);
-		send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS, player.getMinefields()));
+        Player player = game.getPlayer(connId);
+        send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS, player.getMinefields()));
 
         switch (game.getPhase()) {
             case Game.PHASE_LOUNGE :
                 send(connId, createMapSettingsPacket());
+                // Send Entities *after* the Lounge Phase Change
+                send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
+                                        new Integer(game.getPhase())));
+                if (doBlind()) {
+                    send(connId,
+                         createFilteredEntitiesPacket(getPlayer(connId)));
+                }
+                else {
+                    send(connId, createEntitiesPacket());
+                }
                 break;
             case Game.PHASE_INITIATIVE :
             case Game.PHASE_MOVEMENT_REPORT :
@@ -380,12 +384,24 @@ implements Runnable {
             case Game.PHASE_VICTORY :
                 send(connId, createReportPacket());
             default :
-                getPlayer(connId).setDone(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
+                // Send Entites *before* other phase changes.
+                send(connId, createGameSettingsPacket());
+                if (doBlind()) {
+                    send(connId,
+                         createFilteredEntitiesPacket(getPlayer(connId)));
+                }
+                else {
+                    send(connId, createEntitiesPacket());
+                }
+                getPlayer(connId).setDone
+                    (game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
                 send(connId, createBoardPacket());
+                send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
+                                        new Integer(game.getPhase())));
                 break;
         }
-        send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.getPhase())));
-        if (game.getPhase() == Game.PHASE_FIRING || game.getPhase() == Game.PHASE_PHYSICAL) {
+        if (game.getPhase() == Game.PHASE_FIRING ||
+            game.getPhase() == Game.PHASE_PHYSICAL) {
             // can't go above, need board to have been sent
             send(createAttackPacket(game.getActionsVector(), false));
             send(createAttackPacket(game.getChargesVector(), true));
@@ -1082,6 +1098,8 @@ implements Runnable {
                 break;
             case Game.PHASE_VICTORY :
                 prepareVictoryReport();
+                log.append( "\n" );
+                log.append( roundReport.toString() );
                 send(createFullEntitiesPacket());
                 send(createReportPacket());
                 send(createEndOfGamePacket());
@@ -4591,8 +4609,14 @@ implements Runnable {
         }
 
         if (bMissed) {
-            // miss
-            phaseReport.append("misses.\n"); 
+            // Report the miss.
+            if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+                phaseReport.append( "fails to achieve lock.\n" );
+            } else {
+                phaseReport.append("misses.\n"); 
+            }
+
+            // Report any AMS action.
             if (wr.amsShotDown > 0) {
                 phaseReport.append( "\tAMS activates, firing " )
                     .append( wr.amsShotDown )
@@ -6734,10 +6758,11 @@ implements Runnable {
                     damageCrew(entity, 1);
                 }
                 // The pilot may have just expired.
-                if ( entity.crew.isDead() ) {
+                if ( entity.crew.isDead() || entity.crew.isDoomed() ) {
                     roundReport.append( "*** " )
                         .append( entity.getDisplayName() )
-                        .append( " PILOT BAKES TO DEATH! ***" );
+                        .append( " PILOT BAKES TO DEATH! ***" )
+                        .append( destroyEntity(entity, "crew death", true) );
                 }
             }
 
@@ -6962,7 +6987,6 @@ implements Runnable {
                 en.crew.setRollsNeeded(en.crew.getRollsNeeded() + damage);
             } else {
                 en.crew.setDoomed(true);
-                en.crew.setRollsNeeded(0);
                 s += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
             }
         }

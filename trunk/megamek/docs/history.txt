@@ -43,7 +43,8 @@ initiative:
 ? might show whole initiative sequence somewhere
 
 movement:
-- pavement movement and skidding
+- remaining todos in pavement movement and skidding
+- road movement bonus for vehicles
 - go prone action
 
 weapon attacks:
@@ -69,6 +70,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ 652291: Mechs can "stomp" (kick) vehicles in their hex.
+
 v 0.27.12 (12-20-02, 4:30pm)
 + 652106: possible fix for linux flickering in lobby
 + 652105: board pop-up menu appears on linux (and mac too, maybe)

@@ -2,6 +2,8 @@ VERSION HISTORY:
 ----------------
 v 0.29.27 (CVS)
 + Bug 897585: Initiative phase bug fixed.
++ Bug 760628: Clear PSRs for any entity after it falls
+	(no PSRs from crits sustained falling down).
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

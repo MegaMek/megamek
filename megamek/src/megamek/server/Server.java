@@ -7928,6 +7928,8 @@ implements Runnable, ConnectionHandler {
             roll += critMod;
         }
         desc.append( roll ).append( ";" );
+//DEBUG: always crit
+//roll=8;
         if (roll <= 7) {
             desc.append( " no effect." );
             return desc.toString();
@@ -8051,6 +8053,8 @@ implements Runnable, ConnectionHandler {
                     break;
                 }
                 int slot = Compute.randomInt(en.getNumberOfCriticals(loc));
+//DEBUG: always hit hip, or actuators
+//slot = Compute.randomInt(4);
                 CriticalSlot cs = en.getCritical(loc, slot);
                 if (cs == null || !cs.isHittable()) {
                     continue;
@@ -8636,6 +8640,8 @@ implements Runnable, ConnectionHandler {
         // calculate damage
         int damage = (int)Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
 
+//DEBUG: never do falling damage
+// damage=1;
         // half damage for water falls
         if (waterDepth > 0) {
             damage = (int)Math.ceil(damage / 2.0);
@@ -8724,6 +8730,9 @@ implements Runnable, ConnectionHandler {
             entityUpdate( swarmerId );
         } // End dislodge-infantry
 
+        // clear all PSRs after a fall -- the 'Mech has already failed ONE and fallen, it'd be cruel to make it fail some more!
+//DEBUG        game.resetPSRs(entity,this);
+        game.resetPSRs(entity);
     }
 
     /**

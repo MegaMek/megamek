@@ -665,8 +665,10 @@ public class MovementDisplay
                 client.game.board.cursor(b.getCoords());
 
                 // either turn or move
-                cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
-                client.bv.drawMovementData(ce(), cmd);
+                if ( ce() != null && md != null ) {
+                    cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
+                    client.bv.drawMovementData(ce(), cmd);
+                }
             }
         } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
 

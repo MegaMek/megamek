@@ -28,7 +28,7 @@ import megamek.server.*;
 public class MegaMek
     implements ActionListener
 {
-    public static String    VERSION = "0.29.12";
+    public static String    VERSION = "0.29.13-dev";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;
@@ -38,6 +38,7 @@ public class MegaMek
     private CommonAboutDialog           about  = null;
     private CommonHelpDialog            help   = null;
     private GameOptionsDialog           optdlg = null;
+    private CommonSettingsDialog        setdlg = null;
 
     /**
      * Contruct a MegaMek, and display the main menu in the
@@ -422,6 +423,19 @@ public class MegaMek
     }
 
     /**
+     * Called when the user selects the "View->Client Settings" menu item.
+     */
+    private void showSettings() {
+        // Do we need to create the "settings" dialog?
+        if ( this.setdlg == null ) {
+            this.setdlg = new CommonSettingsDialog( this.frame );
+        }
+
+        // Show the settings dialog.
+        this.setdlg.show();
+    }
+
+    /**
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     private void quit() {
@@ -587,6 +601,9 @@ public class MegaMek
         }
         if(ev.getActionCommand().equalsIgnoreCase("helpContents")) {
             showHelp();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+            showSettings();
         }
         if(ev.getActionCommand().equalsIgnoreCase("quit")) {
             quit();

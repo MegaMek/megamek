@@ -1049,6 +1049,10 @@ public class ClientGUI
         String unitPath = dlgSaveList.getDirectory();
         String unitFile = dlgSaveList.getFile();
         if (null != unitFile) {
+            if (!(unitFile.toLowerCase().endsWith(".mul")
+                  || unitFile.toLowerCase().endsWith(".xml"))) {
+                unitFile += ".mul";
+            }
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitPath, unitFile, unitList);

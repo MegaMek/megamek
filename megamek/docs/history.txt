@@ -34,6 +34,7 @@ v 0.29.27 (CVS)
 + Artillery implemented.  Right now, just onboard direct fire with Arrow IVs, nothing else, no special ammo.
 + RFE 898792: MiniMap now shows declared fire
 + Fixed a typo in the apidoc target in build.xml
++ Protomechs shouldn't suffer lvl 3 engine explosions.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

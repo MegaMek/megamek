@@ -158,10 +158,10 @@ public class DeploymentDisplay
         this.cen = en;
         ce().setSelected(true);
 
-        butTurn.setEnabled(true);
+        setTurnEnabled(true);
         butDone.setEnabled(false);
-        butLoad.setEnabled(true);
-        butUnload.setEnabled(true);
+        setLoadEnabled(true);
+        setUnloadEnabled(true);
         
         client.game.board.select(null);
         client.game.board.cursor(null);
@@ -178,7 +178,7 @@ public class DeploymentDisplay
     private void beginMyTurn() {
         client.setDisplayVisible(true);
         selectEntity(client.getFirstDeployableEntityNum());
-        butNext.setEnabled(true);
+        setNextEnabled(true);
         Player p = client.getLocalPlayer();
         // mark deployment hexes if not 'All'
         if (p.getStartingPos() != 0) {
@@ -206,11 +206,11 @@ public class DeploymentDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        butTurn.setEnabled(false);
-        butNext.setEnabled(false);
+        setTurnEnabled(false);
+        setNextEnabled(false);
         butDone.setEnabled(false);
-        butLoad.setEnabled(false);
-        butUnload.setEnabled(false);
+        setLoadEnabled(false);
+        setUnloadEnabled(false);
     }
 
     /**
@@ -511,4 +511,21 @@ public class DeploymentDisplay
     		}
     	}
     }
+
+	private void setNextEnabled(boolean enabled) {
+		butNext.setEnabled(enabled);
+        client.getMenuBar().setDeployNextEnabled(enabled);
+	}
+	private void setTurnEnabled(boolean enabled) {
+		butTurn.setEnabled(enabled);
+        client.getMenuBar().setDeployTurnEnabled(enabled);
+	}
+	private void setLoadEnabled(boolean enabled) {
+		butLoad.setEnabled(enabled);
+        client.getMenuBar().setDeployLoadEnabled(enabled);
+	}
+	private void setUnloadEnabled(boolean enabled) {
+		butUnload.setEnabled(enabled);
+        client.getMenuBar().setDeployUnloadEnabled(enabled);
+	}
 }

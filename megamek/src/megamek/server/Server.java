@@ -977,7 +977,7 @@ implements Runnable, ConnectionHandler {
         if (game.getInitiativeRerollRequests().size() > 0) {
             resetActivePlayersDone();
             TurnOrdered.rollInitAndResolveTies(game.getTeamsVector(), game.getInitiativeRerollRequests());
-            
+
             determineTurnOrder(Game.PHASE_INITIATIVE);
             writeInitiativeReport(true);
             send(createReportPacket());
@@ -4163,7 +4163,7 @@ implements Runnable, ConnectionHandler {
     private void processAttack(Entity entity, Vector vector) {
 
         // Not **all** actions take up the entity's turn.
-        boolean setDone = 
+        boolean setDone =
             !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn);
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
@@ -4899,169 +4899,271 @@ implements Runnable, ConnectionHandler {
      * Resolve a single Weapon Attack object
      */
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
-        final Entity ae = game.getEntity(wr.waa.getEntityId());
-        final Targetable target = game.getTarget(wr.waa.getTargetType(), wr.waa.getTargetId());
-        Entity entityTarget = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            entityTarget = (Entity)target;
-        }
-        final Mounted weapon = ae.getEquipment(wr.waa.getWeaponId());
-        final WeaponType wtype = (WeaponType)weapon.getType();
-        final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-        // 2002-09-16 Infantry weapons have unlimited ammo.
-        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-            wtype.getAmmoType() != AmmoType.T_BA_MG &&
-            wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
-        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-        final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
-        Infantry platoon = null;
-        final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
-        ToHitData toHit = wr.toHit;
-        boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
-        boolean bFragmentation = (usesAmmo && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
-        boolean bFlechette = (usesAmmo && atype.getMunitionType() == AmmoType.M_FLECHETTE);
-        if (!bInferno) {
-            // also check for inferno infantry
-            bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
-        }
-        final boolean targetInBuilding =
-            Compute.isInBuilding( game, entityTarget );
+      System.out.println("rwa");
+      final Entity ae = game.getEntity(wr.waa.getEntityId());
+      final Targetable target = game.getTarget(wr.waa.getTargetType(),
+                                               wr.waa.getTargetId());
+      Entity entityTarget = null;
+      if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        entityTarget = (Entity) target;
+      }
+      final Mounted weapon = ae.getEquipment(wr.waa.getWeaponId());
+      final WeaponType wtype = (WeaponType) weapon.getType();
+      final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+      // 2002-09-16 Infantry weapons have unlimited ammo.
+      final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+          wtype.getAmmoType() != AmmoType.T_BA_MG &&
+          wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
+          !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
+      final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+      final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+      Infantry platoon = null;
+      final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
+      ToHitData toHit = wr.toHit;
+      boolean bInferno = (usesAmmo &&
+                          atype.getMunitionType() == AmmoType.M_INFERNO);
+      boolean bFragmentation = (usesAmmo &&
+                                atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
+      boolean bFlechette = (usesAmmo &&
+                            atype.getMunitionType() == AmmoType.M_FLECHETTE);
+      boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+      if (!bInferno) {
+        // also check for inferno infantry
+        bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
+      }
+      final boolean targetInBuilding =
+          Compute.isInBuilding(game, entityTarget);
 
-        // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+      // Which building takes the damage?
+      Building bldg = game.board.getBuildingAt(target.getPosition());
 
-        if (lastEntityId != ae.getId()) {
-            phaseReport.append("\nWeapons fire for " ).append( ae.getDisplayName() ).append( "\n");
-        }
+      if (lastEntityId != ae.getId()) {
+        phaseReport.append("\nWeapons fire for ").append(ae.getDisplayName()).
+            append("\n");
+      }
 
-        // Swarming infantry can stop during any weapons phase after start.
-        if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
-            // ... but only as their *only* attack action.
-            if ( toHit.getValue() == ToHitData.IMPOSSIBLE ) {
-                phaseReport.append( "Swarm attack can not be ended (" +
-                                    toHit.getDesc() ).append( ")\n" );
-                return;
-            } else {
-                phaseReport.append( "Swarm attack ended.\n" );
-                // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-                if ( ae.getSwarmTargetId() != target.getTargetId() ) {
-                    Entity other = game.getEntity( ae.getSwarmTargetId() );
-                    other.setSwarmAttackerId( Entity.NONE );
-                } else {
-                    entityTarget.setSwarmAttackerId( Entity.NONE );
-                }
-                ae.setSwarmTargetId( Entity.NONE );
-                return;
-            }
-        }
-
-        // Report weapon attack and its to-hit value.
-        phaseReport.append("    " ).append( wtype.getName() ).append( " at " ).append( target.getDisplayName());
+      // Swarming infantry can stop during any weapons phase after start.
+      if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
+        // ... but only as their *only* attack action.
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the shot is impossible (" ).append( toHit.getDesc() ).append( ")\n");
+          phaseReport.append("Swarm attack can not be ended (" +
+                             toHit.getDesc()).append(")\n");
+          return;
+        }
+        else {
+          phaseReport.append("Swarm attack ended.\n");
+          // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+          if (ae.getSwarmTargetId() != target.getTargetId()) {
+            Entity other = game.getEntity(ae.getSwarmTargetId());
+            other.setSwarmAttackerId(Entity.NONE);
+          }
+          else {
+            entityTarget.setSwarmAttackerId(Entity.NONE);
+          }
+          ae.setSwarmTargetId(Entity.NONE);
+          return;
+        }
+      }
+
+      // Report weapon attack and its to-hit value.
+      phaseReport.append("    ").append(wtype.getName()).append(" at ").append(
+          target.getDisplayName());
+      if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        phaseReport.append(", but the shot is impossible (").append(toHit.getDesc()).
+            append(")\n");
+        return;
+      }
+      else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        phaseReport.append(", the shot is an automatic miss (").append(toHit.
+            getDesc()).append("), ");
+      }
+      else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        phaseReport.append(", the shot is an automatic hit (").append(toHit.
+            getDesc()).append("), ");
+      }
+      else {
+        phaseReport.append("; needs ").append(toHit.getValue()).append(", ");
+      }
+
+      // if firing an HGR unbraced, schedule a PSR
+      if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
+        // the mod is weight-based
+        int nMod;
+        if (ae.getWeight() <= Mech.WEIGHT_LIGHT) {
+          nMod = 2;
+        }
+        else if (ae.getWeight() <= Mech.WEIGHT_MEDIUM) {
+          nMod = 1;
+        }
+        else if (ae.getWeight() <= Mech.WEIGHT_HEAVY) {
+          nMod = 0;
+        }
+        else {
+          nMod = -1;
+        }
+        PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
+                                                    "fired HeavyGauss unbraced");
+        psr.setCumulative(false); // about the only time we set this flag
+        game.addPSR(psr);
+      }
+
+      // dice have been rolled, thanks
+      phaseReport.append("rolls ").append(wr.roll).append(" : ");
+
+      // check for AC jams
+      int nShots = weapon.howManyShots();
+      if (nShots > 1) {
+        int jamCheck = 0;
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA &&
+            weapon.curMode().equals("Ultra")) {
+          jamCheck = 2;
+        }
+        else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+          if (nShots == 2) {
+            jamCheck = 2;
+          }
+          else if (nShots == 4) {
+            jamCheck = 3;
+          }
+          else if (nShots == 6) {
+            jamCheck = 4;
+          }
+        }
+
+        if (jamCheck > 0 && wr.roll <= jamCheck) {
+          phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+          weapon.setJammed(true);
+          // ultras are destroyed by jamming
+          if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            weapon.setHit(true);
+          }
+          return;
+        }
+      }
+
+      // do we hit?
+      boolean bMissed = wr.roll < toHit.getValue();
+
+      // special case minefield delivery, no damage and scatters if misses.
+      if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
+        Coords coords = target.getPosition();
+        if (!bMissed) {
+          phaseReport.append("hits the intended hex ")
+              .append(coords.getBoardNum())
+              .append("\n");
+        }
+        else {
+          coords = Compute.scatter(coords);
+          if (game.board.contains(coords)) {
+            phaseReport.append("misses and scatters to hex ")
+                .append(coords.getBoardNum())
+                .append("\n");
+          }
+          else {
+            phaseReport.append("misses and scatters off the board\n");
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-            phaseReport.append(", the shot is an automatic miss (" ).append( toHit.getDesc() ).append( "), ");
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-            phaseReport.append(", the shot is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
-        } else {
-            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+          }
         }
 
-        // if firing an HGR unbraced, schedule a PSR
-        if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
-            // the mod is weight-based
-            int nMod;
-            if (ae.getWeight() <= Mech.WEIGHT_LIGHT) {
-                nMod = 2;
-            } else if (ae.getWeight() <= Mech.WEIGHT_MEDIUM) {
-                nMod = 1;
-            } else if (ae.getWeight() <= Mech.WEIGHT_HEAVY) {
-                nMod = 0;
-            } else {
-                nMod = -1;
-            }
-            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced");
-            psr.setCumulative(false); // about the only time we set this flag
-            game.addPSR(psr);
+        // Handle the thunder munitions.
+        if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
+          deliverThunderAugMinefield(coords, ae.getOwner().getId(),
+                                     atype.getRackSize());
         }
-
-        // dice have been rolled, thanks
-        phaseReport.append("rolls " ).append( wr.roll ).append( " : ");
-
-        // check for AC jams
-        int nShots = weapon.howManyShots();
-        if (nShots > 1) {
-            int jamCheck = 0;
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
-                jamCheck = 2;
-            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                if (nShots == 2) {
-                    jamCheck = 2;
-                }
-                else if (nShots == 4) {
-                    jamCheck = 3;
-                }
-                else if (nShots == 6) {
-                    jamCheck = 4;
-                }
-            }
-
-            if (jamCheck > 0 && wr.roll <= jamCheck) {
-                phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
-                weapon.setJammed(true);
-                // ultras are destroyed by jamming
-                if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
-                    weapon.setHit(true);
-                }
-                return;
-            }
+        else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
+          deliverThunderMinefield(coords, ae.getOwner().getId(),
+                                  atype.getRackSize());
         }
-
-        // do we hit?
-        boolean bMissed = wr.roll < toHit.getValue();
-
-        // special case minefield delivery, no damage and scatters if misses.
-        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
-            Coords coords = target.getPosition();
-            if (!bMissed) {
-                phaseReport.append( "hits the intended hex " )
-                    .append( coords.getBoardNum() )
-                    .append( "\n" );
-            } else {
-                coords = Compute.scatter(coords);
-                if ( game.board.contains(coords) ) {
-                    phaseReport.append("misses and scatters to hex " )
-                        .append( coords.getBoardNum() )
-                        .append( "\n" );
-                } else {
-                    phaseReport.append("misses and scatters off the board\n");
-                    return;
-                }
-            }
-
-            // Handle the thunder munitions.
-            if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
-                deliverThunderAugMinefield( coords, ae.getOwner().getId(),
-                                            atype.getRackSize() );
-            }
-            else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
-                deliverThunderMinefield( coords, ae.getOwner().getId(),
-                                         atype.getRackSize() );
-            }
-            else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-                deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
-            else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize(), wr.waa.getOtherAttackInfo());
-            else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-                deliverThunderActiveMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
-            //else
-            //{
-            //...This is an error, but I'll just ignore it for now.
-            //}
+        else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+          deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+                                         atype.getRackSize());
+        else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+          deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+                                       atype.getRackSize(),
+                                       wr.waa.getOtherAttackInfo());
+        else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+          deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
+                                        atype.getRackSize());
+          //else
+          //{
+          //...This is an error, but I'll just ignore it for now.
+          //}
+        return;
+      }
+      //special case artillery
+      if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+        Coords coords = target.getPosition();
+        if (!bMissed) {
+          phaseReport.append("hits the intended hex ")
+              .append(coords.getBoardNum())
+              .append("\n");
+        }
+        else {
+          coords = Compute.scatter(coords);
+          if (game.board.contains(coords)) {
+            phaseReport.append("misses and scatters to hex ")
+                .append(coords.getBoardNum())
+                .append("\n");
+          }
+          else {
+            phaseReport.append("misses and scatters off the board\n");
             return;
+          }
         }
+
+        int nCluster = 5;
+
+        for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+           Entity entity = (Entity)impactHexHits.nextElement();
+           int hits = wtype.getRackSize();
+           while(hits>0) {
+             HitData hit = entity.rollHitLocation
+                     ( toHit.getHitTable(),
+                       toHit.getSideTable(),
+                       wr.waa.getAimedLocation(),
+                       wr.waa.getAimingMode() );
+
+             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+             hits -= Math.min(nCluster,hits);
+           }
+
+        }
+        for(int dir=0;dir<=5;dir++) {
+          Coords tempcoords=coords.translated(dir);
+          if(!game.board.contains(tempcoords)) {
+            continue;
+          }
+          if(coords.equals(tempcoords)) {
+            continue;
+
+          }
+        Enumeration splashHexHits = game.getEntities(tempcoords);
+        if(splashHexHits.hasMoreElements()) {
+          phaseReport.append("in hex " + tempcoords.getBoardNum());
+        }
+        for(;splashHexHits.hasMoreElements();) {;
+           Entity entity = (Entity)splashHexHits.nextElement();
+           int hits = wtype.getRackSize()/2;
+           while(hits>0) {
+             HitData hit = entity.rollHitLocation
+                     ( toHit.getHitTable(),
+                       toHit.getSideTable(),
+                       wr.waa.getAimedLocation(),
+                       wr.waa.getAimingMode() );
+
+             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+             hits -= Math.min(nCluster,hits);
+           }
+
+        }
+
+
+        }
+
+        return;
+        }
+
+
 
         if (bMissed) {
             // Report the miss.
@@ -7579,7 +7681,7 @@ implements Runnable, ConnectionHandler {
 
             // only unconscious pilots of mechs and proto's can roll to wake up
             if ( !e.isTargetable() || !e.crew.isUnconcious() ||
-                 e.crew.isKoThisRound() || 
+                 e.crew.isKoThisRound() ||
                 !(e instanceof Mech || e instanceof Protomech)) {
                 continue;
             }

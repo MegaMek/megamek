@@ -2379,10 +2379,12 @@ public class Compute
      * Modifier to attacks due to attacker terrain
      */
     public static ToHitData getAttackerTerrainModifier(Game game, int entityId) {
-        final Hex hex = game.board.getHex(game.getEntity(entityId).getPosition());
+        final Entity attacker = game.getEntity(entityId);
+        final Hex hex = game.board.getHex(attacker.getPosition());
         ToHitData toHit = new ToHitData();
 
-        if (hex.levelOf(Terrain.WATER) > 0) {
+        if (hex.levelOf(Terrain.WATER) > 0 
+        && attacker.getMovementType() != Entity.MovementType.HOVER) {
             toHit.addModifier(1, "attacker in water");
         }
         
@@ -2403,7 +2405,8 @@ public class Compute
         
         ToHitData toHit = new ToHitData();
         
-        if (hex.levelOf(Terrain.WATER) > 0) {
+        if (hex.levelOf(Terrain.WATER) > 0
+        && target.getMovementType() != Entity.MovementType.HOVER) {
             toHit.addModifier(-1, "target in water");
         }
 

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v 0.29.31 (CVS)
+
 v 0.29.30 (2004-03-29 7:30am)
 + Bug 922776: Salamander BAs can explicitly raise Mek heat (BMRr, page 65).
 + Minimap now remembers its size.

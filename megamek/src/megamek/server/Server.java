@@ -4430,7 +4430,7 @@ implements Runnable, ConnectionHandler {
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
         Vector artyAutoHitHexes = (Vector) packet.getObject(0);
         
-        Integer playerId = (Integer)artyAutoHitHexes.get(0);
+        Integer playerId = (Integer)artyAutoHitHexes.firstElement();
         artyAutoHitHexes.removeElementAt(0);
         
         // is this the right phase?

@@ -6,6 +6,7 @@ v0.29.55 (CVS)
 + Bug 1058627: Units on bridges shouldn't drown.
 + Can't thrash at null **or** non-infantry targets.
 + Bug 1060733: An ejected Mek pilot should have a BV of 0 (or should it?).
++ Bug 1050887: Artillery crashes MS JRE
 
 v0.29.54 (2004-10-30 3:15pm)
 + Data 1047918: Image for Sunder Omnimech

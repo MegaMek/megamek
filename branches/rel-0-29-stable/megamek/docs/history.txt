@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29-stable-9 (CVS)
++ Bug 931003: spelling fix in TestBot.java
+
 v 0.29-stable-8 (2004-03-14 3:15 PM EST)
 + Bug 898207: players should have to enter in a non-blank, non-whitespace name
 + Bug 899181: unconcious and shut down meks can't find clubs.

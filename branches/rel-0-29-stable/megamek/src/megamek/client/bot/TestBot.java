@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -361,7 +361,7 @@ public class TestBot extends BotClientWrapper {
         }
         
         MoveThread mt = new MoveThread(entity); //so things don't slow down too much, use a thread
-        System.out.println("Contimplating movement of "+entity.getShortName()+" "+entity.getId());
+        System.out.println("Contemplating movement of "+entity.getShortName()+" "+entity.getId());
         mt.start();
         try {
           mt.join();

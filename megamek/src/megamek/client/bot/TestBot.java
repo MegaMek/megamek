@@ -162,19 +162,48 @@ public class TestBot extends BotClientWrapper {
         if (bestAttack.type == PhysicalOption.KICK_LEFT || bestAttack.type == PhysicalOption.KICK_RIGHT) {
           int side = Compute.getThreatHitArc(bestAttack.target.getPosition(), bestAttack.target.getFacing(), en.getPosition());
           double odds = 1.0 - (double)Compute.oddsAbove(Compute.toHitKick(game, entNum, bestAttack.target.getId(), bestAttack.type - 3).getValue())/100;
-          double llarmor = bestAttack.target.getArmor(Mech.LOC_LLEG)/bestAttack.target.getOArmor(Mech.LOC_LLEG);
-          double rlarmor = bestAttack.target.getArmor(Mech.LOC_RLEG)/bestAttack.target.getOArmor(Mech.LOC_RLEG);
+
+          // Meks can kick Vehicles and Infantry, too!
           double mod = 1.0;
-          switch (side) {
-            case CEntity.SIDE_FRONT:
-              mod = (llarmor + rlarmor)/2;
-              break;
-            case CEntity.SIDE_LEFT:
-              mod = llarmor;
-              break;
-            case CEntity.SIDE_RIGHT:
-              mod = rlarmor;
-              break;
+          if ( bestAttack.target instanceof Mech ) {
+              double llarmor = bestAttack.target.getArmor(Mech.LOC_LLEG) / 
+                  bestAttack.target.getOArmor(Mech.LOC_LLEG);
+              double rlarmor = bestAttack.target.getArmor(Mech.LOC_RLEG) / 
+                  bestAttack.target.getOArmor(Mech.LOC_RLEG);
+              switch (side) {
+              case CEntity.SIDE_FRONT:
+                  mod = (llarmor + rlarmor)/2;
+                  break;
+              case CEntity.SIDE_LEFT:
+                  mod = llarmor;
+                  break;
+              case CEntity.SIDE_RIGHT:
+                  mod = rlarmor;
+                  break;
+              }
+          }
+          else if ( bestAttack.target instanceof Infantry ) {
+              mod = 0.0;
+          }
+          else if ( bestAttack.target instanceof Tank ) {
+              switch (side) {
+              case CEntity.SIDE_FRONT:
+                  mod = bestAttack.target.getArmor(Tank.LOC_FRONT) / 
+                      bestAttack.target.getOArmor(Tank.LOC_FRONT);
+                  break;
+              case CEntity.SIDE_LEFT:
+                  mod = bestAttack.target.getArmor(Tank.LOC_LEFT) / 
+                      bestAttack.target.getOArmor(Tank.LOC_LEFT);
+                  break;
+              case CEntity.SIDE_RIGHT:
+                  mod = bestAttack.target.getArmor(Tank.LOC_RIGHT) / 
+                      bestAttack.target.getOArmor(Tank.LOC_RIGHT);
+                  break;
+              case CEntity.SIDE_REAR:
+                  mod = bestAttack.target.getArmor(Tank.LOC_REAR) / 
+                      bestAttack.target.getOArmor(Tank.LOC_REAR);
+                  break;
+              }
           }
           double damage = 2/(1 + mod)*bestAttack.expectedDmg;
           double threat = .2*en.getWeight()*odds*(1-cen.base_psr_odds);

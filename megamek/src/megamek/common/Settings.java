@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.awt.*;
 import java.io.*;
 
 public class Settings
@@ -34,6 +35,8 @@ public class Settings
     
     public static String    lastConnectAddr            = "localhost";
     public static int        lastConnectPort            = 2346;
+    
+    public static Color     mapTextColor            = Color.black;
     
     
     /**
@@ -91,6 +94,17 @@ scan:
                         st.nextToken();
                         lastConnectPort = (int)st.nval;
                     }
+                    if(key.equals("maptext")) {
+                        st.nextToken();
+                        int red = (int)st.nval;
+                        st.nextToken();
+                        int green = (int)st.nval;
+                        st.nextToken();
+                        int blue = (int)st.nval;
+                        mapTextColor = new Color(red, green, blue);
+                        
+                        System.out.println("map text color set to " + mapTextColor);
+                    }
                     
                 }
             }
@@ -119,6 +133,7 @@ scan:
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerName + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
+            cw.write("maptext " + mapTextColor.getRed() + " " + mapTextColor.getGreen() + " " + mapTextColor.getBlue() + " " + "\r\n");
             
             cw.close();
         } catch(Exception e) {

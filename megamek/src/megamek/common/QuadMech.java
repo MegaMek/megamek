@@ -27,10 +27,10 @@ public class QuadMech extends Mech
   
   private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 6, 6, 6, 6};
   
-  private int movementType = Entity.MovementType.QUAD;
-  
   public QuadMech() {
     super();
+    
+    movementType = Entity.MovementType.QUAD;
 
     setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
     setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));

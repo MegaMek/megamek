@@ -47,6 +47,8 @@ public class EquipmentType {
     
     protected boolean   explosive = false;
     protected int       toHitModifier = 0;
+    
+    protected int       flags = 0;
       
     protected float     bv = 0; // battle value point system
     
@@ -95,6 +97,14 @@ public class EquipmentType {
     
     public int getToHitModifier() {
         return toHitModifier;
+    }
+    
+    public int getFlags() {
+        return flags;
+    }
+    
+    public boolean hasFlag(int flag) {
+        return (flags & flag) != 0;
     }
 
     public float getBV(Entity entity) {

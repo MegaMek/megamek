@@ -830,7 +830,7 @@ public class Compute
         AmmoType atype;
         
         // check if weapon uses ammo
-        if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+        if (wtype.getAmmoType() != AmmoType.T_NA) {
             usesAmmo = true;
             amounted = mounted.getLinked();
             if (amounted != null) {
@@ -1504,7 +1504,7 @@ public class Compute
         final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
         final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
         //HACK: this makes certain assumptions about the names of valid clubs
-        final boolean bothArms = club.getType().getName().endsWith("Club");
+        final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         ToHitData toHit;
 
         // arguments legal?
@@ -2416,8 +2416,9 @@ public class Compute
         final Hex hex = game.board.getHex(entity.getPosition());
         
         //Non bipeds can't
-          if ( entity.getMovementType() != Entity.MovementType.BIPED )
+        if ( entity.getMovementType() != Entity.MovementType.BIPED ) {
             return false;
+        }
           
         // need woods for now
         //TODO: building rubble, possibly missing limbs
@@ -2448,13 +2449,7 @@ public class Compute
     public static Mounted clubMechHas(Entity entity) {
         for (Enumeration i = entity.getMisc(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().getName().equals("Tree Club")) {
-                return mounted;
-            } else if (mounted.getType().getName().equals("Girder Club")) {
-                return mounted;
-            } else if (mounted.getType().getName().equals("Limb Club")) {
-                return mounted;
-            } else if (mounted.getType().getName().equals("Hatchet")) {
+            if (mounted.getType().hasFlag(MiscType.F_CLUB) || mounted.getType().hasFlag(MiscType.F_HATCHET)) {
                 return mounted;
             }
         }

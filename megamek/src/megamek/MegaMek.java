@@ -140,26 +140,6 @@ public class MegaMek
     }
     
     /**
-     * 
-     */
-    public void showGame() {
-        frame.removeAll();
-        
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        frame.setLayout(gridbag);
-        
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-
-        addBag(client, gridbag, c);
-
-        frame.validate();
-    }
-    
-    /**
      * Host a new game, connect to it, and then launch the 
      * chat lounge.
      */
@@ -185,9 +165,6 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
-        
-        //showChatLounge();
-        showGame();
     }
     
     /**
@@ -213,9 +190,8 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
-        
-        showGame();
     }
+    
     public void connectBot() {
         ConnectDialog cd;	
 
@@ -237,8 +213,6 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
-        
-        showGame();
     }
   
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {

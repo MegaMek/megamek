@@ -177,7 +177,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType() == MiscType.JUMP_JET && !mounted.isDestroyed()) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()) {
                 jump++;
             }
         }
@@ -194,7 +194,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType() == MiscType.HEAT_SINK && mounted.isDestroyed()) {
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && mounted.isDestroyed()) {
                 capacity--;
             }
         }
@@ -220,7 +220,7 @@ public abstract class Mech
           } else {
             for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
                 Mounted mounted = (Mounted)i.nextElement();
-                if (mounted.getType() == MiscType.HEAT_SINK && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
+                if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
                     sinksUnderwater++;
                 }
             }

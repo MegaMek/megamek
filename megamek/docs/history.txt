@@ -4,6 +4,7 @@ v 0.29.20 (CVS)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.
 + Patch 851394: initial ProtoMech implementation.  NOT BATTLE READY!!!
 + Fix bugs in encoding Buildings.  Don't compress XML in PacketTool.
++ Patch 863376: added Thunder-Augmented LRM ammo type.
 
 v 0.29.19 (2003-12-16, 10:55pm)
 + Bug 849222: Need to check for clubbing in Server#canPhysicalTarget.

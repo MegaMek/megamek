@@ -8,6 +8,9 @@ v 0.29.17 (CVS)
 + Setting "memorydumpon" will track memory usage during a game in MegaMek.log.
 + Bug 829228: applied floio's patch
 + Bug 790019: use minimum sizes for alert, choice and multi-choice dialogs.
++ Bug 834364: Board.java changes for Map Generator use collections.jar classes.
++ Bug 834457: MicroSoft JRE can't use PNG files.  Sad, really.
++ Bug 837237, Patch 838203: you can define "rear of leg/arm" hit locations!
 
 v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.

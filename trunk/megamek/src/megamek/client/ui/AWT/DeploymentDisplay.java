@@ -316,9 +316,9 @@ public class DeploymentDisplay
             ce().setPosition(null);
             client.bv.redrawEntity(ce());
             // Unload any loaded units.
-            Iterator iter =  ce().getLoadedUnits().iterator();
-            while ( iter.hasNext() ) {
-                Entity other = (Entity) iter.next();
+            Enumeration iter =  ce().getLoadedUnits().elements();
+            while ( iter.hasMoreElements() ) {
+                Entity other = (Entity) iter.nextElement();
                 // Please note, the Server never got this unit's load orders.
                 ce().unload( other );
                 other.setTransportId( Entity.NONE );

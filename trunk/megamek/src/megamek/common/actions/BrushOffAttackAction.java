@@ -14,6 +14,8 @@
 
 package megamek.common.actions;
 
+import megamek.common.Targetable;
+
 /**
  * The attacker brushes the target off.
  */

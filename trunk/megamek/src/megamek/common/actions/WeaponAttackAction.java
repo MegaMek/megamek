@@ -30,8 +30,14 @@ public class WeaponAttackAction
     // only used server-side
     private transient Vector vCounterEquipment = null;
     
+    // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
+        this.weaponId = weaponId;
+    }
+    
+    public WeaponAttackAction(int entityId, int targetType, int targetId, int weaponId) {
+        super(entityId, targetType, targetId);
         this.weaponId = weaponId;
     }
     

@@ -271,34 +271,25 @@ public class Game implements Serializable
     }
     
     /**
+     * Returns the appropriate target for this game given a type and id
+     */
+    public Targetable getTarget(int nType, int nID) {
+        switch (nType) {
+            case Targetable.TYPE_ENTITY :
+                return getEntity(nID);
+            case Targetable.TYPE_HEX_CLEAR :
+            case Targetable.TYPE_HEX_IGNITE :
+                return new HexTarget(HexTarget.idToCoords(nID), nType);
+            default :
+                return null;
+        }
+    }
+    
+    /**
      * Returns the entity with the given id number, if any.
      */
 
-    /* The Entity ID space has been polluted; negative ID's below -1000 are targeted coordinates */
-
-    public static Coords IdToCoords(int id) {
-//          System.out.print(id);
-        if (id > -1000) {
-            return null;
-        }
-        Coords c = new Coords((-id - 1000) & 16383, (-id - 1000) / 16384);
-//        System.out.println(" -> (" + c.x + ", " + c.y + ")");
-        return c;
-    }
-
-    public static int CoordsToId(Coords c) {
-        int id = -1000 - c.x - c.y * 16384;
-//        System.out.println("(" + c.x + ", " + c.y + ") -> " + id);
-        return id;
-    }
-
-
     public Entity getEntity(int id) {
-        if(id <= -1000) {
-           final Entity te = new HexEntity(IdToCoords(id));
-           te.setGame(this);
-           return te;
-        }
         return (Entity)entityIds.get(new Integer(id));
     }
  

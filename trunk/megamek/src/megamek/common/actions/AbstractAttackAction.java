@@ -14,6 +14,8 @@
 
 package megamek.common.actions;
 
+import megamek.common.Targetable;
+
 /**
  * Abstract superclass for any action where an entity is attacking another
  * entity.
@@ -22,15 +24,32 @@ public abstract class AbstractAttackAction
     extends AbstractEntityAction
     implements AttackAction
 {
+    private int targetType;
     private int targetId;
     
+    // default to attacking an entity, since this is what most of them are
     public AbstractAttackAction(int entityId, int targetId) {
         super(entityId);
+        this.targetType = Targetable.TYPE_ENTITY;
         this.targetId = targetId;
+    }
+    
+    public AbstractAttackAction(int entityId, int targetType, int targetId) {
+        super(entityId);
+        this.targetType = targetType;
+        this.targetId = targetId;
+    }
+    
+    public int getTargetType() {
+        return targetType;
     }
     
     public int getTargetId() {
         return targetId;
+    }
+    
+    public void setTargetType(int targetType) {
+        this.targetType = targetType;
     }
     
     public void setTargetId(int targetId) {

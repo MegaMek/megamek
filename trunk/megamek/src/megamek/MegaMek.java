@@ -251,7 +251,8 @@ public class MegaMek
         server = new Server(hd.serverPass, hd.port);
         // initialize client
         client = new Client(hd.name, "localhost", hd.port);
-		launch(client.getFrame());
+        client.initializeListeners();
+        launch(client.getFrame());
 
         server.getGame().getOptions().loadOptions(client, hd.serverPass);
         optdlg = null;
@@ -308,7 +309,8 @@ public class MegaMek
             return;
         }
         client = new Client(hd.name, "localhost", hd.port);
-		launch(client.getFrame());
+        client.initializeListeners();
+        launch(client.getFrame());
         optdlg = null;
     }
 
@@ -387,7 +389,8 @@ public class MegaMek
         if (sd.localName != "") {
             // initialize game
             client = new Client(hd.name, "localhost", hd.port);
-			launch(client.getFrame());
+            client.initializeListeners();
+            launch(client.getFrame());
 
             server.getGame().getOptions().loadOptions(client, hd.serverPass);
             
@@ -436,7 +439,8 @@ public class MegaMek
 
         // initialize game
         client = new Client(cd.name, cd.serverAddr, cd.port);
-		launch(client.getFrame());
+        client.initializeListeners();
+        launch(client.getFrame());
     }
 
     public void connectBot() {

@@ -30,13 +30,15 @@ import megamek.common.util.Distractable;
 import megamek.client.util.widget.*;
 
 public class Client extends Panel
-    implements Runnable, MouseListener, WindowListener, ActionListener
+    implements Runnable, MouseListener, WindowListener, ActionListener, KeyListener
 {
 	// Action commands.
 	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
 	public static final String VIEW_MINI_MAP         = "viewMiniMap";
 	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
 	public static final String VIEW_UNIT_OVERVIEW    = "viewUnitOverview";
+	public static final String VIEW_ZOOM_IN    		 = "viewZoomIn";
+	public static final String VIEW_ZOOM_OUT   		 = "viewZoomOut";
 
     // a frame, to show stuff in
     public Frame                frame;
@@ -178,9 +180,24 @@ public class Client extends Panel
         loadSoundClip();
 
         initializeFrame();
-        initializeDialogs();
+
+        try {
+            bv = new BoardView1(game, frame);
+        } catch (IOException e) {
+            doAlertDialog("Fatal Error", "Could not initialise:\n"+e);
+            die();
+        }
+
+/*	ChatterBox2 cb2 = new ChatterBox2(this);
+	bv.addDisplayable(cb2);
+        addGameListener(cb2);
+        bv.addKeyListener(cb2);
+*/
+
+        cb = new ChatterBox(this);
         this.add( cb.getComponent(), BorderLayout.SOUTH );
         changePhase(Game.PHASE_UNKNOWN);
+
         layoutFrame();
 
         frame.setVisible(true);
@@ -213,6 +230,25 @@ public class Client extends Panel
         }
     }
 
+    public void keyPressed(KeyEvent ke) {
+        switch(ke.getKeyCode()) {
+        case KeyEvent.VK_PAGE_DOWN :
+            bv.zoomIn();
+            break;
+        case KeyEvent.VK_PAGE_UP :
+        	bv.zoomOut();
+            break;
+        }
+    }
+    
+    public void keyTyped(KeyEvent ke) {
+        ;
+    }
+    
+    public void keyReleased(KeyEvent ke) {
+    	;
+    }
+    
     /**
      * Display a system message in the chat box.
      *
@@ -227,7 +263,6 @@ public class Client extends Panel
      */
     private void initializeFrame() {
         this.frame = new Frame("MegaMek Client");
-        menuBar.addActionListener( this );
         menuBar.setGame( this.game );
         frame.setMenuBar( menuBar );
         if (Settings.windowSizeHeight != 0) {
@@ -242,7 +277,10 @@ public class Client extends Panel
 
         frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
-        // when frame closes, save settings and clean up.
+        // When frame closes, save settings and clean up.
+        // I'm going to chance leaving this here as
+        // it may not constitute an escape.
+        // Move to #initializeListeners() if I'm wrong.
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
@@ -250,7 +288,6 @@ public class Client extends Panel
                 die();
             }
         });
-
     }
 
     /**
@@ -262,6 +299,25 @@ public class Client extends Panel
         frame.setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.validate();
+    }
+
+    /**
+     * Have the client register itself as a listener wherever it's needed.
+     * <p/>
+     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html
+     * it is a major bad no-no to perform these registrations before the
+     * constructor finishes, so this function has to be called after the
+     * <code>Client</code> is created.
+     */
+    public void initializeListeners() {
+
+        // moved from initializeFrame()
+        menuBar.addActionListener( this );
+        frame.addKeyListener(this);
+
+
+        // from constructor
+        initializeDialogs();
     }
 
     /**
@@ -372,6 +428,10 @@ public class Client extends Panel
 			toggleMap();
 		} else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
 			toggleUnitOverview();
+		} else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
+			bv.zoomIn();
+		} else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
+			bv.zoomOut();
 		} else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
 			showLOSSettingDialog();
 		}
@@ -384,30 +444,20 @@ public class Client extends Panel
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         unitLoadingDialog.show();
 
-        try {
-            bv = new BoardView1(game, frame);
-        } catch (IOException e) {
-            doAlertDialog("Fatal Error", "Could not initialise:\n"+e);
-            die();
-        };
-
-/*		ChatterBox2 cb2 = new ChatterBox2(this);
-		bv.addDisplayable(cb2);
-        addGameListener(cb2);
-        bv.addKeyListener(cb2);
-*/
         uo = new UnitOverview(this);
 		bv.addDisplayable(uo);
 
         bv.addMouseListener(this);
+        bv.addKeyListener(this);
+
         bv.add(popup);
 
-        cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
         mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
+        mechW.addKeyListener(this);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
 
@@ -428,7 +478,9 @@ public class Client extends Panel
             doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
             die();
         };
+        minimap.addKeyListener(this);
         minimapW.addWindowListener(this);
+        minimapW.addKeyListener(this);
         minimapW.add(minimap);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
@@ -863,6 +915,7 @@ public class Client extends Panel
             break;
         case Game.PHASE_DEPLOY_MINEFIELDS:
             component = new DeployMinefieldDisplay(this);
+
             main = "BoardView";
             secondary = "DeployMinefieldDisplay";
             if ( !mainNames.contains( main ) ) {

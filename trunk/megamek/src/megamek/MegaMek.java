@@ -147,6 +147,8 @@ public class MegaMek
         addBag(be, gridbag, c);
         
         frame.validate();
+        
+        new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
     }
     
     /**

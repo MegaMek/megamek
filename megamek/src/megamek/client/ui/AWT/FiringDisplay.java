@@ -1334,14 +1334,13 @@ public class FiringDisplay
 
     // Sets the aiming mode, depending on the target and
     // the attacker. Against immobile mechs, targeting
-    // computer aiming mode will not be used.
+    // computer aiming mode will be used if turned on.  
+    // (This is a hack, but it's the resolution suggested
+    // by the bug submitter, and I don't think it's half 
+    // bad.
     public void setAimingMode() {
       boolean allowAim;
-      allowAim = ((target != null) && target.isImmobile() && target instanceof Mech);
-      if (allowAim) {
-        aimingMode = AIM_MODE_IMMOBILE;
-        return;
-      }
+      
       allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
       if (allowAim) {
         if (lockedLocation) {
@@ -1354,6 +1353,11 @@ public class FiringDisplay
           aimingMode = AIM_MODE_TARG_COMP;
           return;
         }
+      }
+      allowAim = ((target != null) && target.isImmobile() && target instanceof Mech);
+      if (allowAim) {
+        aimingMode = AIM_MODE_IMMOBILE;
+        return;
       }
       aimingMode = AIM_MODE_NONE;
     }

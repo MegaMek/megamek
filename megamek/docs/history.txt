@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.57 (CVS)
+v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.
 + Game option: Night Battle (Partly implementated: Modifier is there, but
   searchlights are incomplete).

@@ -134,20 +134,8 @@ public class Client extends Panel
         this.frame = frame;
         this.name = playername;
 
-        Dialog waitDialog = new Dialog(frame,"Please wait...");
-        waitDialog.setLayout(new GridLayout(4,2));
-        waitDialog.add(new Label("Loading mechs..."));
-        waitDialog.add(new Label());
-        waitDialog.add(new Label("  ...from cache: "));
-        waitDialog.add(new Label());
-        waitDialog.add(new Label("  ...from files: "));
-        waitDialog.add(new Label());
-        waitDialog.add(new Label("  ...from zips: "));
-        waitDialog.add(new Label());
-        waitDialog.setSize(250,130);
-        waitDialog.setLocation(frame.getLocation().x + frame.getSize().width/2 - waitDialog.getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - waitDialog.getSize().height/2);
-        waitDialog.show();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+        unitLoadingDialog.show();
 
         gameListeners = new Vector();
                 
@@ -178,7 +166,7 @@ public class Client extends Panel
         minimapW.addWindowListener(this);
         minimapW.add(minimap);
         
-        mechSelectorDialog = new MechSelectorDialog(this,waitDialog);
+        mechSelectorDialog = new MechSelectorDialog(this,unitLoadingDialog);
         mechSelectorDialogThread = new Thread(mechSelectorDialog);
         mechSelectorDialogThread.start();
 

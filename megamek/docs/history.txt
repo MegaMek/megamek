@@ -126,6 +126,7 @@ v 0.28.23-dev (CVS)
 + Data 754118: added revised readme-German.txt.
 + Bug 754610: Revert fix for bug 702735.
 + Bug 720322: Apply defensive systems, targ comp, and C3 BV logic to Tanks.
++ Added "Unit Loading Failures" dialog.
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly

@@ -61,6 +61,19 @@ public class Tank
     {
         m_bHasNoTurret = b;
     }
+    
+    /**
+    * Returns this entity's walking/cruising mp, factored
+    * for heat and extreme temperatures.
+    */
+    public int getWalkMP() {
+        int i;
+        if (game != null) {
+            i = game.getTemperatureDifference();
+            return Math.max(walkMP - i, 0);
+        } 
+        return walkMP;
+    }    
 
     public boolean isTurretLocked() {
         return m_bTurretLocked;

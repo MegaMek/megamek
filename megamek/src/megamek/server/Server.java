@@ -6034,10 +6034,13 @@ implements Runnable, ConnectionHandler {
                         bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         bCheckedECM = true;
                     }
-                    // also no artemis for IDF
+                    // also no artemis for IDF, and only use standard ammo (excepot for ATMs)
                     if (!bECMAffected&& !bMekStealthActive
                         && (!weapon.getType().hasModes()
-                            || !weapon.curMode().equals("Indirect"))) {
+                            || !weapon.curMode().equals("Indirect"))
+                        && (atype.getMunitionType() == AmmoType.M_STANDARD 
+                            || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE
+                            || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
                         nSalvoBonus += 2;
                     }
                 } else if (entityTarget != null && entityTarget.isNarcedBy(ae.getOwner().getTeam())) {

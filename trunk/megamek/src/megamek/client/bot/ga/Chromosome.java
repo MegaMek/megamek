@@ -1,5 +1,7 @@
 package megamek.client.bot.ga;
 
+import com.sun.java.util.collections.Comparable;
+
 public class Chromosome implements Comparable {
     public double fitness; //absolute fitness value
     public int[] genes;

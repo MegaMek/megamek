@@ -54,6 +54,8 @@ implements Runnable {
     private int                 roundCounter = 0;
     private Vector              turns = new Vector();
     private int                 turnIndex = 0;
+    private int                 turnInfMoved = 0;
+    private int			turnLastPlayerId = -1;
     
     // stuff for the current turn
     private Vector              attacks = new Vector();
@@ -1134,19 +1136,48 @@ implements Runnable {
         // count how many entities each player controls, and how many turns we have to assign
         int MAX_PLAYERS = 255; //XXX HACK HACK HACK!
         int[] noe = new int[MAX_PLAYERS];
+	int playerId = 0;
         int noOfTurns = 0;
+	int[] noi = new int[MAX_PLAYERS]; // The number of Infantry for player.
+	int noOfInfTurns = 0;
+	boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
+	boolean infLast = game.getOptions().booleanOption("inf_move_last");
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             if (entity.isSelectable()) {
-                noe[entity.getOwner().getId()]++;
+		playerId = entity.getOwner().getId();
+
+		// Special handling for infantry for certain game options.
+		if ( entity instanceof Infantry ) {
+		    noi[playerId]++;
+
+		    // If multiple Infantry move per Mek and Vehicle and this
+		    // is NOT the start of a new block of infantry for the
+		    // player do NOT add a turn.
+		    if ( infMulti &&
+			 1 != (noi[playerId] % Game.INF_MOVE_MULTI) ) {
+			continue;
+		    }
+
+		    // If Infantry move after Meks and Vehicles, we'll
+		    // delay calculating the infantry turns.
+		    else if ( infLast ) {
+			noOfInfTurns++;
+			continue;
+		    }
+		}
+                noe[playerId]++;
                 noOfTurns++;
             }
         }
         
         // generate turn list
-        turns.setSize(noOfTurns);
+        turns.setSize(noOfTurns + noOfInfTurns);
         turnIndex = 0;
-        while (turnIndex < turns.size()){
+
+	// Handle all "mainline entities".  I.E. Meks, Vehicles, and
+	// (unless overrided by the "inf_move_last" option) Infantry.
+        while (turnIndex < noOfTurns) {
             // get lowest number of entities, minimum 1.
             int hnoe = 1;
             int lnoe = Integer.MAX_VALUE;
@@ -1175,9 +1206,44 @@ implements Runnable {
                     noe[order[i]]--;
                 }
             }
-        }
-        // reset turn counter
+        } // Handle the next "mainline entity"
+
+	// Now handle all Infantry (the "inf_move_last" option must be on).
+        while (turnIndex < turns.size()) {
+            // get lowest number of entities, minimum 1.
+            int hnoi = 1;
+            int lnoi = Integer.MAX_VALUE;
+            for (int i = 0; i < MAX_PLAYERS; i++) {
+                if (noi[i] > 0 && noi[i] < lnoi) {
+                    lnoi = noi[i];
+                }
+                if (noi[i] > hnoi) {
+                    hnoi = noi[i];
+                }
+            }
+            // cycle through order list
+            for (int i = 0; i < order.length; i++) {
+                if (noi[order[i]] <= 0) {
+                    continue;
+                }
+                /* if you have less than twice the next lowest,
+                 * move 1, otherwise, move more.
+                 * if you have less than half the maximum,
+                 * move none
+                 */
+                int ntm = Math.max(1, (int)Math.floor(noi[order[i]] / lnoi));
+                for (int j = 0; j < ntm; j++) {
+                    turns.setElementAt(new GameTurn(order[i]), turnIndex);
+                    turnIndex++;
+                    noi[order[i]]--;
+                }
+            }
+        } // Handle the next infantry platoon
+
+        // reset turn counters
         turnIndex = 0;
+	turnInfMoved = 0;
+	turnLastPlayerId = -1;
     }
     
     /**
@@ -1315,6 +1381,8 @@ implements Runnable {
         final MovementData md = (MovementData)c.getObject(1);
         // walk thru data, stopping when the mech is out of movement
         final Entity entity = game.getEntity(c.getIntValue(0));
+	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
+	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
         
         if (entity == null) {
             // what causes this?  --Ben
@@ -1325,8 +1393,28 @@ implements Runnable {
             // the entity has already moved, apparently
             return;
         }
+
+	// Check for potential cheating:
+	// If "inf_move_mutli" option is selected, and we're in the middle
+	// of a block of Infantry moves, entity had better be an Infantry
+	// platoon owned by the most recent player.
+	if ( infMoveMulti && turnInfMoved > 0 &&
+	     ( !(entity instanceof Infantry) ||
+	       entity.getOwnerId() != turnLastPlayerId ) ) {
+	    // Do something appropriately awful.
+	    // TODO: Implement me!!!
+	}
         
-        // check for fleeing
+	// Check for potential cheating:
+	// If "inf_move_last" option is selected, player can't move
+	// a Mek or Vehicle after Infantry have started to move.
+	else if ( infMoveLast && turnInfMoved > 0 &&
+		  !(entity instanceof Infantry) ) {
+	    // Do something appropriately awful.
+	    // TODO: Implement me!!!
+	}
+
+	// check for fleeing
         if (md.contains(MovementData.STEP_FLEE)) {
             phaseReport.append("\n" + entity.getDisplayName()
             + " flees the battlefield.\n");
@@ -1518,6 +1606,33 @@ implements Runnable {
             entity.ready = false;
         }
         
+	// Is the entity Infantry?
+	if ( entity instanceof Infantry ) {
+	    // Increment the counter.
+	    turnInfMoved++;
+
+	    // Record the player moving the infantry.
+	    turnLastPlayerId = entity.getOwnerId();
+
+	    // Do infantry move in blocks?
+	    if ( infMoveMulti ) {
+
+		// Are we at the end of a block?
+		if ( Game.INF_MOVE_MULTI == turnInfMoved ||
+		     !game.hasInfantry(turnLastPlayerId) ) {
+
+		    // Yup.  Reset the counter.
+		    turnInfMoved = 0;
+		}
+		else {
+		    // Nope.  Decrement the turn index.
+		    turnIndex--;
+		}
+
+	    } // End inf_move_multi
+
+	} // End entity-is-infantry
+
         // send a packet updating everybody on this entity's movement
         entityUpdate(entity.getId());
         
@@ -3761,12 +3876,56 @@ implements Runnable {
      */
     private void receiveEntityReady(Packet pkt, int connIndex) {
         Entity entity = game.getEntity(pkt.getIntValue(0));
-        if (entity != null && entity.getOwner() == getPlayer(connIndex)
-        && game.getTurn().getPlayerNum() == connIndex) {
+	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
+	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
+        if (entity != null && entity.getOwner() == getPlayer(connIndex) &&
+	    game.getTurn().getPlayerNum() == connIndex) {
+	
+	    // Check for potential cheating:
+	    // If "inf_move_mutli" option is selected, and we're in the middle
+	    // of a block of Infantry fires, entity had better be an Infantry
+	    // platoon owned by the most recent player.
+	    if ( infMoveMulti && turnInfMoved > 0 &&
+		 ( !(entity instanceof Infantry) ||
+		   entity.getOwnerId() != turnLastPlayerId ) ) {
+		// Do something appropriately awful.
+		// TODO: Implement me!!!
+	    }        
+
+	    // We passed the cheat checks.
             entity.ready = false;
-        } else {
+
+	    // Is the entity Infantry?
+	    if ( entity instanceof Infantry ) {
+		// Increment the counter.
+		turnInfMoved++;
+
+		// Record the player moving the infantry.
+		turnLastPlayerId = entity.getOwnerId();
+
+		// Do infantry move in blocks?
+		if ( infMoveMulti ) {
+
+		    // Are we at the end of a block?
+		    if ( Game.INF_MOVE_MULTI == turnInfMoved ||
+			 !game.hasInfantry(turnLastPlayerId) ) {
+
+			// Yup.  Reset the counter.
+			turnInfMoved = 0;
+		    }
+		    else {
+			// Nope.  Decrement the turn index.
+			turnIndex--;
+		    }
+
+		} // End inf_move_multi
+
+	    } // End entity-is-infantry
+
+	} else {
             System.out.println("server.receiveEntityReady: got an invalid ready message");
         }
+
     }
     
     /**
@@ -3858,6 +4017,10 @@ implements Runnable {
         }
         
         int changed = 0;
+	boolean infLastValue =
+	    game.getOptions().getOption("inf_move_last").booleanValue();
+	boolean infMultiValue =
+	    game.getOptions().getOption("inf_move_multi").booleanValue();
         
         for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
             GameOption option = (GameOption)i.nextElement();
@@ -3868,11 +4031,28 @@ implements Runnable {
             }
             
             sendServerChat("Player " + getPlayer(connId).getName() + " changed option \"" + originalOption.getFullName() + "\" to " + option.stringValue() + ".");
-            
+
+	    // Record mutually-exclusive infantry move options.
+            if ( option.getShortName().equals("inf_move_last") ) {
+		infLastValue = option.booleanValue();
+	    }
+	    else if ( option.getShortName().equals("inf_move_multi") ) {
+		infMultiValue = option.booleanValue();
+	    }
+
             originalOption.setValue(option.getValue());
             changed++;
         }
-        
+
+	// Infantry move options can't BOTH be on!!!
+	if ( infLastValue && (infLastValue == infMultiValue) ) {
+	    sendServerChat("Player " + getPlayer(connId).getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
+	    sendServerChat("Clearing *BOTH* options.");
+	    game.getOptions().getOption("inf_move_last").setValue(false);
+	    game.getOptions().getOption("inf_move_multi").setValue(false);
+	    changed += 2;
+	}
+
         return changed > 0;
     }
     

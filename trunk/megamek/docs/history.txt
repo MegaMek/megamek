@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29.5-dev (CVS)
++ Bug 759032: fixed NPE in MovementDisplay
+
 v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).
 + Bug 773000: Tank hit locations

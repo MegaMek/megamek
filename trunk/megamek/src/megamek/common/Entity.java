@@ -113,6 +113,7 @@ public abstract class Entity
      * Generates a new, blank, entity.
      */
     public Entity() {
+        System.out.println("L: " + locations());
         this.armor = new int[locations()];
         this.internal = new int[locations()];
         this.orig_armor = new int[locations()];
@@ -1502,6 +1503,12 @@ public abstract class Entity
      * Add in any piloting skill mods
      */
       public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
+      
+    /**
+     * The maximum elevation change the entity can cross
+     */
+    public abstract int getMaxElevationChange();
+    
     
 }
 

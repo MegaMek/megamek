@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002 Josh Yockey
+ * MechFileParser.java - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23,13 +23,13 @@ import megamek.common.util.BuildingBlock;
 
 public class MechFileParser {
     private File m_file;
-    private Mech m_mech = null;
+    private Entity m_entity = null;
     
     public MechFileParser(File f) throws EntityLoadingException {
         parse(f);
     }
     
-    public Mech getMech() { return m_mech; }
+    public Entity getEntity() { return m_entity; }
     
     private void parse(File f) throws EntityLoadingException {
         m_file = f;
@@ -40,11 +40,26 @@ public class MechFileParser {
         } else if (f.getName().toLowerCase().endsWith(".mtf")) {
             loader = new MtfFile(f);
         } else if (f.getName().toLowerCase().endsWith(".blk")) {
-            loader = new BLKMechFile(f);
+            BuildingBlock bb = new BuildingBlock(f.getPath());
+            if (bb.exists("UnitType")) {
+                String sType = bb.getDataAsString("UnitType")[0];
+                if (sType.equals("Tank")) {
+                    loader = new BLKTankFile(bb);
+                }
+                else if (sType.equals("Mech")) {
+                    loader = new BLKMechFile(bb);
+                }
+                else {
+                    throw new EntityLoadingException("Unknown UnitType: " + sType);
+                }
+            }
+            else {
+                loader = new BLKMechFile(bb);
+            }
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
         
-        m_mech = loader.getMech();
+        m_entity = loader.getEntity();
     }
 }

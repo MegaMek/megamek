@@ -179,7 +179,7 @@ public class Infantry
             else if ( INF_MOTORIZED == type )
                 this.movePoints= 2;
             else if ( INF_JUMP == type )
-                this.movePoints= 2;
+                this.movePoints= 3;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + type );
@@ -190,7 +190,7 @@ public class Infantry
             else if ( INF_MOTORIZED == type )
                 this.movePoints= 2;
             else if ( INF_JUMP == type )
-                this.movePoints= 2;
+                this.movePoints= 3;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + type );

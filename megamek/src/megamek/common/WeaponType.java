@@ -2107,9 +2107,9 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
+        weapon.minimumRange = 3;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 9;
         weapon.longRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;

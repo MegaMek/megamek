@@ -66,11 +66,9 @@ public class MtfFile implements MechLoader {
     
     String[][] critData;
     
-    boolean ioerror = false;
-    
     
     /** Creates new MtfFile */
-    public MtfFile(File file) {
+    public MtfFile(File file) throws EntityLoadingException {
         try {
             BufferedReader r = new BufferedReader(new FileReader(file));
             
@@ -139,9 +137,11 @@ public class MtfFile implements MechLoader {
             
             r.close();
         } catch (IOException ex) {
-            ioerror = true;
+            throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-            // oh well, it'll be caught during parsing
+            throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
+        } catch (NumberFormatException ex) {
+            throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
     
@@ -155,9 +155,6 @@ public class MtfFile implements MechLoader {
     }
     
     public Mech getMech() throws EntityLoadingException {
-        if (ioerror) {
-            throw new EntityLoadingException("I/O error occured during file read");
-        }
         try {
             Mech mech;
             

@@ -121,6 +121,7 @@ v 0.29.10-dev
 + RFE 799511: defined images for Enforcer III and Grand Dragon
 + Data 796980: added Hauptmann image by brandfuchs
 + Patch 794111 MaxTech Target Movement Modifiers by Alexander Schölling.
++ Bug 787486, 789749: LOS bug over water, also fixed bug with smoke on water.
 
 v 0.29.9 (08-31-03, 10pm)
 + Fixed bug 781250 and cleaned up MASC code a bit

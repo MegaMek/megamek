@@ -4382,6 +4382,17 @@ implements Runnable, ConnectionHandler {
      */
     private void doEntityDisplacement(Entity entity, Coords src, Coords dest,
     PilotingRollData roll) {
+        if (!game.board.contains(dest)) {
+            if (!entity.isDoomed()) {
+                game.removeEntity(entity.getId(),
+                        Entity.REMOVE_PUSHED);
+                send(createRemoveEntityPacket(entity.getId(),
+                                    Entity.REMOVE_PUSHED));
+                phaseReport.append("\n*** " ).append( entity.getDisplayName() ).append( " has been forced from the field. ***\n");
+                // TODO: remove passengers and swarmers.
+            }
+            return;
+        }
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final int direction = src.direction(dest);
@@ -4450,8 +4461,11 @@ implements Runnable, ConnectionHandler {
                 game.addPSR(roll);
             }
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
-            // Update the violating entity's postion on the client.
-            entityUpdate( violation.getId() );
+            // Update the violating entity's postion on the client,
+            // if it didn't get displaced off the board.
+            if ( !game.isOutOfGame(violation) ) {
+                entityUpdate( violation.getId() );
+            }
             return;
         } else {
             // accidental fall from above: havoc!
@@ -4496,8 +4510,11 @@ implements Runnable, ConnectionHandler {
                 Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                 if (targetDest != null) {
                     doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
-                    // Update the violating entity's postion on the client.
-                    entityUpdate( violation.getId() );
+                    // Update the violating entity's postion on the client,
+                    // if it didn't get displaced off the board.
+                    if ( !game.isOutOfGame(violation) ) {
+                        entityUpdate( violation.getId() );
+                    }
                 } else {
                     // ack!  automatic death!  Tanks
                     // suffer an ammo/power plant hit.
@@ -7602,9 +7619,14 @@ implements Runnable, ConnectionHandler {
         pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-            phaseReport.append("succeeds: target is pushed into hex "
-            ).append( dest.getBoardNum()
-            ).append( "\n");
+            phaseReport.append("succeeds: target is pushed ");
+            if (game.board.contains(dest)) {
+                phaseReport.append("into hex "
+                ).append( dest.getBoardNum()
+                ).append( "\n");
+            } else {
+                phaseReport.append("off the board.\n");
+            }
 
             doEntityDisplacement(te, src, dest, pushPRD);
 
@@ -7613,20 +7635,9 @@ implements Runnable, ConnectionHandler {
                 ae.setPosition(src);
             }
         } else {
-            if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
-                game.removeEntity(te.getId(),
-                                  Entity.REMOVE_PUSHED);
-                send(createRemoveEntityPacket(te.getId(),
-                                              Entity.REMOVE_PUSHED));
-                phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " has been forced from the field. ***\n");
-                // TODO: remove passengers and swarmers.
-                ae.setPosition(src);
-            } else {
-                phaseReport.append("succeeds, but target can't be moved.\n");
-                game.addPSR(pushPRD);
-            }
+            phaseReport.append("succeeds, but target can't be moved.\n");
+            game.addPSR(pushPRD);
         }
-
 
         phaseReport.append("\n");
     }
@@ -7825,22 +7836,6 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("\n");
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged"));
             doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
-        } else {
-            if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
-                if (!te.isDoomed()) {
-                    game.removeEntity(te.getId(),
-                            Entity.REMOVE_PUSHED);
-                    send(createRemoveEntityPacket(te.getId(),
-                                        Entity.REMOVE_PUSHED));
-                    phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
-                    // TODO: remove passengers and swarmers.
-                }
-                doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
-            } else {
-                // they still have to roll
-                game.addPSR(new PilotingRollData(te.getId(), 2, "was charged"));
-                game.addPSR(chargePSR);
-            }
         }
 
         phaseReport.append("\n");
@@ -7993,24 +7988,13 @@ implements Runnable, ConnectionHandler {
         // Target entities are pushed away or destroyed.
         Coords dest = te.getPosition();
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
-        if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
-            if (!te.isDoomed()) {
-                game.removeEntity(te.getId(),
-                        Entity.REMOVE_PUSHED);
-                send(createRemoveEntityPacket(te.getId(),
-                                    Entity.REMOVE_PUSHED));
-                phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
-                // TODO: remove passengers and swarmers.
-            }
+        if (targetDest != null) {
+            doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
         } else {
-            if (targetDest != null) {
-                doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
-            } else {
-                // ack!  automatic death!  Tanks
-                // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
-                phaseReport.append(destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
-            }
+            // ack!  automatic death!  Tanks
+            // suffer an ammo/power plant hit.
+            // TODO : a Mech suffers a Head Blown Off crit.
+            phaseReport.append(destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
         }
         // HACK: to avoid automatic falls, displace from dest to dest
         doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));

@@ -132,6 +132,7 @@ v 0.29.2 (06-??-03, ??)
   40-59 is +2, etc...
 + Feature 734125+: Added "are you sure" check for movement that requires
   piloting skill rolls.
++ Bug 763169: Dropping prone now has chance to dislodge swarmers.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

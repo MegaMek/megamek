@@ -2767,10 +2767,24 @@ implements Runnable {
             // dropping prone intentionally?
             if (step.getType() == MovementData.STEP_GO_PRONE) {
                 mpUsed = step.getMpUsed();
-                entity.setProne(true);
-                // check to see if we washed off infernos
-                checkForWashedInfernos(entity, curPos);
-                break;
+                rollTarget = entity.checkDislodgeSwarmers();
+                if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
+                    // Not being swarmed
+                    entity.setProne(true);
+                    // check to see if we washed off infernos
+                    checkForWashedInfernos(entity, curPos);
+                    break;
+                } else {
+                    // Being swarmed
+                    entity.setPosition(curPos);
+                    if (doDislodgeSwarmerSkillCheck(entity, rollTarget, curPos)) {
+                        // Entity falls
+                        curFacing = entity.getFacing();
+                        curPos = entity.getPosition();
+                        fellDuringMovement = true;
+                        break;
+                    }
+                }
             }
             
             // update lastPos, prevStep, prevFacing & prevHex
@@ -3028,6 +3042,26 @@ implements Runnable {
             doEntityFall(entity, roll);
         } else {
             phaseReport.append("succeeds.\n");
+        }
+    }
+
+    private boolean doDislodgeSwarmerSkillCheck(Entity entity, PilotingRollData roll, Coords curPos) {
+        // okay, print the info
+        phaseReport.append("\n" ).append( entity.getDisplayName() )
+            .append( " must make a piloting skill check (" )
+            .append( roll.getLastPlainDesc() ).append( ")" ).append( ".\n");
+        // roll
+        final int diceRoll = Compute.d6(2);
+        phaseReport.append("Needs " ).append( roll.getValueAsString()
+        ).append( " [" ).append( roll.getDesc() ).append( "]"
+        ).append( ", rolls " ).append( diceRoll ).append( " : ");
+        if (diceRoll < roll.getValue() || true) {
+            phaseReport.append("fails.\n");
+            return false;
+        } else {
+            phaseReport.append("succeeds.\n");
+            doEntityFallsInto(entity, curPos, curPos, roll);
+            return true;
         }
     }
 

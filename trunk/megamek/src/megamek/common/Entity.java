@@ -2360,6 +2360,24 @@ public abstract class Entity
     }
 
     /**
+     * Checks if the entity is being swarmed.  If so, returns the
+     *  target roll for the piloting skill check to dislodge them.
+     */
+    public PilotingRollData checkDislodgeSwarmers() {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (Entity.NONE == getSwarmAttackerId()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            return roll;
+        }
+
+        // append the reason modifier
+        roll.append(new PilotingRollData(getId(), 0, "attempting to dislodge swarmers by dropping prone"));
+        
+        return roll;
+    }
+
+    /**
      * Checks to see if an entity is moving through buildings.
      *  Note: this method returns true/false, unlike the other
      *  checkStuff() methods above.

@@ -247,10 +247,8 @@ public class LosEffects {
         	return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
         }
 
-        if (lightSmoke > 1 || heavySmoke > 0) {
-            if (lightWoods > 1 || heavyWoods > 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods.");
-            } 
+        if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods.");
         }
         
         if (lightWoods > 0) {

@@ -145,16 +145,30 @@ public class Server
         send(connId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(connId)));
 
         // send current game info
-        transmitAllPlayerConnects(connId);
-        send(connId, createSettingsPacket());
-        send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
-        send(connId, createEntitiesPacket());
+        sendCurrentInfo(connId);
 
         System.out.println("s: player " + connId
                            + " (" + getPlayer(connId).getName() + ") connected from "
                            + getClient(connId).getSocket().getInetAddress());
         sendChatToAll("***Server", getPlayer(connId).getName() + " connected from "
                            + getClient(connId).getSocket().getInetAddress());
+    }
+    
+    /**
+     * Sends a player the info they need to look at the current phase
+     */
+    private void sendCurrentInfo(int connId) {
+        transmitAllPlayerConnects(connId);
+        send(connId, createEntitiesPacket());
+        switch (game.phase) {
+        case Game.PHASE_LOUNGE :
+            send(connId, createSettingsPacket());
+            break;
+        default :
+            send(createBoardPacket());
+            break;
+        }
+        send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
     }
     
     
@@ -829,11 +843,9 @@ public class Server
         }
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (level > 0) {
-                // check previous initiative and that the player is on this level
-                if (player.getInitiativeSize() <= level || player.getInitiative(level - 1) != previousInit) {
-                    continue;
-                }
+            // check previous initiative and that the player is on this level
+            if (player.getInitiativeSize() <= level || (level > 0 &&player.getInitiative(level - 1) != previousInit)) {
+                continue;
             }
             if (player.getInitiative(level) == init) {
                 order[oi++] = player.getId();
@@ -2266,7 +2278,7 @@ public class Server
                     desc += " " + te.getArmor(hit) + " Armor remaining";
                 } else {
                     // damage goes on to internal
-                    int absorbed = te.getArmor(hit);
+                    int absorbed = Math.max(te.getArmor(hit), 0);
                     te.setArmor(Entity.ARMOR_DESTROYED, hit);
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
@@ -2288,10 +2300,10 @@ public class Server
                         desc += " " + te.getInternal(hit) + " Internal Structure remaining";
                     } else {
                         // damage transfers, maybe
-                        int absorbed = te.getInternal(hit);
+                        int absorbed = Math.max(te.getInternal(hit), 0);
                         te.setInternal(Entity.ARMOR_DESTROYED, hit);
                         te.damageThisPhase += absorbed;
-                        damage -= te.getInternal(hit);
+                        damage -= absorbed;
                         desc += " <<<SECTION DESTROYED>>>,";
                     }
                 }

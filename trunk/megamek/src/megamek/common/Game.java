@@ -50,10 +50,11 @@ public class Game implements Serializable
     public static final int PHASE_DEPLOY_MINEFIELDS = 13;
     public static final int PHASE_STARTING_SCENARIO = 14;
     /**
-     * The number of Infantry platoons that have to move for every Mek
-     * or Vehicle, if the "inf_move_multi" option is selected.
+     * The number of Infantry platoons/Protomechs that have to move for
+     * every Mek or Vehicle, if the "inf_and_protos_move_multi" option
+     * is selected.
      */
-    public static final int INF_MOVE_MULTI          = 3;
+    public static final int INF_AND_PROTOS_MOVE_MULTI          = 3;
 
     /**
      * Define constants to describe the condition a
@@ -1208,6 +1209,7 @@ public class Game implements Serializable
     }
     
     /**
+     * THIS METHOD NOT USED ANYWHERE
      * Determines if the indicated player has any remaining selectable infanty.
      *
      * @param playerId - the <code>int</code> ID of the player
@@ -1229,17 +1231,17 @@ public class Game implements Serializable
     }
     
     /**
-     * Returns the number of remaining selectable infantry owned by a player.
+     * Returns the number of remaining selectable infantry/protomechs owned by a player.
      */
-    public int infantryLeft(int playerId) {
-  Player player = this.getPlayer( playerId );
+    public int infantryAndProtomechsLeft(int playerId) {
+        Player player = this.getPlayer( playerId );
         int remaining = 0;
-
+        
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
-     entity.isSelectableThisTurn(this) &&
-     entity instanceof Infantry ) {
+                 entity.isSelectableThisTurn(this) &&
+                 (entity instanceof Infantry || entity instanceof Protomech)) {
                 remaining++;
             }          
         }

@@ -987,22 +987,23 @@ implements Runnable, ConnectionHandler {
     /**
      * Called when the current player has done his current turn and the turn
      * counter needs to be advanced.
-     * Also enforces the "inf_move_multi" option.  If the player has just moved
-     * infantry with a "normal" turn, adds up to Game.INF_MOVE_MULTI - 1 more
-     * infantry-specific turns after the current turn.
+     * Also enforces the "inf_and_protos_move_multi" option.  If the
+     * player has just moved infantry/protos with a "normal" turn, adds
+     * up to Game.INF_AND_PROTOS_MOVE_MULTI - 1 more
+     * infantry/proto-specific turns after the current turn.
      */
     private void endCurrentTurn(Entity entityUsed) {
-        // enforce "inf_move_multi" option
+        // enforce "inf_and_protos_move_multi" option
         boolean turnsChanged = false;
-        if (game.getOptions().booleanOption("inf_move_multi")
-        && entityUsed instanceof Infantry
-        && !(game.getTurn() instanceof GameTurn.OnlyInfantryTurn)) {
+        if (game.getOptions().booleanOption("inf_and_protos_move_multi") &&
+            (entityUsed instanceof Infantry || entityUsed instanceof Protomech)
+            && !(game.getTurn() instanceof GameTurn.OnlyInfantryAndProtomechTurn)) {
             int playerId = game.getTurn().getPlayerNum();
-            int remaining = game.infantryLeft(playerId);
-            int moreInfTurns = Math.min(Game.INF_MOVE_MULTI - 1, remaining);
-            for (int i = 0; i < moreInfTurns; i++) {
+            int remaining = game.infantryAndProtomechsLeft(playerId);
+            int moreInfAndProtoTurns = Math.min(Game.INF_AND_PROTOS_MOVE_MULTI - 1, remaining);
+            for (int i = 0; i < moreInfAndProtoTurns; i++) {
 
-                GameTurn newTurn = new GameTurn.OnlyInfantryTurn(playerId);
+                GameTurn newTurn = new GameTurn.OnlyInfantryAndProtomechTurn(playerId);
                 game.insertNextTurn(newTurn);
                 turnsChanged = true;
             }
@@ -1613,7 +1614,7 @@ implements Runnable, ConnectionHandler {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             player.resetTankCount();
-            player.resetInfantryCount();
+            player.resetInfantryAndProtomechCount();
             player.resetMechCount();
         }
 
@@ -1622,8 +1623,9 @@ implements Runnable, ConnectionHandler {
             final Entity entity = (Entity)e.nextElement();
             if (entity.isSelectableThisTurn(game)) {
                 final Player player = entity.getOwner();
-                if ( entity instanceof Infantry )
-                    player.incrementInfantryCount();
+                if ( entity instanceof Infantry ||
+                     entity instanceof Protomech)
+                    player.incrementInfantryAndProtomechCount();
                 else if (entity instanceof Tank )
                     player.incrementTankCount();
                 else
@@ -1634,60 +1636,60 @@ implements Runnable, ConnectionHandler {
         // Go through each team, update the turn count,
         // and then generate the team order on each team.
 
-        //  This boolean determines whether infantry move and/or
+        //  This boolean determines whether infantry/protos move and/or
         //   deploy last according to game options.
-        boolean infLast = game.getOptions().booleanOption("inf_move_last") && (game.getPhase() != Game.PHASE_DEPLOYMENT || game.getOptions().booleanOption("inf_deploy_last"));
+        boolean infAndProtosLast = game.getOptions().booleanOption("inf_and_protos_move_last") && (game.getPhase() != Game.PHASE_DEPLOYMENT || game.getOptions().booleanOption("inf_and_protos_deploy_last"));
 
         TurnVectors team_order;
         for (Enumeration t = game.getTeams(); t.hasMoreElements(); ) {
             final Team team = (Team)t.nextElement();
             team.updateTurnCount();
-            team.determineTeamOrder(infLast);
+            team.determineTeamOrder(infAndProtosLast);
         }
 
         // Now, generate the order that the teams go in
         team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(),
-                                                   infLast);
+                                                   infAndProtosLast);
 
         // Now, we have the order that the teams
         // go in, and the order team goes in.
-        Vector turns = new Vector(team_order.infantry.size() +
-                                  team_order.non_infantry.size() );
+        Vector turns = new Vector(team_order.infantry_and_protomechs.size() +
+                                  team_order.non_infantry_non_protomechs.size() );
 
-        // First, the non_infantry.  We will do this by looking at
+        // First, the non infantry/protomechs.  We will do this by looking at
         // first element on the team_order vector, then looking at
         // the first element on THAT team's order list.  We will create
         // a new turn, then remove the entry from the team's order list and
         // the uber-turn-order list here.
-        while ( !team_order.non_infantry.isEmpty() ) {
+        while ( !team_order.non_infantry_non_protomechs.isEmpty() ) {
             GameTurn turn = null;
-            Team t = (Team)team_order.non_infantry.firstElement();
-            Player p = (Player)t.getTurnOrder().non_infantry.firstElement();
+            Team t = (Team)team_order.non_infantry_non_protomechs.firstElement();
+            Player p = (Player)t.getTurnOrder().non_infantry_non_protomechs.firstElement();
 
-            if (infLast) {
-                turn = new GameTurn.NotInfantryTurn(p.getId());
+            if (infAndProtosLast) {
+                turn = new GameTurn.NotInfantryOrProtomechTurn(p.getId());
             } else {
                 turn = new GameTurn(p.getId());
             }
             turns.addElement(turn);
 
             // Now, remove the entry
-            t.getTurnOrder().non_infantry.removeElement(p);
-            team_order.non_infantry.removeElement(t);
+            t.getTurnOrder().non_infantry_non_protomechs.removeElement(p);
+            team_order.non_infantry_non_protomechs.removeElement(t);
         }
 
-        // Now, repeat for the infantry
-        while ( !team_order.infantry.isEmpty() ) {
+        // Now, repeat for the infantry and protomechs
+        while ( !team_order.infantry_and_protomechs.isEmpty() ) {
             GameTurn turn = null;
-            Team t = (Team)team_order.infantry.firstElement();
-            Player p = (Player)t.getTurnOrder().infantry.firstElement();
+            Team t = (Team)team_order.infantry_and_protomechs.firstElement();
+            Player p = (Player)t.getTurnOrder().infantry_and_protomechs.firstElement();
 
-            turn = new GameTurn.OnlyInfantryTurn(p.getId());
+            turn = new GameTurn.OnlyInfantryAndProtomechTurn(p.getId());
             turns.addElement(turn);
 
             // Now, remove the entry
-            t.getTurnOrder().infantry.removeElement(p);
-            team_order.infantry.removeElement(t);
+            t.getTurnOrder().infantry_and_protomechs.removeElement(p);
+            team_order.infantry_and_protomechs.removeElement(t);
 
         }
 

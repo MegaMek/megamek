@@ -22,12 +22,12 @@ import java.io.*;
  * <code>GameTurn</code> objects.
  */
 public class TurnVectors implements Serializable{
-    public Vector non_infantry = null;
-    public Vector infantry     = null;
+    public Vector non_infantry_non_protomechs = null;
+    public Vector infantry_and_protomechs     = null;
     
-    public TurnVectors(int non_inf, int inf)
+    public TurnVectors(int non_inf_non_protos, int inf_and_protos)
     {
-	non_infantry = new Vector(non_inf);
-	infantry     = new Vector(inf);
+	non_infantry_non_protomechs = new Vector(non_inf_non_protos);
+	infantry_and_protomechs     = new Vector(inf_and_protos);
     }
 }

@@ -22,3 +22,9 @@ mech "default_assault" "default_assault.gif"
 mech "default_quad" "default_quad.gif"
 
 # put custom pictures here:
+
+mech "LCT-*" "default_light.gif"
+mech "HBK-*" "default_medium.gif"
+mech "SCP-*" "default_quad.gif"
+mech "RFL-*" "default_heavy.gif"
+mech "AS7-*" "default_assault.gif"

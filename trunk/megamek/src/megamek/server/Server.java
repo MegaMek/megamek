@@ -5686,11 +5686,12 @@ implements Runnable {
             Coords targetDest = Compute.getPreferredDisplacement(game, te.getId(), dest, direction);
             phaseReport.append("misses.\n");
             if (targetDest != null) {
-                // move target to preferred hex
-                doEntityDisplacement(te, dest, targetDest, null);
                 // attacker falls into destination hex
                 phaseReport.append(ae.getDisplayName() ).append( " falls into hex " ).append( dest.getBoardNum() ).append( ".\n");
                 doEntityFall(ae, dest, 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
+
+                // move target to preferred hex
+                doEntityDisplacement(te, dest, targetDest, null);
             } else {
                 // attacker destroyed
                 phaseReport.append(destroyEntity(ae, "impossible displacement", false));

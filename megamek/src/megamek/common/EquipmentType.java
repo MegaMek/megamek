@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -150,12 +150,15 @@ public class EquipmentType {
     }
 
     public void addLookupName(String s) {
-        lookupHash.put(s, this); // static variable
+        EquipmentType.lookupHash.put(s, this); // static variable
         namesVector.addElement(s); // member variable
     }
 
     public static EquipmentType get(String key) {
-        return (EquipmentType)lookupHash.get(key);
+        if ( null == EquipmentType.lookupHash ) {
+            EquipmentType.initializeTypes();
+        }
+        return (EquipmentType) EquipmentType.lookupHash.get(key);
     }
 
     public Enumeration getNames() {
@@ -163,8 +166,8 @@ public class EquipmentType {
     }
 
     public static void initializeTypes() {
-        allTypes = new Vector();
-        lookupHash = new Hashtable();
+        EquipmentType.allTypes = new Vector();
+        EquipmentType.lookupHash = new Hashtable();
         
         // will I need any others?
         WeaponType.initializeTypes();
@@ -173,11 +176,17 @@ public class EquipmentType {
     }
     
     public static Enumeration getAllTypes() {
-        return allTypes.elements();
+        if ( null == EquipmentType.allTypes ) {
+            EquipmentType.initializeTypes();
+        }
+        return EquipmentType.allTypes.elements();
     }
     
     protected static void addType(EquipmentType type) {
-        allTypes.addElement(type);
+        if ( null == EquipmentType.allTypes ) {
+            EquipmentType.initializeTypes();
+        }
+        EquipmentType.allTypes.addElement(type);
     }
     
 }

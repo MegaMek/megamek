@@ -12,10 +12,11 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
- 
+
 package megamek.server;
 
 import megamek.common.*;
+import java.util.*;
 
 public abstract class UnitStatusFormatter
 {
@@ -30,22 +31,42 @@ public abstract class UnitStatusFormatter
         sb.append(formatHeader(e));
         sb.append("-------------------------------------------------------------\n");
         sb.append(formatArmor(e));
+        if (e instanceof Mech) {
+            sb.append("-------------------------------------------------------------\n");
+            sb.append(formatCrits(e));
+        }
         sb.append("-------------------------------------------------------------\n");
-        //sb.append(formatCrits(e));
+        sb.append(formatAmmo(e));
         sb.append("=============================================================\n");
         return sb.toString();
     }
-    
+
     private static String formatHeader(Entity e)
     {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("Model: ").append(e.getModel()).append("\n");
+        sb.append("Model: ").append(e.getChassis()).append(" - ").append(e.getModel()).append("\n");
         sb.append("Pilot: ").append(e.crew.getName());
         sb.append(" (").append(e.crew.getGunnery()).append("/");
         sb.append(e.crew.getPiloting()).append(")\n");
         return sb.toString();
     }
-    
+
+    private static String formatAmmo(Entity e)
+    {
+        StringBuffer sb = new StringBuffer(1024);
+        Mounted weap;
+
+        for (Enumeration en = e.getAmmo(); en.hasMoreElements(); )
+        {
+            weap = (Mounted)en.nextElement();
+            sb.append(weap.getName());
+            sb.append(": ").append(weap.getShotsLeft()).append("\n");
+        }
+
+        return sb.toString();
+    }
+      
+
     private static String formatCrits(Entity e)
     {
         StringBuffer sb = new StringBuffer();
@@ -62,7 +83,7 @@ public abstract class UnitStatusFormatter
                 else if (nCount > 1) {
                     sb.append(",");
                 }
-                
+
                 if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
                     if (cs.isHit() || cs.isDestroyed() || cs.isMissing()) {
                         sb.append("*");
@@ -83,16 +104,54 @@ public abstract class UnitStatusFormatter
         }
         return sb.toString();
     }
-    
-    
+
+
     private static String formatArmor(Entity e)
     {
         if (e instanceof Mech) {
             return formatArmorMech((Mech)e);
+        } else if (e instanceof Tank) {
+            return formatArmorTank((Tank)e);
+        } else if (e instanceof BattleArmor) {
+            return formatArmorBattleArmor((BattleArmor)e);
+        } else if (e instanceof Infantry) {
+            return formatArmorInfantry((Infantry)e);
         }
         return "";
     }
     
+    private static String formatArmorTank(Tank t)
+    {
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("      ARMOR               INTERNAL\n    __________           __________\n    |\\      /|           |\\      /|\n");
+        // front
+        sb.append("    | \\ ").append(renderArmor(t.getArmor(Tank.LOC_FRONT))).append(" / |           | \\ ");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_FRONT))).append(" / |\n    |  \\__/  |           |  \\__/  |\n");
+        // left, turret and right
+        sb.append("    |").append(renderArmor(t.getArmor(Tank.LOC_LEFT))).append("/");
+        if (t.hasTurret())
+        {
+            sb.append(renderArmor(t.getArmor(Tank.LOC_TURRET))).append("\\");
+        } else {
+            sb.append("  \\");
+        }
+        sb.append(renderArmor(t.getArmor(Tank.LOC_RIGHT))).append("|           |");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_LEFT))).append("/");
+        if (t.hasTurret())
+        {
+            sb.append(renderArmor(t.getInternal(Tank.LOC_TURRET))).append("\\");
+        } else {
+            sb.append("  \\");
+        }    
+        sb.append(renderArmor(t.getInternal(Tank.LOC_RIGHT))).append("|\n");
+        // rear
+        sb.append("    | /____\\ |           | /____\\ |\n    | / ").append(renderArmor(t.getArmor(Tank.LOC_REAR))).append(" \\ |           | / ");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_REAR))).append(" \\ |\n    |/______\\|           |/______\\|\n");
+
+        sb.append("\n");
+        return sb.toString();
+    }
+
     private static String formatArmorMech(Mech m)
     {
         StringBuffer sb = new StringBuffer(1024);
@@ -154,6 +213,22 @@ public abstract class UnitStatusFormatter
             sb.append(".\\/.").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append("\\\n");
         }
         sb.append("\n");
+        return sb.toString();
+    }
+    
+    private static String formatArmorInfantry(Infantry i) {
+        StringBuffer sb = new StringBuffer(32);
+        sb.append("Surviving troopers: ").append(i.getInternal(0)).append('\n');
+        return sb.toString();
+    }
+    
+    private static String formatArmorBattleArmor(BattleArmor b) {
+        StringBuffer sb = new StringBuffer(32);
+        for (int i = 1; i < b.locations(); i++) {
+            sb.append("Trooper ").append(i).append(": ");
+            sb.append(b.getArmor(i)).append(" / ").append(b.getInternal(i));
+            sb.append('\n');
+        }
         return sb.toString();
     }
     

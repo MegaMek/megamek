@@ -5,6 +5,8 @@ v 0.29.17 (CVS)
 + Marked data/sounds/call.wav as a binary file.
 + Bug 833851 -PARTIAL FIX-
   Catch all Throwables when trying to get the "bing" sound.
++ Setting "memorydumpon" will track memory usage during a game in MegaMek.log.
++ Bug 829228: applied floio's patch
 
 v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.

@@ -72,7 +72,7 @@ public class RandomMapDialog
     private SimpleLine slBoardSizeAd = null;
     private SimpleLine slCratersAd = null;
 
-	/** how much hills there should be, Range 0..99 */
+	/** how much hills there should be, Range 0..100 */
 	private Label labHilliness;
 	private TextField texHilliness;
 	/** Maximum level of the map */
@@ -319,8 +319,8 @@ public class RandomMapDialog
 		slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
 
 		// Advanced setting components...
-		/** how much hills there should be, Range 0..99 */
-		labHilliness = new Label("Amount of elevation(0-99):", Label.LEFT);
+		/** how much hills there should be, Range 0..1000 */
+		labHilliness = new Label("Amount of elevation(0-1000):", Label.LEFT);
 		texHilliness = new TextField(2);
 		texHilliness.addFocusListener(this);
 		/** Maximum level of the map */

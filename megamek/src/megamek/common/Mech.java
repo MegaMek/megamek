@@ -73,6 +73,7 @@ public abstract class Mech
     // Has masc been used?
     private boolean usedMASC = false;
     private int sinksOn;
+    private int sinksOnNextRound;
     private boolean sinksChanged = false;
     private boolean autoEject = true;
 
@@ -335,6 +336,9 @@ public abstract class Mech
                 m.setShotsLeft(0);
             }
         }
+        
+        // set heat sinks
+        sinksOn = sinksOnNextRound;
 
     } // End public void newRound()
 
@@ -1976,13 +1980,20 @@ public abstract class Mech
         return sinks;
     }
     
-    public void setActiveSinks(int sinks) {
+    public void setActiveSinksNextRound(int sinks) {
         if(sinks!=getNumberOfSinks()) {
             sinksChanged=true;
         } else {
             sinksChanged=false;
         }
-        sinksOn=sinks;
+        sinksOnNextRound=sinks;
+    }
+    
+    public int getActiveSinks() {
+        if (sinksChanged) {
+            return sinksOn;
+        }
+        return getNumberOfSinks();
     }
     /**
      * @return Returns the autoEject.

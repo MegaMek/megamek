@@ -622,6 +622,12 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
             
+            // check if we've moved into swamp
+            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport.append(addNag(rollTarget));
+            }
+            
             // check if we used more MPs than the Mech/Vehicle would have in normal gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if (entity instanceof Mech) {
@@ -642,7 +648,7 @@ public class MovementDisplay
                       }
                 } else if (entity instanceof Tank) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-//                      // For Tanks, we need to check if the tank had more MPs because it was moving along a road
+                        // For Tanks, we need to check if the tank had more MPs because it was moving along a road
                         if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

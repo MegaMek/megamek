@@ -177,9 +177,12 @@ public class Settings
     /** Whether to display the Chat Lounge in tabs or not. */
     public static boolean chatLoungeTabs = true;
 
-    /** Disable all automatic ejection by default. */
+    /** Enable all automatic ejection by default. */
     public static boolean defaultAutoejectDisabled = false;
 
+    /** Do not show unit Ids by default. */
+    public static boolean showUnitId = false;
+    
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;
 
@@ -523,6 +526,10 @@ scan:
                         st.nextToken();
                         defaultAutoejectDisabled = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("showUnitId")) {
+                        st.nextToken();
+                        showUnitId = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -647,7 +654,8 @@ scan:
             cw.write("chatloungetabs " + chatLoungeTabs + "\r\n");
             cw.write("chatloungetabfontsize " + chatLoungeTabFontSize + "\r\n");
             cw.write("defaultautoejectdisabled " + defaultAutoejectDisabled + "\r\n");
-
+            cw.write("showUnitId" + showUnitId + "\r\n");
+            
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes
             Enumeration keys = Settings.saved.propertyNames();

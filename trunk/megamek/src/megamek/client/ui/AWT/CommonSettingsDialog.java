@@ -48,6 +48,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
     private TextField   serverlogFilename;
     private TextField   serverlogMaxSize;
     private Checkbox    defaultAutoejectDisabled;
+    private Checkbox    showUnitId;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -139,6 +140,11 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         defaultAutoejectDisabled.addItemListener(this);
         tempPanel.add( defaultAutoejectDisabled );
 
+        showUnitId
+            = new Checkbox ( "Show each unit's unique Id next to its name.");
+        showUnitId.addItemListener(this);
+        tempPanel.add( showUnitId );
+        
         // client-side gamelog settings
         keepServerlog
             = new Checkbox( "Keep a copy of the game log." );
@@ -281,6 +287,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         serverlogMaxSize.setText( Integer.toString(Settings.serverlogMaxSize) );
 
         defaultAutoejectDisabled.setState( Settings.defaultAutoejectDisabled );
+        showUnitId.setState( Settings.showUnitId );
 
         getFocus.setState( Settings.getFocus );
         super.show();
@@ -325,6 +332,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         Settings.serverlogMaxSize       = Integer.parseInt(serverlogMaxSize.getText());
 
         Settings.defaultAutoejectDisabled = defaultAutoejectDisabled.getState();
+        Settings.showUnitId             = showUnitId.getState();
 
         Settings.save();
         this.setVisible( false );

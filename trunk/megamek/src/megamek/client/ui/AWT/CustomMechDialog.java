@@ -610,6 +610,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             loc = m.getLocation();
             String sDesc = "Machine Gun (" + entity.getLocationAbbr(loc) + ")";
             add(new Label(sDesc + " Switch to rapid-fire mode"));
+            chRapid.setState(m.isRapidfire());
             add(chRapid);
         }
 

@@ -47,6 +47,7 @@ v 0.29.27 (CVS)
 + Customize Mech dialog no longer enables ammo choices that aren't yours.
 + Bug 900531: Customize Mech had problems with Clan Mek and Proto MG ammo.
 + Data 897783: New/additional images for Cerberus, Hauptmann, and Sagittaire.
++ Bug 909049: Fixed a bug with charging (Could not reach target with movement)
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

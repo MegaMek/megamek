@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -16,6 +16,7 @@ package megamek;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 import megamek.common.*;
 import megamek.client.*;
@@ -25,6 +26,9 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
+    public static final String  VERSION = "~0.25.4";
+    public static final long    TIMESTAMP = new File("timestamp").lastModified();
+    
     public Frame            frame;
     
     public Client client;
@@ -58,8 +62,11 @@ public class MegaMek
      */
     public void showMainMenu() {
         Button hostB, connectB, botB, editB;
+        Label labVersion = new Label();
             
         frame.removeAll();
+        
+        labVersion.setText("MegaMek version " + VERSION);
         
         hostB = new Button("Host a New Game...");
         hostB.setActionCommand("game_host");
@@ -87,6 +94,7 @@ public class MegaMek
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.ipadx = 20;    c.ipady = 5;
 
+        addBag(labVersion, gridbag, c);
         addBag(hostB, gridbag, c);
         addBag(connectB, gridbag, c);
         addBag(botB, gridbag, c);

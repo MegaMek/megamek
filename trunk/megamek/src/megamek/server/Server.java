@@ -18,6 +18,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import megamek.*;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.options.*;
@@ -36,6 +37,7 @@ public class Server
     private String              password;
     private ServerSocket        serverSocket;
     private ServerLog           log = new ServerLog();
+    private String              motd;
 
     // game info
     private Vector              connections = new Vector(4);
@@ -81,6 +83,8 @@ public class Server
             System.err.println("could not create server socket on port " + port);
         }
         
+        motd = createMotd();
+        
         game.getOptions().initialize();
 
         changePhase(Game.PHASE_LOUNGE);
@@ -102,14 +106,33 @@ public class Server
     }
     
     /**
-     * @returns true if the server has a password
+     * Make a default message o' the day containing the version string, and
+     * if it was found, the build timestamp
+     */
+    private String createMotd() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("Welcome to MegaMek.  Server is running version ");
+        buf.append(MegaMek.VERSION);
+        buf.append(", build date ");
+        if (MegaMek.TIMESTAMP > 0L) {
+            buf.append(new Date(MegaMek.TIMESTAMP).toString());
+        } else {
+            buf.append("unknown");
+        }
+        buf.append(".");
+        
+        return buf.toString();
+    }
+    
+    /**
+     * @return true if the server has a password
      */
     public boolean isPassworded() {
         return password != null;
     }
     
     /**
-     * @returns true if the password matches
+     * @return true if the password matches
      */
     public boolean isPassword(Object guess) {
         return password.equals(guess);
@@ -192,6 +215,9 @@ public class Server
             game.addPlayer(connId, new Player(connId, name));
             validatePlayerInfo(connId);
         }
+        
+        // send the player the motd
+        sendServerChat(connId, motd);
 
         // send info that the player has connected
         send(createPlayerConnectPacket(connId));

@@ -93,6 +93,8 @@ v next
 + 550229: attack tooltip to-hit now takes torso twisting into account
 + automatic misses now show reason (though it's always "out of range")
 + 546527: can't fire from depth 1 water while prone
++ added ant build.xml
++ megamek now prominently displays version number
 
 v 0.25.3 (04-28-02, 5pm)
 + added Dima Nemchenko's patch for confirm dialogs on physical attacks

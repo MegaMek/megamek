@@ -1579,28 +1579,34 @@ implements Runnable {
         // Unloaded successfully.
         return true;
     }
+    
+    /**
+     * Receives an entity movement packet, and if valid, executes it and ends
+     * the current turn.
+     */
+    private void receiveMovement(Packet packet, int connId) {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+        MovementData md = (MovementData)packet.getObject(1);
+        
+        // is this the right thing to move right now?
+        GameTurn turn = game.getTurn();
+        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)) {
+            processMovement(entity, md);
+            endCurrentTurn();
+        } else {
+            // TODO: log it
+        }
+        
+    }
 
     /**
      * Steps thru an entity movement packet, executing it.
      */
-    private void doEntityMovement(Packet c, int cn) {
-        final MovementData md = (MovementData)c.getObject(1);
-        // walk thru data, stopping when the mech is out of movement
-        final Entity entity = game.getEntity(c.getIntValue(0));
+    private void processMovement(Entity entity, MovementData md) {
 	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
 	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
-        
-        if (entity == null) {
-            // what causes this?  --Ben
-            return;
-        }
 
-        if (entity.isDone()) {
-            // the entity has already moved, apparently
-            return;
-        }
-
-	// Check for potential cheating:
+        // Check for potential cheating:
 	// If "inf_move_mutli" option is selected, and we're in the middle
 	// of a block of Infantry moves, entity had better be an Infantry
 	// platoon owned by the most recent player.
@@ -2377,10 +2383,12 @@ implements Runnable {
         } // End entity-is-jumping
 
         // should we give another turn to the entity to keep moving?
-        if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
+        if (fellDuringMovement && entity.mpUsed < entity.getRunMP() 
+        && entity.isSelectable() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
-            turns.insertElementAt(new GameTurn(entity.getOwner().getId(), entity.getId()), turnIndex);
+            GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+            turns.insertElementAt(newTurn, turnIndex);
         } else {
             entity.setDone(true);
         }
@@ -2738,54 +2746,73 @@ implements Runnable {
         }
     }
     
-    private void receiveDeployment(Packet pkt) {
-        if (game.phase != game.PHASE_DEPLOYMENT) {
-            return;
+    /**
+     * Receive a deployment packet.  If valid, execute it and end the current
+     * turn.
+     */
+    private void receiveDeployment(Packet packet, int connId) {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+        Coords coords = (Coords)packet.getObject(1);
+        int nFacing = packet.getIntValue(2);
+        
+        // Handle units that deploy loaded with other units.
+        int loadedCount = packet.getIntValue(3);
+        Vector loadVector = new Vector();
+        for ( int i = 0; i < loadedCount; i++ ){
+            int loadedId = packet.getIntValue( 4 + i );
+            loadVector.add(game.getEntity( loadedId ));
         }
         
-        Entity e = game.getEntity(pkt.getIntValue(0));
-        Coords c = (Coords)pkt.getObject(1);
-        int nFacing = pkt.getIntValue(2);
-
-        // Handle units that deploy loaded with other units.
-        int loadedCount = pkt.getIntValue(3);
-        int loadedId = -1;
-        Entity loaded = null;
-        for ( int loop = 0; loop < loadedCount; loop++ ){
-            loadedId = pkt.getIntValue( 4 + loop );
-            loaded = game.getEntity( loadedId );
+        // game.board.isLegalDeployment(c, e.getOwner())is this the right phase?
+        if (game.getPhase() != Game.PHASE_DEPLOYMENT) {
+            System.err.println("error: server got deployment packet in wrong phase");
+        }
+        
+        // is this the right thing to move right now?
+        GameTurn turn = game.getTurn();
+        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)
+        && game.board.isLegalDeployment(coords, entity.getOwner())) {
+            processDeployment(entity, coords, nFacing, loadVector);
+            endCurrentTurn();
+        } else {
+            System.err.println("error: server got invalid deployment packet");
+        }
+    }
+    
+    /**
+     * Process a deployment packet by... deploying the entity!  We load any
+     * other specified entities inside of it too.  Also, check that the
+     * deployment is valid.
+     */
+    private void processDeployment(Entity entity, Coords coords, int nFacing, Vector loadVector) {
+        for (Enumeration i = loadVector.elements(); i.hasMoreElements();) {
+            Entity loaded = (Entity)i.nextElement();
             if ( loaded == null || loaded.getPosition() != null ||
                  loaded.getTransportId() != Entity.NONE ) {
                 // Something is fishy in Denmark.
-                System.err.println( e.getShortName() + " can not load entity #" +
-                                    loadedId );
+                System.err.println("error: " + entity + " can not load entity #" + loaded );
                 break;
             }
             else {
                 // Have the deployed unit load the indicated unit.
-                this.loadUnit( e, loaded );
+                this.loadUnit( entity, loaded );
             }
         }
 
-        if (game.board.isLegalDeployment(c, e.getOwner())) {
-            e.setPosition(c);
-            e.setFacing(nFacing);
-            e.setSecondaryFacing(nFacing);
-            e.setDone(true);
-            entityUpdate(e.getId());
-        }
-        else {
-            System.err.println("Received invalid deployment for " + e.getShortName());
-        }
+        entity.setPosition(coords);
+        entity.setFacing(nFacing);
+        entity.setSecondaryFacing(nFacing);
+        entity.setDone(true);
+        entityUpdate(entity.getId());
         
 	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
 	// Is the entity Infantry?
-	if ( e instanceof Infantry ) {
+	if ( entity instanceof Infantry ) {
 	    // Increment the counter.
 	    turnInfMoved++;
 
 	    // Record the player moving the infantry.
-	    turnLastPlayerId = e.getOwnerId();
+	    turnLastPlayerId = entity.getOwnerId();
 
 	    // Do infantry move in blocks?
 	    if ( infMoveMulti ) {
@@ -2808,16 +2835,45 @@ implements Runnable {
     }
     
     /**
-     * Gets a bunch of entity actions from the packet
+     * Gets a bunch of entity attacks from the packet.  If valid, processess
+     * them and ends the current turn.
      */
-    private void receiveAttack(Packet pkt) {
-        Vector vector = (Vector)pkt.getObject(1);
-        Entity entity = game.getEntity(pkt.getIntValue(0));
+    private void receiveAttack(Packet packet, int connId) {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+        Vector vector = (Vector)packet.getObject(1);
+        
+        // is this the right phase?
+        if (game.getPhase() != Game.PHASE_FIRING 
+        && game.getPhase() != Game.PHASE_PHYSICAL) {
+            System.err.println("error: server got attack packet in wrong phase");
+        }
+        
+        // is this the right thing to move right now?
+        GameTurn turn = game.getTurn();
+        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)) {
+            processAttack(entity, vector);
+            endCurrentTurn();
+        } else {
+            System.err.println("error: server got invalid attack packet");
+        }
+    }
+    
+    /**
+     * Process a batch of entity attack (or twist) actions by adding them to
+     * the proper list to be processed later.
+     */
+    private void processAttack(Entity entity, Vector vector) {
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
             
-            // move push attacks the end of the displacement attacks
+            // is this the right entity?
+            if (ea.getEntityId() != entity.getId()) {
+                System.err.println("error: attack packet has wrong attacker");
+                continue;
+            }
+            
             if (ea instanceof PushAttackAction) {
+                // push attacks go the end of the displacement attacks
                 PushAttackAction paa = (PushAttackAction)ea;
                 entity.setDisplacementAttack(paa);
                 pendingCharges.addElement(paa);
@@ -2825,23 +2881,13 @@ implements Runnable {
                 // add to the normal attack list.
                 attacks.addElement(ea);
             }
-            
-            // if torso twist, twist so that everybody can see it later
-            if (ea instanceof TorsoTwistAction) {
-                TorsoTwistAction tta = (TorsoTwistAction)ea;
-                game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
-            } else if (ea instanceof FlipArmsAction) {
-                FlipArmsAction faa = (FlipArmsAction)ea;
-                game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
-            }
-            
-            
-            // send an outgoing packet to everybody
-            send(createAttackPacket(ea));
         }
         // this entity is done for the round
         entity.setDone(true);
         entityUpdate(entity.getId());
+        
+        // update all players on the attacks
+        send(createAttackPacket(vector));
     }
     
     /**
@@ -6613,8 +6659,8 @@ implements Runnable {
     /**
      * Creates a packet for an attack
      */
-    private Packet createAttackPacket(EntityAction ea) {
-        return new Packet(Packet.COMMAND_ENTITY_ATTACK, ea);
+    private Packet createAttackPacket(Vector vector) {
+        return new Packet(Packet.COMMAND_ENTITY_ATTACK, vector);
     }
     
     /**
@@ -6720,16 +6766,13 @@ implements Runnable {
                 }
                 break;
             case Packet.COMMAND_ENTITY_MOVE :
-                doEntityMovement(packet, connId);
-                endCurrentTurn();
+                receiveMovement(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_DEPLOY :
-                receiveDeployment(packet);
-                endCurrentTurn();
+                receiveDeployment(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
-                receiveAttack(packet);
-                endCurrentTurn();
+                receiveAttack(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_ADD :
                 receiveEntityAdd(packet, connId);

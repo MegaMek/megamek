@@ -274,22 +274,14 @@ public class Client extends Panel
      * Returns the number of first selectable entity
      */
     public int getFirstEntityNum() {
-        if (game.getTurn().getEntityNum() == GameTurn.ENTITY_ANY) {
-            return game.getFirstEntityNum(getLocalPlayer());
-        } else {
-            return game.getTurn().getEntityNum();
-        }
+        return game.getFirstEntityNum();
     }
     
     /**
      * Returns the number of the next selectable entity after the one given
      */
-    public int getNextEntityNum(int cen) {
-        if (game.getTurn().getEntityNum() == GameTurn.ENTITY_ANY) {
-            return game.getNextEntityNum(getLocalPlayer(), cen);
-        } else {
-            return game.getTurn().getEntityNum();
-        }
+    public int getNextEntityNum(int entityId) {
+        return game.getNextEntityNum(entityId);
     }
   
     /**
@@ -788,19 +780,27 @@ public class Client extends Panel
      * Loads entity firing data from the data in the net command
      */
     protected void receiveAttack(Packet c) {
-        Object o = c.getObject(0);
-        if (o instanceof TorsoTwistAction) {
-            TorsoTwistAction tta = (TorsoTwistAction)o;
-            if (game.getEntity(tta.getEntityId()) != null) {
-            game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+        Vector vector = (Vector)c.getObject(0);
+        for (Enumeration i = vector.elements(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction)i.nextElement();
+            int entityId = ea.getEntityId();
+            if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
+                TorsoTwistAction tta = (TorsoTwistAction)ea;
+                Entity entity = game.getEntity(entityId);
+                entity.setSecondaryFacing(tta.getFacing());
+                //XXX Hack alert!
+                bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
+                //XXX
+            } else if (ea instanceof FlipArmsAction && game.hasEntity(entityId)) {
+                FlipArmsAction faa = (FlipArmsAction)ea;
+                Entity entity = game.getEntity(entityId);
+                entity.setArmsFlipped(faa.getIsFlipped());
+                //XXX Hack alert!
+                bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
+                //XXX
+            } else if (ea instanceof AttackAction) {
+                bv.addAttack((AttackAction)ea);
             }
-        } else if (o instanceof FlipArmsAction) {
-            FlipArmsAction faa = (FlipArmsAction)o;
-            if (game.getEntity(faa.getEntityId()) != null) {
-            game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
-            }
-        } else if (o instanceof AttackAction) {
-            bv.addAttack((AttackAction)o);
         }
     }
     

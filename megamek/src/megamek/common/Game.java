@@ -231,6 +231,14 @@ public class Game implements Serializable
         this.turn = turn;
     }
     
+    public int getPhase() {
+        return phase;
+    }
+    
+    public void setPhase(int phase) {
+        this.phase = phase;
+    }
+    
     public boolean hasDeployed() {
         return m_bHasDeployed;
     }
@@ -324,6 +332,14 @@ public class Game implements Serializable
             entities.setElementAt(entity, entities.indexOf(oldEntity));
         }
         entityIds.put(new Integer(id), entity);
+    }
+    
+    /**
+     * Returns true if an entity with the specified id number exists in this
+     * game.
+     */
+    public boolean hasEntity(int entityId) {
+        return entityIds.containsKey(new Integer(entityId));
     }
   
     /**
@@ -473,59 +489,80 @@ public class Game implements Serializable
 	}
 	return graveyard.contains( entity );
     }
-
+    
     /**
-     * Returns the first selectable entity that belongs to the player,
-     * or null if none do.
-     * 
-     * @param player the player.
+     * Returns the first entity that can act in the present turn, or null if
+     * none can.
      */
-    public Entity getFirstEntity(Player player) {
-        return getEntity(getFirstEntityNum(player));
+    public Entity getFirstEntity() {
+        return getFirstEntity(turn);
     }
     
     /**
-     * Returns the entity number corresponding to the first selectable 
-     * entity that belongs to the player, or -1 if none do.
-     * 
-     * @param player the player.
+     * Returns the first entity that can act in the specified turn, or null if
+     * none can.
      */
-    public int getFirstEntityNum(Player player) {
+    public Entity getFirstEntity(GameTurn turn) {
+        return getEntity(getFirstEntityNum(turn));
+    }
+    
+    /**
+     * Returns the id of the first entity that can act in the current turn,
+     * or -1 if none can.
+     */
+    public int getFirstEntityNum() {
+        return getFirstEntityNum(turn);
+    }
+    
+    /**
+     * Returns the id of the first entity that can act in the specified turn,
+     * or -1 if none can.
+     */
+    public int getFirstEntityNum(GameTurn turn) {
+        if (turn == null) {
+            return -1;
+        }
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if (player.equals(entity.getOwner()) && entity.isSelectable()) {
+            if (turn.isValidEntity(entity)) {
                 return entity.getId();
             }
         }
         return -1;
     }
-
-    /**
-     * Get the entities for the player.
-     *
-     * @param   player - the <code>Player</code> whose entities are required.
-     * @return  a <code>Vector</code> of <code>Entity</code>s.
-     */
-    public Vector getPlayerEntities( Player player ) {
-        Vector output = new Vector();
-        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            if ( player.equals(entity.getOwner()) ) {
-                output.addElement( entity );
-            }
-        }
-        return output;
-    }
     
     /**
-     * Returns the next selectable entity that belongs to the player,
-     * or null if none do.
+     * Returns the next selectable entity that can act this turn,
+     * or null if none can.
      * 
-     * @param player the player.
-     * @param start the index number to start at.
+     * @param start the index number to start at
      */
-    public Entity getNextEntity(Player player, int start) {
-        return getEntity(getNextEntityNum(player, start));
+    public Entity getNextEntity(int start) {
+        return getEntity(getNextEntityNum(turn, start));
+    }
+
+    public int getNextEntityNum(int start) {
+        return getNextEntityNum(turn, start);
+    }
+
+    /**
+     * Returns the entity id of the next entity that can move during the 
+     * specified
+     * 
+     * @param turn the turn to use
+     * @param start the entity id to start at
+     */
+    public int getNextEntityNum(GameTurn turn, int start) {
+        boolean startPassed = false;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (entity.getId() == start) {
+                startPassed = true;
+            } else if (startPassed && turn.isValidEntity(entity)) {
+                return entity.getId();
+            }
+        }
+        return getFirstEntityNum(turn);
     }
 
 
@@ -544,26 +581,22 @@ public class Game implements Serializable
     }
     
     /**
-     * Returns the entity number corresponding to the next selectable 
-     * entity that belongs to the player, or -1 if none do.
-     * 
-     * @param player the player.
-     * @param start the index number to start at.
+     * Get the entities for the player.
+     *
+     * @param   player - the <code>Player</code> whose entities are required.
+     * @return  a <code>Vector</code> of <code>Entity</code>s.
      */
-    public int getNextEntityNum(Player player, int start) {
-        boolean startPassed = false;
+    public Vector getPlayerEntities( Player player ) {
+        Vector output = new Vector();
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if (entity.getId() == start) {
-                startPassed = true;
-            } else if (startPassed && player.equals(entity.getOwner()) 
-                       && entity.isSelectable() ) {
-                return entity.getId();
-            }          
+            if ( player.equals(entity.getOwner()) ) {
+                output.addElement( entity );
+            }
         }
-        return getFirstEntityNum(player);
+        return output;
     }
-
+    
     /**
      * Determines if the indicated player has any remaining selectable infanty.
      *

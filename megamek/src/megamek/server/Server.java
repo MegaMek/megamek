@@ -2135,10 +2135,10 @@ public boolean isPassworded() {
                 ae.setPosition(src);
             }
         } else {
-          if (game.board.getHex(dest) == null) {
+          if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
             game.moveToGraveyard(te.getId());
             send(createRemoveEntityPacket(te.getId()));
-            phaseReport.append("succeeds: target has been forced from the field.\n");
+            phaseReport.append("*** " + te.getDisplayName() + " has been forced from the field. ***\n");
           } else {
             phaseReport.append("succeeds, but target can't be moved.\n");
             pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
@@ -2235,17 +2235,24 @@ public boolean isPassworded() {
             damageTaken -= cluster;
         }
         // move attacker and target, if possible
-        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-            Coords src = te.getPosition();
-            Coords dest = src.translated(direction);
+        Coords src = te.getPosition();
+        Coords dest = src.translated(direction);
             
+        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {    
             phaseReport.append("\n");
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged"));
             doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
         } else {
-            // they stil have to roll
+          pilotRolls.addElement(new PilotingRollData(ae.getId(), 2, "charging"));
+          if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
+            game.moveToGraveyard(te.getId());
+            send(createRemoveEntityPacket(te.getId()));
+            phaseReport.append("*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
+            doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
+          } else {
+                // they stil have to roll
             pilotRolls.addElement(new PilotingRollData(te.getId(), 2, "was charged"));
-            pilotRolls.addElement(new PilotingRollData(ae.getId(), 2, "charging"));
+          }
         }
 
         phaseReport.append("\n");
@@ -2352,12 +2359,18 @@ public boolean isPassworded() {
         Coords src = ae.getPosition();
         Coords dest = te.getPosition();
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
-        if (targetDest != null) {
-            doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
+        if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
+          game.moveToGraveyard(te.getId());
+          send(createRemoveEntityPacket(te.getId()));
+          phaseReport.append("*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
         } else {
-            // ack!  automatic death!
-            phaseReport.append("*** " + te.getDisplayName() + " DESTROYED due to impossible displacement! ***");
-            te.setDoomed(true);
+          if (targetDest != null) {
+              doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
+          } else {
+              // ack!  automatic death!
+             phaseReport.append("*** " + te.getDisplayName() + " DESTROYED due to impossible displacement! ***");
+             te.setDoomed(true);
+          }
         }
         doEntityDisplacement(ae, src, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
     }

@@ -167,6 +167,37 @@ public class Compute
         return md;
     }
     
+    /**
+     * Charge pathfinder.  Finds a path up to the square before the target,
+     * then charges
+     */
+    public static MovementData chargeLazyPathfinder(Coords src, int facing,
+                                                        Coords dest) {
+        MovementData md = new MovementData();
+        
+        int curFacing = facing;
+        Coords curPos = new Coords(src);
+        
+        Coords subDest = dest.translated(dest.direction1(src));
+        
+        while(!curPos.equals(subDest)) {
+            // adjust facing
+            md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
+            // step forwards
+            md.addStep(MovementData.STEP_FORWARDS);
+
+            curFacing = curPos.direction1(subDest);
+            curPos = curPos.translated(curFacing);
+        }
+        
+        // adjust facing
+        md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
+        // charge!
+        md.addStep(MovementData.STEP_CHARGE);
+        
+        return md;
+    }
+    
     
     /**
      * "Compiles" some movement data by setting all the flags.  Determines which
@@ -695,7 +726,7 @@ public class Compute
         // do you have enough mp?   
     
         return true;
-     }
+    }
     
     /**
      * Returns an entity's base piloting skill roll needed
@@ -998,6 +1029,8 @@ public class Compute
         return toHitPunch(game, paa.getEntityId(), paa.getTargetId(), 
                           paa.getArm());
     }
+    
+    
     
     /**
      * To-hit number for the specified arm to punch
@@ -1376,6 +1409,129 @@ public class Compute
         // done!
         return toHit;
     }
+    
+    /**
+     * Checks if a charge can hit the target, including movement
+     */
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        Coords chargeSrc = ae.getPosition();
+        MovementData.Step chargeStep = null;
+        
+        // let's just check this
+        if (!md.contains(MovementData.STEP_CHARGE)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found");
+        }
+        
+        // no jumping
+        if (md.contains(MovementData.STEP_START_JUMP)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "No jumping allowed while charging");
+        }
+        
+        // no backwards
+        if (md.contains(MovementData.STEP_BACKWARDS)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "No backwards movement allowed while charging");
+        }
+        
+        // determine last valid step
+        compile(game, attackerId, md);
+        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                break;
+            } else {
+                if (step.getType() == MovementData.STEP_CHARGE) {
+                    chargeStep = step;
+                } else {
+                    chargeSrc = step.getPosition();
+                }
+            }
+        }
+        
+        if (chargeStep == null) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Could not determine last valid step");
+        }
+        
+        // need to reach target
+        if (!te.getPosition().equals(chargeStep.getPosition())) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
+        }
+        
+        // target must have moved already
+        if (te.ready) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
+        }
+        
+        return toHitCharge(game, attackerId, targetId, chargeSrc);
+    }
+    
+    public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
+        final Entity entity = game.getEntity(caa.getEntityId());
+        return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition());
+    }
+    
+    /**
+     * To-hit number for a charge
+     */
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        final int attackerElevation = game.board.getHex(src).getElevation();;
+        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        ToHitData toHit = null;
+        
+        // arguments legal?
+        if (ae == null || te == null || ae == te) {
+            throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        // check range
+        if (src.distance(te.getPosition()) > 1 ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        }
+        
+        // target must be within 1 elevation level
+        if (Math.abs(attackerElevation - targetElevation) > 1) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be within 1 elevation level");
+        }
+        
+        // can't charge while prone
+        if (ae.isProne()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+        
+        // can't charge prone mechs
+        if (te.isProne()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+        }
+        
+        // okay, modifiers...
+        toHit = new ToHitData(5, "5 (base)");
+        
+        // attacker movement
+        toHit.append(getAttackerMovementModifier(game, attackerId));
+        
+        // target movement
+        toHit.append(getTargetMovementModifier(game, targetId));
+        
+        // attacker terrain
+        toHit.append(getAttackerTerrainModifier(game, attackerId));
+        
+        // target terrain
+        toHit.append(getTargetTerrainModifier(game, targetId));
+        
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
+        
+        // side and elevation shouldn't matter
+
+        // done!
+        return toHit;
+    }
+        
     
     /**
      * Damage that the specified mech does with a kick

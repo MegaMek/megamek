@@ -49,6 +49,7 @@ public class Server
     // stuff for the current turn
     private GameSettings        gameSettings = new GameSettings();
     private Vector              attacks = new Vector();
+    private Vector              pendingCharges = new Vector();
     private Vector              pilotRolls = new Vector();
 
     private StringBuffer        roundReport = new StringBuffer();
@@ -958,11 +959,14 @@ public class Server
             
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
+                Entity target = game.getEntity(step.getPosition());
                 
                 System.out.println("server: got charge step at hex " + curPos.getBoardNum());
                 
                 distance = step.getDistance();
                 entity.setCharging(true);
+                
+                pendingCharges.addElement(new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition()));
                 break;
             }
 
@@ -1436,6 +1440,12 @@ public class Server
         roundReport.append("\nPhysical Attack Phase\n-------------------\n");
 
         int cen = Entity.NONE;
+        
+        // add any pending charges
+        for (Enumeration i = pendingCharges.elements(); i.hasMoreElements();) {
+            attacks.addElement(i.nextElement());
+        }
+        pendingCharges.removeAllElements();
 
         // loop thru received attack actions
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
@@ -1443,11 +1453,11 @@ public class Server
             if (o instanceof PunchAttackAction) {
                 PunchAttackAction paa = (PunchAttackAction)o;
                 if (paa.getArm() == PunchAttackAction.BOTH) {
-                    resolvePunchAttack(new PunchAttackAction(paa.getEntityId(),
-                            paa.getTargetId(), PunchAttackAction.LEFT), cen);
+                    paa.setArm(PunchAttackAction.LEFT);
+                    resolvePunchAttack(paa, cen);
                     cen = paa.getEntityId();
-                    resolvePunchAttack(new PunchAttackAction(paa.getEntityId(),
-                            paa.getTargetId(), PunchAttackAction.RIGHT), cen);
+                    paa.setArm(PunchAttackAction.RIGHT);
+                    resolvePunchAttack(paa, cen);
                 } else {
                     resolvePunchAttack(paa, cen);
                     cen = paa.getEntityId();
@@ -1460,6 +1470,10 @@ public class Server
                 PushAttackAction paa = (PushAttackAction)o;
                 resolvePushAttack(paa, cen);
                 cen = paa.getEntityId();
+            }  else if (o instanceof ChargeAttackAction) {
+                ChargeAttackAction caa = (ChargeAttackAction)o;
+                resolveChargeAttack(caa, cen);
+                cen = caa.getEntityId();
             } else {
                 // hmm, error.
             }
@@ -1628,6 +1642,69 @@ public class Server
 
         // compute to-hit
         ToHitData toHit = Compute.toHitPush(game, paa);
+        phaseReport.append("; needs " + toHit.getValue() + ", ");
+
+        // roll
+        int roll = Compute.d6(2);
+        phaseReport.append("rolls " + roll + " : ");
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            phaseReport.append("misses.\n");
+            return;
+        }
+
+        // we hit...
+        int direction = ae.getFacing();
+
+        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
+            Coords src = te.getPosition();
+            Coords dest = src.translated(direction);
+            phaseReport.append("succeeds: target is pushed into hex "
+                               + dest.getBoardNum()
+                               + "\n");
+            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
+
+            // if push actually moved the target, attacker follows thru
+            if (game.getEntity(src) == null) {
+                ae.setPosition(src);
+            }
+        } else {
+            phaseReport.append("succeeds, but target can't be moved.\n");
+            pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
+        }
+
+
+        phaseReport.append("\n");
+    }
+
+    /**
+     * Handle a charge attack
+     */
+    private void resolveChargeAttack(ChargeAttackAction caa, int lastEntityId) {
+        final Entity ae = game.getEntity(caa.getEntityId());
+        final Entity te = game.getEntity(caa.getTargetId());
+
+        if (lastEntityId != caa.getEntityId()) {
+            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+        }
+
+        phaseReport.append("    Charging " + te.getDisplayName());
+
+        // should we even bother?
+        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+            phaseReport.append(" but the target is already destroyed!\n");
+            return;
+        }
+
+        // target still in the same position?
+        if (!te.getPosition().equals(caa.getTargetPos())) {
+            phaseReport.append(" but the target has moved.\n");
+            return;
+        }
+
+        // compute to-hit
+        ToHitData toHit = Compute.toHitCharge(game, caa);
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll

@@ -143,6 +143,8 @@ public class MovementData
                 curFacing = getAdjustedFacing(curFacing, step.getType());
                 break;
             case STEP_FORWARDS :
+            case STEP_CHARGE :
+            case STEP_DFA :
                 curPos = curPos.translated(curFacing);
                 break;
             case STEP_BACKWARDS :

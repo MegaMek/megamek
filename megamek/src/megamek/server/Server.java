@@ -8624,8 +8624,7 @@ implements Runnable, ConnectionHandler {
     private void checkFor20Damage() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if (entity.getMovementType() == Entity.MovementType.BIPED ||
-            entity.getMovementType() == Entity.MovementType.QUAD) {
+            if (entity instanceof Mech) {
                 // if this mech has 20+ damage, add another roll to the list.
                 if (entity.damageThisPhase >= 20) {
                     if ( game.getOptions().booleanOption("maxtech_round_damage") ) {

@@ -841,6 +841,8 @@ scan:
 
     // begin MouseListener implementation
     public void mousePressed(MouseEvent me) {
+        // center main map on clicked area
+        processMouseClick(me.getX(), me.getY(), me);
     }
 
     public void mouseReleased(MouseEvent me) {
@@ -853,8 +855,6 @@ scan:
     }
 
     public void mouseClicked(MouseEvent me) {
-        // center main map on clicked area
-        processMouseClick(me.getX(), me.getY(), me);
     }
     // end MouseListener implementation
 

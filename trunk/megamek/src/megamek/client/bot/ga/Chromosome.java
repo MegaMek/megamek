@@ -1,8 +1,7 @@
 package megamek.client.bot.ga;
 
-public class Chromosome {
-    public double fitness; //absolute (not relative) fitness value
-    public int fitnessRank; //0 = worst fit, PopDim = best fit
+public class Chromosome implements Comparable {
+    public double fitness; //absolute fitness value
     public int[] genes;
 
     public Chromosome(int iGenesDim) {
@@ -14,7 +13,12 @@ public class Chromosome {
     }
 
     public void copyChromGenes(Chromosome chromosome) {
-        for (int iGene = 0; iGene < genes.length; iGene++)
-            this.genes[iGene] = chromosome.genes[iGene];
+        System.arraycopy(chromosome.genes, 0, genes, 0, genes.length);
     }
+    
+    public int compareTo(Object o) {
+		double delta = fitness - ((Chromosome)o).fitness;
+		return delta>0?1:delta<0?-1:0;
+    }
+
 }

@@ -369,7 +369,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             AmmoType at = (AmmoType)m.getType();
             Vector vTypes = new Vector();
             Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
-            if (vAllTypes == null || vAllTypes.size() < 2) {
+            if (vAllTypes == null) {
                 continue;
             }
             

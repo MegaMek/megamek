@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.39
++ Bug 982019: Fix for Hauptmann HA1-OA and Templar Grayson and Tancred pics.
 
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages

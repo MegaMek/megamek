@@ -89,6 +89,9 @@ v 0.27
 VERSION HISTORY:
 ----------------
 v next
++ 574145: gauss rifle explosion makes all critical slots count as "hit"
+
+v 0.26.3 (06-21-02, 9pm)
 + bot improvements--hawkprime
 + support for (only) new version of HMPRead--spiker
 + added quad backward lateral shifts--LDE

@@ -167,4 +167,21 @@ public class Mounted implements Serializable{
     public void setLinked(Mounted linked) {
         this.linked = linked;
     }
+    
+    public int getExplosionDamage() {
+        if (type instanceof AmmoType) {
+            AmmoType atype = (AmmoType)type;
+            return atype.getDamagePerShot() * atype.getRackSize() * shotsLeft;
+        } else if (type instanceof WeaponType) {
+            WeaponType wtype = (WeaponType)type;
+            //HACK: gauss rifle damage hardcoding
+            if (wtype.getAmmoType() == AmmoType.T_GAUSS) {
+                return 20;
+            }
+        }
+        // um, otherwise, I'm not sure
+        System.err.println("mounted: unable to determine explosion damage for "
+                            + getName());
+        return 0;
+    }
 }

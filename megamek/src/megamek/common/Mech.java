@@ -213,7 +213,6 @@ public abstract class Mech
         return jump;
     }
     
-
     /**
      * Returns the elevation of this entity.  Mechs do funny stuff in the 
      * middle of a DFA.

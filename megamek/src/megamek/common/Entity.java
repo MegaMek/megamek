@@ -587,8 +587,7 @@ public abstract class Entity
     }
 
     /**
-     * Returns this entity's jumping mp, modified for any factors
-     * that affect them.
+     * Returns this entity's current jumping MP, not effected by terrain.
      */
     public int getJumpMP() {
         return jumpMP;
@@ -1416,6 +1415,22 @@ public abstract class Entity
             if (getCritical(loc, i) == null) {
                 setCritical(loc, i, cs);
                 return;
+            }
+        }
+    }
+    
+    /**
+     * Hits all criticals of the system occupying the specified critical
+     * slot.  Used, for example, in a gauss rifle capacitor discharge.
+     * Does not apply any special effect of hitting the criticals, like ammo
+     * explosion.
+     */
+    public void hitAllCriticals(int loc, int slot) {
+        CriticalSlot orig = getCritical(loc, slot);
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot cs = getCritical(loc, slot);
+            if (cs.getType() == orig.getType() && cs.getIndex() == orig.getIndex()) {
+                cs.setHit(true);
             }
         }
     }

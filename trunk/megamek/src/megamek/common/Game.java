@@ -1780,4 +1780,105 @@ public class Game implements Serializable
         return retVal;
     }
 
+    /**
+     * Get all out-of-game <code>Entity</code>s that pass the given selection
+     * criteria.
+     *
+     * @param   selector the <code>EntitySelector</code> that implements
+     *          test that an entity must pass to be included.
+     *          This value may be <code>null</code> (in which case all
+     *          entities in the game will be returned).
+     * @return  an <code>Enumeration</code> of all entities that the
+     *          selector accepts.  This value will not be <code>null</code>
+     *          but it may be empty.
+     */
+    public Enumeration getSelectedOutOfGameEntities( EntitySelector selector ) {
+        Enumeration retVal;
+
+        // If no selector was supplied, return all entities.
+        if ( null == selector ) {
+            retVal = Game.this.vOutOfGame.elements();
+        }
+
+        // Otherwise, return an anonymous Enumeration
+        // that selects entities in this game.
+        else {
+            final EntitySelector entry = selector;
+            retVal = new Enumeration() {
+                    private EntitySelector selector = entry;
+                    private Entity current = null;
+                    private Enumeration iter = Game.this.vOutOfGame.elements();
+
+                    // Do any more entities meet the selection criteria?
+                    public boolean hasMoreElements() {
+                        // See if we have a pre-approved entity.
+                        if ( null == current ) {
+
+                            // Find the first acceptable entity
+                            while ( null == current &&
+                                    iter.hasMoreElements() ) {
+                                current = (Entity) iter.nextElement();
+                                if ( !selector.accept( current ) ) {
+                                    current = null;
+                                }
+                            }
+                        }
+                        return ( null != current );
+                    }
+
+                    // Get the next entity that meets the selection criteria.
+                    public Object nextElement() {
+                        // Pre-approve an entity.
+                        if ( !this.hasMoreElements() ) {
+                            return null;
+                        }
+
+                        // Use the pre-approved entity, and null out our reference.
+                        Entity next = this.current;
+                        this.current = null;
+                        return next;
+                    }
+                };
+
+        } // End use-selector
+
+        // Return the selected entities.
+        return retVal;
+
+    }
+
+    /**
+     * Count all out-of-game<code>Entity</code>s that pass the given selection
+     * criteria.
+     *
+     * @param   selector the <code>EntitySelector</code> that implements
+     *          test that an entity must pass to be included.
+     *          This value may be <code>null</code> (in which case the
+     *          count of all out-of-game entities will be returned).
+     * @return  the <code>int</code> count of all entities that the
+     *          selector accepts.  This value will not be <code>null</code>
+     *          but it may be empty.
+     */
+    public int getSelectedOutOfGameEntityCount( EntitySelector selector ) {
+        int retVal = 0;
+
+        // If no selector was supplied, return the count of all game entities.
+        if ( null == selector ) {
+            retVal = Game.this.vOutOfGame.size();
+        }
+
+        // Otherwise, count the entities that meet the selection criteria.
+        else {
+            Enumeration iter = Game.this.vOutOfGame.elements();
+            while ( iter.hasMoreElements() ) {
+                if ( selector.accept((Entity) iter.nextElement()) ) {
+                    retVal++;
+                }
+            }
+
+        } // End use-selector
+
+        // Return the number of selected entities.
+        return retVal;
+    }
 }

@@ -90,6 +90,7 @@ VERSION HISTORY:
 ----------------
 v next
 + 574145: gauss rifle explosion makes all critical slots count as "hit"
++ 573409: torso jump jets should work in depth 1 water
 
 v 0.26.3 (06-21-02, 9pm)
 + bot improvements--hawkprime

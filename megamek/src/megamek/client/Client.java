@@ -902,6 +902,11 @@ public class Client extends Panel
                 bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
                 //XXX
             } else if (ea instanceof AttackAction) {
+                if ( ea instanceof ClubAttackAction ) {
+                    ClubAttackAction clubAct = (ClubAttackAction) ea;
+                    Entity entity = game.getEntity( clubAct.getEntityId() );
+                    clubAct.setClub( Compute.clubMechHas(entity) );
+                }
                 bv.addAttack((AttackAction)ea);
             }
             // track in the appropriate list

@@ -47,6 +47,7 @@ mechs:
 - allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
+-- Find out how to get M$ .exe to allow UTF-8 encoding.
 -- handle template XML files
 -- handle "slottless" equipment
 -- enforce ammo loading restrictions
@@ -120,7 +121,6 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 v 0.28.13-dev
-+ 715999: Battle Value with linked c3 shown in mech viewer for c3 mechs.
 + Players aren't allowed to target infantry with Inferno rounds.
 + Physical attacks can now use Targetable interface.
 + Initial implementation of buildings.  You can't burn them or climb on them,
@@ -130,6 +130,8 @@ v 0.28.13-dev
 + 716051: Allow boards to disable auto-exiting roads into pavement hexes.
 + 711714: Added swamp hexes.
 + 712049: Added "snow" theme hexset.
++ 715999: Battle Value with linked c3 shown in mech viewer for c3 mechs.
++ 716548: The club in a ClubAttackAction is transient, so it must be re-bound.
 
 v 0.28.12 (04-05-03, 1pm)
 + Stealth Armor should affect the BV calculation.

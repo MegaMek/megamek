@@ -534,7 +534,7 @@ public class CEntity {
         //Final check for illeagal and extra weighting for heat
         for (Iterator i = discovered.values().iterator(); i.hasNext();) {
             MoveOption next = (MoveOption) i.next();
-            next.compile(tb.game, entity);
+            next.compileLastStep();
             if (!next.isMoveLegal()) {
                 i.remove();
             }

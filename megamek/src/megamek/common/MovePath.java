@@ -186,13 +186,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             this.addStep(step);
         }
-
-        /* The compileLastStep() method doesn't do anything!  I am therefore
-         * commenting it out and calling clipToPossible() instead.  Hope this
-         * doesn't break anything...
-         */
-        //compileLastStep();
-        clipToPossible();
+        compileLastStep();
     }
 
     public void removeLastStep() {
@@ -290,7 +284,7 @@ public class MovePath implements Cloneable, Serializable {
     public void printAllSteps() {
         System.out.println("*Steps*");
         for (int i = 0;i < steps.size();i++) {
-            System.out.println("  " + i + ": " + getStep(i).getMovementType());
+            System.out.println("  " + i + ": " + getStep(i) + ", " + getStep(i).getMovementType());
         }
     }
 
@@ -433,9 +427,16 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public void compileLastStep() {
+        compileLastStep(true);
+    }
+
+    public void compileLastStep(boolean clip) {
+        if (clip)
+            clipToPossible(); //get rid of "trailing garbage"
+
         for (int i = length() - 1; i >= 0; i--) {
             final MoveStep step = getStep(i);
-            if (step.checkIllegal(game, entity)) {
+            if (step.checkAndSetIllegal(game, entity)) {
                 continue;
             }
             break;

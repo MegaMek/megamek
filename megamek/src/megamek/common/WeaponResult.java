@@ -28,5 +28,4 @@ implements Serializable {
     public int[] amsShotDown = new int[0];
     public int amsShotDownTotal = 0;
     public Coords artyAttackerCoords=null; //HACK.  Someone do something much neater, PLEASE.
-    public Entity artyEntity=null; // Just as HACKish, but I don't see a different way.
 }

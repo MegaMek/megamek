@@ -40,7 +40,7 @@ public class UnitOverview implements Displayable {
 	private int					actUnitsPerPage = 0;
     private int					scrollOffset = 0;
 
-    private ClientGUI				client;
+    private ClientGUI				clientgui;
 
     private FontMetrics			fm;
     
@@ -49,19 +49,19 @@ public class UnitOverview implements Displayable {
     private Image				pageUp;
     private Image				pageDown;
 
-	public UnitOverview(ClientGUI client) {
-		this.client = client;
-		fm = client.bv.getFontMetrics(FONT);
+	public UnitOverview(ClientGUI clientgui) {
+		this.clientgui = clientgui;
+		fm = clientgui.bv.getFontMetrics(FONT);
 
-		Toolkit toolkit = client.bv.getToolkit();
+		Toolkit toolkit = clientgui.bv.getToolkit();
         scrollUp = toolkit.getImage("data/widgets/scrollUp.gif");
-        PMUtil.setImage(scrollUp, client);
+        PMUtil.setImage(scrollUp, clientgui);
         scrollDown = toolkit.getImage("data/widgets/scrollDown.gif");
-        PMUtil.setImage(scrollDown, client);
+        PMUtil.setImage(scrollDown, clientgui);
         pageUp = toolkit.getImage("data/widgets/pageUp.gif");
-        PMUtil.setImage(pageUp, client);
+        PMUtil.setImage(pageUp, clientgui);
         pageDown = toolkit.getImage("data/widgets/pageDown.gif");
-        PMUtil.setImage(pageDown, client);
+        PMUtil.setImage(pageDown, clientgui);
 	}
 
 	public void draw(Graphics graph, Dimension size) {
@@ -74,7 +74,7 @@ public class UnitOverview implements Displayable {
 		}
 		
 		graph.setFont(FONT);
-		java.util.Vector v = client.getClient().game.getPlayerEntities(client.getClient().getLocalPlayer());
+		java.util.Vector v = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer());
 		unitIds = new int[v.size()];
 
 		scroll = v.size() > unitsPerPage;
@@ -92,8 +92,8 @@ public class UnitOverview implements Displayable {
 		int y = DIST_TOP;
 		
 		if (scroll) {
-			graph.drawImage(pageUp, x, y, client.bv);
-			graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, client.bv);
+			graph.drawImage(pageUp, x, y, clientgui.bv);
+			graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, clientgui.bv);
 			y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING + BUTTON_PADDING;
 		}
 
@@ -101,10 +101,10 @@ public class UnitOverview implements Displayable {
 			Entity e = (Entity) v.elementAt(i);
 			unitIds[i] = e.getId();
 			String name = e.getIconName(fm);
-			Image i1 = client.bv.getTilesetManager().iconFor(e);
+			Image i1 = clientgui.bv.getTilesetManager().iconFor(e);
 
 
-			graph.drawImage(i1, x, y, client.bv);
+			graph.drawImage(i1, x, y, clientgui.bv);
 			printLine(graph, x + 3, y + 46, name);
 			drawBars(graph, e, x, y);
 			drawHeat(graph, e, x, y);
@@ -122,8 +122,8 @@ public class UnitOverview implements Displayable {
 		if (scroll) {
 			y -= PADDING;
 			y += BUTTON_PADDING;
-			graph.drawImage(scrollDown, x, y, client.bv);
-			graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING, client.bv);
+			graph.drawImage(scrollDown, x, y, clientgui.bv);
+			graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING, clientgui.bv);
 		}
 
 	}
@@ -168,7 +168,7 @@ public class UnitOverview implements Displayable {
 		for (int i = scrollOffset; i < unitIds.length && i < actUnitsPerPage + scrollOffset; i++) {
 			if (y > yOffset &&
 				y < yOffset + ICON_HEIGHT) {
-				client.bv.processBoardViewEvent(new BoardViewEvent(client.bv, 
+				clientgui.bv.processBoardViewEvent(new BoardViewEvent(clientgui.bv, 
 												BoardViewEvent.SELECT_UNIT,
 												unitIds[i]));
 				isHit = true;
@@ -288,7 +288,7 @@ public class UnitOverview implements Displayable {
     }
     
     private Color getFrameColor(Entity entity) {
-    	if (!client.getClient().isMyTurn() || !entity.isSelectableThisTurn(client.getClient().game)) {
+    	if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn(clientgui.getClient().game)) {
     		return Color.gray;
     	}
     	return Color.black;
@@ -328,7 +328,7 @@ public class UnitOverview implements Displayable {
             graph.setColor(Color.yellow);
             graph.drawString("PRONE", x + 10, y + 33);
         } else if (!entity.isDeployed()) {
-        	int roundsLeft = entity.getDeployRound() - client.getClient().game.getRoundCount();
+        	int roundsLeft = entity.getDeployRound() - clientgui.getClient().game.getRoundCount();
         	if (roundsLeft > 0) {
         		printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
         	}
@@ -345,7 +345,7 @@ public class UnitOverview implements Displayable {
     		if (scrollOffset < 0) {
     			scrollOffset = 0;
     		}
-    		client.bv.repaint();
+    		clientgui.bv.repaint();
     	}
     }
 
@@ -355,21 +355,21 @@ public class UnitOverview implements Displayable {
     		if (scrollOffset > unitIds.length - actUnitsPerPage) {
     			scrollOffset = unitIds.length - actUnitsPerPage;
     		}
-    		client.bv.repaint();
+    		clientgui.bv.repaint();
     	}
     }
     
     private void scrollUp() {
     	if (scrollOffset > 0) {
     		scrollOffset--;
-    		client.bv.repaint();
+    		clientgui.bv.repaint();
     	}
     }
     
     private void scrollDown() {
     	if (scrollOffset < unitIds.length - actUnitsPerPage) {
     		scrollOffset++;
-    		client.bv.repaint();
+    		clientgui.bv.repaint();
     	}
     }
     

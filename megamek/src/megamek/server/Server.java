@@ -273,6 +273,7 @@ implements Runnable {
         game.getPlayer(connId).setColorIndex(player.getColorIndex());
         game.getPlayer(connId).setStartingPos(player.getStartingPos());
         game.getPlayer(connId).setTeam(player.getTeam());
+        game.getPlayer(connId).setCamoFileName(player.getCamoFileName());
     }
     
     /**
@@ -3438,7 +3439,7 @@ implements Runnable {
             } else if (ea instanceof DodgeAction) {
               entity.dodging = true;
             } else if (ea instanceof SpotAction) {
-				entity.setSpotting(true);
+        entity.setSpotting(true);
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);
@@ -3513,9 +3514,9 @@ implements Runnable {
             else if (ea instanceof FindClubAction) {
                 resolveFindClub(entity);
             } 
-			else if (ea instanceof UnjamAction) {
-				resolveUnjam(entity);
-			} 
+      else if (ea instanceof UnjamAction) {
+        resolveUnjam(entity);
+      } 
         }
     }
     

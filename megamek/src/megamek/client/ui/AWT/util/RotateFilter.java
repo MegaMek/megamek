@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -50,9 +50,9 @@ public class RotateFilter extends RGBImageFilter {
 
     /** Creates new RotateFilter1 */
     public RotateFilter(double angle) {
-	this.angle = angle;
-	this.sin = Math.sin(angle);
-	this.cos = Math.cos(angle);
+  this.angle = angle;
+  this.sin = Math.sin(angle);
+  this.cos = Math.cos(angle);
     }
     
     /**
@@ -64,7 +64,7 @@ public class RotateFilter extends RGBImageFilter {
         cx = width / 2.0;
         cy = height / 2.0;
         raster = new int[width * height];
-	consumer.setDimensions(width, height);
+  consumer.setDimensions(width, height);
     }
     
     /**
@@ -79,15 +79,15 @@ public class RotateFilter extends RGBImageFilter {
      * Here's where we do the work.
      */
     public void imageComplete(int status) {
-	if (status == IMAGEERROR || status == IMAGEABORTED) {
-	    consumer.imageComplete(status);
-	    return;
-	}
+  if (status == IMAGEERROR || status == IMAGEABORTED) {
+      consumer.imageComplete(status);
+      return;
+  }
         // filter everything
         rotate();
         // done!
         consumer.setPixels(0, 0, width, height, ColorModel.getRGBdefault(), raster, 0, width);
-	consumer.imageComplete(status);
+  consumer.imageComplete(status);
     }
     
     /**
@@ -135,6 +135,14 @@ public class RotateFilter extends RGBImageFilter {
         return pix & 0xff;
     }
     
+    private final int red(int pix) {
+        return (pix >> 16) & 0xff;
+    }
+    
+    private final int green(int pix) {
+        return (pix >> 8) & 0xff;
+    }
+    
     private final int combine(int alpha, int red, int green, int blue) {
         return (alpha > ALPHA_CLIP ? 0xFF000000 : 0) | (red << 16) | (green << 8) | (blue);
     }
@@ -164,6 +172,16 @@ public class RotateFilter extends RGBImageFilter {
             return 0;
         }
 
+        int red0 = red(pixel(fx,   fy));
+        int red1 = red(pixel(fx+1, fy));
+        int red2 = red(pixel(fx,   fy+1));
+        int red3 = red(pixel(fx+1, fy+1));
+
+        int green0 = green(pixel(fx,   fy));
+        int green1 = green(pixel(fx+1, fy));
+        int green2 = green(pixel(fx,   fy+1));
+        int green3 = green(pixel(fx+1, fy+1));
+
         int blue0 = blue(pixel(fx,   fy));
         int blue1 = blue(pixel(fx+1, fy));
         int blue2 = blue(pixel(fx,   fy+1));
@@ -179,8 +197,10 @@ public class RotateFilter extends RGBImageFilter {
                 
         int alpha = (int)Math.round(mul0*alpha0 + mul1*alpha1 + mul2*alpha2 + mul3*alpha3);
         int blue = (int)Math.round(mul0*blue0 + mul1*blue1 + mul2*blue2 + mul3*blue3);
+        int red = (int)Math.round(mul0*red0 + mul1*red1 + mul2*red2 + mul3*red3);
+        int green = (int)Math.round(mul0*green0 + mul1*green1 + mul2*green2 + mul3*green3);
         
-        return combine(alpha, blue, blue, blue);
+        return combine(alpha, red, green, blue);
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -20,13 +20,13 @@ import megamek.common.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import megamek.client.ChatLounge;
 import megamek.common.options.GameOption;
 
 public class ScenarioLoader 
 {
     private File m_scenFile;
     // copied from ChatLounge.java
-    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     private Vector m_vDamagePlans = new Vector();        
     
     public ScenarioLoader(File f)
@@ -254,7 +254,7 @@ public class ScenarioLoader
                 s = "Any";
             }
             
-            int nDir = findIndex(startNames, s);
+            int nDir = findIndex(ChatLounge.START_LOCATION_NAMES, s);
             
             // if it's not set by now, make it any
             if (nDir == -1) {

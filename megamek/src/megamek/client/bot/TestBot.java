@@ -752,7 +752,7 @@ public class TestBot extends BotClientWrapper {
       //add them in now, then re-add them later
       if (self.Range > self.RANGE_SHORT) {
         int ele_dif = game.board.getHex(option.curPos).getElevation() - game.board.getHex(self.old.curPos).getElevation();
-        adjustment -= (Math.max(ele_dif, 0) + 1)*((double)Compute.getTargetTerrainModifier(game, option.entity.getId()).getValue() + 1);
+        adjustment -= (Math.max(ele_dif, 0) + 1)*((double)Compute.getTargetTerrainModifier(game, option.entity).getValue() + 1);
       }
       
       //close the range if nothing else and healthy
@@ -801,7 +801,7 @@ public class TestBot extends BotClientWrapper {
       option.setState();
       option.self_damage *= .5;
       option.self_threat *= .5;
-      double terrain = 2*((double)Compute.getTargetTerrainModifier(game, option.entity.getId()).getValue());
+      double terrain = 2*((double)Compute.getTargetTerrainModifier(game, option.entity).getValue());
       option.tv.add(terrain+" Terrain Adjusment " +"\n");  
       option.self_threat -= terrain;
     }
@@ -1087,7 +1087,7 @@ public class TestBot extends BotClientWrapper {
     while (ents.hasMoreElements()) {
       Entity e = (Entity)ents.nextElement();
       CEntity enemy = enemies.get(e);
-      ToHitData th = Compute.toHitWeapon(game, from, e.getId(), weaponID, v);
+      ToHitData th = Compute.toHitWeapon(game, from, e, weaponID, v);
       if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
 	  double expectedDmg;
 

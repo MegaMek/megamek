@@ -1968,7 +1968,8 @@ public abstract class Entity
                 Vector vAttacksInArc = new Vector(vAttacks.size());
                 for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {
                     WeaponAttackAction waa = (WeaponAttackAction)i.nextElement();
-                    if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon), waa.getEntityId())) {
+                    if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon), 
+                            game.getEntity(waa.getEntityId()))) {
                         vAttacksInArc.addElement(waa);
                     }
                 }

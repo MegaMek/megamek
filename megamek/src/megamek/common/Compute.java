@@ -644,8 +644,9 @@ public class Compute
         Hex firstHex = game.board.getHex(first);
         Hex secondHex = game.board.getHex(second);
         
-        
-        if (firstHex.getElevation() > secondHex.getElevation()) {
+        if (firstHex == null || secondHex == null) {
+            // leave it, will be handled
+        } else if (firstHex.getElevation() > secondHex.getElevation()) {
             // leave it
         } else if (firstHex.getElevation() > secondHex.getElevation()) {
             // switch
@@ -1110,7 +1111,7 @@ public class Compute
     public static int getPunchDamageFor(Entity entity, int arm) {
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
-        int damage = (int)Math.floor(entity.getWeight() / 10.0);
+        int damage = (int)Math.ceil(entity.getWeight() / 10.0);
         float multiplier = 1.0f;
         
         if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
@@ -1392,7 +1393,7 @@ public class Compute
         
         // let's just check this
         if (!md.contains(MovementData.STEP_CHARGE)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found in movment path");
         }
         
         // no jumping
@@ -1420,12 +1421,8 @@ public class Compute
             }
         }
         
-        if (chargeStep == null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Could not determine last valid step");
-        }
-        
         // need to reach target
-        if (!te.getPosition().equals(chargeStep.getPosition())) {
+        if (chargeStep == null || !te.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
         
@@ -1483,6 +1480,11 @@ public class Compute
         // can't charge prone mechs
         if (te.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+        }
+        
+        // can't charge charging mechs
+        if (te.isCharging()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already charging");
         }
         
         // okay, modifiers...

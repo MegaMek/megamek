@@ -227,16 +227,30 @@ public class MovementDisplay
      */
     private void endMyTurn() {
         // end my turn, then.
+        disableButtons();
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
         client.mechW.setVisible(false);
         client.bv.clearMovementData();
-        butMove.setEnabled(false);
-        butNext.setEnabled(false);
     }
 
+    /**
+     * Disables all buttons in the interface
+     */
+    private void disableButtons() {
+        butWalk.setEnabled(false);
+        butJump.setEnabled(false);
+        butBackup.setEnabled(false);
+        butGetup.setEnabled(false);
+        butProne.setEnabled(false);
+        butCharge.setEnabled(false);
+        butDFA.setEnabled(false);
+        butNext.setEnabled(false);
+        butOther.setEnabled(false);
+        butMove.setEnabled(false);
+    }
     /**
      * Clears out the curently selected movement data and
      * resets it.
@@ -254,6 +268,7 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private void moveTo(MovementData md) {
+        disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);
         client.sendReady(true);
@@ -325,9 +340,10 @@ public class MovementDisplay
             
             if (gear == Compute.GEAR_CHARGE) {
                 // check if target is valid
-                if (target == null) {
+                if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform charge", "No target!");
                     clearAllMoves();
+                    gear = Compute.GEAR_LAND;
                     return;
                 }
                 
@@ -345,10 +361,11 @@ public class MovementDisplay
                     // if not valid, tell why
                     client.doAlertDialog("Can't perform charge", toHit.getDesc());
                     clearAllMoves();
+                    gear = Compute.GEAR_LAND;
+                    return;
                 }
             }
             
-
             butMove.setLabel("Move");
             butMove.setEnabled(true);
 

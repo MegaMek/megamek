@@ -299,7 +299,12 @@ class ArmorPanel
         // update armor panel
         for(int i = 0; i < en.locations(); i++) {
             this.locL[i].setText(en.getLocationName(i));
-            this.internalL[i].setText(en.getInternalString(i));
+            if (en.isRearLocation(i)) {
+                this.internalL[i].setText("N/A");
+            } else {
+                this.internalL[i].setText(en.getInternalString(i));
+            }
+
             this.armorL[i].setText(en.getArmorString(i));
         }
         

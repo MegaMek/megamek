@@ -193,6 +193,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             fldPiloting.setEnabled(false);
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
+            disableMunitionEditing();
         }
         
         addWindowListener(new WindowAdapter() {
@@ -331,11 +332,15 @@ extends Dialog implements ActionListener, DialogOptionListener {
             add(new Label(sDesc), BorderLayout.WEST);
             add(m_choice, BorderLayout.CENTER);
         }
-        
+
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
             AmmoType at = (AmmoType)m_vTypes.elementAt(n);
             m_mounted.changeAmmoType(at);
+        }
+
+        public void setEnabled(boolean enabled) {
+            m_choice.setEnabled(enabled);
         }
 
         /**
@@ -382,6 +387,12 @@ extends Dialog implements ActionListener, DialogOptionListener {
             // so they have half the number of shots (rounded down).
             setShotsLeft( Math.round( getShotsLeft() * m_origShotsLeft /
                                       m_origAmmo.getShots() ) );
+        }
+    }
+
+    public void disableMunitionEditing() {
+        for (int i = 0; i < m_vMunitions.size(); i++) {
+            ((MunitionChoicePanel)m_vMunitions.elementAt(i)).setEnabled(false);
         }
     }
 

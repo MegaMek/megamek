@@ -85,7 +85,7 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.26.9 (08-09-2002, 11:30pm)
 + detailed end-of-game unit status exported to a text file
 + scenarios now use new bot
 + formatting fixed in push-off-board notice
@@ -100,6 +100,7 @@ v next
 + 577408: double movement due to lag prevented
 + 581000: if victory is on, it is triggered when there are no mechs left
 + one player on no team and one player on a team no longer causes team victory
++ 591886: fixed a bug causing physical attacks to be skipped
 
 v 0.26.8 (07-26-02, 2:30pm)
 + Can now host a game from a user-editable scenario file

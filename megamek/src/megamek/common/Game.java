@@ -1881,4 +1881,30 @@ public class Game implements Serializable
         // Return the number of selected entities.
         return retVal;
     }
+
+    /** Returns true if the player has any valid units this turn that
+     * are not infantry, not protomechs, or not either of those.  This
+     * method is utitilized by the "A players Infantry moves after
+     * that players other units", and "A players Protomechs move after
+     * that players other units" options.
+     */
+    public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
+        Vector entities = getPlayerEntities(getPlayer(playerId));
+        for (int i = 0; i < entities.size(); i++) {
+            Entity entity = (Entity)entities.elementAt(i);
+            boolean excluded = false;
+            if (entity instanceof Infantry &&
+                getOptions().booleanOption("inf_move_later")) {
+                excluded = true;
+            } else if (entity instanceof Protomech &&
+                       getOptions().booleanOption("protos_move_later")) {
+                excluded = true;
+            }
+
+            if (!excluded && getTurn().isValidEntity(entity, this)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -231,11 +231,19 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         } else if (option.getShortName().equals("inf_move_multi")) {
             if ( (options.getOption("inf_move_last")).booleanValue()
+                 || (options.getOption("inf_move_later")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("inf_move_last")) {
             if ( (options.getOption("inf_move_multi")).booleanValue()
+                 || (options.getOption("inf_move_later")).booleanValue()
+                 || !editable ) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getShortName().equals("inf_move_later")) {
+            if ( (options.getOption("inf_move_last")).booleanValue()
+                 || (options.getOption("inf_move_multi")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
@@ -247,12 +255,20 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         } else if (option.getShortName().equals("protos_move_multi")) {
             if ( (options.getOption("protos_move_last")).booleanValue()
+                 || (options.getOption("protos_move_later")).booleanValue()
                  || !editable) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("protos_move_last")) {
             if ( (options.getOption("protos_move_multi")).booleanValue()
+                 || (options.getOption("protos_move_later")).booleanValue()
                  || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getShortName().equals("protos_move_later")) {
+            if ( (options.getOption("protos_move_last")).booleanValue()
+                 || (options.getOption("protos_move_multi")).booleanValue()
+                 || !editable ) {
                 optionComp.setEditable(false);
             }
         } else {
@@ -280,12 +296,29 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 if (comp_i.option.getShortName().equals("inf_move_multi")) {
                     comp_i.setEditable(!state);
                 }
+                if (comp_i.option.getShortName().equals("inf_move_later")) {
+                    comp_i.setEditable(!state);
+                }
             }
         }
         if (option.getShortName().equals("inf_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
                 if (comp_i.option.getShortName().equals("inf_move_last")) {
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getShortName().equals("inf_move_later")) {
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getShortName().equals("inf_move_later")) {
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getShortName().equals("inf_move_last")) {
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getShortName().equals("inf_move_multi")) {
                     comp_i.setEditable(!state);
                 }
             }
@@ -300,12 +333,29 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 if (comp_i.option.getShortName().equals("protos_move_multi")) {
                     comp_i.setEditable(!state);
                 }
+                if (comp_i.option.getShortName().equals("protos_move_later")) {
+                    comp_i.setEditable(!state);
+                }
             }
         }
         if (option.getShortName().equals("protos_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
                 if (comp_i.option.getShortName().equals("protos_move_last")) {
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getShortName().equals("protos_move_later")) {
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getShortName().equals("protos_move_later")) {
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getShortName().equals("protos_move_last")) {
+                    comp_i.setEditable(!state);
+                }
+                if (comp_i.option.getShortName().equals("protos_move_multi")) {
                     comp_i.setEditable(!state);
                 }
             }

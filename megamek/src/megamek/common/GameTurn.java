@@ -50,8 +50,17 @@ public class GameTurn implements Serializable {
      * Returns true if the specified entity is a valid one to use for this turn.
      */
     public boolean isValidEntity(Entity entity, Game game) {
-        return entity != null && entity.getOwnerId() == playerId
-        && entity.isSelectableThisTurn(game);
+        return entity != null
+            && entity.getOwnerId() == playerId
+            && entity.isSelectableThisTurn(game)
+            //This next bit enforces the "A players Infantry/Protos
+            // move after that players other units" options.
+            && !( game.getPhase() == Game.PHASE_MOVEMENT
+                  && ( (entity instanceof Infantry &&
+                        game.getOptions().booleanOption("inf_move_later")) ||
+                       (entity instanceof Protomech &&
+                        game.getOptions().booleanOption("protos_move_later")))
+                  && game.checkForValidNonInfantryAndOrProtomechs(playerId));
     }
     
     /**

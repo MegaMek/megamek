@@ -808,7 +808,8 @@ public class ChatLounge
 
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(client.getLocalPlayer())
-                && client.game.getOptions().booleanOption("blind_drop")) {
+                && client.game.getOptions().booleanOption("blind_drop")
+                && !client.game.getOptions().booleanOption("real_blind_drop")) {
                 String unitClass = "";
                 if (entity instanceof Infantry) {
                     unitClass = "Infantry";
@@ -846,7 +847,9 @@ public class ChatLounge
                         + " Class: "
                         + unitClass
                         + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
-            } else {
+            } else if (entity.getOwner().equals(client.getLocalPlayer())
+                       || (!client.game.getOptions().booleanOption("blind_drop")
+                       && !client.game.getOptions().booleanOption("real_blind_drop"))) {
                 lisEntities.add(
                     strTreeSet
                         + entity.getDisplayName()
@@ -945,10 +948,16 @@ public class ChatLounge
             for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
                 Entity entity = (Entity) j.nextElement();
                 if (entity.getOwner().equals(player)) {
-                    if (useBv) {
-                        playerValue += entity.calculateBattleValue();
+                    if (!client.game.getOptions().booleanOption("real_blind_drop")
+                        || entity.getOwner().equals(client.getLocalPlayer())) {
+                        if (useBv) {
+                          playerValue += entity.calculateBattleValue();
+                        }
+                        else {
+                          playerValue += entity.getWeight();
+                        }
                     } else {
-                        playerValue += entity.getWeight();
+                        // NOP
                     }
                 }
             }

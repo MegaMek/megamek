@@ -8776,7 +8776,7 @@ implements Runnable, ConnectionHandler {
                                                          Mech.LOC_CT ) ) );
                           // If the head is destroyed, kill the crew.
                           if (hit.getLocation() == Mech.LOC_HEAD ||
-						      (hit.getLocation() == Mech.LOC_CT && ammoExplosion)) {
+                              (hit.getLocation() == Mech.LOC_CT && ammoExplosion)) {
                           	te.getCrew().setDoomed(true);
                           }
                         }

@@ -111,7 +111,7 @@ public class BLKTankFile implements MechLoader {
         int[] fullArmor = new int[armor.length + 1];
         fullArmor[0] = 0;
         System.arraycopy(armor, 0, fullArmor, 1, armor.length);
-        for (int x = 0; x < armor.length; x++) {
+        for (int x = 0; x < fullArmor.length; x++) {
             t.initializeArmor(fullArmor[x], x);
         }
         

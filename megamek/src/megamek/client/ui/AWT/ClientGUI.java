@@ -341,12 +341,11 @@ public class ClientGUI
      * <p/>
      * This method can be called by subclasses.
      */
-    public void showHelp(String helpFile) {
+    public void showHelp() {
         // Do we need to create the "help" dialog?
         if (this.help == null) {
-            this.help = new CommonHelpDialog(this.frame, new File(helpFile));
+            this.help = new CommonHelpDialog(this.frame, new File(helpFileName));
         }
-        help.setFile(new File(helpFile));
         // Show the help dialog.
         this.help.show();
     }
@@ -403,7 +402,7 @@ public class ClientGUI
             showAbout();
         }
         if (event.getActionCommand().equalsIgnoreCase("helpContents")) {
-            showHelp(helpFileName);
+            showHelp();
         }
         if (event.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
             showSettings();

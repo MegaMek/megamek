@@ -22,7 +22,7 @@ import java.io.*;
 import megamek.client.util.widget.*;
 
 import megamek.common.*;
-import megamek.client.util.StringUtil;
+import megamek.common.util.StringUtil;
 
 public class ChatLounge extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardListener, GameListener

@@ -2767,11 +2767,12 @@ public class Server
             case CriticalSlot.TYPE_EQUIPMENT :
                 Mounted mounted = en.getEquipment(cs.getIndex());
                 EquipmentType eqType = mounted.getType();
+                boolean hitBefore = mounted.isHit();
                 desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
-                if (eqType.isExplosive() && !mounted.isHit()) {
+                mounted.setHit(true);
+                if (eqType.isExplosive() && !hitBefore) {
                     desc += explodeEquipment(en, loc, slot);
                 }
-                mounted.setHit(true);
                 break;
             }
             hits--;

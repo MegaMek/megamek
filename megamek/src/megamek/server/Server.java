@@ -5256,7 +5256,7 @@ implements Runnable, ConnectionHandler {
       }
       final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
-      if(bArtillery && game.getPhase()==game.PHASE_FIRING) { //if direct artillery
+      if(bArtillery && game.getPhase()==Game.PHASE_FIRING) { //if direct artillery
           wr.artyAttackerCoords=ae.getPosition();
       }
 

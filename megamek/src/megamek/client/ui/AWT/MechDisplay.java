@@ -61,7 +61,7 @@ public class MechDisplay extends Panel
         displayP.add("movement", mPan);
         aPan = new ArmorPanel();
         displayP.add("armor", aPan);
-        wPan = new WeaponPanel();
+        wPan = new WeaponPanel(client);
         displayP.add("weapons", wPan);
         sPan = new SystemPanel(client);
         displayP.add("systems", sPan);
@@ -105,6 +105,7 @@ public class MechDisplay extends Panel
     public void displayEntity(Entity en) {
         this.currentlyDisplaying = en;
         
+        boolean bOwner = (en.getOwner() == client.getLocalPlayer());
         mPan.displayMech(en);
         aPan.displayMech(en);
         wPan.displayMech(en);
@@ -118,6 +119,7 @@ public class MechDisplay extends Panel
     public Entity getCurrentEntity() {
         return currentlyDisplaying;
     }
+    
     
     /**
      * Changes to the specified panel.
@@ -455,9 +457,12 @@ class WeaponPanel
     private Vector weapons;
     private Vector vAmmo;
     private Entity entity;
+    private Client client;
         
-    public WeaponPanel() {
+    public WeaponPanel(Client client) {        
         super(new GridBagLayout());
+        
+        this.client = client;
             
         // weapon list
         weaponList = new java.awt.List(4, false);
@@ -728,8 +733,9 @@ class WeaponPanel
         }
         
         // update ammo selector
+        boolean bOwner = (client.getLocalPlayer() == entity.getOwner());
         m_chAmmo.removeAll();
-        if (wtype.getAmmoType() == AmmoType.T_NA) {
+        if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
             m_chAmmo.setEnabled(false);
         }
         else {
@@ -981,11 +987,12 @@ class SystemPanel
             modeLabel.setEnabled(false);
             Mounted m = getSelectedEquipment();
           
-            if (m != null && m.getType() instanceof AmmoType 
+            boolean bOwner = (client.getLocalPlayer() == en.getOwner());
+            if (m != null && bOwner && m.getType() instanceof AmmoType 
                     && m.getShotsLeft() > 0 && !m.isDumping()) {
                 m_bDumpAmmo.setEnabled(true);
             }
-            else if (m != null && m.getType().hasModes()) {
+            else if (m != null && bOwner && m.getType().hasModes()) {
                 m_chMode.setEnabled(true);
                 modeLabel.setEnabled(true);
                 m_chMode.removeAll();
@@ -1022,7 +1029,9 @@ class SystemPanel
     {
         if (ae.getActionCommand().equals("dump")) {
             Mounted m = getSelectedEquipment();
-            if (m == null || !(m.getType() instanceof AmmoType) || m.getShotsLeft() <= 0) {
+            boolean bOwner = (client.getLocalPlayer() == en.getOwner());
+            if (m == null || !bOwner || !(m.getType() instanceof AmmoType) || 
+                        m.getShotsLeft() <= 0) {
                 return;
             }
             

@@ -80,6 +80,7 @@ v (next)
 + fixed Artemis BV mod
 + 618298: lobby screen fits on 800x600
 + partially added TargComps (ToHit mod, but no aimed shots)
++ lobby lists re-enabled (disabled lists are hard to read)
 
 v 0.27.10 (12-06-02, 11:25pm)
 + new naming system for mechset.txt, allowing omnimechs, etc

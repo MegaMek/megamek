@@ -130,6 +130,7 @@ public class BotClient extends Client
     }
     
     private void notifyOfBot() {
+        new AlertDialog(frame, "Please read the ai-readme.txt", "Please read the ai-readme.txt file before using the bot.  Do not email the authors about the bot.").show();
         sendChat("Hi, I'm a bot client!");
     }
     

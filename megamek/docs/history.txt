@@ -92,6 +92,7 @@ VERSION HISTORY:
 v next
 + moved extra weapon fire checking around in the code
 + all mech display panels now working properly in weapons phase
++ added pop-up prompt to read the documentation when using the bot
 
 v 0.24.8 (04-10-02, 8pm)
 + fixed a bug where the server thought everybody was on the same team

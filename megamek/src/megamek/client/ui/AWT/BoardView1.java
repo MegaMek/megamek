@@ -29,7 +29,7 @@ import megamek.common.actions.*;
 public class BoardView1
     extends Canvas
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
-    ComponentListener, Runnable
+    Runnable
 {
     private static final int        PIC_MAX             = 4;
     private static final int        PIC_MECH_LIGHT      = 0;
@@ -112,7 +112,6 @@ public class BoardView1
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        addComponentListener(this);
         
         // tooltip
         tipWindow = new Window(frame);

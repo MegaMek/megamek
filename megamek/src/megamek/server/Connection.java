@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -136,6 +136,7 @@ public class Connection {
      * Adds a packet to the send queue to be send on a seperate thread.
      */
     public synchronized void send(Packet packet) {
+//             System.out.println( "Sending a " + packet.getCommand() + " packet." ); //commentme
         sendQueue.addElement(packet);
         notifyAll();
     }

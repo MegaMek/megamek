@@ -861,7 +861,13 @@ class WeaponPanel extends BufferedPanel
                 }
             }
             if (nCur == -1) {
-                m_chAmmo.setEnabled(false);
+                // outcommenting this fixes bug 1041003 (if a linked ammobin 
+                // gets breached, it will continue to be used, and other ammo
+                // can't be selected for the weapon that the breached ammo was
+                // linked to), and did not cause anything to misbehave in my
+                // testing, apart from the Choice being enabled even if there
+                // is no ammo to choose from, but that is only a minor issue
+                // m_chAmmo.setEnabled(false);
             }
             else {
                 m_chAmmo.select(nCur);

@@ -36,16 +36,19 @@ public class EquipmentType {
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     
     
-    protected String    name;
+    protected String    name = null;
 
-    protected String    internalName;
-    protected String    mepName;
-    protected String    mtfName;
+    protected String    internalName = null;
+    protected String    mepName = null;
+    protected String    mtfName = null;
 
-    protected float     tonnage;
-    protected int       criticals;
+    protected float     tonnage = 0;
+    protected int       criticals = 0;
+    
+    protected boolean   explosive = false;
+    protected int       toHitModifier = 0;
       
-    protected float     bv; // battle value point system
+    protected float     bv = 0; // battle value point system
     
     // static list of eq
     protected static Vector allTypes;
@@ -84,6 +87,14 @@ public class EquipmentType {
 
     public int getCriticals(Entity entity) {
         return criticals;
+    }
+    
+    public boolean isExplosive() {
+        return explosive;
+    }
+    
+    public int getToHitModifier() {
+        return toHitModifier;
     }
 
     public float getBV(Entity entity) {

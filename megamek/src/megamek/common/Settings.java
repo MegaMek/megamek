@@ -78,6 +78,17 @@ public class Settings
     public static boolean   soundMute               = false;
     public static String    soundBingFilename       = "data/sounds/call.wav";
 
+    /**
+     * The player wants to track memory use. Setting this to <code>true</code>
+     * will cause the client to dump a snapshot of memory usage to the log
+     * file at the beginning of selected phases of each turn.  Very useful
+     * in performance analysis.
+     * 
+     * @see     megamek.client.Client#changePhase(int)
+     * @see     megamek.client.Client#memDump(String)
+     */
+    public static boolean   memoryDumpOn            = false;
+
     private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
             "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
             
@@ -260,6 +271,10 @@ scan:
                         st.nextToken();
                         soundBingFilename = st.sval;
                     }
+                    else if(key.equals("memorydumpon")) {
+                        st.nextToken();
+                        memoryDumpOn = Boolean.valueOf(st.sval).booleanValue();
+                    }
                 }
             }
             
@@ -335,6 +350,7 @@ scan:
             cw.write("showwrecks " + showWrecks + "\r\n");
             cw.write("soundmute " + soundMute + "\r\n");
             cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
+            cw.write("memorydumpon " + memoryDumpOn + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

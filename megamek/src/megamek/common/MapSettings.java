@@ -1,7 +1,15 @@
 /*
- * MapSettings.java
- *
- * Created on March 27, 2002, 1:07 PM
+ * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it 
+ *  under the terms of the GNU General Public License as published by the Free 
+ *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful, but 
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *  for more details.
  */
 
 package megamek.common;
@@ -11,6 +19,9 @@ import java.io.*;
 
 /**
  *
+ * MapSettings.java
+ *
+ * Created on March 27, 2002, 1:07 PM
  * @author  Ben
  * @version 
  */
@@ -254,6 +265,112 @@ public class MapSettings implements Serializable {
         this.boardsAvailable = boardsAvailable;
     }
     
+
+    /**
+       Checks, if the Mapgenerator parameters are all valid. If not 
+       they are changed to valid values.
+    */
+    public void validateMapGenParameters() {
+	if (hilliness < 0) {
+	    hilliness = 0;
+	}
+	if (hilliness > 1000) {
+	    hilliness = 1000;
+	}
+	if (range < 0 ) {
+	    range = 0;
+	}	
+	if (minWaterSpots < 0) {
+	    minWaterSpots = 0;
+	}
+	if (maxWaterSpots < minWaterSpots) {
+	    maxWaterSpots = minWaterSpots;
+	}
+	if (minWaterSize < 0) {
+	    minWaterSize = 0;
+	}
+	if (maxWaterSize < minWaterSize) {
+	    maxWaterSize = minWaterSize;
+	}
+	if (probDeep < 0) {
+	    probDeep = 0;
+	}
+	if (probDeep > 100) {
+	    probDeep = 100;
+	}
+	if (minForestSpots < 0) {
+	    minForestSpots = 0;
+	}
+	if (maxForestSpots < minForestSpots) {
+	    maxForestSpots = minForestSpots;
+	}
+	if (minForestSize < 0) {
+	    minForestSize = 0;
+	}
+	if (maxForestSize < minForestSize) {
+	    maxForestSize = minForestSize;
+	}
+	if (probHeavy < 0) {
+	    probHeavy = 0;
+	}
+	if (probHeavy > 100) {
+	    probHeavy = 100;
+	}
+	if (minRoughSpots < 0) {
+	    minRoughSpots = 0;
+	}
+	if (maxRoughSpots < minRoughSpots) {
+	    maxRoughSpots = minRoughSpots;
+	}
+	if (minRoughSize < 0) {
+	    minRoughSize = 0;
+	}
+	if (maxRoughSize < minRoughSize) {
+	    maxRoughSize = minRoughSize;
+	}
+	if (probRoad < 0) {
+	    probRoad = 0;
+	}
+	if (probRoad > 100) {
+	    probRoad = 100;
+	}
+	if (probInvert < 0) {
+	    probInvert = 0;
+	}
+	if (probInvert > 100) {
+	    probInvert = 100;
+	}
+	if (probRiver < 0) {
+	    probRiver = 0;
+	}
+	if (probRiver > 100) {
+	    probRiver = 100;
+	}
+	if (probCrater < 0) {
+	    probCrater = 0;
+	}
+	if (probCrater > 100) {
+	    probCrater = 100;
+	}
+	if (minRadius < 0) {
+	    minRadius = 0;
+	}
+	if (maxRadius < minRadius) {
+	    maxRadius = minRadius;
+	}
+	if (minCraters < 0 ) {
+	    minCraters = 0;
+	}
+	if (maxCraters < minCraters) {
+	    maxCraters = minCraters;
+	}
+	if (algorthmToUse < 0) {
+	    algorithmToUse = 0;
+	}
+	if (algorithmToUse > 2) {
+	    algorithmToUse = 2;
+	}
+    } /* validateMapGenParameters */
     
 	/**
 		Returns true if the this Mapsetting has the same mapgenerator

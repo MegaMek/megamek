@@ -72,7 +72,6 @@ public class Client extends Panel
     public PopupMenu            popup = new PopupMenu("Board Popup...");
     private UnitOverview 		uo;
     public Ruler                ruler; // added by kenn
-        
     protected Component         curPanel;
     
     // some dialogs...
@@ -605,7 +604,7 @@ public class Client extends Panel
         }
       return startingPositionDialog;
     }
-    
+
     /**
      * Changes the game phase, and the displays that go
      * along with it.
@@ -628,7 +627,7 @@ public class Client extends Panel
         curPanel = null;
         this.removeAll();
         doLayout();
-        
+
         switch(phase) {
         case Game.PHASE_LOUNGE :
             switchPanel(new ChatLounge(this));
@@ -654,6 +653,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
+            dumpMem( "entering deployment phase" );
             break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));
@@ -661,6 +661,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
+            dumpMem( "entering movement phase" );
             break;
         case Game.PHASE_FIRING :
             switchPanel(new FiringDisplay(this));
@@ -668,6 +669,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
+            dumpMem( "entering firing phase" );
             break;
         case Game.PHASE_PHYSICAL :
             game.resetActions();
@@ -677,6 +679,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
+            dumpMem( "entering physical phase" );
             break;
         case Game.PHASE_INITIATIVE :
             game.resetActions();
@@ -1789,6 +1792,40 @@ public class Client extends Panel
     public void bing() {
         if ( !Settings.soundMute && null != bingClip ) {
             bingClip.play();
+        }
+    }
+
+    /**
+     * Perform a dump of the current memory usage.
+     * <p/>
+     * This method is useful in tracking performance issues on various
+     * player's systems.  You can activate it by changing the "memorydumpon"
+     * setting to "true" in the MegaMek.cfg file.
+     *
+     * @param   where - a <code>String</code> indicating which part of the
+     *          game is making this call.
+     *
+     * @see     Settings#memoryDumpOn
+     * @see     Client#changePhase(int)
+     */
+    private void memDump( String where ) {
+        if ( Settings.memoryDumpOn ) {
+            StringBuffer buf = new StringBuffer();
+            final long total = Runtime.getRuntime().totalMemory();
+            final long free  = Runtime.getRuntime().freeMemory();
+            final long used  = total - free;
+            buf.append("Memory dump ")
+                .append(where);
+            for (int loop = where.length(); loop < 25; loop++) {
+                buf.append(' ');
+            }
+            buf.append(": used (")
+                .append( used )
+                .append(") + free (")
+                .append(free)
+                .append(") = ")
+                .append(total);
+            System.out.println(buf.toString());
         }
     }
 

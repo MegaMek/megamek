@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.27 (CVS)
+v 0.29.27 (2004-03-07 9:35pm)
 + Bug 897585: Initiative phase bug fixed.
 + Bug 760628: Clear PSRs for any entity after it falls
 	(no PSRs from crits sustained falling down).

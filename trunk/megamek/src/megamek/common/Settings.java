@@ -57,6 +57,8 @@ public class Settings
     public static boolean   showMoveStep            = true;
     public static int       moveStepDelay           = 500;
     public static boolean   showWrecks              = true;
+
+    public static int       shiftScrollSensitivity  = 3;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
@@ -337,6 +339,10 @@ scan:
                         st.nextToken();
                         unitStartChar = (char)st.nval;
                     }
+                    else if(key.equals("shiftscrollsensitivity")) {
+                        st.nextToken();
+                        shiftScrollSensitivity = (int)st.nval;
+                    }
                 }
             }
             
@@ -424,6 +430,7 @@ scan:
             cw.write("showmaphexpopup " + showMapHexPopup + "\r\n");
             cw.write("tooltipdelay " + tooltipDelay + "\r\n");
             cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
+            cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());

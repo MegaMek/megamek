@@ -8234,7 +8234,7 @@ implements Runnable, ConnectionHandler {
         }
         // is our base roll impossible?
         if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
-            phaseReport.append("\n").append(entity.getDisplayName()).append(" must make ").append(rolls.size()).append(" piloting skill roll(s) and automatically fails (").append(base.getDesc()).append(").\n");
+            phaseReport.append("\n").append(entity.getDisplayName()).append(" must make ").append(rolls.size()).append(" piloting skill roll(s) (" ).append( reasons.toString() ).append(") and automatically fails (").append(base.getDesc()).append(").\n");
             if (moving) {
                 doEntityFallsInto( entity, src, dest, base );
             } else {

@@ -13,6 +13,7 @@ v 0.29.25 (CVS)
 + Bug 833588: Randall sez, "Only kick Infantry in the same hex"
 + Ignore .log files in the data/mechfiles folder
 + RFE 810540: added client settings for board hex popup and tooltip delay
++ Also changed Settings.soundBingFilename definition to use File.separator
 + RFE 697418: New client option for confirming "done".
 + Bug 864751: Java 1.1 issues.
 + Fixed Java 1.1 bug with adding craters (thanks to Florian)

@@ -1034,9 +1034,7 @@ public class BoardView1
 
         clearMovementData();
 
-        //md.clearAllFlags();
-        md.compile();
-        //Compute.compile(game, entity.getId(), md);
+        md.compileLastStep();
 
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();

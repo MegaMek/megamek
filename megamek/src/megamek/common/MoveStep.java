@@ -642,25 +642,10 @@ public class MoveStep implements Serializable {
     }
 
     /**
-	 * @param i
-	 */
-    public void setMpUsed(int i) {
-        mpUsed = i;
-    }
-
-    /**
 	 * @param b
 	 */
     public void setOnlyPavement(boolean b) {
         onlyPavement = b;
-    }
-
-    public void setPastDanger(boolean b) {
-        pastDanger = b;
-    }
-
-    public void setPrevStepOnPavement(boolean b) {
-        prevStepOnPavement = b;
     }
 
     public void setTargetNumberMASC(int i) {
@@ -869,17 +854,17 @@ public class MoveStep implements Serializable {
     /**
 	 * Amount of movement points required to move from start to dest
 	 */
-    public int calcMovementCostFor(Game game, Coords prev) {
+    protected void calcMovementCostFor(Game game, Coords prev) {
         final int moveType = parent.getEntity().getMovementType();
         final Hex srcHex = game.board.getHex(prev);
         final Hex destHex = game.board.getHex(getPosition());
 
+		mp = 1;
+
         // jumping always costs 1
         if (parent.isJumping()) {
-            return 1;
+            return;
         }
-
-        mp = 1;
 
         // Account for terrain, unless we're moving along a road.
         if (!isPavementStep) {
@@ -936,8 +921,6 @@ public class MoveStep implements Serializable {
             Building bldg = game.board.getBuildingAt(getPosition());
             mp += bldg.getType();
         }
-
-        return mp;
     }
 
     /**
@@ -1058,13 +1041,13 @@ public class MoveStep implements Serializable {
         // ugh, stacking checks. well, maybe we're immune!
         if (movementType != Entity.MOVE_JUMP && type != MovePath.STEP_CHARGE && type != MovePath.STEP_DFA) {
             // can't move a mech into a hex with an enemy mech
-            if (parent.getEntity() instanceof Mech && Compute.isEnemyMechIn(game, parent.getEntity().getId(), dest)) {
+            if (parent.getEntity() instanceof Mech && Compute.isEnemyIn(game, parent.getEntity().getId(), dest, true)) {
                 return false;
             }
 
             // Can't move out of a hex with an enemy unit unless we started
             // there, BUT we're allowed to turn, unload, or go prone.
-            if (Compute.isEnemyUnitIn(game, parent.getEntity().getId(), src)
+            if (Compute.isEnemyIn(game, parent.getEntity().getId(), src, false)
                 && !src.equals(parent.getEntity().getPosition())
                 && type != MovePath.STEP_TURN_LEFT
                 && type != MovePath.STEP_TURN_RIGHT

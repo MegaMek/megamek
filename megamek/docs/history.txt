@@ -31,6 +31,7 @@ v0.29.43 (CVS)
 + Bug 1000932: synchronize MovementDisplay#updateProneButtons()
 + RFE 1001439: use the board name for the default name of the image file.
 + Moved the player selection dropdown in the "Select Mech" dialog.
++ Updated build.bat to use Ostermiller.jar and PngEncoder.jar.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

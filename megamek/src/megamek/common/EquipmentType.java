@@ -45,7 +45,7 @@ public class EquipmentType {
     protected float     tonnage;
     protected int       criticals;
       
-    protected int       bv; // battle value point system
+    protected float     bv; // battle value point system
     
     // static list of eq
     protected static Vector allTypes;
@@ -86,7 +86,7 @@ public class EquipmentType {
         return criticals;
     }
 
-    public int getBV(Entity entity) {
+    public float getBV(Entity entity) {
         return bv;
     }
 

@@ -125,6 +125,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM30Ammo());
         EquipmentType.addType(createISMRM40Ammo());
         EquipmentType.addType(createISAMSAmmo());
+        EquipmentType.addType(createISNarcAmmo());
         
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -154,6 +155,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM4Ammo());
         EquipmentType.addType(createCLSRM6Ammo());
         EquipmentType.addType(createCLAMSAmmo());
+        EquipmentType.addType(createCLNarcAmmo());
     }
     
     public static AmmoType createISAC2Ammo() {
@@ -772,11 +774,26 @@ public class AmmoType extends EquipmentType {
         ammo.internalName = "ISAMS Ammo";
         ammo.mepName = ammo.internalName;  // ?
         ammo.mtfName = ammo.internalName;
-        ammo.damagePerShot = 1; // only used for ammo crits
-        ammo.rackSize = 2; // only used for ammo crits
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 12;
         ammo.bv = 11;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISNarcAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Narc Pods";
+        ammo.internalName = "ISNarc Pods";
+        ammo.mepName = ammo.internalName; // ?
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NARC;
+        ammo.shots = 6;
+        ammo.bv = 0;
         
         return ammo;
     }
@@ -1242,6 +1259,21 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 12;
         ammo.bv = 21;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createCLNarcAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Narc Pods";
+        ammo.internalName = "CLNarc Pods";
+        ammo.mepName = ammo.internalName; // ?
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 1; // only used for ammo crits
+        ammo.rackSize = 2; // only used for ammo crits
+        ammo.ammoType = AmmoType.T_NARC;
+        ammo.shots = 6;
+        ammo.bv = 0;
         
         return ammo;
     }

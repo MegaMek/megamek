@@ -23,6 +23,9 @@ Lot of people have contributed to the MegaMek project.
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
 
+  Mech Conversion:
+     Hopalong
+
   Testing, Ideas and Feedback (just a few of many):
      Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
      Jason Kean

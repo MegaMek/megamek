@@ -35,6 +35,7 @@ public class TargetRoll {
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;
     public final static int AUTOMATIC_SUCCESS   = Integer.MIN_VALUE;
+    public final static int CHECK_FALSE         = Integer.MIN_VALUE - 2;
     
     private ArrayList modifiers = new ArrayList();
     
@@ -116,6 +117,14 @@ public class TargetRoll {
         return "";
     }
     
+    /**
+     * Returns the last description found
+     */
+    public String getLastPlainDesc() {
+        Modifier last = (Modifier)modifiers.get(modifiers.size() - 1);
+        return last.desc;
+    }
+    
     public Iterator getModifiers() {
         return modifiers.iterator();
     }
@@ -165,8 +174,10 @@ public class TargetRoll {
             Modifier modifier = (Modifier)i.next();
             
             // check for break condition
-            if (modifier.value == IMPOSSIBLE || modifier.value == AUTOMATIC_FAIL 
-            || modifier.value == AUTOMATIC_SUCCESS) {
+            if (modifier.value == IMPOSSIBLE
+                || modifier.value == AUTOMATIC_FAIL 
+                || modifier.value == AUTOMATIC_SUCCESS
+                || modifier.value == CHECK_FALSE) {
                 total = modifier.value;
                 break;
             }

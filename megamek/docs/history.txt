@@ -130,6 +130,8 @@ v 0.29.2 (06-??-03, ??)
   now +1 for EVERY 20 damage taken in a round instead of just for the first 20. 
   It's still only 1 pilot roll for the damage. Therefore, 20-39 damage is +1, 
   40-59 is +2, etc...
++ Feature 734125+: Added "are you sure" check for movement that requires
+  piloting skill rolls.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

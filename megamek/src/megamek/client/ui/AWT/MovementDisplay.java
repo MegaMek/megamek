@@ -443,9 +443,191 @@ public class MovementDisplay
             }
         }
 
+        String check = doPSRCheck(md);
+        if (check.length() > 0 && Settings.nagForPSR) {
+            ConfirmDialog nag = 
+                new ConfirmDialog(client.frame,
+                                  "Are you sure?", 
+                                  "You must make the following piloting\n" +
+                                  "skill check(s) for your movement:\n" +
+                                  check, true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    Settings.nagForPSR = false;
+                }
+            } else {
+                return;
+            }
+        }
+
         disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);
+    }
+
+    private String addNag(String report, PilotingRollData rollTarget) {
+        report += "Need " + rollTarget.getValueAsString() + " [" + rollTarget.getDesc() + "]\n";
+        return report;
+    }
+
+    /**
+     * Checks to see if piloting skill rolls are needed for the
+     *  currently selected movement.  This code is basically a
+     *  simplified version of Server.processMovement(), except
+     *  that it just reads information (no writing).  Note that
+     *  Compute.compile() is called though, which changes the
+     *  md object.
+     */
+    private String doPSRCheck(MovementData md) {
+
+        String nagReport = new String();
+
+        final Entity entity = ce();
+
+        // okay, proceed with movement calculations
+        Coords lastPos = entity.getPosition();
+        Coords curPos = entity.getPosition();
+        int curFacing = entity.getFacing();
+        int distance = 0;
+        int mpUsed = 0;
+        int moveType = Entity.MOVE_NONE;
+        int overallMoveType = Entity.MOVE_NONE;
+        boolean firstStep;
+        int prevFacing = curFacing;
+        Hex prevHex = null;
+        final boolean isInfantry = (entity instanceof Infantry);
+
+        PilotingRollData rollTarget;
+        
+        // Compile the move
+        Compute.compile(client.game, entity.getId(), md);
+
+        overallMoveType = md.getLastStepMovementType();
+        
+        // iterate through steps
+        firstStep = true;
+        /* Bug 754610: Revert fix for bug 702735. */
+        MovementData.Step prevStep = null;
+        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            boolean isPavementStep = step.isOnPavement();
+            
+            // stop for illegal movement
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                break;
+            }
+            
+            // check piloting skill for getting up
+            rollTarget = entity.checkGetUp(step);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport = addNag(nagReport, rollTarget);
+            } else if (firstStep) {
+                // running with destroyed hip or gyro needs a check
+                rollTarget = entity.checkRunningWithDamage(overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport = addNag(nagReport, rollTarget);
+                }
+                firstStep = false;
+            }
+            
+            // set most step parameters
+            moveType = step.getMovementType();
+            distance = step.getDistance();
+            mpUsed = step.getMpUsed();
+
+            // set last step parameters
+            curPos = step.getPosition();
+            curFacing = step.getFacing();
+
+            final Hex curHex = client.game.board.getHex(curPos);
+
+            // Check for skid.
+            rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
+                                          prevStep, prevFacing, curFacing,
+                                          lastPos, curPos, isInfantry,
+                                          distance);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                // Have an entity-meaningful PSR message.
+                nagReport = addNag(nagReport, rollTarget);
+            }
+
+            // check if we've moved into rubble
+            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport = addNag(nagReport, rollTarget);
+            }
+            
+            // check if we've moved into water
+            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
+                                               isPavementStep);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport = addNag(nagReport, rollTarget);
+            }
+
+            // Handle non-infantry moving into a building.
+            if (entity.checkMovementInBuilding(lastPos, curPos, step,
+                                               curHex, prevHex)) {
+                
+                // Get the building being exited.
+                // TODO: allow units to climb on top of buildings.
+                Building bldgExited = client.game.board.getBuildingAt( lastPos );
+
+                // Get the building being entered.
+                // TODO: allow units to climb on top of buildings.
+                Building bldgEntered = client.game.board.getBuildingAt( curPos );
+
+                if ( bldgExited != null && bldgEntered != null && 
+                     !bldgExited.equals(bldgEntered) ) {
+                    // Exiting one building and entering another.
+                    //  Brave, aren't we?
+                    rollTarget = entity.rollMovementInBuilding(bldgExited, distance, "exiting");
+                    nagReport = addNag(nagReport, rollTarget);
+                    rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering");
+                    nagReport = addNag(nagReport, rollTarget);
+                } else {
+                    Building bldg;
+                    if (bldgEntered == null) {
+                        // Exiting a building.
+                        bldg = bldgExited;
+                    } else {
+                        // Entering or moving within a building.
+                        bldg = bldgEntered;
+                    }
+                    rollTarget = entity.rollMovementInBuilding(bldg, distance, "");
+                    nagReport = addNag(nagReport, rollTarget);
+                }
+            }
+
+            // update lastPos, prevStep, prevFacing & prevHex
+            lastPos = new Coords(curPos);
+            prevStep = step;
+            /* Bug 754610: Revert fix for bug 702735.
+            if (prevHex != null && !curHex.equals(prevHex)) {
+            */
+            if (!curHex.equals(prevHex)) {
+                prevFacing = curFacing;
+            }
+            prevHex = curHex;
+        }
+        
+        // but the danger isn't over yet!  landing from a jump can be risky!
+        if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
+            // check for damaged criticals
+            rollTarget = entity.checkLandingWithDamage();
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport = addNag(nagReport, rollTarget);
+            }
+            // jumped into water?
+            int waterLevel = client.game.board.getHex(curPos).levelOf(Terrain.WATER);
+            rollTarget = entity.checkWaterMove(waterLevel);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                nagReport = addNag(nagReport, rollTarget);
+            }
+        }
+        
+        return nagReport;
     }
 
     /**

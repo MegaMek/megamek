@@ -832,9 +832,14 @@ public abstract class Entity
      * Returns this entity's walking/cruising mp, factored
      * for heat and gravity.
      */
+    
     public int getWalkMP() {
+        return getWalkMP(true);
+    }
+    
+    public int getWalkMP( boolean gravity ) {
         float j = walkMP;
-        if (game != null) {
+        if (game != null && gravity) {
             j = walkMP / game.getOptions().floatOption("gravity");
             j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
         }

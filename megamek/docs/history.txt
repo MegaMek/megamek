@@ -8,6 +8,7 @@ v0.29.37 (CVS)
 + Bug 911899: TEMPORARY solution - treat smoke artillery ammo as normal ammo.
 + Bug 967231: Can now deploy inf in APCs etc with "Inf deploy last"
 	game-option set
++ Bug 970608: low/high gravity & MASC or TSM now works correctly	
 
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin

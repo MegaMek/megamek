@@ -65,9 +65,15 @@ public class MechView {
             sBasic.append( "Inner Sphere" );
         }
         sBasic.append("\n");
-        if (mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
-            sBasic.append( "Linked c3 BV: ")
-                .append( ((Mech)mech).calculateBattleValue(true) );
+        if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
+            sBasic.append( "Linked c3 BV: ");
+            if ( isMech ) {
+                sBasic.append( ((Mech)mech).calculateBattleValue(true) );
+            } else {
+// TODO: Have C3 affect BV of tanks.
+//                sBasic.append( ((Tank)mech).calculateBattleValue(true) );
+                sBasic.append( ((Tank)mech).calculateBattleValue() );
+            }
         }
         sBasic.append("\n");
         sBasic.append( "Movement: " )

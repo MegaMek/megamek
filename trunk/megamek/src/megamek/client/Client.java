@@ -116,6 +116,17 @@ public class Client extends Panel
     
 		return true;
 	}
+    
+    /**
+     * The client has become disconnected from the server
+     */
+    private void disconnected() {
+        AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
+        
+        alert.show();
+        
+        System.exit(0);
+    }
 	
 	/**
 	 * Return an enumeration of the players in the game
@@ -125,7 +136,7 @@ public class Client extends Panel
 	}
 	
 	/**
-	 * Return the current number of players in the client.
+	 * Return the current number of players the client knows about
 	 */
 	public int getNoOfPlayers() {
 		int count = 0;
@@ -485,12 +496,14 @@ public class Client extends Panel
             System.err.println("client: IO error reading command:");
             System.err.println(ex);
             System.err.println(ex.getMessage());
-        return null;
+            disconnected();
+            return null;
             } catch (ClassNotFoundException ex) {
-        System.err.println("client: class not found error reading command:");
-        System.err.println(ex);
-        System.err.println(ex.getMessage());
-        return null;
+            System.err.println("client: class not found error reading command:");
+            System.err.println(ex);
+            System.err.println(ex.getMessage());
+            disconnected();
+            return null;
         }
 	}
 	

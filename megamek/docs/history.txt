@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.35 (CVS)
+v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?
 + Use Java APIs to format numbers.
         P.S. set "memorydumpon" to "true" in CFG

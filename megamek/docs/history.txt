@@ -74,6 +74,8 @@ VERSION HISTORY:
 v next
 + added right-click popup menu to board display
 + stacking rules (vehicles & infantry) partially implemented
++ 613612: units continue to take damage the same phase after they are destroyed
++ fixed a stacking bug
 
 v 0.27.1 (10-04-02, 2:30pm)
 + implemented autosaving every turn and loading from saved games

@@ -749,6 +749,9 @@ public abstract class Entity
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
+        if (Settings.showUnitId) {
+            nbuf.append(" ID:").append(this.getId());
+        }
         this.shortName = nbuf.toString();
     }
 

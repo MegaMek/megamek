@@ -27,6 +27,7 @@ import megamek.common.*;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
+import java.io.File;
 import megamek.client.util.RotateFilter;
 import megamek.client.util.TintFilter;
 import megamek.client.util.widget.BufferedPanel;
@@ -298,7 +299,11 @@ public class TilesetManager {
         
         private void applyColor() {
           Image iMech, iCamo;
-          boolean useCamo = (camo != null) && (!Player.NO_CAMO.equals(camo));
+          File camoFile = new File("data/camo/" + camo + ".jpg");
+          boolean useCamo = (camo != null) && 
+          					(!Player.NO_CAMO.equals(camo)) && 
+          					(camoFile.exists());
+          camoFile = null;
           
           iMech = base;
     

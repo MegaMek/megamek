@@ -1,6 +1,6 @@
 package megamek.client.bot;
 
-import megamek.client.ClientGUI;
+import megamek.MegaMek;
 import megamek.client.ConfirmDialog;
 import megamek.client.GameEvent;
 import megamek.client.GameListener;
@@ -9,12 +9,12 @@ import megamek.common.Settings;
 
 public class BotGUI implements GameListener {
 
-    private ClientGUI clientgui;
+    private MegaMek megamek;
     private BotClient bot;
     private static boolean WarningShown;
     
-    public BotGUI(ClientGUI clientgui, BotClient bot) {
-        this.clientgui = clientgui;
+    public BotGUI(MegaMek megamek, BotClient bot) {
+        this.megamek = megamek;
         this.bot = bot;
     }
     
@@ -39,7 +39,7 @@ public class BotGUI implements GameListener {
     }
 
     public void gamePhaseChange(GameEvent e) {
-		if (clientgui.getClient().game.getPhase() == Game.PHASE_LOUNGE) {
+		if (bot.game.getPhase() == Game.PHASE_LOUNGE || bot.game.getPhase() == Game.PHASE_STARTING_SCENARIO) {
 		    notifyOfBot();
 		}
     }
@@ -52,7 +52,7 @@ public class BotGUI implements GameListener {
 				"The bot does not work with all units or game options.\n"
 					+ "Please read the ai-readme.txt file before using the bot.\n"
 					+ " \nWould you like to read the AI documentation now?\n";
-			ConfirmDialog confirm = new ConfirmDialog(clientgui.frame, title, body, true);
+			ConfirmDialog confirm = new ConfirmDialog(megamek.frame, title, body, true);
 			confirm.show();
 
 			if (!confirm.getShowAgain()) {
@@ -61,7 +61,7 @@ public class BotGUI implements GameListener {
 			}
 
 			if (confirm.getAnswer()) {
-				clientgui.showHelp("ai-readme.txt");
+				megamek.showHelp("ai-readme.txt");
 			}
 		}
 	}

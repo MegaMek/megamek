@@ -26,8 +26,6 @@ public class AdvancedLabel extends Component {
     private Vector stringVector = new Vector();
     private Color[] colorArray;
 
-    private int lines = 0;
-
     private int lineHeight;
     private int maxLineWidth;
     private int ascent;
@@ -39,16 +37,7 @@ public class AdvancedLabel extends Component {
     final private int rightMargin = 2;
 
     public AdvancedLabel(String text) {
-        this(text, null);
-        colorArray = new Color[lines];
-        for (int i = 0; i < lines; i++) {
-            colorArray[i] = getForeground();
-        }
-    }
-
-    public AdvancedLabel(String text, Color[] lineColors) {
         setText(text);
-        colorArray = lineColors;
     }
 
     public void paint(Graphics g) {
@@ -60,12 +49,15 @@ public class AdvancedLabel extends Component {
     }
 
     public void setText(String text) {
-        lines=0;
+        stringVector.clear();
         StringTokenizer st = new StringTokenizer(text, "\n");
         while (st.hasMoreTokens()) {
             stringVector.addElement(st.nextToken());
-            lines++;
         }
+		colorArray = new Color[stringVector.size()];
+		for (int i = 0; i < stringVector.size(); i++) {
+			colorArray[i] = getForeground();
+		}
     }
 
     /*
@@ -91,7 +83,7 @@ public class AdvancedLabel extends Component {
             getSizes();
         }
         int totalWidth = maxLineWidth + leftMargin + rightMargin;
-        int totalHeight = lines * lineHeight + lines * descent;
+        int totalHeight = stringVector.size() * lineHeight + stringVector.size() * descent;
         Dimension d = new Dimension(totalWidth, totalHeight);
         return d;
     }

@@ -136,7 +136,7 @@ public class MepFile
     public Mech getMech() {
         Mech mech = new Mech();
     
-        if(!this.techYear.equalsIgnoreCase("3025")) {
+        if(this.techYear == null || !this.techYear.equalsIgnoreCase("3025")) {
             return null;
         }
     

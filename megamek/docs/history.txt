@@ -9,8 +9,7 @@ could almost be combined:
 - somehow improve board display, especially on sun java
 
 - clean up report generation in Server.java
-
-- clean up the stupidness in BaordView.java
+- clean up the stupidness in BoardView.java
 
 - improve code readibility, commenting; break up 80+ character lines, etc.
 - make fields private, classes encapsulated
@@ -21,7 +20,7 @@ LONGER TERM IDEAS:
 
 - the turn report could keep a list of "message" objects 
   instead of a large report string.  This would allow some customizing of the
-  display, or even translation.
+  display, or even translation (vieleicht zum Deutcher sprache.)
 - more server validation of client data
   
 
@@ -40,14 +39,18 @@ board display:
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
 - bug: movement arrows dissappear when scrolled off the screen
 - mechs not disappearing properly when moved/dead
-- extra heat capacity due to underwater heat sinks doesn't show up on display
+
+mech display:
+- many fields in movement panel are useless
+- extra heat capacity due to underwater heat sinks doesn't show up
+- weapons panel doesn't fit right under sun java
 
 mechs:
 - any more .mep parsing problems?
-- parse XML files (from BTTC, even!)
+- parse XML files (from BTTC, even)
 
 initiative:
-? ineligible units should actually count in the action queue, but be skipped
+? ineligible units should maybe count in the action queue, but be skipped
 - roll-off ties
 - possibly stagger within packs
 ? might show whole initiative sequence in status bar
@@ -57,64 +60,58 @@ movement:
 ? mech can try moving again if failed getting up
 ? make jump jets above water work when jumping out of water
 ? pavement movement and skidding?
-- for unavoidable stacking situations, implement "domino effect" rules
 - mechs should always be able to move 1 square forwards, if standing
 - mechs should always be able to try to get up if one leg & gyro is intact
 - go prone action
 
 weapon attacks:
--- sometimes, fire for a mech is skipped?
+-- sometimes, fire for a mech is skipped? (related to spamming "done"?)
 -- sometimes, a torso twist is not done properly (DIE BUG, DIE!)
-- make sure you always get cover when standing next to level 2 (v. strange)
 - multiple targets modifier
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 
 physical attacks:
-- pushing
+- clubbing
 - charging
 - death from above!
-- somehow show the to-hit numbers
+- show the to-hit numbers
+- opposing pushes should counter each other
 
 falling:
-- unit displacement
 - account for water
 
 
 FUTURE VERSION PLANS:
 ---------------------
-- all reasonable level 1 non-optional rules without bugs
+- all reasonable level 1 rules without bugs
 - interface cleaned up: reasonably intuitive & bug-free
 
-these have higher priority:
-- domino effect rules
-- pushing (maybe)
-- other v. small rules fixes
-
-these are tricky, or have lower priority:
-- a way to get up in the middle of your movement
-- looking at other mechs
-- faster board code
-- charging & death from above
-
-v 0.23
+v 0.25
 - game ends when only one player is left
 - observer mode
 - players that connect with the same name as a "ghost" take control of that player
+- game handles "ghost" players properly (skips them)
 
+v 0.24
+- new display system
+- map selection
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.23.0 (03-02-02, 6:30pm)
 + falling does damage again (oops)
 + changed torso twisting a little
-+ attempted to get initiative working again
++ initiative working again
 + changed the way players and entities are stored in the game
 + player changes (such as starting position) properly update again
 + "immobile" centered on mech icon, when displayed
 + falling accounts for elevation
 + falling while moving handled more correctly
 + new intervening formula from (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
++ pushing & resulting effects implemented
++ you may choose to display either BV or tonnage in the lounge
++ invalid filenames in the mech loading routine handleds
 
 v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server

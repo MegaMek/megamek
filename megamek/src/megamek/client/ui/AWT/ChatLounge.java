@@ -52,6 +52,9 @@ public class ChatLounge extends AbstractPhaseDisplay
       
     private Label labBVs;
     private List lisBVs;
+    private CheckboxGroup bvCbg;
+    private Checkbox chkBV;
+    private Checkbox chkTons;
     private Panel panBVs;
       
     private Panel panMain;
@@ -275,6 +278,12 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         panBVs = new Panel();
             
+        bvCbg = new CheckboxGroup();
+        chkBV = new Checkbox("BV", bvCbg, true);
+        chkBV.addItemListener(this);
+        chkTons = new Checkbox("Tons", bvCbg, false);
+        chkTons.addItemListener(this);
+        
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -290,6 +299,15 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.weightx = 1.0;	c.weighty = 1.0;
         gridbag.setConstraints(lisBVs, c);
         panBVs.add(lisBVs);
+        
+        c.weightx = 1.0;	c.weighty = 1.0;
+        c.gridwidth = 1;
+        gridbag.setConstraints(lisBVs, c);
+        panBVs.add(chkBV);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(lisBVs, c);
+        panBVs.add(chkTons);
     }
 
     /**
@@ -357,21 +375,32 @@ public class ChatLounge extends AbstractPhaseDisplay
   }
 	
     /**
-     * Refreshes the battle values from the client
+     * Refreshes the battle values/tons from the client
      */
     private void refreshBVs() {
+        final boolean useBv = chkBV.getState();
+        
         lisBVs.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player)i.nextElement();
-            if(player != null) {
-                int playerBV = 0;
-                for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
-                    Entity entity = (Entity)j.nextElement();
-                    if (entity.getOwner().equals(player)) {
-                        playerBV += entity.calculateBattleValue();
+            final Player player = (Player)i.nextElement();
+            if(player == null) {
+                continue;
+            }
+            float playerValue = 0;
+            for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
+                Entity entity = (Entity)j.nextElement();
+                if (entity.getOwner().equals(player)) {
+                    if (useBv) {
+                        playerValue += entity.calculateBattleValue();
+                    } else {
+                        playerValue += entity.getWeight();
                     }
                 }
-                lisBVs.add(player.getName() + " BV=" + playerBV);
+            }
+            if (useBv) {
+                lisBVs.add(player.getName() + " BV=" + (int)playerValue);
+            } else {
+                lisBVs.add(player.getName() + " Tons=" + playerValue);
             }
         }
     }
@@ -449,8 +478,11 @@ public class ChatLounge extends AbstractPhaseDisplay
 					changeColor(i);
 				}
 			}
-		}
-		refreshColors();
+            refreshColors();
+		} else if (ev.getSource().equals(chkBV) || ev.getSource().equals(chkTons)) {
+            refreshBVs();
+        }
+        
 	}
 
 

@@ -423,8 +423,6 @@ public class Client extends Panel
             game.addPlayer(pindex, newPlayer);
         }
 		processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
-        
-        System.out.println("client: player #" + newPlayer.getId() + " status change");
 	}
 
 	/**

@@ -517,34 +517,75 @@ public class Compute
     }
     
     /**
-     * Can the defending unit be displaced in the direction?
+     * Can the defending unit be displaced from the source to the destination?
      */
-    public boolean isDisplacementOkay(Game game, int entityId, int direction) {
+    public static boolean isValidDisplacement(Game game, int entityId, 
+                                              Coords src, int direction) {
+        return isValidDisplacement(game, entityId, src, 
+                                   src.translated(direction));
+    }
+    /**
+     * Can the defending unit be displaced from the source to the destination?
+     */
+    public static boolean isValidDisplacement(Game game, int entityId, 
+                                              Coords src, Coords dest) {
         final Entity entity = game.getEntity(entityId);
-        final Coords src = entity.getPosition();
-        final Coords dest = src.translated(direction);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
+        final Coords[] intervening = intervening(src, dest);
         
         // arguments valid?
         if (entity == null) {
             throw new IllegalArgumentException("Entity invalid.");
-        }
-        if (src.distance(dest) > 1) {
-            throw new IllegalArgumentException("Coordinates must be adjacent.");
         }
         
         // an easy check
         if (!game.board.contains(dest)) {
             return false;
         }
-        // can't go up 2+ levels
-        if (destHex.getElevation() - srcHex.getElevation() > 1) {
-            return false;
+        for (int i = 0; i < intervening.length; i++) {
+            final Hex hex = game.board.getHex(intervening[i]);
+            // can't go up 2+ levels
+            if (hex.getElevation() - srcHex.getElevation() > 1) {
+                return false;
+            }
         }
         
         // okay, that's about all the checks
         return true;
+    }
+    
+    /**
+     * Get a valid displacement, preferably in the direction indicated.
+     * 
+     * @return valid displacement coords, or null if none
+     */
+    public static Coords getValidDisplacement(Game game, int entityId, 
+                                              Coords src, int direction) {
+        final Entity entity = game.getEntity(entityId);
+        // check the surrounding hexes
+        if (isValidDisplacement(game, entityId, src, direction)) {
+            // direction already valid?  (probably)
+            return src.translated(direction);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 1) % 6)) {
+            // 1 right?
+            return src.translated((direction + 1) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 5) % 6)) {
+            // 1 left?
+            return src.translated((direction + 5) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 2) % 6)) {
+            // 2 right?
+            return src.translated((direction + 2) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 4) % 6)) {
+            // 2 left?
+            return src.translated((direction + 4) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 3) % 6)) {
+            // opposite?
+            return src.translated((direction + 3) % 6);
+        } else {
+            // well, tried to accomodate you... too bad.
+            return null;
+        }
     }
 	
 	public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
@@ -991,7 +1032,7 @@ public class Compute
 	}
     
     /**
-     * To-hit number for the specified arm to punch
+     * To-hit number for the specified leg to kick
      */
     public static ToHitData toHitKick(Game game, int attackerId, 
                                        int targetId, int leg) {
@@ -1116,6 +1157,98 @@ public class Compute
         return toHit;
     }
     
+	public static ToHitData toHitPush(Game game, PushAttackAction paa) {
+        return toHitPush(game, paa.getEntityId(), paa.getTargetId());
+	}
+    
+    /**
+     * To-hit number for the specified arm to punch
+     */
+    public static ToHitData toHitPush(Game game, int attackerId, int targetId) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
+        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        ToHitData toHit = null;
+
+        // arguments legal?
+        if (ae == null || te == null || ae == te) {
+            throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        // check if attacker has fired arm-mounted weapons
+        for (Enumeration i = ae.weapons.elements(); i.hasMoreElements();) {
+            MountedWeapon weapon = (MountedWeapon)i.nextElement();
+            if (weapon.isFiredThisRound()) {
+                if (weapon.getLocation() == Mech.LOC_RARM
+                    || weapon.getLocation() == Mech.LOC_LARM) {
+        			return new ToHitData(ToHitData.IMPOSSIBLE, 
+                                         "Weapons fired from arm this turn");
+                }
+            }
+        }
+        
+        // check range
+        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        }
+        
+        // target must be at same elevation
+        if (attackerElevation != targetElevation) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Target not at same elevation");
+        }
+        
+        // check facing
+        if (!te.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Target not directly ahead of feet");
+        }
+        
+        // can't push while prone
+        if (ae.isProne()) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+        
+        // can't push prone mechs
+        if (te.isProne()) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+        }
+        
+        // okay, modifiers...
+        toHit = new ToHitData(4, "4 (base)");
+        
+        // attacker movement
+        toHit.append(getAttackerMovementModifier(game, attackerId));
+        
+        // target movement
+        toHit.append(getTargetMovementModifier(game, targetId));
+        
+        // attacker terrain
+        toHit.append(getAttackerTerrainModifier(game, attackerId));
+        
+        // target terrain
+        toHit.append(getTargetTerrainModifier(game, targetId));
+        
+        // damaged or missing actuators
+		if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM) == 0) {
+            toHit.addModifier(2, "Right Shoulder destroyed");
+		}
+		if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM) == 0) {
+            toHit.addModifier(2, "Left Shoulder destroyed");
+		}
+
+        // target immobile
+		if (te.isShutDown()) {
+            toHit.addModifier(-4, "target immobile");
+		}
+        
+        // side and elevation shouldn't matter
+
+        // done!
+        return toHit;
+    }
+    
     /**
      * Damage that the specified mech does with a kick
      */
@@ -1149,11 +1282,9 @@ public class Compute
         
 		if (entity.moved == Entity.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
-		}
-		if (entity.moved == Entity.MOVE_RUN) {
+		} else if (entity.moved == Entity.MOVE_RUN) {
             toHit.addModifier(2, "attacker ran");
-		}
-		if (entity.moved == Entity.MOVE_JUMP) {
+		} else if (entity.moved == Entity.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
 		}
         
@@ -1177,14 +1308,11 @@ public class Compute
       
 		if (distance >= 3 && distance <= 4) {
             toHit.addModifier(1, "target moved 3-4 hexes");
-		}
-		if (distance >= 5 && distance <= 6) {
+		} else if (distance >= 5 && distance <= 6) {
             toHit.addModifier(2, "target moved 5-6 hexes");
-		}
-		if (distance >= 7 && distance <= 9) {
+		} else if (distance >= 7 && distance <= 9) {
             toHit.addModifier(3, "target moved 7-9 hexes");
-		}
-		if (distance >= 10) {
+		} else if (distance >= 10) {
             toHit.addModifier(4, "target moved 10+ hexes");
 		}
 		if (jumped) {
@@ -1215,14 +1343,19 @@ public class Compute
 		final Hex hex = game.board.getHex(game.getEntity(entityId).getPosition());
         ToHitData toHit = new ToHitData(0, "");
 
-		if (hex.getTerrainType() == Terrain.WATER) {
+        switch (hex.getTerrainType()) {
+        case Terrain.WATER :
             toHit.addModifier(-1, "target in water");
-		}
-		if (hex.getTerrainType() == Terrain.FOREST_LITE) {
+            break;
+        case Terrain.FOREST_LITE :
             toHit.addModifier(1, "target in light woods");
-		}
-		if (hex.getTerrainType() == Terrain.FOREST_HVY) {
+            break;
+        case Terrain.FOREST_HVY :
             toHit.addModifier(2, "target in heavy woods");
+            break;
+        default:
+            // no modifier
+            break;
 		}
         
         return toHit;

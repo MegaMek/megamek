@@ -1423,7 +1423,7 @@ public class Compute
 
         if (a == null || b == null) return false;
         
-        if (ae.isECMINarced()) {
+        if (ae.isINarcedWith( INarcPod.ECM )) {
             return true;
         }
 

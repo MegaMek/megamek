@@ -2286,7 +2286,8 @@ public abstract class Entity
     }
 
     public boolean onSameC3NetworkAs(Entity e) {
-      if (isEnemyOf(e) || isShutDown() || e.isShutDown() || isECMINarced()) {
+      if ( isEnemyOf(e) || isShutDown() || e.isShutDown()
+           || isINarcedWith(INarcPod.ECM) ) {
           return false; 
       }
 
@@ -2541,42 +2542,17 @@ public abstract class Entity
     }
     
     /**
-     * Do we have an ECM iNarc Pod attached?
-     * @return
+     * Have we been iNarced with the named pod from any team?
+     * @param type the <code>int</code> type of iNarc pod.
+     * @return <code>true</code> if we have.
      */
-    public boolean isECMINarced() {
+    public boolean isINarcedWith( int type ) {
         for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
             INarcPod pod = (INarcPod)e.nextElement();
-            if (pod.getType() == INarcPod.ECM)
+            if (pod.getType() == type)
                 return true;
         }
         return false;
-    }
-
-    /**
-     * Do we have an Haywire iNarc Pod attached?
-     * @return
-     */
-    public boolean isHaywireINarced() {
-        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = (INarcPod)e.nextElement();
-            if (pod.getType() == INarcPod.HAYWIRE)
-                return true;
-        }
-        return false;        
-    }
-    
-    /**
-     * Do we have an Nemesis iNarc Pod attached?
-     * @return
-     */
-    public boolean isNemesisINarced() {
-        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = (INarcPod)e.nextElement();
-            if (pod.getType() == INarcPod.NEMESIS)
-                return true;
-        }
-        return false;        
     }
     
     /**

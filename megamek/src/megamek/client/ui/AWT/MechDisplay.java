@@ -1551,7 +1551,7 @@ class ExtraPanel
                        .append( "] attached." );
                    narcList.add( buff.toString() );
             }
-            if ( en.isECMINarced() &&
+            if ( en.isINarcedWith(INarcPod.ECM) &&
                     !player.isObserver()) {
                    buff = new StringBuffer( "iNarc ECM Pod from " );
                    buff.append( player.getName() );
@@ -1560,7 +1560,7 @@ class ExtraPanel
                        .append( "] attached." );
                    narcList.add( buff.toString() );
             }
-            if ( en.isHaywireINarced() &&
+            if ( en.isINarcedWith(INarcPod.HAYWIRE) &&
                     !player.isObserver()) {
                    buff = new StringBuffer( "iNarc Haywire Pod from " );
                    buff.append( player.getName() );
@@ -1569,7 +1569,7 @@ class ExtraPanel
                        .append( "] attached." );
                    narcList.add( buff.toString() );
            }
-           if ( en.isNemesisINarced() &&
+           if ( en.isINarcedWith(INarcPod.NEMESIS) &&
                     !player.isObserver()) {
                    buff = new StringBuffer( "iNarc Nemesis Pod from " );
                    buff.append( player.getName() );

@@ -359,9 +359,9 @@ public class FiringDisplay
         if ( null == targ )
           return;
 
-        target(targ.getId());
         client.bv.centerOnHex(targ.getPosition());
         client.game.board.select(targ.getPosition());
+        target(targ.getId());
     }
     
     /**

@@ -1841,13 +1841,15 @@ public abstract class Mech
         // Determine the modifier based upon the range.
         else {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case RangeType.RANGE_MINIMUM:
+            case RangeType.RANGE_SHORT:
                 result = new TargetRoll( 0, "stealth" );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case RangeType.RANGE_MEDIUM:
                 result = new TargetRoll( 1, "stealth" );
                 break;
-            case Compute.RANGE_LONG:
+            case RangeType.RANGE_LONG:
+            case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
                 result = new TargetRoll( 2, "stealth" );
                 break;
             default:

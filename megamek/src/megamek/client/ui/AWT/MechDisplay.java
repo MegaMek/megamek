@@ -305,9 +305,9 @@ class WeaponPanel extends BufferedPanel
 {
     public java.awt.List weaponList;
     public Choice m_chAmmo;
-
-    public TransparentLabel wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL, wMedL, wLongL;
-    public TransparentLabel wNameR, wHeatR, wDamR, wMinR, wShortR,wMedR, wLongR;
+        
+    public TransparentLabel wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL, wMedL, wLongL, wExtL;
+    public TransparentLabel wNameR, wHeatR, wDamR, wMinR, wShortR,wMedR, wLongR, wExtR;
     public TransparentLabel currentHeatBuildupL, currentHeatBuildupR;
 
     public TransparentLabel wTargetL, wRangeL, wToHitL;
@@ -443,11 +443,13 @@ class WeaponPanel extends BufferedPanel
         wShortL = new TransparentLabel("Short", fm, clr, TransparentLabel.CENTER);
         wMedL = new TransparentLabel("Med", fm, clr, TransparentLabel.CENTER);
         wLongL = new TransparentLabel("Long", fm, clr, TransparentLabel.CENTER);
+        wExtL = new TransparentLabel("Ext", fm, clr, TransparentLabel.CENTER);
         wMinR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wShortR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wMedR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wLongR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-
+        wExtR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        
         c.weightx = 1.0;
         c.insets = new Insets(2, 9, 1, 1);
         c.gridx = 0; c.gridy = 5; c.gridwidth = 1;
@@ -462,11 +464,18 @@ class WeaponPanel extends BufferedPanel
         c.gridx = 2; c.gridy = 5;
         ((GridBagLayout) getLayout()).setConstraints(wMedL, c);
         add(wMedL);
-
-        c.insets = new Insets(2, 1, 1, 9);
-        c.gridx = 3; c.gridy = 5; c.gridwidth = GridBagConstraints.REMAINDER;
+        
+//         c.insets = new Insets(2, 1, 1, 9);
+        c.gridx = 3; c.gridy = 5;
+//  c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout) getLayout()).setConstraints(wLongL, c);
         add(wLongL);
+        
+        c.insets = new Insets(2, 1, 1, 9);
+        c.gridx = 4; c.gridy = 5;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wExtL, c);
+        add(wExtL);
         //----------------
 
          c.insets = new Insets(1, 9, 2, 1);
@@ -483,12 +492,18 @@ class WeaponPanel extends BufferedPanel
         ((GridBagLayout) getLayout()).setConstraints(wMedR, c);
         add(wMedR);
 
-        c.insets = new Insets(1, 1, 2, 9);
-        c.gridx = 3; c.gridy = 6; c.gridwidth = GridBagConstraints.REMAINDER;
+//         c.insets = new Insets(1, 1, 2, 9);
+        c.gridx = 3; c.gridy = 6;
+//  c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout) getLayout()).setConstraints(wLongR, c);
-        add(wLongR);
-
-
+        add(wLongR);        
+        
+        c.insets = new Insets(1, 1, 2, 9);
+        c.gridx = 4; c.gridy = 6;
+        ((GridBagLayout) getLayout()).setConstraints(wExtR, c);
+        add(wExtR);
+        
+            
         // target panel
         wTargetL = new TransparentLabel("Target:", fm, clr, TransparentLabel.CENTER);
         wRangeL = new TransparentLabel("Range:", fm, clr, TransparentLabel.CENTER);
@@ -613,6 +628,10 @@ class WeaponPanel extends BufferedPanel
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {
+
+        // Grab a copy of the game.
+        Game game = client.getClient().game;
+
         // update pointer to weapons
         this.weapons = en.getWeaponList();
         this.entity = en;
@@ -623,7 +642,9 @@ class WeaponPanel extends BufferedPanel
         if ( en instanceof Mech && en.infernos.isStillBurning() ) { // hit with inferno ammo
             currentHeatBuildup += en.infernos.getHeat();
         }
-        if ( entity.getPosition() != null && client.getClient().game.getBoard().getHex(entity.getPosition()).levelOf(Terrain.FIRE) == 2 ) {
+        Coords position = entity.getPosition();
+        if ( position != null
+             && game.getBoard().getHex(position).levelOf(Terrain.FIRE) == 2 ) {
             currentHeatBuildup += 5; // standing in fire
         }
         if ( en instanceof Mech && en.isStealthActive() ) {
@@ -636,18 +657,24 @@ class WeaponPanel extends BufferedPanel
         m_chAmmo.setEnabled(false);
 
         for(int i = 0; i < weapons.size(); i++) {
-            Mounted mounted = (Mounted)weapons.elementAt(i);
-            WeaponType wtype = (WeaponType)mounted.getType();
+            Mounted mounted = (Mounted) weapons.elementAt(i);
+            WeaponType wtype = (WeaponType) mounted.getType();
+            // TODO : make this a StringBuffer.
             String wn = mounted.getDesc()
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
             // determine shots left & total shots left
-            if (wtype.getAmmoType() != AmmoType.T_NA && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (wtype.getAmmoType() != AmmoType.T_NA
+                && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 int shotsLeft = 0;
-                if (mounted.getLinked() != null && !mounted.getLinked().isDumping()) {
+                if (mounted.getLinked() != null
+                    && !mounted.getLinked().isDumping()) {
                     shotsLeft = mounted.getLinked().getShotsLeft();
                 }
 
-                EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
+                EquipmentType typeUsed = null;
+                if (null != mounted.getLinked()) {
+                    typeUsed = mounted.getLinked().getType();
+                }
 
                 int totalShotsLeft = entity.getTotalMunitionsOfType(typeUsed);
 
@@ -659,7 +686,8 @@ class WeaponPanel extends BufferedPanel
                 wn += " " + mounted.curMode();
             }
             weaponList.add(wn);
-            if (mounted.isUsedThisRound() && client.getClient().game.getPhase() == Game.PHASE_FIRING) {
+            if (mounted.isUsedThisRound()
+                && game.getPhase() == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }
@@ -681,6 +709,16 @@ class WeaponPanel extends BufferedPanel
             heatText += "*"; // overheat indication
         }
         this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")");
+
+        // If MaxTech range rules are in play, display the extreme range.
+        if (game.getOptions().booleanOption("maxtech_range")) {
+            wExtL.setVisible (true);
+            wExtR.setVisible (true);
+        }
+        else {
+            wExtL.setVisible (false);
+            wExtR.setVisible (false);
+        }
     }
 
     /**
@@ -723,6 +761,7 @@ class WeaponPanel extends BufferedPanel
             wShortR.setText("---");
             wMedR.setText("---");
             wLongR.setText("---");
+            wExtR.setText("---");
             return;
         }
         Mounted mounted = (Mounted)weapons.elementAt(weaponList.getSelectedIndex());
@@ -747,9 +786,16 @@ class WeaponPanel extends BufferedPanel
         }
 
         // update range
-        int shortR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange();
-        int mediumR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange();
-        int longR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange();
+        int shortR   = wtype.getShortRange();
+        int mediumR  = wtype.getMediumRange();
+        int longR    = wtype.getLongRange();
+        int extremeR = wtype.getExtremeRange();
+        if ( Entity.LOC_WET == entity.getLocationStatus(mounted.getLocation()) ) {
+            shortR = wtype.getWShortRange();
+            mediumR = wtype.getWMediumRange();
+            longR = wtype.getWLongRange();
+            extremeR = wtype.getWExtremeRange();
+        }
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
@@ -769,6 +815,11 @@ class WeaponPanel extends BufferedPanel
             wLongR.setText((mediumR + 1) + " - " + longR);
         } else {
             wLongR.setText("" + longR);
+        }
+        if(extremeR - longR > 1) {
+            wExtR.setText((longR + 1) + " - " + extremeR);
+        } else {
+            wExtR.setText("" + extremeR);
         }
 
         // Update the range display to account for the weapon's loaded ammo.

@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.7 (CVS)
+v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images
 + Minefields(no command-detonated, but Thunders). LOS setting button back.
 + Bug 782105: Can't make physical attacks while spotting

@@ -68,13 +68,18 @@ public class MegaMek implements ActionListener {
         System.out.println("Java vendor " + System.getProperty("java.vendor"));
         System.out.println("Java version " + System.getProperty("java.version"));
         System.out.println(
-            "Platform "
-                + System.getProperty("os.name")
-                + " "
-                + System.getProperty("os.version")
-                + " ("
-                + System.getProperty("os.arch")
-                + ")\n");
+                           "Platform "
+                           + System.getProperty("os.name")
+                           + " "
+                           + System.getProperty("os.version")
+                           + " ("
+                           + System.getProperty("os.arch")
+                           + ")");
+        if ( System.getProperties().getProperty( "java.version" ).charAt(2) != '1' ) {
+            Long m = new Long(Runtime.getRuntime().maxMemory() / 1024);
+            System.out.println("Total memory available to MegaMek: " + MegaMek.commafy(m.toString()) + " kB");
+        }
+        System.out.println();
 
         // set visible on middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
@@ -732,6 +737,24 @@ public class MegaMek implements ActionListener {
 
         Settings.load();
         new MegaMek();
+    }
+
+    public static String getMemoryUsed() {
+        long heap = Runtime.getRuntime().totalMemory();
+        long free = Runtime.getRuntime().freeMemory();
+        Long used = new Long((heap - free) / 1024);
+        return MegaMek.commafy(used.toString()) + " kB";
+    }
+
+    public static String commafy(String num) {
+        StringBuffer display = new StringBuffer(num);
+        if (display.length() > 3) {
+            display.insert(display.length() - 3, ',');
+        }
+        if (display.length() > 7) {
+            display.insert(display.length() - 7, ',');
+        }
+        return display.toString();
     }
 
     //

@@ -9,6 +9,11 @@ v0.29.56 (CVS)
 + Patch 1069530: Save autoeject status when saving a unit list
 + Data 1062852, 1057426: Pics for Tundra Wolf and Kingfisher
 + Bug 1067144: Pilot ejecting into minefield unscathed
++ Bug 1066147: Damage from PPC Inhibitor is *not* like an ammo explosion.
++ Bug 1066370: The phrase "minumum range" should be spelled "minimum range".
++ Bug 1061059: A unit can only eject its pilot once.
++ Bug 1057844: Pilots stop taking conciousness roll damage after they eject.
++ Bug 1058352: Game can end once all enemy pilots are captured.
 
 v0.29.55 (2004-11-07 11:00pm)
 + Bug 1057995: Correctly handle configuring auto-ejection.

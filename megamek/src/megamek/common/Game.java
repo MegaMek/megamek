@@ -360,13 +360,18 @@ public class Game implements Serializable
     }
 
     /**
-     * Returns the number of non-destroyed deployed entityes owned by the player
+     * Returns the number of non-destroyed deployed entities owned
+     * by the player.  Ignore offboard units and captured Mek pilots.
      */
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()) {
+            if ( entity.getOwner().equals(player)
+                 && !entity.isDestroyed()
+                 && entity.isDeployed()
+                 && !entity.isOffBoard()
+                 && !entity.isCaptured() ) {
                 count++;
             }
         }
@@ -814,6 +819,7 @@ public class Game implements Serializable
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             if ( entity.getRemovalCondition() == Entity.REMOVE_IN_RETREAT ||
+                 entity.getRemovalCondition() == Entity.REMOVE_CAPTURED ||
                  entity.getRemovalCondition() == Entity.REMOVE_PUSHED ) {
                 sanctuary.addElement(entity);
             }

@@ -1191,15 +1191,15 @@ public class Compute
             }
         }
 
-        // add minumum range modifier
+        // add minimum range modifier
         int minRange = weaponRanges[RangeType.RANGE_MINIMUM];
         if (minRange > 0 && distance <= minRange) {
             int minPenalty = (minRange - distance) + 1;
             // Infantry LRMs suffer double minimum range penalties.
             if (isLRMInfantry) {
-                mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
+                mods.addModifier(minPenalty * 2, "infantry LRM minimum range");
             } else {
-                mods.addModifier(minPenalty, "minumum range");
+                mods.addModifier(minPenalty, "minimum range");
             }
         }
 

@@ -2366,6 +2366,7 @@ implements Runnable, ConnectionHandler {
             // Unit has fled the battlefield.
             phaseReport.append("\n" ).append( entity.getDisplayName()
             ).append( " flees the battlefield.\n");
+
             // Is the unit carrying passengers?
             final Vector passengers = entity.getLoadedUnits();
             if ( !passengers.isEmpty() ) {
@@ -2382,6 +2383,28 @@ implements Runnable, ConnectionHandler {
                                                    Entity.REMOVE_IN_RETREAT) );
                 }
             }
+
+            // Handle any picked up MechWarriors            
+            Enumeration iter = entity.getPickedUpMechWarriors().elements();
+            while (iter.hasMoreElements() ) {
+                Integer mechWarriorId = (Integer)iter.nextElement();
+                Entity mw = game.getEntity(mechWarriorId.intValue());
+
+                // Is the MechWarrior an enemy?
+                int condition = Entity.REMOVE_IN_RETREAT;
+                String leavingText = "carries ";
+                if (mw.isCaptured()) {
+                    condition = Entity.REMOVE_CAPTURED;
+                    leavingText = "takes ";
+                }
+                game.removeEntity( mw.getId(), condition );
+                send( createRemoveEntityPacket(mw.getId(), condition) );
+                    phaseReport.append( "   It " )
+                        .append( leavingText )
+                        .append( mw.getDisplayName() )
+                        .append( " with it.\n" );
+            }
+
             // Is the unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
             if ( Entity.NONE != swarmerId ) {
@@ -2402,9 +2425,9 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append( "   It takes " )
                     .append( swarmer.getDisplayName() )
                     .append( " with it.\n" );
-                game.removeEntity( swarmerId, Entity.REMOVE_PUSHED );
+                game.removeEntity( swarmerId, Entity.REMOVE_CAPTURED );
                 send( createRemoveEntityPacket(swarmerId,
-                                               Entity.REMOVE_PUSHED) );
+                                               Entity.REMOVE_CAPTURED) );
             }
             game.removeEntity( entity.getId(), Entity.REMOVE_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
@@ -5417,6 +5440,7 @@ implements Runnable, ConnectionHandler {
               return;
           }
       }
+
       // Resolve roll for disengaged field inhibitors on PPCs, if needed
       if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
           && wtype.hasModes()
@@ -5432,7 +5456,7 @@ implements Runnable, ConnectionHandler {
           } else if (distance == 1) {
               rollTarget = 10;
           }
-          phaseReport.append("    Fired PPC without field inhibitor, checking for damage:\n");
+          phaseReport.append("\n    Fired PPC without field inhibitor, checking for damage:\n");
           phaseReport.append("    Needs ");
           phaseReport.append(rollTarget);
           phaseReport.append(" to avoid damage, rolls ");
@@ -5454,7 +5478,12 @@ implements Runnable, ConnectionHandler {
                       ae.hitAllCriticals(wlocation,i);
                   }
               }
-              phaseReport.append("fails.").append(damageEntity(ae, new HitData(wlocation), 10, true)).append("\n    ");
+              // Bug 1066147 : damage is *not* like an ammo explosion,
+              //        but it *does* get applied directly to the IS.
+              phaseReport.append( "fails." )
+                  .append( damageEntity(ae, new HitData(wlocation),
+                                        10, false, 0, true) )
+                  .append( "\n    (continuing hit report):" );
           } else {
               phaseReport.append("Succeeds.\n    ");
           }
@@ -5650,61 +5679,59 @@ implements Runnable, ConnectionHandler {
         int nCluster = 5;
 
         for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-           Entity entity = (Entity)impactHexHits.nextElement();
-           int hits = wtype.getRackSize();
-           while(hits>0) {
-             if(wr.artyAttackerCoords!=null) {
-                 toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
-             }
-             HitData hit = entity.rollHitLocation
-                     ( toHit.getHitTable(),
-                       toHit.getSideTable(),
-                       wr.waa.getAimedLocation(),
-                       wr.waa.getAimingMode() );
+            Entity entity = (Entity)impactHexHits.nextElement();
+            int hits = wtype.getRackSize();
+            while(hits>0) {
+                if(wr.artyAttackerCoords!=null) {
+                    toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+                }
+                HitData hit = entity.rollHitLocation
+                    ( toHit.getHitTable(),
+                      toHit.getSideTable(),
+                      wr.waa.getAimedLocation(),
+                      wr.waa.getAimingMode() );
 
-             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true) + "\n");
-             hits -= Math.min(nCluster,hits);
-           }
+                phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true) + "\n");
+                hits -= Math.min(nCluster,hits);
+            }
 
         }
         for(int dir=0;dir<=5;dir++) {
-          Coords tempcoords=coords.translated(dir);
-          if(!game.board.contains(tempcoords)) {
-            continue;
-          }
-          if(coords.equals(tempcoords)) {
-            continue;
+            Coords tempcoords=coords.translated(dir);
+            if(!game.board.contains(tempcoords)) {
+                continue;
+            }
+            if(coords.equals(tempcoords)) {
+                continue;
 
-          }
-        Enumeration splashHexHits = game.getEntities(tempcoords);
-        if(splashHexHits.hasMoreElements()) {
-          phaseReport.append("in hex " + tempcoords.getBoardNum());
-        }
-        for(;splashHexHits.hasMoreElements();) {;
-           Entity entity = (Entity)splashHexHits.nextElement();
-           int hits = wtype.getRackSize()/2;
-           while(hits>0) {
-             HitData hit = entity.rollHitLocation
-                     ( toHit.getHitTable(),
-                       toHit.getSideTable(),
-                       wr.waa.getAimedLocation(),
-                       wr.waa.getAimingMode() );
+            }
+            Enumeration splashHexHits = game.getEntities(tempcoords);
+            if(splashHexHits.hasMoreElements()) {
+                phaseReport.append("in hex " + tempcoords.getBoardNum());
+            }
+            for(;splashHexHits.hasMoreElements();) {;
+            Entity entity = (Entity)splashHexHits.nextElement();
+            int hits = wtype.getRackSize()/2;
+            while(hits>0) {
+                HitData hit = entity.rollHitLocation
+                    ( toHit.getHitTable(),
+                      toHit.getSideTable(),
+                      wr.waa.getAimedLocation(),
+                      wr.waa.getAimingMode() );
 
-             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
-             hits -= Math.min(nCluster,hits);
-           }
+                phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+                hits -= Math.min(nCluster,hits);
+            }
 
-        }
+            }
 
 
         }
 
         return;
-        }
+      } // End artillery
 
-
-
-        if (bMissed) {
+      if (bMissed) {
             // Report the miss.
             if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
                 phaseReport.append( "fails to achieve lock.\n" );
@@ -8404,20 +8431,28 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
-        return damageEntity(te, hit, damage, ammoExplosion, 0);
+    public String damageEntity(Entity te, HitData hit, int damage,
+                               boolean ammoExplosion) {
+        return damageEntity(te, hit, damage, ammoExplosion, 0,
+                            false, false);
     }
 
     public String damageEntity(Entity te, HitData hit, int damage) {
-        return damageEntity(te, hit, damage, false, 0);
+        return damageEntity(te, hit, damage, false, 0,
+                            false, false);
     }
     
-    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag, false);
+    public String damageEntity(Entity te, HitData hit, int damage,
+                               boolean ammoExplosion, int bFrag) {
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag,
+                            false, false);
     }
     
-    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS) {
-    	return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, false);
+    public String damageEntity(Entity te, HitData hit, int damage,
+                               boolean ammoExplosion, int bFrag,
+                               boolean damageIS) {
+    	return damageEntity(te, hit, damage, ammoExplosion, bFrag,
+                            damageIS, false);
     }
 
     /**
@@ -8427,12 +8462,18 @@ implements Runnable, ConnectionHandler {
      * @param te the target entity
      * @param hit the hit data for the location hit
      * @param damage the damage to apply
-     * @param ammoExplosion ammo explosion type damage is handled slightly differently
+     * @param ammoExplosion ammo explosion type damage is applied
+     *          directly to the IS, hurts the pilot, causes auto-ejects,
+     *          and can blow the unit to smithereens
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
-     * @param damageIS Should the target location's internal structure be damaged directly? (only for mechs and tanks)
-     * @param areaSatArty Is the damage from an area saturating artillery attack?
+     * @param damageIS Should the target location's internal structure be
+     *          damaged directly?
+     * @param areaSatArty Is the damage from an area saturating artillery
+     *          attack?
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS, boolean areaSatArty) {
+    private String damageEntity(Entity te, HitData hit, int damage,
+                                boolean ammoExplosion, int bFrag,
+                                boolean damageIS, boolean areaSatArty) {
         boolean autoEject = false;
         if (ammoExplosion) {
             if (te instanceof Mech) {
@@ -9670,9 +9711,8 @@ implements Runnable, ConnectionHandler {
                 Integer mechWarriorId = (Integer)iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId.intValue());
                 mw.setDestroyed(true);
-                game.moveToGraveyard(mw.getId());
-                send( createRemoveEntityPacket(mw.getId(),
-                        condition) );
+                game.removeEntity( mw.getId(), condition );
+                send( createRemoveEntityPacket(mw.getId(), condition) );
                 sb.append("\n*** " ).append( mw.getDisplayName() + 
                           " died in the wreckage. ***\n");
             }
@@ -11303,6 +11343,7 @@ implements Runnable, ConnectionHandler {
              condition != Entity.REMOVE_PUSHED &&
              condition != Entity.REMOVE_SALVAGEABLE &&
              condition != Entity.REMOVE_EJECTED &&
+             condition != Entity.REMOVE_CAPTURED &&
              condition != Entity.REMOVE_DEVASTATED &&
              condition != Entity.REMOVE_NEVER_JOINED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
@@ -12829,25 +12870,13 @@ implements Runnable, ConnectionHandler {
         }
     }
     public void ejectEntity(Entity entity, boolean autoEject) {
-      // check if there is already a MechWarrior
-      // on the field that ejected from this entity
-      final Entity tempent = entity;
-      Enumeration doubleMechWarriors =
-            game.getSelectedEntities( new EntitySelector() {
-                public boolean accept(Entity esEntity) {
-                    if (esEntity instanceof MechWarrior) {
-                        MechWarrior mw = (MechWarrior)esEntity;
-                        if (mw.getOriginalRideId() == tempent.getId()) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            } );
-      if (doubleMechWarriors.hasMoreElements()) {
-        //if there are any ejected MechWarriors from this Entity, return
-        return;
-      } else {
+
+        // An entity can only eject it's crew once.
+        if (entity.getCrew().isEjected()) 
+            return;
+
+        // Mek pilots may get hurt during ejection,
+        // and run around the board afterwards.
         if (entity instanceof Mech) {
             PilotingRollData rollTarget = new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
             if (entity.isProne()) {
@@ -12906,7 +12935,8 @@ implements Runnable, ConnectionHandler {
             }
             // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
             // specify either way.
-            if (entity.getCrew().isDoomed() || entity.getCrew().isUnconscious()) {
+            if (entity.getCrew().isDoomed()
+                || entity.getCrew().isUnconscious()) {
                 phaseReport.append("but the pilot does not survive!\n");
             }
             else {
@@ -12919,23 +12949,40 @@ implements Runnable, ConnectionHandler {
                 game.addEntity(pilot.getId(), pilot);
                 send(createAddEntityPacket(pilot.getId()));
                 if (game.board.contains(targetCoords)) {
+                    pilot.setPosition(targetCoords);                    
+/* Can pilots eject into water???
+   ASSUMPTION : They can (because they get a -1 mod to the PSR.
+                    // Did the pilot land in water?
+                    if ( game.board.getHex( targetCoords).levelOf
+                         ( Terrain.WATER ) > 0 ) {
+                        phaseReport.append("and the pilot ejects, but lands in water!!!\n");
+                        destroyEntity( pilot, "a watery grave", false );
+                    } else {
+                        phaseReport.append("and the pilot ejects safely!\n");
+                    }
+*/
                     phaseReport.append("and the pilot ejects safely!\n");
-                    pilot.setPosition(targetCoords);
-                    doEntityDisplacementMinefieldCheck(pilot, entity.getPosition(), targetCoords);
+                    doEntityDisplacementMinefieldCheck( pilot,
+                                                        entity.getPosition(),
+                                                        targetCoords );
                 } else {
                     phaseReport.append("and the pilot ejects safely and lands far from the battle!");
                     game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
                     send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );                  
                 }
-            }
-        }
+            } // Pilot safely ejects.
+
+        } // End entity-is-Mek
+
+        // Mark the entity's crew as "ejected".
+        entity.getCrew().setEjected( true );
         destroyEntity(entity, "ejection", true, true);        
+
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == Game.PHASE_MOVEMENT) {
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
         }
-      }
     }
     
     private void resolveMechWarriorPickUp() {
@@ -12961,9 +13008,10 @@ implements Runnable, ConnectionHandler {
             while (pickupEntities.hasMoreElements() ) {
                 Entity pe = (Entity) pickupEntities.nextElement();
                 if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
-                    // Load the unit.
+                    // Pick up the unit.
                     pe.pickUp(e);
-                    // The loaded unit is being carried by the loader.
+
+                    // The picked unit is being carried by the loader.
                     e.setPickedUpById(pe.getId());
                     e.setPickedUpByExternalId(pe.getExternalId());
                     pickedUp = true;
@@ -12976,9 +13024,11 @@ implements Runnable, ConnectionHandler {
                 while (pickupEnemyEntities.hasMoreElements() ) {
                     Entity pe = (Entity) pickupEnemyEntities.nextElement();
                     if (!pickedUp) {
-                        // Load the unit.
+                        // Capture the unit.
                         pe.pickUp(e);
-                        // The loaded unit is being carried by the loader.
+
+                        // The captured unit is being carried by the loader.
+                        e.setCaptured( true );
                         e.setPickedUpById(pe.getId());
                         e.setPickedUpByExternalId(pe.getExternalId());
                         pickedUp = true;

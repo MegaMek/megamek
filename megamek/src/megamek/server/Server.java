@@ -6601,7 +6601,7 @@ implements Runnable {
 
             // should we even bother?
             if ( entity.isDestroyed() || entity.isDoomed() ||
-                 entity.crew.isDead() ) {
+                 entity.crew.isDoomed() || entity.crew.isDead() ) {
                 continue;
             }
 
@@ -6742,12 +6742,14 @@ implements Runnable {
                     roundReport.append(explodeAmmoFromHeat(entity));
                 }
             }
-            
+
             // heat effects: mechwarrior damage
-            if (entity.getHitCriticals( CriticalSlot.TYPE_SYSTEM,
-                                        Mech.SYSTEM_LIFE_SUPPORT,
-                                        Mech.LOC_HEAD ) > 0
-                && entity.heat >= 15) {
+            // N.B. The pilot may already be dead.
+            if ( entity.getHitCriticals( CriticalSlot.TYPE_SYSTEM,
+                                         Mech.SYSTEM_LIFE_SUPPORT,
+                                         Mech.LOC_HEAD ) > 0
+                 && entity.heat >= 15
+                 && !entity.crew.isDead() && !entity.crew.isDoomed() ) {
                 if (entity.heat >= 25) {
                     // mechwarrior takes 2 damage
                     roundReport.append(entity.getDisplayName() ).append( " has 25 or higher heat and damaged life support.  Mechwarrior takes 2 damage.\n");
@@ -7939,7 +7941,11 @@ implements Runnable {
         desc.append("\n");
         if (!en.isDoomed() && !en.isDestroyed()) {
             desc.append(damageCrew(en, en.getCrew().getOptions().booleanOption("pain_resistance") ? 1 : 2));
-            desc.append("\n");
+            if ( en.crew.isDoomed() || en.crew.isDead() ) {
+                desc.append( destroyEntity(en, "crew death", true) );
+            } else {
+                desc.append("\n");
+            }
         }
         
         return desc.toString();

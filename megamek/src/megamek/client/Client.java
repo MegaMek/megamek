@@ -391,6 +391,7 @@ public class Client extends Panel
         
         // shut down threads & sockets
         try {
+            frame.removeAll();
             socket.close();
             in.close();
             out.close();
@@ -401,11 +402,16 @@ public class Client extends Panel
         }
         
         frame.setVisible(false);
+/* Avoid the infinite loop until we can fix this bug!!!
         boolean disposed = false;
         while ( !disposed ) {
+*/
+        {
             try {
                 frame.dispose();
+/*
                 disposed = true;
+*/
             }
             catch ( Throwable error ) {
                 error.printStackTrace();
@@ -415,6 +421,7 @@ public class Client extends Panel
                 }
                 catch ( Throwable thr ) {
                     thr.printStackTrace();
+                    frame.dispose();
                 }
             }
         }

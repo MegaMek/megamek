@@ -962,11 +962,6 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
-        // infantry aren't affected by their own movement
-        if (entity instanceof Infantry) {
-            return toHit;
-        }
-
         if (movement == Entity.MOVE_WALK) {
             toHit.addModifier(1, "spotter walked");
         } else if (movement == Entity.MOVE_RUN ||

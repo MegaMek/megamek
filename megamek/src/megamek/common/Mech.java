@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -270,7 +270,7 @@ public abstract class Mech
      * <p/>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
-    protected void setOmni( boolean omni ) {
+    public void setOmni( boolean omni ) {
 
         // Perform the superclass' action.
         super.setOmni( omni );

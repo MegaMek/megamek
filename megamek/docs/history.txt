@@ -86,7 +86,7 @@ v 0.26
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon
 + mech display window resizable 
 + now using contents of Sun's Collections.jar

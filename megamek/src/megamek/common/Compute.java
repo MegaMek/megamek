@@ -819,6 +819,14 @@ public class Compute
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
         }
+        
+        // Ejected MechWarriors are harder to hit
+        if ( te != null && te instanceof Infantry ) {
+            Infantry ti = (Infantry)te;
+            if (ti.isMechWarrior()) {
+                toHit.addModifier( 2, "ejected MechWarrior target" );
+            }
+        }
 
         // Indirect fire has a +1 mod
         if (isIndirect) {

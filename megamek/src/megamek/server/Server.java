@@ -2413,7 +2413,7 @@ implements Runnable, ConnectionHandler {
 
         if (md.contains(MovePath.STEP_EJECT)) {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
-            phaseReport.append(destroyEntity(entity, "ejection"));
+            ejectEntity(entity, false);
 
             /* this was done in destroyEntity() --^
             // Is the unit carrying passengers?
@@ -2442,10 +2442,6 @@ implements Runnable, ConnectionHandler {
                 this.entityUpdate( swarmerId );
             }
             */
-
-            // Now remove the unit that ejected.
-            game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
-            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
             return;
         }
 
@@ -8331,39 +8327,48 @@ implements Runnable, ConnectionHandler {
         boolean anyRolls = false;
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            final int totalHits = e.getCrew().getHits();
-            final int rollsNeeded = e.getCrew().getRollsNeeded();
-            e.crew.setRollsNeeded(0);
-
-            if (!e.isTargetable() || !e.getCrew().isActive() || rollsNeeded == 0) {
-                continue;
-            }
-            anyRolls = true;
-            for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
-                int roll = Compute.d6(2);
-
-                if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
-                  roll = Math.min(12, roll + 1);
-
-                int rollTarget = Compute.getConsciousnessNumber( hit );
-                phaseReport.append("\nPilot of " ).append( e.getDisplayName()
-                                   ).append( " \"" ).append( e.getCrew().getName()
-                                   ).append( "\" needs a " ).append( rollTarget
-                                   ).append( " to stay conscious.  Rolls " ).append( roll
-                                   ).append( " : ");
-                if (roll >= rollTarget) {
-                    phaseReport.append("successful!");
-                } else {
-                    e.crew.setUnconscious(true);
-                    e.crew.setKoThisRound(true);
-                    phaseReport.append("blacks out.");
-                    break;
-                }
+            if (resolveCrewDamage(e, anyRolls)) {
+                anyRolls = true;
             }
         }
         if (anyRolls) {
             phaseReport.append("\n");
         }
+    }
+    
+    /**
+     * resolves consciousness rolls for one entity 
+     */
+    
+    private boolean resolveCrewDamage(Entity e, boolean anyRolls) {
+        final int totalHits = e.getCrew().getHits();
+        final int rollsNeeded = e.getCrew().getRollsNeeded();
+        e.crew.setRollsNeeded(0);
+        if (!e.isTargetable() || !e.getCrew().isActive() || rollsNeeded == 0) {
+            return false;
+        }
+        for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
+            int roll = Compute.d6(2);
+
+            if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
+              roll = Math.min(12, roll + 1);
+
+            int rollTarget = Compute.getConsciousnessNumber( hit );
+            phaseReport.append("\nPilot of " ).append( e.getDisplayName()
+                               ).append( " \"" ).append( e.getCrew().getName()
+                               ).append( "\" needs a " ).append( rollTarget
+                               ).append( " to stay conscious.  Rolls " ).append( roll
+                               ).append( " : ");
+            if (roll >= rollTarget) {
+                phaseReport.append("successful!");
+            } else {
+                e.crew.setUnconscious(true);
+                e.crew.setKoThisRound(true);
+                phaseReport.append("blacks out.");
+                return true;
+            }
+        }
+        return true;
     }
 
     /**
@@ -8433,6 +8438,14 @@ implements Runnable, ConnectionHandler {
      * @param areaSatArty Is the damage from an area saturating artillery attack?
      */
     private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS, boolean areaSatArty) {
+        if (ammoExplosion) {
+            if (te instanceof Mech) {
+                Mech mech = (Mech)te;
+                if (mech.isAutoEject()) {
+                    ejectEntity(te, true);
+                }
+            }
+        }
         StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
@@ -9441,7 +9454,7 @@ implements Runnable, ConnectionHandler {
     private String breachCheck(Entity entity, int loc, Hex hex) {
         StringBuffer desc = new StringBuffer();
         // BattleArmor does not breach
-        if (entity instanceof BattleArmor) {
+        if (entity instanceof Infantry) {
             return "";
         }
         // This handles both water and vacuum breaches.
@@ -12802,5 +12815,96 @@ implements Runnable, ConnectionHandler {
                 }
             }   
         }
+    }
+    public void ejectEntity(Entity entity, boolean autoEject) {
+        if (entity instanceof Mech) {
+            PilotingRollData rollTarget = new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
+            if (entity.isProne()) {
+                rollTarget.addModifier(5, "Mech is prone");
+            }
+            if (entity.getCrew().isUnconscious()) {
+                rollTarget.addModifier(3, "pilot unconscious");
+            }
+            if (autoEject) {
+                rollTarget.addModifier(1, "automatic ejection");
+            }
+            if (entity.getInternal(Mech.LOC_HEAD) < 3) {
+                rollTarget.addModifier(Math.min(3 - entity.getInternal(Mech.LOC_HEAD),2), "Head Internal Structure Damage"); 
+            }
+            int facing = entity.getFacing();
+            Coords targetCoords = entity.getPosition().translated((facing + 3)%6);
+            Hex targetHex = game.board.getHex(targetCoords);
+            if (targetHex != null) {
+                if (targetHex.levelOf(Terrain.WATER) > 0) {
+                    rollTarget.addModifier(-1, "landing in water");
+                } else if (targetHex.levelOf(Terrain.ROUGH) > 0) {
+                    rollTarget.addModifier(0, "landing in rough");
+                } else if (targetHex.levelOf(Terrain.RUBBLE) > 0) {
+                    rollTarget.addModifier(0, "landing in rubble");
+                } else if (targetHex.levelOf(Terrain.WOODS) == 1) {
+                    rollTarget.addModifier(2, "landing in light woods");
+                } else if (targetHex.levelOf(Terrain.WOODS) == 2) {
+                    rollTarget.addModifier(3, "landing in heavy woods");
+                } else if (targetHex.levelOf(Terrain.BLDG_ELEV) > 0) {
+                    rollTarget.addModifier(targetHex.levelOf(Terrain.BLDG_ELEV), "landing in a building");
+                } else rollTarget.addModifier(-2, "landing in clear terrain");
+            } else {
+                    rollTarget.addModifier(-2, "landing off the boad");
+            }
+            if (autoEject) {
+                phaseReport.append("\n").append(entity.getDisplayName())
+                    .append(" suffers an ammunition explosion, but the autoeject system was engaged.");     
+            }
+            // okay, print the info
+            phaseReport.append("\n" ).append( entity.getDisplayName() )
+                .append( " must make a piloting skill check (" )
+                .append( rollTarget.getLastPlainDesc() ).append( ")" ).append( ".\n");
+            // roll
+            final int diceRoll = Compute.d6(2);
+            phaseReport.append("Needs " ).append( rollTarget.getValueAsString()
+            ).append( " [" ).append( rollTarget.getDesc() ).append( "]"
+            ).append( ", rolls " ).append( diceRoll ).append( " : ");
+            if (diceRoll < rollTarget.getValue()) {
+                phaseReport.append("fails.\n");
+                phaseReport.append(damageCrew(entity, 1));
+                if (resolveCrewDamage(entity, false)) {
+                    phaseReport.append("\n");
+                }
+            } else {
+                phaseReport.append("succeeds.\n");
+            }
+            // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
+            // specify either way.
+            if (entity.getCrew().isDoomed() || entity.getCrew().isUnconscious()) {
+                phaseReport.append("but the pilot does not survive!\n");
+            }
+            if (!entity.getCrew().isUnconscious()) {
+                if (game.board.contains(targetCoords)) {
+                    phaseReport.append("and the pilot ejects safely!\n");
+                    Infantry pilot = new Infantry();
+                    pilot.setCrew(entity.getCrew());
+                    pilot.setDeployed(true);
+                    pilot.setPosition(targetCoords);
+                    pilot.setChassis("MechWarrior");
+                    pilot.setModel(entity.getCrew().getName());
+                    pilot.setMechWarrior(true);
+                    pilot.setWeight(1);
+                    pilot.setOwner(entity.getOwner());
+                    pilot.initializeInternal(1, Infantry.LOC_INFANTRY);
+                    if ( Entity.NONE == pilot.getId() ) {
+                        pilot.setId(getFreeEntityId());
+                    }
+                    game.addEntity(pilot.getId(), pilot);
+                    send(createAddEntityPacket(pilot.getId()));
+                } else {
+                    phaseReport.append("and the pilot ejects safely and lands far from the battle!");
+                }
+            }
+        }
+        destroyEntity(entity, "ejection", true, true);
+        // Now remove the unit that ejected.
+        game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
+        send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
+
     }
 }

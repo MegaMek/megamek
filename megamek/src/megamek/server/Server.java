@@ -7959,6 +7959,12 @@ implements Runnable, ConnectionHandler {
         Entity te = null;
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
+            // If target Entity underwater, damage is halved, round up
+            // using getLocationStatus(1), because only Mechs and Protos
+            // can be underwater, and 1 is CT for mechs and torso for Protos
+            if (te.getLocationStatus(1) == Entity.LOC_WET) {
+                damage = (int)Math.ceil(damage * 0.5f);
+            }
         }
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 

@@ -13,6 +13,7 @@ v 0.29.16 (CVS)
 + Data 805836: updated mechset.txt to use V_* images for clan variants.
 + Data 827910: updated scenario_readme.txt
 + Data 829347: added legionnaire.gif and fixed rakshasa.gif
++ Patch 819976 : Random map generator with some GUI work.
 
 v 0.29.15 (10-19-03, 9:30pm)
 + Fa Shih units have superior mine-clearing capabilities.

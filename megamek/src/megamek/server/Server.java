@@ -1481,8 +1481,12 @@ implements Runnable {
                 isRotated = true;
                 name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
             }
-            sheetBoards[i].load( name + ".board");
-            sheetBoards[i].flip( isRotated, isRotated );
+			if (name.startsWith(MapSettings.BOARD_GENERATED)) {
+				sheetBoards[i].generateRandom(mapSettings);
+			} else {
+	            sheetBoards[i].load( name + ".board");
+	            sheetBoards[i].flip( isRotated, isRotated );
+	        }
         }
         game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
         mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
@@ -8428,10 +8432,13 @@ implements Runnable {
         if (tempList.size() > 0) {
             boards.addElement( MapSettings.BOARD_RANDOM );
             boards.addElement( MapSettings.BOARD_SURPRISE );
+			boards.addElement(MapSettings.BOARD_GENERATED);
             com.sun.java.util.collections.Collections.sort(tempList, sortComp);
             for ( int loop = 0; loop < tempList.size(); loop++ ) {
                 boards.addElement( tempList.elementAt(loop) );
             }
+        } else {
+			boards.addElement(MapSettings.BOARD_GENERATED);
         }
         
         //TODO: alphabetize files?
@@ -9194,7 +9201,13 @@ implements Runnable {
                 }
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :
-                mapSettings = (MapSettings)packet.getObject(0);
+				MapSettings newSettings=(MapSettings)packet.getObject(0);
+				if (!mapSettings.equalMapGenParameters(newSettings)) {
+					sendServerChat("Player " + getPlayer(connId).getName() + 
+									" changed mapsettings");
+				}
+				mapSettings = newSettings;
+				newSettings = null;
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 resetPlayersDone();
                 transmitAllPlayerDones();

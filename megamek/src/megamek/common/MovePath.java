@@ -100,12 +100,6 @@ public class MovePath implements Cloneable, Serializable {
         return new Key(getFinalCoords(), getFinalFacing(), getFinalProne()?0:isJumping()?1:2);
     }
 
-    /**
-     * TODO: should be a method of entity.
-     */
-    boolean isUsingManAce() {
-        return entity.getCrew().getOptions().booleanOption("maneuvering_ace");
-    }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -144,7 +138,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean canShift() {
-        return ((entity instanceof QuadMech) || isUsingManAce()) && !isJumping();
+        return ((entity instanceof QuadMech) || entity.isUsingManAce()) && !isJumping();
     }
 
     /**

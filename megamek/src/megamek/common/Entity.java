@@ -3557,4 +3557,8 @@ public abstract class Entity
     public boolean canDFA() {
         return !isImmobile() && getJumpMP() > 0;
     };
+    
+    boolean isUsingManAce() {
+        return getCrew().getOptions().booleanOption("maneuvering_ace");
+    }
 }

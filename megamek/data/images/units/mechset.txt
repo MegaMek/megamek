@@ -33,6 +33,7 @@ mech "RFL-*" "default_heavy.gif"
 mech "AS7-*" "default_assault.gif"
 mech "JR7-*" "jenner0.gif"
 mech "SDR-*" "spider.gif"
+mech "ARC-*" "archer0.gif"
 
 # by Dima Nemchenko (nemchenk)
 mech "MAD-*" "marauder.gif"
@@ -67,4 +68,4 @@ mech "STG-*" "stinger.gif"
 mech "WSP-*" "wasp.gif"
 mech "WHM-*" "warhammer.gif"
 mech "CRD-*" "crusader.gif"
-mech "ARC-*" "archer.gif
+#mech "ARC-*" "archer.gif

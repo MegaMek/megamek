@@ -790,6 +790,8 @@ public class BoardView
 	 * Override Component.update(g);
 	 */
 	public void update(Graphics g) {
+        final long start = System.currentTimeMillis();
+        
 		Dimension size = getSize();
 		if (bb[cb] != null && !size.equals(bb[cb].s)) {
 			// check for resizing, and if so, nullify current buffer
@@ -827,6 +829,9 @@ public class BoardView
 			}
 		}
 		g.drawImage(bb[cb].i, 0, 0, this);
+        
+        final long finish = System.currentTimeMillis();
+        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
 	}
 	
 	/**

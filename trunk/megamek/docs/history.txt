@@ -99,6 +99,10 @@ v 0.24
 
 VERSION HISTORY:
 ----------------
+v 0.23.1 (03-04-02, 4:48pm)
++ new display stuff
+- movement not showing up yet
+
 v 0.23.0 (03-02-02, 6:30pm)
 + falling does damage again (oops)
 + changed torso twisting a little

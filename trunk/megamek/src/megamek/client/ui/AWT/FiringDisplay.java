@@ -32,7 +32,6 @@ public class FiringDisplay
 	public Client client;
 	
 	// displays
-	private BoardView1		bv;
 	private Label			  labStatus;
 	
 	// buttons
@@ -62,7 +61,6 @@ public class FiringDisplay
 		this.client = client;
 		client.addGameListener(this);
 		
-		bv = client.bv;
 		client.game.board.addBoardListener(this);
 		
         shiftheld = false;
@@ -113,7 +111,7 @@ public class FiringDisplay
 		c.weightx = 1.0;	c.weighty = 1.0;
 		c.insets = new Insets(1, 1, 1, 1);
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		addBag(bv, gridbag, c);
+		addBag(client.bv, gridbag, c);
 
 		c.weightx = 1.0;	c.weighty = 0.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -158,7 +156,7 @@ public class FiringDisplay
       selectedWeapon = ce().getFirstWeapon();
       client.mechD.wPan.selectWeapon(selectedWeapon);
       
-		  bv.centerOnHex(ce().getPosition());
+		  client.bv.centerOnHex(ce().getPosition());
     } else {
       System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
       System.err.println("FiringDisplay: sending ready signal...");
@@ -192,7 +190,7 @@ public class FiringDisplay
 		client.game.board.highlight(null);
 		client.game.board.cursor(null);
 		client.mechW.setVisible(false);
-		bv.clearMovementData();
+		client.bv.clearMovementData();
 		butFire.setEnabled(false);
 		butReady.setEnabled(false);
 		butNext.setEnabled(false);
@@ -318,11 +316,11 @@ public class FiringDisplay
 	 * Moves the mech display window to the proper position.
 	 */
 	private void moveMechDisplay() {
-		if(bv.isShowing()) {
-			client.mechW.setLocation(bv.getLocationOnScreen().x 
-                                     + bv.getSize().width 
+		if(client.bv.isShowing()) {
+			client.mechW.setLocation(client.bv.getLocationOnScreen().x 
+                                     + client.bv.getSize().width 
                                      - client.mechD.getSize().width - 20, 
-                                     bv.getLocationOnScreen().y + 20);
+                                     client.bv.getLocationOnScreen().y + 20);
 		}
 	}
 	
@@ -379,7 +377,7 @@ public class FiringDisplay
 		}
 		// if we're ending the firing phase, unregister stuff.
 		if(client.game.phase !=  Game.PHASE_FIRING) {
-			bv.clearAllAttacks();
+			client.bv.clearAllAttacks();
 			
 			client.removeGameListener(this);
 			client.game.board.removeBoardListener(this);

@@ -30,7 +30,6 @@ public class MovementDisplay
 	public Client client;
 	
 	// displays
-	private BoardView1		bv;
 	private Label			statusL;
 	
 	private	boolean			mechdOn;
@@ -68,9 +67,8 @@ public class MovementDisplay
 		
 		shiftheld = false;
 		
-		bv = client.bv;
 		client.game.board.addBoardListener(this);
-		bv.addKeyListener(this);
+		client.bv.addKeyListener(this);
 		
 		
 		statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
@@ -124,7 +122,7 @@ public class MovementDisplay
 		c.weightx = 1.0;	c.weighty = 1.0;
 		c.insets = new Insets(1, 1, 1, 1);
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		addBag(bv, gridbag, c);
+		addBag(client.bv, gridbag, c);
 
 		c.weightx = 1.0;	c.weighty = 0.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -174,7 +172,7 @@ public class MovementDisplay
             client.game.board.cursor(null);
             client.mechD.displayMech(ce());
             client.mechD.showPanel("movement");
-            bv.centerOnHex(ce().getPosition());
+            client.bv.centerOnHex(ce().getPosition());
         } else {
           System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
           System.err.println("FiringDisplay: sending ready signal...");
@@ -205,7 +203,7 @@ public class MovementDisplay
 		client.game.board.highlight(null);
 		client.game.board.cursor(null);
 		client.mechW.setVisible(false);
-		bv.clearMovementData();
+		client.bv.clearMovementData();
 		butMove.setEnabled(false);
 		butNext.setEnabled(false);
 	}
@@ -219,7 +217,7 @@ public class MovementDisplay
 		client.game.board.cursor(null);
 		md = new MovementData();
 		cmd = new MovementData();
-		bv.clearMovementData();
+		client.bv.clearMovementData();
 		butMove.setLabel("Done");;
 	}
 	
@@ -227,7 +225,7 @@ public class MovementDisplay
 	 * Sends a data packet indicating the chosen movement.
 	 */
 	private void moveTo(MovementData md) {
-		bv.clearMovementData();
+		client.bv.clearMovementData();
 		client.moveEntity(cen, md);
 		client.sendReady(true);
 	}
@@ -259,10 +257,10 @@ public class MovementDisplay
 	 * Moves the mech display window to the proper position.
 	 */
 	private void moveMechDisplay() {
-		if (bv.isShowing()) {
-			client.mechW.setLocation(bv.getLocationOnScreen().x + bv.getSize().width 
+		if (client.bv.isShowing()) {
+			client.mechW.setLocation(client.bv.getLocationOnScreen().x + client.bv.getSize().width 
                                - client.mechD.getSize().width - 20, 
-                               bv.getLocationOnScreen().y + 20);
+                               client.bv.getLocationOnScreen().y + 20);
 		}
 	}
 	
@@ -277,16 +275,16 @@ public class MovementDisplay
 					client.game.board.cursor(b.getCoords());
 					
 					// either turn or move
-					bv.clearMovementData();
+					client.bv.clearMovementData();
 					cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
-					bv.drawMovementData(ce(), cmd);
+					client.bv.drawMovementData(ce(), cmd);
 				}
 			} else if (b.getType() == b.BOARD_HEX_CLICKED) {
 				client.game.board.select(b.getCoords());
-				bv.clearMovementData();
+				client.bv.clearMovementData();
 				
 				Coords moveto = b.getCoords();
-				bv.drawMovementData(ce(), cmd);
+				client.bv.drawMovementData(ce(), cmd);
 				md = new MovementData(cmd);
                 butMove.setLabel("Move");
 				butMove.setEnabled(true);
@@ -371,7 +369,7 @@ public class MovementDisplay
             if (!md.contains(MovementData.STEP_GET_UP)) {
                 md.addStep(MovementData.STEP_GET_UP);
             }
-			bv.drawMovementData(ce(), cmd);
+			client.bv.drawMovementData(ce(), cmd);
             butMove.setLabel("Move");
 			butMove.setEnabled(true);
 		}
@@ -394,9 +392,9 @@ public class MovementDisplay
 			shiftheld = true;
 			if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
 				// switch to turning
-				bv.clearMovementData();
+				client.bv.clearMovementData();
 				cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
-				bv.drawMovementData(ce(), cmd);
+				client.bv.drawMovementData(ce(), cmd);
 			}
 		}
 	}
@@ -405,9 +403,9 @@ public class MovementDisplay
 			shiftheld = false;
 			if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
 				// switch to movement
-				bv.clearMovementData();
+				client.bv.clearMovementData();
 				cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
-				bv.drawMovementData(ce(), cmd);
+				client.bv.drawMovementData(ce(), cmd);
 			}
 		}
 	}

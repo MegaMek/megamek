@@ -30,10 +30,10 @@ Maps=RANDOM,RANDOM,RANDOM,RANDOM
 Factions=Kurita,Davion
 
 # Faction location
-# Only used if the faction contains a unit without specified starting coordinates
-# Valid values are N,NE,E,SE,S,SW,W,NW,C (center), and R (random)
-Location_Kurita=C
-Location_Davion=R
+# Determines deployment area
+# Valid values are Any,N,NE,E,SE,S,SW,W,NW
+Location_Kurita=SE
+Location_Davion=NW
 
 
 # Mechlist for each faction
@@ -44,8 +44,7 @@ Location_Davion=R
 # the gap will be ignored.
 #
 
-# The format is MechRef,PilotName,PilotGunnery,PilotPiloting,facing,x,y
-# Facing and coordinates are optional.  Facing is one of NW, N, NE, SE, S, SW
+# The format is MechRef,PilotName,PilotGunnery,PilotPiloting
 
 Unit_Kurita_1=Awesome AWS-8Q,Kaneda Smythe,3,3
 Unit_Kurita_2=Dragon DRG-1C,Elliot Marlin,4,4
@@ -54,8 +53,8 @@ Unit_Kurita_4=Panther PNT-9R,Susan Takeda,4,3
 
 Unit_Davion_1=Griffin GRF-1N,Peter Fizer,3,3
 Unit_Davion_2=Crusader CRD-3D,Maverick,4,4
-Unit_Davion_3=Hunchback HBK-4J,Candice Coyle,4,5,SE,1,1
-Unit_Davion_4=Wolverine WVR-6K,Gordon Lopez,4,4,SE,1,3
+Unit_Davion_3=Hunchback HBK-4J,Candice Coyle,4,5
+Unit_Davion_4=Wolverine WVR-6K,Gordon Lopez,4,4
 
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that location
@@ -73,7 +72,7 @@ Unit_Davion_4=Wolverine WVR-6K,Gordon Lopez,4,4,SE,1,3
 # Warning: this can result in the unit being destroyed before the game begins.
 # Here's an example that would result in 15 points of damage:
 #
-# Unit_Davion_2_Damage=3
+# Unit_Kurita_1_Damage=3
 
 
 

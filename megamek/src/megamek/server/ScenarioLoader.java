@@ -26,18 +26,31 @@ import megamek.common.*;
 public class ScenarioLoader 
 {
     private File m_scenFile;
-    private static final String[] FACING = 
-            { "N", "NE", "SE", "S", "SW", "NW" };
-    private static final String[] DIRS = 
-            { "NW", "N", "NE", "E", "SE", "S", "SW", "W", "C" };
-    private boolean[] m_baTakenDirs = new boolean[DIRS.length];
-    
-            
+    // copied from ChatLounge.java
+    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
+    private Vector m_vDamagePlans = new Vector();        
     
     public ScenarioLoader(File f)
     {
         m_scenFile = f;
     }
+    
+    /**
+     * The damage procedures are built into a server object, so we delay dealing
+     * the random damage until a server is made available to us.
+     */
+    public void applyDamage(Server s) {
+        for (int x = 0, n = m_vDamagePlans.size(); x < n; x++) {
+            DamagePlan dp = (DamagePlan)m_vDamagePlans.elementAt(x);
+            System.out.println("Applying damage to " + dp.entity.getShortName());
+            for (int y = 0; y < dp.nBlocks; y++) {
+                HitData hit = dp.entity.rollHitLocation(ToHitData.HIT_NORMAL, 
+                        ToHitData.SIDE_FRONT);
+                System.out.println(s.damageEntity(dp.entity, hit, 5));
+            }
+        }
+    }
+        
     
     public Game createGame()
         throws Exception
@@ -70,79 +83,13 @@ public class ScenarioLoader
                 entities[y].setOwner(players[x]);
                 entities[y].setId(nIndex++);
                 g.addEntity(entities[y].getId(), entities[y]);
-                // place entity if not specified
-                if (entities[y].getPosition() == null || entities[y].getFacing() == -1) {
-                    placeEntity(entities[y], g);
-                }
             }
         }
         
         // game's ready
         g.getOptions().initialize();
-        g.setHasDeployed(true);
         g.phase = Game.PHASE_INITIATIVE;
         return g;
-    }
-    
-    private void placeEntity(Entity e, Game g)
-    {
-        if (e.getPosition() == null) {
-            // find a position based on the faction's starting position
-            Coords c = getStartingCoords(g, e.getOwner().getStartingPos());
-            e.setPosition(getCoordsAround(c, g));
-        }
-        
-        if (e.getFacing() == -1) {
-            // face towards the middle
-            int nDir = e.getPosition().direction(getStartingCoords(g, 8));
-            e.setFacing(nDir);
-            e.setSecondaryFacing(nDir);
-        }
-    }
-    
-    private Coords getCoordsAround(Coords c, Game g)
-    {
-        // check the requested coords
-        if (g.board.contains(c) && g.getFirstEntity(c) == null) {
-            return c;
-        }
-        
-        // check the surrounding coords
-        for (int x = 0; x < 6; x++) {
-            Coords c2 = c.translated(x);
-            if (g.board.contains(c2) && g.getFirstEntity(c2) == null) {
-                return c2;
-            }
-        }
-        
-        // recurse in a random direction
-        return getCoordsAround(c.translated(Compute.randomInt(6)), g);
-    }
-
-    // taken from Server.java, with Center added    
-    private Coords getStartingCoords(Game game, int nDir)
-    {
-        switch (nDir) {
-            default :
-            case 0 :
-                return new Coords(1, 1);
-            case 1 :
-                return new Coords(game.board.width / 2, 1);
-            case 2 :
-                return new Coords(game.board.width - 2, 1);
-            case 3 :
-                return new Coords(game.board.width - 2, game.board.height / 2);
-            case 4 :
-                return new Coords(game.board.width - 2, game.board.height - 2);
-            case 5 :
-                return new Coords(game.board.width / 2, game.board.height - 2);
-            case 6 :
-                return new Coords(1, game.board.height - 2);
-            case 7 :
-                return new Coords(1, game.board.height / 2);
-            case 8 :
-                return new Coords(game.board.width / 2, game.board.height / 2);
-        }
     }
     
     private Entity[] buildFactionEntities(Properties p, String sFaction)
@@ -158,10 +105,17 @@ public class ScenarioLoader
                 return out;
             }
             else {
-                vEntities.addElement(parseEntityLine(s));
+                Entity e = parseEntityLine(s);
+                s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
+                if (s != null) {
+                    int nBlocks = Integer.parseInt(s);
+                    m_vDamagePlans.add(new DamagePlan(e, nBlocks));
+                }
+                vEntities.addElement(e);
             }
         }        
     }
+    
     
     private Entity parseEntityLine(String s)
         throws Exception
@@ -177,22 +131,6 @@ public class ScenarioLoader
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             e.setCrew(new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
                     Integer.parseInt(st.nextToken())));
-            int nFacing = -1;
-            if (st.hasMoreTokens()) {
-                // facing specified
-                nFacing = findIndex(FACING, st.nextToken());
-            }
-            e.setFacing(nFacing);
-            e.setSecondaryFacing(nFacing);
-            if (st.hasMoreTokens()) {
-                // coords specified
-                e.setPosition(new Coords(Integer.parseInt(st.nextToken()), 
-                        Integer.parseInt(st.nextToken())));
-            }
-            else {
-                // explicitly set to null so a later process can detect it
-                e.setPosition(null);
-            }
             return e;
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -234,55 +172,23 @@ public class ScenarioLoader
             // check for initial placement
             String s = p.getProperty("Location_" + out[x].getName());
             
-            // default to random
+            // default to any
             if (s == null) {
-                s = "R";
+                s = "Any";
             }
             
-            int nDir = -1;
+            int nDir = findIndex(startNames, s);
             
-            if (!s.equals("R")) {
-                nDir = findIndex(DIRS, s);
-            }
-            
-            // if it's not set by now, make it random
+            // if it's not set by now, make it any
             if (nDir == -1) {
-                nDir = getRandomStartingPos();
+                nDir = 0;
             }
             
             out[x].setStartingPos(nDir);
-            m_baTakenDirs[nDir] = true;
         }
         
         return out;
     }
-    
-    private int getRandomStartingPos()
-    {
-        // check to see if all directions are taken
-        boolean bAllTaken = true;
-        
-        for (int x = 0; x < m_baTakenDirs.length; x++) {
-            if (!m_baTakenDirs[x]) {
-                bAllTaken = false;
-                break;
-            }
-        }
-        
-        // essentially loop forever, but fall out in case of weirdness
-        for (int x = 0; x < 200; x++) {
-            int nRand = Compute.randomInt(DIRS.length);
-            if (bAllTaken || !m_baTakenDirs[nRand]) {
-                m_baTakenDirs[nRand] = true;
-                return nRand;
-            }
-        }
-        
-        // should never get here
-        System.out.println("Warning! getRandomStartingPos looped 200 times, but not all taken");
-        return Compute.randomInt(DIRS.length);
-    }
-
     
     /**
      * Load board files and create the megaboard.
@@ -371,5 +277,15 @@ public class ScenarioLoader
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
         Game g = sl.createGame();
         System.out.println("Successfully loaded.");
+    }
+    
+    class DamagePlan {
+        public Entity entity;
+        public int nBlocks;
+        
+        public DamagePlan(Entity e, int n) {
+            entity = e;
+            nBlocks = n;
+        }
     }
 }

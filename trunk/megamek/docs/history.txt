@@ -24,9 +24,9 @@ v0.29.58 (CVS)
     Crab CRB-20, to agree with official HMP mechfiles.
 + RFE 1089881: MW that dies in Ejection isn't reported to Campaigns
 + RFE 1013771, Task 106040: Level 2 Swamp rules
-+ RFE 1052815: differentiate between units of the same type in one hex
-    to enable this, check the client option "Show each unit's unique 
-    Id next to its name."
++ RFE 1052815, 1038344 ] Mech ID in log file: differentiate between units of 
+    the same type in one hex and in the logfile, to enable this, check the 
+    client option "Show each unit's unique Id next to its name."
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

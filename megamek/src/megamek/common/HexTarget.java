@@ -68,6 +68,9 @@ public class HexTarget implements Targetable
 		case (Targetable.TYPE_HEX_IGNITE) :
 			name = " (Ignite)";
 			break;
+		case (Targetable.TYPE_HEX_ARTILLERY) :
+		    name = " (Artillery)";
+		    break;
 		case (Targetable.TYPE_HEX_FASCAM) :
             name = " (FASCAM)";
             break;

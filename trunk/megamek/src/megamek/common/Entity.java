@@ -1245,7 +1245,7 @@ public abstract class Entity
     * Is this location destroyed or breached?
     */
     public boolean isLocationBad(int loc) {
-        return getInternal(loc) == ARMOR_DESTROYED || exposure[loc] == LOC_BREACHED;
+        return getInternal(loc) == ARMOR_DESTROYED;
     }
 
     //returns exposure or breached flag for location

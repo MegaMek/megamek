@@ -63,7 +63,7 @@ public final class Player extends TurnOrdered
     private int num_mf_vibra = 0;
     
     // hexes that are automatically hit by artillery
-    private Vector artyAutoHitHexes;
+    private Vector artyAutoHitHexes = new Vector();
 
     /**
      * The "no camo" category.

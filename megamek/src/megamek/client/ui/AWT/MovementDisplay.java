@@ -295,6 +295,11 @@ public class MovementDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
+        // clear any previously considered moves
+        if (en != cen) {
+            clearAllMoves();
+        }
+        
         boolean isInfantry;
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
@@ -800,7 +805,6 @@ public class MovementDisplay
         if (ev.getSource() == butDone) {
             moveTo(md);
         } else if (ev.getSource() == butNext) {
-            clearAllMoves();
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;

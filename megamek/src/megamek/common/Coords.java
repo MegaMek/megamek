@@ -315,7 +315,7 @@ public class Coords
      * @return  The <code>int</code> hash code for these coords.
      */
     public int hashCode() {
-        return this.x*100 + this.y;
+        return new Integer(x).hashCode() ^ new Integer(y).hashCode();
     }
 
     public String toString() {

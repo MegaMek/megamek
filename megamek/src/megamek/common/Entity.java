@@ -146,6 +146,18 @@ public abstract class Entity
     private boolean             unloadedThisTurn = false;
 
     /**
+     * The id of the <code>Entity</code> that is the current target of a
+     * swarm attack by this unit.
+     */
+    private int                 swarmTargetId = Entity.NONE;
+
+    /**
+     * The id of the <code>Entity</code> that is attacking this unit with
+     * a swarm attack.
+     */
+    private int                 swarmAttackerId = Entity.NONE;
+
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -2224,10 +2236,12 @@ public abstract class Entity
 
     /**
      * Record the ID of the <code>Entity</code> that has loaded this unit.
+     * A unit that is unloaded can neither move nor attack for the rest of
+     * the turn.
      *
      * @param   transportId - the <code>int</code> ID of our transport.
      *          The ID is <b>not</b> validated.  This value should be
-     *          <code>Entity.NONE</code> if this unit has not been loaded.
+     *          <code>Entity.NONE</code> if this unit has been unloaded.
      */
     public void setTransportId( int transportId ) {
         this.conveyance = transportId;
@@ -2295,6 +2309,60 @@ public abstract class Entity
 
         // Return the result.
         return result;
+    }
+
+    /**
+     * Record the ID of the <code>Entity</code> that is the current target
+     * of a swarm attack by this unit. A unit that stops swarming can neither
+     * move nor attack for the rest of the turn.
+     *
+     * @param   id - the <code>int</code> ID of the swarm attack's target.
+     *          The ID is <b>not</b> validated.  This value should be
+     *          <code>Entity.NONE</code> if this unit has stopped swarming.
+     */
+    public void setSwarmTargetId( int id ) {
+        this.swarmTargetId = id;
+        // This entity can neither move nor attack for the rest of this turn.
+        if ( id == Entity.NONE ) {
+            this.unloadedThisTurn = true;
+            this.ready = false;
+        }
+    }
+
+    /**
+     * Get the ID of the <code>Entity</code> that is the current target
+     * of a swarm attack by this unit.
+     *
+     * @param   id - the <code>int</code> ID of the swarm attack's target
+     *          The ID may be invalid.  This value should be
+     *          <code>Entity.NONE</code> if this unit is not swarming.
+     */
+    public int getSwarmTargetId() {
+        return this.swarmTargetId;
+    }
+
+    /**
+     * Record the ID of the <code>Entity</code> that is attacking this unit
+     * with a swarm attack.
+     *
+     * @param   id - the <code>int</code> ID of the swarm attack's attacker.
+     *          The ID is <b>not</b> validated.  This value should be
+     *          <code>Entity.NONE</code> if the swarm attack has ended.
+     */
+    public void setSwarmAttackerId( int id ) {
+        this.swarmAttackerId = id;
+    }
+
+    /**
+     * Get the ID of the <code>Entity</code> that is attacking this unit with
+     * a swarm attack.
+     *
+     * @param   id - the <code>int</code> ID of the swarm attack's attacker
+     *          The ID may be invalid.  This value should be
+     *          <code>Entity.NONE</code> if this unit is not being swarmed.
+     */
+    public int getSwarmAttackerId() {
+        return this.swarmAttackerId;
     }
 
 }

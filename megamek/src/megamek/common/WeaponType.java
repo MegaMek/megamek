@@ -208,6 +208,7 @@ public class WeaponType extends EquipmentType {
         // Anti-Mek attacks are weapon-like in nature.
         EquipmentType.addType( createLegAttack() );
         EquipmentType.addType( createSwarmMek() );
+        EquipmentType.addType( createStopSwarm() );
 
         // Start BattleArmor weapons
         EquipmentType.addType( createBAMG() );
@@ -2368,7 +2369,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Leg Attack";
-        weapon.internalName = "LegAttack";
+        weapon.internalName = Infantry.LEG_ATTACK;
         weapon.mepName = weapon.internalName;
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
@@ -2390,7 +2391,29 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Swarm Mek";
-        weapon.internalName = "SwarmMek";
+        weapon.internalName = Infantry.SWARM_MEK;
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_SPECIAL;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+
+        return weapon;
+    }
+
+    public static WeaponType createStopSwarm() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Stop Swarm Attack";
+        weapon.internalName = Infantry.STOP_SWARM;
         weapon.mepName = weapon.internalName;
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
@@ -2855,8 +2878,8 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Compact Narc";
-        weapon.internalName = "BACompactNARC";
-        weapon.mepName = "BA-Compact NARC";
+        weapon.internalName = "BACompactNarc";
+        weapon.mepName = "BA-Compact Narc";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.rackSize = 1;

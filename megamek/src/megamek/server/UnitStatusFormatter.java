@@ -218,15 +218,19 @@ public abstract class UnitStatusFormatter
     
     private static String formatArmorInfantry(Infantry i) {
         StringBuffer sb = new StringBuffer(32);
-        sb.append("Surviving troopers: ").append(i.getInternal(0)).append('\n');
+        sb.append("Surviving troopers: ")
+            .append( renderArmor(i.getInternal(0)) )
+            .append('\n');
         return sb.toString();
     }
     
     private static String formatArmorBattleArmor(BattleArmor b) {
         StringBuffer sb = new StringBuffer(32);
         for (int i = 1; i < b.locations(); i++) {
-            sb.append("Trooper ").append(i).append(": ");
-            sb.append(b.getArmor(i)).append(" / ").append(b.getInternal(i));
+            sb.append("Trooper ").append(i).append(": ")
+                .append( renderArmor(b.getArmor(i)) )
+                .append(" / ")
+                .append( renderArmor(b.getInternal(i)) );
             sb.append('\n');
         }
         return sb.toString();

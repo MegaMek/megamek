@@ -22,6 +22,7 @@ public class ToHitData extends TargetRoll
     public static final int HIT_NORMAL      = 0;
     public static final int HIT_PUNCH       = 1;
     public static final int HIT_KICK        = 2;
+    public static final int HIT_SWARM       = 3;
     
     public static final int SIDE_FRONT      = 0;
     public static final int SIDE_REAR       = 1;
@@ -110,6 +111,9 @@ public class ToHitData extends TargetRoll
                 break;
             case HIT_KICK :
                 tdesc += "Kick ";
+                break;
+            case HIT_SWARM :
+                tdesc += "Swarm ";
                 break;
             }
             return " (using " + tdesc + "table)";

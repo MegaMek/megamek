@@ -27,7 +27,7 @@ public class PhysicalDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener, ComponentListener
 {
-    private static final int    NUM_BUTTON_LAYOUTS = 1;
+    private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
     private Client          client;
         
@@ -41,6 +41,8 @@ public class PhysicalDisplay
     private Button            butKick;
     private Button            butPush;
     private Button            butClub;
+    private Button            butBrush;
+    private Button            butThrash;
     
     private Button            butSpace;
    
@@ -86,7 +88,15 @@ public class PhysicalDisplay
         butClub = new Button("Club");
         butClub.addActionListener(this);
         butClub.setEnabled(false);
-        
+
+        butBrush = new Button("Brush Off");
+        butBrush.addActionListener(this);
+        butBrush.setEnabled(false);
+
+        butThrash = new Button("Thrash");
+        butThrash.addActionListener(this);
+        butThrash.setEnabled(false);
+
         butSpace = new Button(".");
         butSpace.setEnabled(false);
         
@@ -145,16 +155,22 @@ public class PhysicalDisplay
     
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(2, 3));
         
         switch (buttonLayout) {
         case 0 :
             panButtons.add(butPunch);
             panButtons.add(butKick);
+            panButtons.add(butNext);
             panButtons.add(butPush);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        case 1 :
+            panButtons.add(butBrush);
+            panButtons.add(butThrash);
             panButtons.add(butNext);
             panButtons.add(butClub);
-            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -200,6 +216,7 @@ public class PhysicalDisplay
         ten = Entity.NONE;
         butNext.setEnabled(true);
         butDone.setEnabled(true);
+        butMore.setEnabled(true);
         client.mechW.setVisible(true);
         moveMechDisplay();
         client.game.board.select(null);
@@ -231,6 +248,8 @@ public class PhysicalDisplay
         butPunch.setEnabled(false);
         butPush.setEnabled(false);
         butClub.setEnabled(false);
+        butBrush.setEnabled(false);
+        butThrash.setEnabled(false);
         butDone.setEnabled(false);
         butNext.setEnabled(false);
     }
@@ -342,7 +361,176 @@ public class PhysicalDisplay
 		ready();
 	};
     }
-    
+
+    /**
+     * Sweep off the target with the arms that the player selects.
+     */
+    private void brush() {
+        ToHitData toHitLeft = Compute.toHitBrushOff
+            ( client.game, cen, ten, BrushOffAttackAction.LEFT );
+        ToHitData toHitRight = Compute.toHitBrushOff
+            ( client.game, cen, ten, BrushOffAttackAction.RIGHT );
+        boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
+        boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
+        int     damageLeft = 0;
+        int     damageRight = 0;
+        String  title = null;
+        StringBuffer    warn  = null;
+        StringBuffer    left  = null;
+        StringBuffer    right = null;
+        StringBuffer    both  = null;
+        String[]        choices = null;
+        int             choice;
+        SingleChoiceDialog dlg = null;
+
+        // If the entity can't brush off, display an error message and abort.
+        if ( !canHitLeft && !canHitRight ) {
+            client.doAlertDialog( "Code shouldn't get here!",
+                                  "You've selected a 'brush off' attack that automatically fails!  Try again." );
+            return;
+        }
+
+        // If we can hit with both arms, the player will have to make a choice.
+        // Otherwise, the player is just confirming the arm in the attack.
+        if ( canHitLeft && canHitRight ) {
+            both = new StringBuffer( "Both Arms" );
+            warn = new StringBuffer( "Which arm(s) do you want to use to" );
+            title = "Choose Brush Off Attacks";
+        } else {
+            warn = new StringBuffer( "Confirm you want to use this arm to" );
+            title = "Confrim Brush Off Attack";
+        }
+
+        // Build the rest of the warning string.
+        warn.append( "\nbrush off the swarming infantry?" )
+            .append( "\nWARNING: any arm that misses the infantry" )
+            .append( "\n\thits the Mek on the Punch table!" );
+
+        // If we can hit with the left arm, get
+        // the damage and construct the string.
+        if ( canHitLeft ) {
+            damageLeft = Compute.getBrushOffDamageFor
+                ( ce(), BrushOffAttackAction.LEFT );
+            left = new StringBuffer( "Left Arm to-hit: " );
+            left.append( toHitLeft.getValueAsString() )
+                .append( " (" )
+                .append( Compute.oddsAbove(toHitLeft.getValue()) )
+                .append( "%) Damage: " )
+                .append( damageLeft );
+        }
+
+        // If we can hit with the right arm, get
+        // the damage and construct the string.
+        if ( canHitRight ) {
+            damageRight = Compute.getBrushOffDamageFor
+                ( ce(), BrushOffAttackAction.RIGHT );
+            right = new StringBuffer( "Right Arm to-hit: " );
+            right.append( toHitRight.getValueAsString() )
+                .append( " (" )
+                .append( Compute.oddsAbove(toHitRight.getValue()) )
+                .append( "%) Damage: " )
+                .append( damageRight );
+        }
+
+        // Allow the player to cancel or choose which arm(s) to use.
+        if ( canHitLeft && canHitRight ) {
+            choices = new String[3];
+            choices[0] = left.toString();
+            choices[1] = right.toString();
+            choices[2] = both.toString();
+            dlg = new SingleChoiceDialog
+                ( client.frame, title, warn.toString(), choices );
+            dlg.show();
+            if ( dlg.getAnswer() ) {
+                disableButtons();
+                switch ( dlg.getChoice() ) {
+                case 0:
+                    attacks.addElement( new BrushOffAttackAction
+                        (cen, ten, BrushOffAttackAction.LEFT) );
+                    break;
+                case 1:
+                    attacks.addElement( new BrushOffAttackAction
+                        (cen, ten, BrushOffAttackAction.RIGHT) );
+                    break;
+                case 2: 
+                    attacks.addElement( new BrushOffAttackAction
+                        (cen, ten, BrushOffAttackAction.BOTH) );
+                    break;
+                }
+                ready();
+
+            } // End not-cancel
+
+        } // End choose-attack(s)
+
+        // If only the left arm is available, confirm that choice.
+        else if ( canHitLeft ) {
+            choices = new String[1];
+            choices[0] = left.toString();
+            dlg = new SingleChoiceDialog
+                ( client.frame, title, warn.toString(), choices );
+            dlg.show();
+            if ( dlg.getAnswer() ) {
+                disableButtons();
+                attacks.addElement( new BrushOffAttackAction
+                    (cen, ten, BrushOffAttackAction.LEFT) );
+                ready();
+
+            } // End not-cancel
+
+        } // End confirm-left
+
+        // If only the right arm is available, confirm that choice.
+        else if ( canHitRight ) {
+            choices = new String[1];
+            choices[0] = right.toString();
+            dlg = new SingleChoiceDialog
+                ( client.frame, title, warn.toString(), choices );
+            dlg.show();
+            if ( dlg.getAnswer() ) {
+                disableButtons();
+                attacks.addElement( new BrushOffAttackAction
+                    (cen, ten, BrushOffAttackAction.RIGHT) );
+                ready();
+
+            } // End not-cancel
+
+        } // End confirm-right
+
+    } // End private void brush()
+
+    /**
+     * Thrash at the target, unless the player cancels the action.
+     */
+    private void thrash() {
+        ThrashAttackAction act = new ThrashAttackAction( cen, ten );
+        ToHitData toHit = Compute.toHitThrash( client.game, act );
+        StringBuffer target = new StringBuffer();
+        StringBuffer damage = new StringBuffer();
+
+        // Build the dialog's strings.
+        target.append( "Thrash at " )
+            .append( client.game.getEntity(ten).getDisplayName() )
+            .append( " (warning: this causes a Piloting roll to avoid fall damage)?" );
+        damage.append( "To Hit: " )
+            .append( toHit.getValueAsString() )
+            .append( " (" )
+            .append( Compute.oddsAbove(toHit.getValue()) )
+            .append( "%)   (" )
+            .append( toHit.getDesc() )
+            .append( ")" )
+            .append( "\nDamage: " )
+            .append( Compute.getThrashDamageFor(ce()) )
+            .append( toHit.getTableDesc() );
+
+        // Give the user to cancel the attack.
+        if ( client.doYesNoDialog(target.toString(), damage.toString()) ) {
+            disableButtons();
+            attacks.addElement( act );
+            ready();
+        }
+    }
+
     /**
      * Targets an entity
      */
@@ -383,11 +571,27 @@ public class PhysicalDisplay
             } else {
                 butClub.setEnabled(false);
             }
+
+            // Brush off swarming infantry?
+            ToHitData brushRight = Compute.toHitBrushOff
+                ( client.game, cen, ten, BrushOffAttackAction.RIGHT );
+            ToHitData brushLeft = Compute.toHitBrushOff
+                ( client.game, cen, ten, BrushOffAttackAction.LEFT );
+            boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
+                                brushLeft.getValue() != ToHitData.IMPOSSIBLE);
+            butBrush.setEnabled( canBrush );
+
+            // Thrash at infantry?
+            ToHitData thrash = Compute.toHitThrash( client.game, cen, ten );
+            butThrash.setEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
+
         } else {
             butPunch.setEnabled(false);
             butPush.setEnabled(false);
             butKick.setEnabled(false);
             butClub.setEnabled(false);
+            butBrush.setEnabled(false);
+            butThrash.setEnabled(false);
         }
     }
     
@@ -550,8 +754,16 @@ public class PhysicalDisplay
             push();
         } else if (ev.getSource() == butClub) {
             club();
+        } else if (ev.getSource() == butBrush) {
+            brush();
+        } else if (ev.getSource() == butThrash) {
+            thrash();
         } else if (ev.getSource() == butNext) {
             selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getSource() == butMore) {
+            buttonLayout++;
+            buttonLayout %= NUM_BUTTON_LAYOUTS;
+            setupButtonPanel();
         }
     }
     

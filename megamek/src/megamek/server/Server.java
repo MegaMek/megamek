@@ -1415,6 +1415,20 @@ implements Runnable {
             canHit |= Compute.toHitKick(game, entity.getId(), target.getId(),
             KickAttackAction.RIGHT).getValue()
             != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitBrushOff
+                ( game, entity.getId(), target.getId(),
+                  BrushOffAttackAction.LEFT ).getValue()
+                != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitBrushOff
+                ( game, entity.getId(), target.getId(),
+                  BrushOffAttackAction.RIGHT ).getValue()
+                != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitThrash
+                ( game, entity.getId(), target.getId() ).getValue()
+                != ToHitData.IMPOSSIBLE;
         }
         
         return canHit;
@@ -1506,7 +1520,7 @@ implements Runnable {
             // what causes this?  --Ben
             return;
         }
-        
+
         if (!entity.ready) {
             // the entity has already moved, apparently
             return;
@@ -1536,6 +1550,31 @@ implements Runnable {
         if (md.contains(MovementData.STEP_FLEE)) {
             phaseReport.append("\n" + entity.getDisplayName()
             + " flees the battlefield.\n");
+            // Is the unit carrying passengers?
+            final Vector passengers = entity.getLoadedUnits();
+            if ( !passengers.isEmpty() ) {
+                final Enumeration iter = passengers.elements();
+                while ( iter.hasMoreElements() ) {
+                    final Entity passenger = (Entity) iter.nextElement();
+                    phaseReport.append( "   It carries " )
+                        .append( passenger.getDisplayName() )
+                        .append( " with it.\n" );
+                    game.moveToGraveyard( passenger.getId() );
+                    send( createRemoveEntityPacket(passenger.getId()) );
+                }
+            }
+            // Is the unit being swarmed?
+            final int swarmerId = entity.getSwarmAttackerId();
+            if ( Entity.NONE != swarmerId ) {
+                final Entity swarmer = game.getEntity( swarmerId );
+                swarmer.setSwarmTargetId( Entity.NONE );
+                entity.setSwarmAttackerId( Entity.NONE );
+                phaseReport.append( "   It takes " )
+                    .append( swarmer.getDisplayName() )
+                    .append( " with it.\n" );
+                game.moveToGraveyard( swarmerId );
+                send( createRemoveEntityPacket(swarmerId) );
+            }
             game.moveToGraveyard(entity.getId());
             send(createRemoveEntityPacket(entity.getId()));
             return;
@@ -1565,6 +1604,7 @@ implements Runnable {
 	Hex prevHex = null;
 	final boolean isInfantry = (entity instanceof Infantry);
         
+        // Compile the move
         Compute.compile(game, entity.getId(), md);
         
         // get last step's movement type
@@ -2001,8 +2041,36 @@ implements Runnable {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
                 } else if (curHex.levelOf(Terrain.WATER) == 2) {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"));
+                    // Any swarming infantry will be destroyed.
+                    final int swarmerId = entity.getSwarmAttackerId();
+                    if ( Entity.NONE != swarmerId ) {
+                        final Entity swarmer = game.getEntity( swarmerId );
+                        swarmer.setSwarmTargetId( Entity.NONE );
+                        entity.setSwarmAttackerId( Entity.NONE );
+                        swarmer.setPosition( curPos );
+                        phaseReport.append( "   The swarming unit, " )
+                            .append( swarmer.getShortName() )
+                            .append( ", drowns!\n" )
+                            .append( destroyEntity(swarmer,
+                                                   "a watery grave", false) );
+                        entityUpdate( swarmerId );
+                    }
                 } else {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"));
+                    // Any swarming infantry will be destroyed.
+                    final int swarmerId = entity.getSwarmAttackerId();
+                    if ( Entity.NONE != swarmerId ) {
+                        final Entity swarmer = game.getEntity( swarmerId );
+                        swarmer.setSwarmTargetId( Entity.NONE );
+                        entity.setSwarmAttackerId( Entity.NONE );
+                        swarmer.setPosition( curPos );
+                        phaseReport.append( "   The swarming unit, " )
+                            .append( swarmer.getShortName() )
+                            .append( ", drowns!\n" )
+                            .append( destroyEntity(swarmer,
+                                                   "a watery grave", false) );
+                        entityUpdate( swarmerId );
+                    }
                 }
             }
 
@@ -2089,8 +2157,8 @@ implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        
-                    // but the danger isn't over yet!  landing from a jump can be risky!
+
+        // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
             // check for damaged criticals
             if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0 || entity.hasLegActuatorCrit()) {
@@ -2102,10 +2170,91 @@ implements Runnable {
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"), false);
             } else if (waterLevel == 2) {
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"), false);
+                // Any swarming infantry will be destroyed.
+                final int swarmerId = entity.getSwarmAttackerId();
+                if ( Entity.NONE != swarmerId ) {
+                    final Entity swarmer = game.getEntity( swarmerId );
+                    swarmer.setSwarmTargetId( Entity.NONE );
+                    entity.setSwarmAttackerId( Entity.NONE );
+                    swarmer.setPosition( curPos );
+                    phaseReport.append( "   The swarming unit, " )
+                        .append( swarmer.getShortName() )
+                        .append( ", drowns!\n" )
+                        .append( destroyEntity(swarmer,
+                                               "a watery grave", false) );
+                    entityUpdate( swarmerId );
+                }
             } else if (waterLevel >= 3) {
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"), false);
+                // Any swarming infantry will be destroyed.
+                final int swarmerId = entity.getSwarmAttackerId();
+                if ( Entity.NONE != swarmerId ) {
+                    final Entity swarmer = game.getEntity( swarmerId );
+                    swarmer.setSwarmTargetId( Entity.NONE );
+                    entity.setSwarmAttackerId( Entity.NONE );
+                    swarmer.setPosition( curPos );
+                    phaseReport.append( "   The swarming unit, " )
+                        .append( swarmer.getShortName() )
+                        .append( ", drowns!\n" )
+                        .append( destroyEntity(swarmer,
+                                               "a watery grave", false) );
+                    entityUpdate( swarmerId );
+                }
             }
-        }
+
+            // If the entity is being swarmed, jumping may dislodge the fleas.
+            final int swarmerId = entity.getSwarmAttackerId();
+            if ( Entity.NONE != swarmerId ) {
+                final Entity swarmer = game.getEntity( swarmerId );
+                final PilotingRollData roll =
+                    Compute.getBasePilotingRoll(game, entity.getId());
+
+                // Add a +4 modifier.
+                roll.addModifier( 4, "dislodge swarming infantry" );
+
+                // okay, print the info
+                phaseReport.append("\n")
+                    .append( entity.getDisplayName() )
+                    .append( " tries to dislodge swarming infantry.\n" );
+
+                // roll
+                final int diceRoll = Compute.d6(2);
+                phaseReport.append("Needs " + roll.getValueAsString()
+                                   + " [" + roll.getDesc() + "]"
+                                   + ", rolls " + diceRoll + " : ");
+                if (diceRoll < roll.getValue()) {
+                    phaseReport.append("fails.\n");
+                } else {
+                    phaseReport.append("succeeds.\n");
+                    entity.setSwarmAttackerId( Entity.NONE );
+                    swarmer.setSwarmTargetId( Entity.NONE );
+                    // Did the infantry fall into water?
+                    final Hex curHex = game.board.getHex(curPos);
+                    if ( curHex.levelOf(Terrain.WATER) > 0 ) {
+                        // Swarming infantry die.
+                        swarmer.setPosition( curPos );
+                        phaseReport.append("    ")
+                            .append(swarmer.getDisplayName())
+                            .append(" is dislodged and drowns!")
+                            .append(destroyEntity(swarmer, "a watery grave", false));
+                    } else {
+                        // Swarming infantry take an 11 point hit.
+                        // ASSUMPTION : damage should not be doubled.
+                        phaseReport.append("    ")
+                            .append(swarmer.getDisplayName())
+                            .append(" is dislodged and suffers 11 damage.")
+                            .append( damageEntity(swarmer, 
+                                                  swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                                                  11) )
+                            .append( "\n" );
+                        swarmer.setPosition( curPos );
+                    }
+                    entityUpdate( swarmerId );
+                } // End successful-PSR
+
+            } // End try-to-dislodge-swarmers
+
+        } // End entity-is-jumping
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
@@ -2142,6 +2291,24 @@ implements Runnable {
             } // End inf_move_multi
 
         } // End entity-is-infantry
+
+        // If the entity is being swarmed, update the attacker's position.
+        final int swarmerId = entity.getSwarmAttackerId();
+        if ( Entity.NONE != swarmerId ) {
+            final Entity swarmer = game.getEntity( swarmerId );
+            swarmer.setPosition( curPos );
+            // If the hex is on fire, and the swarming infantry is
+            // *not* Battle Armor, it drops off.
+            if ( !(swarmer instanceof BattleArmor) &&
+                 game.board.getHex(curPos).contains(Terrain.FIRE) ) {
+                swarmer.setSwarmTargetId( Entity.NONE );
+                entity.setSwarmAttackerId( Entity.NONE );
+                phaseReport.append( "\n   " )
+                    .append( swarmer.getShortName() )
+                    .append( " can't stand the fire's heat and drops off.\n" );
+            }
+            entityUpdate( swarmerId );
+        }
 
         // Update the entitiy's position,
         // unless it is off the game map.
@@ -2881,20 +3048,42 @@ implements Runnable {
         Infantry platoon = null;
         BattleArmor troopers = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
+        ToHitData toHit = wr.toHit;
         
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");
         }
-        
-        phaseReport.append("    " + wtype.getName() + " at " + te.getDisplayName());
 
-        // compute to-hit
-        ToHitData toHit = wr.toHit;
+        // Swarming infantry can stop during any weapons phase after start.
+        if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
+            // ... but only as their *only* attack action.
+            if ( toHit.getValue() == ToHitData.IMPOSSIBLE ) {
+                phaseReport.append( "Swarm attack can not be ended (" +
+                                    toHit.getDesc() + ")\n" );
+                return;
+            } else {
+                phaseReport.append( "Swarm attack ended.\n" );
+                // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+                if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
+                    Entity other = game.getEntity( ae.getSwarmTargetId() );
+                    other.setSwarmAttackerId( Entity.NONE );
+                } else {
+                    te.setSwarmAttackerId( Entity.NONE );
+                }
+                ae.setSwarmTargetId( Entity.NONE );
+                return;
+            }
+        }
+
+        // Report weapon attack and its to-hit value.
+        phaseReport.append("    " + wtype.getName() + " at " + te.getDisplayName());
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             phaseReport.append(", the shot is an automatic miss (" + toHit.getDesc() + "), ");
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the shot is an automatic hit (" + toHit.getDesc() + "), ");
         } else {
             phaseReport.append("; needs " + toHit.getValue() + ", ");
         }
@@ -2956,15 +3145,21 @@ implements Runnable {
                 phaseReport.append("\tAMS activates, firing " + wr.amsShotDown + " shot(s).\n");
             }
             
-            // if the target is in the woods and the weapon misses, and the weapon is a large weapon, set the woods on fire.
+            // If the target is in the woods and the weapon misses,
+            // and the weapon is a large weapon, set the woods on fire,
+            // unless the weapon is a Streak SRM.
             Hex targetHex = game.getBoard().getHex(te.getPosition());
-            if (targetHex.contains(Terrain.WOODS) && !(targetHex.contains(Terrain.FIRE))
-            && toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
+            if ( targetHex.contains(Terrain.WOODS) &&
+                 !(targetHex.contains(Terrain.FIRE)) &&
+                 toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
+                 wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {
                 // 11 or 12 is the same odds as 2 or 3
-                if (wtype.getFireTN() != TargetRoll.IMPOSSIBLE && burn(targetHex, 11) == true)
+                if ( wtype.getFireTN() != TargetRoll.IMPOSSIBLE &&
+                     burn(targetHex, 11) == true )
                 {
                     sendChangedHex(te.getPosition());
-                    phaseReport.append("           Missed shot sets the woods on fire! \n");
+                    phaseReport.append
+                        ("           Missed shot sets the woods on fire! \n");
                 }
             }// end if target has woods and no fire
             return;
@@ -2988,9 +3183,16 @@ implements Runnable {
         String sSalvoType = " shot(s) ";
 
         // Mek swarms attach the attacker to the target.
-        if ( wtype.getInternalName().equals("SwarmMek") ) {
-            // TODO : implement me
-            phaseReport.append( "succeeds!  Defender swarmed.\n" );
+        if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+            // Is the target already swarmed?
+            if ( Entity.NONE != te.getSwarmAttackerId() ) {
+                phaseReport.append( "succeds, but the defender is " );
+                phaseReport.append( "already swarmed by another unit.\n" );
+            } else {
+                phaseReport.append( "succeeds!  Defender swarmed.\n" );
+                ae.setSwarmTargetId( wr.waa.getTargetId() );
+                te.setSwarmAttackerId( wr.waa.getEntityId() );
+            }
             return;
         }
 
@@ -3010,7 +3212,12 @@ implements Runnable {
             platoon = (Infantry) ae;
             nCluster = 1;
             nDamPerHit = wtype.getRackSize();
-            hits = Compute.getBattleArmorHits( platoon.getShootingStrength() );
+            hits = platoon.getShootingStrength();
+            // All attacks during Mek Swarms hit; all
+            // others use the Battle Armor hits table.
+            if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
+                hits = Compute.getBattleArmorHits( hits );
+            }
         }
 
         // Infantry damage depends on # men left in platoon.
@@ -3096,13 +3303,20 @@ implements Runnable {
                 platoon = (Infantry) ae;
                 int temp = wtype.getRackSize() * platoon.getShootingStrength();
 
-                // Account for more than 20 missles hitting.
-                hits = 0;
-                while ( temp > 20 ) {
-                    hits += Compute.missilesHit( 20 );
-                    temp -= 20;
-                }
-                hits += Compute.missilesHit( temp );
+                // All attacks during Mek Swarms hit the same location;
+                // all others use the Battle Armor hits table.
+                hits = temp;
+                if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
+
+                    // Account for more than 20 missles hitting.
+                    hits = 0;
+                    while ( temp > 20 ) {
+                        hits += Compute.missilesHit( 20 );
+                        temp -= 20;
+                    }
+                    hits += Compute.missilesHit( temp );
+
+                } // End not-mek-swarming
                 
             } else {
                 hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus);
@@ -3143,9 +3357,17 @@ implements Runnable {
                 nDamPerHit = 10;
             }
         }
+
         // Some weapons double the number of hits scored.
         if ( wtype.hasFlag(WeaponType.F_DOUBLE_HITS) ) {
             hits *= 2;
+        }
+
+        // All attacks (except from infantry weapons)
+        // during Mek Swarms hit the same location.
+        if ( !isWeaponInfantry &&
+             ae.getSwarmTargetId() == wr.waa.getTargetId() ) {
+            nCluster = hits;
         }
 
         // Battle Armor MGs do one die of damage per hit to PBI.
@@ -3334,11 +3556,54 @@ implements Runnable {
             if (o instanceof PunchAttackAction) {
                 PunchAttackAction paa = (PunchAttackAction)o;
                 if (paa.getArm() == PunchAttackAction.BOTH) {
-                    paa.setArm(PunchAttackAction.LEFT);
-                    resolvePunchAttack(paa, cen);
-                    cen = paa.getEntityId();
-                    paa.setArm(PunchAttackAction.RIGHT);
-                    resolvePunchAttack(paa, cen);
+                    // If we're punching while prone (at a Tank,
+                    // duh), then we can only use one arm.
+                    Entity ae = game.getEntity( aa.getEntityId() );
+                    if ( ae.isProne() ) {
+                        // As a sanity check, make certain
+                        // that no arm has been destroyed.
+                        if ( ae.isLocationDestroyed(Mech.LOC_RARM) ) {
+                            phaseReport.append( ae.getDisplayName() ).append
+                                ( " can't punch: right arm destroyed.\n" );
+                            continue;
+                        }
+                        else if ( ae.isLocationDestroyed(Mech.LOC_LARM) ) {
+                            phaseReport.append( ae.getDisplayName() ).append
+                                ( " can't punch: left arm destroyed.\n" );
+                            continue;
+                        }
+
+                        // Find out which arm has the best attack.
+                        paa.setArm(PunchAttackAction.LEFT);
+                        ToHitData left = Compute.toHitPunch( game, paa );
+                        double oddsLeft = Compute.oddsAbove(left.getValue());
+                        int damageLeft = Compute.getPunchDamageFor
+                            ( ae, PunchAttackAction.LEFT );
+                        paa.setArm(PunchAttackAction.RIGHT);
+                        ToHitData right = Compute.toHitPunch( game, paa );
+                        double oddsRight = Compute.oddsAbove(right.getValue());
+                        int damageRight = Compute.getPunchDamageFor
+                            ( ae, PunchAttackAction.RIGHT );
+
+                        // Use the best attack.
+                        if (  oddsLeft*damageLeft > oddsRight*damageRight ) {
+                            // Be sure to set the left arm first.
+                            paa.setArm(PunchAttackAction.LEFT);
+                            resolvePunchAttack(paa, cen);
+                            cen = paa.getEntityId();
+                        } else {
+                            // We've already set the right arm.
+                            resolvePunchAttack(paa, cen);
+                            cen = paa.getEntityId();
+                        }
+                    } // End Entity-is-prone
+                    else {
+                        paa.setArm(PunchAttackAction.LEFT);
+                        resolvePunchAttack(paa, cen);
+                        cen = paa.getEntityId();
+                        paa.setArm(PunchAttackAction.RIGHT);
+                        resolvePunchAttack(paa, cen);
+                    }
                 } else {
                     resolvePunchAttack(paa, cen);
                     cen = paa.getEntityId();
@@ -3347,6 +3612,22 @@ implements Runnable {
                 KickAttackAction kaa = (KickAttackAction)o;
                 resolveKickAttack(kaa, cen);
                 cen = kaa.getEntityId();
+            } else if (o instanceof BrushOffAttackAction) {
+                BrushOffAttackAction baa = (BrushOffAttackAction)o;
+                if (baa.getArm() == BrushOffAttackAction.BOTH) {
+                    baa.setArm(BrushOffAttackAction.LEFT);
+                    resolveBrushOffAttack(baa, cen);
+                    cen = baa.getEntityId();
+                    baa.setArm(BrushOffAttackAction.RIGHT);
+                    resolveBrushOffAttack(baa, cen);
+                } else {
+                    resolveBrushOffAttack(baa, cen);
+                    cen = baa.getEntityId();
+                }
+            } else if (o instanceof ThrashAttackAction) {
+                ThrashAttackAction taa = (ThrashAttackAction)o;
+                resolveThrashAttack(taa, cen);
+                cen = taa.getEntityId();
             } else if (o instanceof ClubAttackAction) {
                 ClubAttackAction caa = (ClubAttackAction)o;
                 resolveClubAttack(caa, cen);
@@ -3525,9 +3806,166 @@ implements Runnable {
         
         phaseReport.append("\n");
     }
-    
+
     /**
-     * Handle a punch attack
+     * Handle a brush off attack
+     */
+    private void resolveBrushOffAttack( BrushOffAttackAction baa,
+                                        int lastEntityId ) {
+        final Entity ae = game.getEntity(baa.getEntityId());
+        final Entity te = game.getEntity(baa.getTargetId());
+        final String armName = baa.getArm() == BrushOffAttackAction.LEFT
+            ? "Left Arm" : "Right Arm";
+
+        if (lastEntityId != baa.getEntityId()) {
+            phaseReport.append( "\nPhysical attacks for " )
+                .append( ae.getDisplayName() )
+                .append( "\n" );
+        }
+
+        phaseReport.append("    Brush Off " )
+            .append( te.getDisplayName() )
+            .append( " with " )
+            .append( armName );
+
+        // compute to-hit
+        ToHitData toHit = Compute.toHitBrushOff(game, baa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append( ", but the brush off is impossible (" )
+                .append( toHit.getDesc() )
+                .append( ")\n" );
+            return;
+        }
+        phaseReport.append("; needs ").append(toHit.getValue()).append(", ");
+
+        // roll
+        int roll = Compute.d6(2);
+        phaseReport.append("rolls ").append(roll).append(" : ");
+
+        int damage = Compute.getBrushOffDamageFor(ae, baa.getArm());
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            phaseReport.append("misses.\n");
+
+            // Missed Brush Off attacks cause punch damage to the attacker.
+            toHit.setHitTable( ToHitData.HIT_PUNCH );
+            toHit.setSideTable( ToHitData.SIDE_FRONT );
+            HitData hit = ae.rollHitLocation( toHit.getHitTable(),
+                                              toHit.getSideTable() );
+            phaseReport.append( ae.getDisplayName() )
+                .append( " punches itself in the " )
+                .append( ae.getLocationAbbr(hit) )
+                .append( damageEntity(ae, hit, damage) )
+                .append("\n");
+            return;
+        }
+
+        HitData hit = te.rollHitLocation( toHit.getHitTable(),
+                                          toHit.getSideTable() );
+        phaseReport.append("hits")
+            .append( toHit.getTableDesc() )
+            .append( " " )
+            .append( te.getLocationAbbr(hit) );
+        phaseReport.append(damageEntity(te, hit, damage));
+
+        phaseReport.append("\n");
+
+        // Dislodge the swarming infantry.
+        ae.setSwarmAttackerId( Entity.NONE );
+        te.setSwarmTargetId( Entity.NONE );
+        phaseReport.append( te.getDisplayName() )
+            .append( " is dislodged.\n" );
+    }
+
+    /**
+     * Handle a thrash attack
+     */
+    private void resolveThrashAttack( ThrashAttackAction baa,
+                                        int lastEntityId ) {
+        final Entity ae = game.getEntity(baa.getEntityId());
+        final Entity te = game.getEntity(baa.getTargetId());
+
+        if (lastEntityId != baa.getEntityId()) {
+            phaseReport.append( "\nPhysical attacks for " )
+                .append( ae.getDisplayName() )
+                .append( "\n" );
+        }
+
+        phaseReport.append("    Thrash at " )
+            .append( te.getDisplayName() );
+
+        // compute to-hit
+        ToHitData toHit = Compute.toHitThrash(game, baa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append( ", but the thrash is impossible (" )
+                .append( toHit.getDesc() )
+                .append( ")\n" );
+            return;
+        }
+
+        // Thrash attack may hit automatically
+        if ( toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS ) {
+            phaseReport.append( "; hits automatically," );
+        } else {
+            phaseReport.append( "; needs " )
+                .append( toHit.getValue() )
+                .append( ", " );
+
+            // roll
+            int roll = Compute.d6(2);
+            phaseReport.append("rolls ").append(roll).append(" : ");
+
+            // do we hit?
+            if (roll < toHit.getValue()) {
+                phaseReport.append("misses.\n");
+                return;
+            }
+            phaseReport.append( ", hits" );
+        }
+
+        // Standard damage loop in 5 point clusters.
+        int hits = Compute.getThrashDamageFor(ae);
+        phaseReport.append( " and deals " )
+            .append( hits )
+            .append( " points of damage in 5 point clusters.");
+        while ( hits > 0 ) {
+            int damage = Math.min(5, hits);
+            hits -= damage;
+            HitData hit = te.rollHitLocation( toHit.getHitTable(),
+                                              toHit.getSideTable() );
+            phaseReport.append("\nHits ").append( te.getLocationAbbr(hit) );
+            phaseReport.append(damageEntity(te, hit, damage));
+        }
+        phaseReport.append("\n");
+
+        // Thrash attacks cause PSRs.  Failed PSRs cause falling damage.
+        // This fall damage applies even though the Thrashing Mek is prone.
+        PilotingRollData roll = Compute.getBasePilotingRoll(game, ae.getId());
+        roll.addModifier( 0, "thrashing at infantry" );
+        phaseReport.append( ae.getDisplayName() )
+            .append( " must make a piloting skill check (" )
+            .append( "thrashing at infantry).\n");
+        final int diceRoll = Compute.d6(2);
+        phaseReport.append("Needs " )
+            .append( roll.getValueAsString() )
+            .append( " [" )
+            .append( roll.getDesc() )
+            .append( "]" )
+            .append( ", rolls " )
+            .append( diceRoll )
+            .append( " : " );
+        if (diceRoll < roll.getValue()) {
+            phaseReport.append("fails.\n");
+            doEntityFall( ae, roll );
+        } else {
+            phaseReport.append("succeeds.\n");
+        }
+
+    }
+
+    /**
+     * Handle a club attack
      */
     private void resolveClubAttack(ClubAttackAction caa, int lastEntityId) {
         final Entity ae = game.getEntity(caa.getEntityId());
@@ -4033,6 +4471,10 @@ implements Runnable {
     
     private void doFlamingDeath(Entity entity) {
         int boomroll = Compute.d6(2);
+        // Infantry are unaffected by fire while they're still swarming.
+        if ( Entity.NONE != entity.getSwarmTargetId() ) {
+            return;
+        }
         phaseReport.append(entity.getDisplayName() + " is on fire.  Needs an 8+ to avoid destruction, rolls " + boomroll + " : ");
         if (boomroll >= 8) {
             phaseReport.append("avoids successfully!\n");
@@ -4266,19 +4708,20 @@ implements Runnable {
         //int loc = hit.getLocation();
         HitData nextHit = null;
 
- 	// Is the infantry in the open?
+        // Is the infantry in the open?
         // TODO : do infantry take double damage in Swamp or Smoke
- 	if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
- 	    te_hex = game.board.getHex( te.getPosition() );
- 	    if ( !te_hex.contains( Terrain.WOODS ) &&
- 		 !te_hex.contains( Terrain.ROUGH ) &&
- 		 !te_hex.contains( Terrain.RUBBLE ) &&
- 		 !te_hex.contains( Terrain.BUILDING ) ) {
- 		// PBI.  Damage is doubled.
- 		damage = damage * 2;
- 		desc += "\n        Infantry platoon caught in the open!!!  Damage doubled." ;
- 	    }
- 	}
+        if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
+            te_hex = game.board.getHex( te.getPosition() );
+            if ( te_hex != null &&
+                 !te_hex.contains( Terrain.WOODS ) &&
+                 !te_hex.contains( Terrain.ROUGH ) &&
+                 !te_hex.contains( Terrain.RUBBLE ) &&
+                 !te_hex.contains( Terrain.BUILDING ) ) {
+                // PBI.  Damage is doubled.
+                damage = damage * 2;
+                desc += "\n        Infantry platoon caught in the open!!!  Damage doubled." ;
+            }
+        }
 
  	// Allocate the damage
         while (damage > 0) {
@@ -4788,6 +5231,28 @@ implements Runnable {
 
             } // End has-transported-unit
 
+            // Is this unit being swarmed?
+            final int swarmerId = entity.getSwarmAttackerId();
+            if ( Entity.NONE != swarmerId ) {
+                final Entity swarmer = game.getEntity( swarmerId );
+                swarmer.setSwarmTargetId( Entity.NONE );
+                entity.setSwarmAttackerId( Entity.NONE );
+                sb.append( swarmer.getDisplayName() );
+                sb.append( " ends its swarm attack.\n" );
+                this.entityUpdate( swarmerId );
+            }
+
+            // Is this unit swarming somebody?
+            final int swarmedId = entity.getSwarmTargetId();
+            if ( Entity.NONE != swarmedId ) {
+                final Entity swarmed = game.getEntity( swarmedId );
+                swarmed.setSwarmAttackerId( Entity.NONE );
+                entity.setSwarmTargetId( Entity.NONE );
+                sb.append( swarmed.getDisplayName() );
+                sb.append( " is freed from its swarm attack.\n" );
+                this.entityUpdate( swarmedId );
+            }
+
         } // End entity-not-already-destroyed.
 
         return sb.toString();
@@ -4928,9 +5393,13 @@ implements Runnable {
         
         // report falling
         phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");
-        
-        // standard damage loop
 
+        // Any swarming infantry will be dislodged, but we don't want to
+        // interrupt the fall's report.  We have to get the ID now because
+        // the fall may kill the entity which will reset the attacker ID.
+        final int swarmerId = entity.getSwarmAttackerId();
+
+        // standard damage loop
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
@@ -4970,6 +5439,36 @@ implements Runnable {
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
+
+        // Now dislodge any swarming infantry.
+        if ( Entity.NONE != swarmerId ) {
+            final Entity swarmer = game.getEntity( swarmerId );
+            entity.setSwarmAttackerId( Entity.NONE );
+            swarmer.setSwarmTargetId( Entity.NONE );
+            // Did the infantry fall into water?
+            Hex fallHex = game.board.getHex( fallPos );
+            if ( fallHex.levelOf(Terrain.WATER) > 0 ) {
+                // Swarming infantry die.
+                swarmer.setPosition( fallPos );
+                phaseReport.append("    ")
+                    .append(swarmer.getDisplayName())
+                    .append(" is dislodged and drowns!")
+                    .append(destroyEntity(swarmer, "a watery grave", false));
+            } else {
+                // Swarming infantry take an 11 point hit.
+                // ASSUMPTION : damage should not be doubled.
+                phaseReport.append("    ")
+                    .append(swarmer.getDisplayName())
+                    .append(" is dislodged and suffers 11 damage.")
+                    .append( damageEntity(swarmer, 
+                                          swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                                          11) )
+                    .append( "\n" );
+            }
+            swarmer.setPosition( fallPos );
+            entityUpdate( swarmerId );
+        } // End dislodge-infantry
+
     }
     
     /**

@@ -73,7 +73,7 @@ public class MegaMek
         dedicatedB.setActionCommand("server_dedicated");
         dedicatedB.addActionListener(this);
         
-        editB = new Button("Editor");
+        editB = new Button("Map Editor");
         editB.setActionCommand("editor");
         editB.addActionListener(this);
 

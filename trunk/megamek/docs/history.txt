@@ -94,6 +94,7 @@ v next
 + attacker being prone now cancels charge instead of auto-misses
 + fixed a bug where a mech would fail to get up but move anyhow
 + fixed a bug where a leg destroyed critical would not cause a mech to fall
++ added MegaMek.cfg option to set map text color
 
 v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping

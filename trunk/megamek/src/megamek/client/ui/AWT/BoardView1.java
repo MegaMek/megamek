@@ -389,7 +389,7 @@ public class BoardView1
         // draw picture
         boardGraph.drawImage(hex.getImage(this), drawX, drawY, this);
         // draw text stuff
-        boardGraph.setColor(Color.black);
+        boardGraph.setColor(Settings.mapTextColor);
         boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 10));
         boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
         if (hex.getElevation() != 0) {
@@ -397,6 +397,7 @@ public class BoardView1
             boardGraph.drawString("LEVEL " + hex.getElevation(), drawX + 24, drawY + 70);
         }
         // draw elevation borders
+        boardGraph.setColor(Color.black);
         Hex tHex;
         if ((tHex = game.board.getHex(c.translated(0))) != null && tHex.getElevation() != hex.getElevation()) {
             boardGraph.drawLine(drawX + 21, drawY, drawX + 62, drawY);

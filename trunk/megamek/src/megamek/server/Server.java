@@ -360,6 +360,10 @@ implements Runnable, ConnectionHandler {
             // oh well.
         }
 
+        // Send the port we're listening on. Only useful for the player
+        // on the server machine to check.
+        sendServerChat(connId, "Listening on port "+serverSocket.getLocalPort());
+        
         // Get the player *again*, because they may have disconnected.
         player = getPlayer( connId );
         if ( null != player ) {

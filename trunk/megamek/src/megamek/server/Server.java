@@ -13042,6 +13042,7 @@ implements Runnable, ConnectionHandler {
                     doEntityDisplacementMinefieldCheck( pilot,
                                                         entity.getPosition(),
                                                         targetCoords );
+                    this.entityUpdate(pilot.getId());
                 } else {
                     desc.append("and the pilot ejects safely and lands far from the battle!");
                     game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
@@ -13085,6 +13086,9 @@ implements Runnable, ConnectionHandler {
             Enumeration pickupEntities = game.getEntities(e.getPosition());
             while (pickupEntities.hasMoreElements() ) {
                 Entity pe = (Entity) pickupEntities.nextElement();
+                if (pe.isDoomed()) {
+                    continue;
+                }
                 if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
                     // Pick up the unit.
                     pe.pickUp(e);
@@ -13101,6 +13105,9 @@ implements Runnable, ConnectionHandler {
                 Enumeration pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements() ) {
                     Entity pe = (Entity) pickupEnemyEntities.nextElement();
+                    if (pe.isDoomed()) {
+                        continue;
+                    }
                     if (!pickedUp) {
                         // Capture the unit.
                         pe.pickUp(e);

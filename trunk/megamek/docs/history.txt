@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display
 + stacking rules (vehicles & infantry) partially implemented
 + 613612: units continue to take damage the same phase after they are destroyed

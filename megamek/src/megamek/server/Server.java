@@ -412,11 +412,7 @@ implements Runnable {
      */
     public void resetGame() {
         // remove all entities
-        Vector tempEntities = (Vector)game.getEntitiesVector().clone();
-        for (Enumeration e = tempEntities.elements(); e.hasMoreElements();) {
-            final Entity entity = (Entity)e.nextElement();
-            game.removeEntity(entity.getId());
-        }
+        game.reset();
         send(createEntitiesPacket());
         
         //TODO: remove ghosts

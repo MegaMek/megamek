@@ -1615,7 +1615,7 @@ public class Server
             if (ea instanceof PushAttackAction) {
                 PushAttackAction paa = (PushAttackAction)ea;
                 entity.setDisplacementAttack(paa);
-                pendingCharges.add(paa);
+                pendingCharges.addElement(paa);
             } else {
                 // add to the normal attack list.
                 attacks.addElement(ea);
@@ -1744,19 +1744,34 @@ public class Server
         if (roll < toHit.getValue()) {
             // miss
             phaseReport.append("misses.\n");
+			if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+				ae.heatBuildup -= wtype.getHeat();
+				ammo.setShotsLeft(ammo.getShotsLeft() + 1);
+				phaseReport.append("    Streak fails to achieve lock on target.\n");
+			}
             return;
         }
         // are we attacks normal weapons or missiles?
-        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
             // missiles; determine number of missiles hitting
+		 if (ammo != null) {
             int hits = Compute.missilesHit(wtype.getRackSize());
+			if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+				hits = wtype.getRackSize();
+			}
             phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
-            if (wtype.getAmmoType() == AmmoType.T_SRM) {
+            if (wtype.getAmmoType() == AmmoType.T_SRM || wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                 // for SRMs, do each missile seperately
                 for (int j = 0; j < hits; j++) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                     phaseReport.append(damageEntity(te, hit, 2));
                 }
+			} else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
+				// for LBX cluster ammo
+				for (int j = 0; j < hits; j++) {
+					HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                    phaseReport.append(damageEntity(te, hit, 1));
+				}
             } else if (wtype.getAmmoType() == AmmoType.T_LRM) {
                 // LRMs, do salvos of 5
                 while (hits > 0) {
@@ -1766,7 +1781,7 @@ public class Server
                     hits -= salvo;
                 }
             }
-        } else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+		 }} else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
              phaseReport.append("hits; target gains 2 more heat during heat phase.");
              te.heatBuildup += 2;
         } else {
@@ -2275,6 +2290,8 @@ public class Server
             // engine hits add a lot of heat, provided the engine is on
             if (!entity.isShutDown()) {
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+				entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+				entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
             }
 
             // add the heat we've built up so far.
@@ -2708,7 +2725,11 @@ public class Server
                     desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                     break;
                 case Mech.SYSTEM_ENGINE :
-                    if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 2) {
+					int numEngineHits = 0;
+					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+					numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+					if (numEngineHits > 2) {
                         // third engine hit
                         en.setDoomed(true);
                         desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
@@ -2740,6 +2761,14 @@ public class Server
                 if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
                     desc += explodeAmmo(en, loc, slot);
                 }
+				else if (en.getEquipment(cs.getIndex()).getName() == "Gauss Rifle") {
+					desc += "\n          Gauss Rifle is hit -- ** ENERGY DISCHARGE **  ";
+					desc += damageEntity(en, new HitData(loc), 20, true) + "\n";
+					 // if the mech survives, the pilot takes damage
+					if (!en.isDoomed() && !en.isDestroyed()) {
+						desc += damageCrew(en, 2) + "\n";
+					}
+				}
                 en.getEquipment(cs.getIndex()).setHit(true);
                 break;
             }
@@ -2801,6 +2830,9 @@ public class Server
             return "";
         }
         AmmoType atype = (AmmoType)mounted.getType();
+        if (atype.isExplosive() == false) {
+			return "";
+		}
         if (mounted.isHit() || mounted.isDestroyed()) {
             System.err.println("server: explodeAmmo called on already exploded ammo"
                                + " crititical slot (" + loc + " , " + slot + ")");
@@ -2842,6 +2874,9 @@ public class Server
                     continue;
                 }
                 AmmoType atype = (AmmoType)mounted.getType();
+                if (atype.isExplosive() == false) {
+					continue;
+				}
                 if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
                 || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
                     rack = atype.getDamagePerShot() * atype.getRackSize();

@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.6 (CVS)
 + Merge of underwater patch undid the Inferno SRM2 fix.
++ Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay

@@ -174,7 +174,26 @@ public class Pilot
       
       return count;
     }
-    
+
+    /**
+        Returns the LVL3 Rules "Pilot Advantages" this pilot has
+    */
+    public Enumeration getAdvantages() {
+        for (Enumeration i = options.groups(); i.hasMoreElements();) {
+            OptionGroup group = (OptionGroup)i.nextElement();
+
+            if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
+                return group.options();
+        };
+
+        // no pilot advantages -- return an empty Enumeration
+        return new java.util.Vector().elements();
+    };
+
+    /**
+        Returns a string of all the LVL3 Pilot Advantage "codes" for this pilot,
+        using sep as the separator
+    */
     public String getAdvantageList(String sep) {
       StringBuffer adv = new StringBuffer();
       
@@ -182,28 +201,21 @@ public class Pilot
         sep = "";
       }
       
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-        OptionGroup group = (OptionGroup)i.nextElement();
-        
-        if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-          continue;
-          
-        for (Enumeration j = group.options(); j.hasMoreElements();) {
-          GameOption option = (GameOption)j.nextElement();
-          
-          if ( option.booleanValue() ) {
+    for (Enumeration j = getAdvantages(); j.hasMoreElements();) {
+        GameOption option = (GameOption)j.nextElement();
+
+        if ( option.booleanValue() ) {
             if ( adv.length() > 0 ) {
-              adv.append(sep);
+                adv.append(sep);
             }
-            
+
             adv.append(option.getShortName());
             if (option.getType() == GameOption.STRING ||
                 option.getType() == GameOption.CHOICE) {
                 adv.append(" ").append(option.stringValue());
             }
-          }
         }
-      }
+    }
       
       return adv.toString();
     }

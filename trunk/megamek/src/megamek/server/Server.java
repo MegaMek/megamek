@@ -5053,7 +5053,7 @@ implements Runnable, ConnectionHandler {
      * Resolve a single Weapon Attack object
      */
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
-      System.out.println("rwa");
+        //      System.out.println("rwa");
       final Entity ae = game.getEntity(wr.waa.getEntityId());
       final Targetable target = game.getTarget(wr.waa.getTargetType(),
                                                wr.waa.getTargetId());

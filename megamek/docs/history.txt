@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v 0.29.21 (CVS)
++ Patch 867652: cleaned up megamek-icon.gif
+
 v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.
 + Patch 851394: initial ProtoMech implementation.  NOT BATTLE READY!!!
@@ -9,6 +12,7 @@ v 0.29.20 (2004-01-02 10:40pm)
 + Fix bug with turning using running movement after walking backwards
 + Patch 864818: added new ammo types
 + Bug 837828, Patch 865451: Double-blind entities aren't necessarily dead.
++ RFE 867570: DOS line-endings in .bat files
 + Bug 849863: Updated mechset.txt, changed existing images, and added Hatamoto.
 + Bug 856217: Updated document (a bit... suggestions welcome).
 + Bug 859805: Integrated more mechset.txt fixes.

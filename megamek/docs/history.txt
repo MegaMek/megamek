@@ -16,6 +16,7 @@ v0.29.65 (CVS)
 + Bug 1120487: ATM alternate ammo and MaxTech extreme range
 + New images for the Interloper, Mauler, and Po, courtesy of ploppy
 + Fixed a few artifacts in Patton and Heavy Hover APC images
++ New images for Scorpion (Laser), LRM Carrier (Laser), and AC2 Carrier
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

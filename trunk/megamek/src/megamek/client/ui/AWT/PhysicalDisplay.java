@@ -185,8 +185,6 @@ public class PhysicalDisplay
     public void selectEntity(int en) {
         if (client.game.getEntity(en) == null) {
             System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en);
-            System.err.println("PhysicalDisplay: sending ready signal...");
-            ready();
             return;
         }
         this.cen = en;

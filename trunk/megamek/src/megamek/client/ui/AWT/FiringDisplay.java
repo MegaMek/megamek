@@ -254,9 +254,6 @@ public class FiringDisplay
                     System.err.println
                         ("FiringDisplay: could not find an on-board entity: " +
                          en);
-                    System.err.println
-                        ("FiringDisplay: sending ready signal...");
-                    ready();
                     return;
                 }
 
@@ -307,8 +304,6 @@ public class FiringDisplay
             butFlipArms.setEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
-            System.err.println("FiringDisplay: sending ready signal...");
-            ready();
         }
     }
     

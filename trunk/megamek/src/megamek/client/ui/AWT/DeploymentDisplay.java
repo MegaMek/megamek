@@ -138,8 +138,6 @@ public class DeploymentDisplay
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en);
-            System.err.println("DeploymentDisplay: sending ready signal...");
-            deploy();
             return;
         }
 

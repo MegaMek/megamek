@@ -52,6 +52,13 @@ public class GameTurn implements Serializable {
         return entity != null && entity.getOwnerId() == playerId
         && entity.isSelectable();
     }
+    
+    /**
+     * Returns true if the player and entity are both valid.
+     */
+    public boolean isValid(int playerId, Entity entity) {
+        return playerId == this.playerId && isValidEntity(entity);
+    }
 
     /**
      * A type of game turn that allows only one specific entity to move.

@@ -31,6 +31,11 @@ public class KickAttackAction
         this.leg = leg;
     }
     
+    public KickAttackAction(int entityId, int targetType, int targetId, int leg) {
+        super(entityId, targetType, targetId);
+        this.leg = leg;
+    }
+    
     public int getLeg() {
         return leg;
     }

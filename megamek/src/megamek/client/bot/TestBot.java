@@ -697,7 +697,7 @@ public class TestBot extends BotClientWrapper {
       //fix for hiding in level 2 water
       //To a greedy bot, it always seems nice to stay in here...
       Hex h = game.board.getHex(option.curPos);
-      if (h.contains(Terrain.WATER) && h.surface() > (self.entity.elevation() + ((option.isProne)?0:1))) {
+      if (h.contains(Terrain.WATER) && h.surface() > (self.entity.getElevation() + ((option.isProne)?0:1))) {
         double mod = (self.entity.heat + option.getMovementheatBuildup() <= 7)?100:30;
         adjustment += self.bv/mod;
       }

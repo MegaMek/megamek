@@ -530,11 +530,13 @@ public class BoardView1
     private String[] getTipText(Point point) {
 
         int stringsSize = 0;
+        Hex mhex = null;
 
         // first, we have to determine how much text we are going to have
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
         if (game.board.contains(mcoords)) {
+            mhex = game.board.getHex(mcoords);
             stringsSize += 1;
         }
 
@@ -554,6 +556,13 @@ public class BoardView1
             }
         }
 
+ 	// If the hex contains a building or rubble, make more space.
+ 	if ( mhex != null &&
+ 	     (mhex.contains(Terrain.RUBBLE) ||
+ 	      mhex.contains(Terrain.BUILDING)) ) {
+            stringsSize += 1;
+ 	}
+        
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
             return null;
@@ -562,14 +571,6 @@ public class BoardView1
         // now we can allocate an array of strings
         String[] strings = new String[stringsSize];
         int stringsIndex = 0;
-        Hex mhex = game.board.getHex(mcoords);
-
- 	// If the hex contains a building or rubble, make more space.
- 	if ( mhex != null &&
- 	     (mhex.contains(Terrain.RUBBLE) ||
- 	      mhex.contains(Terrain.BUILDING)) ) {
-            stringsSize += 1;
- 	}
 
         // are we on a hex?
         if (mhex != null) {
@@ -582,22 +583,21 @@ public class BoardView1
 		strings[stringsIndex] = "Rubble";
 		stringsIndex += 1;
             }
-        }
 
-        // Do we have a building?
-        if ( mhex.contains(Terrain.BUILDING) ) {
-            StringBuffer buf = new StringBuffer( "Height " );
-            buf.append( mhex.levelOf(Terrain.BLDG_ELEV) );
-            switch ( mhex.levelOf(Terrain.BUILDING) ) {
-            case 1: buf.append( " Light " ); break;
-            case 2: buf.append( " Medium " ); break;
-            case 3: buf.append( " Heavy " ); break;
-            case 4: buf.append( " Hardened " ); break;
+            // Do we have a building?
+            else if ( mhex.contains(Terrain.BUILDING) ) {
+                // Get the building.
+                Building bldg = game.board.getBuildingAt( mcoords );
+                StringBuffer buf = new StringBuffer( "Height " );
+                // Each hex of a building has its own elevation.
+                buf.append( mhex.levelOf(Terrain.BLDG_ELEV) );
+                buf.append( " " );
+                buf.append( bldg.toString() );
+                buf.append( ", CF: " );
+                buf.append( bldg.getCurrentCF() );
+                strings[stringsIndex] = buf.toString();
+                stringsIndex += 1;
             }
-            buf.append( "building, CF: " );
-            buf.append( mhex.levelOf(Terrain.BLDG_CF) );
-            strings[stringsIndex] = buf.toString();
-            stringsIndex += 1;
         }
 
         // check if it's on any entities
@@ -1974,16 +1974,16 @@ public class BoardView1
             final int leg = attack.getLeg();
             switch (leg){
                 case KickAttackAction.BOTH:
-                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.LEFT).getValueAsString();
-                    rollRight = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.RIGHT).getValueAsString();
+                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                    rollRight = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
                     bufer = "Kicks with both legs. Left needs " + rollLeft + "; Right needs " + rollRight;
                     break;
                 case KickAttackAction.LEFT:
-                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.LEFT).getValueAsString();
+                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
                     bufer = "Kicks with left leg. Needs " + rollLeft;
                     break;
                 case KickAttackAction.RIGHT:
-                    rollRight = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.RIGHT).getValueAsString();
+                    rollRight = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
                     bufer = "Kicks with right leg. Needs " + rollRight;
                     break;
             }
@@ -1997,16 +1997,16 @@ public class BoardView1
             final int arm = attack.getArm();
             switch (arm){
                 case PunchAttackAction.BOTH:
-                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.LEFT).getValueAsString();
-                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.RIGHT).getValueAsString();
+                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
+                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
                     bufer = "Punches with both arms. Left needs " + rollLeft + "; Right needs " + rollRight;
                     break;
                 case PunchAttackAction.LEFT:
-                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.LEFT).getValueAsString();
+                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
                     bufer = "Punches with left arm. Needs " + rollLeft;
                     break;
                 case PunchAttackAction.RIGHT:
-                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.RIGHT).getValueAsString();
+                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
                     bufer = "Punches with right arm. Needs " + rollRight;
                     break;
             }

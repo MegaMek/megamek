@@ -46,6 +46,11 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_MODECHANGE    = 26;  // reorder me
     
     public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me
+
+    public static final int        COMMAND_BLDG_ADD             = 29; // reorder me
+    public static final int        COMMAND_BLDG_REMOVE          = 30; // reorder me
+    public static final int        COMMAND_BLDG_UPDATE_CF       = 31; // reorder me
+    public static final int        COMMAND_BLDG_COLLAPSE        = 32; // reorder me
     
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
@@ -58,7 +63,7 @@ implements Serializable {
     public static final int        COMMAND_SENDING_GAME_SETTINGS= 21;
     public static final int        COMMAND_SENDING_MAP_SETTINGS = 22;
     public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;
-    
+                                                                
     public static final int        COMMAND_END_OF_GAME          = 24;
     
     

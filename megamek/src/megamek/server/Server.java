@@ -58,7 +58,10 @@ implements Runnable {
     
     // listens for and connects players
     private Thread              connector;
-    
+
+    // Track buildings that are affected by an entity's movement.
+    private Hashtable           affectedBldgs = new Hashtable();
+
     /**
      * Construct a new GameHost and begin listening for
      * incoming clients.
@@ -1031,6 +1034,7 @@ implements Runnable {
 		resolvePilotingRolls(); // Skids cause damage in movement phase
 		resolveCrewDamage(); // again, I guess
                 checkForFlamingDeath();
+                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1050,6 +1054,7 @@ implements Runnable {
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
+                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1068,6 +1073,7 @@ implements Runnable {
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
+                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1601,8 +1607,10 @@ implements Runnable {
         if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
             return true;
         }
-        
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+
+        // Try to find a valid entity target.
+        Enumeration e = game.getEntities();
+        while ( !canHit && e.hasMoreElements() ) {
             Entity target = (Entity)e.nextElement();
             
             // don't shoot at friendlies unless you are into that sort of thing
@@ -1610,38 +1618,107 @@ implements Runnable {
             if (!(entity.isEnemyOf(target) || (friendlyFire && entity.getId() != target.getId() ))) {
                 continue;
             }
-            
-            canHit |= Compute.toHitPunch(game, entity.getId(), target.getId(),
-            PunchAttackAction.LEFT).getValue()
-            != ToHitData.IMPOSSIBLE;
-            
-            canHit |= Compute.toHitPunch(game, entity.getId(), target.getId(),
-            PunchAttackAction.RIGHT).getValue()
-            != ToHitData.IMPOSSIBLE;
-            
-            canHit |= Compute.toHitKick(game, entity.getId(), target.getId(),
-            KickAttackAction.LEFT).getValue()
-            != ToHitData.IMPOSSIBLE;
-            
-            canHit |= Compute.toHitKick(game, entity.getId(), target.getId(),
-            KickAttackAction.RIGHT).getValue()
-            != ToHitData.IMPOSSIBLE;
+
+            // No physical attack works at distances > 1.
+            if ( target.getPosition() != null &&
+                 entity.getPosition().distance(target.getPosition()) > 1 ) {
+                continue;
+            }
+
+            canHit |= Compute.toHitPunch
+                ( game, entity.getId(), target,
+                 PunchAttackAction.LEFT ).getValue()
+                != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitPunch
+                ( game, entity.getId(), target,
+                 PunchAttackAction.RIGHT ).getValue()
+                != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitKick
+                ( game, entity.getId(), target,
+                 KickAttackAction.LEFT ).getValue()
+                != ToHitData.IMPOSSIBLE;
+
+            canHit |= Compute.toHitKick
+                ( game, entity.getId(), target,
+                 KickAttackAction.RIGHT ).getValue()
+                != ToHitData.IMPOSSIBLE;
 
             canHit |= Compute.toHitBrushOff
-                ( game, entity.getId(), target.getId(),
+                ( game, entity.getId(), target,
                   BrushOffAttackAction.LEFT ).getValue()
                 != ToHitData.IMPOSSIBLE;
 
             canHit |= Compute.toHitBrushOff
-                ( game, entity.getId(), target.getId(),
+                ( game, entity.getId(), target,
                   BrushOffAttackAction.RIGHT ).getValue()
                 != ToHitData.IMPOSSIBLE;
 
             canHit |= Compute.toHitThrash
-                ( game, entity.getId(), target.getId() ).getValue()
+                ( game, entity.getId(), target ).getValue()
                 != ToHitData.IMPOSSIBLE;
+
         }
-        
+
+        // If there are no valid Entity targets, check for add valid buildings.
+        Enumeration bldgs = game.board.getBuildings();
+        while ( !canHit && bldgs.hasMoreElements() ) {
+            final Building bldg = (Building) bldgs.nextElement();
+
+            // Walk through the hexes of the building.
+            Enumeration hexes = bldg.getCoords();
+            while ( !canHit && hexes.hasMoreElements() ) {
+                final Coords coords = (Coords) hexes.nextElement();
+
+                // No physical attack works at distances > 1.
+                if ( entity.getPosition().distance(coords) > 1 ) {
+                    continue;
+                }
+
+                // Can the entity target *this* hex of the building?
+                final BuildingTarget target = new BuildingTarget( coords,
+                                                                  game.board,
+                                                                  false );
+
+                canHit |= Compute.toHitPunch
+                    ( game, entity.getId(), target,
+                      PunchAttackAction.LEFT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitPunch
+                    ( game, entity.getId(), target,
+                      PunchAttackAction.RIGHT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitKick
+                    ( game, entity.getId(), target,
+                      KickAttackAction.LEFT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitKick
+                    ( game, entity.getId(), target,
+                      KickAttackAction.RIGHT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitBrushOff
+                    ( game, entity.getId(), target,
+                      BrushOffAttackAction.LEFT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitBrushOff
+                    ( game, entity.getId(), target,
+                      BrushOffAttackAction.RIGHT ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+                canHit |= Compute.toHitThrash
+                    ( game, entity.getId(), target ).getValue()
+                    != ToHitData.IMPOSSIBLE;
+
+            } // Check the next hex of the building
+
+        } // Check the next building
+
         return canHit;
     }
 
@@ -1678,13 +1755,24 @@ implements Runnable {
      * The unit being unloaded does *not* gain a turn.
      *
      * @param   unloader - the <code>Entity</code> that is unloading the unit.
-     * @param   unit - the <code>Entity</code> being unloaded.
+     * @param   unloaded - the <code>Targetable</code> unit being unloaded.
      * @param   pos - the <code>Coords</code> for the unloaded unit.
+     * @param   facing - the <code>int</code> facing for the unloaded unit.
      * @return  <code>true</code> if the unit was successfully unloaded,
      *          <code>false</code> if the unit isn't carried in unloader.
      */
-    private boolean unloadUnit( Entity unloader, Entity unit,
+    private boolean unloadUnit( Entity unloader, Targetable unloaded,
                              Coords pos, int facing ) {
+
+        // We can only unload Entities.
+        Entity unit = null;
+        if ( unloaded instanceof Entity ) {
+            System.err.println( unloaded.getDisplayName() + " is an entity." );//killme
+            unit = (Entity) unloaded;
+        } else {
+            System.err.println( unloaded.getDisplayName() + " is not an entity." );//killme
+            return false;
+        }
 
         // Unload the unit.
         if ( !unloader.unload( unit ) ) {
@@ -1707,7 +1795,119 @@ implements Runnable {
         // Unloaded successfully.
         return true;
     }
-    
+
+    /**
+     * Record that the given building has been affected by the current
+     * entity's movement.  At the end of the entity's movement, notify
+     * the clients about the updates.
+     *
+     * @param   bldg - the <code>Building</code> that has been affected.
+     * @param   collapse - a <code>boolean</code> value that specifies that
+     *          the building collapsed (when <code>true</code>).
+     */
+    private void addAffectedBldg( Building bldg, boolean collapse ) {
+
+        // If the building collapsed, then the clients have already
+        // been notified, so remove it from the notification list.
+        if ( collapse ) {
+            System.err.print( "Removing building from a list of " + affectedBldgs.size() + "\n" );//killme
+            this.affectedBldgs.remove( bldg );
+            System.err.print( "... now list of " + affectedBldgs.size() + "\n" );//killme
+        }
+
+        // Otherwise, make sure that this building is tracked.
+        else {
+            this.affectedBldgs.put( bldg, Boolean.FALSE );
+        }
+
+    }
+
+    /**
+     * Walk through the building hexes that were affected by the recent
+     * entity's movement.  Notify the clients about the updates to all
+     * affected entities and uncollapsed buildings.  The affected hexes
+     * is then cleared for the next entity's movement.
+     */
+    private void applyAffectedBldgs() {
+
+        // Build a list of Building updates.
+        Vector bldgUpdates = new Vector();
+
+        // Only send a single turn update.
+        boolean bTurnsChanged = false;
+
+        // Walk the set of buildings.
+        Enumeration bldgs = this.affectedBldgs.keys();
+        while ( bldgs.hasMoreElements() ) {
+            final Building bldg = (Building) bldgs.nextElement();
+
+            // Walk through the building's coordinates.
+            Enumeration bldgCoords = bldg.getCoords();
+            while ( bldgCoords.hasMoreElements() ) {
+                final Coords coords = (Coords) bldgCoords.nextElement();
+
+                // Walk through the entities at these coordinates.
+                Enumeration entities = game.getEntities( coords );
+                while( entities.hasMoreElements() ) {
+                    final Entity entity = (Entity) entities.nextElement();
+
+                    // Is the entity infantry?
+                    if ( entity instanceof Infantry ) {
+
+                        // Is the infantry dead?
+                        if ( entity.isDoomed() || entity.isDestroyed() ) {
+
+                            // Has the entity taken a turn?
+                            if ( !entity.isDone() ) {
+
+                                // Dead entities don't take turns.
+                                game.removeTurnFor(entity);
+                                bTurnsChanged = true;
+
+                            } // End entity-still-to-move
+
+                            // Clean out the dead entity.
+                            entity.setDestroyed(true);
+                            game.moveToGraveyard(entity.getId());
+                            send(createRemoveEntityPacket(entity.getId()));
+                        }
+
+                        // Infantry that aren't dead are damaged.
+                        else {
+                            this.entityUpdate( entity.getId() );
+                        }
+
+                    } // End entity-is-infantry
+
+                } // Check the next entity.
+
+            } // Handle the next hex in this building.
+
+            // Add this building to the report.
+            bldgUpdates.addElement( bldg );
+
+        } // Handle the next affected building.
+
+        // Did we update the turns?
+        if ( bTurnsChanged ) {
+            send(createTurnVectorPacket());
+        }
+
+        // Are there any building updates?
+        if ( !bldgUpdates.isEmpty() ) {
+
+            // Send the building updates to the clients.
+            send( createUpdateBuildingCFPacket( bldgUpdates ) );
+
+            // Clear the list of affected buildings.
+            this.affectedBldgs.clear();
+        }
+
+        // And we're done.
+        return;
+
+    } // End private void applyAffectedBldgs()
+
     /**
      * Receives an entity movement packet, and if valid, executes it and ends
      * the current turn.
@@ -1730,6 +1930,12 @@ implements Runnable {
         
         // looks like mostly everything's okay
         processMovement(entity, md);
+
+        // Notify the clients about any building updates.
+        applyAffectedBldgs();
+
+        // This entity's turn is over.
+        // N.B. if the entity fell, a *new* turn has already been added.
         endCurrentTurn(entity);
     }
 
@@ -1871,8 +2077,8 @@ implements Runnable {
 
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
-                Entity target = step.getTarget( game );
-                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
+                Targetable target = step.getTarget( game );
+                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
                 game.addCharge(caa);
                 charge = caa;
@@ -1881,8 +2087,8 @@ implements Runnable {
             
             // check for dfa
             if (step.getType() == MovementData.STEP_DFA) {
-                Entity target = step.getTarget( game );
-                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
+                Targetable target = step.getTarget( game );
+                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
                 game.addCharge(daa);
                 charge = daa;
@@ -1896,104 +2102,110 @@ implements Runnable {
             final Hex curHex = game.board.getHex(curPos);
 
             // Check for skid.
-	    if ( moveType != Entity.MOVE_JUMP
-		 && prevHex != null
-		 && prevStep.isOnPavement()
-		 && overallMoveType == Entity.MOVE_RUN
-		 && prevFacing != curFacing
-		 && !lastPos.equals(curPos)
-		 && !isInfantry ) {
+            if ( moveType != Entity.MOVE_JUMP
+                 && prevHex != null
+                 && prevStep.isOnPavement()
+                 && overallMoveType == Entity.MOVE_RUN
+                 && prevFacing != curFacing
+                 && !lastPos.equals(curPos)
+                 && !isInfantry ) {
 
-		// Have an entity-meaningful PSR message.
-		PilotingRollData psr = null;
-		if ( entity instanceof Mech ) {
-		    psr = new PilotingRollData
-			(entity.getId(), getMovementPSRModifier(distance),
-			 "running & turning on pavement", true);
-		} else {
-		    psr = new PilotingRollData
-			(entity.getId(), getMovementPSRModifier(distance),
-			 "reckless driving on pavement", true);
-		}
-		// Does the entity skid?
-		if ( !doSkillCheckWhileMoving(entity, lastPos, lastPos, psr) ){
+                // Have an entity-meaningful PSR message.
+                boolean psrPassed = true;
+                PilotingRollData psr = null;
+                if ( entity instanceof Mech ) {
+                    psr = new PilotingRollData
+                        (entity.getId(), getMovementPSRModifier(distance),
+                         "running & turning on pavement");
+                    psrPassed = doSkillCheckWhileMoving( entity, lastPos,
+                                                         lastPos, psr );
+                } else {
+                    psr = new PilotingRollData
+                        (entity.getId(), getMovementPSRModifier(distance),
+                         "reckless driving on pavement");
+                    psrPassed = doSkillCheckWhileMoving( entity, lastPos,
+                                                         lastPos, psr, false );
+                }
+                // Does the entity skid?
+                if ( !psrPassed ){
 
                     curPos = lastPos;
-		    Coords nextPos = curPos;
-		    Hex    nextHex = null;
-		    int    skidDistance = 0;
-		    Enumeration targets = null;
-		    Entity target = null;
-		    int    curElevation;
-		    int    nextElevation;
+                    Coords nextPos = curPos;
+                    Hex    nextHex = null;
+                    int    skidDistance = 0;
+                    Enumeration targets = null;
+                    Entity target = null;
+                    int    curElevation;
+                    int    nextElevation;
 
-		    // All charge damage is based upon
+                    // All charge damage is based upon
                     // the pre-skid move distance.
-		    entity.delta_distance = distance-1;
+                    entity.delta_distance = distance-1;
 
                     // All attacks against a skidding target are at +2,
                     // and are *NOT* based upon distance moved at all.
                     moveType = Entity.MOVE_SKID;
 
-		    // What is the first hex in the skid?
-		    nextPos = curPos.translated( prevFacing );
-		    nextHex = game.board.getHex( nextPos );
+                    // What is the first hex in the skid?
+                    nextPos = curPos.translated( prevFacing );
+                    nextHex = game.board.getHex( nextPos );
 
-		    // Move the entity a number hexes from curPos in the
-		    // prevFacing direction equal to half the distance moved
+                    // Move the entity a number hexes from curPos in the
+                    // prevFacing direction equal to half the distance moved
                     // this turn (rounded up), unless something intervenes.
-		    for ( skidDistance = 0;
+                    for ( skidDistance = 0;
                           skidDistance < (int) Math.ceil(entity.delta_distance / 2.0); 
-			  skidDistance++ ) {
+                          skidDistance++ ) {
 
-			// Is the next hex off the board?
-			if ( !game.board.contains(nextPos) ) {
+                        // Is the next hex off the board?
+                        if ( !game.board.contains(nextPos) ) {
 
-			    // Can the entity skid off the map?
-			    if ( game.getOptions().booleanOption("push_off_board") ) {
-				// Yup.  One dead entity.
-				game.removeEntity(entity.getId(),
+                            // Can the entity skid off the map?
+                            if ( game.getOptions().booleanOption("push_off_board") ) {
+                                // Yup.  One dead entity.
+                                game.removeEntity(entity.getId(),
                                                   Game.UNIT_IN_RETREAT);
-				send(createRemoveEntityPacket(entity.getId(),
+                                send(createRemoveEntityPacket(entity.getId(),
                                                               Game.UNIT_IN_RETREAT));
-				phaseReport.append("*** " )
+                                phaseReport.append("*** " )
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
 
                                 // The entity's movement is completed.
                                 return;
 
-			    } else {
-				// Nope.  Update the report.
-				phaseReport.append( "   Can't skid off the field.\n" );
-			    }
-			    // Stay in the current hex and stop skidding.
-			    break;
-			}
+                            } else {
+                                // Nope.  Update the report.
+                                phaseReport.append( "   Can't skid off the field.\n" );
+                            }
+                            // Stay in the current hex and stop skidding.
+                            break;
+                        }
 
-			// Can the skiding entity enter the next hex from this?
+                        // Can the skiding entity enter the next hex from this?
                         // N.B. can skid along roads.
-			if ( ( entity.isHexProhibited(curHex) ||
+                        if ( ( entity.isHexProhibited(curHex) ||
                                entity.isHexProhibited(nextHex) ) &&
                              !Compute.canMoveOnPavement(game, curPos, nextPos)
                              ) {
-			    // Update report.
-			    phaseReport.append( "   Can't skid into hex " )
+                            // Update report.
+                            phaseReport.append( "   Can't skid into hex " )
                                 .append( nextPos.getBoardNum() )
                                 .append( ".\n" );
 
-			    // TODO: inflict any damage
-                            // N.B. the BMRr pg. 22 doesn't mention any.
+                            // N.B. the BMRr pg. 22 says that the unit 
+                            // "crashes" into the terrain but it doesn't
+                            // mention any damage.
 
-			    // Stay in the current hex and stop skidding.
-			    break;
-			}
+                            // Stay in the current hex and stop skidding.
+                            break;
+                        }
 
-                        // BMRr pg. 22 - Can't skid uphill,
-                        //      but can skid downhill.
-			curElevation = curHex.floor();
-			nextElevation = nextHex.floor();
                         // Hovercraft can "skid" over water.
+                        // TODO: allow entities to occupy different levels of
+                        //       buildings.
+                        curElevation = curHex.floor();
+                        nextElevation = nextHex.floor();
                         if ( entity instanceof Tank &&
                              entity.getMovementType() ==
                              Entity.MovementType.HOVER ) {
@@ -2007,200 +2219,253 @@ implements Runnable {
                                 nextElevation += land.getLevel();
                             }
                         }
-			if ( curElevation < nextElevation ) {
-			    phaseReport.append
+
+                        // BMRr pg. 22 - Can't skid uphill,
+                        //      but can skid downhill.
+                        if ( curElevation < nextElevation ) {
+                            phaseReport.append
                                 ( "   Can not skid uphill into hex " +
                                   nextPos.getBoardNum() ).append( ".\n" );
 
-			    // Stay in the current hex and stop skidding.
-			    break;
-			}
+                            // Stay in the current hex and stop skidding.
+                            break;
+                        }
 
-			// Does the next hex contain an entities?
-			boolean stopTheSkid = false;
-			targets = game.getEntities( nextPos );
-			while ( targets.hasMoreElements() ) {
-			    target = (Entity) targets.nextElement();
+                        // Get any building in the hex.
+                        Building bldg = game.board.getBuildingAt(nextPos);
+                        boolean bldgSuffered = false;
+
+                        // Does the next hex contain an entities?
+                        // ASSUMPTION: hurt EVERYONE in the hex.
+                        // TODO: allow entities to occupy different levels of
+                        //       buildings, and only skid into a single level.
+                        boolean stopTheSkid = false;
+                        targets = game.getEntities( nextPos );
+                        while ( targets.hasMoreElements() ) {
+                            target = (Entity) targets.nextElement();
 
                             // TODO : allow ready targets to move out of way
 
-			    // TODO : Handle targets in buildings.
+                            // Mechs and vehicles get charged.
+                            if ( !(target instanceof Infantry) ) {
 
-			    // Mechs and vehicles get charged.
-			    if ( !(target instanceof Infantry) ) {
+                                // Update report.
+                                phaseReport.append( "   Skids into " +
+                                                    target.getShortName() +
+                                                    " in hex " +
+                                                    nextPos.getBoardNum() +
+                                                    "... " );
 
-				// Update report.
-				phaseReport.append( "   Skids into " +
-						    target.getShortName() +
-						    " in hex " +
-						    nextPos.getBoardNum() +
-						    "... " );
+                                // Resolve a charge against the target.
+                                // ASSUMPTION: buildings block damage for
+                                //             *EACH* entity charged.
+                                ToHitData toHit = new ToHitData();
+                                toHit.setHitTable( ToHitData.HIT_NORMAL );
+                                toHit.setSideTable
+                                    (Compute.targetSideTable(entity, target));
+                                resolveChargeDamage
+                                    (entity, target, toHit, prevFacing);
+                                bldgSuffered = true;
 
-				// Resolve a charge against the target.
-				ToHitData toHit = new ToHitData();
-				toHit.setHitTable( target.isProne() ? 
-						   ToHitData.HIT_NORMAL :
-						   ToHitData.HIT_KICK );
-				toHit.setSideTable
-				    (Compute.targetSideTable(entity, target));
-				resolveChargeDamage
-				    (entity, target, toHit, prevFacing);
-
-				// The skid ends here if the target lives.
-                                // TODO : do we keep skiding if the target
-                                //      is pushed off the board?
+                                // The skid ends here if the target lives.
+                                // TODO : we should keep skiding if the target
+                                //        is pushed off the board as it has
+                                //        been "destroyed" according to the
+                                //        MegaMek interpretation of the rules.
                                 if ( !target.isDoomed() &&
                                      !target.isDestroyed() ) {
                                     stopTheSkid = true;
                                 }
-			    }
+                            }
 
-			    // Resolve "move-through" damage on infantry.
-			    else {
+                            // Resolve "move-through" damage on infantry.
+                            // Infantry inside of a building don't get a
+                            // move-through, but suffer "bleed through"
+                            // from the building.
+                            else if ( bldg != null ) {
 
-				// Update report.
-				phaseReport.append( "   Skids through " +
-						    target.getShortName() +
-						    " in hex " +
-						    nextPos.getBoardNum() +
-						    "... " );
+                                // Update report.
+                                phaseReport.append( "   Skids through " +
+                                                    target.getShortName() +
+                                                    " in hex " +
+                                                    nextPos.getBoardNum() +
+                                                    "... " );
 
-				// Infantry don't have different
-				// tables for punches and kicks
-				HitData hit = target.rollHitLocation( ToHitData.HIT_NORMAL,
-								      Compute.targetSideTable(entity, target)
-								      );
+                                // Infantry don't have different
+                                // tables for punches and kicks
+                                HitData hit = target.rollHitLocation( ToHitData.HIT_NORMAL,
+                                                                      Compute.targetSideTable(entity, target)
+                                                                      );
 
-				// Damage equals tonnage, divided by 5.
-				phaseReport.append( damageEntity(target, hit, (int)Math.round(entity.getWeight()/5)) );
-				phaseReport.append( "\n" );
+                                // Damage equals tonnage, divided by 5.
+                                // ASSUMPTION: damage is applied in one hit.
+                                phaseReport.append( damageEntity(target, hit, (int)Math.round(entity.getWeight()/5)) );
+                                phaseReport.append( "\n" );
 
-			    } // End handle-infantry
-			    
-			    // Has the target been destroyed?
-			    if ( target.isDoomed() ) {
+                            } // End handle-infantry
+                            
+                            // Has the target been destroyed?
+                            if ( target.isDoomed() ) {
 
-				// Has the target taken a turn?
-				if ( !target.isDone() ) {
+                                // Has the target taken a turn?
+                                if ( !target.isDone() ) {
 
-				    // Dead entities don't take turns.
+                                    // Dead entities don't take turns.
                                     game.removeTurnFor(target);
                                     send(createTurnVectorPacket());
 
-				} // End target-still-to-move
+                                } // End target-still-to-move
 
-				// Yup.  Clean out the entity.
-				target.setDestroyed(true);
-				game.moveToGraveyard(target.getId());
-				send(createRemoveEntityPacket(target.getId()));
+                                // Clean out the entity.
+                                target.setDestroyed(true);
+                                game.moveToGraveyard(target.getId());
+                                send(createRemoveEntityPacket(target.getId()));
 
-			    }
+                            }
 
-			    // Update the target's position,
-			    // unless it is off the game map.
-			    if ( !game.isInGraveyard(target) ) {
-				entityUpdate( target.getId() );
-			    }
+                            // Update the target's position,
+                            // unless it is off the game map.
+                            if ( !game.isInGraveyard(target) ) {
+                                entityUpdate( target.getId() );
+                            }
 
-			} // End someone's-in-the-way
+                        } // Check the next entity in the hex.
 
-			// Do we stay in the current hex and stop skidding?
-			if ( stopTheSkid ) {
-			    break;
-			}
-
-			// Did we skid into a building?
+                        // Handle the building in the hex.
                         // TODO : BMRr pg. 22, only count buildings that are
                         //      higher than our starting terrain height.
-			if ( nextHex.contains(Terrain.BUILDING) ) {
-			    // Update report.
-			    phaseReport.append( "   Skids into building in hex " +
-						nextPos.getBoardNum() +
-						".\n" );
-			    // TODO : Damage the building and the skidding entity.
+                        // TODO: allow units to skid on top of buildings.
+                        if ( bldg != null ) {
 
-			    // Skid into the building's hex and stop skidding.
-			    curPos = nextPos;
-			    entity.setPosition( curPos );
-			    break;
-			}
+                            // Report that the entity has entered the bldg.
+                            phaseReport.append( "   Skids into " )
+                                .append( bldg.getName() )
+                                .append( " in hex " )
+                                .append( nextPos.getBoardNum() )
+                                .append( ".\n" );
 
-			// Update the position and keep skidding.
-			curPos = nextPos;
-			entity.setPosition( curPos );
-			phaseReport.append( "   Skids into hex " ).append( 
-					    curPos.getBoardNum() ).append( ".\n" );
+                            // If the building hasn't already suffered
+                            // damage, then apply charge damage to the
+                            // building and displace the entity inside.
+                            // ASSUMPTION: you don't charge the building
+                            //             if Tanks or Mechs were charged.
+                            int chargeDamage = Compute.getChargeDamageFor
+                                ( entity );
+                            if ( !bldgSuffered ) {
+                                phaseReport.append( "      " )
+                                    .append( damageBuilding( bldg, 
+                                                             chargeDamage ) );
 
-			// Get the next hex in the skid?
-			nextPos = nextPos.translated( prevFacing );
-			nextHex = game.board.getHex( nextPos );
+                                // Apply damage to the attacker.
+                                int toAttacker = Compute.getChargeDamageTakenBy
+                                    ( entity, bldg );
+                                HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
+                                                                      Compute.targetSideTable(curPos, nextPos, entity.getFacing(), false)
+                                                                      );
+                                phaseReport.append( this.damageEntity( entity, hit, toAttacker ) )
+                                    .append( "\n" );
 
-		    } // Handle the next skid hex.
+                                curPos = nextPos;
+                                entity.setPosition( curPos );
+                            } // End buildings-suffer-too
 
-		    // If the skidding entity violates stacking,
-		    // displace targets until it doesn't.
-		    curPos = entity.getPosition();
-		    target = Compute.stackingViolation
-			(game, entity.getId(), curPos);
-		    while (target != null) {
-			nextPos = Compute.getValidDisplacement
-			    (game, target.getId(),
-			     target.getPosition(), prevFacing);
-			// ASSUMPTION
-			// There should always be *somewhere* that
-			// the target can go... last skid hex if
-			// nothing else is available.
-			if ( null == nextPos ) {
-			    // But I don't trust the assumption fully.
-			    // Report the error and try to continue.
-			    System.err.println( "The skid of " +
-						entity.getShortName() +
-						" should displace " +
-						target.getShortName() +
-						" in hex " +
-						curPos.getBoardNum() +
-						" but there is nowhere to go."
-						);
-			    break;
-			}
-			phaseReport.append( "    " ); // indent displacement
-			doEntityDisplacement(target, curPos, nextPos, null);
-			target = Compute.stackingViolation( game, 
-							    entity.getId(), 
-							    curPos );
-		    }
+                            // Any infantry in the building take damage
+                            // equal to the building being charged.
+                            // ASSUMPTION: infantry take no damage from the
+                            //             building absorbing damage from
+                            //             Tanks and Mechs being charged.
+                            damageInfantryIn( bldg, chargeDamage );
 
-		    // Mechs suffer damage for every hex skidded.
-		    if ( entity instanceof Mech ) {
-			// Calculate one half falling damage times skid length.
-			int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
+                            // If a building still stands, then end the skid,
+                            // and add it to the list of affected buildings.
+                            if ( bldg.getCurrentCF() > 0 ) {
+                                stopTheSkid = true;
+                                this.addAffectedBldg( bldg, false );
+                            }
 
-			// report skid damage
-			phaseReport.append("    " ).append( entity.getDisplayName() ).append( " suffers " ).append( damage ).append( " damage from the skid.");
+                        } // End handle-building.
 
-			// standard damage loop
-			// All skid damage is to the front.
-			while (damage > 0) {
-			    int cluster = Math.min(5, damage);
-			    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-			    phaseReport.append(damageEntity(entity, hit, cluster));
-			    damage -= cluster;
-			}
-			phaseReport.append( "\n" );
-		    }
+                        // Do we stay in the current hex and stop skidding?
+                        if ( stopTheSkid ) {
+                            break;
+                        }
 
-		    // Clean up the entity if it has been destroyed.
-		    if ( entity.isDoomed() ) {
-			entity.setDestroyed(true);
-			game.moveToGraveyard(entity.getId());
-			send(createRemoveEntityPacket(entity.getId()));
+                        // Update the position and keep skidding.
+                        curPos = nextPos;
+                        entity.setPosition( curPos );
+                        phaseReport.append( "   Skids into hex " ).append( 
+                                            curPos.getBoardNum() ).append( ".\n" );
+
+                        // Get the next hex in the skid?
+                        nextPos = nextPos.translated( prevFacing );
+                        nextHex = game.board.getHex( nextPos );
+
+                    } // Handle the next skid hex.
+
+                    // If the skidding entity violates stacking,
+                    // displace targets until it doesn't.
+                    curPos = entity.getPosition();
+                    target = Compute.stackingViolation
+                        (game, entity.getId(), curPos);
+                    while (target != null) {
+                        nextPos = Compute.getValidDisplacement
+                            (game, target.getId(),
+                             target.getPosition(), prevFacing);
+                        // ASSUMPTION
+                        // There should always be *somewhere* that
+                        // the target can go... last skid hex if
+                        // nothing else is available.
+                        if ( null == nextPos ) {
+                            // But I don't trust the assumption fully.
+                            // Report the error and try to continue.
+                            System.err.println( "The skid of " +
+                                                entity.getShortName() +
+                                                " should displace " +
+                                                target.getShortName() +
+                                                " in hex " +
+                                                curPos.getBoardNum() +
+                                                " but there is nowhere to go."
+                                                );
+                            break;
+                        }
+                        phaseReport.append( "    " ); // indent displacement
+                        doEntityDisplacement(target, curPos, nextPos, null);
+                        target = Compute.stackingViolation( game, 
+                                                            entity.getId(), 
+                                                            curPos );
+                    }
+
+                    // Mechs suffer damage for every hex skidded.
+                    if ( entity instanceof Mech ) {
+                        // Calculate one half falling damage times skid length.
+                        int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
+
+                        // report skid damage
+                        phaseReport.append("    " ).append( entity.getDisplayName() ).append( " suffers " ).append( damage ).append( " damage from the skid.");
+
+                        // standard damage loop
+                        // All skid damage is to the front.
+                        while (damage > 0) {
+                            int cluster = Math.min(5, damage);
+                            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                            phaseReport.append(damageEntity(entity, hit, cluster));
+                            damage -= cluster;
+                        }
+                        phaseReport.append( "\n" );
+                    }
+
+                    // Clean up the entity if it has been destroyed.
+                    if ( entity.isDoomed() ) {
+                        entity.setDestroyed(true);
+                        game.moveToGraveyard(entity.getId());
+                        send(createRemoveEntityPacket(entity.getId()));
 
                         // The entity's movement is completed.
                         return;
-		    }
+                    }
 
-		    // Let the player know the ordeal is over.
-		    phaseReport.append( "      Skid ends.\n" );
+                    // Let the player know the ordeal is over.
+                    phaseReport.append( "      Skid ends.\n" );
 
 		    // set entity parameters
 		    curFacing = entity.getFacing();
@@ -2211,8 +2476,10 @@ implements Runnable {
 		    fellDuringMovement = true;
 		    distance = entity.delta_distance;
 		    break;
-		}
-            }
+
+                } // End failed-skid-psr
+
+            } // End need-skid-psr
 
             // check if we've moved into rubble
             if (!lastPos.equals(curPos)
@@ -2345,14 +2612,80 @@ implements Runnable {
 
             // Handle unloading units.
             if ( step.getType() == MovementData.STEP_UNLOAD ) {
-                Entity unloaded = step.getTarget( game );
+                Targetable unloaded = step.getTarget( game );
                 if ( !this.unloadUnit( entity, unloaded,
                                        curPos, curFacing ) ) {
                     System.err.println( "Error! Server was told to unload " +
-                                        unloaded.getShortName() +
-                                        " from " + entity.getShortName() +
+                                        unloaded.getDisplayName() +
+                                        " from " + entity.getDisplayName() +
                                         " into " + curPos.getBoardNum() );
                 }
+            }
+
+            // Handle non-infantry moving into a building.
+            if ( !lastPos.equals(curPos) &&
+                 step.getMovementType() != Entity.MOVE_JUMP &&
+                 ( curHex.contains(Terrain.BUILDING) ||
+                   (prevHex != null && prevHex.contains(Terrain.BUILDING)) ) &&
+                 !(entity instanceof Infantry) ) {
+
+                // Get the building being exited.
+                // TODO: allow units to climb on top of buildings.
+                Building bldgExited = game.board.getBuildingAt( lastPos );
+
+                // Get the building being entered.
+                // TODO: allow units to climb on top of buildings.
+                Building bldgEntered = game.board.getBuildingAt( curPos );
+
+                // If we're not leaving a building, just handle the "entered".
+                boolean collapsed = false;
+                if ( bldgExited == null ) {
+                    collapsed = passBuildingWall( entity, bldgEntered,
+                                                  lastPos, curPos,
+                                                  distance, "entering" );
+                    this.addAffectedBldg( bldgEntered, collapsed );
+                }
+
+                // If we're moving withing the same building, just handle
+                // the "within".
+                else if ( bldgExited.equals( bldgEntered ) ) {
+                    collapsed = passBuildingWall( entity, bldgEntered,
+                                                  lastPos, curPos,
+                                                  distance, "moving in" );
+                    this.addAffectedBldg( bldgEntered, collapsed );
+                }
+
+                // If we have different buildings, roll for each.
+                else if ( bldgExited != null && bldgEntered != null ) {
+                    collapsed = passBuildingWall( entity, bldgExited,
+                                                  lastPos, curPos,
+                                                  distance, "exiting" );
+                    this.addAffectedBldg( bldgExited, collapsed );
+                    collapsed = passBuildingWall( entity, bldgEntered,
+                                                  lastPos, curPos,
+                                                  distance, "entering" );
+                    this.addAffectedBldg( bldgEntered, collapsed );
+                }
+
+                // Otherwise, just handle the "exited".
+                else {
+                    collapsed = passBuildingWall( entity, bldgExited,
+                                                  lastPos, curPos,
+                                                  distance, "exiting" );
+                    this.addAffectedBldg( bldgExited, collapsed );
+                }
+
+                // Clean up the entity if it has been destroyed.
+                if ( entity.isDoomed() ) {
+                    entity.setDestroyed(true);
+                    game.moveToGraveyard(entity.getId());
+                    send(createRemoveEntityPacket(entity.getId()));
+
+                    // The entity's movement is completed.
+                    return;
+                }
+
+                // TODO: what if a building collapses into rubble?
             }
 
             // did the entity just fall?
@@ -2626,18 +2959,49 @@ implements Runnable {
     }
     
     /**
-     * Do a piloting skill check while moving
+     * Do a piloting skill check for a Mech while it is moving.
+     * Failing this roll will cause the Mech to fall.
      *
+     * @param   entity - the <code>Entity</code> object for the Mech.
+     * @param   src - the <code>Coords</code> the Mech is moving from.
+     * @param   dest - the <code>Coords</code> the Mech is moving to.
+     *          This value can be the same as src for in-place checks.
+     * @param   reason - the <code>PilotingRollData</code> that is causing
+     *          this check.
      * @return <code>true</code> if the pilot passes the skill check.
      */
-    private boolean doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest,
-    PilotingRollData reason) {
-	boolean result = true;
+    private boolean doSkillCheckWhileMoving( Entity entity,
+                                             Coords src,
+                                             Coords dest,
+                                             PilotingRollData reason ) {
 
-        // Non mechs should never get here, unless we're avoiding skids.
-        if (! (entity instanceof Mech) && !reason.isForSkid() ) {
-            return result;
+        // Non mechs should never get here.
+        if ( !(entity instanceof Mech) ) {
+            return true;
 	}
+
+        return doSkillCheckWhileMoving( entity, src, dest, reason, true );
+    }
+
+    /**
+     * Do a piloting skill check while moving.
+     *
+     * @param   entity - the <code>Entity</code> that must roll.
+     * @param   src - the <code>Coords</code> the entity is moving from.
+     * @param   dest - the <code>Coords</code> the entity is moving to.
+     *          This value can be the same as src for in-place checks.
+     * @param   reason - the <code>PilotingRollData</code> that is causing
+     *          this check.
+     * @param   isFallRoll - a <code>boolean</code> flag that indicates that
+     *          failure will result in a fall or not.  Falls will be processed.
+     * @return  <code>true</code> if the pilot passes the skill check.
+     */
+    private boolean doSkillCheckWhileMoving( Entity entity,
+                                             Coords src,
+                                             Coords dest,
+                                             PilotingRollData reason,
+                                             boolean isFallRoll ) {
+	boolean result = true;
         
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
         final Hex srcHex = game.board.getHex(src);
@@ -2648,32 +3012,48 @@ implements Runnable {
         // append the reason modifier
         roll.append(reason);
         
-        // will the entity fall in the source or destination hex?
+        // Start the info for this roll.
+        phaseReport.append("\n" )
+            .append( entity.getDisplayName() )
+            .append( " must make a piloting skill check" );
+        
+        // Will the entity fall in the source or destination hex?
         if ( src.equals(dest) ) {
             fallsInPlace = true;
+            phaseReport.append( " while moving in hex " )
+                .append( src.getBoardNum() );
         } else {
             fallsInPlace = false;
+            phaseReport.append( " while moving from hex " )
+                .append( src.getBoardNum() )
+                .append( " to hex " )
+                .append( dest.getBoardNum() );
         }
-        
-        // how far down did it fall?
-        fallElevation = Math.abs(destHex.floor() - srcHex.floor());
-        
-        // okay, print the info
-        phaseReport.append("\n" ).append( entity.getDisplayName()
-        ).append( " must make a piloting skill check"
-        ).append( " while moving from hex " ).append( src.getBoardNum()
-        ).append( " to hex " ).append( dest.getBoardNum()
-        ).append( " (" ).append( reason.getPlainDesc() ).append( ")" ).append( ".\n");
+
+        // Finish the info.
+        phaseReport.append( " (" )
+            .append( reason.getPlainDesc() )
+            .append( ")" )
+            .append( ".\n" );
+
         // roll
         final int diceRoll = Compute.d6(2);
-        phaseReport.append("Needs " ).append( roll.getValueAsString()
-        ).append( " [" ).append( roll.getDesc() ).append( "]"
-        ).append( ", rolls " ).append( diceRoll ).append( " : ");
+        phaseReport.append( "Needs " )
+            .append( roll.getValueAsString() )
+            .append( " [" )
+            .append( roll.getDesc() )
+            .append( "]" )
+            .append( ", rolls " )
+            .append( diceRoll )
+            .append( " : " );
         if (diceRoll < roll.getValue()) {
-	    // Vehicles don't fall, they fail
-	    if ( entity instanceof Mech ) {
+            // Does failing the PSR result in a fall.
+	    if ( isFallRoll ) {
 		phaseReport.append("falls.\n");
-		doEntityFallsInto(entity, (fallsInPlace ? dest : src), (fallsInPlace ? src : dest), roll);
+		doEntityFallsInto( entity,
+                                   (fallsInPlace ? dest : src),
+                                   (fallsInPlace ? src : dest),
+                                   roll );
 	    } else {
 		phaseReport.append("fails.\n");
 		entity.setPosition( fallsInPlace ? src : dest );
@@ -2821,7 +3201,7 @@ implements Runnable {
             if (diceRoll >= toHit.getValue()) {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
-                int damage = (int)Math.ceil(entity.getWeight() / 10);
+                int damage = (int)Math.ceil(entity.getWeight() / 10.0);
                 phaseReport.append(violation.getDisplayName() ).append( " takes "
                 ).append( damage ).append( " from the collision.");
                 while (damage > 0) {
@@ -3053,11 +3433,61 @@ implements Runnable {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
                 try {
-                    entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
+                    // Get the entity's current hex.
+                    Coords coords = entity.getPosition();
+                    Hex curHex = game.board.getHex( coords );
+
+                    // Is there the rubble of a medium, heavy,
+                    // or hardened building in the hex?
+                    if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
+
+                        // Finding a club is not guaranteed.  The chances are
+                        // based on the type of building that produced the
+                        // rubble.
+                        boolean found = false;
+                        int roll = Compute.d6(2);
+                        switch ( curHex.levelOf( Terrain.RUBBLE ) ) {
+                        case Building.MEDIUM:
+                            if ( roll >= 7 ) {
+                                found = true;
+                            }
+                            break;
+                        case Building.HEAVY:
+                            if ( roll >= 6 ) {
+                                found = true;
+                            }
+                            break;
+                        case Building.HARDENED:
+                            if ( roll >= 5 ) {
+                                found = true;
+                            }
+                            break;
+                        }
+
+                        // Let the player know if they found a club.
+                        if ( found ) {
+                            entity.addEquipment(EquipmentType.getByInternalName("Girder Club"), Mech.LOC_NONE);
+                            phaseReport.append( "\n" )
+                                .append( entity.getDisplayName() )
+                                .append( " found a girder to use as a club.\n" );
+                        } else {
+                            phaseReport.append( "\n" )
+                                .append( entity.getDisplayName() )
+                                .append( " did not find a club, but may have better luck next turn.\n" );
+                        }
+                    }
+
+                    // Are there woods in the hex?
+                    else if ( 1 <= curHex.levelOf( Terrain.WOODS ) ) {
+                        entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
+                        phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
+                    }
                 } catch (LocationFullException ex) {
                     // unlikely...
+                    phaseReport.append("\n" )
+                        .append( entity.getDisplayName() )
+                        .append( " did not have room for a club.\n");
                 }
-                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
             } else if (o instanceof UnjamAction) {
                 resolveUnjam(entity.getId());
             } else {
@@ -3350,6 +3780,11 @@ implements Runnable {
             // also check for inferno infantry
             bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
         }
+        final boolean targetInBuilding = 
+            Compute.isInBuilding( game, entityTarget );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
         
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nWeapons fire for " ).append( ae.getDisplayName() ).append( "\n");
@@ -3365,7 +3800,7 @@ implements Runnable {
             } else {
                 phaseReport.append( "Swarm attack ended.\n" );
                 // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-                if ( ae.getSwarmTargetId() != target.getTargetID() ) {
+                if ( ae.getSwarmTargetId() != target.getTargetId() ) {
                     Entity other = game.getEntity( ae.getSwarmTargetId() );
                     other.setSwarmAttackerId( Entity.NONE );
                 } else {
@@ -3440,8 +3875,10 @@ implements Runnable {
         }
         
         // do we hit?
+        boolean bMissed = false;
         if (wr.roll < toHit.getValue()) {
             // miss
+            bMissed = true;
             phaseReport.append("misses.\n"); 
            if (wr.amsShotDown > 0) {
                 phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
@@ -3456,11 +3893,17 @@ implements Runnable {
                 }
             }
 
-            return;
+            // BMRr, pg. 51: "All shots that were aimed at a target inside
+            // a building and miss do full damage to the building instead."
+            if ( !targetInBuilding ) {
+                return;
+            }
         }
         
         // special case NARC hits.  No damage, but a beacon is appended
-        if (wtype.getAmmoType() == AmmoType.T_NARC) {
+        if (!bMissed && wtype.getAmmoType() == AmmoType.T_NARC) {
+
+            // TODO: AMS can shoot down NARC pods too.
             if (entityTarget == null) {
                 phaseReport.append("hits, but doesn't do anything.\n");
             } else {
@@ -3479,9 +3922,20 @@ implements Runnable {
         boolean bECMAffected = false;
         boolean bMekStealthActive = false;
         String sSalvoType = " shot(s) ";
+        boolean bAllShotsHit = false;
+
+        // All shots fired by a Streak SRM weapon, during
+        // a Mech Swarm hit, or at an adjacent building.
+        if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ||
+             ae.getSwarmTargetId() == wr.waa.getTargetId() ||
+             ( ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+                 target.getTargetType() == Targetable.TYPE_BUILDING ) &&
+               ae.getPosition().distance( target.getPosition() ) <= 1 ) ) {
+            bAllShotsHit = true;
+        }
 
         // Mek swarms attach the attacker to the target.
-        if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+        if ( !bMissed && Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             // Is the target already swarmed?
             if ( Entity.NONE != entityTarget.getSwarmAttackerId() ) {
                 phaseReport.append( "succeds, but the defender is " );
@@ -3497,7 +3951,10 @@ implements Runnable {
         // Magnetic Mine Launchers roll number of hits on battle armor
         // hits table but use # mines firing instead of men shooting.
         else if ( wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER) ) {
-            hits = Compute.getBattleArmorHits( nShots );
+            hits = nShots;
+            if ( !bAllShotsHit ) {
+                hits = Compute.getBattleArmorHits( hits );
+            }
             bSalvo = true;
             sSalvoType = " mine(s) ";
         }
@@ -3513,7 +3970,7 @@ implements Runnable {
             hits = platoon.getShootingStrength();
             // All attacks during Mek Swarms hit; all
             // others use the Battle Armor hits table.
-            if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
+            if ( !bAllShotsHit ) {
                 hits = Compute.getBattleArmorHits( hits );
             }
 
@@ -3615,25 +4072,23 @@ implements Runnable {
                     bSalvo = false;
             }
 
-            if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-                hits = wtype.getRackSize();
-            } else if ( wtype.getRackSize() == 30 ||
-                        wtype.getRackSize() == 40 ) {
-                // I'm going to assume these are MRMs
+            // Large MRM missile racks roll twice.
+            // MRM missiles never recieve hit bonuses.
+            if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
                 hits = Compute.missilesHit(wtype.getRackSize() / 2) +
                     Compute.missilesHit(wtype.getRackSize() / 2);
-            } else if ( ae instanceof BattleArmor ) {
+            }
 
-                // Battle Armor units multiply their racksize by the
-                // # of men shooting and they can't use NARCs.
+            // Battle Armor units multiply their racksize by the number
+            // of men shooting and they can't get missile hit bonuses.
+            else if ( ae instanceof BattleArmor ) {
                 platoon = (Infantry) ae;
                 int temp = wtype.getRackSize() * platoon.getShootingStrength();
 
-                // All attacks during Mek Swarms hit the same location;
-                // all others use the Battle Armor hits table.
-                hits = temp;
-                if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
-
+                // Do all shots hit?
+                if ( !bAllShotsHit ) {
+                    hits = temp;
+                } else {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
@@ -3641,14 +4096,20 @@ implements Runnable {
                         temp -= 20;
                     }
                     hits += Compute.missilesHit( temp );
+                } // End not-all-shots-hit
+            }
 
-                } // End not-mek-swarming
-                
-            } else {
+            // If all shots hit, use the full racksize.
+            else if ( bAllShotsHit ) {
+                hits = wtype.getRackSize();
+            }
+
+            // In all other circumstances, roll for hits.
+            else {
                 hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus);
             }
 
-            // Advanced SRM's don't hit with an odd # of missles.
+            // Advanced SRM's only hit with even numbers of missles.
             if ( null != atype &&
                  atype.getAmmoType() == AmmoType.T_SRM_ADVANCED ) {
                 hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
@@ -3657,20 +4118,18 @@ implements Runnable {
         } else if (atype != null && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
-            hits = Compute.missilesHit(wtype.getRackSize());
+            hits = wtype.getRackSize();
+            if ( !bAllShotsHit ) {
+                hits = Compute.missilesHit( hits );
+            }
             nDamPerHit = 1;
         } else if (nShots > 1) {
             // this should handle multiple attacks from ultra and rotary ACs
             bSalvo = true;
-            hits = Compute.missilesHit(nShots);
-        } else if (atype != null && atype.hasFlag(AmmoType.F_MG) &&
-                   !isWeaponInfantry && (target instanceof Infantry) &&
-                   !(target instanceof BattleArmor) ) {
-            // Mech and Vehicle MGs do *DICE* of damage to PBI.
-            // 2002-10-24 Suvarov454 : no need for so many lines in the report.
-            nDamPerHit = Compute.d6(wtype.getDamage());
-            phaseReport.append( "riddles the target with " ).append( 
-                nDamPerHit ).append( sSalvoType ).append( "and " );
+            hits = nShots;
+            if ( !bAllShotsHit ) {
+                hits = Compute.missilesHit( hits );
+            }
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
             // HGR does range-dependent damage
@@ -3689,6 +4148,72 @@ implements Runnable {
             hits *= 2;
         }
 
+        // We've calculated how many hits.  At this point, any missed 
+        // shots damage the building instead of the target.
+        if ( bMissed ) {
+            if ( targetInBuilding && bldg != null ) {
+
+                // Reduce the number of hits by AMS hits.
+                if (wr.amsShotDown > 0) {
+                    int shotDown = Math.min(wr.amsShotDown, hits);
+                    phaseReport.append("\tAMS shoots down ")
+                        .append(shotDown).append(" missile(s).\n");
+                    hits -= wr.amsShotDown;
+                }
+
+                // Is the building hit by Inferno rounds?
+                if ( bInferno && hits > 0 ) {
+                
+                    // start a fire in the targets hex
+                    Coords c = target.getPosition();
+                    Hex h = game.getBoard().getHex(c);
+                
+                    // Is there a fire in the hex already?
+                    if ( h.contains( Terrain.FIRE ) ) {
+                        phaseReport.append( "        " )
+                            .append( hits )
+                            .append( " Inferno rounds added to hex " )
+                            .append( c.getBoardNum() )
+                            .append( ".\n" );
+                    } else {
+                        phaseReport.append( "        " )
+                            .append( hits )
+                            .append( " Inferno rounds start fire in hex " )
+                            .append( c.getBoardNum() )
+                            .append( ".\n" );
+                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    }
+                    game.board.addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+                
+                }
+                
+                // Damage the building in one big lump.
+                else {
+
+                    // Only report if damage was done to the building.
+                    int toBldg = hits * nDamPerHit;
+                    if ( toBldg > 0 ) {
+                        phaseReport.append( "        " )
+                            .append( damageBuilding( bldg, toBldg ) )
+                            .append( "\n" );
+                    }
+
+                } // End rounds-hit
+
+            } // End missed-target-in-building
+            return;
+
+        } // End missed-target
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        int bldgAbsorbs = 0;
+        if ( targetInBuilding && bldg != null ) {
+            bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+        }
+
         // All attacks (except from infantry weapons)
         // during Mek Swarms hit the same location.
         if ( !isWeaponInfantry &&
@@ -3698,18 +4223,79 @@ implements Runnable {
 
         // Battle Armor MGs do one die of damage per hit to PBI.
         if ( wtype.getAmmoType() == AmmoType.T_BA_MG &&
-             (target instanceof Infantry) && !(target instanceof BattleArmor) ) {
+             (target instanceof Infantry) &&
+             !(target instanceof BattleArmor) ) {
+
+            // ASSUMPTION: Building walls protect infantry from BA MGs.
+            if ( bldgAbsorbs > 0 ) {
+                int toBldg = nDamPerHit * hits;
+                phaseReport.append( hits )
+                    .append( sSalvoType )
+                    .append( "hit,\n        but " )
+                    .append( damageBuilding( bldg,
+                               Math.min( toBldg, bldgAbsorbs ),
+                               " absorbs the shots, taking " ) )
+                    .append( "\n" );
+                return;
+            }
             nDamPerHit = Compute.d6(hits);
             phaseReport.append( "riddles the target with " ).append( 
                 nDamPerHit ).append( sSalvoType ).append( "and " );
             hits = 1;
-            bSalvo = false;
+        }
+
+        // Mech and Vehicle MGs do *DICE* of damage to PBI.
+        else if (atype != null && atype.hasFlag(AmmoType.F_MG) &&
+                  !isWeaponInfantry && (target instanceof Infantry) &&
+                  !(target instanceof BattleArmor) ) {
+
+            int dice = wtype.getDamage();
+
+            // A building may absorb the entire shot.
+            if ( nDamPerHit <= bldgAbsorbs ) {
+                int toBldg = nDamPerHit * hits;
+                int curCF = bldg.getCurrentCF();
+                curCF = Math.min( curCF, toBldg );
+                bldg.setCurrentCF( curCF );
+                if ( bSalvo ) {
+                    phaseReport.append( hits )
+                        .append( sSalvoType )
+                        .append( "hit,\n" );
+                } else{
+                    phaseReport.append( "hits,\n" );
+                }
+                phaseReport.append( "        but " )
+                    .append( damageBuilding( bldg,
+                               Math.min( toBldg, bldgAbsorbs ),
+                               " absorbs the shots, taking " ) )
+                    .append( "\n" );
+                return;
+            }
+
+            // If a building absorbs partial damage, reduce the dice of damage.
+            else if ( bldgAbsorbs > 0 ) {
+                dice -= bldgAbsorbs;
+            }
+
+            nDamPerHit = Compute.d6( dice );
+            phaseReport.append( "riddles the target with " ).append( 
+                nDamPerHit ).append( sSalvoType ).append( ".\n" );
+            bSalvo = true;
+
+            // If a building absorbed partial damage, report it now
+            // instead of later and then clear the variable.
+            if ( bldgAbsorbs > 0 ) {
+                phaseReport.append( "        " )
+                    .append( damageBuilding( bldg, bldgAbsorbs ) );
+                bldgAbsorbs = 0;
+            }
+
         }
 
         // Report the number of hits.  Infernos have their own reporting
-        if (bSalvo && !bInferno) {
+        else if (bSalvo && !bInferno) {
             phaseReport.append( hits ).append( sSalvoType ).append( "hit" )
-                .append( toHit.getTableDesc() ).append( "." );
+                .append( toHit.getTableDesc() );
             if (bECMAffected) {
                 phaseReport.append(" (ECM prevents bonus)");
             }
@@ -3761,19 +4347,8 @@ implements Runnable {
                     hits -= wr.amsShotDown;
                 }
 
-                // TODO: remove this block and make infantry invalid
-                //       targets for Infernos in Compute#toHitWeapon()
-                // Infernos cannot attack infantry directly so instead
-                // they attack hits the hex and sets it on fire.
-                if (target instanceof Infantry) {
-                    if ( !bSalvo ) {
-                        phaseReport.append("hits!\n");
-                    }
-                    tryIgniteHex(target.getPosition(), true, 0);
-                    return;
-                }
-
                 // targeting a hex for ignition
+                // TODO: add TYPE_BLDG_IGNITE
                 if(target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
                     phaseReport.append( "hits with " )
                         .append( hits )
@@ -3799,22 +4374,31 @@ implements Runnable {
                     Coords c = target.getPosition();
                     Hex h = game.getBoard().getHex(c);
 
-                    phaseReport.append(" Fire started in hex!\n");
-                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    // Unless there a fire in the hex already, start one.
+                    if ( !h.contains( Terrain.FIRE ) ) {
+                        phaseReport.append( " Fire started in hex " )
+                            .append( c.getBoardNum() )
+                            .append( ".\n" );
+                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    }
                     game.board.addInfernoTo
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
                     sendChangedHex(c);
 
                     return;
                 }
+
             } // End is-inferno
 
             // targeting a hex for igniting
+            // TODO: add TYPE_BLDG_IGNITE
             if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
                 if ( !bSalvo ) {
-                    phaseReport.append("hits!\n");
+                    phaseReport.append("hits!");
                 }
-                if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
+                // We handle Inferno rounds above.
+                if (wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
+                    phaseReport.append( "\n" );
                     tryIgniteHex(target.getPosition(), bInferno, wtype.getFireTN());
                 }
                 return;
@@ -3825,25 +4409,46 @@ implements Runnable {
 
                 nDamage = nDamPerHit * hits;
                 if ( !bSalvo ) {
-                    phaseReport.append("hits!\n");
+                    phaseReport.append("hits!");
                 }
                 if (ae instanceof Infantry) {
-                    phaseReport.append("    But infantry cannot try to clear hexes!\n");
+                    phaseReport.append("\n    But infantry cannot try to clear hexes!\n");
                     return;
                 }
 
 
                 phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
                 
-                // any clear attempt can result in accidental ignition
-                // even weapons that can't normally start fires.  that's weird. . 
-                if (tryIgniteHex(target.getPosition(), bInferno, 9)) {
+                // Any clear attempt can result in accidental ignition, even
+                // weapons that can't normally start fires.  that's weird.
+                // Buildings can't be accidentally ignited.
+                if ( bldg != null &&
+                     tryIgniteHex(target.getPosition(), bInferno, 9) ) {
                     return;
                 }
                 
                 int tn = 14 - nDamage;
                 tryClearHex(target.getPosition(), tn);
                 
+                return;
+            }
+
+            // Targeting a building.
+            if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+
+                // The building takes the full brunt of the attack.
+                nDamage = nDamPerHit * hits;
+                if ( !bSalvo ) {
+                    phaseReport.append( "hits." );
+                }
+                phaseReport.append( "\n        " )
+                    .append( damageBuilding( bldg, nDamage ) )
+                    .append( "\n" );
+
+                // Damage any infantry in the hex.
+                this.damageInfantryIn( bldg, nDamage );
+
+                // And we're done!
                 return;
             }
 
@@ -3861,10 +4466,20 @@ implements Runnable {
                         if ( !bSalvo ) {
                             phaseReport.append( "hits." );
                         }
-                        phaseReport.append( "  However, " )
+                        phaseReport.append( "\n        However, " )
                             .append(target.getDisplayName() )
                             .append( " has fire protection gear so no damage is done.\n" );
-                        return;
+
+                        // A building may be damaged, even if the squad is not.
+                        if ( bldgAbsorbs > 0 ) {
+                            int toBldg = nDamPerHit * Math.min( bldgAbsorbs,
+                                                                hits );
+                            phaseReport.append( "        " )
+                                .append( damageBuilding( bldg, toBldg ) )
+                                .append( "\n" );
+                        }
+
+                     return;
                     }
                 }
             } // End target-may-be-immune
@@ -3925,6 +4540,7 @@ implements Runnable {
 
                     // Replace "no effect" results with 4 points of damage.
                     if ( specialDamage.endsWith(" no effect.") ) {
+                        // ASSUMPTION: buildings CAN'T absorb *this* damage.
                         specialDamage = damageEntity(entityTarget, hit, 4);
                     }
                     else {
@@ -3937,7 +4553,24 @@ implements Runnable {
                 else {
                     // Resolve damage normally.
                     nDamage = nDamPerHit * Math.min(nCluster, hits);
-                    phaseReport.append(damageEntity(entityTarget, hit, nDamage));
+
+                    // A building may be damaged, even if the squad is not.
+                    if ( bldgAbsorbs > 0 ) {
+                        int toBldg = Math.min( bldgAbsorbs, nDamage );
+                        nDamage -= toBldg;
+                        phaseReport.append( "\n        " )
+                            .append( damageBuilding( bldg, toBldg ) );
+                    }
+
+                    // A building may absorb the entire shot.
+                    if ( nDamage == 0 ) {
+                        phaseReport.append( "\n        " )
+                            .append( entityTarget.getDisplayName() )
+                            .append( " suffers no damage." );
+                    } else {
+                        phaseReport.append
+                            ( damageEntity(entityTarget, hit, nDamage) );
+                    }
                 }
                 hits -= nCluster;
             }
@@ -4140,15 +4773,23 @@ implements Runnable {
      */
     private void resolvePunchAttack(PunchAttackAction paa, int lastEntityId) {
         final Entity ae = game.getEntity(paa.getEntityId());
-        final Entity te = game.getEntity(paa.getTargetId());
+        final Targetable target = game.getTarget(paa.getTargetType(), paa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
         final String armName = paa.getArm() == PunchAttackAction.LEFT
         ? "Left Arm" : "Right Arm";
-        
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
+
         if (lastEntityId != paa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    Punch (" +armName ).append( ") at " ).append( te.getDisplayName());
+        phaseReport.append("    Punch (" +armName ).append( ") at " ).append( target.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -4157,26 +4798,77 @@ implements Runnable {
 //        }
         // compute to-hit
         ToHitData toHit = Compute.toHitPunch(game, paa);
+        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the punch is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the punch is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
-        
-        // roll
-        int roll = Compute.d6(2);
-        phaseReport.append("rolls " ).append( roll ).append( " : ");
+
+        int damage = Compute.getPunchDamageFor(ae, paa.getArm());
         
         // do we hit?
         if (roll < toHit.getValue()) {
             phaseReport.append("misses.\n");
+
+            // If the target is in a building, the building absorbs the damage.
+            if ( targetInBuilding && bldg != null ) {
+
+                // Only report if damage was done to the building.
+                if ( damage > 0 ) {
+                    phaseReport.append( "  " )
+                        .append( damageBuilding( bldg, damage ) )
+                        .append( "\n" );
+                }
+
+            }
             return;
         }
-        int damage = Compute.getPunchDamageFor(ae, paa.getArm());
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
         
+            // The building takes the full brunt of the attack.
+            phaseReport.append( "hits.\n  " )
+                .append( damageBuilding( bldg, damage ) )
+                .append( "\n" );
+        
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+
+            // And we're done!
+            return;
+        }
+
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
         phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
-        phaseReport.append(damageEntity(te, hit, damage));
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        if ( targetInBuilding && bldg != null ) {
+            int bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+            int toBldg = Math.min( bldgAbsorbs, damage );
+            damage -= toBldg;
+            phaseReport.append( "\n  " )
+                .append( damageBuilding( bldg, toBldg ) );
+        }
+        
+        // A building may absorb the entire shot.
+        if ( damage == 0 ) {
+            phaseReport.append( "\n  " )
+                .append( te.getDisplayName() )
+                .append( " suffers no damage." );
+        } else {
+            phaseReport.append( damageEntity(te, hit, damage) );
+        }
+
         
         phaseReport.append("\n");
     }
@@ -4186,16 +4878,24 @@ implements Runnable {
      */
     private void resolveKickAttack(KickAttackAction kaa, int lastEntityId) {
         final Entity ae = game.getEntity(kaa.getEntityId());
-        final Entity te = game.getEntity(kaa.getTargetId());
+        final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
         final String legName = kaa.getLeg() == KickAttackAction.LEFT
         ? "Left Leg"
         : "Right Leg";
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
         
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    Kick (" ).append( legName ).append( ") at " ).append( te.getDisplayName());
+        phaseReport.append("    Kick (" ).append( legName ).append( ") at " ).append( target.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -4204,31 +4904,80 @@ implements Runnable {
 //        }
         // compute to-hit
         ToHitData toHit = Compute.toHitKick(game, kaa);
+        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the kick is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the kick is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         
-        // roll
-        int roll = Compute.d6(2);
-        phaseReport.append("rolls " ).append( roll ).append( " : ");
+        int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
         
         // do we hit?
         if (roll < toHit.getValue()) {
             // miss
             phaseReport.append("misses.\n");
             game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+
+            // If the target is in a building, the building absorbs the damage.
+            if ( targetInBuilding && bldg != null ) {
+
+                // Only report if damage was done to the building.
+                if ( damage > 0 ) {
+                    phaseReport.append( "  " )
+                        .append( damageBuilding( bldg, damage ) )
+                        .append( "\n" );
+                }
+
+            }
             return;
         }
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
         
-        int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
+            // The building takes the full brunt of the attack.
+            phaseReport.append( "hits.\n  " )
+                .append( damageBuilding( bldg, damage ) )
+                .append( "\n" );
         
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+        
+            // And we're done!
+            return;
+        }
+
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
         phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
-        phaseReport.append(damageEntity(te, hit, damage));
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        if ( targetInBuilding && bldg != null ) {
+            int bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+            int toBldg = Math.min( bldgAbsorbs, damage );
+            damage -= toBldg;
+            phaseReport.append( "\n  " )
+                .append( damageBuilding( bldg, toBldg ) );
+        }
         
+        // A building may absorb the entire shot.
+        if ( damage == 0 ) {
+            phaseReport.append( "\n  " )
+                .append( te.getDisplayName() )
+                .append( " suffers no damage." );
+        } else {
+            phaseReport.append( damageEntity(te, hit, damage) );
+        }
+
         if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
             game.addPSR(new PilotingRollData(te.getId(), 0, "was kicked"));
         }
@@ -4242,6 +4991,7 @@ implements Runnable {
     private void resolveBrushOffAttack( BrushOffAttackAction baa,
                                         int lastEntityId ) {
         final Entity ae = game.getEntity(baa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "brush off".
         final Entity te = game.getEntity(baa.getTargetId());
         final String armName = baa.getArm() == BrushOffAttackAction.LEFT
             ? "Left Arm" : "Right Arm";
@@ -4271,6 +5021,7 @@ implements Runnable {
         int roll = Compute.d6(2);
         phaseReport.append("rolls ").append(roll).append(" : ");
 
+        // ASSUMPTION: buildings can't absorb *this* damage.
         int damage = Compute.getBrushOffDamageFor(ae, baa.getArm());
 
         // do we hit?
@@ -4313,6 +5064,7 @@ implements Runnable {
     private void resolveThrashAttack( ThrashAttackAction baa,
                                         int lastEntityId ) {
         final Entity ae = game.getEntity(baa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "thrash".
         final Entity te = game.getEntity(baa.getTargetId());
 
         if (lastEntityId != baa.getEntityId()) {
@@ -4398,7 +5150,15 @@ implements Runnable {
      */
     private void resolveClubAttack(ClubAttackAction caa, int lastEntityId) {
         final Entity ae = game.getEntity(caa.getEntityId());
-        final Entity te = game.getEntity(caa.getTargetId());
+        final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
         
         // restore club attack
         caa.getClub().restore();
@@ -4407,7 +5167,7 @@ implements Runnable {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    " ).append( caa.getClub().getName() ).append( " attack on " ).append( te.getDisplayName());
+        phaseReport.append("    " ).append( caa.getClub().getName() ).append( " attack on " ).append( target.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -4416,26 +5176,76 @@ implements Runnable {
 //        }
         // compute to-hit
         ToHitData toHit = Compute.toHitClub(game, caa);
+        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the club attack is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
-        
-        // roll
-        int roll = Compute.d6(2);
-        phaseReport.append("rolls " ).append( roll ).append( " : ");
+
+        int damage = Compute.getClubDamageFor(ae, caa.getClub());
         
         // do we hit?
         if (roll < toHit.getValue()) {
             phaseReport.append("misses.\n");
+
+            // If the target is in a building, the building absorbs the damage.
+            if ( targetInBuilding && bldg != null ) {
+
+                // Only report if damage was done to the building.
+                if ( damage > 0 ) {
+                    phaseReport.append( "  " )
+                        .append( damageBuilding( bldg, damage ) )
+                        .append( "\n" );
+                }
+
+            }
             return;
         }
-        int damage = Compute.getClubDamageFor(ae, caa.getClub());
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
         
+            // The building takes the full brunt of the attack.
+            phaseReport.append( "hits.\n  " )
+                .append( damageBuilding( bldg, damage ) )
+                .append( "\n" );
+        
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+        
+            // And we're done!
+            return;
+        }
+
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
         phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
-        phaseReport.append(damageEntity(te, hit, damage));
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        if ( targetInBuilding && bldg != null ) {
+            int bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+            int toBldg = Math.min( bldgAbsorbs, damage );
+            damage -= toBldg;
+            phaseReport.append( "\n  " )
+                .append( damageBuilding( bldg, toBldg ) );
+        }
+        
+        // A building may absorb the entire shot.
+        if ( damage == 0 ) {
+            phaseReport.append( "\n  " )
+                .append( te.getDisplayName() )
+                .append( " suffers no damage." );
+        } else {
+            phaseReport.append( damageEntity(te, hit, damage) );
+        }
         
         phaseReport.append("\n");
         
@@ -4450,6 +5260,7 @@ implements Runnable {
      */
     private void resolvePushAttack(PushAttackAction paa, int lastEntityId) {
         final Entity ae = game.getEntity(paa.getEntityId());
+        // PLEASE NOTE: buildings are *never* the target of a "push".
         final Entity te = game.getEntity(paa.getTargetId());
         
         if (lastEntityId != paa.getEntityId()) {
@@ -4521,7 +5332,15 @@ implements Runnable {
      */
     private void resolveChargeAttack(ChargeAttackAction caa, int lastEntityId) {
         final Entity ae = game.getEntity(caa.getEntityId());
-        final Entity te = game.getEntity(caa.getTargetId());
+        final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
         
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
@@ -4538,7 +5357,9 @@ implements Runnable {
         }
         
         // should we even bother?
-        if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY &&
+             ( te == null || te.isDestroyed() ||
+               te.isDoomed() || te.crew.isDead() ) ) {
             phaseReport.append("    Charge cancelled as the target has been destroyed.\n");
             return;
         }
@@ -4555,10 +5376,10 @@ implements Runnable {
             return;
         }
         
-        phaseReport.append("    Charging " ).append( te.getDisplayName());
+        phaseReport.append("    Charging " ).append( target.getDisplayName());
         
         // target still in the same position?
-        if (!te.getPosition().equals(caa.getTargetPos())) {
+        if (!target.getPosition().equals(caa.getTargetPos())) {
             phaseReport.append(" but the target has moved.\n");
             return;
         }
@@ -4571,6 +5392,9 @@ implements Runnable {
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
             phaseReport.append(", but the charge is impossible (" ).append( toHit.getDesc() ).append( ") : ");
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the charge is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
         } else {
             // roll
             roll = Compute.d6(2);
@@ -4582,9 +5406,36 @@ implements Runnable {
         if (roll < toHit.getValue()) {
             Coords src = ae.getPosition();
             Coords dest = Compute.getMissedChargeDisplacement(game, ae.getId(), src, direction);
+
+            // TODO: handle movement into/out of/through a building.  Do it here?
+
             phaseReport.append("misses.\n");
             // move attacker to side hex
             doEntityDisplacement(ae, src, dest, null);
+        }
+
+        // Targeting a building.
+        else if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+        
+            // The building takes the full brunt of the attack.
+            int damage = Compute.getChargeDamageFor(ae);
+            phaseReport.append( "hits.\n  " )
+                .append( damageBuilding( bldg, damage ) );
+        
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+
+            // Apply damage to the attacker.
+            int toAttacker = Compute.getChargeDamageTakenBy( ae, bldg );
+            HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
+                                              Compute.targetSideTable(target.getPosition(), ae.getPosition(), ae.getFacing(), false)
+                                                  );
+            phaseReport.append( this.damageEntity( ae, hit, toAttacker ) )
+                .append( "\n" );
+            entityUpdate( ae.getId() );
+
+            // TODO: Does the attacker enter the building?
+            // TODO: What if the building collapses?
         }
 	else {
 	    // Resolve the damage.
@@ -4603,6 +5454,19 @@ implements Runnable {
         int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
 	PilotingRollData chargePSR = null;
 
+        // Is the target inside a building?
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( te.getPosition() );
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        int bldgAbsorbs = 0;
+        if ( targetInBuilding && bldg != null ) {
+            bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+        }
+
 	// If we're upright, we may fall down.
 	if ( !ae.isProne() ) {
 	    chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
@@ -4612,9 +5476,23 @@ implements Runnable {
         phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append(damageEntity(te, hit, cluster));
             damage -= cluster;
+            if ( bldgAbsorbs > 0 ) {
+                int toBldg = Math.min( bldgAbsorbs, cluster );
+                cluster -= toBldg;
+                phaseReport.append( "\n  " )
+                    .append( damageBuilding( bldg, toBldg ) );
+            }
+        
+            // A building may absorb the entire shot.
+            if ( cluster == 0 ) {
+                phaseReport.append( "\n  " )
+                    .append( te.getDisplayName() )
+                .append( " suffers no damage." );
+            } else {
+                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                phaseReport.append(damageEntity(te, hit, cluster));
+            }
         }
         phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
@@ -4655,8 +5533,15 @@ implements Runnable {
      */
     private void resolveDfaAttack(DfaAttackAction daa, int lastEntityId) {
         final Entity ae = game.getEntity(daa.getEntityId());
-        final Entity te = game.getEntity(daa.getTargetId());
-        
+        final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
+
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
             return;
@@ -4672,7 +5557,9 @@ implements Runnable {
         ae.setDisplacementAttack(null);
         
         // should we even bother?
-        if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY &&
+             ( te == null || te.isDestroyed() ||
+               te.isDoomed() || te.crew.isDead() ) ) {
             phaseReport.append("    Death from above deals no damage as the target has been destroyed.\n");
             if (ae.isProne()) {
                 // attacker prone during weapons phase
@@ -4684,10 +5571,10 @@ implements Runnable {
             return;
         }
         
-        phaseReport.append("    Attempting death from above on " ).append( te.getDisplayName());
+        phaseReport.append("    Attempting death from above on " ).append( target.getDisplayName());
         
         // target still in the same position?
-        if (!te.getPosition().equals(daa.getTargetPos())) {
+        if ( !target.getPosition().equals(daa.getTargetPos()) ) {
             phaseReport.append(" but the target has moved.\n");
             return;
         }
@@ -4703,6 +5590,9 @@ implements Runnable {
         } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
             phaseReport.append(" but the attack is impossible (" ).append( toHit.getDesc() ).append( ") : ");
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the DFA is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
         } else {
             // roll
             roll = Compute.d6(2);
@@ -4730,18 +5620,37 @@ implements Runnable {
         }
         
         // we hit...
+        // Can't DFA a target inside of a building.
         int damage = Compute.getDfaDamageFor(ae);
         int damageTaken = Compute.getDfaDamageTakenBy(ae);
         
         phaseReport.append("hits.");
         
-        phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
-        while (damage > 0) {
-            int cluster = Math.min(5, damage);
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append(damageEntity(te, hit, cluster));
-            damage -= cluster;
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+        
+            // The building takes the full brunt of the attack.
+            phaseReport.append( "\n  " )
+                .append( damageBuilding( bldg, damage ) )
+                .append( "\n" );
+        
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+
         }
+
+        // Target isn't building.
+        else {
+            phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                phaseReport.append(damageEntity(te, hit, cluster));
+                damage -= cluster;
+            }
+        }
+
         phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
@@ -4750,8 +5659,14 @@ implements Runnable {
             damageTaken -= cluster;
         }
         phaseReport.append("\n");
-        
-        // defender pushed away or destroyed
+
+        // That's it for target buildings.
+        // TODO: where do I put the attacker?!?
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return;
+        }
+
+        // Target entities are pushed away or destroyed.
         Coords src = ae.getPosition();
         Coords dest = te.getPosition();
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
@@ -5788,9 +6703,10 @@ implements Runnable {
 
                     }
                     // Can we unload the unit to the current hex?
+                    // TODO : unloading into stacking violation is not
+                    //        explicitly prohibited in the BMRr.
                     else if (null != Compute.stackingViolation(game, other.getId(), curPos)
                              || other.isHexProhibited(entityHex) ) {
-                        // TODO : this isn't covered in the rules
                         // Nope.
                         game.moveToGraveyard( other.getId() );
                         send( createRemoveEntityPacket(other.getId(),
@@ -5979,7 +6895,7 @@ implements Runnable {
         }
 
         // calculate damage
-        int damage = (int)Math.round(entity.getWeight() / 10) * (height + 1);
+        int damage = (int)Math.round(entity.getWeight() / 10.0) * (height + 1);
         
         // TODO: only fall to surface of water
         if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
@@ -6200,11 +7116,18 @@ implements Runnable {
      * course, also checks to see that fire is possible in the specified hex.
      */
     public boolean burn(Hex hex, int roll, boolean bAnyTerrain) {
+
+        // The hex may already be on fire.
+        if ( hex.contains( Terrain.FIRE ) ) {
+            return true;
+        }
+
         if (!game.getOptions().booleanOption("fire") || null == hex 
                 || hex.contains(Terrain.FIRE)) {
             return false;
         }
-        
+
+        // TODO: allow buildings to burn
         if (!bAnyTerrain && !(hex.contains(Terrain.WOODS))) {
             return false;
         }
@@ -7046,6 +7969,592 @@ implements Runnable {
             result.append("  Luckily, there is no inferno ammo to explode.\n");
         }
         return result.toString();
+    }
+
+    /**
+     * Determine the results of an entity moving through a wall of a building
+     * after having moved a certain distance.  This gets called when a Mech
+     * or a Tank enters a building, leaves a building, or travels from one
+     * hex to another inside a multi-hex building.
+     *
+     * @param   entity - the <code>Entity</code> that passed through a wall.
+     *          Don't pass <code>Infantry</code> units to this method.
+     * @param   bldg - the <code>Building</code> the entity is passing through.
+     * @param   lastPos - the <code>Coords</code> of the hex the entity is 
+     *          exiting.
+     * @param   curPos - the <code>Coords</code> of the hex the entity is
+     *          entering
+     * @param   distance - the <code>int</code> number of hexes the entity
+     *          has moved already this phase.
+     * @param   why - the <code>String</code> explanatin for this action.
+     * @return  <code>true</code> if the building collapses due to overloading.
+     */
+    private boolean passBuildingWall( Entity entity,
+                                      Building bldg,
+                                      Coords lastPos,
+                                      Coords curPos,
+                                      int distance,
+                                      String why ) {
+
+        // Need to roll based on building type.
+        PilotingRollData psr = null;
+        switch ( bldg.getType() ) {
+        case Building.LIGHT:
+            psr = new PilotingRollData
+                ( entity.getId(), 0, why + " Light " + bldg.getName() );
+            break;
+        case Building.MEDIUM:
+            psr = new PilotingRollData
+                ( entity.getId(), 1, why + " Medium " + bldg.getName() );
+            break;
+        case Building.HEAVY:
+            psr = new PilotingRollData
+                ( entity.getId(), 2, why + " Heavy " + bldg.getName() );
+            break;
+        case Building.HARDENED:
+            psr = new PilotingRollData
+                ( entity.getId(), 5, why + " Hardened " + bldg.getName() );
+            break;
+        }
+
+        // Modify the roll by the distance moved so far.      
+        if (distance >= 3 && distance <= 4) {
+            psr.addModifier(1, "moved 3-4 hexes");
+        } else if (distance >= 5 && distance <= 6) {
+            psr.addModifier(2, "moved 5-6 hexes");
+        } else if (distance >= 7 && distance <= 9) {
+            psr.addModifier(3, "moved 7-9 hexes");
+        } else if (distance >= 10) {
+            psr.addModifier(4, "moved 10+ hexes");
+        }
+
+        // Did the entity make the roll?
+        if ( !doSkillCheckWhileMoving( entity, lastPos,
+                                       curPos, psr, false ) ) {
+
+            // Divide the building's current CF by 10, round up.
+            int damage = (int) Math.ceil( bldg.getCurrentCF() / 10.0 );
+
+            // It is possible that the unit takes no damage.
+            if ( damage == 0 ) {
+                phaseReport.append( "        " )
+                    .append( entity.getDisplayName() )
+                    .append( " takes no damage.\n" );
+            } else {
+                // BMRr, pg. 50: The attack direction for this damage is the front.
+                HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL, 
+                                                      ToHitData.SIDE_FRONT );
+                phaseReport.append( damageEntity(entity, hit, damage) )
+                    .append( "\n" );
+            }
+        }
+
+        // Damage the building.  The CF can never drop below 0.
+        int toBldg = (int) Math.ceil( entity.getWeight() / 10.0 );
+        int curCF = bldg.getCurrentCF();
+        curCF -= Math.min( curCF, toBldg );
+        bldg.setCurrentCF( curCF );
+
+        // Apply the correct amount of damage to infantry in the building.
+        // ASSUMPTION: We inflict toBldg damage to infantry and
+        //             not the amount to bring building to 0 CF.
+        this.damageInfantryIn( bldg, toBldg );
+
+        // Get the position map of all entities in the game.
+        Hashtable positionMap = game.getPositionMap();
+
+        // Count the moving entity in its current position, not
+        // its pre-move postition.  Be sure to handle nulls.
+        Vector entities = null;
+        if ( entity.getPosition() != null ) {
+            entities = (Vector) positionMap.get( entity.getPosition() );
+            entities.remove( entity );
+        }
+        entities = (Vector) positionMap.get( curPos );
+        if ( entities == null ) {
+            entities = new Vector();
+            positionMap.put( curPos, entities );
+        }
+        entities.addElement( entity );
+
+        // Check for collapse of this building due to overloading, and return.
+        return this.checkForCollapse( bldg, positionMap );
+    }
+
+    /**
+     * Apply the correct amount of damage that passes on to any infantry unit
+     * in the given building, based upon the amount of damage the building
+     * just sustained.  This amount is a percentage dictated by pg. 52 of BMRr.
+     *
+     * @param   bldg - the <code>Building</code> that sustained the damage.
+     * @param   damage - the <code>int</code> amount of damage.
+     */
+    private void damageInfantryIn( Building bldg, int damage ) {
+
+        // Calculate the amount of damage the infantry will sustain.
+        float percent = 0.0f;
+        switch( bldg.getType() ) {
+        case Building.LIGHT: percent = 0.75f; break;
+        case Building.MEDIUM: percent = 0.5f; break;
+        case Building.HEAVY: percent = 0.25f; break;
+        }
+
+        // Round up at .5 points of damage.
+        int toInf = Math.round( damage * percent );
+
+        // Exit if the infantry receive no points of damage.
+        if ( toInf == 0 ) {
+            phaseReport.append( "    Infantry receive no damage.\n" );
+            return;
+        }
+
+        // Record if we find any infantry.
+        boolean foundInfantry = false;
+
+        // Walk through the entities in the game.
+        Enumeration entities = game.getEntities();
+        while ( entities.hasMoreElements() ) {
+            Entity entity = (Entity) entities.nextElement();
+            final Coords coords = entity.getPosition();
+
+            // If the entity is infantry in one of the building's hexes?
+            if ( entity instanceof Infantry &&
+                 bldg.isIn( coords ) ) {
+
+                // Is the entity is inside of the building
+                // (instead of just on top of it)?
+                if ( Compute.isInBuilding( game, entity, coords ) ) {
+
+                    // Yup.  Damage the entity.
+                    // Battle Armor units use 5 point clusters.
+                    phaseReport.append( "      " )
+                        .append( entity.getDisplayName() )
+                        .append( " takes " )
+                        .append( toInf )
+                        .append( " damage." );
+                    int remaining = toInf;
+                    int cluster = toInf;
+                    if ( entity instanceof BattleArmor ) {
+                        cluster = 5;
+                    }
+                    while ( remaining > 0 ) {
+                        int next = Math.min( cluster, remaining );
+                        HitData hit = entity.rollHitLocation
+                            ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+                        phaseReport.append( damageEntity(entity, hit, next) );
+                        remaining -= next;
+                    }
+                    phaseReport.append( "\n" );
+
+                } // End infantry-inside-building
+
+            } // End entity-is-infantry-in-building-hex
+
+        } // Handle the next entity
+
+        // If we found any infantry, add a line to the phase report.
+        if ( foundInfantry ) {
+            phaseReport.append( "\n" );
+        }
+
+    } // End private void damageInfantryIn( Building, int )
+
+    /**
+     * Determine if the given building should collapse.  If so, 
+     * inflict the appropriate amount of damage on each entity in
+     * the building and update the clients.  If the building does
+     * not collapse, determine if any entities crash through its
+     * floor into its basement.  Again, apply appropriate damage.
+     *
+     * @param   bldg - the <code>Building</code> being checked.
+     *          This value should not be <code>null</code>.
+     * @param   positionMap - a <code>Hashtable</code> that maps
+     *          the <code>Coords</code> positions or each unit
+     *          in the game to a <code>Vector</code> of
+     *          <code>Entity</code>s at that position.
+     *          This value should not be <code>null</code>.
+     * @return  <code>true</code> if the building collapsed.
+     */
+    private boolean checkForCollapse( Building bldg, Hashtable positionMap ) {
+
+        // If the input is meaningless, do nothing and throw no exception.
+        if ( bldg == null ||
+             positionMap == null || positionMap.isEmpty() ) {
+            return false;
+        }
+
+        // Get the building's current CF.
+        final int currentCF = bldg.getCurrentCF();
+
+        // Track all units that fall into the building's basement by Coords.
+        Hashtable basementMap = new Hashtable();
+
+        // Walk through the hexes in the building, looking for a collapse.
+        Enumeration bldgCoords = bldg.getCoords();
+        boolean collapse = false;
+        while ( !collapse && bldgCoords.hasMoreElements() ) {
+            final Coords coords = (Coords) bldgCoords.nextElement();
+
+            // Get the Vector of Entities at these coordinates.
+            final Vector vector = (Vector) positionMap.get( coords );
+
+            // Are there any Entities at these coords?
+            if ( vector != null ) {
+
+                // How many levels does this building have in this hex?
+                final Hex curHex = game.board.getHex( coords );
+                final int hexElev = curHex.surface();
+                final int numFloors = curHex.levelOf( Terrain.BLDG_ELEV );
+
+                // Track the load of each floor (and of the roof) separately.
+                // Track all units that fall into the basement in this hex.
+                // N.B. don't track the ground floor, the first floor is at
+                // index 0, the second is at index 1, etc., and the roof is
+                // at index (numFloors-1).
+                int[] loads = new int[numFloors];
+                Vector basement = new Vector();
+                for ( int loop = 0; loop < numFloors; loop++ ) {
+                    loads[loop] = 0;
+                }
+
+                // Walk through the entities in this position.
+                Enumeration entities = vector.elements();
+                while ( !collapse && entities.hasMoreElements() ) {
+                    final Entity entity = (Entity) entities.nextElement();
+                    final int entityElev = entity.elevationOccupied( curHex ); 
+
+                    // Ignore entities not *inside* the building
+                    if ( !Compute.isInBuilding( game, entity, coords ) ) {
+                        continue;
+                    }
+
+                    // Add the weight of a Mek or tank to the correct floor.
+                    if ( entity instanceof Mech || entity instanceof Tank ) {
+                        int load = (int) entity.getWeight();
+                        int floor = entityElev - hexElev;
+
+                        // Entities on the ground floor may fall into the
+                        // basement, but they won't collapse the building.
+                        if ( floor == 0 && load > currentCF ) {
+                            basement.addElement( entity );
+                        } else if ( floor > 0 ) {
+
+                            // If the load on any floor but the ground floor
+                            // exceeds the building's current CF it collapses.
+                            floor--;
+                            loads[ floor ] += load;
+                            if ( loads[ floor ] > currentCF ) {
+                                collapse = true;
+                            }
+
+                        } // End not-ground-floor
+
+                    } // End increase-load
+
+                } // Handle the next entity.
+
+                // Track all entities that fell into the basement.
+                if ( !basement.isEmpty() ) {
+                    basementMap.put( coords, basement );
+                }
+
+            } // End have-entities-here
+
+        } // Check the next hex of the building.
+
+        // Collapse the building if the flag is set.
+        if ( collapse ) {
+            phaseReport.append( bldg.getName() )
+                .append( " collapses due to heavy loads!\n" );
+            this.collapseBuilding( bldg, positionMap );
+        }
+
+        // Otherwise, did any entities fall into the basement?
+        else if ( !basementMap.isEmpty() ) {
+            // TODO: implement basements
+        }
+
+        // Return true if the building collapsed.
+        return collapse;
+
+    } // End private boolean checkForCollapse( Building, Hashtable )
+
+    /**
+     * Collapse the building.  Inflict the appropriate amount of damage
+     * on all entities in the building.  Update all clients.
+     *
+     * @param   bldg - the <code>Building</code> that has collapsed.
+     * @param   positionMap - a <code>Hashtable</code> that maps
+     *          the <code>Coords</code> positions or each unit
+     *          in the game to a <code>Vector</code> of
+     *          <code>Entity</code>s at that position.
+     *          This value should not be <code>null</code>.
+     */
+    private void collapseBuilding( Building bldg, Hashtable positionMap ) {
+
+        // Loop through the hexes in the building, and apply
+        // damage to all entities inside or on top of the building.
+        final int phaseCF = bldg.getPhaseCF();
+        Enumeration bldgCoords = bldg.getCoords();
+        while ( bldgCoords.hasMoreElements() ) {
+            final Coords coords = (Coords) bldgCoords.nextElement();
+
+            // Get the Vector of Entities at these coordinates.
+            final Vector vector = (Vector) positionMap.get( coords );
+
+            // Are there any Entities at these coords?
+            if ( vector != null ) {
+
+                // How many levels does this building have in this hex?
+                final Hex curHex = game.board.getHex( coords );
+                final int hexElev = curHex.surface();
+                final int numFloors = curHex.levelOf( Terrain.BLDG_ELEV );
+
+                // Walk through the entities in this position.
+                Enumeration entities = vector.elements();
+                while ( entities.hasMoreElements() ) {
+                    final Entity entity = (Entity) entities.nextElement();
+                    final int entityElev = entity.elevationOccupied( curHex );
+                    int floor = entityElev - hexElev;
+
+                    // Ignore units not *inside* the building.
+                    if ( !Compute.isInBuilding( game, entity, coords ) ) {
+                        continue;
+                    }
+
+                    // Treat units on the roof like
+                    // they were in the top floor.
+                    if ( floor == numFloors ) {
+                        floor--;
+                    }
+
+                    // Calculate collapse damage for this entity.
+                    int damage = (int) Math.ceil
+                        ( phaseCF * (numFloors-floor) / 10.0 );
+
+                    // Infantry suffer triple damage.
+                    if ( entity instanceof Infantry ) {
+                        damage *= 3;
+                    }
+
+                    // Apply collapse damage the entity.
+                    // ASSUMPTION: use 5 point clusters.
+                    phaseReport.append( "   " )
+                        .append( entity.getDisplayName() )
+                        .append( " is hit by falling debris for " )
+                        .append( damage )
+                        .append( " damage." );
+                    int remaining = damage;
+                    int cluster = damage;
+                    if ( entity instanceof BattleArmor ||
+                         entity instanceof Mech ||
+                         entity instanceof Tank ) {
+                        cluster = 5;
+                    }
+                    while ( remaining > 0 ) {
+                        int next = Math.max( cluster, remaining );
+                        // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
+                        // pg. 18, Randall Bills says that all damage from a
+                        // collapsing building is applied to the front.
+
+                        HitData hit = entity.rollHitLocation
+                            (ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+                        phaseReport.append
+                            ( damageEntity(entity, hit, next) );
+                        remaining -= next;
+                    }
+                    phaseReport.append( "\n" );
+                    // TODO: Why are dead entities showing up on firing phase?
+
+                    // Do we need to handle falling Meks?
+                    // BMRr, pg. 53 only mentions falling BattleMechs;
+                    // Tanks can't be above the floor and I guess that
+                    // infantry don't suffer falling damage.
+                    // TODO: implement basements, then fall into it.
+                    // ASSUMPTION: we'll let the Mech fall twice: once
+                    // during damageEntity() above and once here.
+                    floor = entityElev - hexElev;
+                    if ( floor > 0 && entity instanceof Mech ) {
+                        // ASSUMPTION: PSR to avoid pilot damage
+                        // should use mods for entity damage and
+                        // 20+ points of collapse damage (if any).
+                        PilotingRollData psr = Compute.getBasePilotingRoll
+                            ( this.game, entity.getId() );
+                        if ( damage >= 20 ) {
+                            psr.addModifier( 1, "20+ damage" );
+                        }
+                        this.doEntityFall( entity, coords, floor, psr );
+                    }
+
+                    // Update this entity.
+                    // ASSUMPTION: this is the correct thing to do.
+                    this.entityUpdate( entity.getId() );
+
+                } // Handle the next entity.
+
+            } // End have-entities-here.
+
+        } // Handle the next hex of the building.
+
+        // Update the building.
+        bldg.setCurrentCF( 0 );
+        bldg.setPhaseCF( 0 );
+        send( createCollapseBuildingPacket(bldg) );
+        game.board.collapseBuilding( bldg );
+
+    } // End private void collapseBuilding( Building )
+
+    /**
+     * Tell the clients to replace the given building with rubble hexes.
+     *
+     * @param   bldg - the <code>Building</code> that has collapsed.
+     * @return  a <code>Packet</code> for the command.
+     */
+    private Packet createCollapseBuildingPacket( Building bldg ) {
+        Vector buildings = new Vector();
+        buildings.addElement( bldg );
+        return this.createCollapseBuildingPacket( buildings );
+    }
+
+    /**
+     * Tell the clients to replace the given buildings with rubble hexes.
+     *
+     * @param   buildings - a <code>Vector</code> of <code>Building</code>s
+     *          that has collapsed.
+     * @return  a <code>Packet</code> for the command.
+     */
+    private Packet createCollapseBuildingPacket( Vector buildings ) {
+        return new Packet( Packet.COMMAND_BLDG_COLLAPSE, buildings );
+    }
+
+    /**
+     * Tell the clients to update the CFs of the given building.
+     *
+     * @param   bldg - the <code>Building</code> that has collapsed.
+     * @return  a <code>Packet</code> for the command.
+     */
+    private Packet createUpdateBuildingCFPacket( Building bldg ) {
+        Vector buildings = new Vector();
+        buildings.addElement( bldg );
+        return this.createUpdateBuildingCFPacket( buildings );
+    }
+
+    /**
+     * Tell the clients to update the CFs of the given buildings.
+     *
+     * @param   buildings - a <code>Vector</code> of <code>Building</code>s
+     *          that need to be updated.
+     * @return  a <code>Packet</code> for the command.
+     */
+    private Packet createUpdateBuildingCFPacket( Vector buildings ) {
+        return new Packet( Packet.COMMAND_BLDG_UPDATE_CF, buildings );
+    }
+
+    /**
+     * Apply this phase's damage to all buildings.  Buildings may
+     * collapse due to damage.
+     */
+    private void applyBuildingDamage() {
+
+        // Walk through the buildings in the game.
+        // Build the collapse and update vectors as you go.
+        // N.B. never, NEVER, collapse buildings while you are walking through
+        //      the Enumeration from megamek.common.Board#getBuildings.
+        Vector collapse = new Vector();
+        Vector update = new Vector();
+        Enumeration buildings = game.board.getBuildings();
+        while ( buildings.hasMoreElements() ) {
+            Building bldg = (Building) buildings.nextElement();
+
+            // If the CF is zero, the building should fall.
+            if ( bldg.getCurrentCF() == 0 ) {
+                collapse.addElement( bldg );
+            }
+
+            // If the building took damage this round, update it.
+            else if ( bldg.getPhaseCF() != bldg.getCurrentCF() ) {
+                bldg.setPhaseCF( bldg.getCurrentCF() );
+                update.addElement( bldg );
+            }
+
+        } // Handle the next building
+
+        // If we have any buildings to collapse, collapse them now.
+        if ( !collapse.isEmpty() ) {
+
+            // Get the position map of all entities in the game.
+            Hashtable positionMap = game.getPositionMap();
+
+            // Walk through the buildings that have collapsed.
+            buildings = collapse.elements();
+            while ( buildings.hasMoreElements() ) {
+                Building bldg = (Building) buildings.nextElement();
+                phaseReport.append( "\n" )
+                    .append( bldg.getName() )
+                    .append( " collapses due to damage!\n" );
+                this.collapseBuilding( bldg, positionMap );
+            }
+
+        }
+
+        // If we have any buildings to update, send the message.
+        if ( !update.isEmpty() ) {
+            send( createUpdateBuildingCFPacket( update ) );
+        }
+    }
+
+    /**
+     * Apply the given amount of damage to the building.  Please note,
+     * this method does <b>not</b> apply any damage to units inside the
+     * building, update the clients, or check for the building's collapse.
+     * <p/>
+     * A default message will be used to describe why the building
+     * took the damage.
+     *
+     * @param   bldg - the <code>Building</code> that has been damaged.
+     *          This value should not be <code>null</code>, but no
+     *          exception will occur.
+     * @param   damage - the <code>int</code> amount of damage.
+     * @return  a <code>String</code> message to be shown to the players.
+     */
+    private String damageBuilding( Building bldg, int damage ) {
+        final String defaultWhy = " absorbs ";
+        return damageBuilding( bldg, damage, defaultWhy );
+    }
+
+    /**
+     * Apply the given amount of damage to the building.  Please note,
+     * this method does <b>not</b> apply any damage to units inside the
+     * building, update the clients, or check for the building's collapse.
+     *
+     * @param   bldg - the <code>Building</code> that has been damaged.
+     *          This value should not be <code>null</code>, but no
+     *          exception will occur.
+     * @param   damage - the <code>int</code> amount of damage.
+     * @param   why - the <code>String</code> message that describes
+     *          why the building took the damage.
+     * @return  a <code>String</code> message to be shown to the players.
+     */
+    private String damageBuilding( Building bldg, int damage, String why ) {
+        StringBuffer buffer = new StringBuffer();
+
+        // Do nothing if no building or no damage was passed.
+        if ( bldg != null && damage > 0 ) {
+            int curCF = bldg.getCurrentCF();
+            curCF -= Math.min( curCF, damage );
+            bldg.setCurrentCF( curCF );
+            buffer.append( bldg.getName() )
+                .append( why )
+                .append( damage )
+                .append( " points of damage." );
+
+            // If the CF is zero, the building should fall.
+            if ( curCF == 0 ) {
+                buffer.append( " <<<BUILDING DESTROYED>>>" );
+            }
+
+        }
+        return buffer.toString();
     }
 
 }

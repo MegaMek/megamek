@@ -39,6 +39,11 @@ public class ClubAttackAction extends AbstractAttackAction {
         this.club = club;
     }
 
+    public ClubAttackAction(int entityId, int targetType, int targetId, Mounted club) {
+        super(entityId, targetType, targetId);
+        this.club = club;
+    }
+
     public Mounted getClub() {
         return club;
     }

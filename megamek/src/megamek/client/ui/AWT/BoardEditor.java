@@ -292,10 +292,11 @@ public class BoardEditor extends Container
         bnd.show();
         
         if(bnd.getX() > 0 || bnd.getY() > 0) {
-            board.newData(bnd.getX(), bnd.getY());
-            for(int i = 0; i < board.data.length; i++) {
-                board.data[i] = new Hex();
+            Hex[] newHexes = new Hex[ bnd.getX() * bnd.getY() ];
+            for(int i = 0; i < newHexes.length; i++) {
+                newHexes[i] = new Hex();
             }
+            board.newData(bnd.getX(), bnd.getY(), newHexes);
             curpath = null;
             curfile = null;
             frame.setTitle("MegaMek Editor : Unnamed");

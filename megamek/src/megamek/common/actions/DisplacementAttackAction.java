@@ -36,6 +36,11 @@ public class DisplacementAttackAction extends AbstractAttackAction {
         super(entityId, targetId);
         this.targetPos = targetPos;
     }
+
+    public DisplacementAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+        super(entityId, targetType, targetId);
+        this.targetPos = targetPos;
+    }
     
     public Coords getTargetPos() {
         return targetPos;

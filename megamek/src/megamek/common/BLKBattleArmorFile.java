@@ -167,7 +167,9 @@ public class BLKBattleArmorFile implements MechLoader {
                     throw new EntityLoadingException(ex.getMessage());
                 }
             }
+            /* remove this block after TAG and Active Probes are implemented **
             else if ( !equipName.equals("0") ) { System.err.println("Could not find " + equipName + " for " + t.getShortName() ); } //killme
+            ** remove this block after TAG and Active Probes are implemented */
         }
     }
 }

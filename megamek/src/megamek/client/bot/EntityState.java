@@ -413,8 +413,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     int targHeight = te.isProne() ? 0 : 1;
     int attEl = 0;
     int targEl = 0;
-    attEl = ae.elevation() + attHeight;
-    targEl = te.elevation() + targHeight;
+    attEl = ae.getElevation() + attHeight;
+    targEl = te.getElevation() + targHeight;
     
     boolean pc = false;
     boolean apc = false;
@@ -659,7 +659,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     // can't jump over too-high terrain
     if (entityMoveType == Entity.MOVE_JUMP
     && destHex.getElevation()
-    > (entity.elevation() +
+    > (entity.getElevation() +
     entity.getJumpMP())) {
       return false;
     }

@@ -33,6 +33,11 @@ public class BrushOffAttackAction
         this.arm = arm;
     }
     
+    public BrushOffAttackAction(int entityId, int targetType, int targetId, int arm) {
+        super(entityId, targetType, targetId);
+        this.arm = arm;
+    }
+    
     public int getArm() {
         return arm;
     }

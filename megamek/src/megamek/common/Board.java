@@ -31,9 +31,13 @@ implements Serializable {
     public transient Coords     highlighted;
     public transient Coords     selected;
     
-    public Hex[]                data;
+    private Hex[]               data;
     
     protected transient Vector boardListeners;
+
+    /** Building data structures. */
+    private Vector              buildings = new Vector();
+    private transient Hashtable bldgByCoords = new Hashtable();
 
     /**
      * Record the infernos placed on the board.
@@ -102,6 +106,20 @@ implements Serializable {
     }
     
     /**
+     * Creates a new data set for the board that is a
+     * duplicate of another board; notifies listeners
+     * that a new data set has been created.
+     * <p/>
+     * Please note that changes to the other board's data can
+     * affect this board.
+     *
+     * @param   board - the other <code>Board</code> to be duplicated.
+     */
+    public void newData( Board other ) {
+        newData( other.width, other.height, other.data );
+    }
+    
+    /**
      * Combines one or more boards into one huge megaboard!
      *
      * @param width the width of each individual board, before the combine
@@ -111,16 +129,24 @@ implements Serializable {
      * @param boards an array of the boards to be combined
      */
     public void combine(int width, int height, int sheetWidth, int sheetHeight, Board[] boards) {
-        int totalWidth = width * sheetWidth;
-        int totalHeight = height * sheetHeight;
-        
-        newData(totalWidth, totalHeight);
-        
+
+        // Update the width and height of this megaboard.
+        this.width = width * sheetWidth;
+        this.height = height * sheetHeight;
+
+        // Make space for the boards' data.
+        this.data = new Hex[this.width * this.height];
+
+        // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
                 copyBoardInto(j * width, i * height, boards[i * sheetWidth + j]);
             }
         }
+
+        // Initizlize the hexes and alert the board listeners.
+        // Keep the data we just copied into this board.
+        newData( this.width, this.height, this.data );
         
     }
     
@@ -186,12 +212,55 @@ implements Serializable {
      * Initialize all hexes
      */
     private void initializeAll() {
+
+        // Initialize all buildings.
+        buildings.removeAllElements();
+        bldgByCoords.clear();
+
+        // Walk through the hexes, creating buildings.
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Does this hex contain a building?
+                Hex curHex = getHex( x, y );
+                if ( curHex != null && curHex.contains( Terrain.BUILDING ) ) {
+
+                    // Yup, but is it a repeat?
+                    Coords coords = new Coords(x,y);
+                    if ( !bldgByCoords.contains(coords) ) {
+
+                        // Nope.  Try to create an object for the new building.
+                        try {
+                            Building bldg = new Building( coords, this );
+                            buildings.addElement( bldg );
+
+                            // Each building will identify the hexes it covers.
+                            Enumeration enum = bldg.getCoords();
+                            while ( enum.hasMoreElements() ) {
+                                bldgByCoords.put( enum.nextElement(), bldg );
+                            }
+                        }
+                        catch ( IllegalArgumentException excep ) {
+                            // Log the error and remove the
+                            // building from the board.
+                            System.err.println( "Unable to create building." );
+                            excep.printStackTrace();
+                            curHex.removeTerrain( Terrain.BUILDING );
+                        }
+
+                    } // End building-is-new
+
+                } // End hex-has-building                    
+            }
+        }
+
+        // Initialize all exits.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 initializeHex(x, y);
             }
         }
-    }
+
+    } // End private void initializeAll()
     
     /**
      * Initialize a hex and the hexes around it
@@ -217,7 +286,7 @@ implements Serializable {
      * If a surrounding hex is off the board, it checks the hex opposite the
      * missing hex.
      */
-    public void initializeHex(int x, int y) {
+    private void initializeHex(int x, int y) {
         Hex hex = getHex(x, y);
         
         if (hex == null) {
@@ -588,6 +657,16 @@ implements Serializable {
                     terr.flipExits( horiz, vert );
                 }
 
+                // Update the building exits in the swapped hexes.
+                terr = this.data[ newIndex ].getTerrain( Terrain.BUILDING );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+                terr = this.data[ oldIndex ].getTerrain( Terrain.BUILDING );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+
                 // Update the bridge exits in the swapped hexes.
                 terr = this.data[ newIndex ].getTerrain( Terrain.BRIDGE );
                 if ( null != terr ) {
@@ -786,10 +865,12 @@ implements Serializable {
 
         // Update the tracker.
         tracker.add( round, hits );
+        /* remove this block after implementing Targetable.TYPE_BLDG_IGNITE **
         System.err.print( "Adding " );//killme
         System.err.print( hits );//killme
         System.err.print( " Inferno rounds to " );//killme
         System.err.println( coords.getBoardNum() );//killme
+        ** remove this block after implementing Targetable.TYPE_BLDG_IGNITE */
 
     }
 
@@ -841,6 +922,167 @@ implements Serializable {
         }
 
         return result;
+    }
+
+    /**
+     * Get an enumeration of all buildings on the board.
+     *
+     * @return  an <code>Enumeration</code> of <code>Building</code>s.
+     */
+    public Enumeration getBuildings() {
+        return this.buildings.elements();
+    }
+
+    /**
+     * Get the building at the given coordinates.
+     *
+     * @param   coords - the <code>Coords</code> being examined.
+     * @return  a <code>Building</code> object, if there is one at the
+     *          given coordinates, otherwise a <code>null</code> will
+     *          be returned.
+     */
+    public Building getBuildingAt( Coords coords ) {
+        return (Building) this.bldgByCoords.get( coords );
+    }
+
+    /**
+     * Get the local object for the given building.  Call this routine
+     * any time the input <code>Building</code> is suspect.
+     *
+     * @param   other - a <code>Building</code> object which may or may
+     *          not be represented on this board.
+     *          This value may be <code>null</code>.
+     * @return  The local <code>Building</code> object if we can find a
+     *          match.  If the other building is not on this board, a
+     *          <code>null</code> is returned instead.
+     */
+    private Building getLocalBuilding( Building other ) {
+
+        // Handle garbage input.
+        if ( other == null ) {
+            return null;
+        }
+
+        // ASSUMPTION: it is better to use the Hashtable than the Vector.
+        Building local = null;
+        Enumeration coords = other.getCoords();
+        if ( coords.hasMoreElements() ) {
+            local = (Building) bldgByCoords.get( coords.nextElement() );
+            if ( !other.equals( local ) ) {
+                local = null;
+            }
+        }
+
+        // TODO: if local is still null, try the Vector.
+        return local;
+    }
+
+    /**
+     * Collapse an array of buildings.
+     *
+     * @param   bldgs - the <code>Vector</code> of <code>Building</code>
+     *          objects to be collapsed.
+     */
+    public void collapseBuilding( Vector bldgs ) {
+
+        // Walk through the vector of buildings.
+        Enumeration loop = bldgs.elements();
+        while ( loop.hasMoreElements() ) {
+            final Building other = (Building) loop.nextElement();
+
+            // Find the local object for the given building.
+            Building bldg = this.getLocalBuilding( other );
+
+            // Handle garbage input.
+            if ( bldg == null ) {
+                System.err.print( "Could not find a match for " );
+                System.err.print( other );
+                System.err.println( " to collapse." );
+                continue;
+            }
+
+            // Update the building.
+            this.collapseBuilding( bldg );
+
+        } // Handle the next building.
+
+    }
+
+    /**
+     * The given building has collapsed.  Remove it from the board and
+     * replace it with rubble.
+     *
+     * @param   other - the <code>Building</code> that has collapsed.
+     */
+    public void collapseBuilding( Building bldg ) {
+
+        // Remove the building from our building vector.
+        this.buildings.remove( bldg );
+
+        // Walk through the building's hexes.
+        Enumeration bldgCoords = bldg.getCoords();
+        while ( bldgCoords.hasMoreElements() ) {
+            final Coords coords = (Coords) bldgCoords.nextElement();
+            final Hex curHex = this.getHex( coords );
+            int elevation = curHex.getElevation();
+
+            // Remove the building from the building map.
+            this.bldgByCoords.remove( coords );
+
+            // Remove the building terrain.
+            curHex.removeTerrain( Terrain.BUILDING );
+            curHex.removeTerrain( Terrain.BLDG_CF );
+            curHex.removeTerrain( Terrain.BLDG_ELEV );
+
+            // Add rubble terrain that matches the building type.
+            curHex.addTerrain( new Terrain( Terrain.RUBBLE, bldg.getType() ) );
+
+            // Any basement reduces the hex's elevation.
+            if ( curHex.contains( Terrain.BLDG_BASEMENT ) ) {
+                elevation -= curHex.levelOf( Terrain.BLDG_BASEMENT );
+                curHex.removeTerrain( Terrain.BLDG_BASEMENT );
+                curHex.setElevation( elevation );
+            }
+
+            // Update the hex.
+            // TODO : Do I need to initialize it???
+            // ASSUMPTION: It's faster to update one at a time.
+            this.setHex( coords, curHex );
+
+        } // Handle the next building hex.
+
+    } // End public void collapseBuilding( Building )
+
+    /**
+     * Update the construction factors on an array of buildings.
+     *
+     * @param   bldgs - the <code>Vector</code> of <code>Building</code>
+     *          objects to be updated.
+     */
+    public void updateBuildingCF( Vector bldgs ) {
+
+        // Walk through the vector of buildings.
+        Enumeration loop = bldgs.elements();
+        while ( loop.hasMoreElements() ) {
+            final Building other = (Building) loop.nextElement();
+
+            // Find the local object for the given building.
+            Building bldg = this.getLocalBuilding( other );
+
+            // Handle garbage input.
+            if ( bldg == null ) {
+                System.err.print( "Could not find a match for " );
+                System.err.print( other );
+                System.err.println( " to update." );
+                continue;
+            }
+
+            // Set the current and phase CFs of the building.
+            bldg.setCurrentCF( other.getCurrentCF() );
+            bldg.setPhaseCF( other.getPhaseCF() );
+
+        } // Handle the next building.
+
     }
 
 }

@@ -57,7 +57,7 @@ public class PhysicalDisplay
         
     // let's keep track of what we're shooting and at what, too
     private int                cen;        // current entity number
-    private int                ten;        // target entity number
+    private Targetable         target;        // target 
       
     // stuff we want to do
     private Vector          attacks;  
@@ -223,7 +223,7 @@ public class PhysicalDisplay
             return;
         }
         this.cen = en;
-        target(Entity.NONE);
+        target(null);
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
         client.game.board.cursor(null);
@@ -246,7 +246,7 @@ public class PhysicalDisplay
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        ten = Entity.NONE;
+        target(null);
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
@@ -263,8 +263,7 @@ public class PhysicalDisplay
     private void endMyTurn() {
         // end my turn, then.
         cen = Entity.NONE;
-        ten = Entity.NONE;
-        target(Entity.NONE);
+        target(null);
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
@@ -312,10 +311,10 @@ public class PhysicalDisplay
      * Punch the target!
      */
     private void punch() {
-	final ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
-	final ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
+	final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
+	final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
 
-	if (client.doYesNoDialog( "Punch " + client.game.getEntity(ten).getDisplayName() + "?",
+	if (client.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
 		"To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
 		+ "\nDamage [RA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
 		+ "\n   and/or"
@@ -325,11 +324,11 @@ public class PhysicalDisplay
 	        disableButtons();
       	  if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
             	&& rightArm.getValue() != ToHitData.IMPOSSIBLE) {
-	            attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.BOTH));
+	            attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
       	  } else if (leftArm.getValue() < rightArm.getValue()) {
-            	attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.LEFT));
+            	attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
 	        } else {
-      	      attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.RIGHT));
+      	      attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
 	        }
 
       	  ready();
@@ -340,8 +339,8 @@ public class PhysicalDisplay
      * Kick the target!
      */
     private void kick() {
-	ToHitData leftLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.LEFT);
-	ToHitData rightLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.RIGHT);
+	ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
+	ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
 	ToHitData attackLeg;
 	int attackSide;
 
@@ -353,12 +352,12 @@ public class PhysicalDisplay
 		attackSide = KickAttackAction.RIGHT;
 	};
 
-	if (client.doYesNoDialog( "Kick " + client.game.getEntity(ten).getDisplayName() + "?",
+	if (client.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
 		"To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
 		+ "\nDamage: "+Compute.getKickDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
 	) ) {
 		disableButtons();
-		attacks.addElement(new KickAttackAction(cen, ten, attackSide));
+		attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
 		ready();
 	};
     }
@@ -367,12 +366,12 @@ public class PhysicalDisplay
      * Push that target!
      */
     private void push() {
-	ToHitData toHit = Compute.toHitPush(client.game, cen, ten);
-	if (client.doYesNoDialog( "Push " + client.game.getEntity(ten).getDisplayName() + "?",
+	ToHitData toHit = Compute.toHitPush(client.game, cen, target);
+	if (client.doYesNoDialog( "Push " + target.getDisplayName() + "?",
 		"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
 	) ) {
 		disableButtons();
-		attacks.addElement(new PushAttackAction(cen, ten, te().getPosition()));
+		attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
 		ready();
 	};
     }
@@ -382,13 +381,13 @@ public class PhysicalDisplay
      */
     private void club() {
 	Mounted club = Compute.clubMechHas(ce());
-	ToHitData toHit = Compute.toHitClub(client.game, new ClubAttackAction(cen, ten, club));
-	if (client.doYesNoDialog( "Club " + client.game.getEntity(ten).getDisplayName() + "?",
+	ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
+	if (client.doYesNoDialog( "Club " + target.getDisplayName() + "?",
 		"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
 		+ "\nDamage: "+Compute.getClubDamageFor(ce(),club)+toHit.getTableDesc()
 	) ) {
 		disableButtons();
-		attacks.addElement(new ClubAttackAction(cen, ten, club));
+		attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
 		ready();
 	};
     }
@@ -398,9 +397,9 @@ public class PhysicalDisplay
      */
     private void brush() {
         ToHitData toHitLeft = Compute.toHitBrushOff
-            ( client.game, cen, ten, BrushOffAttackAction.LEFT );
+            ( client.game, cen, target, BrushOffAttackAction.LEFT );
         ToHitData toHitRight = Compute.toHitBrushOff
-            ( client.game, cen, ten, BrushOffAttackAction.RIGHT );
+            ( client.game, cen, target, BrushOffAttackAction.RIGHT );
         boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
         boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
         int     damageLeft = 0;
@@ -477,15 +476,15 @@ public class PhysicalDisplay
                 switch ( dlg.getChoice() ) {
                 case 0:
                     attacks.addElement( new BrushOffAttackAction
-                        (cen, ten, BrushOffAttackAction.LEFT) );
+                        (cen, target.getTargetType(), target.getTargetId(), BrushOffAttackAction.LEFT) );
                     break;
                 case 1:
                     attacks.addElement( new BrushOffAttackAction
-                        (cen, ten, BrushOffAttackAction.RIGHT) );
+                        (cen, target.getTargetType(), target.getTargetId(), BrushOffAttackAction.RIGHT) );
                     break;
                 case 2: 
                     attacks.addElement( new BrushOffAttackAction
-                        (cen, ten, BrushOffAttackAction.BOTH) );
+                        (cen, target.getTargetType(), target.getTargetId(), BrushOffAttackAction.BOTH) );
                     break;
                 }
                 ready();
@@ -504,7 +503,7 @@ public class PhysicalDisplay
             if ( dlg.getAnswer() ) {
                 disableButtons();
                 attacks.addElement( new BrushOffAttackAction
-                    (cen, ten, BrushOffAttackAction.LEFT) );
+                    (cen, target.getTargetType(), target.getTargetId(), BrushOffAttackAction.LEFT) );
                 ready();
 
             } // End not-cancel
@@ -521,7 +520,7 @@ public class PhysicalDisplay
             if ( dlg.getAnswer() ) {
                 disableButtons();
                 attacks.addElement( new BrushOffAttackAction
-                    (cen, ten, BrushOffAttackAction.RIGHT) );
+                    (cen, target.getTargetType(), target.getTargetId(), BrushOffAttackAction.RIGHT) );
                 ready();
 
             } // End not-cancel
@@ -534,14 +533,14 @@ public class PhysicalDisplay
      * Thrash at the target, unless the player cancels the action.
      */
     private void thrash() {
-        ThrashAttackAction act = new ThrashAttackAction( cen, ten );
+        ThrashAttackAction act = new ThrashAttackAction( cen, target.getTargetType(), target.getTargetId() );
         ToHitData toHit = Compute.toHitThrash( client.game, act );
-        StringBuffer target = new StringBuffer();
+        StringBuffer at = new StringBuffer();
         StringBuffer damage = new StringBuffer();
 
         // Build the dialog's strings.
-        target.append( "Thrash at " )
-            .append( client.game.getEntity(ten).getDisplayName() )
+        at.append( "Thrash at " )
+            .append( target.getDisplayName() )
             .append( " (warning: this causes a Piloting roll to avoid fall damage)?" );
         damage.append( "To Hit: " )
             .append( toHit.getValueAsString() )
@@ -555,7 +554,7 @@ public class PhysicalDisplay
             .append( toHit.getTableDesc() );
 
         // Give the user to cancel the attack.
-        if ( client.doYesNoDialog(target.toString(), damage.toString()) ) {
+        if ( client.doYesNoDialog(at.toString(), damage.toString()) ) {
             disableButtons();
             attacks.addElement( act );
             ready();
@@ -563,41 +562,41 @@ public class PhysicalDisplay
     }
 
     /**
-     * Targets an entity
+     * Targets something
      */
-    void target(int en) {
-        this.ten = en;
+    void target(Targetable t) {
+        this.target = t;
         updateTarget();
     }
-    
+
     /**
      * Targets an entity
      */
     private void updateTarget() {
         // dis/enable punch button
-        if (cen != Entity.NONE && ten != Entity.NONE) {
+        if (cen != Entity.NONE && target != null) {
             // punch?
-            final ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
-            final ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
+            final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
+            final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
             boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
                               || rightArm.getValue() != ToHitData.IMPOSSIBLE;
             butPunch.setEnabled(canPunch);
             
             // kick?
-            ToHitData leftLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.LEFT);
-            ToHitData rightLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.RIGHT);
+            ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
+            ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
             boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
             butKick.setEnabled(canKick);
             
             // how about push?
-            ToHitData push = Compute.toHitPush(client.game, cen, ten);
+            ToHitData push = Compute.toHitPush(client.game, cen, target);
             butPush.setEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
             
             // clubbing?
             Mounted club = Compute.clubMechHas(ce());
             if (club != null) {
-                ToHitData clubToHit = Compute.toHitClub(client.game, cen, ten, club);
+                ToHitData clubToHit = Compute.toHitClub(client.game, cen, target, club);
                 butClub.setEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
             } else {
                 butClub.setEnabled(false);
@@ -605,15 +604,15 @@ public class PhysicalDisplay
 
             // Brush off swarming infantry?
             ToHitData brushRight = Compute.toHitBrushOff
-                ( client.game, cen, ten, BrushOffAttackAction.RIGHT );
+                ( client.game, cen, target, BrushOffAttackAction.RIGHT );
             ToHitData brushLeft = Compute.toHitBrushOff
-                ( client.game, cen, ten, BrushOffAttackAction.LEFT );
+                ( client.game, cen, target, BrushOffAttackAction.LEFT );
             boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
                                 brushLeft.getValue() != ToHitData.IMPOSSIBLE);
             butBrush.setEnabled( canBrush );
 
             // Thrash at infantry?
-            ToHitData thrash = Compute.toHitThrash( client.game, cen, ten );
+            ToHitData thrash = Compute.toHitThrash( client.game, cen, target );
             butThrash.setEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
 
         } else {
@@ -632,14 +631,7 @@ public class PhysicalDisplay
     private Entity ce() {
         return client.game.getEntity(cen);
     }
-    
-    /**
-     * Returns the target entity.
-     */
-    private Entity te() {
-        return client.game.getEntity(ten);
-    }
-    
+
     /**
      * Moves the mech display window to the proper position.
      */
@@ -668,11 +660,11 @@ public class PhysicalDisplay
     }
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null) {
-            final Entity target = this.chooseTarget( b.getCoords() );
+            final Targetable target = this.chooseTarget( b.getCoords() );
             if ( target != null ) {
-                target( target.getId() );
+                target( target );
             } else {
-                target(Entity.NONE);
+                target(null);
             }
         }
     }
@@ -682,10 +674,10 @@ public class PhysicalDisplay
      *
      * @param   pos - the <code>Coords</code> containing targets.
      */
-    private Entity chooseTarget( Coords pos ) {
+    private Targetable chooseTarget( Coords pos ) {
 
         // Assume that we have *no* choice.
-        Entity choice = null;
+        Targetable choice = null;
 
         // Get the available choices.
         Enumeration choices = client.game.getEntities( pos );
@@ -693,17 +685,23 @@ public class PhysicalDisplay
         // Convert the choices into a List of targets.
         Vector targets = new Vector();
         while ( choices.hasMoreElements() ) {
-            choice = (Entity) choices.nextElement();
+            choice = (Targetable) choices.nextElement();
             if ( !ce().equals( choice ) ) {
                 targets.addElement( choice );
             }
+        }
+
+        // Is there a building in the hex?
+        Building bldg = client.game.board.getBuildingAt( pos );
+        if ( bldg != null ) {
+            targets.add( new BuildingTarget(pos, client.game.board, false) );
         }
 
         // Do we have a single choice?
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Entity) targets.elementAt( 0 );
+            choice = (Targetable) targets.elementAt( 0 );
 
         }
 
@@ -713,26 +711,28 @@ public class PhysicalDisplay
             StringBuffer question = new StringBuffer();
             question.append( "Hex " );
             question.append( pos.getBoardNum() );
-            question.append( " contains the following units." );
-            question.append( "\n\nWhich unit do you want to target?" );
+            question.append( " contains the following targets." );
+            question.append( "\n\nWhich target do you want to attack?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Entity)targets.elementAt(loop) ).getShortName();
+                names[loop] = ( (Targetable)targets.elementAt(loop) )
+                    .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( client.frame,
-                                        "Target Unit",
+                                        "Choose Target",
                                         question.toString(),
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Entity) targets.elementAt( choiceDialog.getChoice() );
+                choice = (Targetable) targets.elementAt
+                    ( choiceDialog.getChoice() );
             }
         } // End have-choices
 
         // Return the chosen unit.
         return choice;
 
-    } // End private Entity chooseTarget( Coords )
+    } // End private Targetable chooseTarget( Coords )
 
     //
     // GameListener

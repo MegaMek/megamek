@@ -23,4 +23,8 @@ public class ThrashAttackAction
     public ThrashAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
      }
+
+    public ThrashAttackAction(int entityId, int targetType, int targetId) {
+        super(entityId, targetType, targetId);
+     }
 }

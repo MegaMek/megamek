@@ -104,12 +104,10 @@ public class MiscType extends EquipmentType {
                 tons = entity.getTotalOArmor() / ( 16 * 1.12 );
             }
             tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
-            System.err.println( "Ferro-fibrous for " + entity.getTotalOArmor() + " armor is " + tons );//killme
             return (float) tons;
         } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
             double tons = 0.0;
             tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
-            System.err.println( "Endo steel for " + entity.getWeight() + " ton mech is " + tons );//killme
             return (float) tons;
         }
         

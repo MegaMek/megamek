@@ -407,10 +407,15 @@ public class MovementDisplay
         butDone.setLabel("Done");
         updateProneButtons();
         updateRACButton();
-        if (ce() != null) {
+
+        // We may not have an entity selected yet (race condition).
+        if ( ce() != null ) {
             loadedUnits = ce().getLoadedUnits();
-            updateLoadButtons();
+        } else {
+            // The variable, loadedUnits, can not be null.
+            loadedUnits = new Vector();
         }
+        updateLoadButtons();
     }
 
     /**
@@ -484,7 +489,7 @@ public class MovementDisplay
 
             if (gear == Compute.GEAR_CHARGE) {
                 // check if target is valid
-                final Entity target = this.chooseTarget( b.getCoords() );
+                final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform charge", "No target!");
                     clearAllMoves();
@@ -495,11 +500,24 @@ public class MovementDisplay
                 // check if it's a valid charge
                 ToHitData toHit = Compute.toHitCharge( client.game,
                                                        cen,
-                                                       target.getId(),
+                                                       target,
                                                        md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
-                    // if yes, ask them if they want to charge
 
+                    // Determine how much damage the charger will take.
+                    int toAttacker = 0;
+                    if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+                        Entity te = (Entity) target;
+                        toAttacker = Compute.getChargeDamageTakenBy(ce(),te);
+                    }
+                    else if ( target.getTargetType() ==
+                              Targetable.TYPE_BUILDING ) {
+                        Building bldg = client.game.board.getBuildingAt
+                            ( moveto );
+                        toAttacker = Compute.getChargeDamageTakenBy(ce(),bldg);
+                    }
+
+                    // Ask the player if they want to charge.
                     if ( client.doYesNoDialog
                          ( "Charge " + target.getDisplayName() + "?",
                            "To Hit: " + toHit.getValueAsString() +
@@ -509,7 +527,7 @@ public class MovementDisplay
                            Compute.getChargeDamageFor(ce(),md.getHexesMoved())+
                            " (in 5pt clusters)"+ toHit.getTableDesc()
                            + "\nDamage to Self: " +
-                           Compute.getChargeDamageTakenBy(ce(),target) +
+                           toAttacker +
                            " (in 5pt clusters)" ) ) {
                         // if they answer yes, charge the target.
                         md.getStep(md.length()-1).setTarget(target);
@@ -529,7 +547,7 @@ public class MovementDisplay
                 }
             } else if (gear == Compute.GEAR_DFA) {
                 // check if target is valid
-                final Entity target = this.chooseTarget( b.getCoords() );
+                final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform D.F.A.", "No target!");
                     clearAllMoves();
@@ -540,7 +558,7 @@ public class MovementDisplay
                 // check if it's a valid DFA
                 ToHitData toHit = Compute.toHitDfa( client.game,
                                                     cen,
-                                                    target.getId(),
+                                                    target,
                                                     md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
@@ -706,10 +724,10 @@ public class MovementDisplay
      *
      * @param   pos - the <code>Coords</code> containing targets.
      */
-    private Entity chooseTarget( Coords pos ) {
+    private Targetable chooseTarget( Coords pos ) {
 
         // Assume that we have *no* choice.
-        Entity choice = null;
+        Targetable choice = null;
 
         // Get the available choices.
         Enumeration choices = client.game.getEntities( pos );
@@ -717,17 +735,23 @@ public class MovementDisplay
         // Convert the choices into a List of targets.
         Vector targets = new Vector();
         while ( choices.hasMoreElements() ) {
-            choice = (Entity) choices.nextElement();
+            choice = (Targetable) choices.nextElement();
             if ( !ce().equals( choice ) ) {
                 targets.addElement( choice );
             }
+        }
+
+        // Is there a building in the hex?
+        Building bldg = client.game.board.getBuildingAt( pos );
+        if ( bldg != null ) {
+            targets.add( new BuildingTarget(pos, client.game.board, false) );
         }
 
         // Do we have a single choice?
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Entity) targets.elementAt( 0 );
+            choice = (Targetable) targets.elementAt( 0 );
 
         }
 
@@ -737,26 +761,26 @@ public class MovementDisplay
             StringBuffer question = new StringBuffer();
             question.append( "Hex " );
             question.append( pos.getBoardNum() );
-            question.append( " contains the following units." );
-            question.append( "\n\nWhich unit do you want to target?" );
+            question.append( " contains the following targets." );
+            question.append( "\n\nWhich target do you want to attack?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Entity)targets.elementAt(loop) ).getShortName();
+                names[loop] = ( (Targetable)targets.elementAt(loop) ).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( client.frame,
-                                        "Target Unit",
+                                        "Choose Target",
                                         question.toString(),
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Entity) targets.elementAt( choiceDialog.getChoice() );
+                choice = (Targetable) targets.elementAt( choiceDialog.getChoice() );
             }
         } // End have-choices
 
         // Return the chosen unit.
         return choice;
 
-    } // End private Entity chooseTarget( Coords )
+    } // End private Targetable chooseTarget( Coords )
 
     //
     // GameListener

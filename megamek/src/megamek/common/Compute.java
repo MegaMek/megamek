@@ -392,6 +392,14 @@ public class Compute
                 break;
             case MovementData.STEP_TURN_LEFT :
             case MovementData.STEP_TURN_RIGHT :
+                // Check for pavement movement.
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
+                } else {
+                    isPavementStep = false;
+                    onlyPavement = false;
+                }
+
                 // Infantry can turn for free.
                 stepMp = (isJumping || hasJustStood || isInfantry) ? 0 : 1;
                 curFacing = MovementData.getAdjustedFacing(curFacing, step.getType());
@@ -621,11 +629,22 @@ public class Compute
 
                 // Can't unload units into prohibited terrain
                 // or into stacking violation.
-                Entity other = step.getTarget( game );
-                if ( null != stackingViolation(game, other, curPos, entity)
-                     || other.isHexProhibited(game.board.getHex(curPos)) ) {
+                Targetable target = step.getTarget( game );
+                if ( target instanceof Entity ) {
+                    Entity other = (Entity) target;
+                    if ( null != stackingViolation(game, other, curPos, entity)
+                         || other.isHexProhibited(game.board.getHex(curPos))) {
+                        moveType = Entity.MOVE_ILLEGAL;
+                    }
+                } else {
+                    System.err.print( "Trying to unload " );
+                    System.err.print( target.getDisplayName() );
+                    System.err.print( " from " );
+                    System.err.print( entity.getDisplayName() );
+                    System.err.println( "." );
                     moveType = Entity.MOVE_ILLEGAL;
                 }
+
             }
 
             // only standing mechs may go prone
@@ -793,7 +812,7 @@ public class Compute
             // Otherwise, if there are two present entities controlled
             // by this player, returns a random one of the two.
             // Somewhat arbitrary, but how else should we resolve it?
-            if (!inHex.getOwner().isEnemyOf(entering.getOwner())) {
+            if ( !inHex.getOwner().isEnemyOf(entering.getOwner()) ) {
                 if (firstEntity == null) {
                     firstEntity = inHex;
                 } else {
@@ -892,6 +911,7 @@ public class Compute
         } // End not-along-road
         
         // account for elevation?
+        // TODO: allow entities to occupy different levels of buildings.
         int nSrcEl = entity.elevationOccupied(srcHex);
         int nDestEl = entity.elevationOccupied(destHex);
         int nMove = entity.getMovementType();
@@ -908,7 +928,14 @@ public class Compute
             }
             mp += delta_e;
         }
-        
+
+        // If we entering a building, all non-infantry pay additional MP.
+        if ( nDestEl < destHex.levelOf( Terrain.BLDG_ELEV ) &&
+             !(entity instanceof Infantry) ) {
+            Building bldg = game.board.getBuildingAt( dest );
+            mp += bldg.getType();
+        }
+
         return mp;
     }
     
@@ -1055,7 +1082,7 @@ public class Compute
         // can't jump over too-high terrain
         if (entityMoveType == Entity.MOVE_JUMP
             && destHex.getElevation() 
-               > (entity.elevation() +
+               > (entity.getElevation() +
                   entity.getJumpMPWithTerrain())) {
             return false;
         }
@@ -1160,6 +1187,17 @@ public class Compute
              && overallMoveType == Entity.MOVE_RUN
              && isTurning
              && !isInfantry ) {
+            return true;
+        }
+
+        // If we entering or leaving a building, all non-infantry
+        // need to make a piloting check to avoid damage.
+        // TODO: allow entities to occupy different levels of buildings.
+        int nSrcEl = entity.elevationOccupied(srcHex);
+        int nDestEl = entity.elevationOccupied(destHex);
+        if ( ( nSrcEl < srcHex.levelOf( Terrain.BLDG_ELEV ) ||
+               nDestEl < destHex.levelOf( Terrain.BLDG_ELEV ) ) &&
+             !(entity instanceof Infantry) ) {
             return true;
         }
 
@@ -1379,7 +1417,7 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = game.getEntity(target.getTargetID());
+            te = (Entity) target;
         }
         final Mounted weapon = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)weapon.getType();
@@ -1393,6 +1431,7 @@ public class Compute
             !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
+        final boolean targetInBuilding = isInBuilding( game, te );
         
         ToHitData toHit = null;
         boolean pc = false; // partial cover
@@ -1424,12 +1463,6 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon blocked by passenger.");
         }
 
-        // weapon in arc?
-        // TODO? : move to after range calculation?
-        if (!isInArc(game, attackerId, weaponId, target)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
-        }
-
         // Can't target a entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
@@ -1447,13 +1480,46 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
         }
 
+        // Can't target infantry with Inferno rounds (BMRr, pg. 141).
+        if ( te instanceof Infantry &&
+             ( ( atype != null &&
+                 atype.getMunitionType() == AmmoType.M_INFERNO ) ||
+               ( isWeaponInfantry &&
+                 wtype.hasFlag(WeaponType.F_INFERNO) )
+               ) ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                  "Can not target infantry with Inferno rounds." );
+        }
+
+        // -- BEGIN -- Hack Alert -- BEGIN --
+        // Can't target buidings with Inferno rounds (yet).
+        // TODO: implement building fires!!!
+        if ( ( targetInBuilding ||
+               target.getTargetType() == Targetable.TYPE_BUILDING ) &&
+             ( ( atype != null &&
+                 atype.getMunitionType() == AmmoType.M_INFERNO ) ||
+               ( isWeaponInfantry &&
+                 wtype.hasFlag(WeaponType.F_INFERNO) )
+               ) ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                  "Building fires has not been implemented yet, so you can not target buildings with Inferno rounds.  Please do NOT report this as a bug or a feature request... I'm getting to it." );
+        }
+        // --  END  -- Hack Alert --  END  --
+
         // Can't raise the heat of infantry or tanks.
         if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
              wtype.hasModes() &&
              weapon.curMode().equals("Heat") &&
-             te != null &&
              !(te instanceof Mech) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Can only raise the heat level of Meks.");
+        }
+
+        // Can't target infantry in buildings (from the outside).
+        // TODO: you can target infantry from within the *same* building.
+        if ( targetInBuilding &&
+             te instanceof Infantry &&
+             !ae.getPosition().equals(target.getPosition()) ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can not target infantry that from outside the building.");
         }
 
         // Handle solo attack weapons.
@@ -1511,6 +1577,11 @@ public class Compute
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
 
+            // Return if the attack is impossible.
+            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+                return toHit;
+            }
+
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
             for ( Enumeration iter = ae.getMisc(); iter.hasMoreElements(); ) {
@@ -1525,6 +1596,11 @@ public class Compute
         }
         else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
+
+            // Return if the attack is impossible.
+            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+                return toHit;
+            }
 
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -1559,7 +1635,7 @@ public class Compute
         }
         // Swarming infantry always hit their target, but
         // they can only target the Mek they're swarming.
-        else if ( ae.getSwarmTargetId() == target.getTargetID() ) {
+        else if ( te != null && ae.getSwarmTargetId() == te.getId() ) {
             // Only certain weapons can be used in a swarm attack.
             if ( wtype.getDamage() == 0 ) {
                 return new ToHitData( ToHitData.IMPOSSIBLE,
@@ -1703,7 +1779,20 @@ public class Compute
 
         } // End short-range
 
-        // also check for minimum range
+        // Weapon in arc?
+        if (!isInArc(game, attackerId, weaponId, target)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( range <= 1 &&
+             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
+
+        // Check for minimum range.
         if (range <= minimumRange) {
             int minPenalty = minimumRange - range + 1;
             // Infantry LRMs suffer double minimum range penalties.
@@ -1725,7 +1814,7 @@ public class Compute
         
         // target movement
         if (te != null) {
-            ToHitData thTemp = getTargetMovementModifier(game, target.getTargetID());
+            ToHitData thTemp = getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
             
             // precision ammo reduces this modifier
@@ -1788,7 +1877,7 @@ public class Compute
             }
         }
         
-        if (primaryTarget != Entity.NONE && primaryTarget != target.getTargetID()) {
+        if (primaryTarget != Entity.NONE && primaryTarget != target.getTargetId()) {
 
             // Infantry can't attack secondary targets (BMRr, pg. 32).
             if ( isAttackerInfantry ) {
@@ -2128,22 +2217,30 @@ public class Compute
         }
         int attEl = ae.absHeight();
         int targEl;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            targEl = ((Entity)target).absHeight();
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
+             target.getTargetType() == Targetable.TYPE_BUILDING ||
+             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
+            targEl = target.absHeight();
         } else {
             targEl = game.board.getHex(target.getPosition()).floor();
         }
         Hex hex = game.board.getHex(coords);
         int hexEl = hex.surface();
-        
-        
+
+        // Handle building elevation.
+        // ASSUMPTION: bridges don't block LOS.
+        int bldgEl = 0;
+        if ( hex.contains( Terrain.BLDG_ELEV ) ) {
+            bldgEl = hex.levelOf( Terrain.BLDG_ELEV );
+        }
+
         // check for block by terrain
-        if ((hexEl > attEl && hexEl > targEl)
-        || (hexEl > attEl && ae.getPosition().distance(coords) == 1)
-        || (hexEl > targEl && target.getPosition().distance(coords) == 1)) {
+        if ((hexEl + bldgEl > attEl && hexEl + bldgEl > targEl)
+        || (hexEl + bldgEl > attEl && ae.getPosition().distance(coords) == 1)
+        || (hexEl + bldgEl > targEl && target.getPosition().distance(coords) == 1)) {
             los.blocked = true;
         }
-        
+
         // check for woods or smoke
         if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
         || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
@@ -2159,14 +2256,16 @@ public class Compute
         }
         
         // check for target partial cover
-        if (target.getPosition().distance(coords) == 1 && hexEl == targEl 
-        && attEl <= targEl && target.getHeight() > 0) {
+        if ( target.getPosition().distance(coords) == 1 &&
+             hexEl + bldgEl == targEl &&
+             attEl <= targEl && target.getHeight() > 0) {
             los.targetCover = true;
         }
 
         // check for attacker partial cover
-        if (ae.getPosition().distance(coords) == 1 && hexEl == attEl 
-        && attEl >= targEl && ae.height() > 0) {
+        if (ae.getPosition().distance(coords) == 1 &&
+            hexEl + bldgEl == attEl &&
+            attEl >= targEl && ae.height() > 0) {
             los.attackerCover = true;
         }
         
@@ -2175,7 +2274,8 @@ public class Compute
     
 
     public static ToHitData toHitPunch(Game game, PunchAttackAction paa) {
-        return toHitPunch(game, paa.getEntityId(), paa.getTargetId(), 
+        return toHitPunch(game, paa.getEntityId(),
+                          game.getTarget(paa.getTargetType(), paa.getTargetId() ),
                           paa.getArm());
     }
     
@@ -2183,19 +2283,43 @@ public class Compute
     
     /**
      * To-hit number for the specified arm to punch
+     * <p/>
+     * This version is kept for backwards compatability.
      */
     public static ToHitData toHitPunch(Game game, int attackerId, 
                                        int targetId, int arm) {
+        return toHitPunch( game, attackerId, game.getEntity(targetId), arm );
+    }
+    
+    /**
+     * To-hit number for the specified arm to punch
+     */
+    public static ToHitData toHitPunch(Game game, int attackerId,
+                                       Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
         final int attackerHeight = ae.absHeight();
-        final int targetHeight = te.absHeight();
-        final int targetElevation = te.elevation();
+        final int targetHeight = target.absHeight();
+        final int targetElevation = target.getElevation();
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
+        final boolean targetInBuilding = isInBuilding( game, te );
         ToHitData toHit;
+
+        // arguments legal?
+        if (arm != PunchAttackAction.RIGHT && arm != PunchAttackAction.LEFT) {
+            throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
+        }
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -2207,21 +2331,13 @@ public class Compute
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
 	}
 
-        // arguments legal?
-        if (arm != PunchAttackAction.RIGHT && arm != PunchAttackAction.LEFT) {
-            throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
-        }
-        if (ae == null || te == null) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
-        }
-
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
@@ -2251,7 +2367,7 @@ public class Compute
         }
         
         // check range
-        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
@@ -2261,10 +2377,16 @@ public class Compute
         }
         
         // can't physically attack mechs making dfa attacks
-        if (te.isMakingDfa()) {
+        if ( te != null && te.isMakingDfa() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
-        
+
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
 
@@ -2275,7 +2397,7 @@ public class Compute
             if ( !ae.isLocationDestroyed(Mech.LOC_RARM) &&
                  !ae.isLocationDestroyed(Mech.LOC_LARM) &&
                  te instanceof Tank &&
-                 ae.getPosition().distance( te.getPosition() ) == 0 ) {
+                 ae.getPosition().distance( target.getPosition() ) == 0 ) {
                 toHit.addModifier( 2, "attacker is prone" );
             } else {
                 return new ToHitData(ToHitData.IMPOSSIBLE,"Attacker is prone");
@@ -2284,10 +2406,23 @@ public class Compute
 
         // Check facing if the Mek is not prone.
         else if ( !isInArc(ae.getPosition(), ae.getSecondaryFacing(), 
-                           te.getPosition(), armArc) ) {
+                           target.getPosition(), armArc) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
-        
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
+
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
@@ -2376,21 +2511,58 @@ public class Compute
     }
     
     public static ToHitData toHitKick(Game game, KickAttackAction kaa) {
-        return toHitKick(game, kaa.getEntityId(), kaa.getTargetId(), 
+        return toHitKick(game, kaa.getEntityId(), 
+                         game.getTarget(kaa.getTargetType(), kaa.getTargetId()),
                          kaa.getLeg());
     }
     
     /**
      * To-hit number for the specified leg to kick
+     * <p/>
+     * This version is kept for backwards compatability.
      */
     public static ToHitData toHitKick(Game game, int attackerId, 
                                        int targetId, int leg) {
+        return toHitKick( game, attackerId, game.getEntity(targetId), leg );
+    }
+    
+    /**
+     * To-hit number for the specified leg to kick
+     */
+    public static ToHitData toHitKick(Game game, int attackerId,
+                                      Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation();
-        final int targetHeight = te.absHeight();
-        final int targetElevation = te.elevation();
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
+        final int attackerElevation = ae.getElevation();
+        final int targetHeight = target.absHeight();
+        final int targetElevation = target.getElevation();
+        final boolean targetInBuilding = isInBuilding( game, te );
+
         int[] kickLegs = new int[2];
+        if ( ae.entityIsQuad() ) {
+          kickLegs[0] = Mech.LOC_RARM;
+          kickLegs[1] = Mech.LOC_LARM;
+        } else {
+          kickLegs[0] = Mech.LOC_RLEG;
+          kickLegs[1] = Mech.LOC_LLEG;
+        }
+        final int legLoc = 
+            (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
+        
+        ToHitData toHit;
+
+        // arguments legal?
+        if (leg != KickAttackAction.RIGHT && leg != KickAttackAction.LEFT) {
+            throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
+        }
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -2402,33 +2574,13 @@ public class Compute
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
 	}
 
-        if ( ae.entityIsQuad() ) {
-          kickLegs[0] = Mech.LOC_RARM;
-          kickLegs[1] = Mech.LOC_LARM;
-        } else {
-          kickLegs[0] = Mech.LOC_RLEG;
-          kickLegs[1] = Mech.LOC_LLEG;
-        }
-
-        final int legLoc = (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
-        
-        ToHitData toHit;
-
-        // arguments legal?
-        if (leg != KickAttackAction.RIGHT && leg != KickAttackAction.LEFT) {
-            throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
-        }
-        if (ae == null || te == null) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
-        }
-
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
         
@@ -2453,7 +2605,7 @@ public class Compute
         }
         
         // check range
-        final int range = ae.getPosition().distance(te.getPosition());
+        final int range = ae.getPosition().distance(target.getPosition());
         if ( range > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
@@ -2464,7 +2616,7 @@ public class Compute
         }
         
         // can't physically attack mechs making dfa attacks
-        if (te.isMakingDfa()) {
+        if ( te != null && te.isMakingDfa() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
 
@@ -2472,7 +2624,7 @@ public class Compute
 	// Don't check arc for stomping infantry or tanks.
         if (0 != range &&
 	    !isInArc(ae.getPosition(), ae.getFacing(), 
-                     te.getPosition(), Compute.ARC_FORWARD)) {
+                     target.getPosition(), Compute.ARC_FORWARD)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
@@ -2481,6 +2633,25 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
         
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( 0 != range && targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
+
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(3, "base");
 
@@ -2590,26 +2761,42 @@ public class Compute
     }
     
     public static ToHitData toHitClub(Game game, ClubAttackAction caa) {
-        return toHitClub(game, caa.getEntityId(), caa.getTargetId(), 
+        return toHitClub(game, caa.getEntityId(), 
+                         game.getTarget(caa.getTargetType(), caa.getTargetId()),
                          caa.getClub());
     }
-    
+
+    /**
+     * To-hit number for the specified club to hit
+     * <p/>
+     * This version is kept for backwards compatability.
+     */
+    public static ToHitData toHitClub(Game game, int attackerId, int targetId, Mounted club) {
+        return toHitClub( game, attackerId, game.getEntity(targetId), club );
+    }
+
     /**
      * To-hit number for the specified club to hit
      */
-    public static ToHitData toHitClub(Game game, int attackerId, int targetId, Mounted club) {
+    public static ToHitData toHitClub(Game game, int attackerId, Targetable target, Mounted club) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation();
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
+        final int attackerElevation = ae.getElevation();
         final int attackerHeight = ae.absHeight();
-        final int targetHeight = te.absHeight();
-        final int targetElevation = te.elevation();
+        final int targetHeight = target.absHeight();
+        final int targetElevation = target.getElevation();
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
+        final boolean targetInBuilding = isInBuilding( game, te );
         ToHitData toHit;
 
         // arguments legal?
-        if (ae == null || te == null) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
         }
 
         // can't target yourself
@@ -2628,13 +2815,19 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
         }
 
         if (bothArms) {
@@ -2681,7 +2874,7 @@ public class Compute
         }
         
         // check range
-        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
@@ -2691,13 +2884,14 @@ public class Compute
         }
         
         // can't physically attack mechs making dfa attacks
-        if (te.isMakingDfa()) {
+        if ( te != null && te.isMakingDfa() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
 
         // check facing
         int clubArc = bothArms ? Compute.ARC_FORWARD : (club.getLocation() == Mech.LOC_LARM ? Compute.ARC_LEFTARM : Compute.ARC_RIGHTARM);
-        if (!isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), clubArc)) {
+        if ( !isInArc( ae.getPosition(), ae.getSecondaryFacing(),
+                       target.getPosition(), clubArc ) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
@@ -2705,7 +2899,20 @@ public class Compute
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
-        
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
+
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
 
@@ -2799,22 +3006,38 @@ public class Compute
     }
     
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {
-        return toHitPush(game, paa.getEntityId(), paa.getTargetId());
+        return toHitPush(game, paa.getEntityId(), 
+                         game.getTarget(paa.getTargetType(), paa.getTargetId()));
     }
     
     /**
      * To-hit number for the mech to push another mech
      */
     public static ToHitData toHitPush(Game game, int attackerId, int targetId) {
+        return toHitPush( game, attackerId, game.getEntity(targetId) );
+    }
+
+    /**
+     * To-hit number for the mech to push another mech
+     */
+    public static ToHitData toHitPush(Game game,
+                                      int attackerId,
+                                      Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation();
-        final int targetElevation = te.elevation();
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
+        final int attackerElevation = ae.getElevation();
+        final int targetElevation = target.getElevation();
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
         ToHitData toHit = null;
 
         // arguments legal?
-        if (ae == null || te == null) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
         }
         
         // can't target yourself
@@ -2833,7 +3056,7 @@ public class Compute
         }
         
         //Can only push mechs
-        if (! (te instanceof Mech)) {
+        if ( te !=null && !(te instanceof Mech) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
         }
 
@@ -2843,12 +3066,12 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
@@ -2865,7 +3088,7 @@ public class Compute
         }
         
         // check range
-        if (ae.getPosition().distance(te.getPosition()) > 1 ) {
+        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
@@ -2875,27 +3098,29 @@ public class Compute
         }
         
         // can't push mech making non-pushing displacement attack
-        if (te.hasDisplacementAttack() && !te.isPushing()) {
+        if ( te != null && te.hasDisplacementAttack() && !te.isPushing() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a charge/DFA attack");
         }
         
         // can't push mech pushing another, different mech
-        if (te.isPushing() && te.getDisplacementAttack().getTargetId() != ae.getId()) {
+        if ( te != null && te.isPushing() &&
+             te.getDisplacementAttack().getTargetId() != ae.getId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is pushing another mech");
         }
         
         // can't do anything but counter-push if the target of another attack
-        if (ae.isTargetOfDisplacementAttack() && ae.findTargetedDisplacement().getEntityId() != te.getId()) {
+        if (ae.isTargetOfDisplacementAttack() && ae.findTargetedDisplacement().getEntityId() != target.getTargetId()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is the target of another push/charge/DFA");
         }
         
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+        if ( te != null && te.isTargetOfDisplacementAttack() &&
+             te.findTargetedDisplacement().getEntityId() != ae.getId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
         }
         
         // check facing
-        if (!te.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
+        if (!target.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not directly ahead of feet");
         }
         
@@ -2905,10 +3130,29 @@ public class Compute
         }
         
         // can't push prone mechs
-        if (te.isProne()) {
+        if ( te != null && te.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
         }
+
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, 
+                                  "You can not push a building (well, you can, but it won't do anything)." );
+        }
         
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
         
@@ -2933,7 +3177,7 @@ public class Compute
         }
 
         // water partial cover?
-        Hex targHex = game.board.getHex(te.getPosition());
+        Hex targHex = game.board.getHex(target.getPosition());
         if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
@@ -2949,10 +3193,36 @@ public class Compute
         return toHit;
     }
     
+    /**
+    * Checks if a charge can hit the target, including movement
+    */
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
+            // the attacker must have at least walked...
+            int movement=Entity.MOVE_WALK;
+            // ...if they moved more than their walk MPs, they must've Run
+            if (md.getMpUsed() > game.getEntity(attackerId).walkMP) {
+                    movement=Entity.MOVE_RUN;
+            };
+            // ...and if they have a jump step, they must've jumped!
+            if (md.contains(MovementData.STEP_START_JUMP)) {
+                    movement=Entity.MOVE_JUMP;
+            };
+
+            return toHitCharge(game, attackerId, targetId, md, movement);
+	};
+
+	/**
+	* Checks if a charge can hit the target, taking account of movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md, int movement) {
+            final Entity target = game.getEntity( targetId );
+            return toHitCharge( game, attackerId, target, md, movement );
+        }
+
 	/**
 	* Checks if a charge can hit the target, including movement
 	*/
-	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
+	public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovementData md) {
 		// the attacker must have at least walked...
 		int movement=Entity.MOVE_WALK;
 		// ...if they moved more than their walk MPs, they must've Run
@@ -2964,15 +3234,18 @@ public class Compute
 			movement=Entity.MOVE_JUMP;
 		};
 
-		return toHitCharge(game, attackerId, targetId, md, movement);
+		return toHitCharge(game, attackerId, target, md, movement);
 	};
 
 	/**
 	* Checks if a charge can hit the target, taking account of movement
 	*/
-	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md, int movement) {
+	public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovementData md, int movement) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+        }
         Coords chargeSrc = ae.getPosition();
         MovementData.Step chargeStep = null;
 
@@ -2999,12 +3272,12 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
@@ -3024,16 +3297,16 @@ public class Compute
         }
 
         // need to reach target
-        if (chargeStep == null || !te.getPosition().equals(chargeStep.getPosition())) {
+        if (chargeStep == null || !target.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
 
         // target must have moved already
-        if (!te.isDone()) {
+        if ( te != null && !te.isDone()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
 
-	return toHitCharge(game, attackerId, targetId, chargeSrc, movement);
+	return toHitCharge(game, attackerId, target, chargeSrc, movement);
     }
 
     /**
@@ -3041,24 +3314,41 @@ public class Compute
      */
     public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
         final Entity entity = game.getEntity(caa.getEntityId());
-        return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition(),entity.moved);
+        return toHitCharge(game, caa.getEntityId(), 
+                           game.getTarget(caa.getTargetType(), caa.getTargetId()),
+                           entity.getPosition(),entity.moved);
+    }
+
+    /**
+     * To-hit number for a charge, assuming that movement has been handled
+     * <p/>
+     * This version is kept for backwards compatability.
+     */
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
+        return toHitCharge( game, attackerId, game.getEntity(targetId), src, movement );
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
+    public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
         final int attackerElevation = ae.elevationOccupied(game.board.getHex(src));
         final int attackerHeight = attackerElevation + ae.height();
-        final int targetElevation = te.elevation();
-        final int targetHeight = te.absHeight();
+        final int targetElevation = target.getElevation();
+        final int targetHeight = target.absHeight();
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
         ToHitData toHit = null;
         
         // arguments legal?
-        if (ae == null || te == null || ae == te) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
+        if ( ae == null || target == null ) {
+            throw new IllegalArgumentException("Attacker or target not valid");
         }
         
         // can't target yourself
@@ -3072,26 +3362,26 @@ public class Compute
 	}
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
-        if (src.distance(te.getPosition()) > 1 ) {
+        if (src.distance(target.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
         // mechs can only charge standing mechs
         if (ae instanceof Mech) {
-            if (! (te instanceof Mech)) {
+            if ( te != null && !(te instanceof Mech) ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
             }
-            if (te.isProne()) {
+            if ( te != null && te.isProne() ) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
             }
         }
@@ -3101,7 +3391,8 @@ public class Compute
         }
         
         // target must be within 1 elevation level
-        if (attackerElevation > targetHeight || attackerHeight < targetElevation) {
+        if ( attackerElevation > targetHeight ||
+             attackerHeight < targetElevation ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
         
@@ -3111,15 +3402,34 @@ public class Compute
         }        
         
         // can't attack mech making a different displacement attack
-        if (te.hasDisplacementAttack()) {
+        if ( te != null && te.hasDisplacementAttack() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
         
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+        if ( te != null && te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }
+
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
         
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(5, "base");
         
@@ -3187,20 +3497,39 @@ public class Compute
 	public static int getChargeDamageFor(Entity entity, int hexesMoved) {
 		return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1));
 	};
-    
+
     /**
      * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int)Math.ceil(target.getWeight() / 10.0);
+        return (int) Math.ceil( target.getWeight() / 10.0 );
+    }
+
+    /**
+     * Damage that a mech suffers after a successful charge.
+     */
+    public static int getChargeDamageTakenBy(Entity entity, Building bldg) {
+        // ASSUMPTION: 10% of buildings CF at start of phase, round up.
+        return (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
     }
     
     /**
      * Checks if a death from above attack can hit the target, including movement
      */
     public static ToHitData toHitDfa(Game game, int attackerId, int targetId, MovementData md) {
+        final Entity target = game.getEntity( targetId );
+        return toHitDfa( game, attackerId, target, md );
+    }
+
+    /**
+     * Checks if a death from above attack can hit the target, including movement
+     */
+    public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, MovementData md) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+        }
         Coords chargeSrc = ae.getPosition();
         MovementData.Step chargeStep = null;
         
@@ -3220,12 +3549,12 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
         
@@ -3245,35 +3574,53 @@ public class Compute
         }
         
         // need to reach target
-        if (chargeStep == null || !te.getPosition().equals(chargeStep.getPosition())) {
+        if (chargeStep == null || !target.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
         
         // target must have moved already
-        if (!te.isDone()) {
+        if ( te != null && !te.isDone() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
         
-	return toHitDfa(game, attackerId, targetId, chargeSrc);
+	return toHitDfa(game, attackerId, target, chargeSrc);
     }
     
     public static ToHitData toHitDfa(Game game, DfaAttackAction daa) {
         final Entity entity = game.getEntity(daa.getEntityId());
-        return toHitDfa(game, daa.getEntityId(), daa.getTargetId(), entity.getPosition());
+        return toHitDfa(game, daa.getEntityId(),
+                        game.getTarget(daa.getTargetType(), daa.getTargetId()),
+                        entity.getPosition());
     }
     
     /**
      * To-hit number for a death from above attack, assuming that movement has 
      * been handled
+     * <p/>
+     * This version is kept for backwards compatability.
      */
     public static ToHitData toHitDfa(Game game, int attackerId, int targetId, Coords src) {
+        return toHitDfa( game, attackerId, game.getEntity(targetId), src );
+    }
+
+    /**
+     * To-hit number for a death from above attack, assuming that movement has 
+     * been handled
+     */
+    public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
+        final boolean targetInBuilding = isInBuilding( game, te );
         ToHitData toHit = null;
         
         // arguments legal?
-        if (ae == null || te == null || ae == te) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
+        if ( ae == null || target == null ) {
+            throw new IllegalArgumentException("Attacker or target not valid");
         }
         
         // can't target yourself
@@ -3287,17 +3634,17 @@ public class Compute
 	}
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
-        if (src.distance(te.getPosition()) > 1 ) {
+        if (src.distance(target.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
@@ -3307,15 +3654,35 @@ public class Compute
         }
         
         // can't attack mech making a different displacement attack
-        if (te.hasDisplacementAttack()) {
+        if ( te != null && te.hasDisplacementAttack() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
         
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+        if ( te != null && te.isTargetOfDisplacementAttack() &&
+             te.findTargetedDisplacement().getEntityId() != ae.getId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }        
+
+        // Can't target units in buildings (from the outside).
+        // TODO: you can target units from within the *same* building.
+        if ( targetInBuilding ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
         
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
         // okay, modifiers...
         toHit = new ToHitData(5, "base");
 
@@ -3480,7 +3847,7 @@ public class Compute
     public static ToHitData getTargetTerrainModifier(Game game, Targetable t) {
         Entity entityTarget = null;
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
-            entityTarget = game.getEntity(t.getTargetID());
+            entityTarget = (Entity) t;
         }
         final Hex hex = game.board.getHex(t.getPosition());
         
@@ -3767,10 +4134,12 @@ public class Compute
         if ( entity.getMovementType() != Entity.MovementType.BIPED ) {
             return false;
         }
-          
-        // need woods for now
-        //TODO: building rubble, possibly missing limbs
-        if (hex.levelOf(Terrain.WOODS) < 1) {
+
+        // The hex must contain woods or rubble from
+        // a medium, heavy, or hardened building.
+        //TODO: missing limbs are clubs.
+        if ( hex.levelOf(Terrain.WOODS) < 1 &&
+             hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM ) {
             return false;
         }
         
@@ -4405,7 +4774,27 @@ public class Compute
      * @return  the <code>ToHitData</code> containing the target roll.
      */
     public static ToHitData toHitThrash(Game game, ThrashAttackAction act){
-        return toHitThrash( game, act.getEntityId(), act.getTargetId() );
+        return toHitThrash( game, act.getEntityId(),
+                            game.getTarget(act.getTargetType(),
+                                           act.getTargetId()) );
+    }
+
+    /**
+     * To-hit number for thrashing attack.  This attack can only be made
+     * by a prone Mek in a clear or pavement terrain hex that contains
+     * infantry.  This attack will force a PSR check for the prone Mek;
+     * if the PSR is missed, the Mek takes normal falling damage.
+     * <p/>
+     * This version is kept for backwards compatability.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   attackerId - the <code>int</code> ID of the attacking unit.
+     * @param   targetId - the <code>int</code> ID of the attack's target.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitThrash( Game game, int attackerId, 
+                                         int targetId ) {
+        return toHitThrash( game, attackerId, game.getEntity(targetId) );
     }
 
     /**
@@ -4416,19 +4805,24 @@ public class Compute
      *
      * @param   game - the <code>Game</code> object containing all entities.
      * @param   attackerId - the <code>int</code> ID of the attacking unit.
-     * @param   targetId - the <code>int</code> ID of the attack's target.
+     * @param   target - the <code>Targetable</code> unit being targeted.
      * @return  the <code>ToHitData</code> containing the target roll.
      */
-    public static ToHitData toHitThrash( Game game, int attackerId, 
-                                         int targetId ) {
+    public static ToHitData toHitThrash( Game game, int attackerId,
+                                         Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
         ToHitData toHit;
 
         // arguments legal?
-        if (ae == null || te == null) {
+        if (ae == null || target == null) {
             throw new IllegalArgumentException
-                ("Attacker or target id not valid");
+                ("Attacker or target not valid");
         }
         
         // Non-mechs can't thrash.
@@ -4444,20 +4838,20 @@ public class Compute
         }
         
         // Can't thrash against non-infantry
-        if (!(te instanceof Infantry)) {
+        if ( te == null && !(te instanceof Infantry) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Can only thrash at infantry");
         }
 
         // Can't thrash against swarming infantry.
-        else if ( Entity.NONE != te.getSwarmTargetId() ) {
+        else if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Can't thrash at swarming infantry" );
         }
 
         // Check range.
-        if (te.getPosition() == null 
-        || ae.getPosition().distance(te.getPosition()) > 0 ) {
+        if ( target.getPosition() == null ||
+             ae.getPosition().distance(target.getPosition()) > 0 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target not in same hex");
         }
@@ -4470,6 +4864,14 @@ public class Compute
  	     hex.contains( Terrain.BUILDING ) ) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Not a clear or pavement hex." );
+        }
+
+        // Can't target woods or a building with a thrash attack.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
         // The Mech can't have fired a weapon this round.
@@ -4517,7 +4919,9 @@ public class Compute
      * @return  the <code>ToHitData</code> containing the target roll.
      */
     public static ToHitData toHitBrushOff(Game game, BrushOffAttackAction act){
-        return toHitBrushOff( game, act.getEntityId(), act.getTargetId(),
+        return toHitBrushOff( game, act.getEntityId(),
+                              game.getTarget(act.getTargetType(),
+                                             act.getTargetId()),
                               act.getArm() );
     }
 
@@ -4525,6 +4929,8 @@ public class Compute
      * To-hit number for the specified arm to brush off swarming infantry.
      * If this attack misses, the Mek will suffer punch damage.  This same
      * action is used to remove iNARC pods.
+     * <p/>
+     * This version is kept for backwards compatability.
      *
      * @param   game - the <code>Game</code> object containing all entities.
      * @param   attackerId - the <code>int</code> ID of the attacking unit.
@@ -4536,8 +4942,31 @@ public class Compute
      */
     public static ToHitData toHitBrushOff(Game game, int attackerId, 
                                           int targetId, int arm) {
+        return toHitBrushOff( game, attackerId, game.getEntity(targetId), arm );
+    }
+
+    /**
+     * To-hit number for the specified arm to brush off swarming infantry.
+     * If this attack misses, the Mek will suffer punch damage.  This same
+     * action is used to remove iNARC pods.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   attackerId - the <code>int</code> ID of the attacking unit.
+     * @param   target - the <code>Targetable</code> object being targeted.
+     * @param   arm - the <code>int</code> of the arm making the attack;
+     *          this value must be <code>BrushOffAttackAction.RIGHT</code>
+     *          or <code>BrushOffAttackAction.LEFT</code>.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitBrushOff(Game game, int attackerId,
+                                          Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
-        final Entity te = game.getEntity(targetId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
         final int armLoc = (arm == BrushOffAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         ToHitData toHit;
@@ -4553,10 +4982,11 @@ public class Compute
              arm != BrushOffAttackAction.LEFT ) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
-        if (ae == null || te == null) {
-            throw new IllegalArgumentException("Attacker or target id not valid");
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
         }
-        if ( targetId != ae.getSwarmAttackerId() ) {
+        if ( targetId != ae.getSwarmAttackerId() ||
+             te == null || !(te instanceof Infantry) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Can only brush off swarming infantry" );
         }
@@ -4587,13 +5017,21 @@ public class Compute
         }
 
         // can't physically attack mechs making dfa attacks
-        if (te.isMakingDfa()) {
+        if ( te != null && te.isMakingDfa() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
         
         // Can't brush off while prone.
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+
+        // Can't target woods or a building with a brush off attack.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
         
         // okay, modifiers...
@@ -4701,6 +5139,101 @@ public class Compute
      */
     public static boolean isOdd( int number ) {
         return ( (number & 1) == 1 );
+    }
+
+    /**
+     * Determine if the given unit is inside of a building at the given
+     * coordinates.
+     *
+     * @param   game - the <code>Game</code> object.
+     *          This value may be <code>null</code>.
+     * @param   entity - the <code>Entity</code> to be checked.
+     *          This value may be <code>null</code>.
+     * @return  <code>true</code> if the entity is inside of the building
+     *          at those coordinates.  <code>false</code> if there is no
+     *          building at those coordinates or if the entity is on the
+     *          roof or in the air above the building, or if any input
+     *          argument is <code>null</code>.
+     */
+    public static boolean isInBuilding( Game game,
+                                        Entity entity ) {
+
+        // No game, no building.
+        if ( game == null ) {
+            return false;
+        }
+
+        // Null entities can't be in a building.
+        if ( entity == null ) {
+            return false;
+        }
+
+        // Call the version of the function that requires coordinates.
+        return isInBuilding( game, entity, entity.getPosition() );
+    }
+
+    /**
+     * Determine if the given unit is inside of a building at the given
+     * coordinates.
+     *
+     * @param   game - the <code>Game</code> object.
+     *          This value may be <code>null</code>.
+     * @param   entity - the <code>Entity</code> to be checked.
+     *          This value may be <code>null</code>.
+     * @param   coords - the <code>Coords</code> of the building hex.
+     *          This value may be <code>null</code>.
+     * @return  <code>true</code> if the entity is inside of the building
+     *          at those coordinates.  <code>false</code> if there is no
+     *          building at those coordinates or if the entity is on the
+     *          roof or in the air above the building, or if any input
+     *          argument is <code>null</code>.
+     */
+    public static boolean isInBuilding( Game game,
+                                        Entity entity,
+                                        Coords coords ) {
+
+        // No game, no building.
+        if ( game == null ) {
+            return false;
+        }
+
+        // Null entities can't be in a building.
+        if ( entity == null ) {
+            return false;
+        }
+
+        // Null coordinates can't have buildings.
+        if ( coords == null ) {
+            return false;
+        }
+
+        // Get the Hex at those coordinates.
+        final Hex curHex = game.board.getHex( coords );
+
+        // The entity can't be inside of a building that isn't there.
+        if ( !curHex.contains( Terrain.BLDG_ELEV ) ) {
+            return false;
+        }
+
+        // Get the elevations occupied by the building.
+        int surface = curHex.surface();
+        int bldgHeight = curHex.levelOf( Terrain.BLDG_ELEV );
+        int basement = 0;
+        if ( curHex.contains( Terrain.BLDG_BASEMENT ) ) {
+            basement = curHex.levelOf( Terrain.BLDG_BASEMENT );
+        }
+
+        // Get the elevation occupied by the entity in that hex.
+        int entityElev = entity.elevationOccupied( curHex );
+
+        // Return true if the entity is in the range of building elevations.
+        if ( entityElev >= (surface - basement) &&
+             entityElev < (surface + bldgHeight) ) {
+            return true;
+        }
+
+        // Entity is not *inside* of the building.
+        return false;
     }
 
 } // End public class Compute

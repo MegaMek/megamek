@@ -182,9 +182,25 @@ public class Hex
      * this level is assumed to be air.
      */
     public int ceiling() {
-        // TODO: implement
-        
-        return elevation;
+        int maxFeature = 0;
+
+        // Account for woods.
+        // N.B. VTOLs are allowed to enter smoke.
+        if ( this.contains( Terrain.WOODS ) ) {
+            maxFeature = 2;
+        }
+
+        // Account for buildings.
+        if ( maxFeature < this.levelOf(Terrain.BLDG_ELEV) ) {
+            maxFeature = this.levelOf(Terrain.BLDG_ELEV);
+        }
+
+        // Account for bridges.
+        if ( maxFeature < this.levelOf(Terrain.BRIDGE_ELEV) ) {
+            maxFeature = this.levelOf(Terrain.BRIDGE_ELEV);
+        }
+
+        return elevation + maxFeature;
     }
     
     /**

@@ -34,6 +34,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_CLUB              = 0x0008;
     public static final int     F_HATCHET           = 0x0010;
     public static final int     F_TREE_CLUB         = 0x0020;
+    public static final int     F_CASE              = 0x0040;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -68,7 +69,7 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
-        } else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTech().equalsIgnoreCase("Inner Sphere")) {
+        } else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() != TechConstants.T_CLAN_LEVEL_2) {
             return 3;
         }
         // right, well I'll just guess then
@@ -102,6 +103,8 @@ public class MiscType extends EquipmentType {
         
         // Start of Level2 stuff
         EquipmentType.addType(createDoubleHeatSink());
+        EquipmentType.addType(createISCASE());
+        EquipmentType.addType(createCLCASE());
     }
     
     public static MiscType createHeatSink() {
@@ -195,16 +198,78 @@ public class MiscType extends EquipmentType {
     }
     
     // Start of Level2 stuff
+    
+    // REMOVE ME WHEN HMPREAD IS UPDATED!
     public static MiscType createDoubleHeatSink() {
         MiscType misc = new MiscType();
         
         misc.name = "Double Heat Sink";
-        misc.internalName = misc.name;
-        misc.mepName = misc.name;
-        misc.mtfName = misc.name;
+        misc.internalName = "REMOVE MEEE!!";
+        misc.mepName = "REMOVE ME!";
+        misc.mtfName = "Double Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = CRITICALS_VARIABLE;
         misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createISDoubleHeatSink() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Double Heat Sink";
+        misc.internalName = "ISDouble Heat Sink";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 1.0f;
+        misc.criticals = 3;
+        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createCLDoubleHeatSink() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Double Heat Sink";
+        misc.internalName = "CLDouble Heat Sink";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 1.0f;
+        misc.criticals = 2;
+        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createISCASE() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "CASE";
+        misc.internalName = "ISCASE";
+        misc.mepName = misc.name;
+        misc.mtfName = "ISCASE";
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.flags |= F_CASE;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createCLCASE() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "CASE";
+        misc.internalName = "CLCASE";
+        misc.mepName = misc.name;
+        misc.mtfName = "CLCASE";
+        misc.tonnage = 0.0f;
+        misc.criticals = 0;
+        misc.flags |= F_CASE;
         misc.bv = 0;
         
         return misc;

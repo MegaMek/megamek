@@ -26,7 +26,7 @@
  	private String m_sRef;
  	private File m_sSourceFile;
  	private int m_nYear;
- 	private String m_sType;
+ 	private int m_nType;
  	private int m_nTons;
  	private int m_nBV;
 
@@ -35,7 +35,7 @@
 	public String getRef() { return (this.m_sRef); }
 	public File getSourceFile() { return (this.m_sSourceFile); }
 	public int getYear() { return (this.m_nYear); }
-	public String getType() { return (this.m_sType); }
+	public int getType() { return (this.m_nType); }
 	public int getTons() { return (this.m_nTons); }
 	public int getBV() { return (this.m_nBV); }
 	
@@ -43,7 +43,7 @@
 	public void setRef(String m_sRef) { this.m_sRef = m_sRef; }
 	public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
 	public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
-	public void setType(String m_sType) { this.m_sType = m_sType; }
+	public void setType(int m_nType) { this.m_nType = m_nType; }
 	public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
 	public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
 }

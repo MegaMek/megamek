@@ -151,20 +151,28 @@ public class MtfFile {
         if ( null != chassisConfig )
           chassisConfig = chassisConfig.substring(7).trim();
          
-        Mech mech = null;
+        Mech mech;
         
         if ( "Quad".equals(chassisConfig) )
           mech = new QuadMech();
         else
           mech = new BipedMech();
-
-        if (techYear == null) {
-            return null;
-        }
         
         mech.setName(name);
         mech.setModel(model);
-		mech.setTech(techBase.substring(9));
+        mech.setYear(Integer.parseInt(this.techYear.substring(4).trim()));
+        //mech.setOmni("OmniMech".equals(this.chassisType.trim()));
+        
+        //TODO: this ought to be a better test
+        if ("Inner Sphere".equals(this.techBase.substring(9).trim())) {
+            if (mech.getYear() == 3025) {
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            } else {
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            }
+        } else {
+            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        }
         
         mech.weight = (float)Integer.parseInt(tonnage.substring(5));
         mech.heatSinks = Integer.parseInt(heatSinks.substring(11, 14).trim()) - 10;
@@ -199,21 +207,26 @@ public class MtfFile {
             parseCrits(mech, i);
         }
 
+        if (mech.isClan()) {
+            mech.addClanCase();
+        }
+        
         return mech;
     }
     
     private void parseCrits(Mech mech, int loc) {
         // check for removed arm actuators
-		if (!chassisConfig.equals("Quad")) {
-			if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
-            if (!critData[loc][3].equals("Hand Actuator")) {
-                mech.setCritical(loc, 3, null);
+        if (!(mech instanceof QuadMech)) {
+            if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
+                if (!critData[loc][3].equals("Hand Actuator")) {
+                    mech.setCritical(loc, 3, null);
+                }
+                if (!critData[loc][2].equals("Lower Arm Actuator")) {
+                    mech.setCritical(loc, 2, null);
+                }
             }
-            if (!critData[loc][2].equals("Lower Arm Actuator")) {
-                mech.setCritical(loc, 2, null);
-            }
-            }
-		}
+        }
+        
         // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
             // if the slot's full already, skip it.

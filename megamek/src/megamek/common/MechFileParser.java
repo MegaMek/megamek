@@ -25,16 +25,12 @@ import megamek.common.util.BuildingBlock;
 
 public class MechFileParser {
     private File m_file;
-    private int m_nYear;
-    private String m_sTechType;
     private Mech m_mech = null;
     
     public MechFileParser(File f) {
         parse(f);
     }
     
-    public int getYear() { return m_nYear; }
-    public String getTechType() { return m_sTechType; }
     public Mech getMech() { return m_mech; }
     
     private void parse(File f) {
@@ -42,21 +38,15 @@ public class MechFileParser {
         if (f.getName().toLowerCase().endsWith(".mep")) {
             MepFile mf = new MepFile(f);
             m_mech = mf.getMech();
-            m_nYear = Integer.parseInt(mf.techYear);
-            m_sTechType = mf.innerSphere;
         }
         else if (f.getName().toLowerCase().endsWith(".mtf")) {
             MtfFile mf = new MtfFile(f);
             m_mech = mf.getMech();
-            m_nYear = Integer.parseInt(mf.techYear.substring(4));
-            m_sTechType = mf.techBase;
         }
         else if (f.getName().toLowerCase().endsWith(".blk")) {
             BLKMechFile mf = new BLKMechFile(f);
             m_mech = mf.getMech();
             BuildingBlock bb = mf.dataFile;
-            m_nYear = bb.getDataAsInt("year")[0];
-            m_sTechType = bb.getDataAsString("type")[0];
         }
     }
 }

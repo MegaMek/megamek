@@ -86,6 +86,9 @@ v 0.26
 
 VERSION HISTORY:
 ----------------
+v next
++ weapon critical hits should actually disable the weapon
+
 v 0.25.0 (04-11-02, 10:45am)
 + moved extra weapon fire checking around in the code
 + all mech display panels now working properly in weapons phase

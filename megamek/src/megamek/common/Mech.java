@@ -119,6 +119,16 @@ public abstract class Mech
     }
     
     /**
+     * Override entity.newRound()
+     */
+    public void newRound() {
+        super.newRound();
+        
+        setSecondaryFacing(getFacing());
+    }
+    
+    
+    /**
      * Returns true if the location in question is a torso location
      */
     public boolean locationIsTorso(int loc) {

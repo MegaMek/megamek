@@ -126,6 +126,11 @@ public class Tank
             m_jammedGun.setHit(false);
             m_jammedGun = null;
         }
+        
+        // reset turret facing, if not jammed
+        if (!m_bTurretLocked) {
+            setSecondaryFacing(getFacing());
+        }
     }
     
     /*

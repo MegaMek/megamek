@@ -131,22 +131,24 @@ public class BipedMech extends Mech {
     /**
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
-    public int getRunMP() {
+    
+    public int getRunMP(boolean gravity) {
         if ( countBadLegs() == 0 ) {
-            return super.getRunMP();
+            return super.getRunMP(gravity);
         } else {
-            return getWalkMP();
+            return getWalkMP(gravity);
         }
     }
 
     /**
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
-    public int getRunMPwithoutMASC() {
+       
+    public int getRunMPwithoutMASC(boolean gravity) {
         if ( countBadLegs() == 0 ) {
-            return super.getRunMPwithoutMASC();
+            return super.getRunMPwithoutMASC(gravity);
         } else {
-            return getWalkMP();
+            return getWalkMP(gravity);
         }
     }
 

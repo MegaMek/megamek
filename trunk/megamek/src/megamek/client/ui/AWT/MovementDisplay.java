@@ -625,14 +625,14 @@ public class MovementDisplay
             if (!i.hasMoreElements()) {
                 if (entity instanceof Mech) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                        if ((step.getMpUsed() > (int)Math.ceil(entity.getWalkMP(false) * 1.5)) && !step.isUsingMASC()) {
+                        if (step.getMpUsed() > entity.getRunMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
                             }
                         }
                     } else if (step.getMovementType() == Entity.MOVE_JUMP) {
-                        if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+                        if (step.getMpUsed() > entity.getOriginalJumpMP()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
@@ -641,7 +641,7 @@ public class MovementDisplay
                       }
                 } else if (entity instanceof Tank) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                        if (step.getMpUsed() > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                        if (step.getMpUsed() > entity.getRunMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));

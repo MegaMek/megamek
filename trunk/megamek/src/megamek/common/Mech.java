@@ -487,18 +487,20 @@ public abstract class Mech
     /**
      * Potentially adjust runMP for MASC
      */
-    public int getRunMP() {
+    
+    public int getRunMP(boolean gravity) {
         if (hasArmedMASC()) {
-            return getWalkMP() * 2;
+            return getWalkMP(gravity) * 2;
         }
-        return super.getRunMP();
+        return super.getRunMP(gravity);
     }
 
     /**
      * Returns run MP without considering MASC
      */
-    public int getRunMPwithoutMASC() {
-        return super.getRunMP();
+    
+    public int getRunMPwithoutMASC(boolean gravity) {
+        return super.getRunMP(gravity);
     }
 
     /**

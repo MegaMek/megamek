@@ -532,6 +532,8 @@ public class BoardView1
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
      * the old sprite with the new!
+     *
+     *  Try to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity) {
         EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
@@ -540,13 +542,16 @@ public class BoardView1
         
         
         if (sprite != null) {
-            entitySprites.removeElement(sprite);
+            newSprites.removeElement(sprite);
         }
         
         sprite = new EntitySprite(entity);
-        entitySprites.addElement(sprite);
-        entitySpriteIds.put(new Integer(entity.getId()), sprite);
+        newSprites.addElement(sprite);
+        newSpriteIds.put(new Integer(entity.getId()), sprite);
         
+        entitySprites = newSprites;
+        entitySpriteIds = newSpriteIds;
+
         repaint(100);
     }
     

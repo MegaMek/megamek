@@ -101,6 +101,8 @@ public class MechSelectorDialog
         m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12));
         add(m_mechViewRight, BorderLayout.EAST);
         
+        clearMechPreview();
+        
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
         m_chUnitType.addItemListener(this);
@@ -250,22 +252,41 @@ public class MechSelectorDialog
         else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType || ie.getSource() == m_chUnitType) {
             filterMechs();
         } else if (ie.getSource() == m_mechList) {
-            MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
-            try {
-                Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                MechView mechView = new MechView(entity);
-		m_mechViewLeft.setEditable(false);
-		m_mechViewRight.setEditable(false);
-		m_mechViewLeft.setText(mechView.getMechReadoutBasic());
-		m_mechViewRight.setText(mechView.getMechReadoutLoadout());
-                m_mechViewLeft.setCaretPosition(0);
-                m_mechViewRight.setCaretPosition(0);
-            } catch (EntityLoadingException ex) {
-                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
-                ex.printStackTrace();
+            int selected = m_mechList.getSelectedIndex();
+            if (selected == -1) {
+                clearMechPreview();
                 return;
             }
+            else {
+                MechSummary ms = m_mechsCurrent[selected];
+                try {
+                    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    previewMech(entity);
+                } catch (EntityLoadingException ex) {
+                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+                    ex.printStackTrace();
+                    clearMechPreview();
+                    return;
+                }
+            }
         }
+    }
+    
+    void clearMechPreview() {
+        m_mechViewLeft.setEditable(false);
+        m_mechViewRight.setEditable(false);
+        m_mechViewLeft.setText("");
+        m_mechViewRight.setText("");
+    }
+    
+    void previewMech(Entity entity) {
+        MechView mechView = new MechView(entity);
+        m_mechViewLeft.setEditable(false);
+        m_mechViewRight.setEditable(false);
+        m_mechViewLeft.setText(mechView.getMechReadoutBasic());
+        m_mechViewRight.setText(mechView.getMechReadoutLoadout());
+        m_mechViewLeft.setCaretPosition(0);
+        m_mechViewRight.setCaretPosition(0);
     }
     
     private static final String SPACES = "                        ";

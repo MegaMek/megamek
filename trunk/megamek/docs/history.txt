@@ -78,6 +78,7 @@ v next
 + during DFA, with prone attacker, dead target, attacker takes falling damage
 + 618373: DFA 3+ levels down can no longer result in automatic fall
 + 653880: mep names added for recently-added equipment
++ 654328: artemis iv and narc are no longer cumulative
 
 v 0.27.11 (12-13-02, 8:10pm)
 + killing a C3 network master no longer crashes the client

@@ -5809,7 +5809,8 @@ implements Runnable, ConnectionHandler {
         boolean bAllShotsHit = false;
         int nRange = ae.getPosition().distance(target.getPosition());
         int nMissilesModifier = 0;
-        if (game.getOptions().booleanOption("maxtech_mslhitpen")) {
+        boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
+        if (maxtechmissiles) {
             if (nRange<=1) {
                 nMissilesModifier = +1;
             } else if (nRange <= wtype.getShortRange()) {
@@ -5986,8 +5987,8 @@ implements Runnable, ConnectionHandler {
             // Large MRM missile racks roll twice.
             // MRM missiles never recieve hit bonuses.
             if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier) +
-                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier, maxtechmissiles) +
+                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier, maxtechmissiles);
             }
 
             // Battle Armor units multiply their racksize by the number
@@ -6003,10 +6004,10 @@ implements Runnable, ConnectionHandler {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20, nMissilesModifier );
+                        hits += Compute.missilesHit( 20, nMissilesModifier, maxtechmissiles );
                         temp -= 20;
                     }
-                    hits += Compute.missilesHit( temp, nMissilesModifier );
+                    hits += Compute.missilesHit( temp, nMissilesModifier, maxtechmissiles );
                 } // End not-all-shots-hit
             }
 
@@ -6017,7 +6018,7 @@ implements Runnable, ConnectionHandler {
 
             // In all other circumstances, roll for hits.
             else {
-                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier);
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier, maxtechmissiles);
             }
 
             // Advanced SRM's only hit with even numbers of missles.

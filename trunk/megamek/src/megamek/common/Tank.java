@@ -92,6 +92,17 @@ public class Tank
         }
     }
     
+    /**
+     * Hovercraft move on the surface of the water
+     */
+    public int elevationOccupied(Hex hex) {
+       if (movementType == MovementType.HOVER && hex.contains(Terrain.WATER)) {
+           return hex.surface();
+       } else {
+           return hex.floor();
+       }
+    }
+    
     public void lockTurret()
     {
         m_bTurretLocked = true;
@@ -442,17 +453,6 @@ public class Tank
         
         for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);
-        }
-    }
-    
-    public int elevation()
-    {
-        if (getMovementType() == Entity.MovementType.HOVER &&
-                game.board.getHex(getPosition()).contains(Terrain.WATER)) {
-            return 0;
-        }
-        else {
-            return super.elevation();
         }
     }
     

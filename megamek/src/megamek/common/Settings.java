@@ -92,6 +92,13 @@ public class Settings
      */
     public static boolean   memoryDumpOn            = false;
 
+    /**
+     * The MegaMek-standard "newline" string is that of Windows.  Basically,
+     * apps written for *nix or MacOS will know how to read Windows newlines,
+     * but Windows apps are (usually) unable to read *nix or MacOS newlines.
+     */
+    public static final String NL = "\r\n";
+
     private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
             "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
             

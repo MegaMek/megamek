@@ -32,7 +32,7 @@ public class BoardEncoder {
     /**
      * Encode a <code>Board</code> object to an output writer.
      *
-     * @param   option - the <code>Board</code> to be encoded.
+     * @param   board - the <code>Board</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -40,9 +40,74 @@ public class BoardEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Board option, Writer out )
+    public static void encode( Board board, Writer out )
         throws IOException
     {
+        Enumeration iter; // used when marching through a list of sub-elements
+        Coords coords;
+        int x;
+        int y;
+        int turns;
+
+        // First, validate our input.
+        if ( null == board ) {
+            throw new IllegalArgumentException( "The board is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this board
+        out.write( "<board version=\"1.0\" >" );
+
+        // Write the hex array to the stream.
+        out.write( "<data width=\"" );
+        out.write( board.width );
+        out.write( "\" height=\"" );
+        out.write( board.height );
+        out.write( "\" roadsAutoExit=\"" );
+        out.write( board.getRoadsAutoExit() ? "true" : "false" );
+        out.write( "\" >" );
+        for ( x = 0; x < board.width; x++ ) {
+            for ( y = 0; y < board.height; y++ ) {
+                HexEncoder.encode( board.getHex(x,y), out );
+            }
+        }
+        out.write( "</data>" );
+
+        // Write out the buildings (if any).
+        iter = board.getBuildings();
+        if ( iter.hasMoreElements() ) {
+            out.write( "<buildings>" );
+            while ( iter.hasMoreElements() ) {
+                BuildingEncoder.encode( (Building) iter.nextElement(), out );
+            }
+            out.write( "</buildings>" );
+        }
+
+        // Write out the infernos (if any).
+        iter = board.getInfernoBurningCoords();
+        if ( iter.hasMoreElements() ) {
+            out.write( "<infernos>" );
+            while ( iter.hasMoreElements() ) {
+                // Encode the infernos as these coordinates.
+                coords = (Coords) iter.nextElement();
+                out.write( "<inferno>" );
+                CoordsEncoder.encode( coords, out );
+                turns = board.getInfernoBurnTurns( coords );
+                out.write( "<standard turns=\"" );
+                out.write( turns );
+                turns = board.getInfernoIVBurnTurns( coords );
+                // This value may be zero.
+                if ( turns > 0 ) {
+                    out.write( "\" ><arrowiv turns=\"" );
+                    out.write( turns );
+                }
+                out.write( "\" ></inferno>" );
+            }
+            out.write( "</infernos>" );
+        }
+
     }
 
     /**

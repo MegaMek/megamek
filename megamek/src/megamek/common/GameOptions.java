@@ -31,7 +31,6 @@ import megamek.common.options.OptionGroup;
  * @author Ben
  */
 public class GameOptions extends Options implements Serializable {
-    private static final String NL = "\r\n";
     private static final String GAME_OPTIONS_FILE_NAME = "gameoptions.xml";
     
     public void initialize() {
@@ -182,9 +181,9 @@ public class GameOptions extends Options implements Serializable {
 
         // Output the doctype and header stuff.
           output.write( "<?xml version=\"1.0\"?>" );
-          output.write( NL );
+          output.write( Settings.NL );
           output.write( "<options>" );
-          output.write( NL );
+          output.write( Settings.NL );
   
         // Now the options themselves
           for ( int i = 0; i < options.size(); i++ ) {
@@ -192,23 +191,23 @@ public class GameOptions extends Options implements Serializable {
   
             output.write( "   <gameoption>" );
 
-            output.write( NL );
+            output.write( Settings.NL );
             output.write( "      <optionname>" );
             output.write( option.getShortName() );
             output.write( "</optionname>" );
-            output.write( NL );
+            output.write( Settings.NL );
             output.write( "      <optionvalue>" );
             output.write( option.getValue().toString() );
             output.write( "</optionvalue>" );
-            output.write( NL );
+            output.write( Settings.NL );
   
             output.write( "   </gameoption>" );
-            output.write( NL );
+            output.write( Settings.NL );
           }
   
         // Finish writing.
           output.write( "</options>" );
-          output.write( NL );
+          output.write( Settings.NL );
           output.flush();
           output.close();
       } catch (IOException e) {}

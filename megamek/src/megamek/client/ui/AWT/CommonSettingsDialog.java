@@ -128,7 +128,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         tempPanel.add( getFocus );
 
 // scrolling options
-        tempPanel.add( new Label("Clicking on the MiniMap and using the cursor keys always scrolls the main display.") );
+        tempPanel.add( new Label("Clicking on the MiniMap and using the numpad arrow keys always scrolls the main display.") );
         tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
 
         rightDragScroll
@@ -144,7 +144,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
             tempPanel.add( clickEdgeScroll );
 
         autoEdgeScroll
-            = new Checkbox( "Whenever you left-click near the edge of the map." );
+            = new Checkbox( "Automatically, whenever you left-click near the edge of the map." );
             tempPanel.add( autoEdgeScroll );
 
         panSetting = new Panel();

@@ -31,7 +31,7 @@ public class PMAreasGroup  implements PMElement{
      * Adds area to group
      */
     public void addArea(PMElement ha){
-        gr.add(ha);
+        gr.addElement(ha);
     }
     
     /**

@@ -203,31 +203,31 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         Image tile = comp.getToolkit().getImage("data/widgets/tile.gif");
         PMUtil.setImage(tile,comp);
         int b = BackGroundDrawer.TILING_BOTH;
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));                
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));                
         
             b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
                 
         
             b = BackGroundDrawer.NO_TILING | 
@@ -235,28 +235,28 @@ public class GeneralInfoMapSet implements DisplayMapSet{
                 BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage("data/widgets/tl_corner.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage("data/widgets/bl_corner.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage("data/widgets/tr_corner.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         
             b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage("data/widgets/br_corner.gif");
         PMUtil.setImage(tile,comp);
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
          
     }
     

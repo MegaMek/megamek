@@ -6,6 +6,7 @@ v0.29.52 (CVS)
 + Implementede designated artillery targets, any artillery targeting
     any of these up to 5 hexes per player automatically hits.
 + Bug 1040426: Artemis bonus to non-standard missile ammo
++ Bug 1040547: Arctic Fox B & C have incorrect heatsinks
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

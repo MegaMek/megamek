@@ -19,22 +19,22 @@ import java.io.*;
 
 public class Settings
 {
-    public static String    cfgFileName = "MegaMek.cfg";
+    public static String    cfgFileName             = "MegaMek.cfg";
     
     
-    public static int        windowPosX                = 0;
-    public static int        windowPosY                = 0;
-    public static int        windowSizeWidth            = 800;
-    public static int        windowSizeHeight        = 600;
+    public static int       windowPosX              = 0;
+    public static int       windowPosY              = 0;
+    public static int       windowSizeWidth         = 800;
+    public static int       windowSizeHeight        = 600;
     
-    public static String    lastPlayerName            = "";
-    public static int        lastPlayerColor;
+    public static String    lastPlayerName          = "";
+    public static int       lastPlayerColor;
     
-    public static String    lastServerPass            = "";
-    public static int        lastServerPort            = 2346;
+    public static String    lastServerPass          = "";
+    public static int       lastServerPort          = 2346;
     
-    public static String    lastConnectAddr            = "localhost";
-    public static int        lastConnectPort            = 2346;
+    public static String    lastConnectAddr         = "localhost";
+    public static int       lastConnectPort         = 2346;
     
     public static Color     mapTextColor            = Color.black;
     

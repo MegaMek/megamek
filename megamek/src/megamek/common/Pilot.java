@@ -103,13 +103,10 @@ public class Pilot
         this.koThisRound = koThisRound;
     }
     
-    /**
-     * Returns a digest string describing the pilot
-     */
     public String getDesc() {
         String s = new String(name);
         if (hits > 0) {
-            s += " (" + hits + " hits taken";
+            s += " (" + hits + " hit(s)";
             if (isUnconcious()) {
                 s += " [ko]";
             } else if (isDead()) {

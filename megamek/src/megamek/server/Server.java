@@ -2051,16 +2051,7 @@ implements Runnable {
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_SALVAGEABLE));
             return;
         }
-        
-        // check for MASC failure
-        if (entity instanceof Mech) {
-            if (((Mech)entity).checkForMASCFailure(phaseReport)) {
-                // no movement after that
-                return;
-            }
-        }
-                
-        
+
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -2079,6 +2070,14 @@ implements Runnable {
         
         // Compile the move
         Compute.compile(game, entity.getId(), md);
+
+        // check for MASC failure
+        if (entity instanceof Mech) {
+            if (((Mech)entity).checkForMASCFailure(phaseReport,md)) {
+                // no movement after that
+                return;
+            }
+        }
         
         // get last step's movement type
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {

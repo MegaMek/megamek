@@ -86,11 +86,11 @@ public class CEntity {
     boolean isPhysicalTarget = false;
 
     //will change based upon the pilot
-    int gunnery = 4;
+    private int gunnery = 4;
     int piloting = 5;
 
     int overheat = OVERHEAT_NONE;
-    int Range = RANGE_ALL;
+    int range = RANGE_ALL;
     int long_range = 0;
     double RangeDamages[] = new double[4];
 
@@ -125,6 +125,8 @@ public class CEntity {
     boolean engaged = false; //am i fighting
     boolean moved = false;
     boolean justMoved = false;
+    
+	int[] minRangeMods = new int[7];
 
     public CEntity(Entity en, TestBot tb) {
         this.entity = en;
@@ -176,8 +178,6 @@ public class CEntity {
         Arrays.fill(this.possible_damage, 0);
     }
 
-    int[] MinRanges = new int[7];
-
     public void characterize() {
         this.entity = tb.game.getEntity(this.entity.getId());
         this.current = new MoveOption(tb.game, this);
@@ -200,7 +200,7 @@ public class CEntity {
         int heat_total = 0;
         Enumeration weapons = entity.getWeapons();
         int num_weapons = 0;
-        this.MinRanges = new int[7];
+        this.minRangeMods = new int[7];
         while (weapons.hasMoreElements()) {
             num_weapons++;
             Mounted m = (Mounted) weapons.nextElement();
@@ -222,7 +222,7 @@ public class CEntity {
             for (int range = 1; range <= lr && range <= MAX_RANGE; range++) {
                 if (range <= min) {
                     if (range < 7)
-                        this.MinRanges[range] += 1 + min - range;
+                        this.minRangeMods[range] += 1 + min - range;
                     odds = Compute.oddsAbove(this.gunnery + 1 + min - range) / 100.0;
                 } else if (range <= sr) {
                     odds = Compute.oddsAbove(this.gunnery) / 100.0;
@@ -240,9 +240,9 @@ public class CEntity {
                 this.long_range = Math.max(this.long_range, range);
             }
         }
-        for (int r = 1; r < this.MinRanges.length; r++) {
+        for (int r = 1; r < this.minRangeMods.length; r++) {
             if (num_weapons > 0)
-                this.MinRanges[r] = (int) Math.round(((double) this.MinRanges[r]) / (double) num_weapons);
+                this.minRangeMods[r] = (int) Math.round(((double) this.minRangeMods[r]) / (double) num_weapons);
         }
         //what type of overheater am I
         int heat = heat_total - capacity;
@@ -373,17 +373,20 @@ public class CEntity {
                         break;
                 }
             }
-            this.armor_health[arc] = ((double) total * points) / 242;
-            if (this.armor_health[arc] > max) {
-                max = this.armor_health[arc];
+            int max_points = 22*11;
+            if (entity instanceof Infantry) {
+                max_points = 4;
+            } else if (entity instanceof Tank) {
+                max_points = 4;
             }
-            this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
-            this.avg_iarmor = this.entity.getTotalInternal() / 5;
+            this.armor_health[arc] = ((double) total * points) / max_points;
+            max = Math.max(armor_health[arc], max);
         }
+		this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
+		this.avg_iarmor = this.entity.getTotalInternal() / 5;
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
             this.armor_percent[arc] = this.armor_health[arc] / max;
         }
-
         this.computeRange();
     }
 
@@ -424,13 +427,13 @@ public class CEntity {
         }
         this.RangeDamages[3] /= 3;
         if (values[0] > 2.5 * values[1]) {
-            this.Range = RANGE_SHORT;
+            this.range = RANGE_SHORT;
         } else if (values[1] > 2.5 * values[2]) {
-            this.Range = RANGE_MEDIUM;
+            this.range = RANGE_MEDIUM;
         } else if (values[2] > .25 * values[0]) {
-            this.Range = RANGE_LONG;
+            this.range = RANGE_LONG;
         } else {
-            this.Range = RANGE_ALL;
+            this.range = RANGE_ALL;
         }
     }
 
@@ -439,9 +442,8 @@ public class CEntity {
      */
     protected int[] getArmorValues(int loc, boolean rear) {
         int[] result = new int[2];
-        double percent = 0;
         result[0] = this.entity.getArmor(loc, rear);
-        percent = result[0] / this.entity.getOArmor(loc, rear);
+		double percent = result[0] / this.entity.getOArmor(loc, rear);
         if (percent < .25) {
             result[1] = 0;
         } else if (percent < .60) {
@@ -510,7 +512,7 @@ public class CEntity {
         MoveOption.Table discovered = new MoveOption.Table();
 
         if (entity.getJumpMPWithTerrain() > 0) {
-            possible.add(base.createMovePath(base).addStep(MovePath.STEP_START_JUMP));
+            possible.add(((MovePath)base.clone()).addStep(MovePath.STEP_START_JUMP));
         }
 
         possible.add(base);
@@ -590,17 +592,17 @@ public class CEntity {
      * given my skill and the present modifiers, what is a better estimate of
      * my damage dealing -- actual and not utility
      */
-    public double getModifiedDamage(int arc, int range, int modifier) {
-        if (range > MAX_RANGE)
+    public double getModifiedDamage(int arc, int a_range, int modifier) {
+        if (a_range > MAX_RANGE)
             return 0;
-        double damage = this.damages[arc][range];
+        double damage = this.damages[arc][a_range];
         int base = this.gunnery;
         int dist_mod = 0;
-        if (range < 7) {
-            dist_mod = this.MinRanges[range];
-        } else if (range < 13) {
+        if (a_range < 7) {
+            dist_mod = this.minRangeMods[a_range];
+        } else if (a_range < 13) {
             dist_mod = 2;
-        } else if (range < MAX_RANGE) {
+        } else if (a_range < MAX_RANGE) {
             dist_mod = 4;
         } else { //will need to be changed for extended range weapons
             dist_mod = 20;

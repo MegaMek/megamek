@@ -4433,7 +4433,7 @@ implements Runnable, ConnectionHandler {
                 .append( " did not have room for a club.\n");
         }
     }
-    
+
     /**
      * Generates a WeaponResult object for a WeaponAttackAction.  Adds heat,
      * depletes ammo, sets weapons used.
@@ -4446,8 +4446,8 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !wtype.hasFlag(WeaponType.F_INFANTRY);
-        final boolean isOneShot = wtype.isOneShot();
+            !wtype.hasFlag(WeaponType.F_INFANTRY) && !wtype.hasFlag(WeaponType.F_ONESHOT);
+        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
 
 
 
@@ -4529,8 +4529,8 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !wtype.hasFlag(WeaponType.F_INFANTRY);
-        final boolean isOneShot = wtype.isOneShot();
+            !wtype.hasFlag(WeaponType.F_INFANTRY) && !wtype.hasFlag(WeaponType.F_ONESHOT);
+        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
         Mounted ammo = weapon.getLinked();
 
         // how many shots are we firing?
@@ -4715,15 +4715,15 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !isWeaponInfantry;
+            !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         Infantry platoon = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
         boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
-	boolean bFragmentation = (usesAmmo && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
-	boolean bFlechette = (usesAmmo && atype.getMunitionType() == AmmoType.M_FLECHETTE);
+        boolean bFragmentation = (usesAmmo && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
+        boolean bFlechette = (usesAmmo && atype.getMunitionType() == AmmoType.M_FLECHETTE);
         if (!bInferno) {
             // also check for inferno infantry
             bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
@@ -5070,18 +5070,27 @@ implements Runnable, ConnectionHandler {
                 nDamPerHit = Math.abs( wtype.getAmmoType() );
             } else {
                 sSalvoType = " missile(s) ";
-                if(!(atype==null)) {  //will be null for oneshots.
+                if(!(wtype.hasFlag(WeaponType.F_ONESHOT))) {  //will be null for oneshots.
                   nDamPerHit = atype.getDamagePerShot();
-                } else { //for now assume it's a RL.
-                  nDamPerHit= 1;
+                } else { //Hard code in weapon types.
+                  switch(wtype.getAmmoType()) {
+                    case AmmoType.T_LRM:
+                    case AmmoType.T_MRM:
+                      nDamPerHit=1;
+                      break;
+                    case AmmoType.T_SRM:
+                    case AmmoType.T_SRM_STREAK:
+                      nDamPerHit=2;
+                      break;
+
+                  }
                 }
 
             }
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
-                 wtype.getAmmoType() == AmmoType.T_ATM ||
-                 wtype.isOneShot()) {
+                 wtype.getAmmoType() == AmmoType.T_ATM) {
                 nCluster = 5;
             }
 
@@ -5626,8 +5635,8 @@ implements Runnable, ConnectionHandler {
             else if (entityTarget != null) {
                  HitData hit = entityTarget.rollHitLocation
                      ( toHit.getHitTable(),
-                       toHit.getSideTable(), 
-                       wr.waa.getAimedLocation(), 
+                       toHit.getSideTable(),
+                       wr.waa.getAimedLocation(),
                        wr.waa.getAimingMode() );
 
                 // If a leg attacks hit a leg that isn't

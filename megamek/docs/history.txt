@@ -3,6 +3,7 @@ VERSION HISTORY:
 v 0.29.24 (CVS) 
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)
 + Bug 879938: Fixed. More Java 1.1 compatability issues.
++ Rewrote RL/OS code for friendliness;while other OS missile racks aren't supported yet, the code is ready to take them.
 
 v 0.29.23 (2004-01-25 9:45pm)
 + Bug 828741: jumping bypasses fire, but not on the first step. Also optimised

@@ -31,6 +31,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PPC           = 0x0008; //              "
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
+    public static final int     F_ONESHOT       = 0x8000; //weapon is oneShot.
 
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
@@ -57,7 +58,6 @@ public class WeaponType extends EquipmentType {
     private int     waterShortRange;
     private int     waterMediumRange;
     private int     waterLongRange;
-    private boolean oneShot=false; //For OS/RL weapons.
 
     protected WeaponType() {
         ;
@@ -127,9 +127,6 @@ public class WeaponType extends EquipmentType {
         return waterLongRange;
     }
 
-    public boolean isOneShot() {
-      return oneShot;
-    }
 
 
     /**
@@ -696,8 +693,8 @@ public class WeaponType extends EquipmentType {
       weapon.tonnage = .5f;
       weapon.criticals = 1;
       weapon.bv= 18;
-      weapon.ammoType = AmmoType.T_NA;
-      weapon.oneShot=true;
+      weapon.ammoType = AmmoType.T_LRM;
+      weapon.flags |= F_ONESHOT;
       weapon.toHitModifier=1;
 
       return weapon;
@@ -720,9 +717,9 @@ public class WeaponType extends EquipmentType {
       weapon.tonnage = 1.0f;
       weapon.criticals = 2;
       weapon.bv= 23;
-      weapon.ammoType = AmmoType.T_NA;
-      weapon.oneShot=true;
+      weapon.flags |= F_ONESHOT;
       weapon.toHitModifier=1;
+      weapon.ammoType= AmmoType.T_LRM;
 
       return weapon;
     }
@@ -744,8 +741,8 @@ public class WeaponType extends EquipmentType {
      weapon.tonnage = 1.5f;
      weapon.criticals = 3;
      weapon.bv= 24;
-     weapon.ammoType = AmmoType.T_NA;
-     weapon.oneShot=true;
+     weapon.ammoType = AmmoType.T_LRM;
+     weapon.flags |= F_ONESHOT;
      weapon.toHitModifier=1;
 
      return weapon;

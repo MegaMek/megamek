@@ -421,12 +421,12 @@ public class Compute
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !isWeaponInfantry;
+            !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
-        final boolean isOneShot = wtype.isOneShot();
-        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
+        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&
@@ -946,7 +946,7 @@ public class Compute
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
-        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
             && weapon.curMode().equals("Indirect");
 
         ToHitData mods = new ToHitData();

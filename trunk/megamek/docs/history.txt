@@ -5,6 +5,7 @@ v 0.29.19 (CVS)
 + Fix the FiringDisplay NPE that McWizard mentioned in bug # 849441.
 + Incorporated the Ostermiller utility library (need Base64 for PacketEncoder).
 + Initial implementation of the PacketTool.  It only sends XML-encoded Boards.
++ Bug 775759: CHECK_FALSE overrides other autos in target rolls
 
 v 0.29.18 (2003-11-26, 7:30am)
 + Bug 843723, Patch 842834: fix race condition with "Done" button

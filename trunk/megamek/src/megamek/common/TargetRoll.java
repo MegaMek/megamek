@@ -141,6 +141,9 @@ public class TargetRoll {
     }
 
     public void addModifier(Modifier modifier) {
+        if (modifier.value == CHECK_FALSE) {
+            removeAutos();
+        }
         modifiers.add(modifier);
         recalculate();
     }

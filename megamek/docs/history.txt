@@ -72,6 +72,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ Applied skids patch to CVS tree.
+
 v 0.27.6 (11-08-01, 6pm)
 + Added Kai's fire patch (only working for missed shots, presently)
 + 633352: fixed NullPointerException when deploying during double blind

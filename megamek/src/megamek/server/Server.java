@@ -891,6 +891,8 @@ implements Runnable {
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
                 resolveCrewDamage();
+		resolvePilotingRolls(); // Skids cause damage in movement phase
+		resolveCrewDamage(); // again, I guess
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1466,6 +1468,9 @@ implements Runnable {
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;
+	int prevFacing = curFacing;
+	Hex prevHex = null;
+	final boolean isInfantry = (entity instanceof Infantry);
         
         Compute.compile(game, entity.getId(), md);
         
@@ -1516,13 +1521,324 @@ implements Runnable {
                 fellDuringMovement = true;
                 break;
             }
+             
+            // step...
+            moveType = step.getMovementType();
+            curPos = step.getPosition();
+            curFacing = step.getFacing();
+            distance = step.getDistance();
+            mpUsed = step.getMpUsed();
+
+            final Hex curHex = game.board.getHex(curPos);
+
+            // Check for skid.
+	    // ASSUMPTION - only count pavement in the src hex.
+	    if ( moveType != Entity.MOVE_JUMP
+		 && prevHex != null
+		 && prevHex.contains(Terrain.PAVEMENT)
+		 && overallMoveType == Entity.MOVE_RUN
+		 && prevFacing != curFacing
+		 && !lastPos.equals(curPos)
+		 && !isInfantry ) {
+
+		// Have an entity-meaningful PSR message.
+		PilotingRollData psr = null;
+		if ( entity instanceof Mech ) {
+		    psr = new PilotingRollData
+			(entity.getId(), getMovementPSRModifier(distance),
+			 "running & turning on pavement", true);
+		} else {
+		    psr = new PilotingRollData
+			(entity.getId(), getMovementPSRModifier(distance),
+			 "reckless driving on pavement", true);
+		}
+		// Does the entity skid?
+		if ( !doSkillCheckWhileMoving(entity, lastPos, curPos, psr) ) {
+
+		    curPos = entity.getPosition();
+		    Coords nextPos = curPos;
+		    Hex    nextHex = null;
+		    int    skidDistance = 0;
+		    Enumeration targets = null;
+		    Entity target = null;
+		    int    curElevation;
+		    int    nextElevation;
+
+		    // All charge damage and fire mods are based upon
+		    // the pre-skid move distance.
+		    entity.delta_distance = distance;
+
+		    // What is the first hex in the skid?
+		    nextPos = curPos.translated( prevFacing );
+		    nextHex = game.board.getHex( nextPos );
+
+		    // Move the entity "distance" hexes from curPos in the
+		    // prevFacing direction, unless something intervenes.
+		    for ( skidDistance = 0; skidDistance < distance; 
+			  skidDistance++ ) {
+
+			// Is the next hex off the board?
+			if ( !game.board.contains(nextPos) ) {
+
+			    // Can the entity skid off the map?
+			    if ( game.getOptions().booleanOption("push_off_board") ) {
+				// Yup.  One dead entity.
+				game.moveToGraveyard(entity.getId());
+				send(createRemoveEntityPacket(entity.getId()));
+				phaseReport.append("*** " + entity.getDisplayName() + " has skidded off the field. ***\n");
+
+			    } else {
+				// Nope.  Update the report.
+				phaseReport.append( "   Can't skid off the field.\n" );
+
+				// TODO: inflict any damage
+			    }
+			    // Stay in the current hex and stop skidding.
+			    break;
+			}
+
+			// Can the skiding entity enter the hex?
+			if ( entity.isHexProhibited(nextHex) ) {
+			    // Update report.
+			    phaseReport.append( "   Can't skid into hex " + 
+						nextPos.getBoardNum() +
+						".\n" );
+
+			    // TODO: inflict any damage
+
+			    // Stay in the current hex and stop skidding.
+			    break;
+			}
+
+			// Is there an elevation difference?
+			// ASSUMPTION - Elevation difference ends skid.
+			curElevation =
+			    game.board.getHex(curPos).getElevation();
+			nextElevation =
+			    nextHex.getElevation();
+			if ( curElevation < nextElevation ) {
+			    // ASSUMPTION - Can't skid uphill.
+			    phaseReport.append( "   Skids into base of hill in hex " +
+						nextPos.getBoardNum() +
+						".\n" );
+
+			    // TODO: inflict any damage
+
+			    // Stay in the current hex and stop skidding.
+			    break;
+			}
+			else if ( curElevation > nextElevation ) {
+			    // Skids downhill and keeps skiding.
+			    phaseReport.append( "   Skids off a hillside.\n" );
+
+			    // Resolve the fall.
+			    doEntityFallsInto( entity, curPos, nextPos, 
+					       Compute.getBasePilotingRoll(game, entity.getId())
+					       );
+
+			    // Stay in fallen hex and stop skiding.
+			    break;
+			}
+
+			// Does the next hex contain an entities?
+			boolean stopTheSkid = false;
+			targets = game.getEntities( nextPos );
+			while ( targets.hasMoreElements() ) {
+			    target = (Entity) targets.nextElement();
+
+			    // TODO : Handle targets in buildings.
+
+			    // Mechs and vehicles get charged.
+			    if ( !(target instanceof Infantry) ) {
+
+				// Update report.
+				phaseReport.append( "   Skids into " +
+						    target.getShortName() +
+						    " in hex " +
+						    nextPos.getBoardNum() +
+						    "... " );
+
+				// Resolve a charge against the target.
+				ToHitData toHit = new ToHitData();
+				toHit.setHitTable( target.isProne() ? 
+						   ToHitData.HIT_NORMAL :
+						   ToHitData.HIT_KICK );
+				toHit.setSideTable
+				    (Compute.targetSideTable(entity, target));
+				resolveChargeDamage
+				    (entity, target, toHit, prevFacing);
+
+				// The skid ends here.
+				stopTheSkid = true;
+			    }
+
+			    // Resolve "move-through" damage on infantry.
+			    else {
+
+				// Update report.
+				phaseReport.append( "   Skids through " +
+						    target.getShortName() +
+						    " in hex " +
+						    nextPos.getBoardNum() +
+						    "... " );
+
+				// Infantry don't have different
+				// tables for punches and kicks
+				HitData hit = target.rollHitLocation( ToHitData.HIT_NORMAL,
+								      Compute.targetSideTable(entity, target)
+								      );
+
+				// Damage equals tonnage, divided by 5.
+				phaseReport.append( damageEntity(target, hit, (int)Math.round(entity.getWeight()/5)) );
+				phaseReport.append( "\n" );
+
+			    } // End handle-infantry
+			    
+			    // Has the target been destroyed?
+			    if ( target.isDoomed() ) {
+
+				// Has the target taken a turn?
+				if ( target.ready ) {
+
+				    // Dead entities don't take turns.
+				    int targetOwnerId = target.getOwner().getId();
+				    for ( int loop = turnIndex + 1;
+					  loop < turns.size();
+					  loop++ ) {
+					// Is the loop-th turn for the 
+					// destroyed target's player?
+					if ( targetOwnerId == ( (GameTurn)turns.elementAt(loop) ).getPlayerNum() ) {
+					    // Yup. Remove the turn and stop looping.
+					    turns.remove( loop );
+					    break;
+					}
+				    } // Check the next turn
+
+				} // End target-still-to-move
+
+				// Yup.  Clean out the entity.
+				target.setDestroyed(true);
+				game.moveToGraveyard(target.getId());
+				send(createRemoveEntityPacket(target.getId()));
+
+			    }
+
+			    // Update the target's position,
+			    // unless it is off the game map.
+			    if ( !game.isInGraveyard(target) ) {
+				entityUpdate( target.getId() );
+			    }
+
+			} // End someone's-in-the-way
+
+			// Do we stay in the current hex and stop skidding?
+			if ( stopTheSkid ) {
+			    break;
+			}
+
+			// Did we skid into a building?
+			if ( nextHex.contains(Terrain.BUILDING) ) {
+			    // Update report.
+			    phaseReport.append( "   Skids into building in hex " +
+						nextPos.getBoardNum() +
+						".\n" );
+			    // TODO : Damage the building and the skidding entity.
+
+			    // Skid into the building's hex and stop skidding.
+			    curPos = nextPos;
+			    entity.setPosition( curPos );
+			    break;
+			}
+
+			// Update the position and keep skidding.
+			curPos = nextPos;
+			entity.setPosition( curPos );
+			phaseReport.append( "   Skids into hex " + 
+					    curPos.getBoardNum() + ".\n" );
+
+			// Get the next hex in the skid?
+			nextPos = nextPos.translated( prevFacing );
+			nextHex = game.board.getHex( nextPos );
+
+		    } // Handle the next skid hex.
+
+		    // If the skidding entity violates stacking,
+		    // displace targets until it doesn't.
+		    curPos = entity.getPosition();
+		    target = Compute.stackingViolation
+			(game, entity.getId(), curPos);
+		    while (target != null) {
+			nextPos = Compute.getValidDisplacement
+			    (game, target.getId(),
+			     target.getPosition(), prevFacing);
+			// ASSUMPTION
+			// There should always be *somewhere* that
+			// the target can go... last skid hex if
+			// nothing else is available.
+			if ( null == nextPos ) {
+			    // But I don't trust the assumption fully.
+			    // Report the error and try to continue.
+			    System.err.println( "The skid of " +
+						entity.getShortName() +
+						" should displace " +
+						target.getShortName() +
+						" in hex " +
+						curPos.getBoardNum() +
+						" but there is nowhere to go."
+						);
+			    break;
+			}
+			phaseReport.append( "    " ); // indent displacement
+			doEntityDisplacement(target, curPos, nextPos, null);
+			target = Compute.stackingViolation( game, 
+							    entity.getId(), 
+							    curPos );
+		    }
+
+		    // Mechs suffer damage for every hex skidded.
+		    if ( entity instanceof Mech ) {
+			// Calculate one half falling damage times skid length.
+			int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
+
+			// report skid damage
+			phaseReport.append("    " + entity.getDisplayName() + " suffers " + damage + " damage from the skid.");
+
+			// standard damage loop
+			// All skid damage is to the front.
+			while (damage > 0) {
+			    int cluster = Math.min(5, damage);
+			    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+			    phaseReport.append(damageEntity(entity, hit, cluster));
+			    damage -= cluster;
+			}
+			phaseReport.append( "\n" );
+		    }
+
+		    // Clean up the entity if it has been destroyed.
+		    if ( entity.isDoomed() ) {
+			entity.setDestroyed(true);
+			game.moveToGraveyard(entity.getId());
+			send(createRemoveEntityPacket(entity.getId()));
+		    }
+
+		    // Let the player know the ordeal is over.
+		    phaseReport.append( "      Skid ends.\n" );
+
+		    // set entity parameters
+		    curFacing = entity.getFacing();
+		    curPos = entity.getPosition();
+		    entity.setSecondaryFacing( curFacing );
+		    mpUsed = entity.getRunMP(); // skid consumes all movement
+		    entity.moved = moveType;
+		    fellDuringMovement = true;
+		    break;
+		}
+            }
             
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                
-                distance = step.getDistance();
                 
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
@@ -1534,24 +1850,13 @@ implements Runnable {
             if (step.getType() == MovementData.STEP_DFA) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                
-                distance = step.getDistance();
-                
+
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
                 pendingCharges.addElement(daa);
                 break;
             }
-            
-            // step...
-            moveType = step.getMovementType();
-            curPos = step.getPosition();
-            curFacing = step.getFacing();
-            distance = step.getDistance();
-            mpUsed = step.getMpUsed();
-            
-            final Hex curHex = game.board.getHex(curPos);
-            
+
             // check if we've moved into rubble
             if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
@@ -1595,8 +1900,11 @@ implements Runnable {
                 break;
             }
             
-            // update lastPos
+            // update lastPos, prevFacing & prevHex
             lastPos = new Coords(curPos);
+	    if ( !curHex.equals(prevHex) )
+		prevFacing = curFacing;
+	    prevHex = curHex;
         }
         
         // set entity parameters
@@ -1669,8 +1977,11 @@ implements Runnable {
 
 	} // End entity-is-infantry
 
-        // send a packet updating everybody on this entity's movement
-        entityUpdate(entity.getId());
+	// Update the entitiy's position,
+	// unless it is off the game map.
+	if ( !game.isInGraveyard(entity) ) {
+	    entityUpdate( entity.getId() );
+	}
         
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
@@ -1719,13 +2030,17 @@ implements Runnable {
     
     /**
      * Do a piloting skill check while moving
+     *
+     * @return <code>true</code> if the pilot passes the skill check.
      */
-    private void doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest,
+    private boolean doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest,
     PilotingRollData reason) {
-        // non mechs should never get here
-        if (! (entity instanceof Mech)) {
-            return;
-        }
+	boolean result = true;
+
+        // Non mechs should never get here, unless we're avoiding skids.
+        if (! (entity instanceof Mech) && !reason.isForSkid() ) {
+            return result;
+	}
         
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
         final Hex srcHex = game.board.getHex(src);
@@ -1737,6 +2052,7 @@ implements Runnable {
         roll.append(reason);
         
         // will the entity fall in the source or destination hex?
+	// ASSUMPTION - skids while going uphill start from src, not dest
         if (src.equals(dest) || srcHex.floor() < destHex.floor()) {
             fallsInPlace = true;
         } else {
@@ -1758,11 +2074,19 @@ implements Runnable {
         + " [" + roll.getDesc() + "]"
         + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
-            phaseReport.append("falls.\n");
-            doEntityFallsInto(entity, (fallsInPlace ? dest : src), (fallsInPlace ? src : dest), roll);
+	    // Vehicles don't fall, they fail
+	    if ( entity instanceof Mech ) {
+		phaseReport.append("falls.\n");
+		doEntityFallsInto(entity, (fallsInPlace ? dest : src), (fallsInPlace ? src : dest), roll);
+	    } else {
+		phaseReport.append("fails.\n");
+		entity.setPosition( fallsInPlace ? src : dest );
+	    }
+	    result = false;
         } else {
             phaseReport.append("succeeds.\n");
         }
+	return result;
     }
     
     /**
@@ -1806,6 +2130,8 @@ implements Runnable {
             doEntityFall(entity, dest, fallElevation, roll);
             // target gets displaced
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
+	    // Update the violating entity's postion on the client.
+	    entityUpdate( violation.getId() );
         }
     }
     
@@ -1839,6 +2165,9 @@ implements Runnable {
                 if (roll != null) {
                     pilotRolls.addElement(roll);
                 }
+
+		// Update the entity's postion on the client.
+		entityUpdate( entity.getId() );
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
@@ -1868,6 +2197,8 @@ implements Runnable {
                 pilotRolls.addElement(roll);
             }
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
+	    // Update the violating entity's postion on the client.
+	    entityUpdate( violation.getId() );
             return;
         } else {
             // accidental fall from above: havoc!
@@ -1909,6 +2240,8 @@ implements Runnable {
                 Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                 if (targetDest != null) {
                     doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
+		    // Update the violating entity's postion on the client.
+		    entityUpdate( violation.getId() );
                 } else {
                     // ack!  automatic death!
                     phaseReport.append(destroyEntity(violation, "impossible displacement"));
@@ -1919,6 +2252,8 @@ implements Runnable {
                 Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
                 if (targetDest != null) {
                     doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"));
+		    // Update the entity's postion on the client.
+		    entityUpdate( entity.getId() );
                 } else {
                     // ack!  automatic death!
                     phaseReport.append(destroyEntity(entity, "impossible displacement"));
@@ -2804,12 +3139,28 @@ implements Runnable {
             phaseReport.append("misses.\n");
             // move attacker to side hex
             doEntityDisplacement(ae, src, dest, null);
-            return;
         }
-        
+	else {
+	    // Resolve the damage.
+	    resolveChargeDamage( ae, te, toHit, direction );
+	}
+	return;
+    }
+
+    /**
+     * Handle a charge's damage
+     */
+    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
+
         // we hit...
         int damage = Compute.getChargeDamageFor(ae);
         int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
+	PilotingRollData chargePSR = null;
+
+	// If we're upright, we may fall down.
+	if ( !ae.isProne() ) {
+	    chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
+	}
         
         phaseReport.append("hits.");
         phaseReport.append("\n  Defender takes " + damage + " damage" + toHit.getTableDesc() + ".");
@@ -2829,26 +3180,27 @@ implements Runnable {
         // move attacker and target, if possible
         Coords src = te.getPosition();
         Coords dest = src.translated(direction);
-        
+
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             phaseReport.append("\n");
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged"));
-            doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
+            doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
         } else {
-            pilotRolls.addElement(new PilotingRollData(ae.getId(), 2, "charging"));
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.moveToGraveyard(te.getId());
                 send(createRemoveEntityPacket(te.getId()));
                 phaseReport.append("\n*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
-                doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
+                doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
             } else {
                 // they stil have to roll
                 pilotRolls.addElement(new PilotingRollData(te.getId(), 2, "was charged"));
+		pilotRolls.addElement(chargePSR);
             }
         }
         
         phaseReport.append("\n");
-    }
+
+    } // End private void resolveChargeDamage( Entity, Entity, ToHitData )
     
     /**
      * Handle a death from above attack
@@ -3847,8 +4199,11 @@ implements Runnable {
                 phaseReport.append(damageCrew(entity, 1) + "\n");
             }
         }
-        
-        entity.setProne(true);
+         
+	// Only Mechs can fall prone.
+	if ( entity instanceof Mech ) {
+	    entity.setProne(true);
+	}
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
@@ -4583,7 +4938,23 @@ implements Runnable {
             sendServerChat(connId, "Command not recognized.  Type /help for a list of commands.");
         }
     }
-    
+ 
+    /**
+     * Calculate the piloting skill roll modifier, based upon the number
+     * of hexes moved this phase.
+     */
+    private int getMovementPSRModifier( int distance ) {
+	if ( distance > 10 ) // 11+ hexes
+	    return 4;
+	else if ( distance > 7 ) // 8-10 hexes
+	    return 2;
+	else if ( distance > 4 ) // 5-7 hexes
+	    return 1;
+	else if ( distance > 2 ) // 3-4 hexes
+	    return 0;
+	return -1; // 0-2 hexes
+    }
+
     /**
      * Process a packet
      */

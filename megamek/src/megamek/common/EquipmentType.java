@@ -44,6 +44,7 @@ public class EquipmentType {
 
     protected float     tonnage = 0;
     protected int       criticals = 0;
+    protected int       techType = TechConstants.T_IS_LEVEL_1;
     
     protected boolean   explosive = false;
     protected boolean   hittable = true; // if false, reroll critical hits
@@ -98,6 +99,10 @@ public class EquipmentType {
 
     public int getCriticals(Entity entity) {
         return criticals;
+    }
+    
+    public int getTechType() {
+        return techType;
     }
     
     public boolean isExplosive() {
@@ -155,6 +160,10 @@ public class EquipmentType {
         WeaponType.initializeTypes();
         AmmoType.initializeTypes();
         MiscType.initializeTypes();
+    }
+    
+    public static Enumeration getAllTypes() {
+        return allTypes.elements();
     }
     
     protected static void addType(EquipmentType type) {

@@ -79,6 +79,7 @@ public class CEntity  {
   double[] armor_health = {0,0,0,0};
   double[] armor_percent = {0,0,0,0};
   double avg_armor = 0;
+  double avg_iarmor = 0;
   
   //used to determine the utility of combining attacks
   double[] expected_damage = {0,0,0,0};
@@ -161,9 +162,9 @@ public class CEntity  {
     this.base_psr_odds = Compute.oddsAbove(Compute.getBasePilotingRoll(game,entity.getId()).getValue())/100;
     //begin weapons characterization
     double heat_mod = .9; //these estimates are consistently too high
-    if (entity.heat > 7) heat_mod = .7; //reduce effectiveness
-    if (entity.heat > 12) heat_mod = .4;
-    if (entity.heat > 16) heat_mod = .2;
+    if (entity.heat > 7) heat_mod = .8; //reduce effectiveness
+    if (entity.heat > 12) heat_mod = .5;
+    if (entity.heat > 16) heat_mod = .35;
     int capacity = entity.getHeatCapacity();
     int heat_total = 0;
     Enumeration weapons = entity.getWeapons();
@@ -307,6 +308,7 @@ public class CEntity  {
         max = this.armor_health[arc];
       }
       this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3])/4;
+      this.avg_iarmor = this.entity.getTotalInternal()/5;
     }
     for(int arc = this.FIRST_ARC; arc <= this.LAST_PRIMARY_ARC; arc++) {
       this.armor_percent[arc] = this.armor_health[arc]/max;
@@ -402,13 +404,13 @@ public class CEntity  {
     //absolute bonus for damage that is likely to do critical
     if (t2 + this.expected_damage[arc] > this.armor_health[arc]){
       //damage saturation check, only if we have more mechs 
-      if ((t2 + this.expected_damage[0] + this.expected_damage[1] + this.expected_damage[2] + this.expected_damage[3] > 2*this.avg_armor + 1
-       || (this.entity.isProne() && this.base_psr_odds < .1)) && !(this.tb.NumFriends > this.tb.NumEnemies)
+      if ((t2 + this.expected_damage[0] + this.expected_damage[1] + this.expected_damage[2] + this.expected_damage[3] > 3*(this.avg_armor + this.avg_iarmor)
+       || (this.entity.isProne() && this.base_psr_odds < .1 && !this.entity.isImmobile())) && !(this.tb.NumFriends > this.tb.NumEnemies)
       ) {
         if (this.tb.NumEnemies == 1) {
           return t2 *= 2;
         }
-        return Math.sqrt(t2);
+        return Math.sqrt(t2)*this.strategy.target;
       }
       t2 *= 1.5;
     } else if (this.expected_damage[arc] > 0) {
@@ -416,7 +418,7 @@ public class CEntity  {
     } else if (this.hasTakenDamage) {
       t2 *= 1.1; //for coordinating fire
     }
-    return Math.max(t1,t2);
+    return Math.max(t1,t2)*this.strategy.target;
   }
   
   public Integer getKey() {
@@ -606,8 +608,12 @@ public class CEntity  {
     
     if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0 || entity.hasLegActuatorCrit()) {
       if (this.base_psr_odds > .2) { 
-        current.movement_threat += .1*entity.getWeight()*(1 - 1/2*this.base_psr_odds);
-        current.tv.add(.1*entity.getWeight()*(1 - 1/2*this.base_psr_odds)+" Jump Threat");
+        double mod = 1;
+        if (this.base_psr_odds < .5) {
+          mod = 3;
+        }
+        current.movement_threat += mod*.1*entity.getWeight()*(1 - 1/2*this.base_psr_odds);
+        current.tv.add(mod*.1*entity.getWeight()*(1 - 1/2*this.base_psr_odds)+" Jump Threat");
       } else {
         possible.clear();
         discovered.clear();
@@ -686,8 +692,7 @@ public class CEntity  {
     }
     this.MechsMoved = this.tb.my_mechs_moved;
     Object[] move_array = moves.toArray();
-    //Object[] enemy_array = game.getValidTargets(entity).toArray();
-    Object[] enemy_array = vectorToArray(game.getValidTargets(entity));
+    Object[] enemy_array = Compute.vectorToArray(game.getValidTargets(entity));
     CEntity self = this;
     
     for (int i = 0; i < move_array.length; i++) { // for each state (could some prefiltering be done?)
@@ -832,8 +837,8 @@ public class CEntity  {
     } else { //will need to be changed for extended range weapons
       dist_mod = 20;
     }
-    if (base + dist_mod + modifier > 10) return 0;
-    if (base + dist_mod + modifier == 10) modifier++;
+    if (base + dist_mod + modifier > TestBot.Ignore) return 0;
+    if (base + dist_mod + modifier == TestBot.Ignore) damage *= .5;
     return (damage/Compute.oddsAbove(base+dist_mod)*Compute.oddsAbove(dist_mod+modifier+base));
   }
   
@@ -859,10 +864,4 @@ public class CEntity  {
       return (CEntity)super.remove(es.getKey());
     }
   }
-  
-    private Object[] vectorToArray(java.util.Vector vector) {
-        Object[] array = new Object[vector.size()];
-        vector.copyInto(array);
-        return array;
-    }
 }

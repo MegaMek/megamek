@@ -102,6 +102,7 @@ public class GALance extends GA {
         EntityState min = (EntityState)((EntityState[])moves.elementAt(m))[0];
         if (min.damage > 2*next.damage && min.getUtility() < .5*next.getUtility()) {
           result += next.centity.bv; //it is being endangered in the future
+          if (m > 0) chromVector.genes[m]--; //go so far as to mutate the gene
         }
       }
     }
@@ -109,7 +110,7 @@ public class GALance extends GA {
     double distance_mod = 0;
     //if outnumbered and loosing, clump together.
     try {
-      int target_distance = Math.max(9 - difference, 1);
+      int target_distance = Math.max(8 - difference, 1);
       for(int m = 0; m < move_array.length; m++) {
         EntityState next = (EntityState)move_array[m];
         next.getUtility();
@@ -155,9 +156,9 @@ public class GALance extends GA {
       CEntity cen = tb.enemies.get((Entity)this.enemy_array[e]);
       if (damages[e] > cen.avg_armor) {
         if (damages[e] > 4*cen.avg_armor) {
-          max += cen.bv/10; //likely to die
+          max += cen.bv/5; //likely to die
         } else {
-          max += cen.bv/100; //in danger
+          max += cen.bv/50; //in danger
         }
       } else if (damages[e] > 40) {
         max += (1 - cen.base_psr_odds)*cen.entity.getWeight();
@@ -177,19 +178,16 @@ public class GALance extends GA {
     
     for(int m = 0; m < move_array.length; m++) {
       EntityState next = (EntityState)move_array[m];
-      if (next.centity.engaged) {
-        if (next.centity.old.Doomed && next.Doomed) {
-          if (next.centity.entity.getWeight() <= 30) {
-            result += .5*next.getUtility() - next.damage;
-          } else {
-            result -= next.damage;
-          }
+      if (next.Doomed) {
+        if (next.centity.entity.getWeight() <= 30) {
+          result += .5*next.getUtility() - next.damage;
         } else {
           result += next.getUtility();
         }
+      } else {
+        result += next.getUtility();
       }
     }
-    //System.out.println(-result + (max - distance_mod));
     return -result + (max - distance_mod);
   }
   
@@ -200,22 +198,6 @@ public class GALance extends GA {
       possible.add(new EntityState(((EntityState[])this.moves.elementAt(iGene))[r.genes[iGene]]));
     }
     Object[] move_array = possible.toArray();
-    /*for (int e = 0; e < enemy_array.length; e++) { // for each enemy
-      EntityState max = (EntityState)move_array[0];
-      for(int m = 1; m < move_array.length; m++) {
-        if (((EntityState)move_array[m]).threats[e] > max.threats[e]) {
-          max.threats[e] = 0; //should do this a little more carefully
-          max = (EntityState)move_array[m];
-        }
-      }
-    }
-    for(int m = 0; m < move_array.length; m++) {
-      EntityState next = (EntityState)move_array[m];
-      next.threat = 0;
-      for (int e = 0; e < enemy_array.length; e++) {
-        next.threat += next.threats[e];
-      }
-    }*/
     EntityState result = null;
     for(int m = 0; m < move_array.length; m++) {
       EntityState next = (EntityState)move_array[m];
@@ -224,13 +206,13 @@ public class GALance extends GA {
         result = next;
       }
     }
-    for(int m = 0; m < move_array.length; m++) {
+    /*for(int m = 0; m < move_array.length; m++) {
       EntityState next = (EntityState)move_array[m];
       CEntity cen = tb.enemies.get(next.entity);
       if (!cen.moved && ((EntityState[])this.moves.elementAt(m)).length < 6) {
         result = next;
       }
-    }
+    }*/
     return result;
   }
   

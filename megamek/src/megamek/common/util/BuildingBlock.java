@@ -122,6 +122,7 @@ public class BuildingBlock {
             while(in.ready()) {
             
                 data = in.readLine();
+                if (data == null) continue; 
                 data = data.trim();
                 
                 //check for blank lines & comment lines...

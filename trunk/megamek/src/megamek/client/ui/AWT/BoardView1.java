@@ -430,7 +430,7 @@ public class BoardView1
     /**
      * Returns the coords at the specified point
      */
-    private Coords getCoordsAt(Point p) {
+    Coords getCoordsAt(Point p) {
         final int x = (p.x + scroll.x - offset.x) / 63;
         final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
         return new Coords(x, y);

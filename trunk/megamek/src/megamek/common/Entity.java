@@ -467,6 +467,16 @@ public abstract class Entity
     }
 
     /**
+     * Determine if this <code>Entity</code> was unloaded previously this turn.
+     *
+     * @return  <code>true</code> if this entity was unloaded for any reason
+     *          during this turn.
+     */
+    public boolean isUnloadedThisTurn() {
+        return this.unloadedThisTurn;
+    }
+
+    /**
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
@@ -2332,16 +2342,24 @@ public abstract class Entity
     // add a narc pod from this team to the mech.  Unremovable
     public void setNarcedBy(int nTeamID) {
         // avoid overflow in ridiculous battles
-        if (nTeamID > 63) {
+        if (nTeamID > (1 << Player.MAX_TEAMS)) {
             System.out.println("Narc system can't handle team IDs this high!");
             return;
         }
-        m_lPendingNarc |= (long)(Math.pow(2.0, (double)nTeamID));
+        long teamMask = 1;
+        if ( nTeamID > Player.TEAM_NONE ) {
+            teamMask = 1 << nTeamID;
+        }
+        m_lPendingNarc |= teamMask;
     }
 
     // has the team attached a narc pod to me?
     public boolean isNarcedBy(int nTeamID) {
-        return (m_lNarcedBy & (long)(Math.pow(2.0, (double)nTeamID))) > 0;
+        long teamMask = 1;
+        if ( nTeamID > Player.TEAM_NONE ) {
+            teamMask = 1 << nTeamID;
+        }
+        return (m_lNarcedBy & teamMask) > 0;
     }
 
 

@@ -1699,12 +1699,12 @@ public class Compute
         Coords[] trueArray = new Coords[trueCoords.size()];
         trueCoords.copyInto(trueArray);
         
-        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
-        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
-            final Coords coords = (Coords)i.nextElement();
-            System.out.print(coords.getBoardNum() + " ");
-        }
-        System.out.print("]\n");
+//        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
+//        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
+//            final Coords coords = (Coords)i.nextElement();
+//            System.out.print(coords.getBoardNum() + " ");
+//        }
+//        System.out.print("]\n");
         
         return trueArray;
     }

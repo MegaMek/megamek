@@ -2375,8 +2375,12 @@ public class Server
         }
 
         // calculate damage
-        //TODO: account for water
         int damage = (int)Math.round(entity.getWeight() / 10) * (height + 1);
+        
+        // TODO: only fall to surface of water
+        if (game.board.getHex(fallPos).getTerrainType() == Terrain.WATER) {
+            damage = (int)Math.ceil(damage / 2.0);
+        }
 
         // report falling
         phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");

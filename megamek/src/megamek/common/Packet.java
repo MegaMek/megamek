@@ -122,6 +122,9 @@ implements Serializable {
         if (zipped) {
             unzipData();
         }
+        if (index >= data.length) {
+            return null;
+        }
         return data[index];
     }
     

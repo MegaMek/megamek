@@ -49,10 +49,6 @@ public class Game implements Serializable
      * Define constants to describe the condition a
      * unit was in when it wass removed from the game.
      */
-    public static final int UNIT_NEVER_JOINED   = 0x0000;
-    public static final int UNIT_IN_RETREAT     = 0x0100;
-    public static final int UNIT_SALVAGEABLE    = 0x0200;
-    public static final int UNIT_DEVASTATED     = 0x0400;
     
     private GameOptions options = new GameOptions();
 
@@ -61,12 +57,8 @@ public class Game implements Serializable
     private Vector entities = new Vector();
     private Hashtable entityIds = new Hashtable();
     
-    /** Keeps track of dead units */
-    private Vector graveyard = new Vector();
-    /** Track units that have been retreated. */
-    private Vector sanctuary = new Vector();
-    /** Track units that have been utterly devastated. */
-    private Vector smithereens = new Vector();
+    /** Track entities removed from the game (probably by death) */
+    private Vector vOutOfGame = new Vector();
 
     private Vector players = new Vector();
     private Vector teams   = new Vector(); // DES
@@ -346,6 +338,17 @@ public class Game implements Serializable
     }
 
     /**
+     * Returns the actual vector for the out-of-game entities
+     */
+    public Vector getOutOfGameEntitiesVector() {
+        return vOutOfGame;
+    }
+    
+    public void setOutOfGameEntitiesVector(Vector vOutOfGame) {
+        this.vOutOfGame = vOutOfGame;
+    }
+
+    /**
      * Returns a <code>Hashtable</code> that maps the <code>Coords</code>
      * of each unit in this <code>Game</code> to a <code>Vector</code>
      * of <code>Entity</code>s at that positions.  Units that have no
@@ -386,9 +389,18 @@ public class Game implements Serializable
     }
 
     /**
-     * Returns an enumeration of entities in the graveyard
+     * Returns an enumeration of salvagable entities.
      */
     public Enumeration getGraveyardEntities() {
+        Vector graveyard = new Vector();
+        
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE) {
+                graveyard.addElement(entity);
+            }
+        }
+        
         return graveyard.elements();
     }
 
@@ -396,6 +408,15 @@ public class Game implements Serializable
      * Returns an enumeration of entities that have retreated
      */
     public Enumeration getRetreatedEntities() {
+        Vector sanctuary = new Vector();
+        
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getRemovalCondition() == Entity.REMOVE_IN_RETREAT) {
+                sanctuary.addElement(entity);
+            }
+        }
+        
         return sanctuary.elements();
     }
 
@@ -403,6 +424,15 @@ public class Game implements Serializable
      * Returns an enumeration of entities that were utterly destroyed
      */
     public Enumeration getDevastatedEntities() {
+        Vector smithereens = new Vector();
+        
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getRemovalCondition() == Entity.REMOVE_DEVASTATED) {
+                smithereens.addElement(entity);
+            }
+        }
+        
         return smithereens.elements();
     }
     
@@ -471,7 +501,7 @@ public class Game implements Serializable
      * Method kept for backwards compatability.
      */
     public void removeEntity(int id) {
-        this.removeEntity( id, UNIT_NEVER_JOINED );
+        this.removeEntity( id, Entity.REMOVE_UNKNOWN );
     }
 
     /**
@@ -480,31 +510,17 @@ public class Game implements Serializable
      */
     public void removeEntity( int id, int condition ) {
         Entity toRemove = getEntity(id);
-        if (toRemove != null) {
-            entities.removeElement(toRemove);
-            entityIds.remove(new Integer(id));
-
-            // Where does it go from here?
-            switch ( condition ) {
-            case UNIT_NEVER_JOINED:
-                // Nothing further required.
-                break;
-            case UNIT_IN_RETREAT  :
-                // Move it to the rolls of those with dubious honor.
-                sanctuary.addElement( toRemove );
-                break;
-            case UNIT_SALVAGEABLE :
-                // Move it into the graveyard where it may be resurrected.
-                graveyard.addElement( toRemove );
-                break;
-            case UNIT_DEVASTATED  :
-                // Mark the unit as way gone.
-                smithereens.addElement( toRemove );
-                break;
-            }
-        } else {
+        if (toRemove == null) {
             System.err.println("Game#removeEntity: could not find entity to remove");
+            return;
         }
+        
+        entities.removeElement(toRemove);
+        entityIds.remove(new Integer(id));
+        
+        toRemove.setRemovalCondition(condition);
+        
+        vOutOfGame.addElement(toRemove);
     }
     
     /**
@@ -516,9 +532,7 @@ public class Game implements Serializable
         entities.removeAllElements();
         entityIds.clear();
 
-        sanctuary.removeAllElements();
-        graveyard.removeAllElements();
-        smithereens.removeAllElements();
+        vOutOfGame.removeAllElements();
         
         resetActions();
         resetCharges();
@@ -602,38 +616,37 @@ public class Game implements Serializable
      * out every phase.
      */
     public void moveToGraveyard(int id) {
-        this.removeEntity( id, UNIT_SALVAGEABLE );
+        this.removeEntity( id, Entity.REMOVE_SALVAGEABLE );
     }
      
     /**
-     * See if the <code>Entity</code> with the given ID is in the graveyard.
+     * See if the <code>Entity</code> with the given ID is out of the game.
      *
      * @param	id - the ID of the <code>Entity</code> to be checked.
      * @return  <code>true</code> if the <code>Entity</code> is in the
      *		graveyard, <code>false</code> otherwise.
      */
-    public boolean isInGraveyard( int id ) {
+    public boolean isOutOfGame( int id ) {
         final Entity entity = getEntity(id);
         if (entity == null) {
 	    // Unknown entity ID
 	    return false;
 	}
-	return isInGraveyard( entity );
+	return isOutOfGame( entity );
     }
 
     /**
-     * See if the <code>Entity</code> is in the graveyard.
+     * See if the <code>Entity</code> is out of the game.
      *
      * @param	entity - the <code>Entity</code> to be checked.
      * @return  <code>true</code> if the <code>Entity</code> is in the
      *		graveyard, <code>false</code> otherwise.
      */
-    public boolean isInGraveyard( Entity entity ) {
+    public boolean isOutOfGame( Entity entity ) {
         if (entity == null) {
-	    // No nulls in the graveyard
 	    return false;
 	}
-	return graveyard.contains( entity );
+	return vOutOfGame.contains( entity );
     }
     
     /**

@@ -141,6 +141,9 @@ public abstract class Entity
     private boolean             clearingMinefield = false;
     private boolean             selected = false;
     private int                 killerId = Entity.NONE;
+    private boolean             isOffBoard = false;
+    private int                 offBoardDistance = 0;
+    private int                 offBoardDirection = -1;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -513,7 +516,7 @@ public abstract class Entity
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && !crew.isDead() && deployed;
+        return !destroyed && !doomed && !crew.isDead() && deployed && !isOffBoard;
     }
 
     public boolean isProne() {
@@ -636,6 +639,10 @@ public abstract class Entity
 
         if ( Entity.NONE != this.getTransportId() ) {
             pos = game.getEntity( this.getTransportId() ).getPosition();
+        }
+        
+        if (isOffBoard()) {
+            return 0;
         }
 
         if ( null == pos ) {
@@ -3441,7 +3448,7 @@ public abstract class Entity
      * @return true, if the entity is active
      */
     public boolean canSpot() {
-        return isActive();
+        return isActive() && !isOffBoard();
     }
 
     public String toString() {
@@ -3488,7 +3495,7 @@ public abstract class Entity
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {
-        return ( !deployed && (getDeployRound() <= round) );
+        return ( !deployed && (getDeployRound() <= round) && !isOffBoard );
     }
 
     public void setSelected(boolean selected) {
@@ -3624,7 +3631,8 @@ public abstract class Entity
             || isCharging()
             || isMakingDfa()
             || isFindingClub()
-            || isSpotting()) {
+            || isSpotting()
+            || isOffBoard()) {
             return false;
         }
 
@@ -3702,5 +3710,53 @@ public abstract class Entity
                 space += ((TroopSpace) t).totalSpace;
             }
         return space;
+    }
+    
+    /**
+     * @return Returns wether the unit is offboard.
+     */
+    public boolean isOffBoard() {
+        return isOffBoard;
+    }
+    /**
+     * @param isOffBoard The isOffBoard to set.
+     */
+    public void setOffBoard(boolean isOffBoard) {
+        this.isOffBoard = isOffBoard;
+    }
+    
+    public void setOffBoardDistance(int distance) {
+        offBoardDistance = distance;
+    }
+    
+    public int getOffBoardDistance() {
+        return offBoardDistance;
+    }
+    
+    public void setOffBoardDirection(int direction) {
+        offBoardDirection = direction;
+    }
+    
+    public void checkPlaceOffBoard() {
+        switch (offBoardDirection) {
+        case -1: //no direction selected
+            break;
+        case 0: //north
+            setPosition(new Coords (game.board.width/2, -getOffBoardDistance() ));
+            setFacing(3);
+            break;
+        case 1: //south
+            setPosition(new Coords (game.board.width/2, game.board.height + getOffBoardDistance() ));
+            setFacing(0);
+            break;
+        case 2: //east
+            setPosition(new Coords (game.board.width + getOffBoardDistance(), game.board.height/2 ));
+            setFacing(5);
+            break;
+        case 3: //west
+            setPosition(new Coords ( -getOffBoardDistance(), game.board.height/2 ));
+            setFacing(1);
+            break;
+        }
     }
 }

@@ -846,6 +846,7 @@ public class ChatLounge
                         + ")"
                         + " Class: "
                         + unitClass
+                        + ((entity.isOffBoard()) ? " deploys off board" : "")
                         + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
@@ -864,6 +865,7 @@ public class ChatLounge
                         + " BV="
                         + entity.calculateBattleValue()
                         + strTreeView
+                        + ((entity.isOffBoard()) ? " deploys off board" : "")
                         + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
                 entityCorrespondance[listIndex++] = entity.getId();
             }
@@ -1289,15 +1291,6 @@ public class ChatLounge
                     anyDelayed = true;
                     break;
                 }
-            }
-
-            if (anyDelayed && (client.getLocalPlayer().getStartingPos() == 0)) {
-                new AlertDialog(
-                    clientgui.frame,
-                    "Need deployment",
-                    "Players with delayed deployment can not use the 'any' starting position. Please select a direction to start from.")
-                    .show();
-                return;
             }
 
             boolean done = !client.getLocalPlayer().isDone();

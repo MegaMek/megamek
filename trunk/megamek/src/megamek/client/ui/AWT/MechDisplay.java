@@ -643,9 +643,11 @@ class WeaponPanel extends BufferedPanel
             currentHeatBuildup += en.infernos.getHeat();
         }
         Coords position = entity.getPosition();
-        if ( position != null
-             && game.getBoard().getHex(position).levelOf(Terrain.FIRE) == 2 ) {
-            currentHeatBuildup += 5; // standing in fire
+        if (!en.isOffBoard()) {
+            if ( position != null
+                    && game.getBoard().getHex(position).levelOf(Terrain.FIRE) == 2 ) {
+                   currentHeatBuildup += 5; // standing in fire
+               }
         }
         if ( en instanceof Mech && en.isStealthActive() ) {
             currentHeatBuildup += 10; // active stealth heat

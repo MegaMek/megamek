@@ -72,6 +72,8 @@ public final class Player extends TurnOrdered
     
     private Vector visibleMinefields = new Vector();
     
+    private boolean admitsDefeat = false;
+    
     public Vector getMinefields() {
     	return visibleMinefields;
     }
@@ -288,5 +290,13 @@ public final class Player extends TurnOrdered
 
     public int hashCode() {
         return getId();
+    }
+    
+    public void setAdmitsDefeat(boolean admitsDefeat) {
+    	this.admitsDefeat = admitsDefeat;
+    }
+    
+    public boolean admitsDefeat() {
+    	return admitsDefeat;
     }
 }

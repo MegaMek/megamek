@@ -33,7 +33,7 @@ public class VictoryCommand extends ServerCommand {
 
     /** Creates new VictoryCommand */
     public VictoryCommand(Server server) {
-        super(server, "victory", "Causes automatic victory for the issuing player or his/her team at the end of this turn.  Usage: /victory <password>");
+        super(server, "victory", "Causes automatic victory for the issuing player or his/her team at the end of this turn. Must be acknowledged by all opponents using the /defeat command. Usage: /victory <password>");
     }
 
     /**
@@ -49,17 +49,17 @@ public class VictoryCommand extends ServerCommand {
     
     private void reset(int connId) {
         Player player = server.getPlayer(connId);
-        // are we cancelling victory?
+/*        // are we cancelling victory?
         if (server.getGame().isForceVictory()) {
             server.sendServerChat(player.getName() + " cancels the force victory.");
             server.cancelVictory();
             return;
         }
-        // okay, declare force victory
+*/        // okay, declare force victory
         if (player.getTeam() == Player.TEAM_NONE) {
-            server.sendServerChat(player.getName() + " declares individual victory at the end of the turn.  Any other player may cancel this with another use of the /victory command.");
+            server.sendServerChat(player.getName() + " declares individual victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
         } else {
-            server.sendServerChat(player.getName() + " declares team victory at the end of the turn.  Any other player may cancel this with another use of the /victory command.");
+            server.sendServerChat(player.getName() + " declares team victory at the end of the turn. This must be acknowledged by all opponents using the /defeat command or no victory will occur.");
         }
         server.forceVictory(player);
     }

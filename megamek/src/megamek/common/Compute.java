@@ -376,9 +376,11 @@ public class Compute
             second = temp;
         }
 
-        if (isValidDisplacement(game, entityId, src, src.direction(first))) {
+        if (isValidDisplacement(game, entityId, src, src.direction(first)) 
+            && game.board.contains(first)) {
             return first;
-        } else if (isValidDisplacement(game, entityId, src, src.direction(second))) {
+        } else if (isValidDisplacement(game, entityId, src, src.direction(second))
+            && game.board.contains(second)) {
             return second;
         } else {
             return src;

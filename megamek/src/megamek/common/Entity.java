@@ -1589,9 +1589,19 @@ public abstract class Entity
                 if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
                     continue;
                 }
+                // make a new vector of only incoming attacks in arc
+                Vector vAttacksInArc = new Vector(vAttacks.size());
+                for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {
+                    WeaponAttackAction waa = (WeaponAttackAction)i.nextElement();
+                    if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon), waa.getEntityId())) {
+                        vAttacksInArc.add(waa);
+                    }
+                }
                 // find the most dangerous salvo by expected damage
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacks, vOtherAttacks);
-                waa.addCounterEquipment(weapon);
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc, vOtherAttacks);
+                if (waa != null) {
+                    waa.addCounterEquipment(weapon);
+                }
             }
         }
     }

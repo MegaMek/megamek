@@ -1066,9 +1066,7 @@ public class Compute
         }
         
         // weapon in arc?
-        int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
-        if (!isInArc(ae.getPosition(), facing, 
-            te.getPosition(), ae.getWeaponArc(weaponId))) {
+        if (!isInArc(game, attackerId, weaponId, targetId)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
@@ -2658,6 +2656,18 @@ public class Compute
         fDamage *= fChance;
         System.out.println("\tExpected Damage: " + fDamage);
         return fDamage;
+    }
+    
+    /**
+     * Checks to see if a target entity is in arc of the specified
+     * weapon, on the specified entity
+     */
+    public static boolean isInArc(Game game, int attackerId, int weaponId, int targetId) {
+        Entity ae = game.getEntity(attackerId);
+        Entity te = game.getEntity(targetId);
+        int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
+        return isInArc(ae.getPosition(), facing, te.getPosition(), ae.getWeaponArc(weaponId));
+        
     }
     
     /**

@@ -1841,6 +1841,7 @@ public boolean isPassworded() {
         if (usesAmmo) {
             if (waa.getAmmoId() > -1) {
                 ammo = ae.getEquipment(waa.getAmmoId());
+                weapon.setLinked(ammo);
             }
             else {
                 ammo = weapon.getLinked();

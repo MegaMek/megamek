@@ -76,6 +76,7 @@ v next
 + 609356: vehicles do not make piloting skill rolls to avoid falling
 + 609201: fixed crash when a charging vehicle is destroyed by weapons fire
 + 568291: typo in determining charge elevation levels (thx to suvarov454)
++ 610307: ammo changes are properly applied while resilving weapons fire
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

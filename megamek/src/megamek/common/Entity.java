@@ -1036,7 +1036,11 @@ public abstract class Entity
      * -1 if equipment is not present.
      */
     public int getEquipmentNum(Mounted mounted) {
-        return equipmentList.indexOf(mounted);
+        if (mounted != null) {
+            return equipmentList.indexOf(mounted);
+        } else {
+            return -1;
+        }
     }
     
     /**

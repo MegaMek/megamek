@@ -2550,6 +2550,18 @@ implements Runnable, ConnectionHandler {
         int mpUsed = 0;
         int moveType = Entity.MOVE_NONE;
         int overallMoveType = Entity.MOVE_NONE;
+        // if the entity already used some MPs, 
+        // it previously tried to get up and fell,
+        // and then got another turn. set moveType
+        // and overallMoveType accordingly
+        if (entity.mpUsed > 0) {
+            moveType = Entity.MOVE_WALK;
+            overallMoveType = Entity.MOVE_WALK;
+            if (entity.mpUsed > entity.getWalkMP()) {
+                moveType = Entity.MOVE_RUN;
+                overallMoveType = Entity.MOVE_RUN;
+            }
+        }
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;

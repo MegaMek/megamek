@@ -13,7 +13,7 @@
  */
 
 package megamek.common.actions;
-import megamek.*;
+
 import megamek.common.*;
 import java.io.Serializable;
 import java.util.*;

@@ -22,7 +22,6 @@ import gd.xml.ParseException;
 import gd.xml.tiny.TinyParser;
 import gd.xml.tiny.ParsedXML;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 

@@ -14,8 +14,6 @@
 
 package megamek.client;
 
-import megamek.client.util.*;
-import megamek.common.*;
 import java.awt.*;
 import java.awt.event.*;
 

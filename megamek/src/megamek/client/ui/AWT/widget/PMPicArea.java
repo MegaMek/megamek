@@ -16,7 +16,6 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 /**
  * Simple rectangle hot are for PicMap component.

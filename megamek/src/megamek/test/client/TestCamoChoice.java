@@ -14,9 +14,7 @@
 
 package megamek.test.client;
 
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -26,7 +24,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import megamek.client.CamoChoiceDialog;
-import megamek.client.util.ImageFileFactory;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.Player;
 

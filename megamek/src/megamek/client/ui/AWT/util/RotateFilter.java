@@ -20,7 +20,6 @@
 
 package megamek.client.util;
 
-import java.awt.*;
 import java.awt.image.*;
 
 /**

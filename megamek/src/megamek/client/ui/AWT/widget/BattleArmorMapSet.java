@@ -20,7 +20,6 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.util.*;
-import megamek.client.*;
 import megamek.common.*;
 
 /**

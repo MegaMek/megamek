@@ -14,7 +14,6 @@
 
 package megamek.common.equip;
 
-import megamek.common.*;
 import java.util.Vector;
 
 /* This class defines Streak missile type.  Abstract, and extended by 

@@ -14,8 +14,6 @@
 
 package megamek.common.util;
 
-import java.io.File;
-
 /**
  * This interface represents a categorizable file.
  *

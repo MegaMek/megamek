@@ -32,7 +32,6 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
-import megamek.common.Entity.MovementType;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class

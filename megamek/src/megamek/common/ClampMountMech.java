@@ -14,8 +14,6 @@
 
 package megamek.common;
 
-import java.util.*;
-import java.io.IOException;
 
 /**
  * Represtents the space on an standard Mech (i.e. one that is not an

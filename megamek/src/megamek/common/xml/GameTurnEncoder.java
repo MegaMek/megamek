@@ -16,7 +16,6 @@ package megamek.common.xml;
 
 import java.io.Writer;
 import java.io.IOException;
-import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
 

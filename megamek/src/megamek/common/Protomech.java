@@ -17,7 +17,6 @@ package megamek.common;
 import java.io.*;
 import java.util.Enumeration;
 import megamek.client.FiringDisplay;
-import megamek.client.UnitOverview;
 
 /**
  * Protomechs.  Level 2 Clan equipment.

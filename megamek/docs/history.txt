@@ -87,6 +87,9 @@ v 0.26
 
 VERSION HISTORY:
 ----------------
+v next
++ 554568: fixed false secondary target modifier on first shot
+
 v 0.25.5 (05-10-02, 10:20am)
 + minor changes to the client & server for Helge
 + added Cord Awtry's mega-patch for quads, flipping arms, small bugfixes

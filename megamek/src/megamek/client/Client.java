@@ -25,11 +25,16 @@ import megamek.common.actions.*;
 import megamek.client.util.widget.*;
 
 public class Client extends Panel
-    implements Runnable, MouseListener, WindowListener
+    implements Runnable, MouseListener, WindowListener, ActionListener
 {
     // a frame, to show stuff in
     public Frame                frame;
-    
+
+    // A menu bar to contain all actions.
+    private CommonMenuBar       menuBar = new CommonMenuBar();
+    private CommonAboutDialog   about   = null;
+    private CommonHelpDialog    help    = null;
+
     // we need these to communicate with the server
     private String              name;
     Socket                      socket;
@@ -112,14 +117,14 @@ public class Client extends Panel
     	super(new BorderLayout());
         this.name = playername;
 
-		Settings.load();
-		
-		initializeFrame();
-		initializeDialogs();
-		changePhase(Game.PHASE_UNKNOWN);
+        Settings.load();
+
+        initializeFrame();
+        initializeDialogs();
+        changePhase(Game.PHASE_UNKNOWN);
         layoutFrame();
-                
-		frame.setVisible(true);
+
+        frame.setVisible(true);
     }
     
     /**
@@ -127,6 +132,9 @@ public class Client extends Panel
      */
     private void initializeFrame() {
         this.frame = new Frame("MegaMek Client");
+        menuBar.addActionListener( this );
+        menuBar.setGame( this.game );
+        frame.setMenuBar( menuBar );
         if (Settings.windowSizeHeight != 0) {
             frame.setLocation(Settings.windowPosX, Settings.windowPosY);
             frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
@@ -154,44 +162,92 @@ public class Client extends Panel
      * frame display area.
      */
     private void layoutFrame() {
-		frame.setTitle(this.name + " - MegaMek");
-		frame.setLayout(new BorderLayout());
-		frame.add(this, BorderLayout.CENTER);
-		frame.validate();
+        frame.setTitle(this.name + " - MegaMek");
+        frame.setLayout(new BorderLayout());
+        frame.add(this, BorderLayout.CENTER);
+        frame.validate();
+    }
+
+    /**
+     * Get the menu bar for this client.
+     *
+     * @return  the <code>CommonMenuBar</code> of this client.
+     */
+    public CommonMenuBar getMenuBar() {
+        return this.menuBar;
+    }
+
+    /**
+     * Called when the user selects the "Help->About" menu item.
+     */
+    private void showAbout() {
+        // Do we need to create the "about" dialog?
+        if ( this.about == null ) {
+            this.about = new CommonAboutDialog( this.frame );
+        }
+
+        // Show the about dialog.
+        this.about.show();
+    }
+
+    /**
+     * Called when the user selects the "Help->Contents" menu item.
+     */
+    private void showHelp() {
+        // Do we need to create the "help" dialog?
+        if ( this.help == null ) {
+            File helpfile = new File( "readme.txt" );
+            this.help = new CommonHelpDialog( this.frame, helpfile );
+        }
+
+        // Show the help dialog.
+        this.help.show();
+    }
+
+    /**
+     * Implement the <code>ActionListener</code> interface.
+     */
+    public void actionPerformed(ActionEvent event) {
+        if(event.getActionCommand().equalsIgnoreCase("helpAbout")) {
+            showAbout();
+        }
+        if(event.getActionCommand().equalsIgnoreCase("helpContents")) {
+            showHelp();
+        }
     }
     
     /**
      * Initializes dialogs and some displays for this client.
      */
     private void initializeDialogs() {
-		UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-		unitLoadingDialog.show();
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+        unitLoadingDialog.show();
 
-		bv = new BoardView1(game, frame);
-		bv.addMouseListener(this);
-		bv.add(popup);
-        
-		cb = new ChatterBox(this);
-		mechW = new Dialog(frame, "Mech Display", false);
-		mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
-		mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
-		mechW.setResizable(true);
-		mechW.addWindowListener(this);
-		mechD = new MechDisplay(this);
-		mechW.add(mechD);
-		// minimap
-		minimapW = new Dialog(frame, "MiniMap", false);
-		minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-		minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-		minimap = new MiniMap(minimapW, this, bv);
-		minimapW.addWindowListener(this);
-		minimapW.add(minimap);
-        
+        bv = new BoardView1(game, frame);
+        bv.addMouseListener(this);
+        bv.add(popup);
+
+        cb = new ChatterBox(this);
+        mechW = new Dialog(frame, "Mech Display", false);
+        mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
+        mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
+        mechW.setResizable(true);
+        mechW.addWindowListener(this);
+        mechD = new MechDisplay(this);
+        mechW.add(mechD);
+        // minimap
+        minimapW = new Dialog(frame, "MiniMap", false);
+        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+        minimap = new MiniMap(minimapW, this, bv);
+        minimapW.addWindowListener(this);
+        minimapW.add(minimap);
+
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         mechSelectorDialogThread = new Thread(mechSelectorDialog);
         mechSelectorDialogThread.start();
     }
-    
+
     /**
      * Attempt to connect to the specified host
      */
@@ -261,7 +317,16 @@ public class Client extends Panel
         }
         
         frame.setVisible(false);
-        frame.dispose();
+        boolean disposed = false;
+        while ( !disposed ) {
+            try {
+                frame.dispose();
+                disposed = true;
+            }
+            catch ( Throwable error ) {
+                error.printStackTrace();
+            }
+        }
         
         System.out.println("client: died");
     }
@@ -468,6 +533,7 @@ public class Client extends Panel
             setMapVisible(false);
             break;
         }
+        menuBar.setPhase( phase );
         this.validate();
         this.doLayout();
         this.cb.moveToEnd();
@@ -475,6 +541,10 @@ public class Client extends Panel
     }
     
     private void switchPanel(Component panel) {
+        if ( curPanel instanceof ActionListener )
+            menuBar.removeActionListener( (ActionListener) curPanel );
+        if ( panel instanceof ActionListener )
+            menuBar.addActionListener( (ActionListener) panel );
         // TODO: reuse existing panels.
         curPanel = panel;
         this.add(curPanel);

@@ -113,9 +113,16 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.12-dev
+v 0.29.12-dev (CVS)
 + Shows movement step by step, optional in MegaMek.cfg.
 + Bug fix for the above.
++ Bug 802741: "check false" should *not* be added as a modifier.
++ Use the build.xml from thebohemian.
++ RFE 807590: Distinguish "fled" from "pushed offboard" and "ejected".
++ Bug 803965: Changed option label from I.S. Equipment Limits to Ammo & Equip..
++ When a transporter ejects, unload all passengers.
+PARTIAL IMPLEMENTATION:
++ RFE 555499, 702795, 726478, 783395: Added a menu bar.
 
 v 0.29.11 (09-15-03, 3pm)
 + All movement resets result in the "walk" gear being selected

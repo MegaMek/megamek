@@ -28,13 +28,16 @@ import megamek.server.*;
 public class MegaMek
     implements ActionListener
 {
-    public static String    VERSION = "0.29.11";
+    public static String    VERSION = "0.29.12-dev";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;
 
-    public Client			client;
-    public Server			server;
+    public Client			client = null;
+    public Server			server = null;
+    private CommonAboutDialog           about  = null;
+    private CommonHelpDialog            help   = null;
+    private GameOptionsDialog           optdlg = null;
 
     /**
      * Contruct a MegaMek, and display the main menu in the
@@ -53,6 +56,9 @@ public class MegaMek
         
         frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
+        CommonMenuBar menuBar = new CommonMenuBar();
+        menuBar.addActionListener( this );
+        frame.setMenuBar( menuBar );
         showMainMenu();
 
         // echo some useful stuff
@@ -61,13 +67,22 @@ public class MegaMek
         System.out.println("Java vendor " + System.getProperty("java.vendor"));
         System.out.println("Java version " + System.getProperty("java.version"));
 
-		// set visible on middle of screen
-		Dimension screenSize = frame.getToolkit().getScreenSize();
-		frame.pack();
+        // set visible on middle of screen
+        Dimension screenSize = frame.getToolkit().getScreenSize();
+        frame.pack();
         frame.setLocation(
             screenSize.width / 2 - frame.getSize().width / 2,
             screenSize.height / 2 - frame.getSize().height / 2);
+
+        // Apparently, the MSJDK doesn't handle the menu bar very well.
+        Dimension windowSize = frame.getSize();
+        windowSize.height += 25;
+        frame.setSize( windowSize );
+        frame.pack();
+
+        // Show the window.
         frame.setVisible(true);
+
     }
 
     /**
@@ -80,27 +95,27 @@ public class MegaMek
         labVersion.setText("MegaMek version " + VERSION);
 
         hostB = new Button("Host a New Game...");
-        hostB.setActionCommand("game_host");
+        hostB.setActionCommand("fileGameNew");
         hostB.addActionListener(this);
 
         scenB = new Button("Host a Scenario...");
-        scenB.setActionCommand("game_scen");
+        scenB.setActionCommand("fileGameScenario");
         scenB.addActionListener(this);
 
         loadB = new Button("Host a Saved Game...");
-        loadB.setActionCommand("game_load");
+        loadB.setActionCommand("fileGameOpen");
         loadB.addActionListener(this);
 
         connectB = new Button("Connect to a Game...");
-        connectB.setActionCommand("game_connect");
+        connectB.setActionCommand("fileGameConnect");
         connectB.addActionListener(this);
 
         botB = new Button("Connect as a Bot...");
-        botB.setActionCommand("game_botconnect");
+        botB.setActionCommand("fileGameConnectBot");
         botB.addActionListener(this);
 
 		editB = new Button("Map Editor");
-		editB.setActionCommand("editor");
+		editB.setActionCommand("fileBoardNew");
 		editB.addActionListener(this);
 
 		quitB = new Button("Quit");
@@ -166,11 +181,35 @@ public class MegaMek
     }
 
     /**
+     * Display the game options dialog.
+     */
+    public void showGameOptions() {
+        GameOptions options = new GameOptions();
+        options.initialize();
+        options.loadOptions( null, null );
+        if ( optdlg == null ) {
+            optdlg = new GameOptionsDialog( frame, options );
+        }
+        optdlg.update( options );
+        optdlg.show();
+    }
+
+    /**
      * Display the board editor.
      */
     public void showEditor() {
     	BoardEditor editor = new BoardEditor();
     	launch(editor.getFrame());
+        editor.boardNew();
+    }
+
+    /**
+     * Display the board editor and open an "open" dialog.
+     */
+    public void showEditorOpen() {
+    	BoardEditor editor = new BoardEditor();
+    	launch(editor.getFrame());
+        editor.boardLoad();
     }
 
     /**
@@ -194,6 +233,7 @@ public class MegaMek
 		launch(client.getFrame());
 
         server.getGame().getOptions().loadOptions(client, hd.serverPass);
+        optdlg = null;
     }
 
     public void loadGame() {
@@ -221,6 +261,7 @@ public class MegaMek
         }
         client = new Client(hd.name, "localhost", hd.port);
 		launch(client.getFrame());
+        optdlg = null;
     }
 
     /**
@@ -291,8 +332,7 @@ public class MegaMek
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
         }
-
-
+        optdlg = null;
 
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
@@ -353,7 +393,34 @@ public class MegaMek
         gridbag.setConstraints(comp, c);
         frame.add(comp);
     }
-    
+
+    /**
+     * Called when the user selects the "Help->About" menu item.
+     */
+    private void showAbout() {
+        // Do we need to create the "about" dialog?
+        if ( this.about == null ) {
+            this.about = new CommonAboutDialog( this.frame );
+        }
+
+        // Show the about dialog.
+        this.about.show();
+    }
+
+    /**
+     * Called when the user selects the "Help->Contents" menu item.
+     */
+    private void showHelp() {
+        // Do we need to create the "help" dialog?
+        if ( this.help == null ) {
+            File helpfile = new File( "readme.txt" );
+            this.help = new CommonHelpDialog( this.frame, helpfile );
+        }
+
+        // Show the help dialog.
+        this.help.show();
+    }
+
     /**
      * Called when the quit buttons is pressed or the main menu is closed.
      */
@@ -491,27 +558,39 @@ public class MegaMek
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("editor")) {
+        if(ev.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
             showEditor();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("game_host")) {
+        if(ev.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
+            showEditorOpen();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("fileGameNew")) {
             host();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("game_scen")) {
+        if(ev.getActionCommand().equalsIgnoreCase("fileGameScenario")) {
             scenario();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("game_connect")) {
+        if(ev.getActionCommand().equalsIgnoreCase("fileGameConnect")) {
             connect();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("game_botconnect")) {
+        if(ev.getActionCommand().equalsIgnoreCase("fileGameConnectBot")) {
             connectBot();
         }
-		if(ev.getActionCommand().equalsIgnoreCase("game_load")) {
-			loadGame();
-		}
-		if(ev.getActionCommand().equalsIgnoreCase("quit")) {
-			quit();
-		}
+        if(ev.getActionCommand().equalsIgnoreCase("fileGameOpen")) {
+            loadGame();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+            showGameOptions();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("helpAbout")) {
+            showAbout();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("helpContents")) {
+            showHelp();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("quit")) {
+            quit();
+        }
     }
 }
 

@@ -37,7 +37,9 @@ public abstract class Entity
     
     public static final int REMOVE_UNKNOWN        = 0x0000;
     public static final int REMOVE_IN_RETREAT     = 0x0100;
+    public static final int REMOVE_PUSHED         = 0x0110;
     public static final int REMOVE_SALVAGEABLE    = 0x0200;
+    public static final int REMOVE_EJECTED        = 0x0210;
     public static final int REMOVE_DEVASTATED     = 0x0400;
     public static final int REMOVE_NEVER_JOINED   = 0x0800;
     
@@ -2578,14 +2580,14 @@ public abstract class Entity
      *  target roll for the piloting skill check to dislodge them.
      */
     public PilotingRollData checkDislodgeSwarmers() {
-        PilotingRollData roll = getBasePilotingRoll();
 
+        // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-            return roll;
+            return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,"Check false");
         }
 
         // append the reason modifier
+        PilotingRollData roll = getBasePilotingRoll();
         roll.append(new PilotingRollData(getId(), 0, "attempting to dislodge swarmers by dropping prone"));
         
         return roll;

@@ -2207,9 +2207,9 @@ implements Runnable {
                 phaseReport.append( "   It takes " )
                     .append( swarmer.getDisplayName() )
                     .append( " with it.\n" );
-                game.removeEntity( swarmerId, Entity.REMOVE_IN_RETREAT );
+                game.removeEntity( swarmerId, Entity.REMOVE_PUSHED );
                 send( createRemoveEntityPacket(swarmerId,
-                                               Entity.REMOVE_IN_RETREAT) );
+                                               Entity.REMOVE_PUSHED) );
             }
             game.removeEntity( entity.getId(), Entity.REMOVE_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
@@ -2220,6 +2220,21 @@ implements Runnable {
         if (md.contains(MovePath.STEP_EJECT)) {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
+
+            // Is the unit carrying passengers?
+            final Vector passengers = entity.getLoadedUnits();
+            if ( !passengers.isEmpty() ) {
+                final Enumeration iter = passengers.elements();
+                while ( iter.hasMoreElements() ) {
+                    final Entity passenger = (Entity) iter.nextElement();
+                    // Unit should unload.
+                    // TODO : unloading into stacking violation is not
+                    //        explicitly prohibited in the BMRr.
+                    this.unloadUnit( entity, passenger, 
+                                     entity.getPosition(), 
+                                     entity.getFacing() );
+                }
+            }
 
             // Is the unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
@@ -2233,8 +2248,8 @@ implements Runnable {
             }
 
             // Now remove the unit that ejected.
-            game.removeEntity( entity.getId(), Entity.REMOVE_SALVAGEABLE );
-            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_SALVAGEABLE));
+            game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
+            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
             return;
         }
 
@@ -2410,9 +2425,9 @@ implements Runnable {
                             if ( game.getOptions().booleanOption("push_off_board") ) {
                                 // Yup.  One dead entity.
                                 game.removeEntity(entity.getId(),
-                                                  Entity.REMOVE_IN_RETREAT);
+                                                  Entity.REMOVE_PUSHED);
                                 send(createRemoveEntityPacket(entity.getId(),
-                                                              Entity.REMOVE_IN_RETREAT));
+                                                              Entity.REMOVE_PUSHED));
                                 phaseReport.append("*** " )
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
@@ -6079,9 +6094,9 @@ implements Runnable {
         } else {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.removeEntity(te.getId(),
-                                  Entity.REMOVE_IN_RETREAT);
+                                  Entity.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(te.getId(),
-                                              Entity.REMOVE_IN_RETREAT));
+                                              Entity.REMOVE_PUSHED));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " has been forced from the field. ***\n");
                 // TODO: remove passengers and swarmers.
                 ae.setPosition(src);
@@ -6280,9 +6295,9 @@ implements Runnable {
         } else {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.removeEntity(te.getId(),
-                                  Entity.REMOVE_IN_RETREAT);
+                                  Entity.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(te.getId(),
-                                              Entity.REMOVE_IN_RETREAT));
+                                              Entity.REMOVE_PUSHED));
                 phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
                 // TODO: remove passengers and swarmers.
 
@@ -6442,9 +6457,9 @@ implements Runnable {
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
         if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
             game.removeEntity(te.getId(),
-                              Entity.REMOVE_IN_RETREAT);
+                              Entity.REMOVE_PUSHED);
             send(createRemoveEntityPacket(te.getId(),
-                                          Entity.REMOVE_IN_RETREAT));
+                                          Entity.REMOVE_PUSHED));
             phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
             // TODO: remove passengers and swarmers.
         } else {
@@ -8887,7 +8902,9 @@ implements Runnable {
      * @param   entityId - the <code>int</code> ID of the entity being removed.
      * @param   condition - the <code>int</code> condition the unit was in.
      *          This value must be one of <code>Game.UNIT_IN_RETREAT</code>,
+     *          <code>Game.UNIT_PUSHED</code>, or
      *          <code>Game.UNIT_SALVAGEABLE</code>, or
+     *          <code>Game.UNIT_EJECTED</code>, or
      *          <code>Game.UNIT_DEVASTATED</code> or an
      *          <code>IllegalArgumentException</code> will be thrown.
      * @return  A <code>Packet</code> to be sent to clients.
@@ -8895,7 +8912,9 @@ implements Runnable {
     private Packet createRemoveEntityPacket(int entityId, int condition) {
         if ( condition != Entity.REMOVE_UNKNOWN &&
              condition != Entity.REMOVE_IN_RETREAT &&
+             condition != Entity.REMOVE_PUSHED &&
              condition != Entity.REMOVE_SALVAGEABLE &&
+             condition != Entity.REMOVE_EJECTED &&
              condition != Entity.REMOVE_DEVASTATED &&
              condition != Entity.REMOVE_NEVER_JOINED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +

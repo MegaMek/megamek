@@ -47,7 +47,7 @@ public class FiringDisplay
     private Button            butFindClub;
     private Button            butNextTarg;
     private Button            butFlipArms;
-    private Button        butSpot;
+    private Button            butSpot;
     
     private Button            butReport;
     private Button            butSpace;
@@ -269,9 +269,12 @@ public class FiringDisplay
             refreshAll();
             cacheVisibleTargets();
 
-	        if (!client.bv.isMovingUnits()) {
-	            client.bv.centerOnHex(ce().getPosition());
-	        }
+            if (!client.bv.isMovingUnits()) {
+                client.bv.centerOnHex(ce().getPosition());
+            }
+
+            // Update the menu bar.
+            client.getMenuBar().setEntity( ce() );
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
@@ -323,11 +326,12 @@ public class FiringDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
+        client.getMenuBar().setHasFireChoice( false );
         butFire.setEnabled(false);
         butSkip.setEnabled(false);
         butTwist.setEnabled(false);
-    butAim.setEnabled(false);
-    butSpot.setEnabled(false);
+        butAim.setEnabled(false);
+        butSpot.setEnabled(false);
         butFindClub.setEnabled(false);
         butMore.setEnabled(false);
         butNext.setEnabled(false);
@@ -343,9 +347,14 @@ public class FiringDisplay
     private void changeMode() {
         int wn = client.mechD.wPan.getSelectedWeaponNum();
         Mounted m = ce().getEquipment(wn);
-        int nMode = m.switchMode();
+
+        // If the weapon does not have modes, just exit.
+        if ( !m.getType().hasModes() ) {
+            return;
+        }
         
         // send change to the server
+        int nMode = m.switchMode();
         client.sendModeChange(ce().getId(), wn, nMode);
         
         // notify the player
@@ -398,12 +407,14 @@ public class FiringDisplay
           visibleTargets[count++] = (Entity)it.next();
         }
 
+        client.getMenuBar().setHasTarget( visibleTargets.length > 0 );
         butNextTarg.setEnabled(visibleTargets.length > 0);
       }
 
       private void clearVisibleTargets() {
         visibleTargets = null;
         lastTargetID = -1;
+        client.getMenuBar().setHasTarget( false );
         butNextTarg.setEnabled(false);
       }
       
@@ -415,7 +426,7 @@ public class FiringDisplay
           return null;
         
         lastTargetID++;
-        
+
         if ( lastTargetID >= visibleTargets.length )
           lastTargetID = 0;
         
@@ -452,7 +463,10 @@ public class FiringDisplay
         
         // clear queue
         attacks.removeAllElements();
-        
+
+        // Clear the menu bar.
+        client.getMenuBar().setEntity( null );
+
         // close aimed shot display, if any
         ash.closeDialog();
         ash.lockLocation(false);
@@ -654,6 +668,7 @@ public class FiringDisplay
      * Targets something
      */
     protected void updateTarget() {
+        client.getMenuBar().setHasFireChoice( false );
         butFire.setEnabled(false);
         
         // make sure we're showing the current entity in the mech display
@@ -695,9 +710,11 @@ public class FiringDisplay
                 butFire.setEnabled(false);
             } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
+                client.getMenuBar().setHasFireChoice( true );
                 butFire.setEnabled(true);
             } else {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                client.getMenuBar().setHasFireChoice( true );
                 butFire.setEnabled(true);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());
@@ -818,32 +835,45 @@ public class FiringDisplay
         
         if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getSource() == butReport) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
             new MiniReportDisplay(client.frame, client.eotr).show();
             return;
-        } else if (ev.getSource() == butFire) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+            // Make sure the game options dialog is not editable.
+            if ( client.getGameOptionsDialog().isEditable() ) {
+                client.getGameOptionsDialog().setEditable( false );
+            }
+            // Display the game options dialog.
+            client.getGameOptionsDialog().update(client.game.getOptions());
+            client.getGameOptionsDialog().show();
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireFire")) {
             fire();
-        } else if (ev.getSource() == butSkip) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireSkip")) {
             nextWeapon();
-        } else if (ev.getSource() == butTwist) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireTwist")) {
             twisting = true;
-        } else if (ev.getSource() == butNext) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireNext")) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-    } else if (ev.getSource() == butFindClub) {
-      findClub();
-    } else if (ev.getSource() == butSpot) {
-      doSpot();
-        } else if (ev.getSource() == butNextTarg) {
-          jumpToNextTarget();
-        } else if (ev.getSource() == butFlipArms) {
-          updateFlipArms(!ce().getArmsFlipped());
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireFindClub")) {
+            findClub();
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireSpot")) {
+            doSpot();
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireNextTarg")) {
+            jumpToNextTarget();
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireFlipArms")) {
+            updateFlipArms(!ce().getArmsFlipped());
         // Fire Mode - More Fire Mode button handling - Rasia
-        } else if (ev.getSource() == butFireMode) {
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireMode")) {
             changeMode();
+        } else if (ev.getActionCommand().equalsIgnoreCase("fireCancel")) {
+            clearAttacks();
+            client.game.board.select(null);
+            client.game.board.cursor(null);
+            refreshAll();
         }
     }
     

@@ -151,7 +151,7 @@ public class TestBot extends BotClientWrapper {
   }
   
   public void calculatePhysicalTurn() {
-    int entNum = game.getFirstEntityNum(getLocalPlayer());
+    int entNum = game.getFirstEntityNum();
     int first = entNum;
     do {
       // take the first entity that can do an attack
@@ -260,7 +260,7 @@ public class TestBot extends BotClientWrapper {
         sendAttackData(entNum, v);
         return;
       }
-      entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+      entNum = game.getNextEntityNum(entNum);
     } while (entNum != -1 && entNum != first);
   }
   
@@ -304,8 +304,9 @@ public class TestBot extends BotClientWrapper {
 
     //I'm not quite sure where to put this, but we need to make sure that if
     //an entity falls, and gets another turn, that it takes it -- Ben
-    if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY) {
-        Entity mustMove = game.getEntity(game.getTurn().getEntityNum());
+    if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
+        GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn)game.getTurn();
+        Entity mustMove = game.getEntity(turn.getEntityNum());
         this.enemies.get(mustMove).refresh();
         this.enemies.get(mustMove).moved = false;
     }
@@ -338,9 +339,8 @@ public class TestBot extends BotClientWrapper {
         Entity entity = (Entity)i.next();
         CEntity cen = this.enemies.get(entity);
         
-        // if we must move only one entity, ignore others for the moment
-        if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY
-        && entity.getId() != game.getTurn().getEntityNum()) {
+        // if we can't move this entity right now, ignore it
+        if (game.getTurn().isValidEntity(entity)) {
             continue;
         }
         
@@ -1263,7 +1263,7 @@ public class TestBot extends BotClientWrapper {
   }
   
   public void calculateFiringTurn() {
-    int first_entity = game.getFirstEntityNum(getLocalPlayer());
+    int first_entity = game.getFirstEntityNum();
     int entity_num = first_entity;
     int best_entity = first_entity;
     double max = java.lang.Double.MIN_VALUE;
@@ -1288,7 +1288,7 @@ public class TestBot extends BotClientWrapper {
 	  if ( game.hasInfantry(this.local_pn) ) {
 
 	      // Yup.  Ignore this entity and check the next one.
-	      entity_num = game.getNextEntityNum(getLocalPlayer(), entity_num);
+	      entity_num = game.getNextEntityNum(entity_num);
 	      continue;
 
 	  }
@@ -1356,7 +1356,7 @@ public class TestBot extends BotClientWrapper {
           }
         }
       }
-      entity_num = game.getNextEntityNum(getLocalPlayer(), entity_num);
+      entity_num = game.getNextEntityNum(entity_num);
     } while (entity_num != first_entity && entity_num != -1);
     
     java.util.Vector av = new java.util.Vector();

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -23,41 +23,77 @@ package megamek.common;
 import java.io.*;
 
 /**
- * Represents a single turn within a phase of the game, where a specific player 
- * has to declare his/her action.  May also include data on a specific entity
- * that that player has to move.
+ * Represents a single turn within a phase of the game, where a specific player
+ * has to declare his/her action.  The default game turn allows a player to
+ * move any entity.
  *
  * @author  Ben
  */
 public class GameTurn implements Serializable {
-    public final static int ENTITY_ANY = -1;
-    
-    private int playerNum;
-    private int entityNum;
+    private int playerId;
     
     /** Creates a new instance of GameTurn */
-    public GameTurn(int playerNum, int entityNum) {
-        this.playerNum = playerNum;
-        this.entityNum = entityNum;
-    }
-    
-    public GameTurn(int playerNum) {
-        this(playerNum, ENTITY_ANY);
+    public GameTurn(int playerId) {
+        this.playerId = playerId;
     }
     
     public int getPlayerNum() {
-        return playerNum;
+        return playerId;
     }
     
-    public void setPlayerNum(int playerNum) {
-        this.playerNum = playerNum;
+    public void setPlayerNum(int playerId) {
+        this.playerId = playerId;
     }
     
-    public int getEntityNum() {
-        return entityNum;
+    /**
+     * Returns true if the specified entity is a valid one to use for this turn.
+     */
+    public boolean isValidEntity(Entity entity) {
+        return entity != null && entity.getOwnerId() == playerId
+        && entity.isSelectable();
+    }
+
+    /**
+     * A type of game turn that allows only one specific entity to move.
+     */
+    public static class SpecificEntityTurn extends GameTurn {
+        private int entityId;
+        
+        public SpecificEntityTurn(int playerId, int entityId) {
+            super(playerId);
+            this.entityId = entityId;
+        }
+        
+        public int getEntityNum() {
+            return entityId;
+        }
+        
+        public void setEntityNum(int entityId) {
+            this.entityId = entityId;
+        }
+        
+        /**
+         * Returns true if the entity is normally valid and it is the specific
+         * entity that can move this turn.
+         */
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && entity.getId() == entityId;
+        }
     }
     
-    public void setEntityNum(int entityNum) {
-        this.entityNum = entityNum;
+    /**
+     * A type of game turn that allows only infantry to move
+     */
+    public static class OnlyInfantryTurn extends GameTurn {
+        public OnlyInfantryTurn(int playerId) {
+            super(playerId);
+        }
+        
+        /**
+         * Returns true if the entity is normally valid and it is infantry.
+         */
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && entity instanceof Infantry;
+        }
     }
 }

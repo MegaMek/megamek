@@ -315,7 +315,7 @@ Equipment
 
 - Active Probe			Yes		Hidden units is not implemented.
 - Anti-Missile System		Yes		AMS target is selected for the player.
-- Anti-Personal Pods		No		None
+- Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
 - Artillery Weapons		No		None
 - Autocannon Munitions		Partial		Incendiary Ammo notlemented.

@@ -458,6 +458,7 @@ public class BattleArmor
                                            true) );
 
         // Is the item a stealth equipment?
+        // TODO : what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();
         if ( BattleArmor.STEALTH.equals( name ) ) {
             this.isStealthy = true;
@@ -663,15 +664,17 @@ public class BattleArmor
         // Stealthy units alreay have their to-hit mods defined.
         else if ( isStealthy ) {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case RangeType.RANGE_MINIMUM:
+            case RangeType.RANGE_SHORT:
                 result = new TargetRoll( this.shortStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case RangeType.RANGE_MEDIUM:
                 result = new TargetRoll( this.mediumStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_LONG:
+            case RangeType.RANGE_LONG:
+            case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
                 result = new TargetRoll( this.longStealthMod,
                                          this.stealthName );
                 break;

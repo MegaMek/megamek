@@ -70,6 +70,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_target_modifiers", "MaxTech target movement modifiers", "If checked, the target movement modifiers table is enhanced by 3 additional steps (14-18 hexes => +5, 19-24 hexes => +6 25+ hexes => +7.", false));
         addOption(level3, new GameOption("maxtech_leg_damage", "MaxTech Leg Damage Rule", "If checked, hip criticals are cummulative with other damage to legs, but reduce movement by 2 instead of halving. Destroying both hips does not reduce MPs to zero.", false));
         addOption(level3, new GameOption("maxtech_fire", "MaxTech Fire/Smoke Rules", "If checked, fires create smoke that drifts and dissipates, instead of remaining static.  In addition, smoke is split into light and heavy varieties.", false));
+        addOption(level3, new GameOption("maxtech_range", "MaxTech Extreme Range Rules", "If checked, Weapons have an extreme range bracket past their long range distance.", false));
         
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);

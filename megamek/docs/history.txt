@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.37 (CVS)
+v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl
 + some more bugfixing in high/low gravity rules
 + Bug 966960: Specialty Ammo with Mixed Tech works now
@@ -11,6 +11,7 @@ v0.29.37 (CVS)
 + Bug 970608: low/high gravity & MASC or TSM now works correctly	
 + Use an Enumeration rather than Vector#elementAt() whenever possible.
 + Bug 967231: Oops! Had made it possible to load enemy inf :)
++ Patch 962593: added jaxom_renard's MaxTech Extreme Range patch.
 
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin

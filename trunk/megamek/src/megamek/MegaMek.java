@@ -338,11 +338,9 @@ public class MegaMek
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
-                Client c = BotFactory.getBot(BotFactory.TEST, pa[x].getName());
+                BotClient c = new TestBot(pa[x].getName());
                 c.connect("localhost", hd.port);
                 c.retrieveServerInfo();
-                ((BotClientWrapper)c).initialize();
-                //f.hide();
             }
         }
     }
@@ -374,8 +372,7 @@ public class MegaMek
             return;
         }
         // initialize game
-        client = BotFactory.getBot(BotFactory.TEST, cd.name);
-        //client = new BotClient(frame, cd.name);
+        client = new TestBot(cd.name);
 
   		// verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {

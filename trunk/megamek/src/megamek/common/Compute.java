@@ -39,13 +39,6 @@ public class Compute
     public static final int        ARC_LEFTSIDE     = 5;
     public static final int        ARC_RIGHTSIDE    = 6;
     
-    public static final int        GEAR_LAND        = 0;
-    public static final int        GEAR_BACKUP      = 1;
-    public static final int        GEAR_JUMP        = 2;
-    public static final int        GEAR_CHARGE      = 3;
-    public static final int        GEAR_DFA         = 4;
-    public static final int        GEAR_TURN        = 5;
-
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
     /** Wrapper to random#d6(n) */
@@ -104,560 +97,7 @@ public class Compute
         }
         return 0;
     } 
-     
-    /**
-     * Generates a MovePath to rotate the entity to it's new facing
-     */
-    public static MovePath rotatePathfinder(Game game, int entityId, 
-                                                int destFacing) {
-        final Entity entity = game.getEntity(entityId);
-        return rotatePathfinder(entity.getFacing(), destFacing);
-    }
-    
-    /**
-     * Generates a MovePath object to rotate from the start facing to the
-     * destination facing.
-     */
-    public static MovePath rotatePathfinder(int facing, int destFacing) {
-        MovePath md = new MovePath();
-
-        // adjust facing
-        while (facing != destFacing) {
-            int stepType = MovePath.getDirection(facing, destFacing);
-            md.addStep(stepType);
-            facing = MovePath.getAdjustedFacing(facing, stepType);
-        }
-        
-        return md;
-    }
-    
-    /**
-     * Generates MovePath for a mech to move from its current position
-     * to the destination.
-     */
-    public static MovePath lazyPathfinder(Game game, int entityId, 
-                                                  Coords dest) {
-        final Entity entity = game.getEntity(entityId);
-        return lazyPathfinder(entity.getPosition(), entity.getFacing(), dest);
-    }
-    
-    /**
-     * Generates MovePath for a mech to move from the start position and
-     * facing to the destination
-     */
-    public static MovePath lazyPathfinder(Coords src, int facing, Coords dest) {
-        MovePath md = new MovePath();
-        
-        int curFacing = facing;
-        Coords curPos = new Coords(src);
-        
-        while(!curPos.equals(dest)) {
-            // adjust facing
-            md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
-            // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
-
-            curFacing = curPos.direction1(dest);
-            curPos = curPos.translated(curFacing);
-        }
-        
-        return md;
-    }
-    
-    /**
-     * Backwards walking pathfinder.  Note that this will let you do impossible
-     * things, like run backwards.
-     */
-    public static MovePath backwardsLazyPathfinder(Coords src, int facing, Coords dest) {
-        MovePath md = new MovePath();
-        
-        int curFacing = facing;
-        Coords curPos = new Coords(src);
-        
-        while(!curPos.equals(dest)) {
-            // adjust facing
-            int destFacing = (curPos.direction1(dest) + 3) % 6;
-            md.append(rotatePathfinder(curFacing, destFacing));
-            
-            // step backwards
-            md.addStep(MovePath.STEP_BACKWARDS);
-
-            curFacing = destFacing;
-            curPos = curPos.translated((destFacing + 3) % 6);
-        }
-        
-        return md;
-    }
-    
-    /**
-     * Charge pathfinder.  Finds a path up to the hex before the target,
-     * then charges
-     */
-    public static MovePath chargeLazyPathfinder(Coords src, int facing,
-                                                        Coords dest) {
-        MovePath md = new MovePath();
-        
-        int curFacing = facing;
-        Coords curPos = new Coords(src);
-        
-        Coords subDest = dest.translated(dest.direction1(src));
-        
-        while(!curPos.equals(subDest)) {
-            // adjust facing
-            md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
-            // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
-
-            curFacing = curPos.direction1(subDest);
-            curPos = curPos.translated(curFacing);
-        }
-        
-        // adjust facing
-        md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
-        // charge!
-        md.addStep(MovePath.STEP_CHARGE);
-        
-        return md;
-    }
-    
-    /**
-     * Death from above pathfinder.  Finds a path up to the hex before the target,
-     * then charges
-     */
-    public static MovePath dfaLazyPathfinder(Coords src, int facing,
-                                                        Coords dest) {
-        MovePath md = new MovePath();
-        
-        int curFacing = facing;
-        Coords curPos = new Coords(src);
-        
-        Coords subDest = dest.translated(dest.direction1(src));
-        
-        while(!curPos.equals(subDest)) {
-            // adjust facing
-            md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
-            // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
-
-            curFacing = curPos.direction1(subDest);
-            curPos = curPos.translated(curFacing);
-        }
-        
-        // adjust facing
-        md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
-        // charge!
-        md.addStep(MovePath.STEP_DFA);
-        
-        return md;
-    }
-    
-    
-    /**
-     * "Compiles" some movement data by setting all the flags.  Determines which
-     * steps are possible, how many movement points each uses, and where they
-     * occur.
-     */
-    public static void compile(Game game, int entityId, MovePath md) {
-        final Entity entity = game.getEntity(entityId);
-        
-        // some flags
-        boolean isJumping = false;
-        boolean isInfantry = (entity instanceof Infantry);
-        boolean isUsingManAce = false;
-        
-        // check for jumping
-        if (md.contains(MovePath.STEP_START_JUMP)) {
-            isJumping = true;
-        } else {
-            isUsingManAce = entity.getCrew().getOptions().booleanOption("maneuvering_ace");
-        }
-        
-        // transform lateral shifts for quads or maneuverability aces
-        if (((entity instanceof QuadMech) || isUsingManAce) && !isJumping) {
-            md.transformLateralShifts();
-            md.transformLateralShiftsBackwards();
-        }
-
-        // first pass: set position, facing and mpUsed; figure out overallMoveType
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            MoveStep step = (MoveStep)i.nextElement();
-            MoveStep prev = step.getPrev();
-            
-            MoveState state = step.getState();
-            MoveState prevState;
-            if (prev == null) {
-                prevState = new MoveState();
-                prevState.setFromEntity(entity, game); 
-            } else {
-                prevState = prev.getState();
-            }
-            
-            state.setFromPrev(prevState);
-
-            // 
-            switch(step.getType()) {
-            case MovePath.STEP_UNLOAD:
-            // TODO: Can immobilized transporters unload?
-            case MovePath.STEP_LOAD:
-                state.setMp(1);
-                break;
-            case MovePath.STEP_TURN_LEFT :
-            case MovePath.STEP_TURN_RIGHT :
-                // Check for pavement movement.
-                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
-                    state.setPavementStep(true);
-                } else {
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
-                }
-
-                // Infantry can turn for free.
-                state.setMp((state.isJumping() || state.isHasJustStood() || isInfantry) ? 0 : 1);
-                state.adjustFacing(step.getType());
-                break;
-            case MovePath.STEP_FORWARDS :
-            case MovePath.STEP_BACKWARDS :
-            case MovePath.STEP_CHARGE :
-            case MovePath.STEP_DFA :
-                // step forwards or backwards
-                if (step.getType() == MovePath.STEP_BACKWARDS) {
-                    state.moveInDir((state.getFacing() + 3) % 6);
-                    state.setThisStepBackwards(true);
-                    state.setRunProhibited(true);
-                } else {
-                    state.moveInDir(state.getFacing());
-                    state.setThisStepBackwards(false);
-                }
-
-                // Check for pavement movement.
-                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
-                    state.setPavementStep(true);
-                } else {
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
-                }
-
-                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(), state.isJumping()));
-
-                // check for water
-                if (!state.isPavementStep()
-                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0
-                    && entity.getMovementType() != Entity.MovementType.HOVER) {
-                    state.setRunProhibited(true);
-                }
-                state.setHasJustStood(false);
-                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
-                    state.setDistance(0); //start over after shifting gears
-                }
-                state.addDistance(1);
-                break;
-            case MovePath.STEP_LATERAL_LEFT :
-            case MovePath.STEP_LATERAL_RIGHT :
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
-                if (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS 
-                    || step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS) {
-                    state.moveInDir((MovePath.getAdjustedFacing(state.getFacing(), MovePath.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
-                    state.setThisStepBackwards(true);
-                    state.setRunProhibited(true);
-                } else {
-                    state.moveInDir(MovePath.getAdjustedFacing(state.getFacing(), MovePath.turnForLateralShift(step.getType())));
-                    state.setThisStepBackwards(false);
-                }
-
-                // Check for pavement movement.
-                if ( canMoveOnPavement(game, prevState.getPosition(), state.getPosition()) ) {
-                    state.setPavementStep(true);
-                } else { 
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
-                }
-
-                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(),
-                state.isJumping()) + 1);
-                // check for water
-                if (!state.isPavementStep()
-                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0) {
-                        state.setRunProhibited(true);
-                }
-                state.setHasJustStood(false);
-                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
-                    state.setDistance(0); //start over after shifting gears
-                }
-                state.addDistance(1);
-                break;
-            case MovePath.STEP_GET_UP :
-                // mechs with 1 MP are allowed to get up
-                state.setMp(entity.getRunMP() == 1 ? 1 : 2);
-                state.setHasJustStood(true);
-                break;
-            case MovePath.STEP_GO_PRONE :
-                state.setMp(1);
-                break;
-            case MovePath.STEP_START_JUMP :
-                state.setJumping(true);
-                break;
-            default :
-                state.setMp(0);
-            }
-            
-            state.addMpUsed(state.getMp());
-
-        }
-        
-        // running with gyro or hip hit is dangerous!
-        // but we can't show it right now.  check officially moved anyhow.
-//        if (overallMoveType == Entity.MOVE_RUN
-//            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-//                || entity.hasHipCrit())) {
-//            md.getStep(0).setDanger(true);
-//        }
-        
-        // set moveType, illegal, trouble flags
-        compileIllegal(game, entityId, md);
-
-        // Check the last step for legality.
-        compileLastStep(game, entityId, md);
-        
-        // check for illegal jumps
-        if (isJumping) {
-            compileJumpCheck(game, entityId, md);
-        }
-        
-        md.setCompiled(true);
-    }
-    
-    /**
-     * Go thru movement data and set the moveType, illegal and danger flags.
-     */
-    private static void compileIllegal(Game game, int entityId, MovePath md) {
-        final Entity entity = game.getEntity(entityId);
-
-        Coords curPos = new Coords(entity.getPosition());
-        boolean legal = true;
-        boolean danger = false;
-        boolean pastDanger = false;
-        boolean firstStep = true;
-        boolean isInfantry = (entity instanceof Infantry);
-        boolean isTurning = false;
-        boolean isUnloaded = false;
-        boolean prevStepOnPavement = false;
-        boolean isProne = entity.isProne();
-        boolean isUnjammingRAC = entity.isUnjammingRAC();
-
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
-            final int stepType = step.getType();
-            
-            Coords lastPos = new Coords(curPos);
-            curPos = step.getPosition();
-
-            // guilty until proven innocent
-            int moveType = Entity.MOVE_ILLEGAL;
-            
-            // check for valid jump mp
-            if (step.isJumping() 
-                && step.getMpUsed() <= entity.getJumpMPWithTerrain()
-                && !isProne) {
-                moveType = Entity.MOVE_JUMP;
-            }
-            
-            // check for valid walk/run mp
-            if ( !step.isJumping()
-                && (!isProne || md.contains(MovePath.STEP_GET_UP)
-                    || stepType == MovePath.STEP_TURN_LEFT 
-                    || stepType == MovePath.STEP_TURN_RIGHT)) {
-
-                // Vehicles moving along pavement get "road bonus" of 1 MP.
-                // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.
-                if (step.getMpUsed() <= entity.getWalkMP()) {
-                    moveType = Entity.MOVE_WALK;
-                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
-                            step.getMpUsed() == entity.getWalkMP() + 1 ) {
-                    moveType = Entity.MOVE_WALK;
-                } else if ( step.getMpUsed() <= entity.getRunMPwithoutMASC() &&
-                            !step.isRunProhibited() ) {
-                    moveType = Entity.MOVE_RUN;
-                } else if ( step.getMpUsed() <= entity.getRunMP() &&
-                            !step.isRunProhibited() ) {
-                    step.setUsingMASC(true);
-                    Mech m = (Mech)entity;
-                    step.setTargetNumberMASC(m.getMASCTarget());
-                    moveType = Entity.MOVE_RUN;
-                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
-                            step.getMpUsed() <= entity.getRunMP() + 
-                            (isOdd(entity.getWalkMP()) ? 1 : 2) &&
-                            !step.isRunProhibited() ) {
-                    moveType = Entity.MOVE_RUN;
-                }
-            }
-            
-            // mechs with 1 MP are allowed to get up
-            if ( stepType == MovePath.STEP_GET_UP &&
-                 entity.getRunMP() == 1 ) {
-                moveType = Entity.MOVE_RUN;
-            }
-            
-            // amnesty for the first step
-            if ( firstStep && moveType == Entity.MOVE_ILLEGAL &&
-                 entity.getWalkMP() > 0 && !entity.isProne() &&
-                 stepType == MovePath.STEP_FORWARDS ) {
-                moveType = Entity.MOVE_RUN;
-            }
-
-            // Is the entity unloading passeners?
-            if ( stepType == MovePath.STEP_UNLOAD ) {
-                // Prone Meks are able to unload, if they have the MP.
-                if ( step.getMpUsed() <= entity.getRunMP() &&
-                     entity.isProne() && moveType == Entity.MOVE_ILLEGAL ) {
-                    moveType = Entity.MOVE_RUN;
-                    if ( step.getMpUsed() <= entity.getWalkMP() ) {
-                        moveType = Entity.MOVE_WALK;
-                    }
-                }
-
-                // Can't unload units into prohibited terrain
-                // or into stacking violation.
-                Targetable target = step.getTarget( game );
-                if ( target instanceof Entity ) {
-                    Entity other = (Entity) target;
-                    if ( null != stackingViolation(game, other, curPos, entity)
-                         || other.isHexProhibited(game.board.getHex(curPos))) {
-                        moveType = Entity.MOVE_ILLEGAL;
-                    }
-                } else {
-                    System.err.print( "Trying to unload " );
-                    System.err.print( target.getDisplayName() );
-                    System.err.print( " from " );
-                    System.err.print( entity.getDisplayName() );
-                    System.err.println( "." );
-                    moveType = Entity.MOVE_ILLEGAL;
-                }
-
-            }
-
-            // Can't run or jump if unjamming a RAC.
-            if (isUnjammingRAC
-                && (moveType == Entity.MOVE_RUN || step.isJumping())) {
-                moveType = Entity.MOVE_ILLEGAL;
-            }
-
-            // only standing mechs may go prone
-            if (stepType == MovePath.STEP_GO_PRONE 
-            && (isProne || !(entity instanceof Mech))) {
-                moveType = Entity.MOVE_ILLEGAL;
-            }
-            
-            // check if this movement is illegal for reasons other than points
-            if ( !isMovementPossible(game, entityId, lastPos, curPos,
-                                     moveType, stepType, firstStep)
-                 || isUnloaded ) {
-                moveType = Entity.MOVE_ILLEGAL;
-            }
-            
-
-            // no legal moves past an illegal one
-            if (moveType == Entity.MOVE_ILLEGAL) {
-                legal = false;
-            }
-
-            // check for danger
-            danger = step.isDanger();
-            danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
-                                             curPos, moveType,
-                                             isTurning,
-                                             prevStepOnPavement );
-
-            // getting up is also danger
-            if (stepType == MovePath.STEP_GET_UP) {
-                danger = true;
-            }
-            
-            // set flags
-            step.setDanger(danger);
-            step.setPastDanger(pastDanger);
-            step.setMovementType(legal ? moveType : Entity.MOVE_ILLEGAL);
-            
-            // set past danger
-            pastDanger |= danger;
-
-            // Record if we're turning *after* check for danger,
-            // because the danger lies in moving *after* turn.
-            switch(stepType) {
-            case MovePath.STEP_TURN_LEFT :
-            case MovePath.STEP_TURN_RIGHT :
-                isTurning = true;
-                break;
-            case MovePath.STEP_UNLOAD:
-                // Unloading must be the last step.
-                isUnloaded = true;
-                break;
-            default:
-                isTurning = false;
-                break;
-            }
-
-            firstStep = false;
- 
-                                          
-            /* Bug 754610: Revert fix for bug 702735. */
-            // Record if the step just taken was along pavement or a road.
-            prevStepOnPavement = step.isPavementStep();
-
-            // Infantry can always move one hex in *any* direction.
-            if ( isInfantry && step.getMpUsed() == 0 ) {
-                firstStep = true;
-            }
-
-            // update prone state
-            if (stepType == MovePath.STEP_GO_PRONE) {
-                isProne = true;
-            } else if (stepType == MovePath.STEP_GET_UP) {
-                isProne = false;
-            }
-        }
-    }
-    
-    /**
-     * Check the last steps for stacking violations or other problems.
-     * MoveStep backwards until we get to the first (last) legal step.  Then check 
-     * if we have a violation.  If we do, then that step's illegal.  Check the 
-     * next step backwards.  Otherwise, stop checking.
-     */
-    private static void compileLastStep(Game game, int entityId, MovePath md) {
-        final Entity entity = game.getEntity(entityId);
-        
-        for (int i = md.length() - 1; i >= 0; i--) {
-            final MoveStep step = md.getStep(i);
-            final Hex destHex = game.board.getHex(step.getPosition());
-            
-            // skip steps that are not the last step
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
-                continue;
-            }
-            
-            // check for stacking violations
-            final Entity violation = stackingViolation(game, entityId, step.getPosition());
-            if (violation != null
-                    && step.getType() != MovePath.STEP_CHARGE
-                    && step.getType() != MovePath.STEP_DFA) {
-                // can't move here
-                step.setMovementType(Entity.MOVE_ILLEGAL);
-                continue;
-            }
-            
-            // Check again for illegal terrain, in case of jumping.  We're
-            // allowed to enter prohibited terrain via a road or bridge.
-            if ( entity.isHexProhibited(destHex) && !step.isPavementStep() ) {
-                step.setMovementType(Entity.MOVE_ILLEGAL);
-                continue;
-            }
-            
-            // we've found the last step and it was legal, so stop checking
-            break;
-        }
-    }
-    
+         
     /**
      * Returns an entity if the specified entity would cause a stacking
      * violation entering a hex, or returns null if it would not.
@@ -673,7 +113,7 @@ public class Compute
      * When compiling an unloading step, both the transporter and the unloaded
      * unit probably occupy some other position on the board.
      */
-    private static Entity stackingViolation( Game game,
+    public static Entity stackingViolation( Game game,
                                              Entity entering,
                                              Coords coords,
                                              Entity transport ) {
@@ -720,33 +160,6 @@ public class Compute
         
         // okay, all clear
         return null;
-    }
-
-    /**
-     * Checks to make sure that the jump as a whole is legal, and marks
-     * all steps as illegal if it is not.
-     *
-     * An illegal jump either does not go anywhere, or takes a longer path
-     * than is necessary to the destination.
-     *
-     * This function assumes that at least the position and mpUsed for each
-     * step have been properly calculated and that the movement it is given
-     * is jumping movement.
-     */
-    private static void compileJumpCheck(Game game, int entityId, MovePath md) {
-        final Entity entity = game.getEntity(entityId);
-        Coords start = entity.getPosition();
-        Coords land = md.getStep(md.length() - 1).getPosition();
-        int distance = start.distance(land);
-        int mp = md.getStep(md.length() - 1).getMpUsed();
-        
-        if (distance < 1 || mp > distance) {
-            // whole movement illegal
-            for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
-                MoveStep step = (MoveStep)i.nextElement();
-                step.setMovementType(Entity.MOVE_ILLEGAL);
-            }
-        }
     }
     
     /**
@@ -1257,13 +670,6 @@ public class Compute
         }
     }
     
-    /**
-     * @deprecated no more prevattacks
-     */
-    public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa, Vector prevAttacks) {
-        return toHitWeapon(game, waa.getEntityId(), game.getTarget(waa.getTargetType(), waa.getTargetId()),
-                           waa.getWeaponId(), prevAttacks);
-    }
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
         return toHitWeapon(game, waa.getEntityId(), 
                            game.getTarget(waa.getTargetType(), waa.getTargetId()),
@@ -1272,16 +678,7 @@ public class Compute
                            waa.getAimingMode());
     }
     
-    /**
-     * To-hit number for attacker firing a weapon at the target.
-     * 
-     * @deprecated no more prevattacks
-     */
-    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, Vector prevAttacks) {
-         // ignore prevAttacks
-    return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-  }
-
+    
     public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
     return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
   }
@@ -3838,7 +3235,7 @@ public class Compute
         }
 
         // determine last valid step
-        compile(game, attackerId, md);
+        md.compile(game, ae);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
@@ -4138,7 +3535,7 @@ public class Compute
         }
         
         // determine last valid step
-        compile(game, attackerId, md);
+        md.compile(game, ae);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
@@ -4666,8 +4063,7 @@ public class Compute
      */
     public static boolean canSee(Game game, Entity ae, Targetable target)
     {
-        LosEffects los = calculateLos(game, ae.getId(), target);
-        return !los.blocked && los.lightWoods + ((los.heavyWoods + los.smoke) * 2) < 3;
+        return calculateLos(game, ae.getId(), target).canSee();
     }
     
     /**

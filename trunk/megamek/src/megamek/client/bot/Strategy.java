@@ -1,18 +1,9 @@
-/*
- * Strategy.java
- *
- * Created on May 19, 2002, 12:01 PM
- */
-
 package megamek.client.bot;
 
-import megamek.common.*;
-import megamek.client.*;
-import megamek.server.*;
-
 /**
- * Container for strategy modifiers -- will be expanded upon
- * @author  Steve Hawkins
+ * Container for strategy modifiers
+ * 
+ * TODO: alot...
  */
 public class Strategy {
   
@@ -26,15 +17,5 @@ public class Strategy {
    */
   public double target = 1;
   
-  //not yet implemented
-  public double movement = 1;
-  
-  //where should I go?
-  Coords target_coords = null;
-  
   static CEntity MainTarget;
-  
-  static int Turns = 0;
-  
 }
-

@@ -38,6 +38,9 @@ Lot of people have contributed to the MegaMek project.
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
 
+  Scenario Readme:
+     Lee "T-Bolt" Smith
+
   Mech Conversion:
      Hopalong
 

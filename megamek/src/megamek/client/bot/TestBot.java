@@ -130,7 +130,7 @@ public class TestBot extends BotClientWrapper {
     }
   }
   
-  protected void initialize() {
+  public void initialize() {
     EntityState.game = this.game;
     EntityState.tb = this;
     CEntity.game = this.game;

@@ -107,6 +107,8 @@ v 0.25.3 (04-28-02, 5pm)
 + fixed a bug that would stop wakeup rolls under certain circumstances
 + added a picture for quads (not used yet)
 + fixed an error that occured when a mech had no operational weapons
++ hexes are now hexagonal in LOS calcs (thx Derek Evans)
++ 550576: config file read in dedicated server mode too
 
 v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels

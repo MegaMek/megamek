@@ -77,7 +77,7 @@ public class Client extends Panel
         		
         game = new Game();
 
-        bv = new BoardView1(game);
+        bv = new BoardView1(game, frame);
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 320);

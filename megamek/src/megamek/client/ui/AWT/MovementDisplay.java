@@ -430,6 +430,20 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private void moveTo(MovementData md) {
+        if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
+            Mech m = (Mech)ce();
+            ConfirmDialog nag = new ConfirmDialog(client.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    Settings.nagForMASC = false;
+                }
+            } else {
+                return;
+            }
+        }
+
         disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);

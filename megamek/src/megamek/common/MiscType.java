@@ -475,7 +475,7 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_MASC;
         misc.bv = 0;
         
-        String[] saModes = { "Off", "On" };
+        String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
         
         return misc;
@@ -496,7 +496,7 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_MASC;
         misc.bv = 0;
         
-        String[] saModes = { "Off", "On" };
+        String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
         
         return misc;

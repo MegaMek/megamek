@@ -156,6 +156,19 @@ public class MovementData
         }
         return false;
     }
+
+    /**
+     * Check for MASC use
+     */
+    public boolean hasActiveMASC() {
+        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+            Step step = (Step)i.nextElement();
+            if (step.isUsingMASC()) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /**
      * Clear all flags in all steps
@@ -473,6 +486,8 @@ public class MovementData
         private transient int movementType;
         private transient boolean danger;
         private transient boolean pastDanger;
+        private transient boolean isUsingMASC;
+        private transient int targetNumberMASC;
 
         /**
          * Create a step of the given type.
@@ -485,6 +500,7 @@ public class MovementData
             this.targetId = Entity.NONE;
             this.targetType = Targetable.TYPE_ENTITY;
             this.onPavement = false;
+            this.isUsingMASC = false;
         }
 
         /**
@@ -500,6 +516,7 @@ public class MovementData
             this.targetId = target.getTargetId();
             this.targetType = target.getTargetType();
             this.onPavement = false;
+            this.isUsingMASC = false;
         }
 
         /**
@@ -519,8 +536,10 @@ public class MovementData
             this.movementType = other.movementType;
             this.danger = other.danger;
             this.pastDanger = other.pastDanger;
+            this.isUsingMASC = other.isUsingMASC;
+            this.targetNumberMASC = other.targetNumberMASC;
         }
-        
+
         public String toString() {
             switch (type) {
             case MovementData.STEP_BACKWARDS:return "B";	
@@ -660,6 +679,22 @@ public class MovementData
         public void setPastDanger(boolean pastDanger) {
             this.pastDanger = pastDanger;
         }
+
+        public boolean isUsingMASC() {
+            return isUsingMASC;
+        }
+        
+        public void setUsingMASC(boolean usingMASC) {
+            this.isUsingMASC = usingMASC;
+        }
+
+        public void setMASCNumber(int n) {
+            this.targetNumberMASC = n;
+        }
+
+        public int getMASCNumber() {
+            return targetNumberMASC;
+        }
         
         public void clearAllFlags() {
             this.position = null;
@@ -669,6 +704,7 @@ public class MovementData
             this.movementType = 0;
             this.danger = false;
             this.pastDanger = false;
+            this.isUsingMASC = false;
         }
         
         public Object clone() {
@@ -685,10 +721,15 @@ public class MovementData
                 return false;
             }
             Step other = (Step)object;
-            return other.type == this.type && other.position.equals(this.position)
-            && other.facing == this.facing && other.mpUsed == this.mpUsed
-            && other.distance == this.distance && other.movementType == this.movementType
-            && other.danger == this.danger && other.pastDanger == this.pastDanger;
+            return other.type == this.type
+                && other.position.equals(this.position)
+                && other.facing == this.facing
+                && other.mpUsed == this.mpUsed
+                && other.distance == this.distance
+                && other.movementType == this.movementType
+                && other.danger == this.danger
+                && other.pastDanger == this.pastDanger
+                && other.isUsingMASC == this.isUsingMASC;
         }
     }
 }

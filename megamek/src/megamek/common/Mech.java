@@ -72,9 +72,10 @@ public abstract class Mech
     private int[] rearArmor;
     private int[] orig_rearArmor;
     
+    private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
     // MASCLevel is the # of turns MASC has been used previously
     private int nMASCLevel = 0;
-    // This is if mask it was used
+    // Has masc been used?
     private boolean usedMASC = false;
 
     /**
@@ -119,12 +120,13 @@ public abstract class Mech
         setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
-    
-    private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
-    
-    public boolean checkForMASCFailure(StringBuffer phaseReport)
-    {        
-        if (hasActiveMASC()) {
+
+    public int getMASCTarget() {
+        return MASC_FAILURE[nMASCLevel] + 1;
+    }
+
+    public boolean checkForMASCFailure(StringBuffer phaseReport, MovementData md) {
+        if (md.hasActiveMASC()) {
             boolean bFailure = false;
 
             // if usedMASC is already set, then we've already checked MASC
@@ -135,17 +137,16 @@ public abstract class Mech
             // If we failed before, the MASC was destroyed, and we wouldn't
             // have gotten here (havActiveMASC would return false)
             if (!usedMASC) {
-                
                 int nRoll = Compute.d6(2);
                 
                 usedMASC = true;
                 phaseReport.append("\n" + getDisplayName() +
                                    " checking for MASC failure.\n");       
-                phaseReport.append("Needs " + (MASC_FAILURE[nMASCLevel] + 1) +
+                phaseReport.append("Needs " + getMASCTarget() +
                                    ", rolls " + nRoll + " : ");
             
             
-                if (nRoll <= MASC_FAILURE[nMASCLevel]) {
+                if (nRoll < getMASCTarget()) {
                     // uh oh
                     bFailure = true;
                     phaseReport.append("MASC fails!.\n");
@@ -158,6 +159,7 @@ public abstract class Mech
                         Mounted m = (Mounted)e.nextElement();
                         if (m.getType().hasFlag(MiscType.F_MASC)) {
                             m.setDestroyed(true);
+                            m.setMode("Off");
                         }
                     }                
                 }
@@ -190,12 +192,8 @@ public abstract class Mech
             Mounted m = (Mounted) e.nextElement();
             MiscType mtype = (MiscType) m.getType();
 
-            // Turn off MASC at start of each round.
-            if (mtype.hasFlag(MiscType.F_MASC)) {
-                m.setMode("Off");
-            }
             // Stealth can not be turned on if it's ECM is destroyed.
-            else if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
+            if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
                       m.getLinked().isDestroyed() ) {
                 m.setMode("Off");
             }
@@ -333,13 +331,16 @@ public abstract class Mech
     }
     
     /**
-     * Utility function to loop through the equipment
+     * Makes it possible for a mech to use its MASC system.  Note
+     *  that the mech will have to exceed its normal run to actually
+     *  engage the MASC system
      */
-    public boolean hasActiveMASC() {
+    public boolean hasArmedMASC() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (!m.isDestroyed() && m.getType() instanceof MiscType &&
-                    m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("On")) {
+                m.getType().hasFlag(MiscType.F_MASC)
+                && m.curMode().equals("Armed")) {
                 return true;
             }
         }
@@ -358,14 +359,21 @@ public abstract class Mech
         }
         return false;
     }
-    
+
     /**
      * Potentially adjust runMP for MASC
      */
     public int getRunMP() {
-        if (hasActiveMASC()) {
+        if (hasArmedMASC()) {
             return getWalkMP() * 2;
         }
+        return super.getRunMP();
+    }
+
+    /**
+     * Returns run MP without considering MASC
+     */
+    public int getRunMPwithoutMASC() {
         return super.getRunMP();
     }
     

@@ -518,8 +518,14 @@ public class Compute
                 } else if ( entity instanceof Tank && onlyPavement &&
                             step.getMpUsed() == entity.getWalkMP() + 1 ) {
                     moveType = Entity.MOVE_WALK;
+                } else if ( step.getMpUsed() <= entity.getRunMPwithoutMASC() &&
+                            !runProhibited ) {
+                    moveType = Entity.MOVE_RUN;
                 } else if ( step.getMpUsed() <= entity.getRunMP() &&
                             !runProhibited ) {
+                    step.setUsingMASC(true);
+                    Mech m = (Mech)entity;
+                    step.setMASCNumber(m.getMASCTarget());
                     moveType = Entity.MOVE_RUN;
                 } else if ( entity instanceof Tank && onlyPavement &&
                             step.getMpUsed() <= entity.getRunMP() + 

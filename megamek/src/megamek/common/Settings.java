@@ -39,6 +39,8 @@ public class Settings
     public static int       displaySizeHeight       = 370;
     
     public static boolean   autoEndFiring           = true;
+
+    public static boolean   nagForMASC              = true;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
@@ -55,6 +57,7 @@ public class Settings
     public static Color     moveRunColor            = Color.yellow;
     public static Color     moveJumpColor           = Color.red;
     public static Color     moveIllegalColor        = Color.darkGray;
+    public static Color     moveMASCColor           = new Color(255,140,0);
     
     public static String    mapTileset              = "defaulthexset.txt";
     
@@ -145,6 +148,10 @@ scan:
                         st.nextToken();
                         autoEndFiring = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("nagformasc")) {
+                        st.nextToken();
+                        nagForMASC = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -175,6 +182,9 @@ scan:
                     }
                     else if (key.equals("moveillegal")) {
                         moveIllegalColor = loadColor(st, moveIllegalColor);
+                    }
+                    else if (key.equals("movemasc")) {
+                        moveMASCColor = loadColor(st, moveMASCColor);
                     }
                     else if(key.equals("maptileset")) {
                         st.nextToken();
@@ -248,6 +258,7 @@ scan:
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
+            cw.write("nagformasc " + nagForMASC + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
@@ -256,6 +267,7 @@ scan:
             cw.write("moverun " + writeColor(moveRunColor) + "\r\n");
             cw.write("movejump " + writeColor(moveJumpColor) + "\r\n");
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
+            cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();

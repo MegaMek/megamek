@@ -14,6 +14,8 @@
 
 package megamek.common.actions;
 
+import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.Targetable;
 
 /**
@@ -54,6 +56,14 @@ public abstract class AbstractAttackAction
     
     public void setTargetId(int targetId) {
         this.targetId = targetId;
+    }
+    
+    public Targetable getTarget(Game g) {
+        return g.getTarget(getTargetId(), getTargetType());
+    }
+    
+    public Entity getEntity(Game g) {
+        return g.getEntity(getEntityId());
     }
     
 }

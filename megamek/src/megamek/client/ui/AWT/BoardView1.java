@@ -2751,7 +2751,7 @@ public class BoardView1
         }
         
         public void addWeapon(ChargeAttackAction attack) {
-              final String roll = Compute.toHitCharge(game, attack).getValueAsString();
+              final String roll = attack.toHit(game).getValueAsString();
               weaponDescs.addElement("Charges. Needs " + roll);
         }
         public void addWeapon(DfaAttackAction attack) {

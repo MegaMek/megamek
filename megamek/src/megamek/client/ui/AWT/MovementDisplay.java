@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.actions.ChargeAttackAction;
 
 public class MovementDisplay
     extends StatusBarPhaseDisplay
@@ -735,23 +736,20 @@ public class MovementDisplay
                 }
 
                 // check if it's a valid charge
-                ToHitData toHit = Compute.toHitCharge( client.game,
-                                                       cen,
-                                                       target,
-                                                       cmd);
+                ToHitData toHit = new ChargeAttackAction(cen, target.getTargetId(), target.getTargetType(), target.getPosition()).toHit(client.game, cmd);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
 
                     // Determine how much damage the charger will take.
                     int toAttacker = 0;
                     if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
                         Entity te = (Entity) target;
-                        toAttacker = Compute.getChargeDamageTakenBy(ce(),te);
+                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),te);
                     }
                     else if ( target.getTargetType() ==
                               Targetable.TYPE_BUILDING ) {
                         Building bldg = client.game.board.getBuildingAt
                             ( moveto );
-                        toAttacker = Compute.getChargeDamageTakenBy(ce(),bldg);
+                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),bldg);
                     }
 
                     // Ask the player if they want to charge.
@@ -761,7 +759,7 @@ public class MovementDisplay
                            " (" + Compute.oddsAbove(toHit.getValue()) +
                            "%)   (" + toHit.getDesc() + ")"
                            + "\nDamage to Target: "+
-                           Compute.getChargeDamageFor(ce(),cmd.getHexesMoved())+
+                           ChargeAttackAction.getChargeDamageFor(ce(),cmd.getHexesMoved())+
                            " (in 5pt clusters)"+ toHit.getTableDesc()
                            + "\nDamage to Self: " +
                            toAttacker +

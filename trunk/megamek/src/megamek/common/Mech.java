@@ -1100,7 +1100,19 @@ public abstract class Mech
     public int calculateBattleValue() {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
-        
+
+        // Try to find a Mek Stealth system.
+        boolean bHasStealthArmor = false;
+        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
+            Mounted mEquip = (Mounted) equips.nextElement();
+            MiscType mtype = (MiscType) mEquip.getType();
+            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
+                // The Mek has Stealth Armor.
+                bHasStealthArmor = true;
+                break;
+            }
+        }
+
         // total armor points
         dbv += getTotalArmor() * 2.0;
         
@@ -1210,12 +1222,18 @@ public abstract class Mech
         } else {
             maximumHeat += 2;
         }
+
         // adjust for heat efficiency
         if (maximumHeat > getHeatCapacity()) {
             double heatPenalty = ((maximumHeat - getHeatCapacity()) * 5);
             dbv = Math.max(1, dbv - heatPenalty);
         }
-        
+
+        // Add in Mek Stealth Armor effects to the OFFENSIVE Battle Rating.
+        if ( bHasStealthArmor ) {
+            maximumHeat += 10;
+        }
+
         // adjust for target movement modifier
         int runMP = getRunMP();
         // factor in masc or tsm
@@ -1240,7 +1258,7 @@ public abstract class Mech
         dbv *= tmmFactors[targetMovementModidifer];
         
         double weaponBV = 0;
-        
+
         // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
@@ -1332,7 +1350,12 @@ public abstract class Mech
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        
+
+        // Adjust for Steath Armor on Mek.
+        if ( bHasStealthArmor ) {
+            speedFactor += 0.2;
+        }
+
         obv = weaponBV * speedFactor;
         
         // we get extra bv from c3 networks. a valid network requires at least 2 members

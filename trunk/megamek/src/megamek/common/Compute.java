@@ -3425,14 +3425,15 @@ public class Compute
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
+        ToHitData toHit = getTargetMovementModifier
+            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP ); 
 
         // Did the target skid this turn?
         if ( entity.moved == Entity.MOVE_SKID ) {
-            return new ToHitData( 2, "target skidding" );
+            toHit.addModifier( 2, "target skidded" );
         }
 
-        return getTargetMovementModifier(entity.delta_distance, 
-                                         entity.moved == Entity.MOVE_JUMP);
+        return toHit;
     }
   
     /**

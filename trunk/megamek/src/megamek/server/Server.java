@@ -2209,6 +2209,7 @@ implements Runnable {
 		    mpUsed = entity.getRunMP(); // skid consumes all movement
 		    entity.moved = moveType;
 		    fellDuringMovement = true;
+		    distance = entity.delta_distance;
 		    break;
 		}
             }

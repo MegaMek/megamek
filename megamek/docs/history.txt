@@ -92,6 +92,8 @@ v 0.28.6-dev (CVS)
 + 687825: fix crash going back to lobby from a scenario
 + first initiative phase not lost when using a scenario or loading a savegame
 + autosave takes place at beginning of initiative, not end phase
++ 675633: NullPointerException squashed
++ disconnected players must be manually skipped (with new /skip command)
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

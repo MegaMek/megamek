@@ -2823,12 +2823,12 @@ implements Runnable, ConnectionHandler {
                 }
             }
 
-            // check to see if we've moved INTO fire and we are not a mech
-            if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && game.board.getHex(curPos).contains(Terrain.FIRE)) {
-                if (!(entity instanceof Mech)) {
-                    doFlamingDeath(entity);
+            // check to see if we are not a mech and we've moved INTO fire
+            if (!(entity instanceof Mech)) {
+                if ( game.board.getHex(curPos).contains(Terrain.FIRE)
+                    && !lastPos.equals(curPos)
+                    && step.getMovementType() != Entity.MOVE_JUMP ) {
+                        doFlamingDeath(entity);
                 }
             }   
 

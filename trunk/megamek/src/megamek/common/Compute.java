@@ -1697,9 +1697,24 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not at same elevation");
         }
         
-        // can't physically attack mechs making dfa attacks
-        if (te.isMakingDfa()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        // can't push mech making non-pushing displacement attack
+        if (te.hasDisplacementAttack() && !te.isPushing()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a charge/DFA attack");
+        }
+        
+        // can't push mech pushing another, different mech
+        if (te.isPushing() && te.getDisplacementAttack().getTargetId() != ae.getId()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is pushing another mech");
+        }
+        
+        // can't do anything but counter-push if the target of another attack
+        if (ae.isTargetOfDisplacementAttack() && ae.findTargetedDisplacement().getEntityId() != te.getId()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is the target of another push/charge/DFA");
+        }
+        
+        // can't attack the target of another displacement attack
+        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
         }
         
         // check facing
@@ -1864,9 +1879,14 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
         }
         
-        // can't charge charging mechs
-        if (te.isCharging() || te.isMakingDfa()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is charging");
+        // can't attack mech making a different displacement attack
+        if (te.hasDisplacementAttack()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
+        }
+        
+        // can't attack the target of another displacement attack
+        if (te.isTargetOfDisplacementAttack()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }
         
         // okay, modifiers...
@@ -2005,10 +2025,15 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
         
-        // can't charge charging mechs
-        if (te.isCharging() || te.isMakingDfa()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is charging");
+        // can't attack mech making a different displacement attack
+        if (te.hasDisplacementAttack()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
+        
+        // can't attack the target of another displacement attack
+        if (te.isTargetOfDisplacementAttack()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
+        }        
         
         // okay, modifiers...
         toHit = new ToHitData(5, "base");

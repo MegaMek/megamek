@@ -2954,11 +2954,17 @@ public boolean isPassworded() {
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 desc += "\n            Movement system damaged!";
-                te.setOriginalWalkMP(Math.max(0, te.getOriginalWalkMP() - 1));
+                int nMP = te.getOriginalWalkMP();
+                if (nMP <= 1) {
+                    ((Tank)te).immobilize();
+                }
+                else {
+                    te.setOriginalWalkMP(nMP - 1);
+                }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc += "\n            Movement system destroyed!";
-                te.setOriginalWalkMP(0);
+                ((Tank)te).immobilize();
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
                 desc += "\n            Turret locked!";

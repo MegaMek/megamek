@@ -88,6 +88,8 @@ v next
 + 608627: spurious tank death messages removed
 + 608767: hovercraft no longer recieve fire mods for being in water
 + 608767: prevented several more ways for a turret to rotate while locked
++ 608767: stunned vehicle crews don't roll for wakeup
++ disabled vehicles are counted as immobile for bth purposes
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

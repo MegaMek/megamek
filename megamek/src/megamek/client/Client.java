@@ -137,9 +137,11 @@ public class Client implements Runnable {
             connected = false;
             die();
         }
-        processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), ""));
+        if (!host.equals("localhost")) {
+            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), ""));
+        }
     }
-
+    
     /**
      * Return an enumeration of the players in the game
      */

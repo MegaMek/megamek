@@ -104,6 +104,7 @@ implements Runnable {
         connector.start();
         
         // register commands
+        registerCommand(new DefeatCommand(this));
         registerCommand(new HelpCommand(this));
         registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
@@ -906,6 +907,12 @@ implements Runnable {
             game.setVictoryPlayerId(Player.PLAYER_NONE);
             game.setVictoryTeam(victor.getTeam());
         }
+
+        Vector players = game.getPlayersVector();
+        for (int i = 0; i < players.size(); i++) {
+        	Player player = (Player) players.elementAt(i);
+        	player.setAdmitsDefeat(false);
+        }
     }
     
     /** Cancels the force victory */
@@ -1342,7 +1349,47 @@ implements Runnable {
      */
     public boolean victory() {
         if (game.isForceVictory()) {
+        	int victoryPlayerId = game.getVictoryPlayerId();
+        	int victoryTeam = game.getVictoryTeam();
+        	Vector players = game.getPlayersVector();
+        	boolean forceVictory = true;
+        	
+        	// Individual victory.
+        	if (victoryPlayerId != Player.PLAYER_NONE) {
+        		for (int i = 0; i < players.size(); i++) {
+        			Player player = (Player) players.elementAt(i);
+        			
+        			if (player.getId() != victoryPlayerId && !player.isObserver()) {
+        				if (!player.admitsDefeat()) {
+        					forceVictory = false;
+        					break;
+        				}
+        			}
+        		}
+        	}
+        	// Team victory.
+        	if (victoryTeam != Player.TEAM_NONE) {
+        		for (int i = 0; i < players.size(); i++) {
+        			Player player = (Player) players.elementAt(i);
+        			
+        			if (player.getTeam() != victoryTeam && !player.isObserver()) {
+        				if (!player.admitsDefeat()) {
+        					forceVictory = false;
+        					break;
+        				}
+        			}
+        		}
+        	}
+
+            for (int i = 0; i < players.size(); i++) {
+            	Player player = (Player) players.elementAt(i);
+            	player.setAdmitsDefeat(false);
+            }
+
+        	if (forceVictory) {
             return true;
+            }
+            cancelVictory();
         }
         
         if (!game.getOptions().booleanOption("check_victory")) {

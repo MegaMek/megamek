@@ -384,6 +384,17 @@ public class Game implements Serializable
     }
     
     /**
+     * Resets this game by removing all entities.
+     */
+    public void reset() {
+        entities.removeAllElements();
+        sanctuary.removeAllElements();
+        graveyard.removeAllElements();
+        smithereens.removeAllElements();
+        entityIds.clear();
+    }
+    
+    /**
      * Checks to see if we have an entity in the master list, and if so,
      * returns its id number.  Otherwise returns -1.
      */

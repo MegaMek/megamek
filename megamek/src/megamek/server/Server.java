@@ -1176,6 +1176,7 @@ implements Runnable, ConnectionHandler {
                 writeInitiativeReport(false);
                 send(createReportPacket());
                 autoSave();
+                System.out.println("Round " + game.getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
             case Game.PHASE_DEPLOY_MINEFIELDS :
                 checkForObservers();

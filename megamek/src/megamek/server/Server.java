@@ -13030,19 +13030,21 @@ implements Runnable, ConnectionHandler {
             } else {
                 desc.append("succeeds.\n");
             }
+            // create the MechWarrior in any case, for campaign tracking
+            MechWarrior pilot = new MechWarrior(entity);
+            pilot.setDeployed(true);
+            pilot.setId(getFreeEntityId());
+            game.addEntity(pilot.getId(), pilot);
+            send(createAddEntityPacket(pilot.getId()));
             // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
             // specify either way.
             if (entity.getCrew().isDoomed()
                 || entity.getCrew().isUnconscious()) {
                 desc.append("but the pilot does not survive!\n");
+                desc.append(destroyEntity(pilot, "deadly ejection", false, false));
             }
             else {
                 // Add the pilot as an infantry unit on the battlefield.
-                MechWarrior pilot = new MechWarrior(entity);
-                pilot.setDeployed(true);
-                pilot.setId(getFreeEntityId());
-                game.addEntity(pilot.getId(), pilot);
-                send(createAddEntityPacket(pilot.getId()));
                 if (game.board.contains(targetCoords)) {
                     pilot.setPosition(targetCoords);                    
 /* Can pilots eject into water???
@@ -13057,9 +13059,6 @@ implements Runnable, ConnectionHandler {
                     }
 */
                     desc.append("and the pilot ejects safely!\n");
-                    doEntityDisplacementMinefieldCheck( pilot,
-                                                        entity.getPosition(),
-                                                        targetCoords );
                     if (game.getOptions().booleanOption("vacuum")) {
                         desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
                         desc.append(destroyEntity(pilot, "explosive decompression", false, false));
@@ -13068,6 +13067,10 @@ implements Runnable, ConnectionHandler {
                     if (!pilot.isDoomed()) {
                         this.entityUpdate(pilot.getId());
                     }
+                    // check if the pilot lands in a minefield
+                    doEntityDisplacementMinefieldCheck( pilot,
+                            entity.getPosition(),
+                            targetCoords );
                 } else {
                     desc.append("and the pilot ejects safely and lands far from the battle!");
                     if (game.getOptions().booleanOption("vacuum")) {

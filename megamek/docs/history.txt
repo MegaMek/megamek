@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29.7 (CVS)
++ Data 779006: Added BH-21's resized mech images
+
 v 0.29.6 (08-03-03, 7pm)
 + Merge of underwater patch undid the Inferno SRM2 fix.
 + Bug 776023: Made "Warhammer IIC" the model for all clan whammys.

@@ -365,16 +365,21 @@ public class FiringDisplay
     */
     private void changeMode() {
         int wn = client.mechD.wPan.getSelectedWeaponNum();
-        Mounted m = ce().getEquipment(wn);
+
+        // Do nothing we have no unit selected.
+        if ( null == ce() ) {
+            return;
+        }
 
         // If the weapon does not have modes, just exit.
-        if ( !m.getType().hasModes() ) {
+        Mounted m = ce().getEquipment(wn);
+        if ( m == null || !m.getType().hasModes() ) {
             return;
         }
         
         // send change to the server
         int nMode = m.switchMode();
-        client.sendModeChange(ce().getId(), wn, nMode);
+        client.sendModeChange(cen, wn, nMode);
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {

@@ -78,6 +78,7 @@ public class BoardView1
     
     // vector of sprites for C3 network lines
     private Vector C3Sprites = new Vector();
+
     // tooltip stuff
     private Window tipWindow;
     private boolean isTipPossible = false;
@@ -659,6 +660,7 @@ public class BoardView1
         }
         
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
+
         repaint(100);
     }
     
@@ -1489,13 +1491,13 @@ public class BoardView1
                 col = Color.yellow;
                 break;
             case Entity.MOVE_JUMP :
-                col = Color.cyan;
-                break;
-            case Entity.MOVE_ILLEGAL :
                 col = Color.red;
                 break;
+            case Entity.MOVE_ILLEGAL :
+                col = Color.darkGray;
+                break;
             default :
-                col = Color.green;
+                col = Color.cyan;
                 break;
             }
 

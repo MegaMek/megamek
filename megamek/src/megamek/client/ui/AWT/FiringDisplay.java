@@ -274,7 +274,6 @@ public class FiringDisplay
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
             butFlipArms.setEnabled(ce().canFlipArms());
-            updateFlipArmsButtonName();
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
@@ -526,6 +525,7 @@ public class FiringDisplay
             attacks.removeAllElements();
         }
         ce().setSecondaryFacing(ce().getFacing());
+        ce().setArmsFlipped(false);
     }
     
     /**
@@ -753,19 +753,13 @@ public class FiringDisplay
 
       torsoTwist(null);
       
-      ce().setArmsFlipped(armsFlipped);
       clearAttacks();
+      ce().setArmsFlipped(armsFlipped);
       attacks.addElement(new FlipArmsAction(cen, armsFlipped));
       updateTarget();
       refreshAll();
-
-      updateFlipArmsButtonName();
     }
     
-    private void updateFlipArmsButtonName() {
-      butFlipArms.setLabel( "Flip " + (ce().getArmsFlipped() ? "Front" : "Rear"));
-    }
-
     //
     // KeyListener
     //

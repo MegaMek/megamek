@@ -8,6 +8,8 @@ v 0.29.22 (CVS)
 + Used splash screen submitted by freakboy2571.
 + Bug 874582: Shouldn't be able to back up across an elevation change.
 + Bug 869821: fixed transparency on challenger.gif
++ Torso crits have no effect 1/3 of the time.  Handle 'Proto crew hits.
++ Bug 869807: "Armor-Piercing" should be hyphenated as well.
 
 v 0.29.21 (2004-01-10 11:45am)
 + Patch 867652: cleaned up megamek-icon.gif

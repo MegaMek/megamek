@@ -113,6 +113,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     this.curPos = new Coords(entity.getPosition());
     this.curFacing = entity.getFacing();
     this.isProne = entity.isProne();
+    this.mpUsed = entity.mpUsed;
     this.heatBuildup = entity.heatBuildup;
   }
   public void addStep(int step_type) {

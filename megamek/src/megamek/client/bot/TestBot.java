@@ -309,6 +309,7 @@ public class TestBot extends BotClientWrapper {
     //an entity falls, and gets another turn, that it takes it -- Ben
     if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY) {
         Entity mustMove = game.getEntity(game.getTurn().getEntityNum());
+        this.enemies.get(mustMove).refresh();
         this.enemies.get(mustMove).moved = false;
     }
     //first check and make sure that someone else has moved so that we don't replan
@@ -339,6 +340,13 @@ public class TestBot extends BotClientWrapper {
       while(i.hasNext()) {    
         Entity entity = (Entity)i.next();
         CEntity cen = this.enemies.get(entity);
+        
+        // if we must move only one entity, ignore others for the moment
+        if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY
+        && entity.getId() != game.getTurn().getEntityNum()) {
+            continue;
+        }
+        
         MoveThread mt = new MoveThread(entity); //so things don't slow down too much, use a thread
         System.out.println("Contimplating movement of "+entity.getShortName()+" "+entity.getId());
         mt.start();
@@ -347,6 +355,7 @@ public class TestBot extends BotClientWrapper {
         } catch (Exception e) {
           e.printStackTrace();
         }
+        
 
 	// Are we moving a non-Infantry entity in
 	// the middle of an Infantry move block?

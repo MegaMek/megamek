@@ -93,6 +93,8 @@ v CVS
 + 657511: Bot no longer freezes when it kicks a Tank (or Infantry).
 + 657635: Can't reproduce error.  Added logging of pilot baking to death.
 + Stop logging when an Entity ID is translated into a Coords object.
++ 623853: bot now completely recalculates movement when falling mid-move
++ bot should not move the wrong mech when directed
 
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.

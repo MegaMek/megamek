@@ -30,26 +30,26 @@ import java.util.Vector;
  * @version
  */
 public class MtfFile implements MechLoader {
-    
+
     String version;
-    
+
     String name;
     String model;
-    
+
     String chassisConfig;
     String techBase;
     String techYear;
     String rulesLevel;
-    
+
     String tonnage;
     String engine;
     String internalType;
     String myomerType;
-    
+
     String heatSinks;
     String walkMP;
     String jumpMP;
-    
+
     String armorType;
     String larmArmor;
     String rarmArmor;
@@ -62,48 +62,48 @@ public class MtfFile implements MechLoader {
     String ltrArmor;
     String rtrArmor;
     String ctrArmor;
-    
+
     String weaponCount;
     String[] weaponData;
-    
+
     String[][] critData;
-    
+
     Hashtable hSharedEquip = new Hashtable();
     Vector vSplitWeapons = new Vector();
-    
-    
+
+
     /** Creates new MtfFile */
     public MtfFile(InputStream is) throws EntityLoadingException {
         try {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
-            
+
             version = r.readLine();
 
             name = r.readLine();
             model = r.readLine();
-            
+
             r.readLine();
-            
+
             chassisConfig = r.readLine();
             techBase = r.readLine();
             techYear = r.readLine();
             rulesLevel = r.readLine();
-            
+
             r.readLine();
-            
+
             tonnage = r.readLine();
             engine = r.readLine();
             internalType = r.readLine();
             myomerType = r.readLine();
-            
+
             r.readLine();
-            
+
             heatSinks = r.readLine();
             walkMP = r.readLine();
             jumpMP = r.readLine();
-            
+
             r.readLine();
-            
+
             armorType = r.readLine();
             larmArmor = r.readLine();
             rarmArmor = r.readLine();
@@ -116,21 +116,21 @@ public class MtfFile implements MechLoader {
             ltrArmor = r.readLine();
             rtrArmor = r.readLine();
             ctrArmor = r.readLine();
-            
+
             r.readLine();
-            
+
             weaponCount = r.readLine();
-            
+
             int a = 9;
-            
+
             int weapons = Integer.parseInt(weaponCount.substring(8));
             weaponData = new String[weapons];
             for(int i = 0; i < weapons; i++) {
                 weaponData[i] = r.readLine();
             }
-            
+
             critData = new String[8][12];
-            
+
             readCrits(r, Mech.LOC_LARM);
             readCrits(r, Mech.LOC_RARM);
             readCrits(r, Mech.LOC_LT);
@@ -139,7 +139,7 @@ public class MtfFile implements MechLoader {
             readCrits(r, Mech.LOC_HEAD);
             readCrits(r, Mech.LOC_LLEG);
             readCrits(r, Mech.LOC_RLEG);
-            
+
             r.close();
         } catch (IOException ex) {
             throw new EntityLoadingException("I/O Error reading file");
@@ -149,20 +149,20 @@ public class MtfFile implements MechLoader {
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
-    
+
     private void readCrits(BufferedReader r, int loc) throws IOException {
         r.readLine(); // blank line
         r.readLine(); // location name.... verify?
-        
+
         for (int i = 0; i < 12; i++) {
             critData[loc][i] = r.readLine();
         }
     }
-    
+
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;
-            
+
             if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech();
             } else {
@@ -240,7 +240,7 @@ public class MtfFile implements MechLoader {
             if (mech.isClan()) {
                 mech.addClanCase();
             }
-            
+
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
 
@@ -253,7 +253,7 @@ public class MtfFile implements MechLoader {
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
         }
     }
-    
+
     private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
@@ -266,19 +266,19 @@ public class MtfFile implements MechLoader {
                 }
             }
         }
-        
+
         // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
             // if the slot's full already, skip it.
             if (mech.getCritical(loc, i) != null) {
                 continue;
             }
-            
+
             // parse out and add the critical
             String critName = critData[loc][i];
             boolean rearMounted = false;
             boolean split = false;
-            
+
             if (critName.equalsIgnoreCase("Fusion Engine")) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
                 continue;
@@ -291,7 +291,7 @@ public class MtfFile implements MechLoader {
                 split = true;
                 critName = critName.substring(0, critName.length() - 7).trim();
             }
-            
+
             try {
                 EquipmentType etype = EquipmentType.getByMtfName(critName);
                 if (etype != null) {
@@ -300,7 +300,7 @@ public class MtfFile implements MechLoader {
                         Mounted m = (Mounted)hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, 
+                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
                                     mech.getEquipmentNum(m), etype.isHittable()));
                             continue;
                         }
@@ -316,7 +316,7 @@ public class MtfFile implements MechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = (Mounted)vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc)) 
+                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc))
                                         && m.getType() == etype) {
                                 bFound = true;
                                 break;

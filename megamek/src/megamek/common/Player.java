@@ -25,6 +25,7 @@ public final class Player
     implements Serializable
 {
     public static final int     TEAM_NONE = 0;
+    public static final int     MAX_TEAMS = 6;  // one above the last team
     
     public static final int     colorRGBs[] = {0x8686BF, 0xF2F261, 0xCC6666,
     0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B};

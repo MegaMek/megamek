@@ -309,6 +309,8 @@ public class Client extends Panel
     protected void changePhase(int phase) {
         this.game.phase = phase;
         
+        bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
+        
         // remove the current panel
         curPanel = null;
         this.removeAll();
@@ -316,36 +318,26 @@ public class Client extends Panel
         
         switch(phase) {
         case Game.PHASE_LOUNGE :
-            curPanel = new ChatLounge(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
+            switchPanel(new ChatLounge(this));
             break;
         case Game.PHASE_EXCHANGE :
             sendReady(true);
             break;
         case Game.PHASE_MOVEMENT :
-            curPanel = new MovementDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
+            switchPanel(new MovementDisplay(this));
             break;
         case Game.PHASE_FIRING :
-            curPanel = new FiringDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
+            switchPanel(new FiringDisplay(this));
             break;
         case Game.PHASE_PHYSICAL :
-            curPanel = new PhysicalDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
+            switchPanel(new PhysicalDisplay(this));
             break;
         case Game.PHASE_INITIATIVE :
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
-            bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
-            curPanel = new ReportDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
+        case Game.PHASE_VICTORY :
+            switchPanel(new ReportDisplay(this));
             break;
         }
         this.validate();
@@ -354,6 +346,11 @@ public class Client extends Panel
         processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
     }
     
+    private void switchPanel(Panel panel) {
+        curPanel = panel;
+        this.add(curPanel);
+        curPanel.requestFocus();
+    }
     
     protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);

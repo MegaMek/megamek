@@ -4094,24 +4094,19 @@ implements Runnable, ConnectionHandler {
                         entity.setLocationStatus(loop, Entity.LOC_VACUUM);
                     else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
                 }
-                // BMRr, page 94 says that only Meks standing in Level 2 water,
-                // or prone in Level 1 water are "underwater" and thus subject
-                // to hull breaches.  We'll add a GameOption to override this.
-                if (game.getOptions().booleanOption("check_leg_breaches")) {
-                    entity.setLocationStatus(Mech.LOC_RLEG, Entity.LOC_WET);
-                    entity.setLocationStatus(Mech.LOC_LLEG, Entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, Entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, Entity.LOC_WET);
+                phaseReport.append
+                    (breachCheck(entity, Mech.LOC_RLEG, hex));
+                phaseReport.append
+                    (breachCheck(entity, Mech.LOC_LLEG, hex));
+                if (entity instanceof QuadMech) {
+                    entity.setLocationStatus(Mech.LOC_RARM, Entity.LOC_WET);
+                    entity.setLocationStatus(Mech.LOC_LARM, Entity.LOC_WET);
                     phaseReport.append
-                        (breachCheck(entity, Mech.LOC_RLEG, hex));
+                        (breachCheck(entity, Mech.LOC_RARM, hex));
                     phaseReport.append
-                        (breachCheck(entity, Mech.LOC_LLEG, hex));
-                    if (entity instanceof QuadMech) {
-                        entity.setLocationStatus(Mech.LOC_RARM, Entity.LOC_WET);
-                        entity.setLocationStatus(Mech.LOC_LARM, Entity.LOC_WET);
-                        phaseReport.append
-                            (breachCheck(entity, Mech.LOC_RARM, hex));
-                        phaseReport.append
-                            (breachCheck(entity, Mech.LOC_LARM, hex));
-                    }
+                        (breachCheck(entity, Mech.LOC_LARM, hex));
                 }
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {

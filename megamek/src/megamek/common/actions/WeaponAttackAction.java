@@ -230,7 +230,7 @@ public class WeaponAttackAction
         }
     
         // got ammo?
-        if ( usesAmmo && (ammo == null || ammo.getShotsLeft() == 0) ) {
+        if ( usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
         }
     

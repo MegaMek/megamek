@@ -2739,7 +2739,7 @@ implements Runnable, ConnectionHandler {
                         if ( !game.board.contains(nextPos) ) {
 
                             // Can the entity skid off the map?
-                            if ( game.getOptions().booleanOption("push_off_board") ) {
+                            if (game.getOptions().booleanOption("push_off_board")) {
                                 // Yup.  One dead entity.
                                 game.removeEntity(entity.getId(),
                                                   Entity.REMOVE_PUSHED);
@@ -2756,12 +2756,12 @@ implements Runnable, ConnectionHandler {
 
                             } else {
                                 // Nope.  Update the report.
-                                phaseReport.append( "   Can't skid off the field.\n" );
+                                phaseReport.append("   Can't skid off the field.\n");
                             }
                             // Stay in the current hex and stop skidding.
                             break;
                         }
-
+                        
                         // Can the skiding entity enter the next hex from this?
                         // N.B. can skid along roads.
                         if ( ( entity.isHexProhibited(curHex) ||
@@ -2806,7 +2806,6 @@ implements Runnable, ConnectionHandler {
                             phaseReport.append
                                 ( "   Can not skid uphill into hex " +
                                   nextPos.getBoardNum() ).append( ".\n" );
-
                             // Stay in the current hex and stop skidding.
                             break;
                         }
@@ -3048,6 +3047,32 @@ implements Runnable, ConnectionHandler {
                         // Do we stay in the current hex and stop skidding?
                         if ( stopTheSkid ) {
                             break;
+                        }
+                        // is the next hex a rubble hex?
+                        rollTarget = entity.checkRubbleMove(step, nextHex,
+                                                curPos, nextPos);
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            doSkillCheckWhileMoving(entity, curPos, nextPos,
+                                                        rollTarget, true);
+                            if (entity.isProne()) {
+                                // if we fell, stop the skid (see bug 1115608)
+                                break;
+                            }
+                        }
+                        
+                        // is the next hex a swamp?
+                        rollTarget = entity.checkSwampMove(step, nextHex, 
+                                                              curPos, nextPos);
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            if (!doSkillCheckWhileMoving(entity, curPos,
+                                                   nextPos, rollTarget, false)){
+                                entity.setStuck(true);
+                                phaseReport.append("\n").append(
+                                    entity.getDisplayName()).append(
+                                    " gets stuck in the swamp.\n");
+                                // stay here and stop skidding, see bug 1115608
+                                break;
+                            }
                         }
 
                         // Update the position and keep skidding.

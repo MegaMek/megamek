@@ -675,6 +675,11 @@ class WeaponPanel extends BufferedPanel
 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
             }
+            
+            // MG rapidfire
+            if (mounted.isRapidfire()) {
+                wn += " [Rapid Fire]";
+            }
 
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {

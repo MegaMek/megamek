@@ -73,6 +73,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
     private Vector m_vMunitions = new Vector();
     private Panel panMunitions = new Panel();
+    private Vector m_vMGs = new Vector();
+    private Panel panRapidfireMGs = new Panel();
         
     private Entity entity;
     private boolean okay = false;
@@ -297,6 +299,14 @@ extends Dialog implements ActionListener, DialogOptionListener {
             gridbag.setConstraints(panMunitions, c);
             add(panMunitions);
         }
+        
+        // Set up rapidfire mg
+        if (clientgui.getClient().game.getOptions().booleanOption("maxtech_burst")) {
+            setupRapidfireMGs();
+            c.anchor = GridBagConstraints.CENTER;
+            gridbag.setConstraints(panRapidfireMGs, c);
+            add(panRapidfireMGs);
+        }
 
         setupButtons();
         
@@ -319,6 +329,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
             disableMunitionEditing();
+            disableMGSetting();
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -355,6 +366,26 @@ extends Dialog implements ActionListener, DialogOptionListener {
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
+    }
+    
+    private void setupRapidfireMGs() {
+        GridBagLayout gbl = new GridBagLayout();
+        panMunitions.setLayout(gbl);
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        int row = 0;
+        for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            WeaponType wtype = (WeaponType)m.getType();
+            if (wtype.hasFlag(WeaponType.F_MG)) {
+                gbc.gridy = row++;
+                // Protomechs need special choice panels.
+                RapidfireMGPanel rmp = new RapidfireMGPanel(m);                
+                gbl.setConstraints(rmp, gbc);
+                panRapidfireMGs.add(rmp);
+                m_vMGs.addElement(rmp);
+            }
+        }
     }
     
     private void setupMunitions() {
@@ -567,10 +598,41 @@ extends Dialog implements ActionListener, DialogOptionListener {
             }            
         }
     }
+    
+    class RapidfireMGPanel extends Panel {
+        private Mounted m_mounted;
+        
+        protected Checkbox chRapid = new Checkbox();
+                
+        public RapidfireMGPanel(Mounted m) {
+            m_mounted = m;
+            int loc;
+            setLayout(new GridLayout(2, 2));
+            loc = m.getLocation();
+            String sDesc = "Machine Gun (" + entity.getLocationAbbr(loc) + ")";
+            add(new Label(sDesc + " Switch to rapid-fire mode"));
+            add(chRapid);
+        }
+
+        public void applyChoice() {
+            boolean b = chRapid.getState();
+            m_mounted.setRapidfire(b);
+        }
+
+        public void setEnabled(boolean enabled) {
+            chRapid.setEnabled(enabled);
+        }
+    }
 
     public void disableMunitionEditing() {
         for (int i = 0; i < m_vMunitions.size(); i++) {
             ((MunitionChoicePanel)m_vMunitions.elementAt(i)).setEnabled(false);
+        }
+    }
+    
+    public void disableMGSetting() {
+        for (int i = 0; i < m_vMGs.size(); i++) {
+            ((MunitionChoicePanel)m_vMGs.elementAt(i)).setEnabled(false);
         }
     }
 
@@ -911,6 +973,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
             // update munitions selections
             for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {
                 ((MunitionChoicePanel)e.nextElement()).applyChoice();
+            }
+            // update MG rapid fire settings
+            for (Enumeration e = m_vMGs.elements(); e.hasMoreElements(); ) {
+                ((RapidfireMGPanel)e.nextElement()).applyChoice();
             }
             
             setOptions();

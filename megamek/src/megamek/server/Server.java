@@ -2650,17 +2650,12 @@ implements Runnable {
             Hex targetHex = game.getBoard().getHex(te.getPosition());
             if (targetHex.contains(Terrain.WOODS) && !(targetHex.contains(Terrain.FIRE))
             && toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
-                // disqualified weapons are Gauss, small lasers of all sorts, and SRM2s.  This is a hack, but it works.
-                if (wtype.getName().indexOf("Small")==-1  //"small" does not appear
-                && wtype.getName().indexOf("Gauss")==-1	//"Gauss" does not appear
-                && !((wtype.getAmmoType() == AmmoType.T_SRM) && (wtype.getRackSize() ==2)))  //not an SRM2
+                // 11 or 12 is the same odds as 2 or 3
+                if (wtype.getFireTN() != TargetRoll.IMPOSSIBLE && burn(targetHex, 11) == true)
                 {
-                    if (burn(targetHex, 11) == true)  // 11 or 12 is the same odds as 2 or 3
-                    {
-                        sendChangedHex(te.getPosition());
-                        phaseReport.append("           Missed shot sets the woods on fire! \n");
-                    }
-                }//end if eligible weapon
+                    sendChangedHex(te.getPosition());
+                    phaseReport.append("           Missed shot sets the woods on fire! \n");
+                }
             }// end if target has woods and no fire
             return;
         }

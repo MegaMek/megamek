@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 v0.29.35 (CVS)
 + Time to start tracking memory usage in the log file.  Where is it all going?
++ Use Java APIs to format numbers.  
+        P.S. set "memorydumpon" to "true" in CFG
+        P.P.S. java.lang.Runtime#maxMemory() is a JDK v1.4.x API
 
 v0.29.34 (2004-05-11, 10:30pm)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.

@@ -61,7 +61,7 @@ public class BoardEncoder {
         out.write( "<board version=\"1.0\" >" );
 
         // Write the hex array to the stream.
-        out.write( "<data width=\"" );
+        out.write( "<boardData width=\"" );
         out.write( board.width );
         out.write( "\" height=\"" );
         out.write( board.height );
@@ -73,7 +73,7 @@ public class BoardEncoder {
                 HexEncoder.encode( board.getHex(x,y), out );
             }
         }
-        out.write( "</data>" );
+        out.write( "</boardData>" );
 
         // Write out the buildings (if any).
         iter = board.getBuildings();
@@ -100,14 +100,16 @@ public class BoardEncoder {
                 turns = board.getInfernoIVBurnTurns( coords );
                 // This value may be zero.
                 if ( turns > 0 ) {
-                    out.write( "\" ><arrowiv turns=\"" );
+                    out.write( "\" /><arrowiv turns=\"" );
                     out.write( turns );
                 }
-                out.write( "\" ></inferno>" );
+                out.write( "\" /></inferno>" );
             }
             out.write( "</infernos>" );
         }
 
+        // Finish the XML stream for this board.
+        out.write( "</board>" );
     }
 
     /**

@@ -158,8 +158,8 @@ public class GameEncoder {
             out.write( "</PSRs>" );
         }
 
-        // Encode the game's state.
-        out.write( "<gamestate " );
+        // Encode the game's data.
+        out.write( "<gameData " );
         out.write( "windDirection=\"" );
         out.write( game.getWindDirection() );
         out.write( "\" roundCount=\"" );
@@ -182,7 +182,6 @@ public class GameEncoder {
 
         // Finish the XML stream for this game.
         out.write( "</game>" );
-
     }
 
     /**

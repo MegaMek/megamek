@@ -32,7 +32,7 @@ public class PlayerEncoder {
     /**
      * Encode a <code>Player</code> object to an output writer.
      *
-     * @param   option - the <code>Player</code> to be encoded.
+     * @param   player - the <code>Player</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -40,9 +40,67 @@ public class PlayerEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Player option, Writer out )
+    public static void encode( Player player, Writer out )
         throws IOException
     {
+        Enumeration iter; // used when marching through a list of sub-elements
+
+        // First, validate our input.
+        if ( null == player ) {
+            throw new IllegalArgumentException( "The player is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this player
+        out.write( "<player version=\"1.0\" >" );
+
+        // Write the hex array to the stream.
+        out.write( "<playerData id=\"" );
+        out.write( player.getId() );
+        out.write( "\" name=\"" );
+        out.write( player.getName() );
+        out.write( "\" team=\"" );
+        out.write( player.getTeam() );
+        out.write( "\" colorIndex=\"" );
+        out.write( player.getColorIndex() );
+        out.write( "\" camoFileName=\"" );
+        out.write( player.getCamoFileName() );
+        out.write( "\" startingPos=\"" );
+        out.write( player.getStartingPos() );
+        out.write( "\" numConvMF=\"" );
+        out.write( player.getNbrMFConventional() );
+        out.write( "\" numCommandMF=\"" );
+        out.write( player.getNbrMFCommand() );
+        out.write( "\" numVibroMF=\"" );
+        out.write( player.getNbrMFVibra() );
+        out.write( "\" isDone=\"" );
+        out.write( player.isDone() ? "true" : "false" );
+        out.write( "\" isGhost=\"" );
+        out.write( player.isGhost() ? "true" : "false" );
+        out.write( "\" isObserver=\"" );
+        out.write( player.isObserver() ? "true" : "false" );
+        out.write( "\" isSeeAll=\"" );
+        out.write( player.getSeeAll() ? "true" : "false" );
+        out.write( "\" admitsDefeat=\"" );
+        out.write( player.admitsDefeat() ? "true" : "false" );
+        out.write( "\" />" );
+
+        // Write the coordinate of the player.
+        iter = player.getMinefields().elements();
+        if ( iter.hasMoreElements() ) {
+            out.write( "<minefields>" );
+            while ( iter.hasMoreElements() ) {
+                MinefieldEncoder.encode( (Minefield) iter.nextElement(),
+                                         out );
+            }
+        }
+        out.write( "</minefields>" );
+
+        // Finish the XML stream for this player.
+        out.write( "</player>" );
+
     }
 
     /**

@@ -714,6 +714,20 @@ public class Game implements Serializable
         
         return remaining;
     }
+    
+    /**
+     * Removes the last, next turn found that the specified entity can move in.
+     * Used when, say, an entity dies mid-phase.
+     */
+    public void removeTurnFor(Entity entity) {
+        for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
+            GameTurn turn = (GameTurn)turnVector.elementAt(i);
+            if (turn.isValidEntity(entity)) {
+                turnVector.removeElementAt(i);
+                break;
+            }
+        }
+    }
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped
@@ -818,6 +832,11 @@ public class Game implements Serializable
     
     public int actionsSize() {
         return actions.size();
+    }
+    
+    /** Returns the actions vector.  Do not use to modify the actions! */
+    public Vector getActionsVector() {
+        return actions;
     }
     
     /** Adds a pending displacement attack to the list for this phase. */

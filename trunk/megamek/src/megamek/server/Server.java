@@ -336,6 +336,10 @@ implements Runnable {
                 break;
         }
         send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
+        if (game.getPhase() == Game.PHASE_FIRING || game.getPhase() == Game.PHASE_PHYSICAL) {
+            // can't go above, need board to have been sent
+            send(createAttackPacket(game.getActionsVector()));
+        }
         if (game.phaseHasTurns(game.getPhase())) {
             send(connId, createTurnVectorPacket());
             send(connId, createTurnIndexPacket());
@@ -1572,22 +1576,11 @@ implements Runnable {
 
         // Remove the loaded unit from the screen.
         unit.setPosition( null );
+        
 
-        //CHECK: 
-//        // Remove the *last* friendly turn (removing the *first* penalizes
-//        // the opponent too much, and re-calculating moves is too hard).
-//        for ( int index = this.turns.size() - 1;
-//              index >= this.turnIndex; index-- ) {
-//
-//            // If the index-th turn is for the loaded unit's
-//            // player, remove it and stop looking.
-//            if ( unit.getOwnerId()  == 
-//                 ( (GameTurn)turns.elementAt(index) ).getPlayerNum() ) {
-//                this.turns.removeElementAt( index );
-//                break;
-//            }
-//
-//        } // Check the next turn
+        // Remove the *last* friendly turn (removing the *first* penalizes
+        // the opponent too much, and re-calculating moves is too hard).
+        game.removeTurnFor(unit);
 
         // Load the unit.
         loader.load( unit );
@@ -2000,25 +1993,13 @@ implements Runnable {
 			    // Has the target been destroyed?
 			    if ( target.isDoomed() ) {
 
-                                //CHECK: are we okay here with turns?
-//				// Has the target taken a turn?
-//				if ( !target.isDone() ) {
-//
-//				    // Dead entities don't take turns.
-//				    int targetOwnerId = target.getOwner().getId();
-//				    for ( int loop = turnIndex + 1;
-//					  loop < turns.size();
-//					  loop++ ) {
-//					// Is the loop-th turn for the 
-//					// destroyed target's player?
-//					if ( targetOwnerId == ( (GameTurn)turns.elementAt(loop) ).getPlayerNum() ) {
-//					    // Yup. Remove the turn and stop looping.
-//					    turns.removeElementAt( loop );
-//					    break;
-//					}
-//				    } // Check the next turn
-//
-//				} // End target-still-to-move
+				// Has the target taken a turn?
+				if ( !target.isDone() ) {
+
+				    // Dead entities don't take turns.
+                                    game.removeTurnFor(target);
+
+				} // End target-still-to-move
 
 				// Yup.  Clean out the entity.
 				target.setDestroyed(true);

@@ -87,7 +87,7 @@ v 0.26
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.25.4 (05-03-02, 8:20pm)
 + use ammo and build heat for automatic misses, none for impossible shots
 + 549900: mechs make shutdown rolls even if pilot is KO
 + 550229: attack tooltip to-hit now takes torso twisting into account

@@ -17,7 +17,6 @@ import megamek.common.weapons.*;
  * special rules.  
  */
 public class WeaponHandler implements AttackHandler {
-	boolean matters;
 	ToHitData toHit;
 	Game game;
 	WeaponAttackAction waa;
@@ -41,7 +40,29 @@ public class WeaponHandler implements AttackHandler {
 		this.server=server;
 	}
 
-	
+	protected void doChecks() {
+		
+	}
+	protected boolean specialResolution(StringBuffer phaseReport,Entity entityTarget, boolean bMissed) {
+		return false;
+	}
+	protected boolean handleSpecialMiss(Entity entityTarget,boolean targetInBuilding,Building bldg) {
+		 // Shots that miss an entity can set fires.
+        // Buildings can't be accidentally ignited,
+        // and some weapons can't ignite fires.
+        if ( entityTarget != null &&
+                 ( bldg == null &&
+                       wtype.getFireTN() != TargetRoll.IMPOSSIBLE ) ) {
+            server.tryIgniteHex(target.getPosition(), false, 11);
+        }
+
+        // BMRr, pg. 51: "All shots that were aimed at a target inside
+        // a building and miss do full damage to the building instead."
+        if ( !targetInBuilding ) {
+            return false;
+        }
+        return true;
+	}
 	public boolean handle(int phase) {
 		if(!this.cares(phase)) {
 			return true;
@@ -77,32 +98,30 @@ public class WeaponHandler implements AttackHandler {
 
 	      // dice have been rolled, thanks
 	      phaseReport.append("rolls ").append(roll).append(" : ");
-
-
+	      
+	      //Any necessary PSRs, jam checks, etc.
+	      doChecks();
+	      
 	      // do we hit?
 	      boolean bMissed = roll < toHit.getValue();
+	      
+	      //Do we need some sort of special resolution (minefields, artillery, etc.)
+	      if(specialResolution(phaseReport,entityTarget,bMissed)) {
+	      	return false;
+	      }
+
+	      
 
 
 	        if (bMissed) {
-	            // Report the miss.
+	            reportMiss(phaseReport);
+	            	            
+	            //Works out fire setting, AMS shots, and whether continuation is necessary.
+	            if(!handleSpecialMiss(entityTarget,targetInBuilding,bldg)) {
+	            	return false;
+	            }
 	            
-	                phaseReport.append("misses.\n");
-
-
-	            // Shots that miss an entity can set fires.
-	            // Buildings can't be accidentally ignited,
-	            // and some weapons can't ignite fires.
-	            if ( entityTarget != null &&
-	                     ( bldg == null &&
-	                           wtype.getFireTN() != TargetRoll.IMPOSSIBLE ) ) {
-	                server.tryIgniteHex(target.getPosition(), false, 11);
-	            }
-
-	            // BMRr, pg. 51: "All shots that were aimed at a target inside
-	            // a building and miss do full damage to the building instead."
-	            if ( !targetInBuilding ) {
-	                return false;
-	            }
+	           
 	        }
 
 	       
@@ -260,6 +279,10 @@ public class WeaponHandler implements AttackHandler {
 	        phaseReport.append("\n");
 		return false;
 	}
+	protected void reportMiss(StringBuffer phaseReport) {
+		// Report the miss.
+		phaseReport.append("misses.\n");
+	}
 	//Among other things, basically a refactored Server#preTreatWeaponAttack
 	public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
 		toHit=t;
@@ -272,19 +295,18 @@ public class WeaponHandler implements AttackHandler {
 		
         
 		
-		if(toHit.getValue()==TargetRoll.AUTOMATIC_FAIL || toHit.getValue()==TargetRoll.IMPOSSIBLE) {
-			matters=false;
-		} else {
-			matters=true;
-		}
+		
 		roll=Compute.d6(2);
+		addHeatUseAmmo();
+		
+		
+	}
+	protected void addHeatUseAmmo() {
 		if(!(toHit.getValue()==TargetRoll.IMPOSSIBLE)) {
 
 	        ae.heatBuildup += (wtype.getHeat());
 		}
 		weapon.setUsedThisRound(true);
-		
-		
 	}
 
 }

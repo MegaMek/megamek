@@ -755,7 +755,14 @@ public abstract class Mech
         dbv += getTotalArmor() * 2.0;
         
         // total internal structure
-        dbv += getTotalInternal() * 1.5;
+        double internalMultiplier;
+        if (hasXL()) {
+            internalMultiplier = isClan() ? 1.125 : 0.75;
+        } else {
+            internalMultiplier = 1.5;
+        }
+        
+        dbv += getTotalInternal() * internalMultiplier;
         
         // add weight
         dbv += getWeight();

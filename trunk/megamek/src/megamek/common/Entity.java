@@ -1412,6 +1412,15 @@ public abstract class Entity
         return totalShotsLeft;
     }
 
+    /**
+     * Determine how much ammunition (of all munition types) remains
+     * which is compatable with the given ammo.
+     *
+     * @param   ammo - the <code>EquipmentType</code> of the ammo to be found.
+     *          This value may be <code>null</code>.
+     * @return  the <code>int</code> count of the amount of shots of all
+     *          munitions equivalent to the given ammo type.
+     */
     public int getTotalMunitionsOfType(EquipmentType et) {
         int totalShotsLeft = 0;
         for (Enumeration j = getAmmo(); j.hasMoreElements();) {
@@ -3232,9 +3241,11 @@ public abstract class Entity
 
         // Get the range modifier.
         switch ( range ) {
-        case Compute.RANGE_SHORT:
-        case Compute.RANGE_MEDIUM:
-        case Compute.RANGE_LONG:
+        case RangeType.RANGE_MINIMUM:
+        case RangeType.RANGE_SHORT:
+        case RangeType.RANGE_MEDIUM:
+        case RangeType.RANGE_LONG:
+        case RangeType.RANGE_EXTREME:
             result = new TargetRoll( 0, "stealth not installed" );
             break;
         default:

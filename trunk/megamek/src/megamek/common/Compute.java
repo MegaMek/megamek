@@ -25,11 +25,14 @@ import megamek.client.*;
  */
 public class Compute
 {
-    public static final int        RANGE_MINIMUM    = 0;
-    public static final int        RANGE_SHORT      = 1;
-    public static final int        RANGE_MEDIUM     = 2;
-    public static final int        RANGE_LONG       = 3;
-    public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
+// begin killme block
+//     public static final int        RANGE_MINIMUM    = 0;
+//     public static final int        RANGE_SHORT      = 1;
+//     public static final int        RANGE_MEDIUM     = 2;
+//     public static final int        RANGE_LONG       = 3;
+//     public static final int        RANGE_EXTREME    = 4;
+//     public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
+//  end  killme block
 
     public static final int        ARC_360          = 0;
     public static final int        ARC_FORWARD      = 1;
@@ -998,6 +1001,7 @@ public class Compute
         boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
         boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
             && weapon.curMode().equals("Indirect");
+        boolean useExtremeRange = game.getOptions().booleanOption("maxtech_range");
 
         ToHitData mods = new ToHitData();
 
@@ -1006,10 +1010,10 @@ public class Compute
         if (wtype.getAmmoType() == AmmoType.T_ATM) {
             AmmoType atype = (AmmoType)weapon.getLinked().getType();
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                weaponRanges = new int[] {4, 9, 18, 27};
+                weaponRanges = new int[] {4, 9, 18, 27, 36};
             }
             else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                weaponRanges = new int[] {0, 3, 6, 9};
+                weaponRanges = new int[] {0, 3, 6, 9, 12};
             }
         }
 
@@ -1028,7 +1032,7 @@ public class Compute
             weaponRanges = wtype.getWRanges();
             //HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
-            if (weaponRanges[RANGE_SHORT] == 0) {
+            if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
                 return new ToHitData(ToHitData.IMPOSSIBLE,
                                      "Weapon cannot fire underwater.");
             }
@@ -1047,10 +1051,11 @@ public class Compute
 
         // determine base distance & range bracket
         int distance = effectiveDistance(game, ae, target);
-        int range = rangeBracket(distance, weaponRanges);
+        int range = RangeType.rangeBracket(distance, weaponRanges,
+                                           useExtremeRange);
 
         // short circuit if at zero range or out of range
-        if (range == RANGE_OUT_OF) {
+        if (range == RangeType.RANGE_OUT) {
             return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
         }
         if (distance == 0 && !isAttackerInfantry) {
@@ -1063,7 +1068,8 @@ public class Compute
             c3spotter = ae; // no c3 when using indirect fire
         }
         int c3dist = effectiveDistance(game, c3spotter, target);
-        int c3range = rangeBracket(c3dist, weaponRanges);
+        int c3range = RangeType.rangeBracket(c3dist, weaponRanges,
+                                             useExtremeRange);
 
         // determine which range we're using
         int usingRange = Math.min(range, c3range);
@@ -1071,10 +1077,10 @@ public class Compute
         // add range modifier
         if (usingRange == range) {
             // no c3 adjustment
-            if (range == RANGE_MEDIUM) {
+            if (range == RangeType.RANGE_MEDIUM) {
                 mods.addModifier(2, "medium range");
             }
-            else if (range == RANGE_LONG) {
+            else if (range == RangeType.RANGE_LONG) {
                 // Protos that loose head sensors can't shoot long range.
                 if( (ae instanceof Protomech) &&
                     (2 == ((Protomech)ae).getCritsHit(Protomech.LOC_HEAD)) ) {
@@ -1085,56 +1091,71 @@ public class Compute
                     mods.addModifier(4, "long range");
                 }
             }
+            else if (range == RangeType.RANGE_EXTREME) {
+                // Protos that loose head sensors can't shoot extreme range.
+                if( (ae instanceof Protomech) &&
+                    (2 == ((Protomech)ae).getCritsHit(Protomech.LOC_HEAD)) ) {
+                    mods.addModifier
+                        ( ToHitData.IMPOSSIBLE,
+                          "No extreme range attacks with destroyed head sensors." );
+                } else {
+                    mods.addModifier(8, "extreme range");
+                }
+            }
         }
+
         else {
             // report c3 adjustment
-            if (c3range == RANGE_SHORT) {
+            if (c3range == RangeType.RANGE_SHORT) {
                 mods.addModifier(0, "short range due to C3 spotter");
             }
-            else if (c3range == RANGE_MEDIUM) {
+            else if (c3range == RangeType.RANGE_MEDIUM) {
                 mods.addModifier(2, "medium range due to C3 spotter");
+            }
+            else if (c3range == RangeType.RANGE_LONG) {
+                mods.addModifier(4, "long range due to C3 spotter");
             }
         }
 
-    // add infantry LRM maximum range penalty
-    if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
-      mods.addModifier(1, "infantry LRM maximum range");
-    }
+        // add infantry LRM maximum range penalty
+        if (isLRMInfantry && distance == weaponRanges[RangeType.RANGE_LONG]) {
+            mods.addModifier(1, "infantry LRM maximum range");
+        }
 
-    // add infantry zero-range modifier
-    // TODO: this is not the right place to hardcode these
-    if (isWeaponInfantry && distance == 0) {
-      // Infantry platoons attacking with infantry weapons can attack
-      // in the same hex with a base of 2, except for flamers and
-      // SRMs, which have a base of 3 and LRMs, which suffer badly.
-      if (wtype.hasFlag(WeaponType.F_FLAMER)) {
-        mods.addModifier(-1, "infantry flamer assault");
-      } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
-        mods.addModifier(-1, "infantry SRM assault");
-      } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
-        mods.addModifier(-2, "infantry assault");
-      }
-    }
+        // add infantry zero-range modifier
+        // TODO: this is not the right place to hardcode these
+        if (isWeaponInfantry && distance == 0) {
+            // Infantry platoons attacking with infantry weapons can attack
+            // in the same hex with a base of 2, except for flamers and
+            // SRMs, which have a base of 3 and LRMs, which suffer badly.
+            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
+                mods.addModifier(-1, "infantry flamer assault");
+            } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
+                mods.addModifier(-1, "infantry SRM assault");
+            } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
+                mods.addModifier(-2, "infantry assault");
+            }
+        }
 
-    // add minumum range modifier
-    int minRange = weaponRanges[RANGE_MINIMUM];
-    if (minRange > 0 && distance <= minRange) {
-      int minPenalty = (minRange - distance) + 1;
-      // Infantry LRMs suffer double minimum range penalties.
-      if (isLRMInfantry) {
-        mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
-      } else {
-        mods.addModifier(minPenalty, "minumum range");
-      }
-    }
+        // add minumum range modifier
+        int minRange = weaponRanges[RangeType.RANGE_MINIMUM];
+        if (minRange > 0 && distance <= minRange) {
+            int minPenalty = (minRange - distance) + 1;
+            // Infantry LRMs suffer double minimum range penalties.
+            if (isLRMInfantry) {
+                mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
+            } else {
+                mods.addModifier(minPenalty, "minumum range");
+            }
+        }
 
-    // add any target stealth modifier
-    if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
-      mods.append(((Entity)target).getStealthModifier(usingRange));
-    }
+        // add any target stealth modifier
+        if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
+            mods.append(((Entity)target).getStealthModifier(usingRange));
+        }
 
-    return mods;
-  }
+        return mods;
+    }
 
   /**
    * Finds the effective distance between an attacker and a target.
@@ -1143,38 +1164,20 @@ public class Compute
    *
    * @return the effective distance
    */
-  public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
-    int distance = attacker.getPosition().distance(target.getPosition());
+    public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
+        int distance = attacker.getPosition().distance(target.getPosition());
 
-    // If the attack is completely inside a building, add the difference
-    // in elevations between the attacker and target to the range.
-    // TODO: should the player be explcitly notified?
-    if ( isInSameBuilding(game, attacker, target) ) {
-      int aElev = attacker.getElevation();
-      int tElev = target.getElevation();
-      distance += Math.abs(aElev - tElev);
-    }
+        // If the attack is completely inside a building, add the difference
+        // in elevations between the attacker and target to the range.
+        // TODO: should the player be explcitly notified?
+        if ( isInSameBuilding(game, attacker, target) ) {
+            int aElev = attacker.getElevation();
+            int tElev = target.getElevation();
+            distance += Math.abs(aElev - tElev);
+        }
 
-    return distance;
-  }
-
-  /**
-   * Returns the range bracket a distance falls into.
-   */
-  public static int rangeBracket(int distance, int[] ranges) {
-    if (null == ranges || distance > ranges[RANGE_LONG]) {
-      return RANGE_OUT_OF;
+        return distance;
     }
-    else if (distance > ranges[RANGE_MEDIUM]) {
-      return RANGE_LONG;
-    }
-    else if (distance > ranges[RANGE_SHORT]) {
-      return RANGE_MEDIUM;
-    }
-    else {
-      return RANGE_SHORT;
-    }
-  }
 
     /**
      * Attempts to find a C3 spotter that is closer to the target than the

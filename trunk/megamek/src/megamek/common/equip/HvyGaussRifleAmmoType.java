@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -30,11 +30,13 @@ public class HvyGaussRifleAmmoType extends GaussRifleAmmoType {
 	    int range_id = range.getRangeID(fire_range);
 
 	    switch (range_id) {
+	    case RangeType.RANGE_MINIMUM:
 	    case RangeType.RANGE_SHORT:
 		return 25;
-	    case RangeType.RANGE_MED:
+	    case RangeType.RANGE_MEDIUM:
 		return 20;
 	    case RangeType.RANGE_LONG:
+            case RangeType.RANGE_EXTREME: // TODO : what's the *real* value?
 		return 10;
 	    }
 	}

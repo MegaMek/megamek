@@ -57,9 +57,12 @@ public class WeaponType extends EquipmentType {
     private int     shortRange;
     private int     mediumRange;
     private int     longRange;
+    private int     extremeRange;
     private int     waterShortRange;
     private int     waterMediumRange;
     private int     waterLongRange;
+    private int     waterExtremeRange;
+
 
     protected WeaponType() {
         ;
@@ -94,7 +97,8 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getRanges() {
-    	return new int[] {minimumRange, shortRange, mediumRange, longRange};
+    	return new int[] {minimumRange, shortRange, mediumRange,
+                          longRange, extremeRange};
     }
 
     public int getMinimumRange() {
@@ -113,8 +117,13 @@ public class WeaponType extends EquipmentType {
         return longRange;
     }
 
+    public int getExtremeRange() {
+        return extremeRange;
+    }
+
     public int[] getWRanges() {
-    	return new int[] {minimumRange, waterShortRange, waterMediumRange, waterLongRange};
+    	return new int[] {minimumRange, waterShortRange, waterMediumRange,
+                          waterLongRange, waterExtremeRange};
     }
 
     public int getWShortRange() {
@@ -127,6 +136,10 @@ public class WeaponType extends EquipmentType {
 
     public int getWLongRange() {
         return waterLongRange;
+    }
+
+    public int getWExtremeRange() {
+        return waterExtremeRange;
     }
 
 
@@ -331,6 +344,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
@@ -356,6 +370,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange =4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
@@ -380,9 +395,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 6;
         weapon.waterLongRange = 9;
+        weapon.waterExtremeRange = 12;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -404,10 +421,12 @@ public class WeaponType extends EquipmentType {
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
-        weapon.longRange = 9;
+        weapon.longRange = 9;        
+        weapon.extremeRange = 12;
         weapon.waterShortRange = 2;
         weapon.waterMediumRange = 4;
         weapon.waterLongRange = 6;
+        weapon.waterExtremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -430,9 +449,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -455,9 +476,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.waterShortRange = 4;
         weapon.waterMediumRange = 7;
         weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -481,6 +504,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 5;
@@ -504,6 +528,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
         weapon.longRange = 24;
+        weapon.extremeRange = 32;
         weapon.tonnage = 6.0f;
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE;
@@ -528,6 +553,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 8.0f;
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
@@ -552,6 +578,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 12.0f;
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE;
@@ -572,10 +599,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 20;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_AC;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 14.0f;
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE;
@@ -600,6 +628,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
@@ -624,6 +653,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
@@ -648,6 +678,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
@@ -672,6 +703,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
@@ -694,6 +726,7 @@ public class WeaponType extends EquipmentType {
       weapon.shortRange= 5;
       weapon.mediumRange= 11;
       weapon.longRange = 18;
+      weapon.extremeRange = 22;
       weapon.tonnage = .5f;
       weapon.criticals = 1;
       weapon.bv= 18;
@@ -717,6 +750,7 @@ public class WeaponType extends EquipmentType {
       weapon.shortRange= 4;
       weapon.mediumRange= 9;
       weapon.longRange = 15;
+      weapon.extremeRange = 18;
       weapon.tonnage = 1.0f;
       weapon.criticals = 2;
       weapon.bv= 23;
@@ -740,6 +774,7 @@ public class WeaponType extends EquipmentType {
      weapon.shortRange= 3;
      weapon.mediumRange= 7;
      weapon.longRange = 12;
+     weapon.extremeRange = 14;
      weapon.tonnage = 1.5f;
      weapon.criticals = 3;
      weapon.bv= 24;
@@ -766,6 +801,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
@@ -786,10 +822,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 39;
@@ -809,10 +846,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 59;
@@ -832,13 +870,15 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 15;
         weapon.damage = 10;
         weapon.ammoType = AmmoType.T_NA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
+        weapon.extremeRange = 28;
         weapon.waterShortRange = 4;
         weapon.waterMediumRange = 10;
         weapon.waterLongRange = 16;
+        weapon.waterExtremeRange = 20;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -860,9 +900,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 19;
+        weapon.extremeRange = 28;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 9;
         weapon.waterLongRange = 12;
+        weapon.waterExtremeRange = 18;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -884,9 +926,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 5;
         weapon.waterLongRange = 8;
+        weapon.waterExtremeRange = 10;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -908,9 +952,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 5;
+        weapon.extremeRange = 8;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 3;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -934,10 +980,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 7;
         weapon.longRange = 10;
-
+        weapon.extremeRange = 14;
         weapon.waterShortRange = 2;
         weapon.waterMediumRange = 5;
         weapon.waterLongRange = 7;
+        weapon.waterExtremeRange = 10;
         weapon.tonnage = 7.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -961,9 +1008,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.waterShortRange = 2;
         weapon.waterMediumRange = 3;
         weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 6;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -987,9 +1036,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1012,6 +1063,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 9;
         weapon.mediumRange = 18;
         weapon.longRange = 27;
+        weapon.extremeRange = 36;
         weapon.tonnage = 6.0f;
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1034,6 +1086,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 8.0f;
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1052,10 +1105,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 10;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_AC_LBX;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 11.0f;
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1074,10 +1128,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 20;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_AC_LBX;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 14.0f;
         weapon.criticals = 11;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1099,6 +1154,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 15;
         weapon.longRange = 22;
+        weapon.extremeRange = 30;
         weapon.tonnage = 15.0f;
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
@@ -1121,6 +1177,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 17;
         weapon.longRange = 25;
+        weapon.extremeRange = 34;
         weapon.tonnage = 12.0f;
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
@@ -1143,6 +1200,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 13;
         weapon.longRange = 20;
+        weapon.extremeRange = 26;
         weapon.tonnage = 18.0f;
         weapon.criticals = 11;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
@@ -1166,6 +1224,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 17;
         weapon.longRange = 25;
+        weapon.extremeRange = 34;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1190,6 +1249,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 13;
         weapon.longRange = 20;
+        weapon.extremeRange = 26;
         weapon.tonnage = 9.0f;
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1210,10 +1270,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 10;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_AC_ULTRA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 13.0f;
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1234,10 +1295,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 20;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_AC_ULTRA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 7;
         weapon.longRange = 10;
+        weapon.extremeRange = 14;
         weapon.tonnage = 15.0f;
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1258,10 +1320,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 2;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_AC_ROTARY;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 8.0f;
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1285,10 +1348,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 5;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_AC_ROTARY;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 10.0f;
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE;
@@ -1313,10 +1377,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
@@ -1336,10 +1401,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 3.0f;
         weapon.criticals = 1;
         weapon.bv = 59;
@@ -1358,10 +1424,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 4.5f;
         weapon.criticals = 2;
         weapon.bv = 89;
@@ -1383,10 +1450,11 @@ public class WeaponType extends EquipmentType {
         weapon.toHitModifier = 1;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_MRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 8;
         weapon.longRange = 15;
+        weapon.extremeRange = 16;
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 56;
@@ -1408,10 +1476,11 @@ public class WeaponType extends EquipmentType {
         weapon.toHitModifier = 1;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_MRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 8;
         weapon.longRange = 15;
+        weapon.extremeRange = 16;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 112;
@@ -1435,10 +1504,11 @@ public class WeaponType extends EquipmentType {
         weapon.toHitModifier = 1;
         weapon.rackSize = 30;
         weapon.ammoType = AmmoType.T_MRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 8;
         weapon.longRange = 15;
+        weapon.extremeRange = 16;
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 168;
@@ -1461,10 +1531,11 @@ public class WeaponType extends EquipmentType {
         weapon.toHitModifier = 1;
         weapon.rackSize = 40;
         weapon.ammoType = AmmoType.T_MRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 8;
         weapon.longRange = 15;
+        weapon.extremeRange = 16;
         weapon.tonnage = 12.0f;
         weapon.criticals = 7;
         weapon.bv = 224;
@@ -1505,10 +1576,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 30;
@@ -1529,13 +1601,15 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 15;
         weapon.damage = 15;
         weapon.ammoType = AmmoType.T_NA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
+        weapon.extremeRange = 28;
         weapon.waterShortRange = 4;
         weapon.waterMediumRange = 10;
         weapon.waterLongRange = 16;
+        weapon.waterExtremeRange = 20;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -1557,9 +1631,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 15;
         weapon.longRange = 25;
+        weapon.extremeRange = 30;
         weapon.waterShortRange = 5;
         weapon.waterMediumRange = 10;
         weapon.waterLongRange = 16;
+        weapon.waterExtremeRange = 20;
         weapon.tonnage = 4.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1581,9 +1657,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 7;
         weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1605,9 +1683,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1629,9 +1709,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 4;
+        weapon.extremeRange = 4;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1653,6 +1735,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
@@ -1677,6 +1760,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
@@ -1702,9 +1786,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 6;
         weapon.waterLongRange = 9;
+        weapon.waterExtremeRange = 12;
         weapon.tonnage = 4.0f;
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1727,9 +1813,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.waterShortRange = 2;
         weapon.waterMediumRange = 4;
         weapon.waterLongRange = 6;
+        weapon.waterExtremeRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1752,9 +1840,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1777,6 +1867,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
@@ -1798,6 +1889,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
@@ -1819,6 +1911,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 6;
@@ -1837,10 +1930,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
@@ -1860,10 +1954,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
@@ -1883,10 +1978,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
@@ -1906,10 +2002,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
@@ -1933,6 +2030,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
@@ -1952,10 +2050,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 39;
@@ -1974,10 +2073,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
         weapon.bv = 59;
@@ -2000,9 +2100,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 14;
         weapon.longRange = 20;
+        weapon.extremeRange = 28;
         weapon.waterShortRange = 4;
         weapon.waterMediumRange = 10;
         weapon.waterLongRange = 14;
+        weapon.waterExtremeRange = 20;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2026,9 +2128,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.waterShortRange = 3;
         weapon.waterMediumRange = 5;
         weapon.waterLongRange = 8;
+        weapon.waterExtremeRange = 10;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2052,9 +2156,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2077,9 +2183,11 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.waterShortRange = 1;
         weapon.waterMediumRange = 2;
         weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2102,6 +2210,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 10;
         weapon.mediumRange = 20;
         weapon.longRange = 30;
+        weapon.extremeRange = 40;
         weapon.tonnage = 5.0f;
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2124,6 +2233,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 15;
         weapon.longRange = 24;
+        weapon.extremeRange = 30;
         weapon.tonnage = 7.0f;
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2142,10 +2252,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 10;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_AC_LBX;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2164,10 +2275,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 20;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_AC_LBX;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 12.0f;
         weapon.criticals = 9;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2189,6 +2301,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 15;
         weapon.longRange = 22;
+        weapon.extremeRange = 30;
         weapon.tonnage = 12.0f;
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
@@ -2212,6 +2325,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 9;
         weapon.mediumRange = 18;
         weapon.longRange = 27;
+        weapon.extremeRange = 36;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2232,10 +2346,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 5;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_AC_ULTRA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2256,10 +2371,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 10;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_AC_ULTRA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
+        weapon.extremeRange = 24;
         weapon.tonnage = 10.0f;
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2280,10 +2396,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = 20;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_AC_ULTRA;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 12.0f;
         weapon.criticals = 8;
         weapon.flags |= F_DIRECT_FIRE;
@@ -2305,10 +2422,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
@@ -2328,10 +2446,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 79;
@@ -2350,10 +2469,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 119;
@@ -2375,6 +2495,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 1.5f;
         weapon.criticals = 2;
         weapon.bv = 53;
@@ -2396,6 +2517,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 3.5f;
         weapon.criticals = 3;
         weapon.bv = 105;
@@ -2417,6 +2539,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 147;
@@ -2438,6 +2561,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
+        weapon.extremeRange = 20;
         weapon.tonnage = 7.0f;
         weapon.criticals = 5;
         weapon.bv = 212;
@@ -2458,6 +2582,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 2; // No long range.
+        weapon.extremeRange = 2; // No Extreme Range
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
@@ -2479,6 +2604,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
@@ -2500,6 +2626,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
@@ -2521,6 +2648,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_INFERNO;
@@ -2542,6 +2670,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 9;
         weapon.longRange = 12;
+        weapon.extremeRange = 18;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
@@ -2564,6 +2693,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
@@ -2585,6 +2715,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 2; // No long range.
+        weapon.extremeRange = 2; // No Extreme Range.
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY;
@@ -2628,10 +2759,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 30;
@@ -2653,6 +2785,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 0;
         weapon.mediumRange = 0;
         weapon.longRange = 0;
+        weapon.extremeRange = 0;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2673,6 +2806,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 0;
         weapon.mediumRange = 0;
         weapon.longRange = 0;
+        weapon.extremeRange = 0;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2693,6 +2827,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 0;
         weapon.mediumRange = 0;
         weapon.longRange = 0;
+        weapon.extremeRange = 0;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2716,6 +2851,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2738,6 +2874,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2758,6 +2895,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_FLAMER;
@@ -2779,6 +2917,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2800,6 +2939,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2821,6 +2961,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2842,6 +2983,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_NO_FIRES;
@@ -2863,6 +3005,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2886,6 +3029,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2908,6 +3052,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2929,6 +3074,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 0;
         weapon.mediumRange = 0;
         weapon.longRange = 0;
+        weapon.extremeRange = 0;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2950,6 +3096,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 4;
+        weapon.extremeRange = 4; // No Extreme Range
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2970,10 +3117,12 @@ public class WeaponType extends EquipmentType {
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
-        weapon.longRange = 21;
+        weapon.longRange = 21;        
+        weapon.extremeRange = 28;
         weapon.waterShortRange = 7;
         weapon.waterMediumRange = 14;
         weapon.waterLongRange = 21;
+        weapon.waterExtremeRange = 28;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -2995,6 +3144,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
@@ -3017,6 +3167,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
@@ -3038,6 +3189,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
@@ -3059,6 +3211,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_MISSILE_HITS | F_DIRECT_FIRE;
@@ -3080,6 +3233,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DOUBLE_HITS;
@@ -3101,6 +3255,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -3122,6 +3277,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -3143,6 +3299,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
@@ -3164,6 +3321,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 5;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
@@ -3184,6 +3342,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 5;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -3205,6 +3364,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
@@ -3226,6 +3386,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 0;
         weapon.mediumRange = 0;
         weapon.longRange = 0;
+        weapon.extremeRange = 0;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -3244,10 +3405,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=1;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 0.2f;
         weapon.criticals=0;
         weapon.bv = 17;
@@ -3265,10 +3427,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=2;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 0.4f;
         weapon.criticals=0;
         weapon.bv = 25;
@@ -3286,10 +3449,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=3;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 0.6f;
         weapon.criticals=0;
         weapon.bv = 35;
@@ -3307,10 +3471,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=4;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 0.8f;
         weapon.criticals=0;
         weapon.bv = 46;
@@ -3328,10 +3493,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=5;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1f;
         weapon.criticals=0;
         weapon.bv = 55;
@@ -3349,10 +3515,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=6;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1.2f;
         weapon.criticals=0;
         weapon.bv = 69;
@@ -3370,10 +3537,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=7;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1.4f;
         weapon.criticals=0;
         weapon.bv = 92;
@@ -3391,10 +3559,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=8;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1.6f;
         weapon.criticals=0;
         weapon.bv = 93;
@@ -3412,10 +3581,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=9;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 1.8f;
         weapon.criticals=0;
         weapon.bv = 95;
@@ -3433,10 +3603,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=10;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2f;
         weapon.criticals=0;
         weapon.bv = 109;
@@ -3454,10 +3625,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=11;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.2f;
         weapon.criticals=0;
         weapon.bv = 139;
@@ -3475,10 +3647,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=12;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.4f;
         weapon.criticals=0;
         weapon.bv = 141;
@@ -3496,10 +3669,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=13;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.6f;
         weapon.criticals=0;
         weapon.bv = 161;
@@ -3517,10 +3691,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=14;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 2.8f;
         weapon.criticals=0;
         weapon.bv = 163;
@@ -3538,10 +3713,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=15;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3f;
         weapon.criticals=0;
         weapon.bv = 164;
@@ -3559,10 +3735,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=16;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3.2f;
         weapon.criticals=0;
         weapon.bv = 214;
@@ -3580,10 +3757,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=17;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3.4f;
         weapon.criticals=0;
         weapon.bv = 215;
@@ -3601,10 +3779,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=18;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3.6f;
         weapon.criticals=0;
         weapon.bv = 217;
@@ -3622,10 +3801,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=19;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 3.8f;
         weapon.criticals=0;
         weapon.bv = 218;
@@ -3643,10 +3823,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=20;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 7;
         weapon.mediumRange=14;
         weapon.longRange =21;
+        weapon.extremeRange = 28;
         weapon.tonnage = 4f;
         weapon.criticals=0;
         weapon.bv = 220;
@@ -3667,6 +3848,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.25f;
         weapon.criticals = 0;
         weapon.bv = 15;
@@ -3686,6 +3868,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 21;
@@ -3705,6 +3888,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.75f;
         weapon.criticals = 0;
         weapon.bv = 30;
@@ -3724,6 +3908,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 39;
@@ -3743,6 +3928,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.25f;
         weapon.criticals = 0;
         weapon.bv = 47;
@@ -3762,6 +3948,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
@@ -3777,10 +3964,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 20;
@@ -3796,10 +3984,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 40;
@@ -3815,10 +4004,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
@@ -3834,10 +4024,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 2f;
         weapon.criticals = 0;
         weapon.bv = 79;
@@ -3853,10 +4044,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 2.5f;
         weapon.criticals = 0;
         weapon.bv = 99;
@@ -3872,10 +4064,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
+        weapon.extremeRange = 16;
         weapon.tonnage = 3f;
         weapon.criticals = 0;
         weapon.bv = 119;
@@ -3894,10 +4087,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_ARROW_IV;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 5;
+        weapon.extremeRange = 5; // No extreme range.
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 171;
@@ -3916,10 +4110,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_ARROW_IV;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;  //
         weapon.mediumRange = 2;
         weapon.longRange = 6;
+        weapon.extremeRange = 6; // No extreme range.
         weapon.tonnage = 12f;
         weapon.criticals = 12;
         weapon.bv = 171;
@@ -3937,10 +4132,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_LONG_TOM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 20;
+        weapon.extremeRange = 20; // No extreme range.
         weapon.tonnage = 30f;
         weapon.criticals = 30;
         weapon.bv = 171;
@@ -3958,10 +4154,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_LONG_TOM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;  //
         weapon.mediumRange = 2;
         weapon.longRange = 20;
+        weapon.extremeRange = 20; // No extreme range.
         weapon.tonnage = 30f;
         weapon.criticals = 30;
         weapon.bv = 171;
@@ -3979,10 +4176,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_SNIPER;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 12;
+        weapon.extremeRange = 12; // No extreme range.
         weapon.tonnage = 20f;
         weapon.criticals = 20;
         weapon.bv = 86;
@@ -4000,10 +4198,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_SNIPER;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;  //
         weapon.mediumRange = 2;
         weapon.longRange = 12;
+        weapon.extremeRange = 12; // No extreme range.
         weapon.tonnage = 20f;
         weapon.criticals = 20;
         weapon.bv = 86;
@@ -4021,10 +4220,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_THUMPER;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 14;
+        weapon.extremeRange = 14; // No extreme range.
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 40;
@@ -4042,10 +4242,11 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_ARTILLERY;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_THUMPER;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;  //
         weapon.mediumRange = 2;
         weapon.longRange = 14;
+        weapon.extremeRange = 14; // No extreme range.
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 40;

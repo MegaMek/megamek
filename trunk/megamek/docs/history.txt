@@ -89,8 +89,6 @@ infantry:
 -- Minesweepers
 - implement BattleArmor units as their special rules are implemented
         (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
-- change BattleArmor names from "X (Y) Battle Armor" to "X Battle Armor (Y)"
-        (after Mech Selection's "advanced filters and sorts" is implemented)
 
 buildings:
 - Test all of my assumptions.
@@ -115,6 +113,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.20-dev
++ Bug 743355, Data 742085: applied updated infantry.zip from Hopalong.
++ Bug 712311: use only lower case letters in the image file names.
+
 v 0.28.19 (05-25-03, 12am)
 + Mech readout window in lobby closes with "x" in corner too
 + proper "waiting to..." message in physical attack phase

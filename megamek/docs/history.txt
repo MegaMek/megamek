@@ -131,7 +131,9 @@ v 0.29.9-dev
 + RFE 706481: recognize units with two C3Master computers.
 + Bug 686063: Count the members of the C3 network and alert the user.
 + Bug 791578: C3 range: use Entity#isActive() not Entity#isSelectableThisTurn()
-
++ Added the minimap to the map editor. Also, made minimap more efficient by 
+  disabling its drawing if it's hidden (it can slow down the game on large maps)
+  
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.
 + Added minefield option under Game Options.

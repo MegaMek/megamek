@@ -141,7 +141,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 215);
         content.addArea(pilotR);
 
-        ejectL = createLabel( "Autoeject Status:", fm, 0, 230);
+        ejectL = createLabel( "Auto Eject:", fm, 0, 230);
         content.addArea( ejectL );
         ejectR = createLabel("***", fm, ejectL.getSize().width + 10, 230);
         content.addArea( ejectR );
@@ -191,9 +191,9 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         ejectR.setString( "N/A" );
         if (en instanceof Mech) {
             if (((Mech)en).isAutoEject()) {
-                ejectR.setString( "Active" );
+                ejectR.setString( "Operational" );
             } else {
-                ejectR.setString( "Inactive" );
+                ejectR.setString( "Disabled" );
             }
         }                
 

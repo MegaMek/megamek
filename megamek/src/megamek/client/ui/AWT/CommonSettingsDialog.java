@@ -47,6 +47,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
     private Checkbox    keepServerlog;
     private TextField   serverlogFilename;
     private TextField   serverlogMaxSize;
+    private Checkbox    defaultAutoejectDisabled;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -131,6 +132,12 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
             = new Checkbox( "Get Focus when a new phase begins.");
         tempPanel.add( getFocus );
         tempPanel.add( panSetting );
+
+        // player-specific settings
+        defaultAutoejectDisabled
+            = new Checkbox( "Disable all automatic ejection by default." );
+        defaultAutoejectDisabled.addItemListener(this);
+        tempPanel.add( defaultAutoejectDisabled );
 
         // client-side gamelog settings
         keepServerlog
@@ -273,6 +280,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         serverlogMaxSize.setEnabled(keepServerlog.getState());
         serverlogMaxSize.setText( Integer.toString(Settings.serverlogMaxSize) );
 
+        defaultAutoejectDisabled.setState( Settings.defaultAutoejectDisabled );
 
         getFocus.setState( Settings.getFocus );
         super.show();
@@ -315,6 +323,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         Settings.keepServerlog          = keepServerlog.getState();
         Settings.serverlogFilename      = serverlogFilename.getText();
         Settings.serverlogMaxSize       = Integer.parseInt(serverlogMaxSize.getText());
+
+        Settings.defaultAutoejectDisabled = defaultAutoejectDisabled.getState();
 
         Settings.save();
         this.setVisible( false );

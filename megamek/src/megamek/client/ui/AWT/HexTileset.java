@@ -117,6 +117,12 @@ public class HexTileset {
         return bestMatch.getImage(comp);
     }
     
+    // perfect match
+    // all but theme
+    // all but elevation
+    // all but elevation & theme
+    
+    
     public void loadFromFile(String filename) {
         try {
             // make inpustream for board
@@ -235,8 +241,8 @@ public class HexTileset {
         
         // Determine maximum number of terrain matches.
         // Bug 732188: Have a non-zero minimum terrain match.
-        double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent()) + 1.0;
-        double matches = 1.0;
+        double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent());
+        double matches = 0.0;
         for (int i = 0; i < Terrain.SIZE; i++) {
             Terrain cTerr = com.getTerrain(i);
             Terrain oTerr = org.getTerrain(i);

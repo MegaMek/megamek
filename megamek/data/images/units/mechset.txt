@@ -403,3 +403,6 @@ chassis "Schiltron" "schiltron.gif"
 chassis "Viking" "viking.gif"
 chassis "Fafnir" "fafnir.gif"
 chassis "Hauptmann" "hauptman.gif"
+
+# brandfuchs
+chassis "Uziel" "uziel.gif"

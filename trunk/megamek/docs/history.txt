@@ -94,6 +94,7 @@ v 0.28.12-dev
 + added "fluff" terrain type with no intended game effect
 + hex theme settable from the map editor
 + ".board" extention checked for in map editor
++ exits terrain parameter counts for base images too
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

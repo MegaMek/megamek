@@ -239,14 +239,22 @@ public class HexTileset {
         for (int i = 0; i < Terrain.SIZE; i++) {
             Terrain cTerr = com.getTerrain(i);
             Terrain oTerr = org.getTerrain(i);
-            if (cTerr != null && oTerr != null) {
-                if (cTerr.getLevel() == Terrain.WILDCARD) {
-                    matches += 1.0;
-                } else {
-                    double match = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
-                    matches += match;
-                }
+            if (cTerr == null || oTerr == null) {
+                continue;
             }
+            double thisMatch = 0;
+            
+            if (cTerr.getLevel() == Terrain.WILDCARD) {
+                thisMatch = 1.0;
+            } else {
+                thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
+            }
+            // without exit match, terrain counts... um, half?
+            if (cTerr.hasExitsSpecified() && oTerr.getExits() != cTerr.getExits()) {
+                thisMatch *= 0.5;
+            }
+            // add up match value
+            matches += thisMatch;
         }
         if (maxTerrains == 0) {
             terrain = 1.0;

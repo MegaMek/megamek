@@ -202,6 +202,13 @@ public class MechView {
                 .append( mech.getLocationAbbr(mounted.getLocation()) )
                 .append( "]\n" );
         }
+
+        String capacity = mech.getUnusedString();
+        if ( capacity != null && capacity.length() > 0 ) {
+            sMisc.append( "\nCarrying Capacity:\n" )
+                .append( capacity )
+                .append( "\n" );
+        }
         return sMisc.toString();
     }
     

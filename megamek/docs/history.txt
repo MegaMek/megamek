@@ -5,6 +5,7 @@ v0.29.45 (CVS)
 + Patch 1007651: Speed up loading.  Thanks weaselflink!
 + Patch 1001719 and some more coding: Vibrabomb-IV, FASCAM and Inferno-IV
     Arrow IV submunitions now implemented.
++ Entities criticalled during scenario setup have null positions.
 
 v0.29.44 (2004-08-08 9:30pm)
 + Bug 1003021: Could not clear burning woods.

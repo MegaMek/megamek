@@ -773,6 +773,7 @@ implements Runnable {
                     deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center, 10);
                 }
                 */
+                game.determineWindDirection();
                 break;
             case Game.PHASE_INITIATIVE :
                 // remove the last traces of last round
@@ -807,6 +808,7 @@ implements Runnable {
                 checkForSuffocation();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
+				resolveFire();
                 autoSave();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1290,7 +1292,8 @@ implements Runnable {
             roundReport.append((firstTurn ? "" : ", ") + getPlayer(turn.getPlayerNum()).getName());
             firstTurn = false;
         }
-        roundReport.append("\n");
+        roundReport.append("\n\n");
+        roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
         
         // reset turn index
         turnIndex = 0;
@@ -1555,6 +1558,19 @@ implements Runnable {
                 doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Rubble"));
             }
             
+            // check to see if we've moved OUT of fire
+            if (!lastPos.equals(curPos)
+            && game.board.getHex(lastPos).contains(Terrain.FIRE)) {
+                if (entity instanceof Tank) {
+                    doFlamingDeath(entity);
+                }
+                else {
+                    entity.heatBuildup+=2;
+                    phaseReport.append("\n" + entity.getDisplayName()
+                    + " passes through a fire.  It will generate 2 more heat this round.\n");
+                }
+            }			
+
             // check if we've moved into water
             if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
@@ -2216,6 +2232,21 @@ implements Runnable {
                 ammo.setShotsLeft(ammo.getShotsLeft() + 1);
                 phaseReport.append("    Streak fails to achieve lock on target.\n");
             }
+            // if the target is in the woods and the weapon misses, and the weapon is a large weapon, set the woods on fire.
+            Hex targetHex = game.getBoard().getHex(te.getPosition());
+            if (targetHex.contains(Terrain.WOODS) && !(targetHex.contains(Terrain.FIRE))) {
+                // disqualified weapons are Gauss, small lasers of all sorts, and SRM2s.  This is a hack, but it works.
+                if (wtype.getName().indexOf("Small")==-1  //"small" does not appear
+                && wtype.getName().indexOf("Gauss")==-1	//"Gauss" does not appear
+                && !((wtype.getAmmoType() == AmmoType.T_SRM) && (wtype.getRackSize() ==2)))  //not an SRM2
+                {
+                    if (burn(targetHex, 11) == true)  // 11 or 12 is the same odds as 2 or 3
+                    {
+                        sendChangedHex(te.getPosition());
+                        phaseReport.append("           Missed shot sets the woods on fire! \n");
+                    }
+                }//end if eligible weapon
+            }// end if target has woods and no fire
             return;
         }
         
@@ -2911,6 +2942,7 @@ implements Runnable {
         roundReport.append("\nHeat Phase\n----------\n");
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
+            Hex entityHex = game.getBoard().getHex(entity.getPosition());
             
             // should we even bother?
             if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDead()) {
@@ -2921,6 +2953,12 @@ implements Runnable {
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+            }
+            
+            // add +5 Heat if the hex you're in is on fire and was on fire for the full round
+            if (entityHex.levelOf(Terrain.FIRE) == 2) {
+                entity.heatBuildup += 5;
+                roundReport.append("\nAdded heat from a fire....\n");
             }
             
             // add the heat we've built up so far.
@@ -3004,6 +3042,23 @@ implements Runnable {
                     damageCrew(entity, 1);
                 }
             }
+            
+            // heat effects:  Horrible flaming vehicle death!  BWAHAHAHAHAHAHAHAHA!
+            if (entity instanceof Tank && (entityHex.contains(Terrain.FIRE))) {
+                doFlamingDeath(entity);
+            }
+
+        }
+    }
+    
+    private void doFlamingDeath(Entity entity) {
+        int boomroll = Compute.d6(2);
+        roundReport.append(entity.getDisplayName() + " is on fire.  Needs an 8+ to avoid destruction, rolls " + boomroll + " : ");
+        if (boomroll >= 8) {
+            roundReport.append("avoids successfully!\n");
+        } else {
+            roundReport.append("fails to avoid horrible instant flaming death.\n");
+            roundReport.append(destroyEntity(entity, "fire"));
         }
     }
     
@@ -3781,6 +3836,155 @@ implements Runnable {
      */
     private void doEntityFall(Entity entity, PilotingRollData roll) {
         doEntityFall(entity, entity.getPosition(), 0, roll);
+    }
+    
+	
+    /** Make fires spread, smoke spread, and make sure that all fires
+     * started this turn are marked as "burning" for next turn.
+     * 
+     * A "FIRE" terrain has one of two levels: 
+     *  1 (Created this turn, and so can't spread of generate heat)
+     *  2 (Created as a result of spreading fire or on a previous turn)
+     *
+     * Since fires created at end of turn act normally in the following turn, 
+     * spread fires have level 2.
+     *
+     * At NO TIME should any fire created outside this function have a level of 
+     * 2, nor should anything except this function SET fires to level 2.
+     * 
+     * Newly created "spread" fires have a level of 1, so that they do not 
+     * spread in the turn they are created.  After all spreading has been 
+     * completed, all burning hexes are set to level 2.
+     */
+    private void resolveFire() {
+        Board board = game.getBoard();
+        int width = board.width;
+        int height = board.height;
+        int windDirection = game.getWindDirection();
+        
+        roundReport.append("\n\nResolving fire movement \n ------------------------\n");
+        // cycle through all hexes, checking for fire.
+        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+            
+            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
+                // if the woods has been cleared, put the fires out.
+                if (currentHex.contains(Terrain.FIRE) && !(currentHex.contains(Terrain.WOODS))) {
+                    removeFire(currentXCoord, currentYCoord, currentHex);
+                }
+                if (currentHex.levelOf(Terrain.FIRE) == 2)  //Fire was started on a previous turn
+                {
+                    phaseReport.append("Fire at " + currentCoords.getBoardNum() + " is burning brightly.\n");
+                    //spread fire...
+                    spreadFire(currentXCoord, currentYCoord, windDirection);
+                }  // End the Else If Hex was on fire previously
+            }  // end the loop through Y coordinates
+        }  // end the loop through X coordinates
+        //  Loop a second time, to set all fires to level 2 before next turn, and add smoke.
+        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+            
+            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord,currentYCoord);
+                // if the fire in the hex was started this turn
+                if (currentHex.levelOf(Terrain.FIRE) == 1) {
+                    currentHex.removeTerrain(Terrain.FIRE);
+                    currentHex.addTerrain(new Terrain(Terrain.FIRE, 2));
+                    sendChangedHex(currentCoords);
+                    phaseReport.append("Fire at " + currentCoords.getBoardNum() + " was started this round.\n");
+                }
+                if (currentHex.contains(Terrain.FIRE)) {
+                    addSmoke(currentXCoord, currentYCoord, windDirection);
+                    addSmoke(currentXCoord, currentYCoord, (windDirection+1)%6);
+                    addSmoke(currentXCoord, currentYCoord, (windDirection+5)%6);
+                    board.initializeAround(currentXCoord,currentYCoord);
+                }
+            }
+        }
+        
+    }  // End the ResolveFire() method
+    
+    /**
+     * Spreads the fire around the specified coordinates.
+     */
+    public void spreadFire(int x, int y, int windDir) {
+        Coords src = new Coords(x, y);
+        Coords nextCoords = src.translated(windDir);
+        
+        spreadFire(nextCoords, 9);
+        
+        // Spread to the next hex downwind on a 12 if the first hex wasn't burning...
+        if (!(game.getBoard().getHex(nextCoords).contains(Terrain.FIRE))) {
+            // we've already gone one step in the wind direction, now go another
+            spreadFire(nextCoords.translated(windDir), 12);
+        }
+        
+        // spread fire 60 degrees clockwise....
+        spreadFire(src.translated((windDir + 1) % 6), 11);
+        
+        // spread fire 60 degrees counterclockwise
+        spreadFire(src.translated((windDir + 5) % 6), 11);
+    }
+    
+    /**
+     * Spreads the fire, and reports the spread, to the specified hex, if
+     * possible and the fire roll is made.
+     */
+    public void spreadFire(Coords coords, int roll) {
+        Hex hex = game.getBoard().getHex(coords);
+        if (burn(hex, roll)) {
+            sendChangedHex(coords);
+            phaseReport.append("Fire spreads to " + coords.getBoardNum() + "!\n");
+        }
+    }
+    
+    /**
+     * Returns true if the hex is flammable, and the roll is made.  Also adds
+     * the fire to that hex.
+     */
+    public boolean burn(Hex hex, int roll) {
+        if (null != hex && !(hex.contains(Terrain.FIRE)) && (hex.contains(Terrain.WOODS))) {
+            int fireRoll = Compute.d6(2);
+            if (fireRoll >= roll) {
+                hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    public void removeFire(int x, int y, Hex hex) {
+        Coords fireCoords = new Coords(x, y);
+        int windDir = game.getWindDirection();
+        hex.removeTerrain(Terrain.FIRE);
+        sendChangedHex(fireCoords);
+        removeSmoke(x, y, windDir);
+        removeSmoke(x, y, (windDir + 1) % 6);
+        removeSmoke(x, y, (windDir + 5) % 6);
+        phaseReport.append("Fire at " + fireCoords.getBoardNum() + " goes out due to lack of fuel!\n");
+    }
+    
+    // called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex,
+    public void addSmoke(int x, int y, int windDir) {
+        Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
+        Hex nextHex = game.getBoard().getHex(smokeCoords);
+        if (!(nextHex.contains(Terrain.SMOKE))) {
+            nextHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
+            sendChangedHex(smokeCoords);
+            phaseReport.append("Smoke fills " + smokeCoords.getBoardNum() + "!\n");
+        }
+    }
+    
+    public void removeSmoke(int x, int y, int windDir) {
+        Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
+        Hex nextHex = game.getBoard().getHex(smokeCoords);
+        if (nextHex.contains(Terrain.SMOKE)) {
+            nextHex.removeTerrain(Terrain.SMOKE);
+            sendChangedHex(smokeCoords);
+            phaseReport.append("Smoke clears from " + smokeCoords.getBoardNum() + "!\n");
+        }
     }
     
     /**

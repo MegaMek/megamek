@@ -83,11 +83,11 @@ public class TilesetManager {
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
             }            
         }
-  // Not every entity has a secondary facing.
-  if ( entity.canChangeSecondaryFacing() ) {
-        return entityImage.getFacing(entity.getSecondaryFacing());
-    }
-  return entityImage.getFacing(entity.getFacing());
+        // Not every entity has a secondary facing.
+        if (entity.canChangeSecondaryFacing()) {
+            return entityImage.getFacing(entity.getSecondaryFacing());
+        }
+        return entityImage.getFacing(entity.getFacing());
     }
     
     /**
@@ -117,7 +117,7 @@ public class TilesetManager {
     }
     
     /**
-     * @returns true if we'return done loading images
+     * @returns true if we're done loading images
      */
     public boolean isLoaded() {
         if (!loaded) {
@@ -136,8 +136,7 @@ public class TilesetManager {
         for (int y = 0; y < game.board.height; y++) {
             for (int x = 0; x < game.board.width; x++) {
                 Hex hex = game.board.getHex(x, y);
-                hexTileset.assignMatch(hex, comp);
-                hexTileset.trackHexImages(hex, tracker);
+                loadHexImage(hex);
             }
         }
         
@@ -147,6 +146,28 @@ public class TilesetManager {
         }
         
         started = true;
+    }
+    
+    /**
+     * Loads the image(s) for this hex into the tracker.
+     * @param hex the hex to load
+     */
+    private void loadHexImage(Hex hex) {
+		hexTileset.assignMatch(hex, comp);
+		hexTileset.trackHexImages(hex, tracker);
+    }
+    
+    /**
+     * Waits until a certain hex's images are done loading.
+     * @param hex the hex to wait for
+     */
+    public void waitForHex(Hex hex) {
+		loadHexImage(hex);
+        try {
+            tracker.waitForID(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     /**

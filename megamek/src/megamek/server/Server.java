@@ -1995,6 +1995,14 @@ implements Runnable {
             return;
         }
         
+        if (md.contains(MovementData.STEP_EJECT)) {
+            phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
+            phaseReport.append(destroyEntity(entity, "ejection"));
+            game.removeEntity( entity.getId(), Game.UNIT_SALVAGEABLE );
+            send(createRemoveEntityPacket(entity.getId(), Game.UNIT_SALVAGEABLE));
+            return;
+        }
+        
         // check for MASC failure
         if (entity instanceof Mech) {
             if (((Mech)entity).checkForMASCFailure(phaseReport)) {
@@ -7664,7 +7672,7 @@ implements Runnable {
      */
     private Packet createEndOfGamePacket() {
         Object[] array = new Object[3];
-        array[0] = new Integer(getDetailedVictoryReport());
+        array[0] = getDetailedVictoryReport();
         array[1] = new Integer(game.getVictoryPlayerId());
         array[2] = new Integer(game.getVictoryTeam());
         return new Packet(Packet.COMMAND_END_OF_GAME, array);
@@ -8073,7 +8081,7 @@ implements Runnable {
         Vector entities = null;
         if ( entity.getPosition() != null ) {
             entities = (Vector) positionMap.get( entity.getPosition() );
-            entities.remove( entity );
+            entities.removeElement( entity );
         }
         entities = (Vector) positionMap.get( curPos );
         if ( entities == null ) {

@@ -141,11 +141,6 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         pilotR = createLabel("***", fm, pilotL.getSize().width + 10, 215);
         content.addArea(pilotR);
 
-        ejectL = createLabel( "Auto Eject:", fm, 0, 230);
-        content.addArea( ejectL );
-        ejectR = createLabel("***", fm, ejectL.getSize().width + 10, 230);
-        content.addArea( ejectR );
-
         int vSpace = 230;
         advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
@@ -153,6 +148,10 @@ public class GeneralInfoMapSet implements DisplayMapSet{
             content.addArea(advantagesR[i]);
             vSpace += 15;
         };
+        ejectL = createLabel( "Auto Eject:", fm, 0, vSpace);
+        content.addArea( ejectL );
+        ejectR = createLabel("***", fm, ejectL.getSize().width + 10, vSpace);
+        content.addArea( ejectR );
     }
 
      /**

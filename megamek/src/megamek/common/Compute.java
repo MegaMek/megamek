@@ -593,10 +593,10 @@ public class Compute
         // hovercraft on water don't care about depth
         if (nMove == Entity.MovementType.HOVER) {
             if (srcHex.contains(Terrain.WATER)) {
-                nSrcEl = 0;
+                nSrcEl = srcHex.surface();
             }
             if (destHex.contains(Terrain.WATER)) {
-                nDestEl = 0;
+                nDestEl = destHex.surface();
             }
         }
         if (nSrcEl != nDestEl) {
@@ -653,8 +653,9 @@ public class Compute
             || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && srcHex.floor() != destHex.floor()) {
             return false;
         }
-        // can't run into water
+        // can't run into water (unless hovering)
         if (entityMoveType == Entity.MOVE_RUN 
+            && entity.getMovementType() != Entity.MovementType.HOVER
             && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
             return false;
         }

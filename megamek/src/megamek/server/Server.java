@@ -6704,6 +6704,10 @@ implements Runnable {
         sbDesc.append("        ***The safety systems on the engine fail catastrophically resulting in a cascading engine failure!\n");
         sbDesc.append( destroyEntity(en, "engine explosion", false, false));
         
+        //This is a hack so MM.NET marks the mech as not salvageable
+          if ( en instanceof Mech )
+            destroyLocation(en, Mech.LOC_CT);
+        
         //Light our hex on fire
           final Hex curHex = game.board.getHex(en.getPosition());
           
@@ -6760,6 +6764,8 @@ implements Runnable {
                 sbDesc.append(damageEntity(entity, hit, cluster));
                 damage -= cluster;
             }
+            
+            sbDesc.append("\n");
           }
       }
       

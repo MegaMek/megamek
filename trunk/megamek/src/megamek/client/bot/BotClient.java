@@ -85,9 +85,6 @@ import megamek.common.actions.*;
      
 public class BotClient extends Client
 {
-    // stuff for the current turn
-    protected int		turnInfMoved = 0;
-
     /**
      * Constructor
      */
@@ -135,8 +132,6 @@ public class BotClient extends Client
             case GameEvent.GAME_PLAYER_STATUSCHANGE :
                 break;
             case GameEvent.GAME_PHASE_CHANGE :
-		// Reset the count of infantry moves for this turn.
-		turnInfMoved = 0;
                 break;
             case GameEvent.GAME_TURN_CHANGE :
                 if (isMyTurn()) {
@@ -429,46 +424,6 @@ public class BotClient extends Client
          MoveOption opt = null;
          int theEnt = -1;
          do {
-	     // Are we moving a non-Infantry entity in
-	     // the middle of an Infantry move block?
-	     if ( infMoveMulti && (turnInfMoved % Game.INF_MOVE_MULTI) > 0 &&
-		  !(game.getEntity(entNum) instanceof Infantry) ) {
-
-		 // Does this player still have infantry to move?
-		 if ( game.hasInfantry(this.local_pn) ) {
-
-		     // Yup.  Ignore this entity and check the next one.
-		     entNum = game.getNextEntityNum(entNum);
-		     continue;
-
-		 }
-		 else {
-		     // Nope.  Reset the infantry counter.
-		     turnInfMoved = 0;
-		 }
-
-	     } // End check-inf_move_multi
-
-	     // If infantry move last, and the current entity is Infantry, then
-	     // make sure that all other entities for the player have moved.
-	     else if ( infMoveLast && turnInfMoved == 0 &&
-		       (game.getEntity(entNum) instanceof Infantry) ) {
-
-		 // Walk through the list of entities for this player.
-		 for ( int nextId = game.getNextEntityNum(entNum);
-		       nextId != entNum;
-		       nextId = game.getNextEntityNum(nextId) ) {
-
-		     // If we find a non-Infantry entity,
-		     // move it instead, and stop looping.
-		     if ( !(game.getEntity(nextId) instanceof Infantry) ) {
-			 entNum = nextId;
-			 break;
-		     }
-
-		 } // Check the player's next entity.
-
-	     } // End check-inf_move_last
 
             MoveOption mo = calculateBestMove(entNum);
             sendChat("Could move " + game.getEntity(entNum).getShortName() + " with " + mo.moves + ": dmg " + mo.damagePotential + ", threat " + mo.threat);
@@ -483,11 +438,6 @@ public class BotClient extends Client
 
             entNum = game.getNextEntityNum(entNum);
          } while (entNum != -1 && entNum != first);
-
-         // If we're moving an infantry unit, increment the counter.
-	 if ( game.getEntity(theEnt) instanceof Infantry ) {
-	     turnInfMoved++;
-	 }
 
          // okay, now we've got a move -- submit it
          sendChat("Move " + game.getEntity(theEnt).getShortName() + ": " + opt.moves);
@@ -711,30 +661,6 @@ public class BotClient extends Client
         // just take the first unit that hasn't fired yet and do it
         int entNum = game.getFirstEntityNum();
         Entity en = game.getEntity(entNum);
-	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
-	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
-
-	// Are we firing a non-Infantry entity in
-	// the middle of an Infantry block?
-	if ( infMoveMulti && (turnInfMoved % Game.INF_MOVE_MULTI) > 0 &&
-	     !(en instanceof Infantry) ) {
-
-	    // Does this player still have infantry to fire?
-	    if ( game.hasInfantry(this.local_pn) ) {
-
-		// Yup.  Find an Infantry entity.
-		while ( !(en instanceof Infantry ) ) {
-		    entNum = game.getNextEntityNum(entNum);
-		    en = game.getEntity(entNum);
-		}
-
-	    }
-	    else {
-		// Nope.  Reset the infantry counter.
-		turnInfMoved = 0;
-	    }
-
-	} // End check-inf_move_multi
 
         Vector firV = new Vector();
         for (Enumeration i = en.getWeapons();i.hasMoreElements();) {

@@ -106,16 +106,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem moveClear = null;
     private MenuItem moveGetUp = null;
 
-    /**
-     * When we have selected a weapon that can fire, set this to <code>true</code>.
-     */
-    private boolean hasFireChoice = false;
-
-    /**
-     * When we have a visible target, set this to <code>true</code>.
-     */
-    private boolean hasTarget = false;
-
     private MenuItem fireFire           = null;
     private MenuItem fireSkip           = null;
     private MenuItem fireNextTarg       = null;
@@ -331,57 +321,28 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         menu = new Menu( "Fire" );
         this.add( menu );
 
-        fireFire = new MenuItem( "Fire" );
-        fireFire.addActionListener( this );
-        fireFire.setActionCommand(FiringDisplay.FIRE_FIRE);
-        fireFire.setShortcut(new MenuShortcut(KeyEvent.VK_F));
-        menu.add( fireFire );
-        fireSkip = new MenuItem( "Skip" );
-        fireSkip.addActionListener( this );
-        fireSkip.setActionCommand(FiringDisplay.FIRE_SKIP);
-        menu.add( fireSkip );
-        fireNextTarg = new MenuItem( "Next Target" );
-        fireNextTarg.addActionListener( this );
-        fireNextTarg.setActionCommand(FiringDisplay.FIRE_NEXT_TARG);
-        menu.add( fireNextTarg );
-        fireNext = new MenuItem( "Next Unit" );
-        fireNext.addActionListener( this );
-        fireNext.setActionCommand(FiringDisplay.FIRE_NEXT);
-        menu.add( fireNext );
-        menu.addSeparator();
-        fireTwist = new MenuItem( "Twist" );
-        fireTwist.addActionListener( this );
-        fireTwist.setActionCommand(FiringDisplay.FIRE_TWIST);
-        menu.add( fireTwist );
-        fireFlipArms = new MenuItem( "Flip Arms" );
-        fireFlipArms.addActionListener( this );
-        fireFlipArms.setActionCommand(FiringDisplay.FIRE_FLIP_ARMS);
-        menu.add( fireFlipArms );
-        menu.addSeparator();
-        fireMode = new MenuItem( "Mode" );
-        fireMode.addActionListener( this );
-        fireMode.setActionCommand(FiringDisplay.FIRE_MODE);
-        fireMode.setShortcut(new MenuShortcut(KeyEvent.VK_O));
-        menu.add( fireMode );
+        fireFire = createMenuItem(menu, "Fire", FiringDisplay.FIRE_FIRE, KeyEvent.VK_F);
+        fireSkip = createMenuItem(menu, "Skip", FiringDisplay.FIRE_SKIP, KeyEvent.VK_S);
+        fireNextTarg = createMenuItem(menu, "Next Target", FiringDisplay.FIRE_NEXT_TARG, KeyEvent.VK_T);
+        fireNext = createMenuItem(menu, "Next Unit", FiringDisplay.FIRE_NEXT, KeyEvent.VK_N);
 
         menu.addSeparator();
 
-        fireFindClub = new MenuItem( "Find Club" );
-        fireFindClub.addActionListener( this );
-        fireFindClub.setActionCommand(FiringDisplay.FIRE_FIND_CLUB);
-        menu.add( fireFindClub );
-        
-        fireSpot = new MenuItem( "Spot" );
-        fireSpot.addActionListener( this );
-        fireSpot.setActionCommand(FiringDisplay.FIRE_SPOT);
-        menu.add( fireSpot );
+		fireTwist = createMenuItem(menu, "Twist", FiringDisplay.FIRE_TWIST);
+		fireFlipArms = createMenuItem(menu, "Flip Arms", FiringDisplay.FIRE_TWIST);
 
         menu.addSeparator();
 
-        fireCancel = new MenuItem( "Cancel" );
-        fireCancel.addActionListener( this );
-        fireCancel.setActionCommand(FiringDisplay.FIRE_CANCEL);
-        menu.add( fireCancel );
+		fireMode = createMenuItem(menu, "Mode", FiringDisplay.FIRE_MODE, KeyEvent.VK_O);
+
+        menu.addSeparator();
+
+		fireFindClub = createMenuItem(menu, "Find Club", FiringDisplay.FIRE_FIND_CLUB);
+		fireSpot = createMenuItem(menu, "Spot", FiringDisplay.FIRE_SPOT);
+
+        menu.addSeparator();
+
+		fireCancel = createMenuItem(menu, "Cancel", FiringDisplay.FIRE_CANCEL);
 
         // *** Create the physical menu.
         menu = new Menu( "Physical" );
@@ -587,38 +548,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         viewGameOptions.setEnabled( true );
         viewClientSettings.setEnabled( true );
 
-        // We can only fire selected units in the firing phase.
-        if ( this.phase != Game.PHASE_FIRING || entity == null ) {
-            fireFire.setEnabled( false );
-            fireSkip.setEnabled( false );
-            fireNextTarg.setEnabled( false );
-            fireNext.setEnabled( false );
-            fireTwist.setEnabled( false );
-            fireFlipArms.setEnabled( false );
-            fireMode.setEnabled( false );
-            fireFindClub.setEnabled( false );
-            fireSpot.setEnabled( false );
+       if ( this.phase != Game.PHASE_FIRING || entity == null ) {
             fireCancel.setEnabled( false );
         } else {
-            // Some actions require a visible target.
-            if ( this.hasTarget ) {
-                fireNextTarg.setEnabled( true );
-                fireSkip.setEnabled( true );
-                // Ability to fire is controlled by its own flag.
-                fireFire.setEnabled( this.hasFireChoice );
-            }
-            fireTwist.setEnabled( entity.canChangeSecondaryFacing() );
-            fireFindClub.setEnabled
-                ( Compute.canMechFindClub(game, entity.getId()) );
-            fireSpot.setEnabled
-                ( entity.canSpot() &&
-                  game.getOptions().booleanOption("indirect_fire") );
-            fireFlipArms.setEnabled( entity.canFlipArms() );
-            fireNext.setEnabled( true );
-            fireMode.setEnabled( true );
             fireCancel.setEnabled( true );
-        } // End in-firing-phase
-
+        }
     }
 
     /**
@@ -681,30 +615,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     public synchronized void setPhase( int current ) {
     	this.entity = null;
         this.phase = current;
-        manageMenu();
-    }
-
-    /**
-     * Identify that the current <code>Entity</code> has a visible target.
-     *
-     * @param   available - <code>true</code> when a visible target is
-     *          available.  Set this value to <code>false</code> after
-     *          the target list is cleared.
-     */
-    public synchronized void setHasTarget( boolean available ) {
-        this.hasTarget = available;
-        manageMenu();
-    }
-
-    /**
-     * Identify that the current <code>Entity</code> has a fire choice.
-     *
-     * @param   available - <code>true</code> when a fire choice is
-     *          available.  Set this value to <code>false</code> after
-     *          the fire choice is cleared.
-     */
-    public synchronized void setHasFireChoice( boolean available ) {
-        this.hasFireChoice = available;
         manageMenu();
     }
 
@@ -808,5 +718,35 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 	}
 	public synchronized void setPhysicalThrashEnabled(boolean enabled) {
     	physicalThrash.setEnabled(enabled);
+	}
+	
+	//Manages fire menu items...
+	
+	public synchronized void setFireFireEnabled(boolean enabled) {
+    	fireFire.setEnabled(enabled);
+	}
+	public synchronized void setFireSkipEnabled(boolean enabled) {
+    	fireSkip.setEnabled(enabled);
+	}
+	public synchronized void setFireNextTargetEnabled(boolean enabled) {
+    	fireNextTarg.setEnabled(enabled);
+	}
+	public synchronized void setFireNextEnabled(boolean enabled) {
+    	fireNext.setEnabled(enabled);
+	}
+	public synchronized void setFireTwistEnabled(boolean enabled) {
+    	fireTwist.setEnabled(enabled);
+	}
+	public synchronized void setFireFlipArmsEnabled(boolean enabled) {
+    	fireFlipArms.setEnabled(enabled);
+	}
+	public synchronized void setFireModeEnabled(boolean enabled) {
+    	fireMode.setEnabled(enabled);
+	}
+	public synchronized void setFireFindClubEnabled(boolean enabled) {
+    	fireFindClub.setEnabled(enabled);
+	}
+	public synchronized void setFireSpotEnabled(boolean enabled) {
+    	fireSpot.setEnabled(enabled);
 	}
 }

@@ -121,78 +121,126 @@ public class Ruler extends Dialog implements BoardListener {
       heightLabel1.setText("Height1: ");
       heightLabel1.setForeground(startColor);
       height1.setText("1");
+      height1.addKeyListener(new java.awt.event.KeyAdapter() {
+         public void keyReleased(KeyEvent e) {
+            height1_keyReleased(e);
+         }
+      });
       height1.setColumns(5);
       heightLabel2.setText("Height2: ");
       heightLabel2.setForeground(endColor);
       height2.setText("1");
+      height2.addKeyListener(new java.awt.event.KeyAdapter() {
+         public void keyReleased(KeyEvent e) {
+            height2_keyReleased(e);
+         }
+      });
       height2.setColumns(5);
 
       GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.BOTH;
-      c.insets = new Insets(10, 10, 10, 10);
-      c.weightx = 1.0;    c.weighty = 0.0;
-      c.gridwidth = GridBagConstraints.REMAINDER;
-      c.gridx = 0; c.gridy = 0;
-      gridBagLayout1.setConstraints(jLabel1, c);
-      panel1.add(jLabel1);
+      c.gridheight = 1;
+      c.weightx = 0.0;
+      c.weighty = 0.0;
+      c.anchor = GridBagConstraints.CENTER;
+      c.fill = GridBagConstraints.NONE;
+      c.insets = new Insets(0, 5, 0, 0);
+      c.ipadx = 0;
+      c.ipady = 0;
 
-      c.gridx = 1;
-      gridBagLayout1.setConstraints(tf_start, c);
-      panel1.add(tf_start);
+      c.gridx = 0;
+      c.gridy = 0;
+      c.gridwidth = 4;
+      c.insets = new Insets(0, 0, 0, 0);
+      gridBagLayout1.setConstraints(butFlip, c);
+      panel1.add(butFlip);
 
-      c.gridx = 0; c.gridy++;
-      gridBagLayout1.setConstraints(jLabel2, c);
-      panel1.add(jLabel2);
-
-      c.gridx = 1;
-      gridBagLayout1.setConstraints(tf_end, c);
-      panel1.add(tf_end);
-
-      c.gridx = 0; c.gridy++;
-      gridBagLayout1.setConstraints(jLabel3, c);
-      panel1.add(jLabel3);
-
-      c.gridx = 1;
-      gridBagLayout1.setConstraints(tf_distance, c);
-      panel1.add(tf_distance);
-
-      c.gridx = 0; c.gridy++;
-      gridBagLayout1.setConstraints(jLabel4, c);
-      panel1.add(jLabel4);
-
-      c.gridx = 1;
-      gridBagLayout1.setConstraints(tf_los1, c);
-      panel1.add(tf_los1);
-
-      c.gridx = 0; c.gridy++;
-      gridBagLayout1.setConstraints(jLabel5, c);
-      panel1.add(jLabel5);
-
-      c.gridx = 1;
-      gridBagLayout1.setConstraints(tf_los2, c);
-      panel1.add(tf_los2);
-
-      c.gridx = 0; c.gridy++;
+      c.gridx = 0;
+      c.gridy = 1;
+      c.gridwidth = 1;
       gridBagLayout1.setConstraints(heightLabel1, c);
       panel1.add(heightLabel1);
 
       c.gridx = 1;
+      c.gridy = 1;
+      c.gridwidth = 1;
       gridBagLayout1.setConstraints(height1, c);
       panel1.add(height1);
 
-      c.gridx = 0; c.gridy++;
+      c.gridx = 2;
+      c.gridy = 1;
+      c.gridwidth = 1;
       gridBagLayout1.setConstraints(heightLabel2, c);
       panel1.add(heightLabel2);
 
-      c.gridx = 1;
+      c.gridx = 3;
+      c.gridy = 1;
+      c.gridwidth = 1;
       gridBagLayout1.setConstraints(height2, c);
       panel1.add(height2);
 
-      c.gridx = 0; c.gridy++;
-      gridBagLayout1.setConstraints(butFlip, c);
-      panel1.add(butFlip);
+      c.gridx = 0;
+      c.gridy = 2;
+      c.gridwidth = 1;
+      gridBagLayout1.setConstraints(jLabel1, c);
+      panel1.add(jLabel1);
 
       c.gridx = 1;
+      c.gridy = 2;
+      c.gridwidth = 3;
+      gridBagLayout1.setConstraints(tf_start, c);
+      panel1.add(tf_start);
+
+      c.gridx = 0;
+      c.gridy = 3;
+      c.gridwidth = 1;
+      gridBagLayout1.setConstraints(jLabel2, c);
+      panel1.add(jLabel2);
+
+      c.gridx = 1;
+      c.gridy = 3;
+      c.gridwidth = 3;
+      gridBagLayout1.setConstraints(tf_end, c);
+      panel1.add(tf_end);
+
+      c.gridx = 0;
+      c.gridy = 4;
+      c.gridwidth = 1;
+      gridBagLayout1.setConstraints(jLabel3, c);
+      panel1.add(jLabel3);
+
+      c.gridx = 1;
+      c.gridy = 4;
+      c.gridwidth = 3;
+      gridBagLayout1.setConstraints(tf_distance, c);
+      panel1.add(tf_distance);
+
+      c.gridx = 0;
+      c.gridy = 5;
+      c.gridwidth = 1;
+      gridBagLayout1.setConstraints(jLabel4, c);
+      panel1.add(jLabel4);
+
+      c.gridx = 1;
+      c.gridy = 5;
+      c.gridwidth = 3;
+      gridBagLayout1.setConstraints(tf_los1, c);
+      panel1.add(tf_los1);
+
+      c.gridx = 0;
+      c.gridy = 6;
+      c.gridwidth = 1;
+      gridBagLayout1.setConstraints(jLabel5, c);
+      panel1.add(jLabel5);
+
+      c.gridx = 1;
+      c.gridy = 6;
+      c.gridwidth = 3;
+      gridBagLayout1.setConstraints(tf_los2, c);
+      panel1.add(tf_los2);
+
+      c.gridx = 0;
+      c.gridy = 7;
+      c.gridwidth = 5;
       gridBagLayout1.setConstraints(butClose, c);
       panel1.add(butClose);
 
@@ -371,4 +419,13 @@ public class Ruler extends Dialog implements BoardListener {
       bv.drawRuler(start, end, startColor, endColor);
    }
 
+   void height1_keyReleased(KeyEvent e) {
+      setText();
+      show();
+   }
+
+   void height2_keyReleased(KeyEvent e) {
+      setText();
+      show();
+   }
 }

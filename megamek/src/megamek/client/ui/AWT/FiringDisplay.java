@@ -81,6 +81,9 @@ public class FiringDisplay
     // let's keep track of what we're shooting and at what, too
     private int                cen = Entity.NONE;        // current entity number
     private Targetable         target;        // target 
+
+    // HACK : track when we wan to show the target choice dialog.
+    private boolean            showTargetChoice = true;
   
     // shots we have so far.
     private Vector attacks;  
@@ -504,8 +507,14 @@ public class FiringDisplay
         if ( null == targ )
           return;
 
+        // HACK : don't show the choice dialog.
+        this.showTargetChoice = false;
+
         clientgui.bv.centerOnHex(targ.getPosition());
         client.game.board.select(targ.getPosition());
+
+        // HACK : show the choice dialog again.
+        this.showTargetChoice = true;
         target(targ);
     }
     
@@ -904,7 +913,10 @@ public class FiringDisplay
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
-            final Targetable targ = this.chooseTarget( b.getCoords() );
+            // HACK : sometimes we don't show the target choice window
+            Targetable targ = null;
+            if (this.showTargetChoice)
+                targ = this.chooseTarget( b.getCoords() );
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());

@@ -1057,22 +1057,29 @@ public class Game implements Serializable
     }
     
     /**
-     * Returns an Enumeration of the enemy's active entities at the given coordinates.
+     * Returns an <code>Enumeration</code> of the enemy's active
+     * entities at the given coordinates.
+     *
+     * @param   c the <code>Coords</code> of the hex being examined.
+     * @param   currentEntity the <code>Entity</code> whose enemies are needed.
+     * @return  an <code>Enumeration</code> of <code>Entity</code>s at the
+     *          given coordinates who are enemies of the given unit.
      */
-    public Enumeration getEnemyEntities(Coords c, Entity currentEntity) {
-        Vector vector = new Vector();
-
-        // Only build the list if the coords are on the board.
-        if ( this.board.contains(c) ) {
-            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-                final Entity entity = (Entity)i.nextElement();
-                if (c.equals(entity.getPosition()) && entity.isTargetable() && entity.isEnemyOf(currentEntity)) {
-                    vector.addElement(entity);
-                }
-            }
-        }
-
-        return vector.elements();
+    public Enumeration getEnemyEntities( final Coords c,
+                                         final Entity currentEntity ) {
+        // Use an EntitySelector to avoid walking the entities vector twice.
+        return this.getSelectedEntities
+            (new EntitySelector() {
+                    private Coords coords = c;
+                    private Entity friendly = currentEntity;
+                    public boolean accept (Entity entity) {
+                        if ( coords.equals(entity.getPosition())
+                             && entity.isTargetable()
+                             && entity.isEnemyOf(friendly) )
+                            return true;
+                        return false;
+                    }
+                });
     }
 
     /**

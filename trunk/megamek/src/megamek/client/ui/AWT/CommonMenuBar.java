@@ -358,8 +358,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         menu.addSeparator();
 
-		fireTwist = createMenuItem(menu, "Twist", FiringDisplay.FIRE_TWIST);
-		fireFlipArms = createMenuItem(menu, "Flip Arms", FiringDisplay.FIRE_TWIST);
+        fireTwist = createMenuItem(menu, "Twist", FiringDisplay.FIRE_TWIST);
+        fireFlipArms = createMenuItem(menu, "Flip Arms", FiringDisplay.FIRE_FLIP_ARMS);
 
         menu.addSeparator();
 

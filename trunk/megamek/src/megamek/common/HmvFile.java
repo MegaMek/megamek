@@ -37,6 +37,7 @@ public class HmvFile
   private HMVMovementType movementType;
   private int rulesLevel;
   private int year;
+  private boolean isOmni = false;
   private HMVTechType techType;
 
   private int engineRating;
@@ -99,9 +100,11 @@ public class HmvFile
       // ??
       dis.skipBytes(32);
 
-      // ??
+      // The "bf2" buffer contains the word "omni" for OmniVehicles.
       int bf2Length = readUnsignedShort(dis);
-      dis.skipBytes(bf2Length);
+      byte[] bf2Buffer = new byte[ bf2Length ];
+      dis.read( bf2Buffer );
+      isOmni = containsOmni( bf2Buffer );
 
       techType = HMVTechType.getType(readUnsignedShort(dis));
 
@@ -142,7 +145,13 @@ public class HmvFile
       rearArmor = readUnsignedShort(dis);
 
       // ??
-      dis.skipBytes(14);
+      if ( isOmni ) {
+          // Skip 12 bytes for OmniVehicles
+          dis.skipBytes(12);
+      } else {
+          // Skip 14 bytes for non-OmniVehicles
+          dis.skipBytes(14);
+      }
 
       int weapons = readUnsignedShort(dis);
       for (int i = 1; i <= weapons; i++)
@@ -302,6 +311,31 @@ public class HmvFile
     return b1 + b2 + b3 + b4;
   }
 
+    /**
+     * Determine if the buffer contains the "is omni" flag.
+     *
+     * @param   buffer the array of <code>byte</code>s to be scanned.
+     * @return  <code>true</code> if the buffer contains the "is omni" flag.
+     */
+    private boolean containsOmni( byte[] buffer ) {
+        int index;
+
+        // Look for the 4 byte flag.
+        for ( index = buffer.length - 4; index >= 0; index-- ) {
+            if ( 0x6f == buffer[index]   &&  // 'o'
+                 0x6d == buffer[index+1] &&  // 'm'
+                 0x6e == buffer[index+2] &&  // 'n'
+                 0x69 == buffer[index+3] ) { // 'i'
+
+                // We found it!
+                return true;
+            }
+        }
+
+        // We didn't find the "is omni" flag;
+        return false;
+    }
+
   public Entity getEntity() throws EntityLoadingException {
       try  {
 	  Entity entity = null;
@@ -316,6 +350,7 @@ public class HmvFile
                   tank.setChassis(name);
                   tank.setModel(model);
                   tank.setYear(year);
+                  tank.setOmni( isOmni );
 
                   int techLevel = rulesLevel == 1 ? TechConstants.T_IS_LEVEL_1 :
                       techType == HMVTechType.CLAN ? TechConstants.T_CLAN_LEVEL_2 :

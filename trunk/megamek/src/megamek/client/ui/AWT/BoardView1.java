@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -176,27 +176,29 @@ public class BoardView1
     }
 
     public void addMovingUnit(Entity entity, java.util.Vector movePath) {
-    	Object[] o = new Object[2];
-    	o[0] = entity;
-    	o[1] = movePath;
-    	movingUnits.addElement(o);
+        if ( !movePath.isEmpty() ) {
+            Object[] o = new Object[2];
+            o[0] = entity;
+            o[1] = movePath;
+            movingUnits.addElement(o);
     	
-        GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
-        ghostEntitySprites.addElement(ghostSprite);
+            GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
+            ghostEntitySprites.addElement(ghostSprite);
 
-    	// Center on the starting hex of the moving unit.
-		int j = ((Integer) movePath.elementAt(0)).intValue();
-		int y = j & 255;
-		int x = (j >> 8) & 255;
-    	centerOnHex(new Coords(x, y));
+            // Center on the starting hex of the moving unit.
+            int j = ((Integer) movePath.elementAt(0)).intValue();
+            int y = j & 255;
+            int x = (j >> 8) & 255;
+            centerOnHex(new Coords(x, y));
+        }
     }
 
-	public void addDisplayable(Displayable disp) {
-		displayables.addElement(disp);
+    public void addDisplayable(Displayable disp) {
+        displayables.addElement(disp);
     }
 
-	public void removeDisplayable(Displayable disp) {
-		displayables.removeElement(disp);
+    public void removeDisplayable(Displayable disp) {
+        displayables.removeElement(disp);
     }
 
     public void paint(Graphics g) {

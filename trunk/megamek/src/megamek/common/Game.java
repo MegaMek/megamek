@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -456,7 +456,7 @@ public class Game implements Serializable
     
     /** Inserts a turn that will come directly after the current one */
     public void insertNextTurn(GameTurn turn) {
-  turnVector.insertElementAt(turn, turnIndex + 1);
+        turnVector.insertElementAt(turn, turnIndex + 1);
     }
 
     /** Returns an Enumeration of the current turn list */
@@ -1094,7 +1094,7 @@ public class Game implements Serializable
         }
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            
+
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }

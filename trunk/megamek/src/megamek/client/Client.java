@@ -949,12 +949,40 @@ public class Client extends Panel
     
     /**
      * Pops up a dialog box asking a yes/no question
-     * @returns true if yes
+     * 
+     * @param   title the <code>String</code> title of the dialog box.
+     * @param   question the <code>String</code> question that has a
+     *          "Yes" or "No" answer.  The question will be split across
+     *          multiple line on the '\n' characters.
+     * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
         confirm.show();
         return confirm.getAnswer();
+    };
+    
+    /**
+     * Pops up a dialog box asking a yes/no question
+     * <p/>
+     * The player will be given a chance to not show the dialog again.
+     *
+     * @param   title the <code>String</code> title of the dialog box.
+     * @param   question the <code>String</code> question that has a
+     *          "Yes" or "No" answer.  The question will be split across
+     *          multiple line on the '\n' characters.
+     * @param   bother a <code>Boolean</code> that will be set to match
+     *          the player's response to "Do not bother me again".
+     * @return  the <code>ConfirmDialog</code> containing the player's
+     *          responses.  The dialog will already have been shown to 
+     *          the player, and is only being returned so the calling
+     *          function can see the answer to the question and the state
+     *          of the "Show again?" question. 
+     */
+    public ConfirmDialog doYesNoBotherDialog( String title, String question ) {
+        ConfirmDialog confirm = new ConfirmDialog(frame,title,question,true);
+        confirm.show();
+        return confirm;
     };
 
     /**

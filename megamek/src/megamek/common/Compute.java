@@ -293,6 +293,8 @@ public class Compute
             }
             
             state.setFromPrev(prevState);
+            
+            System.out.println("previous pos = " + prevState.getPosition());
 
             // 
             switch(step.getType()) {

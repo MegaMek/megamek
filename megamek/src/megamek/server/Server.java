@@ -3205,7 +3205,7 @@ implements Runnable {
         Mounted ammo = weapon.getLinked();
         
         // how many shots are we firing?
-        int nShots = howManyShots(weapon, ammo);
+        int nShots = weapon.howManyShots();
         
         // do we need to revert to single shot?
         if (usesAmmo && nShots > 1) {
@@ -3272,31 +3272,6 @@ implements Runnable {
         }
         
         return wr;
-    }
-    
-    /**
-     * Returns how many shots the weapon is using
-     */
-    private int howManyShots(Mounted weapon, Mounted ammo) {
-        final WeaponType wtype = (WeaponType)weapon.getType();
-        int nShots = 1;
-        // figure out # of shots for variable-shot weapons
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
-            nShots = 2;
-        } else if ( wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
-                    wtype.getInternalName()
-                    .equals(BattleArmor.MINE_LAUNCHER) ) {
-            if (weapon.curMode().equals("2-shot")) {
-                nShots = 2;
-            } else if (weapon.curMode().equals("3-shot")) {
-                nShots = 3;
-            } else if (weapon.curMode().equals("4-shot")) {
-                nShots = 4;
-            } else if (weapon.curMode().equals("6-shot")) {
-                nShots = 6;
-            }
-        }
-        return nShots;
     }
     
     private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {        
@@ -3436,7 +3411,7 @@ implements Runnable {
         phaseReport.append("rolls " ).append( wr.roll ).append( " : ");
         
         // check for AC jams
-        int nShots = howManyShots(weapon, ammo);
+        int nShots = weapon.howManyShots();
         if (nShots > 1) {
             int jamCheck = 0;
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
@@ -4839,11 +4814,7 @@ implements Runnable {
             }
 
             // engine hits add a lot of heat, provided the engine is on
-            if (!entity.isShutDown()) {
-                entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-                entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-            }
+            entity.heatBuildup += entity.getEngineCritHeat();
 
             // If a Mek had an active Stealth suite, add 10 heat.
             if ( entity instanceof Mech && entity.isStealthActive() ) {

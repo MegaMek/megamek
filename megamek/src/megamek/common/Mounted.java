@@ -236,6 +236,29 @@ public class Mounted implements Serializable{
         this.shotsLeft = shotsLeft;
     }
     
+    /**
+     * Returns how many shots the weapon is using
+     */
+    public int howManyShots() {
+        final WeaponType wtype = (WeaponType)this.getType();
+        int nShots = 1;
+        // figure out # of shots for variable-shot weapons
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && this.curMode().equals("Ultra")) {
+            nShots = 2;
+        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
+                   wtype.getInternalName()
+                   .equals(BattleArmor.MINE_LAUNCHER)) {
+            if (this.curMode().equals("2-shot")) {
+                nShots = 2;
+            } else if (this.curMode().equals("4-shot")) {
+                nShots = 4;
+            } else if (this.curMode().equals("6-shot")) {
+                nShots = 6;
+            }
+        }
+        return nShots;
+    }
+    
     public boolean isPendingDump() {
         return m_bPendingDump;
     }

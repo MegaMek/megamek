@@ -124,7 +124,18 @@ public class BipedMech extends Mech {
             return getWalkMP();
         }
     }
-    
+
+    /**
+     * Returns run MP without considering MASC modified for leg loss & stuff.
+     */
+    public int getRunMPwithoutMASC() {
+        if ( countDestroyedLegs() == 0 ) {
+            return super.getRunMP();
+        } else {
+            return getWalkMP();
+        }
+    }
+
     /**
      * Returns true is the location is a leg
      */

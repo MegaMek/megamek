@@ -295,18 +295,31 @@ public abstract class Mech
                 }
 
     /**
+     * Returns true if the entity has a hip crit.
+     */
+    public boolean hasHipCrit() {
+        for ( int loc = 0; loc < NUM_MECH_LOCATIONS; loc++ ) {
+            if ( legHasHipCrit( loc ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return true is the location is a leg and has a hip crit
      */   
-      public boolean legHasHipCrit(int loc) {
+    public boolean legHasHipCrit(int loc) {
         if ( isLocationDestroyed(loc) )
-          return false;
+            return false;
           
         if ( locationIsLeg(loc) ) {
-          return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) == 0);
-                }
+            return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                     Mech.ACTUATOR_HIP, loc) == 0);
+        }
         
         return false;
-            }
+    }
     
     /**
      * Count non-hip leg actuator crits

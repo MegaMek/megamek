@@ -103,7 +103,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
 		content.addArea(mpL3);
 		
 		
-		mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 115);
+		mpR0 = createLabel("", fm, mpL0.getSize().width + 10, 100);
 		content.addArea(mpR0);
 		
 		mpR1 = createLabel("***", fm, mpL0.getSize().width + 10, 115);

@@ -498,7 +498,7 @@ implements Serializable {
                 return (c.x >= (width - nLimit) && c.y > height / 2) ||
                         (c.y >= (height - nLimit) && c.x > width / 2);
             case 6 : // S
-                return c.y > (height - nLimit);
+                return c.y >= (height - nLimit);
             case 7 : // SW
                 return (c.x < nLimit && c.y > height / 2) ||
                         (c.y >= (height - nLimit) && c.x < width / 2);

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.56 (CVS)
++ Bug 1065147: Handle null targets better in CAA#toHit and Compute#toHitDFA.
 
 v0.29.55 (2004-11-07 11:00pm)
 + Bug 1057995: Correctly handle configuring auto-ejection.

@@ -624,6 +624,36 @@ public class MovementDisplay
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
             }
+            
+            // check if we used more MPs than the Mech/Vehicle would have in normal gravity
+            if (!i.hasMoreElements()) {
+                if (entity instanceof Mech) {
+                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                        if (step.getMpUsed() > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                nagReport.append(addNag(rollTarget));
+                            }
+                        }
+                    } else if (step.getMovementType() == Entity.MOVE_JUMP) {
+                        if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                nagReport.append(addNag(rollTarget));
+                            }
+                        }    
+                      }
+                } else if (entity instanceof Tank) {
+                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                        if (step.getMpUsed() > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                nagReport.append(addNag(rollTarget));
+                            }
+                        }
+                    }   
+                }
+            }
 
             // Handle non-infantry moving into a building.
             if (entity.checkMovementInBuilding(lastPos, curPos, step,

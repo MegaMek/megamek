@@ -89,10 +89,10 @@ v 0.25.6 (05-23-02, 8:30pm)
 + 554568: fixed false secondary target modifier on first shot
 + improved recently introduced oddities with friendly fire impacting movement and bots--LDE
 + minor fixess to unlikely crit transfers--LDE
-+ Extra PSRs for leg destruction corrected--LDE
-+ Fixed bug allowing gyro'd quads to stand--LDE
++ 555039: Extra PSRs for leg destruction corrected--LDE
++ 556214: Fixed bug allowing gyro'd quads to stand--LDE
 + Fixed bug involving ammo switching tons--LDE
-+ Fixed bug preventing fire when LOS passes outside the board--LDE
++ 554933: Fixed bug preventing fire when LOS passes outside the board--LDE
 + VERSION, TIMESTAMP fields no longer final
 + non-standalone client no longer calls System.exit
 + killed some flicker associated with torso twists

@@ -44,9 +44,22 @@ public class Settings
     
     public static Color     mapTextColor            = Color.black;
     
+    public static Color     moveDefaultColor        = Color.cyan;
+    public static Color     moveRunColor            = Color.yellow;
+    public static Color     moveJumpColor           = Color.red;
+    public static Color     moveIllegalColor        = Color.darkGray;
+    
     public static String    mapTileset              = "defaulthexset.txt";
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
+    
+    private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
+            "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
+            
+    private static Color[] m_colorValues = { Color.black, Color.blue, Color.cyan,
+            Color.darkGray, Color.gray, Color.green, Color.lightGray, 
+            Color.magenta, Color.orange, Color.pink, Color.red, Color.white, 
+            Color.yellow };
     
     
     /**
@@ -82,54 +95,60 @@ scan:
                         st.nextToken();
                         windowPosY = (int)st.nval;
                     }
-                    if(key.equals("windowsize")) {
+                    else if(key.equals("windowsize")) {
                         st.nextToken();
                         windowSizeWidth = (int)st.nval;
                         st.nextToken();
                         windowSizeHeight = (int)st.nval;
                     }
-                    if (key.equals("minimapenabled")) {
+                    else if (key.equals("minimapenabled")) {
                         st.nextToken();
                         minimapEnabled = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    if(key.equals("minimappos")) {
+                    else if(key.equals("minimappos")) {
                         st.nextToken();
                         minimapPosX = (int)st.nval;
                         st.nextToken();
                         minimapPosY = (int)st.nval;
                     }
-                    if(key.equals("minimapsize")) {
+                    else if(key.equals("minimapsize")) {
                         st.nextToken();
                         minimapSizeWidth = (int)st.nval;
                         st.nextToken();
                         minimapSizeHeight = (int)st.nval;
                     }
-                    if(key.equals("playername")) {
+                    else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
                     }
-                    if(key.equals("server")) {
+                    else if(key.equals("server")) {
                         st.nextToken();
                         lastServerPass = st.sval;
                         st.nextToken();
                         lastServerPort = (int)st.nval;
                     }
-                    if(key.equals("connect")) {
+                    else if(key.equals("connect")) {
                         st.nextToken();
                         lastConnectAddr = st.sval;
                         st.nextToken();
                         lastConnectPort = (int)st.nval;
                     }
-                    if(key.equals("maptext")) {
-                        st.nextToken();
-                        int red = (int)st.nval;
-                        st.nextToken();
-                        int green = (int)st.nval;
-                        st.nextToken();
-                        int blue = (int)st.nval;
-                        mapTextColor = new Color(red, green, blue);
+                    else if(key.equals("maptext")) {
+                        mapTextColor = loadColor(st, mapTextColor);
                     }
-                    if(key.equals("maptileset")) {
+                    else if (key.equals("movedefault")) {
+                        moveDefaultColor = loadColor(st, moveDefaultColor);
+                    }
+                    else if (key.equals("moverun")) {
+                        moveRunColor = loadColor(st, moveRunColor);
+                    }
+                    else if (key.equals("movejump")) {
+                        moveJumpColor = loadColor(st, moveJumpColor);
+                    }
+                    else if (key.equals("moveillegal")) {
+                        moveIllegalColor = loadColor(st, moveIllegalColor);
+                    }
+                    else if(key.equals("maptileset")) {
                         st.nextToken();
                         mapTileset = st.sval;
                     }
@@ -143,6 +162,31 @@ scan:
             System.err.println(e.getMessage());
         }
     }
+    
+    private static Color loadColor(StreamTokenizer st, Color cDefault) {
+        try {
+            st.nextToken();
+            if (st.ttype == st.TT_NUMBER) {
+                int red = (int)st.nval;
+                st.nextToken();
+                int green = (int)st.nval;
+                st.nextToken();
+                int blue = (int)st.nval;
+                return new Color(red, green, blue);
+            } else if (st.ttype == st.TT_WORD) {
+                String sName = st.sval;
+                for (int x = 0; x < m_sColorNames.length; x++) {
+                    if (m_sColorNames[x].equalsIgnoreCase(sName)) {
+                        return m_colorValues[x];
+                    }
+                }
+                System.out.println("Unrecognized color: " + sName);
+            }
+        } catch (Exception e) {
+            System.err.println("Unable to load color data");
+        }
+        return cDefault;
+    }                   
     
     /**
      * Saves the settings to disk
@@ -164,12 +208,25 @@ scan:
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
-            cw.write("maptext " + mapTextColor.getRed() + " " + mapTextColor.getGreen() + " " + mapTextColor.getBlue() + " " + "\r\n");
+            cw.write("maptext " + writeColor(mapTextColor) + "\r\n");
+            cw.write("movedefault " + writeColor(moveDefaultColor) + "\r\n");
+            cw.write("moverun " + writeColor(moveRunColor) + "\r\n");
+            cw.write("movejump " + writeColor(moveJumpColor) + "\r\n");
+            cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
             
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+    
+    private static String writeColor(Color c) {
+        for (int x = 0; x < m_colorValues.length; x++) {
+            if (c == m_colorValues[x]) {
+                return m_sColorNames[x];
+            }
+        }
+        return c.getRed() + " " + c.getGreen() + " " + c.getBlue();
     }
 }

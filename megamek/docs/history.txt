@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v (next)
+v 0.27.3 (10-18-02, 4pm)
 + Abstracted equipment mode system
 + AMS can be turned off
 + fixed crash with bot and non-mech units
@@ -83,9 +83,10 @@ v (next)
 + messed around with LOS; hopefully more readable code, bugs fixed
 + 536077: split crits supported (in mtf files only so far)
 + TSM added
-+ 624368: LBX AC's use shots, not missles.
++ 624368: LBX AC's use shots, not missiles.
 + fixed a slight bug with the new LOS changes and woods
 + 612729: units should no longer be displaced into prohibited hexes
++ 623853: bot should try getting up again if first attempt fails
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

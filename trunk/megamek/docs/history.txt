@@ -5,7 +5,7 @@ v0.29.65 (CVS)
 + Bug 1115577: Correctly identify the first step (again, *sigh*).
 + Don't show stuff like "Archer ARC-5S (Dread Moores) gains -12 heat,
     sinks -12 heat and is now at 0 heat." in games with low temperature.
-+ Patch 1117943: Updated image for the Avatar unit.
++ Data 1117943: Updated image for the Avatar unit.
 + Haubrek battle armor should be called Hauberk battle armor
 + Bug 1101518: if a tank dies to a crit, additional crits are not resolved.
 + Bug 1060000: Pilot losing consciousness should live through the ejection
@@ -19,6 +19,7 @@ v0.29.65 (CVS)
 + New images for Scorpion (Laser), LRM Carrier (Laser), and AC2 Carrier
 + Don't report captured MechWarriors that died as captured in end of game
     report.
++ Bug 1115608: Skidding into swamp or rubble, PSR missing.
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

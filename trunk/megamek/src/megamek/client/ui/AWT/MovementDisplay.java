@@ -314,15 +314,17 @@ public class MovementDisplay
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
-        boolean isMech = (ce() instanceof Mech);
-        boolean isInfantry = (ce() instanceof Infantry);
+        boolean isMech      = (ce() instanceof Mech);
+        boolean isInfantry  = (ce() instanceof Infantry);
+        boolean isProtomech = (ce() instanceof Protomech);
+        // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
         setJumpEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
         setBackUpEnabled(butWalk.isEnabled());
         
-        // Infantry can't charge or DFA.
-        if ( isInfantry ) {
+        // Infantry and Protos can't charge or DFA.
+        if ( isInfantry || isProtomech ) {
             setChargeEnabled(false);
             setDFAEnabled(false);
             if(client.game.containsMinefield(ce().getPosition())) {

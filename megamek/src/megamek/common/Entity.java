@@ -2314,13 +2314,21 @@ public abstract class Entity
                     continue;
                 }
 
-                if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
+                // make sure ammo is loaded
+                Mounted ammo = weapon.getLinked();
+                if ( ammo == null || ammo.getShotsLeft() == 0 ||
+                     ammo.isDumping() ) {
                     loadWeapon(weapon);
+                    ammo = weapon.getLinked();
                 }
+
                 // try again
-                if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
+                if ( ammo == null || ammo.getShotsLeft() == 0 ||
+                     ammo.isDumping() ) {
+                    // No ammo for this AMS.
                     continue;
                 }
+
                 // make a new vector of only incoming attacks in arc
                 Vector vAttacksInArc = new Vector(vAttacks.size());
                 for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {

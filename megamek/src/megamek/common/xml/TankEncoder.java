@@ -43,7 +43,6 @@ public class TankEncoder {
     public static void encode( Entity entity, Writer out )
         throws IOException
     {
-        Enumeration iter; // used when marching through a list of sub-elements
         Tank tank = (Tank) entity;
         int value;
 
@@ -193,7 +192,7 @@ public class TankEncoder {
             // Did we find the moveHit node?
             else if ( childName.equals( "moveHit" ) ) {
 
-                // See if the Tank move a hit pending.
+                // See if the Tank has a move hit.
                 attrStr = child.getAttribute( "value" );
                 if ( null == attrStr ) {
                     throw new IllegalStateException
@@ -210,7 +209,7 @@ public class TankEncoder {
             // Did we find the moveHitPending node?
             else if ( childName.equals( "moveHitPending" ) ) {
 
-                // See if the Tank move a hit pending.
+                // See if the Tank has a move hit pending.
                 attrStr = child.getAttribute( "value" );
                 if ( null == attrStr ) {
                     throw new IllegalStateException

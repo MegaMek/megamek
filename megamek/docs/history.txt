@@ -9,6 +9,8 @@ v 0.29.27 (CVS)
 + Bug 898207: players should have to enter in a non-blank, non-whitespace name
 + Bug 899181: unconcious and shut down meks can't find clubs.
 + Better width calculation for Game Options dialog.
++ Infantry move last, deploy last, and move multi game options now
+        include Protomechs as well.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

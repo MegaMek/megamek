@@ -59,7 +59,7 @@ public final class Player extends TurnOrdered
 
     private int num_mechs    = 0;
     private int num_tanks    = 0;
-    private int num_infantry = 0;
+    private int num_infantry_and_protomechs = 0;
 
 	// number of minefields
     private int num_mf_conv  = 0;
@@ -162,8 +162,8 @@ public final class Player extends TurnOrdered
         num_tanks = 0;
     }
 
-    public void resetInfantryCount() {
-        num_infantry = 0;
+    public void resetInfantryAndProtomechCount() {
+        num_infantry_and_protomechs = 0;
     }
 
     public int incrementMechCount() {
@@ -174,20 +174,20 @@ public final class Player extends TurnOrdered
         return ++num_tanks;
     }
 
-    public int incrementInfantryCount() {
-        return ++num_infantry;
+    public int incrementInfantryAndProtomechCount() {
+        return ++num_infantry_and_protomechs;
     }
 
     public void updateTurnCount()
     {
         // This assumes that all unit counts are correct
-        boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
+        boolean infAndProtosMulti = game.getOptions().booleanOption("inf_and_protos_move_multi");
 
-        if (infMulti)
-            turns_infantry = (int)Math.ceil( ((double)num_infantry) /
-                                             ((double)Game.INF_MOVE_MULTI) );
+        if (infAndProtosMulti)
+            turns_infantry_and_protomechs = (int)Math.ceil( ((double)num_infantry_and_protomechs) /
+                                             ((double)Game.INF_AND_PROTOS_MOVE_MULTI) );
         else
-            turns_infantry = num_infantry;
+            turns_infantry_and_protomechs = num_infantry_and_protomechs;
 
         turns_tank = num_tanks;
         turns_mech = num_mechs;

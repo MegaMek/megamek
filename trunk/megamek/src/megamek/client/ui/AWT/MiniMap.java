@@ -285,25 +285,26 @@ public class MiniMap extends Canvas
 
             if (! roadHexIndexes.isEmpty()) paintRoads(g);
 
-            for (int j = 0; j < m_game.board.width; j++) {
-                for (int k = 0; k < m_game.board.height; k++) {
-                    if (SHOW_NO_HEIGHT!=heightDisplayMode) {
+            if (SHOW_NO_HEIGHT!=heightDisplayMode) {
+                for (int j = 0; j < m_game.board.width; j++) {
+                    for (int k = 0; k < m_game.board.height; k++) {
                         Hex h = m_game.board.getHex(j, k);
                         paintHeight(g, h, j , k);
-                    };
+                    }
                 }
             }
 
             // draw Drop Zone
-            for (int j = 0; j < m_game.board.width; j++) {
-                for (int k = 0; k < m_game.board.height; k++) {
-                    if (null!=m_client && null!=m_game) {   // sanity check!
-                        if (Game.PHASE_DEPLOYMENT==m_game.getPhase()
-                            && m_game.getTurn().getPlayerNum()==m_client.getLocalPlayer().getId()
-                            && m_game.board.isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
-                            paintSingleCoordBorder(g,j,k,Color.yellow);
-                        };
-                    };
+            if (null!=m_client && null!=m_game) {   // sanity check!
+                if (Game.PHASE_DEPLOYMENT == m_game.getPhase()
+                    && m_game.getTurn().getPlayerNum() == m_client.getLocalPlayer().getId()) {
+                    for (int j = 0; j < m_game.board.width; j++) {
+                        for (int k = 0; k < m_game.board.height; k++) {
+                            if (m_game.board.isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
+                                paintSingleCoordBorder(g,j,k,Color.yellow);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -940,7 +941,12 @@ public class MiniMap extends Canvas
     }
 
     public void boardChangedHex(BoardEvent b) {
-        drawMap();
+        // Calling drawMap here turns out to be a bad idea since this
+        //  method gets called about 7 times for each hex that is changed.
+        //  Resolving fire/smoke updates, for example, was taking four times
+        //  as long with this call enabled.  We'll just leave the drawing
+        //  to the change turn/phase methods above.
+        //        drawMap();
     }
     // end BoardListener implementation
 

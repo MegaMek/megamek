@@ -29,7 +29,7 @@ should be obvious that FLOSS Java environments will not build this file.
 Please apply the patch named "gcj.patch" to correct this problem.
 
 While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
-computer is running Debian Sarge with Kaffe installed.  Therefore, I can build
+computer is running Debian Sarge with GCC installed.  Therefore, I can build
 MegaMek with the following command; please modify the command to meet your
 environment (email me if you have any problems).
 

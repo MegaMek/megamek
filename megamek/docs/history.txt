@@ -6,6 +6,7 @@ v0.29.59 (CVS)
 + Bug 1091979: Infantry won't unload from Tanks
 + Bug 912127: when a Mek is standing up from prone on pavement, its
     "free facing change" should *not* cause a Skid PSR.
++ Bug 987956: on failure to get up, firing mod for walking/running missing
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

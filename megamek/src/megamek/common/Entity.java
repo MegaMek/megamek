@@ -1521,7 +1521,8 @@ public abstract class Entity
         if (isShutDown()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType().hasFlag(MiscType.F_C3S) && !m.isDestroyed()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S) 
+                    && !m.isDestroyed()) {
                 return true;
             }
         }
@@ -1532,7 +1533,8 @@ public abstract class Entity
         if (isShutDown()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType().hasFlag(MiscType.F_C3M) && !m.isDestroyed()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M) 
+                    && !m.isDestroyed()) {
                 return true;
             }
         }
@@ -1547,7 +1549,8 @@ public abstract class Entity
         if (isShutDown()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType().hasFlag(MiscType.F_C3I) && !m.isDestroyed()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I) 
+                    && !m.isDestroyed()) {
                 return true;
             }
         }

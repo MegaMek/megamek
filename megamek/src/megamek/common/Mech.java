@@ -291,7 +291,8 @@ public abstract class Mech
     public boolean hasActiveMASC() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (!m.isDestroyed() && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("On")) {
+            if (!m.isDestroyed() && m.getType() instanceof MiscType &&
+                    m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("On")) {
                 return true;
             }
         }
@@ -304,7 +305,7 @@ public abstract class Mech
     public boolean hasTSM() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType().hasFlag(MiscType.F_TSM)) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TSM)) {
                 return true;
             }
         }

@@ -63,7 +63,6 @@
   <target name="cvsdev-init">
     <tstamp/>
     <mkdir dir="${cvsdir}"/>
-    <mkdir dir="${cvsdir}/megamek/classes"/>
   </target>
 
   <target depends="cvsdev-init" name="cvsdev-get">
@@ -71,6 +70,7 @@
   </target>
 
   <target depends="cvsdev-init" name="cvsdev-build">
+    <mkdir dir="${cvsdir}/megamek/classes"/>
     <!-- compile -->
     <javac classpath="${cvsdir}/megamek;${cvsdir}/megamek/collections.jar;${cvsdir}/megamek/TinyXML.jar" destdir="${cvsdir}/megamek/classes" srcdir="${cvsdir}/megamek" target="1.1"/>
     <!-- build -->

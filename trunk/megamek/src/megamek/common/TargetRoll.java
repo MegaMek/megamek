@@ -21,6 +21,7 @@
 package megamek.common;
 
 import com.sun.java.util.collections.*;
+import java.io.Serializable;
 
 /**
  * Keeps track of a target for a roll.  Allows adding modifiers with 
@@ -30,7 +31,7 @@ import com.sun.java.util.collections.*;
  * @author  Ben
  * @version 
  */
-public class TargetRoll {
+public class TargetRoll implements Serializable {
     
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;

@@ -176,6 +176,8 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.insert(0, "+");
         } else if (jammed) {
             desc.insert(0, "j ");
+        } else if (fired) {
+            desc.insert(0, "x ");
         }
         if (rearMounted) {
             desc.append(" (R)");

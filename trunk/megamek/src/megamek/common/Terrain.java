@@ -93,7 +93,7 @@ implements Serializable {
         
         this.type = parse(name);
         if (firstColon == lastColon) {
-            this.level = Integer.parseInt(terrain.substring(firstColon + 1));
+            this.level = levelFor(terrain.substring(firstColon + 1));
             this.exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
@@ -101,9 +101,18 @@ implements Serializable {
                 this.exitsSpecified = true;
             }
         } else {
-            this.level = Integer.parseInt(terrain.substring(firstColon + 1, lastColon));
+            this.level = levelFor(terrain.substring(firstColon + 1, lastColon));
             this.exitsSpecified = true;
-            this.exits = Integer.parseInt(terrain.substring(lastColon + 1));
+            this.exits = levelFor(terrain.substring(lastColon + 1));
+        }
+    }
+    
+    public static int levelFor(String string) {
+        if (string.equals("*")) {
+            return WILDCARD;
+        }
+        else {
+            return Integer.parseInt(string);
         }
     }
     

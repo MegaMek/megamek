@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.33 (CVS)
++ Bug 937996: Fix NPE when starting a scenario against the bot
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

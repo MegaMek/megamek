@@ -38,8 +38,7 @@ public class Client extends Panel
     private ObjectOutputStream  out = null;
 
     // some info about us and the server
-    public String                serverName;
-    public int                    max_players;
+    private boolean             connected = false;
     public int                    local_pn;
         
     // the actual game (imagine that)
@@ -79,8 +78,6 @@ public class Client extends Panel
 
         gameListeners = new Vector();
                 
-        serverName = null;
-        max_players = -1;
         local_pn = -1;
                 
         game = new Game();
@@ -130,6 +127,8 @@ public class Client extends Panel
      * The client has become disconnected from the server
      */
     protected void disconnected() {
+        connected = false;
+        pump = null;
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
         alert.show();
         System.exit(0);
@@ -153,13 +152,6 @@ public class Client extends Panel
             }
         }
         return count;
-    }
-    
-    /**
-     * Return the maximum number of players in the client.
-     */
-    public int getMaxPlayers() {
-        return max_players;
     }
     
     /**
@@ -327,10 +319,10 @@ public class Client extends Panel
      */
     public void retrieveServerInfo() {
         int retry = 50;
-        while(retry-- > 0 || serverName == null || local_pn == -1) {
+        while(retry-- > 0 && !connected) {
             synchronized(this) {
                 try {
-                    wait(10);
+                    wait(100);
                 } catch(InterruptedException ex) {
                     ;
                 }
@@ -596,8 +588,8 @@ public class Client extends Panel
             c = readPacket();
             // obey command
             switch(c.getCommand()) {
-            case Packet.COMMAND_SERVER_NAME :
-                serverName = (String)c.getObject(0);
+            case Packet.COMMAND_SERVER_GREETING :
+                connected = true;
                 send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
                 break;
             case Packet.COMMAND_LOCAL_PN :

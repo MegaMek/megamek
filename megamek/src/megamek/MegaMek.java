@@ -167,11 +167,11 @@ public class MegaMek
         hd = new HostDialog(frame);
         hd.show();
         // verify dialog data
-        if(hd.name == null || hd.serverName == null || hd.port == 0) {
+        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
         // start server
-        server = new Server(hd.serverName, hd.port);
+        server = new Server(hd.serverPass, hd.port);
         // initialize game
         client = new Client(frame, hd.name);
         // verify connection
@@ -248,11 +248,11 @@ public class MegaMek
         hd = new HostDialog(frame);
         hd.show();
         // verify dialog data
-        if(hd.name == null || hd.serverName == null || hd.port == 0) {
+        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
         // start server
-        server = new Server(hd.serverName, hd.port);
+        server = new Server(hd.serverPass, hd.port);
     
     // die, frame!
     frame.setVisible(false);
@@ -327,22 +327,23 @@ public class MegaMek
  * here's a quick class for the host new game diaglogue box
  */
 class HostDialog extends Dialog implements ActionListener {
-    public String            name, serverName;
+    public String            name;
+    public String            serverPass;
     public int                port;
     
-    protected Label            yourNameL, serverNameL, portL;
-    protected TextField        yourNameF, serverNameF, portF;
+    protected Label            yourNameL, serverPassL, portL;
+    protected TextField        yourNameF, serverPassF, portF;
     protected Button        okayB, cancelB;
     
     public HostDialog(Frame frame) {
         super(frame, "Host New Game...", true);
         
         yourNameL = new Label("Your Name:", Label.RIGHT);
-        serverNameL = new Label("Server Name:", Label.RIGHT);
+        serverPassL = new Label("Server Password:", Label.RIGHT);
         portL = new Label("Port:", Label.RIGHT);
         
         yourNameF = new TextField(Settings.lastPlayerName, 16);
-        serverNameF = new TextField(Settings.lastServerName, 16);
+        serverPassF = new TextField(Settings.lastServerPass, 16);
         portF = new TextField(Settings.lastServerPort + "", 4);
     
         okayB = new Button("Okay");
@@ -364,32 +365,39 @@ class HostDialog extends Dialog implements ActionListener {
         c.insets = new Insets(5, 5, 5, 5);
         
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(yourNameL, c);
         add(yourNameL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(yourNameF, c);
         add(yourNameF);
         
         c.gridwidth = 1;
-        gridbag.setConstraints(serverNameL, c);
-        add(serverNameL);
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(serverPassL, c);
+        add(serverPassL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(serverNameF, c);
-        add(serverNameF);
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(serverPassF, c);
+        add(serverPassF);
         
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(portL, c);
         add(portL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(portF, c);
         add(portF);
         
         
         c.ipadx = 20;    c.ipady = 5;
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
         add(okayB);
         
@@ -406,7 +414,7 @@ class HostDialog extends Dialog implements ActionListener {
         if(e.getActionCommand().equals("done")) {
             try {
                 name = yourNameF.getText();
-                serverName = serverNameF.getText();
+                serverPass = serverPassF.getText();
                 port = Integer.decode(portF.getText()).intValue();
             } catch(NumberFormatException ex) {
                 System.err.println(ex.getMessage());
@@ -414,7 +422,7 @@ class HostDialog extends Dialog implements ActionListener {
             
             // update settings
             Settings.lastPlayerName = name;
-            Settings.lastServerName = serverName;
+            Settings.lastServerPass = serverPass;
             Settings.lastServerPort = port;
 
             setVisible(false);
@@ -466,32 +474,39 @@ class ConnectDialog extends Dialog implements ActionListener {
         c.insets = new Insets(5, 5, 5, 5);
         
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(yourNameL, c);
         add(yourNameL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(yourNameF, c);
         add(yourNameF);
         
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(serverAddrL, c);
         add(serverAddrL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(serverAddrF, c);
         add(serverAddrF);
         
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(portL, c);
         add(portL);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(portF, c);
         add(portF);
         
         
         c.ipadx = 20;    c.ipady = 5;
         c.gridwidth = 1;
+        c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(okayB, c);
         add(okayB);
         

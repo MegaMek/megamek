@@ -22,7 +22,6 @@ could almost be combined:
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
-- connects/disconnects mid-game need to be handled better
 ? have server only send entity add/deletes in lounge, not entire list
 - double reports when firing phase happens and physical phase is skipped
 
@@ -30,13 +29,11 @@ board display:
 ? display something in exchange phase
 ? show dead mechs as rubble?
 ? some way to resize chat to be bigger or smaller
-? hex numbers are hard to read on dark tiles
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
 
 mech display:
 - many fields in movement panel are useless
 - extra heat capacity due to underwater heat sinks doesn't show up
-- weapons panel doesn't fit right under sun java
 
 mechs:
 - allow split criticals for large weapons in MEP files (or in general)
@@ -56,13 +53,11 @@ movement:
 - jump into level 1 water should need roll (bdee)
 
 weapon attacks:
-? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
 - eliminate leg weapons & kicks in level 1 water
 
 physical attacks:
-- clubbing
 - dfa should violate stacking
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
@@ -102,6 +97,9 @@ v next
 + changed button layout (again)... let's get the new buttons working!
 + inserted Derek Evans's fix for LOS floating-point precision errors
 + turn & torso twist buttons working
++ picking up tree clubs possible
++ /kick command added
++ server name changed to server password; used for /reset, /kick
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

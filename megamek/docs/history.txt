@@ -20,6 +20,7 @@ v 0.29.15 (CVS)
 + RFE 720869: Show (turret) "Locked" where "Prone" is shown.
 + RFE 712315: Update fuel tank explosion text.
 + Fixed an NPE in Game#removeEntity(int, int).
++ Partial bug 826249: Typed chat message is deleted only on escape.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

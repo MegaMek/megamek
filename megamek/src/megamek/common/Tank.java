@@ -28,6 +28,7 @@ public class Tank
     private boolean m_bTurretLocked = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
+    private int m_nJammedTurns = 0;
     private Mounted m_jammedGun = null;
     private boolean m_bImmobile = false;
     private boolean m_bImmobileHit = false;
@@ -154,7 +155,8 @@ public class Tank
     public void setJammedWeapon(Mounted m)
     {
         m_jammedGun = m;
-        m_jammedGun.setHit(true);
+        m_jammedGun.setJammed(true);
+        m_nJammedTurns = 1;
     }
     
     public void applyDamage() {
@@ -175,8 +177,12 @@ public class Tank
         
         // check for weapon jam
         if (m_jammedGun != null) {
-            m_jammedGun.setHit(false);
-            m_jammedGun = null;
+            if (m_nJammedTurns > 0) {
+                m_nJammedTurns--;
+            } else {
+                m_jammedGun.setJammed(false);
+                m_jammedGun = null;
+            }
         }
         
         // reset turret facing, if not jammed

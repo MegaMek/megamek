@@ -847,6 +847,7 @@ public class ChatLounge
                         + " Class: "
                         + unitClass
                         + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+                entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                        || (!client.game.getOptions().booleanOption("blind_drop")
                        && !client.game.getOptions().booleanOption("real_blind_drop"))) {
@@ -864,9 +865,8 @@ public class ChatLounge
                         + entity.calculateBattleValue()
                         + strTreeView
                         + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+                entityCorrespondance[listIndex++] = entity.getId();
             }
-
-            entityCorrespondance[listIndex++] = entity.getId();
         }
 
         // Enable the "Save Unit List..." and "Delete All"

@@ -1557,7 +1557,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLHeavyLargeLaser";
         weapon.mepName = "N/A";
         weapon.mtfName = "CLHeavyLargeLaser";
-        weapon.tdbName = "Clan Heavy Large Laser";
+        weapon.tdbName = "Clan Large Heavy Laser";
         weapon.heat = 18;
         weapon.damage = 16;
         weapon.toHitModifier = 1;
@@ -1581,7 +1581,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLHeavyMediumLaser";
         weapon.mepName = "N/A";
         weapon.mtfName = "CLHeavyMediumLaser";
-        weapon.tdbName = "Clan Heavy Medium Laser";
+        weapon.tdbName = "Clan Medium Heavy Laser";
         weapon.heat = 7;
         weapon.damage = 10;
         weapon.toHitModifier = 1;
@@ -1605,7 +1605,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLHeavySmallLaser";
         weapon.mepName = "N/A";
         weapon.mtfName = "CLHeavySmallLaser";
-        weapon.tdbName = "Clan Heavy Small Laser";
+        weapon.tdbName = "Clan Small Heavy Laser";
         weapon.heat = 3;
         weapon.damage = 6;
         weapon.toHitModifier = 1;
@@ -2250,7 +2250,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLATM3";
         weapon.mepName = "Clan ATM-3";
         weapon.mtfName = "CLATM3";
-        weapon.tdbName = "Clan ATM 3";
+        weapon.tdbName = "Clan ATM-3";
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
@@ -2273,7 +2273,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLATM6";
         weapon.mepName = "Clan ATM-6";
         weapon.mtfName = "CLATM6";
-        weapon.tdbName = "Clan ATM 6";
+        weapon.tdbName = "Clan ATM-6";
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -2296,7 +2296,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLATM9";
         weapon.mepName = "Clan ATM-9";
         weapon.mtfName = "CLATM9";
-        weapon.tdbName = "Clan ATM 9";
+        weapon.tdbName = "Clan ATM-9";
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 9;
@@ -2319,7 +2319,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLATM12";
         weapon.mepName = "Clan ATM-12";
         weapon.mtfName = "CLATM12";
-        weapon.tdbName = "Clan ATM 12";
+        weapon.tdbName = "Clan ATM-12";
         weapon.heat = 8;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 12;

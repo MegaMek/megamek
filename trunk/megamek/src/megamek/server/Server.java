@@ -8410,7 +8410,7 @@ implements Runnable, ConnectionHandler {
     //    damageCrew()
     //    explodeEquipment()
     //    game
-    public String applyCriticalHit( Entity en, int loc, CriticalSlot cs, 
+    public String applyCriticalHit( Entity en, int loc, CriticalSlot cs,
                                     boolean secondaryEffects ) {
         StringBuffer desc = new StringBuffer();
 
@@ -11371,6 +11371,19 @@ implements Runnable, ConnectionHandler {
         game.resetActions();
         changeToNextTurn();
     }
+    /**
+     * For all current artillery attacks in the air from this entity with this weapon, clear the list of spotters.  Needed because firing another round before first lands voids spotting.
+     * @param entityID int
+     */
+    private void clearArtillerySpotters(int entityID,int weaponID)  {
+        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
+            ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
+            if(aaa.getWR().waa.getEntityId()==entityID && aaa.getWR().waa.getWeaponId()==weaponID) {
+                aaa.setSpotters(new Vector());
+            }
+
+        }
+    }
     private boolean isEligibleForTargetingPhase(Entity entity) {
         for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
               Mounted mounted = (Mounted)i.nextElement();
@@ -11392,15 +11405,58 @@ implements Runnable, ConnectionHandler {
         // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
             ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
-            aaa.turnsTilHit--;
-            // TODO: should this be "<="???
-            if (aaa.turnsTilHit < 0) {
-                WeaponAttackAction waa = aaa.getWAA();
-                // TODO: move pre-treat to Targeting phase.
-                //       Resolve attack including any in-flight DRMs.
-                results.addElement(preTreatWeaponAttack(waa));
+
+            if (aaa.turnsTilHit <= 0) {
+                final WeaponResult wr = aaa.getWR();
+                Vector spottersBefore=aaa.getSpotters();
+                Vector validSpotters=new Vector();
+                //fetch possible spotters now
+                Enumeration spottersAfter=game.getSelectedEntities(new EntitySelector() {
+                    public int player =  wr.waa.getEntity(game).getOwnerId();
+                    public Targetable target = wr.waa.getTarget(game);
+                    public boolean accept(Entity entity) {
+                        if ( (player == entity.getOwnerId()) &&
+                            !((LosEffects.calculateLos(game, entity.getId(), target)).isBlocked()) && entity.isActive()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    }
+                }
+                    );
+                //If it's a spotter now AND it was a spotter then, then it's valid
+                for(;spottersAfter.hasMoreElements();) {
+                    Entity e=(Entity)spottersAfter.nextElement();
+                    if(spottersBefore.contains(e)) {
+                        validSpotters.add(e);
+                    }
+                }
+                //Out of any valid spotters, pick the best.
+                Entity bestSpotter=null;
+                for(Enumeration j = validSpotters.elements();j.hasMoreElements();) {
+                    Entity e=(Entity)j.nextElement();
+                    if(bestSpotter==null || e.crew.getGunnery()<bestSpotter.crew.getGunnery()) {
+                        bestSpotter=e;
+                    }
+                }
+                //If at least one valid spotter, then get the benefits thereof.
+                if(bestSpotter!=null) {
+                    int mod=(bestSpotter.crew.getGunnery()-4)/2;
+
+
+                    wr.toHit.addModifier(mod,"Spotting modifier");
+                }
+                //HACK...but I gotta know HERE whether it hits, for purposes of adjusting fire.
+                if(wr.roll >= wr.toHit.getValue()) {
+                    wr.waa.getEntity(game).aTracker.setModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),ToHitData.AUTOMATIC_SUCCESS,wr.waa.getTarget(game).getPosition());
+                } else {
+                    wr.waa.getEntity(game).aTracker.setModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),wr.waa.getEntity(game).aTracker.getModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),wr.waa.getTarget(game).getPosition())-1,wr.waa.getTarget(game).getPosition());
+                }
+                results.addElement(wr);
                 attacks.addElement( aaa );
             }
+            aaa.turnsTilHit--;
         }
 
         // loop through weapon results and resolve
@@ -11417,8 +11473,6 @@ implements Runnable, ConnectionHandler {
                 ( (ArtilleryAttackAction) i.nextElement() );
         }
 
-        // and clear the attacks Vector
-        game.resetActions();
 
     }
 
@@ -11427,12 +11481,30 @@ implements Runnable, ConnectionHandler {
         ArtilleryAttackAction aaa;
         for (Enumeration i = game.getActions();i.hasMoreElements();) {
             EntityAction ea = (EntityAction) i.nextElement();
-            Entity entity = game.getEntity(ea.getEntityId());
+            final Entity firingEntity = game.getEntity(ea.getEntityId());
             if (ea instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) ea;
-                // TODO: Pre-treat this attack (i.e. heat and ammo use).
-                //       Also record any entity-state DRMs.
-                aaa = new ArtilleryAttackAction(waa, game);
+                final WeaponAttackAction waa = (WeaponAttackAction) ea;
+                WeaponResult wr = preTreatWeaponAttack(waa);
+                clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
+                Enumeration spotters = game.getSelectedEntities(new EntitySelector() {
+                    public int player = firingEntity.getOwnerId();
+                    public Targetable target = waa.getTarget(game);
+                    public boolean accept(Entity entity) {
+                        if ( (player == entity.getOwnerId()) &&
+                            !((LosEffects.calculateLos(game, entity.getId(), target)).isBlocked()) && entity.isActive()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    }
+                }
+                    );
+                Vector spottersVector=new Vector();
+                for(;spotters.hasMoreElements();) {
+                    spottersVector.add((spotters.nextElement()));
+                }
+                aaa = new ArtilleryAttackAction(wr, game,spottersVector);
                 game.addArtilleryAttack(aaa);
             }
         }

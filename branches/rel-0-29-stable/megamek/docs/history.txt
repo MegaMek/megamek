@@ -113,12 +113,15 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-5 (10-19-03, 2:15 am)
+v 0.29-stable-5 (10-28-03, 7:00 pm)
 + Bug 825739: Attempt to squash InputContext exception in Client#die().
 + Bug 824473: Retain building damage from saved games and restarts.
 + Bugs 798306, 822293, 825064: Restore Entity & Owner in Entity#setGame.
 + RFE 787056: Set the default Mech Display window width to 235.
 + Bugs 787045, 810017: Fix ammo in Tyr Infantry Support Tank.
++ Bug 780999: Streak message should be "failed to lock", not "missed".
++ Bug 753507: Append the victory report to the server log.
++ Bug 744623: Report when the pilot bakes to death, and destroy the Mek.
 
 v 0.29-stable-4 (09-30-03, 4:30 pm)
 + Bug 802741: "check false" should *not* be added as a modifier.

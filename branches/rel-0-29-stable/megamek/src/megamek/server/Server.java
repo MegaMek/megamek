@@ -998,6 +998,8 @@ implements Runnable {
                 break;
             case Game.PHASE_VICTORY :
                 prepareVictoryReport();
+                log.append( "\n" );
+                log.append( roundReport.toString() );
                 send(createFullEntitiesPacket());
                 send(createReportPacket());
                 send(createEndOfGamePacket());
@@ -4086,9 +4088,15 @@ implements Runnable {
         // do we hit?
         boolean bMissed = false;
         if (wr.roll < toHit.getValue()) {
-            // miss
+            // Report the miss.
             bMissed = true;
-            phaseReport.append("misses.\n"); 
+            if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+                phaseReport.append( "fails to achieve lock.\n" );
+            } else {
+                phaseReport.append("misses.\n"); 
+            }
+
+            // Report any AMS action.
             if (wr.amsShotDown > 0) {
                 phaseReport.append( "\tAMS activates, firing " )
                     .append( wr.amsShotDown )
@@ -6148,10 +6156,11 @@ implements Runnable {
                     damageCrew(entity, 1);
                 }
                 // The pilot may have just expired.
-                if ( entity.crew.isDead() ) {
+                if ( entity.crew.isDead() || entity.crew.isDoomed() ) {
                     roundReport.append( "*** " )
                         .append( entity.getDisplayName() )
-                        .append( " PILOT BAKES TO DEATH! ***" );
+                        .append( " PILOT BAKES TO DEATH! ***" )
+                        .append( destroyEntity(entity, "crew death", true) );
                 }
             }
 
@@ -6336,7 +6345,6 @@ implements Runnable {
                 en.crew.setRollsNeeded(en.crew.getRollsNeeded() + damage);
             } else {
                 en.crew.setDoomed(true);
-                en.crew.setRollsNeeded(0);
                 s += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
             }
         }

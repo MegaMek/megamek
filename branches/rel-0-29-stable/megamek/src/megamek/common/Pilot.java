@@ -109,7 +109,9 @@ public class Pilot
     }
     
     public void setRollsNeeded(int rollsNeeded) {
-        this.rollsNeeded = rollsNeeded;
+        if ( !doomed ) {
+            this.rollsNeeded = rollsNeeded;
+        }
     }
     
     public boolean isKoThisRound() {

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -2142,7 +2142,15 @@ public abstract class Entity
         final int entityId = getId();
         
         PilotingRollData roll;
-        
+
+        // Pilot dead?
+        if ( getCrew().isDead() || getCrew().isDoomed() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
+        // pilot awake?
+        else if (!getCrew().isActive()) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+        }
         // gyro operational?
         if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
@@ -2158,14 +2166,6 @@ public abstract class Entity
         // entity shut down?
         if (isShutDown()) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
-        }
-        // Pilot dead?
-        if ( getCrew().isDead() ) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
-        }
-        // pilot awake?
-        else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
         }
         
         // okay, let's figure out the stuff then

@@ -294,6 +294,14 @@ public class Infantry
      * Infantry have no secondary facing.
      */
     public int clipSecondaryFacing( int dir ) { return -1; }
+    
+    /**
+     * Infantry have no piloting skill (set to 5 for BV purposes)
+     */
+    public void setCrew(Pilot p) {
+        super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
+    }
+    
 
     /**
      * Infantry have only one speed.
@@ -607,72 +615,87 @@ public class Infantry
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
+        
+        int nBV = 0;
+        
         // BV is factor of movement type and weapon type.
         switch ( this.weapons ) {
         case INF_RIFLE:
             if ( INF_LEG == this.getMovementType() )
-                return 23;
+                nBV = 23;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 28;
+                nBV = 28;
             else if ( INF_JUMP == this.getMovementType() )
-                return 29;
+                nBV = 29;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         case INF_MG:
             if ( INF_LEG == this.getMovementType() )
-                return 31;
+                nBV = 31;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 39;
+                nBV = 39;
             else if ( INF_JUMP == this.getMovementType() )
-                return 37;
+                nBV = 37;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         case INF_FLAMER:
             if ( INF_LEG == this.getMovementType() )
-                return 28;
+                nBV = 28;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 35;
+                nBV = 35;
             else if ( INF_JUMP == this.getMovementType() )
-                return 32;
+                nBV = 32;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         case INF_LASER:
             if ( INF_LEG == this.getMovementType() )
-                return 37;
+                nBV = 37;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 42;
+                nBV = 42;
             else if ( INF_JUMP == this.getMovementType() )
-                return 41;
+                nBV = 41;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         case INF_SRM:
             if ( INF_LEG == this.getMovementType() )
-                return 60;
+                nBV = 60;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 70;
+                nBV = 70;
             else if ( INF_JUMP == this.getMovementType() )
-                return 71;
+                nBV = 71;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         case INF_LRM:
             if ( INF_LEG == this.getMovementType() )
-                return 56;
+                nBV = 56;
             else if ( INF_MOTORIZED == this.getMovementType() )
-                return 75;
+                nBV = 75;
             else if ( INF_JUMP == this.getMovementType() )
-                return 87;
+                nBV = 87;
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
+            break;
         default:
             throw new IllegalArgumentException
                 ( "Unknown infantry weapon: " + this.weapons );
         }
+        
+        // adjust for crew
+        double pilotFactor = crew.getBVSkillMultiplier();
+        
+        return (int)(pilotFactor * (double)nBV);
+        
 
     } // End public int calculateBattleValue()
 

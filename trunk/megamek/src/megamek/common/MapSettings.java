@@ -364,7 +364,7 @@ public class MapSettings implements Serializable {
 	if (maxCraters < minCraters) {
 	    maxCraters = minCraters;
 	}
-	if (algorthmToUse < 0) {
+	if (algorithmToUse < 0) {
 	    algorithmToUse = 0;
 	}
 	if (algorithmToUse > 2) {

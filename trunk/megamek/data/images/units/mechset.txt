@@ -79,8 +79,8 @@ chassis "Griffin" "griffin.gif"
 chassis "Stalker" "stalker.gif"
 chassis "Phoenix Hawk" "phoenixhawk.gif"
 chassis "Javelin" "javelin0.gif"
-chassis "INF_M-*" "motorized_infantry.gif"
-chassis "INF_J-*" "jump_infantry.gif"
+chassis "Motorized Platoon" "motorized_infantry.gif"
+chassis "Jump Platoon" "jump_infantry.gif"
 
 # by grfx_slade
 chassis "Stinger" "stinger.gif"

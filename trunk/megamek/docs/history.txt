@@ -125,6 +125,8 @@ v 0.28.18-dev (CVS)
      arrow not displaying).
 + Bug 736534: Fixed Scenario Loading to use new initiative code.
 + Fixed bug preventing Systems Mode dropdown from showing current choice.
++ Bug 739057: Fixed MASC rolls after first turn. 
++ Bug 737972: 3 Infantry per 1 Mech should work now.
 
 v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move

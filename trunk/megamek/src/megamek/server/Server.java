@@ -897,8 +897,9 @@ implements Runnable {
             int remaining = game.infantryLeft(playerId);
             int moreInfTurns = Math.min(Game.INF_MOVE_MULTI - 1, remaining); 
             for (int i = 0; i < moreInfTurns; i++) {
+		
                 GameTurn newTurn = new GameTurn.OnlyInfantryTurn(playerId);
-                game.insertTurn(newTurn);
+                game.insertNextTurn(newTurn);
                 turnsChanged = true;
             }
         }

@@ -85,6 +85,9 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ a few more hovercraft movement fixes
+
 v 0.26.10 (08-16-02, 10pm)
 + big horkin' vehicle patch.  Ground vehicles are mostly implemented
 + hovercrafts behave correctly on water

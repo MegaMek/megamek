@@ -11334,7 +11334,7 @@ implements Runnable, ConnectionHandler {
      * Sets game options, providing that the player has specified the password
      * correctly.
      *
-     * @returns true if any options have been successfully changed.
+     * @return true if any options have been successfully changed.
      */
     private boolean receiveGameOptions(Packet packet, int connId) {
         Player player = game.getPlayer( connId );
@@ -11904,6 +11904,9 @@ implements Runnable, ConnectionHandler {
     /**
      * Makes one slot of inferno ammo, determined
      * by certain rules, explode on a mech.
+     * 
+     * @param entity  The <code>Entity</code> that should suffer an 
+     *                inferno ammo explosion.
      */
     private String explodeInfernoAmmoFromHeat(Entity entity) {
         int damage = 0;
@@ -12690,6 +12693,10 @@ implements Runnable, ConnectionHandler {
     private boolean isEligibleForOffboard(Entity entity) {
         return false;//only things w/ tag are, and we don't yet have TAG.
     }
+    
+    /**
+     * resolve Indirect Artillery Attacks for this turn
+     */
     private void resolveIndirectArtilleryAttacks()  {
         Vector results = new Vector(game.getArtillerySize());
         Vector attacks = new Vector(game.getArtillerySize());
@@ -12801,10 +12808,11 @@ implements Runnable, ConnectionHandler {
             game.removeArtilleryAttack
                 ( (ArtilleryAttackAction) i.nextElement() );
         }
-
-
     }
 
+    /**
+     * enqueues any indirect artillery attacks made this turn
+     */
     private void enqueueIndirectArtilleryAttacks() {
         resolveAllButWeaponAttacks();
         ArtilleryAttackAction aaa;
@@ -12855,6 +12863,7 @@ implements Runnable, ConnectionHandler {
         }
         game.resetActions();
     }
+    
     /**
      * Credits a Kill for an entity, if the target got killed.
      * 
@@ -12873,7 +12882,7 @@ implements Runnable, ConnectionHandler {
      * @param aaa The <code>AbstractAttackAction</code> of the physical attack 
      *            to pre-treat
      * 
-     * @return    The <code>PhysicalResult</code> of that attaction, including
+     * @return    The <code>PhysicalResult</code> of that action, including
      *            possible damage.
      */     
     private PhysicalResult preTreatPhysicalAttack(AbstractAttackAction aaa) {
@@ -12951,6 +12960,13 @@ implements Runnable, ConnectionHandler {
         return pr;
     }
     
+    /**
+     * Resolve a Physical Attack
+     * 
+     * @param pr  The <code>PhysicalResult</code> of the physical attack
+     * @param cen The <code>int</code> Entity Id of the entit's whose
+     *            physical attack was last resolved
+     */    
     private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
         AbstractAttackAction aaa = pr.aaa;
         int roll = pr.roll;
@@ -13014,6 +13030,13 @@ implements Runnable, ConnectionHandler {
         }
     }
     
+    /**
+     * Do any extreme gravity PSRs the entity gets due to its movement
+     * 
+     * @param entity The <code>Entity</code> to check.
+     * @param step   The last <code>MoveStep</code> of this entity
+     * @param curPos The current <code>Coords</code> of this entity
+     */    
     private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
         HitData hit;
         PilotingRollData rollTarget;
@@ -13121,28 +13144,37 @@ implements Runnable, ConnectionHandler {
         }
     }
     
+    /**
+     * Damage the inner structure of a mech's leg / a tank's front.
+     * This only happens when the Entity fails an extreme Gravity PSR.
+     * @param entity The <code>Entity</code> to damage.
+     * @param damage The <code>int</code> amount of damage.
+     */
     private void doExtremeGravityDamage(Entity entity, int damage) {
         HitData hit;
         if (entity instanceof BipedMech) {
-            hit = new HitData (Mech.LOC_LLEG);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-            hit = new HitData (Mech.LOC_RLEG);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-        } else if (entity instanceof QuadMech) {
-            hit = new HitData (Mech.LOC_LLEG);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-            hit = new HitData (Mech.LOC_RLEG);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-            hit = new HitData (Mech.LOC_LARM);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-            hit = new HitData (Mech.LOC_RARM);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            for (int i = 6; i<=7; i++) {
+                hit = new HitData (i);
+                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            }
+        } if (entity instanceof QuadMech) {
+            for (int i = 4; i<=7; i++) {
+                hit = new HitData (i);
+                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            }
         } else if (entity instanceof Tank) {
             hit = new HitData (Tank.LOC_FRONT);
             phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));            
         }
-        
     }
+    
+    /**
+     * Eject an Entity.
+     * @param entity    The <code>Entity</code> to eject.
+     * @param autoEject The <code>boolean</code> state of the entity's auto-
+     *                  ejection system
+     * @return a <code>String</code> description for the serverlog.
+     */
     public String ejectEntity(Entity entity, boolean autoEject) {
         
         StringBuffer desc = new StringBuffer();
@@ -13275,6 +13307,10 @@ implements Runnable, ConnectionHandler {
         return desc.toString();
     }
     
+    /**
+     * Checks if ejected Mechwarriors are eligible to be picked up, 
+     * and if so, captures them or picks them up
+     */
     private void resolveMechWarriorPickUp() {
         // fetch all mechWarriors that are not picked up
         Enumeration mechWarriors =
@@ -13364,6 +13400,9 @@ implements Runnable, ConnectionHandler {
         }
     }
     
+    /**
+     * let all Entities make their "break-free-of-swamp-stickyness" PSR
+     */
     private void doTryUnstuck() {
         Enumeration stuckEntities = 
             game.getSelectedEntities( new EntitySelector() {

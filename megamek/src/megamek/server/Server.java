@@ -5274,7 +5274,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // compute to-hit
-        wr.toHit = WeaponAttackAction.toHit(game, waa);
+        wr.toHit = waa.toHit(game);
 
         // roll dice
         wr.roll = Compute.d6(2);

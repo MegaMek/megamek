@@ -1165,7 +1165,7 @@ public class Compute
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         System.out.println("Computing expected damage for " + attacker.getShortName() + " " +
                 weapon.getName());
-        ToHitData hitData = WeaponAttackAction.toHit(g, waa);
+        ToHitData hitData = waa.toHit(g);
         if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
             return 0.0f;
         }

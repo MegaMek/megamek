@@ -117,12 +117,12 @@ public class WeaponAttackAction
     	return otherAttackInfo;
     }
 
-    public static ToHitData toHit(Game game, WeaponAttackAction waa) {
-        return WeaponAttackAction.toHit(game, waa.getEntityId(),
-                           game.getTarget(waa.getTargetType(), waa.getTargetId()),
-                           waa.getWeaponId(),
-                           waa.getAimedLocation(),
-                           waa.getAimingMode());
+    public ToHitData toHit(Game game) {
+        return WeaponAttackAction.toHit(game, getEntityId(),
+                           game.getTarget(getTargetType(), getTargetId()),
+                           getWeaponId(),
+                           getAimedLocation(),
+                           getAimingMode());
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId) {

@@ -72,6 +72,8 @@ VERSION HISTORY:
 v CVS
 + applied HentaiZonga's patch for C3, RAC unjamming and targetting hexes
 + 639358: jumping over fire hexes does not raise mech heat
++ 636311: infantry are destroyed by fire too
++ 636311: fire kills vehicles & infantry under the correct circumstances
 
 v 0.27.7 (11-15-02, 11:30pm)
 + Applied skids patch to CVS tree.

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 13th August 2004.  MegaMek Version 0.22.45. Best viewed in 1024x768.
+The Great MegaMek Feature list. 31st August 2004.  MegaMek Version 0.22.48. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -60,8 +60,8 @@ Movement (Actions)
 
 Movement (Stacking)		
 
-- Stacking			Yes		Only one unit per hex during deployment phase.
-- Accidental Violation		Yes
+- Stacking			Yes		None
+- Accidental Violation		Yes 	None
 
 Movement (Pavement)
 
@@ -83,7 +83,7 @@ Combat (Line Of Sight)
 - Elevation			Yes		None
 - Intervening Terrain		Yes		None
 - Partial Cover			Yes		None
-- Water Hexes			
+- Water Hexes			Yes 	None
 
 Weapon Attacks
 
@@ -155,7 +155,7 @@ Buildings (Movement Effects)
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
-- Attacking Units inside Bldgs	Yes             None
+- Attacking Units inside Bldgs	Yes 	None
 - Combat Within Buildings	Partial		Needs to be debugged.
 - Collapse			Partial		Units may not climb buildings.
 
@@ -194,7 +194,7 @@ Infantry (Movement)
 
 - Movement			Yes		Infantry cannot change floors in a building
 - Infantry Carriers		Yes		When Deploying infantry carriers, select "Load" to start Infantry inside.
-- Mechanised Battle Armor	Yes		When Delpoying OmniMechs, select "Load" to start BA squad attached to a Mech.
+- Mechanised Battle Armor	Yes		When Deploying OmniMechs, select "Load" to start BA squad attached to a Mech.
 
 Infantry (Combat)
 

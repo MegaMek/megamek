@@ -85,27 +85,27 @@ public class TdbFile implements MechLoader {
     private static final String  FALSE   = "False";
     private static final String  DOUBLE   = "Double";
     private static final String  TRUE_LOWER    = "true";
-    
+
     private String creatorName = "Unknown";
     private String creatorVersion = "Unknown";
     private String name;
     private boolean isOmni = false;
     private String model;
     private String variant;
-    
+
     private String chassisConfig;
     private String techBase;
     private static final String techYear = "3068"; // TDB doesn't have era
     private String rulesLevel;
     private String LAMTonnage;
-    
+
     private String tonnage;
-    
+
     private String heatSinks;
     private boolean dblSinks;
     private String walkMP;
     private String jumpMP;
-    
+
     private int larmArmor;
     private int rarmArmor;
     private int ltArmor;
@@ -117,20 +117,20 @@ public class TdbFile implements MechLoader {
     private int ltrArmor;
     private int rtrArmor;
     private int ctrArmor;
-    
+
     private String[][][] critData;
     private boolean isRearMounted[];
     private boolean isSplit[];
-    
+
     private Hashtable hSharedEquip = new Hashtable();
     private Vector vSplitWeapons = new Vector();
-    
+
     /** Creates new TdbFile */
     public TdbFile(InputStream is) throws EntityLoadingException {
         try {
             root = TinyParser.parseXML(is);
         }
-        catch (ParseException e) { 
+        catch (ParseException e) {
             throw new EntityLoadingException("   Failure to parse XML (TinyParser exception)");
         }
         // Arbitrarily sized static arrays suck, or so a computer
@@ -165,7 +165,7 @@ public class TdbFile implements MechLoader {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
                 parseNode((ParsedXML)children.nextElement());
-            } 
+            }
         }
     }
 
@@ -186,7 +186,7 @@ public class TdbFile implements MechLoader {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
                 parseCreatorNode((ParsedXML)children.nextElement());
-            } 
+            }
         }
         // Other tags (that don't match any if blocks above)
         //  are simply ignored.
@@ -257,7 +257,7 @@ public class TdbFile implements MechLoader {
             } else {
                 isRearMounted[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = false;
             }
-            if (node.getAttribute(IS_SPREAD).equals(TRUE)) {            
+            if (node.getAttribute(IS_SPREAD).equals(TRUE)) {
                 isSplit[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = true;
             } else {
                 isSplit[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = false;
@@ -342,7 +342,7 @@ public class TdbFile implements MechLoader {
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;
-            
+
             if (creatorName == "Unknown"
                 || !creatorName.equals("The Drawing Board")
                 || Integer.parseInt(creatorVersion) != 2) {
@@ -436,7 +436,7 @@ public class TdbFile implements MechLoader {
             if (mech.isClan()) {
                 mech.addClanCase();
             }
-            
+
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
 
@@ -449,7 +449,7 @@ public class TdbFile implements MechLoader {
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
         }
     }
-    
+
     private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
@@ -462,7 +462,7 @@ public class TdbFile implements MechLoader {
                 }
             }
         }
-        
+
         // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
 
@@ -470,7 +470,7 @@ public class TdbFile implements MechLoader {
             if (mech.getCritical(loc, i) != null) {
                 continue;
             }
-            
+
             // parse out and add the critical
             String critName = critData[loc][i][0];
             boolean rearMounted = true;
@@ -528,7 +528,7 @@ public class TdbFile implements MechLoader {
                         hashPrefix = "IS ";
                         critName = critName.substring(5);
                     } else if (mech.isClan()) {
-                        //assume equipment is clan because mech is clan 
+                        //assume equipment is clan because mech is clan
                         hashPrefix = "Clan ";
                     } else {
                         //assume equipment is inner sphere
@@ -542,8 +542,8 @@ public class TdbFile implements MechLoader {
                         Mounted m = (Mounted)hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, 
-                                    mech.getEquipmentNum(m), etype.isHittable()));
+                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
+                                                                   mech.getEquipmentNum(m), etype.isHittable()));
                             continue;
                         }
                         else {
@@ -558,8 +558,8 @@ public class TdbFile implements MechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = (Mounted)vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc)) 
-                                        && m.getType() == etype) {
+                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc))
+                                && m.getType() == etype) {
                                 bFound = true;
                                 break;
                             }
@@ -581,7 +581,7 @@ public class TdbFile implements MechLoader {
                             vSplitWeapons.addElement(m);
                         }
                         mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                mech.getEquipmentNum(m), etype.isHittable()));
+                                                               mech.getEquipmentNum(m), etype.isHittable()));
                     }
                     else {
                         mech.addEquipment(etype, loc, rearMounted);

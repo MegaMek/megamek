@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.43
+v0.29.43 (CVS)
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

@@ -125,6 +125,7 @@ v 0.29.9-dev
 + Bug 796081: updated "BMRr Feature List.txt" to indicate how to face off-board
 + Fixed repeating "Player X disconnected" problem
 + Bug 794377: fixed main menu not reappearing when client disconnected
++ Fixed MSJDK compatibility issues
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

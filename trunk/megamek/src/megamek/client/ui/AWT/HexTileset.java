@@ -317,7 +317,7 @@ public class HexTileset {
         private Image image;
         private java.util.Vector images;
         private java.util.Vector filenames;
-		private java.util.Random r;
+    private java.util.Random r;
         
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;
@@ -342,26 +342,26 @@ public class HexTileset {
             if (images == null) {
                 loadImage(comp);
             }
-			if (images.size() > 1) {
-				int rand = r.nextInt(images.size());
-				return (Image) images.elementAt(rand);
-			} else {
-				return (Image) images.firstElement();
-			}
-/*			if (image == null) {
-				return image    loadImage(comp);
-			}
-			return image;
+      if (images.size() > 1) {
+        int rand = (int)(r.nextDouble() * (double)images.size());
+        return (Image) images.elementAt(rand);
+      } else {
+        return (Image) images.firstElement();
+      }
+/*      if (image == null) {
+        return image    loadImage(comp);
+      }
+      return image;
 */
-		}
+    }
         
         public void loadImage(Component comp) {
-        	images = new java.util.Vector();
-        	for (int i = 0; i < filenames.size(); i++) {
-        		String filename = (String) filenames.elementAt(i);
-        		images.addElement(comp.getToolkit().getImage("data/hexes/" + filename));
-        	}
-//			image = comp.getToolkit().getImage("data/hexes/" + imageFile);
+          images = new java.util.Vector();
+          for (int i = 0; i < filenames.size(); i++) {
+            String filename = (String) filenames.elementAt(i);
+            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename));
+          }
+//      image = comp.getToolkit().getImage("data/hexes/" + imageFile);
         }
     }
 }

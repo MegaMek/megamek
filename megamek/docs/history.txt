@@ -76,6 +76,8 @@ v CVS
 + Added Kai's fire patch (only working for missed shots, presently)
 + 633352: fixed NullPointerException when deploying during double blind
 + 632830: fixed typo causing small south deployment zone
++ inf_move_multi no longer messes up deployment phase
++ deployment phase works properly after /reset or victory
 
 v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.

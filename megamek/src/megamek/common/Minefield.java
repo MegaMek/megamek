@@ -1,3 +1,17 @@
+/**
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it 
+ *  under the terms of the GNU General Public License as published by the Free 
+ *  Software Foundation; either version 2 of the License, or (at your option) 
+ *  any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful, but 
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *  for more details.
+ */
+
 package megamek.common;
 
 import java.io.*;
@@ -10,9 +24,11 @@ public class Minefield implements Serializable, Cloneable {
 
 	public static final int TRIGGER_NONE 			= 0;
 	
-	public static final int CLEAR_NUMBER_WEAPON				= 5;
-	public static final int CLEAR_NUMBER_INFANTRY			= 10;
-	public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT	= 5;
+        public static final int CLEAR_NUMBER_WEAPON             = 5;
+        public static final int CLEAR_NUMBER_INFANTRY           = 10;
+        public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT  = 5;
+        public static final int CLEAR_NUMBER_SWEEPER            = 6;
+        public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT   = 2;
 
 	public static final int TO_HIT_SIDE 			= ToHitData.SIDE_FRONT;
 	public static final int TO_HIT_TABLE 			= ToHitData.HIT_KICK;

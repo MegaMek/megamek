@@ -4043,11 +4043,31 @@ implements Runnable {
     		for (int j = 0; j < temp.size(); j++) {
     			Entity ent = (Entity) temp.elementAt(j);
     			int roll = Compute.d6(2);
-    			phaseReport.append(ent.getShortName() + " attempts to clear mines in hex " + pos.getBoardNum() + ", rolls " + roll);
-    			if (roll >= Minefield.CLEAR_NUMBER_INFANTRY) {
+			int clear = Minefield.CLEAR_NUMBER_INFANTRY;
+			int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
+
+			// Does the entity has a minesweeper?
+			Enumeration equip = ent.getMisc();
+			while ( equip.hasMoreElements() ) {
+			    Mounted mounted = (Mounted) equip.nextElement();
+			    if ( mounted.getType()
+				 .hasFlag(MiscType.F_MINESWEEPER) ) {
+				clear = Minefield.CLEAR_NUMBER_SWEEPER;
+				boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
+				break;
+			    }
+			}
+    			phaseReport.append( ent.getShortName() )
+			    .append( " attempts to clear mines in hex " )
+			    .append( pos.getBoardNum() )
+			    .append( "; needs a " )
+			    .append( clear )
+			    .append( ", rolls " )
+			    .append( roll );
+    			if (roll >= clear) {
     				phaseReport.append(" and is successful!\n");
     				cleared = true;
-    			} else if (roll <= Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT) {
+    			} else if (roll <= boom) {
     				phaseReport.append(" and accidently sets it off!\n");
     				accident = true;
     			} else {

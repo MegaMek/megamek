@@ -153,6 +153,29 @@ public class Server
     }
     
     /**
+     * Shuts down the server.
+     */
+    public void die() {
+        // kill thread accepting new connections
+        connector = null;
+        
+        // kill pending connnections
+        for (Enumeration i = connectionsPending.elements(); i.hasMoreElements();) {
+            final Connection conn = (Connection)i.nextElement();
+            conn.die();
+        }
+        connectionsPending = null;
+        
+        // kill active connnections
+        for (Enumeration i = connections.elements(); i.hasMoreElements();) {
+            final Connection conn = (Connection)i.nextElement();
+            conn.die();
+        }
+        connections = null;
+        connectionIds = null;
+    }
+    
+    /**
      * Returns an enumeration of all the command names
      */
     public Enumeration getAllCommandNames() {

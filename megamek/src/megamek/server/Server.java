@@ -2567,7 +2567,7 @@ public class Server
             }
             int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
             CriticalSlot cs = en.getCritical(loc, slot);
-            if (cs != null && cs.isHitable()) {
+            if (cs == null || !cs.isHitable()) {
                 continue;
             }
             cs.setHit(true);

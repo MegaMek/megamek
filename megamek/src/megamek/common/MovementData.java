@@ -31,8 +31,12 @@ public class MovementData
 	public static final int		STEP_GET_UP			= 5;
 	public static final int		STEP_GO_PRONE		= 6;
 	public static final int		STEP_START_JUMP 	= 7;
+	public static final int		STEP_CHARGE      	= 8;
+	public static final int		STEP_DFA         	= 9;
     
     private Vector steps = new Vector();
+    
+    private transient boolean compiled = false;
 	
 	/**
 	 * Generates a new, empty, movement data object.
@@ -58,6 +62,14 @@ public class MovementData
 	public int length() {
 		return steps.size();
 	}
+    
+    public boolean isCompiled() {
+        return compiled;
+    }
+    
+    public void setCompiled(boolean compiled) {
+        this.compiled = compiled;
+    }
 	
 	/**
 	 * Add a new step to the movement data.
@@ -86,6 +98,7 @@ public class MovementData
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             this.steps.addElement(i.nextElement());
         }
+        compiled = false;
 	}
 	
 	/**
@@ -153,6 +166,25 @@ public class MovementData
             }
         }
         return facing;
+    }
+    
+    /**
+     * Removes impossible steps, if compiled.  If not compiled,
+     * does nothing.
+     */
+    public void clipToPossible() {
+        if (!compiled) {
+            return;
+        }
+        // hopefully there's no impossible steps in the middle of possible ones
+        Vector goodSteps = new Vector();
+        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+            final Step step = (Step)i.nextElement();
+            if (step.getType() != Entity.MOVE_ILLEGAL) {
+                goodSteps.addElement(step);
+            }
+        }
+        
     }
 	
     /**

@@ -217,6 +217,8 @@ public class Compute
                 break;
 			case MovementData.STEP_FORWARDS :
 			case MovementData.STEP_BACKWARDS :
+			case MovementData.STEP_CHARGE :
+			case MovementData.STEP_DFA :
                 // step forwards or backwards
                 if (step.getType() == MovementData.STEP_FORWARDS) {
                     curPos = curPos.translated(curFacing);
@@ -345,6 +347,7 @@ public class Compute
             }
         }
         
+        md.setCompiled(true);
 	}
     
     /**
@@ -445,7 +448,7 @@ public class Compute
             && Math.abs(srcHex.getElevation() - destHex.getElevation()) > 2) {
             return false;
         }
-        // units moving backwards may not change elevation levels (that's mean)
+        // units moving backwards may not change elevation levels (I think this rule's dumb)
         if (stepType == MovementData.STEP_BACKWARDS
             && srcHex.getElevation() != destHex.getElevation()) {
             return false;
@@ -462,8 +465,10 @@ public class Compute
             && srcHex.getTerrainType() == Terrain.WATER) {
             return false;
         }
-        // can't move into a hex with an enemy unit
+        // can't move into a hex with an enemy unit, unless charging or jumping
         if (entityMoveType != Entity.MOVE_JUMP
+            && stepType != MovementData.STEP_CHARGE
+            && stepType != MovementData.STEP_DFA
             && game.getEntity(dest) != null
             && !game.getEntity(dest).getOwner().equals(entity.getOwner())) {
             return false;

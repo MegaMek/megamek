@@ -61,6 +61,9 @@ public class Game implements Serializable
     // have the entities been deployed?
     private boolean m_bHasDeployed = false;
     
+	private int windDirection;
+	private String stringWindDirection;
+	
     /**
      * Constructor
      */
@@ -379,6 +382,21 @@ public class Game implements Serializable
      */
     public Entity getNextEntity(Player player, int start) {
         return getEntity(getNextEntityNum(player, start));
+    }
+
+
+    public void determineWindDirection() {
+        windDirection = Compute.d6(1)-1;
+        String[] dirNames = {"North", "Northeast", "Southeast", "South", "Southwest", "Northwest"};
+        stringWindDirection = dirNames[windDirection];
+    }
+    
+    public int getWindDirection() {
+        return windDirection;
+    }
+    
+    public String getStringWindDirection() {
+        return stringWindDirection;
     }
     
     /**

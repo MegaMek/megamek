@@ -72,6 +72,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ Added Kai's fire patch (only working for missed shots, presently)
+
 v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.
 + Add error-checking to Entity#elevation().

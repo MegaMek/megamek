@@ -5,6 +5,7 @@ v0.29.41 (CVS)
 + Track Kills for use in MegamekNET and in the end-of-game report.
 + Bug 991967: Magshot Gauss Rifles should not be able to start fires.
 + Bug 992597: -5 and below hexes with rubble no longer corrupted
++ Bug 974157: Splash screen now closes for the Bot
 
 v0.29.40 (2004-07-11 6:15pm)
 + Bug 985884: Possible fix for this NPE bug.

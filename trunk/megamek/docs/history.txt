@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.3-dev (CVS)
+v 0.29.3 (06-14-03, 9pm)
 + Did some to-hit code refactoring (no net change)
 + Added indirect fire mode to LRMs (spotters must use spot button)
 + Indirect fire rules made optional

@@ -819,6 +819,7 @@ public class MoveStep implements Serializable {
         // check for valid walk/run mp
         if (!parent.isJumping()
             && !entity.isStuck()
+            && entity.getWalkMP() > 0
             && (!isProne()
                 || parent.contains(MovePath.STEP_GET_UP)
                 || stepType == MovePath.STEP_TURN_LEFT

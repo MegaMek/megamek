@@ -1360,31 +1360,32 @@ public class Server
      * if they have no damaged legs.
      */
     private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {
-      if ( gettingUp && entity.needsRollToStand() ) {
-        phaseReport.append("\n" + entity.getDisplayName() + " does not need to make " +
-                    " a piloting skill check to stand up because it has all four of its legs.");
-      } else {
+        if ( gettingUp && !entity.needsRollToStand() ) {
+            phaseReport.append("\n" + entity.getDisplayName() + " does not need to make "
+            + " a piloting skill check to stand up because it has all four of its legs.");
+            return;
+        }
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
-
+        
         // append the reason modifier
         roll.append(reason);
-
+        
         // okay, print the info
         phaseReport.append("\n" + entity.getDisplayName()
-                   + " must make a piloting skill check (" + reason.getPlainDesc() + ")"
-                   + ".\n");
+        + " must make a piloting skill check (" + reason.getPlainDesc() + ")"
+        + ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
         phaseReport.append("Needs " + roll.getValue()
-                   + " [" + roll.getDesc() + "]"
-                   + ", rolls " + diceRoll + " : ");
+        + " [" + roll.getDesc() + "]"
+        + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
             phaseReport.append("falls.\n");
             doEntityFall(entity, roll);
         } else {
             phaseReport.append("succeeds.\n");
         }
-    }
+
     }
 
     /**

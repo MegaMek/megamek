@@ -173,7 +173,7 @@ public class ScenarioLoader
                 throw new Exception("Scenario requires missing entity: " + sRef);
             }
             System.out.println("Loading " + ms.getRef());
-            Entity e = new MechFileParser(ms.getSourceFile()).getEntity();
+            Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             e.crew = new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
                     Integer.parseInt(st.nextToken()));
             int nFacing = -1;

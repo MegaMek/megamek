@@ -78,7 +78,7 @@ public class Client implements Runnable {
 
         if (Settings.keepServerlog) {
             // we need to keep a copy of the log
-            serverlog = new megamek.server.ServerLog(Settings.serverlogFilename,true);
+            serverlog = new megamek.server.ServerLog(Settings.serverlogFilename, true, (new Integer(Settings.serverlogMaxSize).longValue() * 1024 * 1024) );
         };
     }
 

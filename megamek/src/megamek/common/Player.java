@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -66,7 +66,17 @@ public final class Player extends TurnOrdered
     private int num_mf_cmd   = 0;
     private int num_mf_vibra = 0;
 
-    public static final String NO_CAMO = "No Camo";
+    /**
+     * The "no camo" category.
+     */
+    public static final String NO_CAMO = "-- No Camo --";
+    
+    /**
+     * The category for camos in the root directory.
+     */
+    public static final String ROOT_CAMO = "-- General --";
+
+    private String camoCategory = null;
     
     private String camoFileName = null;
     
@@ -126,6 +136,14 @@ public final class Player extends TurnOrdered
     
     public int getNbrMFVibra() {
     	return num_mf_vibra;
+    }
+    
+    public void setCamoCategory(String name) {
+      this.camoCategory = name;
+    }
+    
+    public String getCamoCategory() {
+      return camoCategory;
     }
     
     public void setCamoFileName(String name) {

@@ -21,6 +21,7 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.client.*;
+import megamek.client.util.AdvancedLabel;
 import megamek.client.util.widget.*;
 import megamek.client.bot.*;
 import megamek.server.*;
@@ -842,9 +843,15 @@ class ScenarioDialog extends Dialog implements ActionListener
     private Player[] m_players;
     private Label[] m_labels;
     private Choice[] m_typeChoices;
-    private Choice[] m_colorChoices;
-    private Choice[] m_camoChoices;
+    private Choice[] m_colorChoices;//killme
+    private Choice[] m_camoChoices;//killme
+    private ImageButton[] m_camoButtons;
     private Frame m_frame;
+
+    /** The camo selection dialog.
+     */
+    private CamoChoiceDialog camoDialog;
+    private ItemListener prevListener = null;
 
     public boolean bSet = false;
     public int[] playerTypes;
@@ -854,46 +861,74 @@ class ScenarioDialog extends Dialog implements ActionListener
     {
         super(frame, "Set Scenario Players...", true);
         m_frame = frame;
+        camoDialog = new CamoChoiceDialog( frame );
         m_players = pa;
         m_labels = new Label[pa.length];
         m_typeChoices = new Choice[pa.length];
-        m_colorChoices = new Choice[pa.length];
-        m_camoChoices = new Choice[pa.length];
+        m_camoButtons = new ImageButton[pa.length];
+
         playerTypes = new int[pa.length];
 
-        Vector camoList = ChatLounge.getCamoList();
-        
         for (int x = 0; x < pa.length; x++) {
+            final Player curPlayer = m_players[x];
+            curPlayer.setColorIndex( x );
+
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
+
             m_typeChoices[x] = new Choice();
             m_typeChoices[x].add("Me");
             m_typeChoices[x].add("Other Human");
             m_typeChoices[x].add("Bot");
-            m_colorChoices[x] = new Choice();
-            for (int i = 0; i < Player.colorNames.length; i++) {
-                m_colorChoices[x].add(Player.colorNames[i]);
-            }
-            m_colorChoices[x].select(x);
-            
-            m_camoChoices[x] = new Choice();
-            for ( int i = 0; i < camoList.size(); i++ ) {
-              m_camoChoices[x].add((String)camoList.elementAt(i));
-            }
-            m_camoChoices[x].select(0);
+            final Color defaultBackground = m_typeChoices[x].getBackground();
+
+            m_camoButtons[x] = new ImageButton();
+            final ImageButton curButton = m_camoButtons[x];
+            curButton.setLabel( "No Camo" );
+            curButton.setPreferredSize( 84, 72 );
+            curButton.setBackground( new Color(Player.colorRGBs[x]) );
+            curButton.setActionCommand( "camo" );
+
+            // When a camo button is pressed, remove any previous
+            // listener from the dialog, update the dialog for the
+            // button's player, and add a new listener.
+            curButton.addActionListener( new ActionListener() {
+                    private final CamoChoiceDialog dialog = camoDialog;
+                    private final ImageButton button = curButton;
+                    private final Color background = defaultBackground;
+                    private final Player player = curPlayer;
+                    public void actionPerformed(ActionEvent e) {
+                        if ( null != prevListener ) {
+                            dialog.removeItemListener( prevListener );
+                        }
+                        if ( null == player.getCamoFileName() ) {
+                            dialog.setCategory( Player.NO_CAMO );
+                            dialog.setItemName
+                                ( Player.colorNames[player.getColorIndex()] );
+                        } else {
+                            dialog.setCategory( player.getCamoCategory() );
+                            dialog.setItemName( player.getCamoFileName() );
+                        }
+                        prevListener = new CamoChoiceListener
+                            ( dialog, button, background, player );
+                        dialog.addItemListener( prevListener );
+                        dialog.show();
+                    }
+                } );
+
         }
 
         setLayout(new BorderLayout());
         Panel choicePanel = new Panel();
-        choicePanel.setLayout(new GridLayout(pa.length + 1, 3));
-        choicePanel.add(new Label("Player"));
-        choicePanel.add(new Label("Type"));
-        choicePanel.add(new Label("Color"));
+        choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
+        choicePanel.add(new AdvancedLabel("Player Name\nPlayer Type"));
         choicePanel.add(new Label("Camo"));
         for (int x = 0; x < pa.length; x++) {
-            choicePanel.add(m_labels[x]);
-            choicePanel.add(m_typeChoices[x]);
-            choicePanel.add(m_colorChoices[x]);
-            choicePanel.add(m_camoChoices[x]);
+            Panel typePanel = new Panel();
+            typePanel.setLayout( new GridLayout(0,1) );
+            typePanel.add(m_labels[x]);
+            typePanel.add(m_typeChoices[x]);
+            choicePanel.add( typePanel );
+            choicePanel.add( m_camoButtons[x] );
         }
         add(choicePanel, BorderLayout.CENTER);
 
@@ -929,8 +964,6 @@ class ScenarioDialog extends Dialog implements ActionListener
                     bMeSet = true;
                     localName = m_players[x].getName();
                 }
-                m_players[x].setColorIndex(m_colorChoices[x].getSelectedIndex());
-                m_players[x].setCamoFileName(m_camoChoices[x].getSelectedItem());
             }
             bSet = true;
             setVisible(false);

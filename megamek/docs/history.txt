@@ -9,6 +9,9 @@ v 0.29.23 (CVS)
 + Bug 878087: Left clicking no longer targets friendly units.
 + Added calculateBattleValue(boolean assumeLinkedC3) to Entity so MMNet can calc C3 easier.
 + Bug 874179: Moving through hexes with friendly units no longer a problem
++ Read images from directories or ZIP files; separate them into categories.
++ Data 777032, 778903, 779051, 786208, 786400, 786787, 787080, 788382, 788439, 
+        792441, 855114: Released all submitted camos as separate files.
 
 v 0.29.22 (2004-01-17 2:25pm)
 + In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.

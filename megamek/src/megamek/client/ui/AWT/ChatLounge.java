@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -31,18 +31,20 @@ public class ChatLounge extends AbstractPhaseDisplay
     
     // parent Client
     private Client client;
-        
+
+    // The camo selection dialog.
+    private CamoChoiceDialog camoDialog;
+
     // buttons & such
     private Panel panPlayerInfo;
     private Label labPlayerInfo;
     private List lisPlayerInfo;
-    private Label labColor;
+
     private Label labTeam;            
-    private Choice choColor;
     private Choice choTeam;
     
     private Label labCamo;
-    private Choice choCamo;
+    private ImageButton butCamo;
     
     private Panel panMinefield;
     private Label labMinefield;
@@ -102,7 +104,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     public ChatLounge(Client client) {
         super();
         this.client = client;
-            
+
+        // Create a new camo selection dialog.
+        camoDialog = new CamoChoiceDialog( client.getFrame() );
+
         client.addGameListener(this);
         client.game.board.addBoardListener(this);
 
@@ -163,31 +168,46 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     
     /**
-     * Sets up the player info (color, team) panel
+     * Sets up the player info (team, camo) panel
      */
     private void setupPlayerInfo() {
+        Player player = client.getLocalPlayer();
+
         panPlayerInfo = new Panel();
         
         labPlayerInfo = new Label("Player Setup");
         
         lisPlayerInfo = new List(5);
         
-        labColor = new Label("Color:", Label.RIGHT);
         labTeam = new Label("Team:", Label.RIGHT);
         labCamo = new Label("Camo:", Label.RIGHT);
-                
-        choColor = new Choice();
-        choColor.addItemListener(this);
-        setupColors();
                 
         choTeam = new Choice();
         choTeam.addItemListener(this);
         setupTeams();
-        
-        choCamo = new Choice();
-        choCamo.addItemListener(this);
-        setupCamos();
-        
+
+        butCamo = new ImageButton();
+        butCamo.setLabel( "No Camo" );
+        butCamo.setPreferredSize( 84, 72 );
+        butCamo.setActionCommand( "camo" );
+        butCamo.addActionListener( this );
+        camoDialog.addItemListener( new CamoChoiceListener
+                                    (camoDialog,
+                                     butCamo,
+                                     butOptions.getBackground(),
+                                     player.getId(),
+                                     client) );
+        refreshCamos();
+
+        // If we have a camo pattern, use it.  Otherwise set a background.
+        Image[] images = (Image[]) camoDialog.getSelectedObjects();
+        if ( null != images ) {
+            butCamo.setImage( images[0] );
+        } else {
+            butCamo.setBackground
+                ( new Color(Player.colorRGBs[player.getColorIndex()]) );
+        }
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -207,24 +227,14 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         c.gridwidth = 1;
         c.weightx = 0.0;    c.weighty = 0.0;
-        gridbag.setConstraints(labColor, c);
-        panPlayerInfo.add(labColor);
-            
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(choColor, c);
-        panPlayerInfo.add(choColor);
-            
-        c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
         gridbag.setConstraints(labTeam, c);
         panPlayerInfo.add(labTeam);
-            
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 1.0;    c.weighty = 0.0;
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
-        
+
         c.gridwidth = 1;
         c.weightx = 0.0;    c.weighty = 0.0;
         gridbag.setConstraints(labCamo, c);
@@ -232,8 +242,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(choCamo, c);
-        panPlayerInfo.add(choCamo);
+        gridbag.setConstraints(butCamo, c);
+        panPlayerInfo.add(butCamo);
 
         refreshPlayerInfo();
     }
@@ -793,32 +803,24 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
     
-    private void setupCamos() {
-        choCamo.removeAll();
-        
-        Vector camoList = getCamoList();
-
-        for (int i = 0; i < camoList.size(); i++) {
-          choCamo.add((String)camoList.elementAt(i));
-        }
-        
-        String selCamo = client.getLocalPlayer().getCamoFileName();
-        
-        if ( (null == selCamo) || (selCamo.equals(Player.NO_CAMO)) )
-          choCamo.select(Player.NO_CAMO);
-        else
-          choCamo.select(client.getLocalPlayer().getCamoFileName());
-    }
-    
     private void refreshCamos() {
-      String selCamo = client.getLocalPlayer().getCamoFileName();
-      
-      if ( (null == selCamo) || (selCamo.equals(Player.NO_CAMO)) )
-        choCamo.select(Player.NO_CAMO);
-      else
-        choCamo.select(client.getLocalPlayer().getCamoFileName());
+        // Get the local player's selected camo.
+        String curCat = client.getLocalPlayer().getCamoCategory();
+        String curItem = client.getLocalPlayer().getCamoFileName();
+
+        // If the player has no camo selected, show his color.
+        if ( null == curItem ) {
+            curCat = Player.NO_CAMO;
+            curItem = Player.colorNames
+                [client.getLocalPlayer().getColorIndex()];
+        }
+
+        // Now update the camo selection dialog.
+        camoDialog.setCategory( curCat );
+        camoDialog.setItemName( curItem );
     }
 
+    // begin killme block
     public static Vector getCamoList() {
       com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
       com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
@@ -842,6 +844,7 @@ public class ChatLounge extends AbstractPhaseDisplay
       camoList.insertElementAt(Player.NO_CAMO, 0);
       return camoList;
     }
+    //  end  killme block
     
     /**
      * Refreshes the starting positions
@@ -858,25 +861,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         }
     }
-    
-    /**
-     * Setup the color choice box
-     */
-    private void setupColors() {
-        choColor.removeAll();
-        for (int i = 0; i < Player.colorNames.length; i++) {
-            choColor.add(Player.colorNames[i]);
-        }
-        choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
-    }
-  
-    /**
-     * Refresh the color choice box
-     */
-    private void refreshColors() {
-        choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
-    }
-  
+
     /**
      * Setup the team choice box
      */
@@ -907,17 +892,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshDoneButton() {
         refreshDoneButton(client.getLocalPlayer().isDone());
     }
-    
-    /**
-     * Change local player color.
-     */
-    public void changeColor(int nc) {
-        if (client.getLocalPlayer().getColorIndex() != nc) {
-            client.getLocalPlayer().setColorIndex(nc);
-            client.sendPlayerInfo();
-        }
-    }
-  
+
     /**
      * Change local player team.
      */
@@ -926,15 +901,6 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.getLocalPlayer().setTeam(team);
             client.sendPlayerInfo();
         }
-    }
-    
-    public void changeCamo(String camo) {
-      String curCamo = client.getLocalPlayer().getCamoFileName();
-        if ((camo == null && curCamo != null)
-            || (camo != null && !camo.equals(curCamo))) {
-      client.getLocalPlayer().setCamoFileName(camo);
-      client.sendPlayerInfo();
-      }
     }
 
 	private void updateMinefield() {
@@ -1078,7 +1044,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshBVs();
         refreshPlayerInfo();
         refreshStarts();
-        refreshColors();
         refreshCamos();
         refreshMinefield();
     }
@@ -1106,16 +1071,8 @@ public class ChatLounge extends AbstractPhaseDisplay
      * it is already selected.
      */
     public void itemStateChanged(ItemEvent ev) {
-        if (ev.getSource() == choColor) {
-            changeColor(choColor.getSelectedIndex());
-        } else if (ev.getSource() == choTeam) {
+        if (ev.getSource() == choTeam) {
             changeTeam(choTeam.getSelectedIndex());
-        } else if (ev.getSource() == choCamo) {
-          if (choCamo.getSelectedIndex() != 0) {
-            changeCamo(choCamo.getSelectedItem());
-          } else {
-            changeCamo(null);
-          }
         } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
             refreshBVs();
         } else if (ev.getSource() == lisEntities) {
@@ -1219,6 +1176,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == butMinefield) {
         	updateMinefield();
         }
+        else if (ev.getSource() == butCamo) {
+            camoDialog.show();
+        }
     }
-
+ 
 }

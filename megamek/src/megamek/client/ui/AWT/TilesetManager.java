@@ -28,10 +28,12 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.File;
+import megamek.client.util.ImageFileFactory;
 import megamek.client.util.RotateFilter;
 import megamek.client.util.TintFilter;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.BackGroundDrawer;
+import megamek.common.util.DirectoryItems;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -48,7 +50,9 @@ public class TilesetManager {
     private MediaTracker tracker;
     private boolean started = false;
     private boolean loaded = false;
-    
+
+    // keep track of camo images
+    private DirectoryItems camos;
     
     // mech images
     private MechTileset mechTileset = new MechTileset("data/mex/");
@@ -64,7 +68,9 @@ public class TilesetManager {
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) {
         this.comp = comp;
-        this.tracker = new MediaTracker(comp);        
+        this.tracker = new MediaTracker(comp);
+        camos = new DirectoryItems( new File("data/camo"), "",
+                                    ImageFileFactory.getInstance() );
 
         mechTileset.loadFromFile("mechset.txt");
         wreckTileset.loadFromFile("wreckset.txt");
@@ -222,7 +228,7 @@ public class TilesetManager {
     }
     
     // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(Entity entity, String camo, int tint, BufferedPanel bp) {
+    public void loadPreviewImage(Entity entity, Image camo, int tint, BufferedPanel bp) {
 		Image base = mechTileset.imageFor(entity, comp);
 		EntityImage entityImage = new EntityImage(base, tint, camo, bp);
 		Image preview = entityImage.loadPreviewImage();
@@ -242,41 +248,67 @@ public class TilesetManager {
     }
 
     /**
+     * Get the camo pattern for the given player.
+     *
+     * @param   player - the <code>Player</code> whose camo pattern is needed.
+     * @return  The <code>Image</code> of the player's camo pattern.
+     *          This value will be <code>null</code> if the player has selected
+     *          no camo pattern or if there was an error loading it.
+     */
+    public Image getPlayerCamo( Player player ) {
+        // Try to get the player's camo file.
+        Image camo = null;
+        try {
+
+            // Translate the root camo directory name.
+            String category = player.getCamoCategory();
+            if ( Player.ROOT_CAMO.equals( category ) ) category = "";
+            camo = (Image) camos.getItem( category, player.getCamoFileName() );
+
+        } catch ( Exception err ) {
+            err.printStackTrace();
+        }
+        return camo;
+    }
+
+    /**
      * Load a single entity image
      */
     public void loadImage(Entity entity)
     {
-            Image base = mechTileset.imageFor(entity, comp);
-            Image wreck = null;
-            if ( !(entity instanceof Infantry) &&
-                 !(entity instanceof Protomech) ) {
-            	wreck = wreckTileset.imageFor(entity, comp);
+        Image base = mechTileset.imageFor(entity, comp);
+        Image wreck = null;
+        if ( !(entity instanceof Infantry) &&
+             !(entity instanceof Protomech) ) {
+            wreck = wreckTileset.imageFor(entity, comp);
+        }
+        Player player = entity.getOwner();
+        int tint = player.getColorRGB();
+
+        Image camo = getPlayerCamo( player );
+        EntityImage entityImage = null;
+
+        // check if we have a duplicate image already loaded
+        for (Iterator j = mechImageList.iterator(); j.hasNext();) {
+            EntityImage onList = (EntityImage)j.next();
+            if (onList.getBase() == base && onList.tint == tint) {
+                entityImage = onList;
+                break;
             }
-            int tint = entity.getOwner().getColorRGB();
-            String camo = entity.getOwner().getCamoFileName();
-            EntityImage entityImage = null;
-            
-            // check if we have a duplicate image already loaded
-            for (Iterator j = mechImageList.iterator(); j.hasNext();) {
-                EntityImage onList = (EntityImage)j.next();
-                if (onList.getBase() == base && onList.tint == tint) {
-                    entityImage = onList;
-                    break;
-                }
+        }
+
+        // if we don't have a cached image, make a new one
+        if (entityImage == null) {
+            entityImage = new EntityImage(base, wreck, tint, camo, comp);
+            mechImageList.add(entityImage);
+            entityImage.loadFacings();
+            for (int j = 0; j < 6; j++) {
+                tracker.addImage(entityImage.getFacing(j), 1);
             }
-            
-            // if we don't have a cached image, make a new one
-            if (entityImage == null) {
-                entityImage = new EntityImage(base, wreck, tint, camo, comp);
-                mechImageList.add(entityImage);
-                entityImage.loadFacings();
-                for (int j = 0; j < 6; j++) {
-                    tracker.addImage(entityImage.getFacing(j), 1);
-                }
-            }
-            
-            // relate this id to this image set
-            mechImages.put(new Integer(entity.getId()), entityImage);
+        }
+
+        // relate this id to this image set
+        mechImages.put(new Integer(entity.getId()), entityImage);
     }
     
     /**
@@ -296,7 +328,7 @@ public class TilesetManager {
         private Image wreck;
         private Image icon;
         private int tint;
-        private String camo;
+        private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
         private Component comp;
@@ -305,11 +337,11 @@ public class TilesetManager {
         private final int IMG_HEIGHT = 72;
         private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
         
-        public EntityImage(Image base, int tint, String camo, Component comp) {
+        public EntityImage(Image base, int tint, Image camo, Component comp) {
         	this(base, null, tint, camo, comp);
         }
 
-        public EntityImage(Image base, Image wreck, int tint, String camo, Component comp) {
+        public EntityImage(Image base, Image wreck, int tint, Image camo, Component comp) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
@@ -357,12 +389,8 @@ public class TilesetManager {
         }
 
         private Image applyColor(Image image) {
-          Image iMech, iCamo;
-          File camoFile = new File("data/camo/" + camo + ".jpg");
-          boolean useCamo = (camo != null) && 
-          					(!Player.NO_CAMO.equals(camo)) && 
-          					(camoFile.exists());
-          camoFile = null;
+          Image iMech;
+          boolean useCamo = (camo != null);
           
           iMech = image;
     
@@ -382,8 +410,7 @@ public class TilesetManager {
           }
           
           if (useCamo) {
-	          iCamo = comp.getToolkit().getImage("data/camo/" + camo + ".jpg");
-	          PixelGrabber pgCamo = new PixelGrabber(iCamo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
+	          PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
 	          try {
 	              pgCamo.grabPixels();
 	          } catch (InterruptedException e) {

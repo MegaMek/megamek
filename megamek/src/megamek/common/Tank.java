@@ -438,6 +438,11 @@ public class Tank
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             EquipmentType etype = mounted.getType();
+
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+
             if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
@@ -483,6 +488,10 @@ public class Tank
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
 
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+
             // don't count AMS, it's defensive
             if (wtype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
@@ -522,6 +531,10 @@ public class Tank
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();
             
+            // don't count depleted ammo
+            if (mounted.getShotsLeft() == 0)
+                continue;
+
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {
                 continue;

@@ -493,9 +493,16 @@ public class BattleArmor
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
+        double bv = (double)myBV;
+
+        // Adjust for missing troopers
+        bv = bv * getInternalRemainingPercent();
+
         // Adjust BV for crew skills.
         double pilotFactor = crew.getBVSkillMultiplier();
-        return (int)(pilotFactor * (double)myBV);
+        bv = pilotFactor * bv;
+
+        return (int)Math.round(bv);
     }
 
     /**

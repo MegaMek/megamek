@@ -9,6 +9,9 @@ v0.29.58 (CVS)
 + Bug 1057834: Weapons report & auto-eject (confusing order of events)
 + Bug 1088365: Mek Pilots Ejected during Movement don't immediately show up
 + Bug 1083617: Ejected Pilot does not die in vaccuum
++ Bug 1061712: No PSR for destroyed frontleg on quad mech
++ Quads now get their front legs breached as well when standing in lvl1 water
+    with no armor on their legs
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

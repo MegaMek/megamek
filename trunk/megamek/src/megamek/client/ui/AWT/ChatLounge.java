@@ -232,8 +232,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoad = new Button("Open Mech File...");
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
-            
-        butCustom = new Button("View/Edit Pilot...");
+
+// + HentaiZonga            
+        butCustom = new Button("View/Edit Mech...");
+// - HentaiZonga
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
             
@@ -360,13 +362,46 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
+// + HentaiZonga
+        String TreeSet = "";
+        String TreeView = "";
+// - HentaiZonga
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            lisEntities.add(entity.getDisplayName() 
+// + HentaiZonga
+            if(entity.hasC3i()) {
+               TreeSet = "";
+               if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
+               TreeView = " (" + entity.getC3NetID() + ")";
+            }
+            else if(entity.hasC3()) {
+                if(entity.getC3Master() == null) {
+                    if(entity.hasC3S()) 
+                        TreeSet = "***";
+                    else
+                        TreeSet = "*";
+                    TreeView = "";
+                }
+                else {
+                    TreeSet = "";
+                    if(!entity.C3MasterIs(entity)) {
+                        TreeSet = ">";
+                        if(entity.getC3Master().getC3Master() != null && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
+                            TreeSet = ">>";
+                        TreeView = " -> " + entity.getC3Master().getDisplayName();
+                    }
+                }
+            }
+            else {
+                TreeSet = "";
+                TreeView = "";
+            }
+            lisEntities.add(TreeSet + entity.getDisplayName() 
                             + " (" + entity.getCrew().getGunnery() 
                             + "/" + entity.getCrew().getPiloting() + " pilot)"
-                            + " BV=" + entity.calculateBattleValue());
+                            + " BV=" + entity.calculateBattleValue() + TreeView);
+// - HentaiZonga
             entityCorrespondance[listIndex++] = entity.getId();
         }
   }
@@ -486,7 +521,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
         // display dialog
-        CustomMechDialog cmd = new CustomMechDialog(client.frame, entity, editable);
+// + HentaiZonga
+        CustomMechDialog cmd = new CustomMechDialog(client, entity, editable);
+// - HentaiZonga
         cmd.show();
         if (editable && cmd.isOkay()) {
             // send changes

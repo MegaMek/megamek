@@ -90,6 +90,8 @@ v next
 + formatting fixed in push-off-board notice
 + 583692: duplicate physical attacks prevented
 + 532080: jumping into water provokes a PSR
++ mech selector defaults to 3025
++ fixed movement to-hit penalty when a mech gets up and doesn't otherwise move
 
 v 0.26.8 (07-26-02, 2:30pm)
 + Can now host a game from a user-editable scenario file

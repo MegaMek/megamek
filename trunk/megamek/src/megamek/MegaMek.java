@@ -307,7 +307,7 @@ public class MegaMek
     
     private static void testDice() {
         // test RNG
-        long rolls = 1000000;
+        long rolls = 100000000;
         int sides = 14;
         long[] hits = new long[sides];
         

@@ -1343,6 +1343,7 @@ public boolean isPassworded() {
 
             // did the entity just fall?
             if (!wasProne && entity.isProne()) {
+                moveType = step.getMovementType();
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
                 break;

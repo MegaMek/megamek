@@ -10,6 +10,7 @@ v0.29.49 (CVS)
 + New pictures for Direwolf/Daishi Prime and Widowmaker, Fire Moth/Dasher, Gargoyle/Man O' War,
     Grendel, Hatamoto-Chi, Hellbringer/Loki, Ice Ferret/Fenris, Linebacker, Mad Dog/Vulture,
     Rifleman IIC, Shootist, Summoner/Thor, Timberwolf/Mad Cat, Vanquisher and Viper/Dragonfly
++ Bug 1026079, Patch 1029379: Skidding gnerates no heat
 
 v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.

@@ -15,6 +15,7 @@ v0.29.58 (CVS)
 + Added Mechs for Batchall.de (German Clan Battletech Community).
 + Corrected a spelling mistake in conjunction with extreme G's.
 + Bug 1040858: breaching a leg results only in one PSR, should do more
++ Bug 1021324: Hull breached on the beach
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

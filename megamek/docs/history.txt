@@ -88,11 +88,14 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.26.6 (07-12-02, 6:14pm)
 + clan gauss rifles explode too
 + light gauss rifles use distinct ammo, explode for less damage
 + optional victory phase
 + 535042: next target button now able to target stacked mechs
++ LOS on the line between hexes now picks 1 hex favoring the defender
++ misc AI tweaks, fix of the tt while prone
++ fix a bug that hangs the client window with mm.net
 
 v 0.26.5 (07-05-02, 6:42pm)
 + 575448: critical hits on ammo make explosions again

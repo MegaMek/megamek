@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -44,8 +44,8 @@ public class InfantryEncoder {
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
-        int value;
         Infantry inf = (Infantry) entity;
+        int value;
 
         // First, validate our input.
         if ( null == entity ) {
@@ -58,6 +58,7 @@ public class InfantryEncoder {
         // Our EntityEncoder already gave us our root element.
         out.write( "<shootingStrength value=\"" );
         value = inf.getShootingStrength();
+        out.write( String.valueOf(value) );
         out.write( "\" />" );
     }
 
@@ -74,7 +75,66 @@ public class InfantryEncoder {
      *          contain a valid <code>Entity</code>.
      */
     public static Entity decode( ParsedXML node, Game game ) {
-        Infantry entity = new Infantry();
+        Infantry entity = null;
+        String attrStr;
+        int attrVal;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The Infantry node is null." );
+        }
+
+        // Make sure that the node is for an Infantry unit.
+        attrStr = node.getAttribute( "name" );
+        if ( !node.getName().equals( "class" ) ||
+             null == attrStr || !attrStr.equals( "Infantry" ) ) {
+            throw new IllegalStateException( "Not passed an Infantry node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Create the entity.
+        entity = new Infantry();
+
+        // Walk the board node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the shootingStrength node?
+            else if ( childName.equals( "shootingStrength" ) ) {
+
+                // Get the number of men shooting.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the shootingStrength for an Infantry unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Shooting strength is set... oddly.
+                entity.setInternal( Infantry.LOC_INFANTRY, attrVal );
+                entity.applyDamage();
+            }
+
+        } // Handle the next element.
+
+        // Return the entity.
         return entity;
     }
 

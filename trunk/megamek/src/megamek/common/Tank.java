@@ -62,6 +62,10 @@ public class Tank
         m_bHasNoTurret = b;
     }
 
+    public boolean isTurretLocked() {
+        return m_bTurretLocked;
+    }
+
     /**
      * Returns the number of locations in the entity
      */
@@ -98,7 +102,15 @@ public class Tank
             super.setSecondaryFacing(nTurretFacing);
         }
     }
-    
+
+    public boolean isMovementHit() {
+        return m_bImmobile;
+    }
+
+    public boolean isMovementHitPending() {
+        return m_bImmobileHit;
+    }
+
     public void immobilize()
     {
         m_bImmobileHit = true;
@@ -146,20 +158,37 @@ public class Tank
     {
         m_bTurretLocked = true;
     }
-    
-    public void stunCrew()
-    {
-        m_nStunnedTurns = 3;
+
+    public int getStunnedTurns() {
+        return m_nStunnedTurns;
+    }
+
+    public void setStunnedTurns( int turns ) {
+        m_nStunnedTurns = turns;
         this.crew.setUnconcious(true);
     }
-    
-    public void setJammedWeapon(Mounted m)
+
+    public void stunCrew()
     {
-        m_jammedGun = m;
-        m_jammedGun.setJammed(true);
-        m_nJammedTurns = 1;
+        setStunnedTurns( 3 );
     }
-    
+
+    public int getJammedTurns() {
+        return m_nJammedTurns;
+    }
+
+    public void setJammedTurns( int turns ) {
+        // Set the jammed gun, if none are currently jammed.
+        if ( null == m_jammedGun ) {
+            m_jammedGun = this.getMainWeapon();
+            // We *may* be in the middle of de-serializing this tank.
+            if ( null != m_jammedGun ) {
+                m_jammedGun.setJammed(true);
+            }
+        }
+        m_nJammedTurns = turns;
+    }
+
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
     }
@@ -621,6 +650,18 @@ public class Tank
 		
         while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
             iconName = iconName.substring(0, iconName.length() - 1);
+        }
+    }
+
+    /**
+     * Restores the entity after serialization
+     */
+    public void restore() {
+        super.restore();
+
+        // Restore our jammed gun, if necessary.
+        if ( m_nJammedTurns > 0 && null == m_jammedGun ) {
+            m_jammedGun = this.getMainWeapon();
         }
     }
 

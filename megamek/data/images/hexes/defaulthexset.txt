@@ -11,6 +11,11 @@ super * "building:2;bldg_elev:3" "" "boring/cropped_cannon_tower.png"
 super * "building:3;bldg_elev:3" "" "boring/cropped_refinery.png"
 super * "building:3;bldg_elev:4" "" "boring/cropped_mage_tower.png"
 
+super * "rubble:1" "" "boring/rubble.png"
+super * "rubble:2" "" "boring/rubble.png"
+super * "rubble:3" "" "boring/rubble.png"
+super * "rubble:4" "" "boring/rubble.png"
+
 super * "road:1:00" "" "boring/road00.gif"
 super * "road:1:01" "" "boring/road01.gif"
 super * "road:1:02" "" "boring/road02.gif"

@@ -91,6 +91,11 @@ v 0.28.9 (CVS)
 + client now is more aware of charge-type attacks, and displays them
 + fix NPE in movement when determining prone status
 + heavy woods made somewhat distinct on minimap
++ 701259 and 701649: used the updated vehicles3025.zip file.
++ 701999 and 702237: used the updated vehicles3058.zip file.
++ 702590: the AMS (and NARC launcher) system had incorrect name in ZIP file.
++ 700644: unload transported units when they're destroyed.
++ 671513: added all images (even bad ones) and updated mechset.txt.
 
 v 0.28.8 (03-07-03, 7:20pm)
 + Added ability to go prone

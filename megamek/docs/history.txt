@@ -91,6 +91,7 @@ v 0.28.8-dev
 + client keeps better track of recieved attacks
 + 692607: crits transfer from loc with non-hittable crits, like endo steel
 + added zipp32's attack arrow patch
++ Applied latest version of oscarmm's Mech Viewer patch.
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

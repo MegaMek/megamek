@@ -43,17 +43,17 @@ public class MechView {
         mech = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
-	hasEndoSteel = false;
-	hasFerroFibrous = false;
+        hasEndoSteel = false;
+        hasFerroFibrous = false;
 
-	sLoadout.append( getWeapons() )
-	    .append("\n")
-	    .append(getAmmo())
-	    .append("\n")
-	    .append(getMisc()); //has to occur before basic is processed
+        sLoadout.append( getWeapons() )
+            .append("\n")
+            .append(getAmmo())
+            .append("\n")
+            .append(getMisc()); //has to occur before basic is processed
 
         sBasic.append( mech.getShortName() );
-	sBasic.append("\n");
+        sBasic.append("\n");
         if ( !isInf ) {
             sBasic.append( Math.round(mech.getWeight()) )
                 .append(" tons   " );
@@ -63,7 +63,7 @@ public class MechView {
         } else {
             sBasic.append( "Inner Sphere" );
         }
-	sBasic.append("\n\n");
+        sBasic.append("\n\n");
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
@@ -78,7 +78,7 @@ public class MechView {
             if (aMech.hasXL()) {
                 sBasic.append( " XL" );
             }
-	    sBasic.append("\n");
+            sBasic.append("\n");
             sBasic.append( "Heat Sinks: " )
                 .append( aMech.heatSinks() );
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
@@ -86,10 +86,10 @@ public class MechView {
                     .append( aMech.getHeatCapacity() )
                     .append( "]" );
             }
-	    sBasic.append("\n");
+            sBasic.append("\n");
         }
         sBasic.append("\n")
-	    .append( getInternalAndArmor() );
+            .append( getInternalAndArmor() );
     }
 
     public String getMechReadoutBasic() {
@@ -97,7 +97,7 @@ public class MechView {
     }
 
     public String getMechReadoutLoadout() {
-	return sLoadout.toString();
+        return sLoadout.toString();
     }
 
     public String getMechReadout() {
@@ -110,24 +110,20 @@ public class MechView {
         int maxArmor = mech.getTotalInternal() * 2 + 3;
         sIntArm.append( "Internal: " )
             .append( mech.getTotalInternal() );
-	if (hasEndoSteel) {
-	    sIntArm.append("  (Endo Steel)");
-	}
-	sIntArm.append( "\n" );
-	sIntArm.append("Armor: ")
-	    .append( mech.getTotalArmor() );
+        if (hasEndoSteel) {
+            sIntArm.append(" (Endo Steel)");
+        }
+        sIntArm.append( "\n" );
+        sIntArm.append("Armor: ")
+            .append( mech.getTotalArmor() );
         if ( isMech ) {
             sIntArm.append( "/" )
                 .append( maxArmor );
-	    if (hasFerroFibrous) {
-		sIntArm.append("  (Ferro-Fibrous)");
-	    }
+            if (hasFerroFibrous) {
+                sIntArm.append(" (Ferro-Fibrous)");
+            }
         }
-	sIntArm.append( "\n" );
-        sIntArm.append( " IS: " )
-            .append( mech.getTotalInternal() )
-            .append( "\n" );
-
+        sIntArm.append( "\n" );
         // Walk through the entity's locations.
         for ( int loc = 0; loc < mech.locations(); loc++ ) {
 
@@ -138,15 +134,16 @@ public class MechView {
                                         (loc == Tank.LOC_BODY))) ) {
                 continue;
             }
+
             sIntArm.append( mech.getLocationAbbr(loc) )
-                .append( ":  " );
+                .append( ": " );
+            sIntArm.append( renderArmor(mech.getInternal(loc)) )
+                .append("   ");
             if ( Entity.ARMOR_NA != mech.getArmor(loc) ) {
-                sIntArm.append( renderArmor(mech.getArmor(loc)) )
-                    .append( "  " );
+                sIntArm.append( renderArmor(mech.getArmor(loc)) );
             }
-            sIntArm.append( renderArmor(mech.getInternal(loc)) );
             if ( mech.hasRearArmor(loc) ) {
-                sIntArm.append( "  (" )
+                sIntArm.append( " (" )
                     .append( renderArmor(mech.getArmor(loc, true)) )
                     .append( ")" );
             }
@@ -186,21 +183,24 @@ public class MechView {
         Enumeration eMisc = mech.getMisc();
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if ( mounted.getDesc().indexOf("Endo Steel") != -1 ) {
-                hasEndoSteel = true;
+            if ( mounted.getDesc().indexOf("Jump Jet") != -1 ||
+                 ( mounted.getDesc().indexOf("CASE") != -1 &&
+                   mech.isClan() ) ||
+                 mounted.getDesc().indexOf("Heat Sink") != -1  ||
+                 mounted.getDesc().indexOf("Endo Steel") != -1 ||
+                 mounted.getDesc().indexOf("Ferro-Fibrous") != -1) {
+                if (mounted.getDesc().indexOf("Endo Steel") != -1) {
+                    hasEndoSteel = true;
+                }
+                if (mounted.getDesc().indexOf("Ferro-Fibrous") != -1) {
+                    hasFerroFibrous = true;
+                }
+                continue;
             }
-            else if ( mounted.getDesc().indexOf("Ferro-Fibrous") != -1 ) {
-                hasFerroFibrous = true;
-            }
-            else if ( mounted.getDesc().indexOf("Jump Jet") == -1 &&
-                      ( !mech.isClan() ||
-                        mounted.getDesc().indexOf("CASE") == -1 ) &&
-                      mounted.getDesc().indexOf("Heat Sink") == -1 ) {
-                sMisc.append( mounted.getDesc() )
-                    .append( "  [" )
-                    .append( mech.getLocationAbbr(mounted.getLocation()) )
-                    .append( "]\n" );
-	    }
+            sMisc.append( mounted.getDesc() )
+                .append( "  [" )
+                .append( mech.getLocationAbbr(mounted.getLocation()) )
+                .append( "]\n" );
         }
         return sMisc.toString();
     }

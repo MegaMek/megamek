@@ -1143,12 +1143,16 @@ implements Runnable {
                 sendServerChat("Turns cannot be skipped in the deployment phase.");
                 break;
             case Game.PHASE_MOVEMENT :
-                processMovement(toSkip, new MovementData());
+                if ( toSkip != null ) {
+                    processMovement(toSkip, new MovementData());
+                }
                 endCurrentTurn(toSkip);
                 break;
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
-                processAttack(toSkip, new Vector(0));
+                if ( toSkip != null ) {
+                    processAttack(toSkip, new Vector(0));
+                }
                 endCurrentTurn(toSkip);
                 break;
             default :
@@ -1978,6 +1982,16 @@ implements Runnable {
             final int swarmerId = entity.getSwarmAttackerId();
             if ( Entity.NONE != swarmerId ) {
                 final Entity swarmer = game.getEntity( swarmerId );
+
+                // Has the swarmer taken a turn?
+                if ( !swarmer.isDone() ) {
+                
+                    // Dead entities don't take turns.
+                    game.removeTurnFor(swarmer);
+                    send(createTurnVectorPacket());
+
+                } // End swarmer-still-to-move
+
                 // Unit has fled the battlefield.
                 swarmer.setSwarmTargetId( Entity.NONE );
                 entity.setSwarmAttackerId( Entity.NONE );
@@ -1988,7 +2002,6 @@ implements Runnable {
                 send( createRemoveEntityPacket(swarmerId,
                                                Game.UNIT_IN_RETREAT) );
             }
-            
             game.removeEntity( entity.getId(), Game.UNIT_IN_RETREAT );
             send( createRemoveEntityPacket(entity.getId(),
                                            Game.UNIT_IN_RETREAT) );
@@ -2911,12 +2924,16 @@ implements Runnable {
         game.board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
         entity.infernos.clear();
 
-        // start a fire in the hex
+        // Start a fire in the hex?
         Hex hex = game.board.getHex(coords);
         phaseReport.append( " Inferno removed from " )
-            .append( entity.getDisplayName() )
-            .append( " and fire started in hex!\n" );
-        hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+            .append( entity.getDisplayName() );
+        if ( hex.contains(Terrain.FIRE) ) {
+            phaseReport.append( ".\n" );
+        } else {
+            phaseReport.append( " and fire started in hex!\n" );
+            hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+        }
         sendChangedHex(coords);
     }
 
@@ -3731,7 +3748,12 @@ implements Runnable {
         }
         
         Hex hex = game.board.getHex(c);                                 
-        if (burn(hex, nTargetRoll, bAnyTerrain)) {
+
+        // The hex may already be on fire.
+        if ( hex.contains( Terrain.FIRE ) ) {
+            return true;
+        }
+        else if (ignite(hex, nTargetRoll, bAnyTerrain)) {
             phaseReport.append("           The hex ignites!\n");
             sendChangedHex(c);
             return true;
@@ -3900,7 +3922,11 @@ implements Runnable {
             }
             
             // Non-streaks can set fires on misses
-            if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL && wtype.getAmmoType() != AmmoType.T_SRM_STREAK) {
+            // Buildings can't be accidentally ignited.
+            if ( bldg != null &&
+                 entityTarget != null &&
+                 toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
+                 wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {
                 
                 // make sure it's a fire-setting weapon
                 if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
@@ -4360,15 +4386,32 @@ implements Runnable {
                         .append(wr.amsShotDown).append(" shots, shooting down ")
                         .append(shotDown).append(" missile(s).");
                     hits -= wr.amsShotDown;
+                    if ( hits <= 0 ) {
+                        continue;
+                    }
                 }
 
                 // targeting a hex for ignition
-                // TODO: add TYPE_BLDG_IGNITE
-                if(target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+                if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||
+                    target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
+
                     phaseReport.append( "hits with " )
                         .append( hits )
                         .append( " inferno missles.\n" );
-                    tryIgniteHex(target.getPosition(), true, 0);
+
+                    // Unless there a fire in the hex already, start one.
+                    Coords c = target.getPosition();
+                    Hex h = game.getBoard().getHex(c);
+                    if ( !h.contains( Terrain.FIRE ) ) {
+                        phaseReport.append( " Fire started in hex " )
+                            .append( c.getBoardNum() )
+                            .append( ".\n" );
+                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    }
+                    game.board.addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+
                     return;
                 }
                 
@@ -4406,15 +4449,19 @@ implements Runnable {
             } // End is-inferno
 
             // targeting a hex for igniting
-            // TODO: add TYPE_BLDG_IGNITE
-            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+            if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||
+                target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
                 if ( !bSalvo ) {
                     phaseReport.append("hits!");
                 }
                 // We handle Inferno rounds above.
-                if (wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
+                int tn = wtype.getFireTN();
+                if (tn != TargetRoll.IMPOSSIBLE) {
+                    if ( bldg != null ) {
+                        tn += bldg.getType() - 1;
+                    }
                     phaseReport.append( "\n" );
-                    tryIgniteHex(target.getPosition(), bInferno, wtype.getFireTN());
+                    tryIgniteHex( target.getPosition(), bInferno, tn );
                 }
                 return;
             }
@@ -6186,7 +6233,7 @@ implements Runnable {
         HitData nextHit = null;
 
         // Is the infantry in the open?
-        // TODO : do infantry take double damage in Swamp or Smoke?
+        // TODO : do infantry take double damage in Smoke?
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
             te_hex = game.board.getHex( te.getPosition() );
             if ( te_hex != null &&
@@ -7030,6 +7077,38 @@ implements Runnable {
         int windDirection = game.getWindDirection();
         
         phaseReport.append("\n\nResolving fire movement \n ------------------------\n");
+
+        // Get the position map of all entities in the game.
+        Hashtable positionMap = game.getPositionMap();
+
+        // Build vector to send for updated buildings at once.
+        Vector burningBldgs = new Vector();
+
+        // Cycle through all buildings, checking for fire.
+        // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
+        // ASSUMPTION: multi-hex buildings lose 2 CF max, regardless of # fires
+        Enumeration buildings = game.board.getBuildings();
+        while ( buildings.hasMoreElements() ) {
+            Building bldg = (Building) buildings.nextElement();
+            if ( bldg.isBurning() ) {
+                int cf = bldg.getCurrentCF() - 2;
+                bldg.setCurrentCF( cf );
+
+                // Does the building burned down?
+                if ( cf == 0 ) {
+                    phaseReport.append( bldg.getName() )
+                        .append( " has burned to the ground!\n" );
+                    this.collapseBuilding( bldg, positionMap );
+                } 
+
+                // If it doesn't collapse under its load, mark it for update.
+                else if ( !checkForCollapse(bldg, positionMap) ) {
+                    bldg.setPhaseCF( cf );
+                    burningBldgs.addElement( bldg );
+                }
+            }
+        }
+
         // Cycle through all hexes, checking for fire.
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
             
@@ -7040,9 +7119,11 @@ implements Runnable {
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
                 boolean infernoBurning = board.burnInferno( currentCoords );
 
-                // If the woods has been cleared, put non-inferno fires out.
+                // If the woods has been cleared, or the building
+                // has collapsed put non-inferno fires out.
                 if ( currentHex.contains(Terrain.FIRE) && !infernoBurning &&
-                     !(currentHex.contains(Terrain.WOODS))) {
+                     !(currentHex.contains(Terrain.WOODS)) &&
+                     !(currentHex.contains(Terrain.BUILDING)) ) {
                     removeFire(currentXCoord, currentYCoord, currentHex);
                 }
 
@@ -7074,6 +7155,13 @@ implements Runnable {
                     phaseReport.append( "Fire at " )
                         .append( currentCoords.getBoardNum() )
                         .append( " was started this round.\n" );
+
+                    // If the hex contains a building, set it on fire.
+                    Building bldg = game.board.getBuildingAt( currentCoords );
+                    if ( bldg != null ) {
+                        bldg.setBurning( true );
+                        burningBldgs.add( bldg );
+                    }
                 }
                 if (currentHex.contains(Terrain.FIRE)) {
                     addSmoke(currentXCoord, currentYCoord, windDirection);
@@ -7082,6 +7170,11 @@ implements Runnable {
                     board.initializeAround(currentXCoord,currentYCoord);
                 }
             }
+        }
+
+        // If any buildings are burning, update the clients.
+        if ( !burningBldgs.isEmpty() ) {
+            send( createUpdateBuildingCFPacket(burningBldgs) );
         }
         
     }  // End the ResolveFire() method
@@ -7115,7 +7208,7 @@ implements Runnable {
      */
     public void spreadFire(Coords coords, int roll) {
         Hex hex = game.getBoard().getHex(coords);
-        if (burn(hex, roll)) {
+        if (ignite(hex, roll)) {
             sendChangedHex(coords);
             phaseReport.append("Fire spreads to " ).append( coords.getBoardNum() ).append( "!\n");
         }
@@ -7125,7 +7218,7 @@ implements Runnable {
      * Returns true if the hex is set on fire with the specified roll.  Of
      * course, also checks to see that fire is possible in the specified hex.
      */
-    public boolean burn(Hex hex, int roll, boolean bAnyTerrain) {
+    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain) {
 
         // The hex may already be on fire.
         if ( hex.contains( Terrain.FIRE ) ) {
@@ -7137,8 +7230,9 @@ implements Runnable {
             return false;
         }
 
-        // TODO: allow buildings to burn
-        if (!bAnyTerrain && !(hex.contains(Terrain.WOODS))) {
+        if ( !bAnyTerrain &&
+             !(hex.contains(Terrain.WOODS)) &&
+             !(hex.contains(Terrain.BUILDING)) ) {
             return false;
         }
         
@@ -7152,8 +7246,8 @@ implements Runnable {
     }
     
     // default signature, assuming only woods can burn
-    public boolean burn(Hex hex, int roll) {
-        return burn(hex, roll, false);
+    public boolean ignite(Hex hex, int roll) {
+        return ignite(hex, roll, false);
     }
     
     

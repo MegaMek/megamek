@@ -29,7 +29,6 @@ import java.util.Enumeration;
  */
 public class MiscType extends EquipmentType {
     // equipment flags (okay, like every type of equipment has its own flag)
-    // TODO: need more than l6 equipment flags
     public static final int     F_HEAT_SINK         = 0x0001;
     public static final int     F_DOUBLE_HEAT_SINK  = 0x0002;
     public static final int     F_JUMP_JET          = 0x0004;
@@ -46,6 +45,19 @@ public class MiscType extends EquipmentType {
     public static final int     F_ECM               = 0x2000;
     public static final int     F_TARGCOMP          = 0x4000;
     public static final int     F_OTHER             = 0x8000;
+    public static final int     F_BAP               = 0x00010000;
+    public static final int     F_TAG               = 0x00020000;
+    public static final int     F_BOARDING_CLAW     = 0x00040000;
+    public static final int     F_ASSAULT_CLAW      = 0x00080000;
+    public static final int     F_FIRE_RESISTANT    = 0x00100000;
+    public static final int     F_STEALTH           = 0x00200000;
+    public static final int     F_MINE              = 0x00400000;
+    public static final int     F_MINESWEEPER       = 0x00800000;
+    public static final int     F_MAGNETIC_CLAMP    = 0x01000000;
+    public static final int     F_PARAFOIL          = 0x02000000;
+    public static final int     F_FERRO_FIBROUS     = 0x04000000;
+    public static final int     F_ENDO_STEEL        = 0x08000000;
+    public static final int     F_AP_POD            = 0x10000000;
 
     // Define constants for Ferro-Fibrous and Endo-Steel.
     public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
@@ -234,6 +246,15 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createFerroFibrous());
         EquipmentType.addType(createEndoSteel());
         EquipmentType.addType(createISEndoSteel());
+        EquipmentType.addType(createBeagleActiveProbe());
+        EquipmentType.addType(createCLActiveProbe());
+        EquipmentType.addType(createCLLightActiveProbe());
+        EquipmentType.addType(createISTAG());
+        EquipmentType.addType(createISLightTAG());
+        EquipmentType.addType(createCLTAG());
+        EquipmentType.addType(createCLLightTAG());
+        EquipmentType.addType(createISAPPod());
+        EquipmentType.addType(createCLAPPod());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -642,7 +663,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_BOARDING_CLAW;
         misc.bv = 0;
         
         return misc;
@@ -658,7 +679,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_ASSAULT_CLAW;
         misc.bv = 0;
         
         return misc;
@@ -674,7 +695,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_FIRE_RESISTANT;
         misc.bv = 0;
         
         return misc;
@@ -690,7 +711,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_STEALTH;
         misc.bv = 0;
         
         return misc;
@@ -706,7 +727,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_STEALTH;
         misc.bv = 0;
         
         return misc;
@@ -722,7 +743,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_STEALTH;
         misc.bv = 0;
         
         return misc;
@@ -738,7 +759,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = true;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_MINE;
         misc.bv = 0;
         
         return misc;
@@ -754,7 +775,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_MINESWEEPER;
         misc.bv = 0;
         
         return misc;
@@ -770,7 +791,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_MAGNETIC_CLAMP;
         misc.bv = 0;
         
         return misc;
@@ -802,7 +823,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_STEALTH;
         misc.bv = 0;
         
         return misc;
@@ -818,7 +839,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = false;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_PARAFOIL;
         misc.bv = 0;
         
         return misc;
@@ -835,7 +856,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_STEALTH;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -855,7 +876,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;            //???
         
         return misc;
@@ -872,7 +893,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;            //???
         
         return misc;
@@ -889,8 +910,161 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags |= F_OTHER;
+        misc.flags |= F_ENDO_STEEL;
         misc.bv = 0;            //???
+        
+        return misc;
+    }
+
+    public static MiscType createBeagleActiveProbe() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Beagle Active Probe";
+        misc.internalName = "BeagleActiveProbe";
+        misc.mepName = "Beagle Active Probe";
+        misc.mtfName = "ISBeagleActiveProbe";
+        misc.tonnage = 1.5f;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 10;
+        
+        return misc;
+    }
+
+    public static MiscType createCLActiveProbe() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Clan Active Probe";
+        misc.internalName = "CLActiveProbe";
+        misc.mepName = "Active Probe";
+        misc.mtfName = "CLActiveProbe";
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 12;
+        
+        return misc;
+    }
+
+    public static MiscType createCLLightActiveProbe() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Light Active Probe";
+        misc.internalName = "CLLightActiveProbe";
+        misc.mepName = "CL Light Active Probe";
+        misc.mtfName = "Light Active Probe";
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_BAP;
+        misc.bv = 7;
+        
+        return misc;
+    }
+
+    public static MiscType createISTAG() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "IS TAG";
+        misc.internalName = "ISTAG";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_TAG;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createISLightTAG() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "IS Light TAG";
+        misc.internalName = "ISLightTAG";
+        misc.mepName = "Light TAG";
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_TAG;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createCLTAG() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Clan TAG";
+        misc.internalName = "CLTAG";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_TAG;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createCLLightTAG() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Clan Light TAG";
+        misc.internalName = "CLLightTAG";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_TAG;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createISAPPod() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "IS AP Pod";
+        misc.internalName = "ISAPPod";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_AP_POD;
+        misc.bv = 1;
+        
+        return misc;
+    }
+
+    public static MiscType createCLAPPod() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "CL AP Pod";
+        misc.internalName = "CLAntiPersonnelPod";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_AP_POD;
+        misc.bv = 1;
         
         return misc;
     }

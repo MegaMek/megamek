@@ -1482,21 +1482,6 @@ public class Compute
                   "Can not target infantry with Inferno rounds." );
         }
 
-        // -- BEGIN -- Hack Alert -- BEGIN --
-        // Can't target buidings with Inferno rounds (yet).
-        // TODO: implement building fires!!!
-        if ( ( targetInBuilding ||
-               target.getTargetType() == Targetable.TYPE_BUILDING ) &&
-             ( ( atype != null &&
-                 atype.getMunitionType() == AmmoType.M_INFERNO ) ||
-               ( isWeaponInfantry &&
-                 wtype.hasFlag(WeaponType.F_INFERNO) )
-               ) ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                  "Building fires has not been implemented yet, so you can not target buildings with Inferno rounds.  Please do NOT report this as a bug or a feature request... I'm getting to it." );
-        }
-        // --  END  -- Hack Alert --  END  --
-
         // Can't raise the heat of infantry or tanks.
         if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
              wtype.hasModes() &&
@@ -3849,7 +3834,7 @@ public class Compute
         ToHitData toHit = new ToHitData();
         
         // only entities get terrain bonuses 
-        // TODO: this should be changed for buildings, I expect
+        // TODO: should this be changed for buildings???
         if (entityTarget == null) {
             return toHit;
         }

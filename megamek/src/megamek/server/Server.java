@@ -5807,7 +5807,19 @@ implements Runnable, ConnectionHandler {
         boolean bMekStealthActive = false;
         String sSalvoType = " shot(s) ";
         boolean bAllShotsHit = false;
-
+        int nRange = ae.getPosition().distance(target.getPosition());
+        int nMissilesModifier = 0;
+        if (game.getOptions().booleanOption("maxtech_mslhitpen")) {
+            if (nRange<=1) {
+                nMissilesModifier = +1;
+            } else if (nRange <= wtype.getShortRange()) {
+                nMissilesModifier = 0;
+            } else if (nRange <= wtype.getMediumRange()) {
+                nMissilesModifier = -1;
+            } else {
+                nMissilesModifier = -2;
+            }
+       }
         // All shots fired by a Streak SRM weapon, during
         // a Mech Swarm hit, or at an adjacent building.
         if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ||
@@ -5974,8 +5986,8 @@ implements Runnable, ConnectionHandler {
             // Large MRM missile racks roll twice.
             // MRM missiles never recieve hit bonuses.
             if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2) +
-                    Compute.missilesHit(wtype.getRackSize() / 2);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier) +
+                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier);
             }
 
             // Battle Armor units multiply their racksize by the number
@@ -5991,10 +6003,10 @@ implements Runnable, ConnectionHandler {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20 );
+                        hits += Compute.missilesHit( 20, nMissilesModifier );
                         temp -= 20;
                     }
-                    hits += Compute.missilesHit( temp );
+                    hits += Compute.missilesHit( temp, nMissilesModifier );
                 } // End not-all-shots-hit
             }
 
@@ -6005,7 +6017,7 @@ implements Runnable, ConnectionHandler {
 
             // In all other circumstances, roll for hits.
             else {
-                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus);
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier);
             }
 
             // Advanced SRM's only hit with even numbers of missles.
@@ -6032,7 +6044,6 @@ implements Runnable, ConnectionHandler {
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
             // HGR does range-dependent damage
-            int nRange = ae.getPosition().distance(target.getPosition());
             if (nRange <= wtype.getShortRange()) {
                 nDamPerHit = 25;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -6044,7 +6055,6 @@ implements Runnable, ConnectionHandler {
             // Check for Altered Damage from Energy Weapons (MTR, pg.22)
             nDamPerHit = wtype.getDamage();
             if (game.getOptions().booleanOption("maxtech_altdmg")) {
-                int nRange = ae.getPosition().distance(target.getPosition());
                 if (nRange<=1) {
                     nDamPerHit++;
                 } else if (nRange <= wtype.getMediumRange()) {

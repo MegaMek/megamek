@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 17th October 2004.  MegaMek Version 0.22.53. Best viewed in 1024x768.
+The Great MegaMek Feature list. 25th October 2004.  MegaMek Version 0.22.54. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -244,7 +244,7 @@ Special Case Rules (Miscellaneous)
 - Clearing Woods		Yes		None
 - Dropping Troops		No		None
 - Dumping Ammo			Yes		None
-- Ejecting			Partial		No Auto-Ejecting. A Pilot who ejects is removed from the game.
+- Ejecting			Partial		Ejected pilots can't be picked up by other units.
 - Improved Positions		No 		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None 

@@ -57,6 +57,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Vector entityUnitNum = new Vector();
     private Label labDeployment = new Label("Deployment Round: ", Label.RIGHT);
     private Choice choDeployment = new Choice();
+    private Label labAutoEject = new Label("Disable Automatic ejection? ", Label.RIGHT);
+    private Checkbox chAutoEject = new Checkbox();
     
     private Label labOffBoard = new Label("Deploy Offboard?", Label.RIGHT);
     private Checkbox chOffBoard = new Checkbox();
@@ -138,6 +140,20 @@ extends Dialog implements ActionListener, DialogOptionListener {
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldPiloting, c);
         add(fldPiloting);
+        
+        if (entity instanceof Mech) {
+            Mech mech = (Mech)entity;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labAutoEject, c);
+            add(labAutoEject);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(chAutoEject, c);
+            add(chAutoEject);
+            chAutoEject.setState(!mech.isAutoEject());
+        }
         
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
@@ -796,6 +812,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             int gunnery;
             int piloting;
             int offBoardDistance;
+            boolean autoEject = chAutoEject.getState();
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
@@ -829,6 +846,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
+            if (entity instanceof Mech) {
+                Mech mech = (Mech)entity;
+                mech.setAutoEject(autoEject);
+            }
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 Entity chosen = client.getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );

@@ -84,6 +84,7 @@ chassis "Nighthawk" "isbattlearmor-b.gif"
 chassis "Purifier" "isbattlearmor-b.gif"
 chassis "Raiden" "isbattlearmor-b.gif"
 chassis "Sloth" "quadbattlearmor.gif"
+chassis "MechWarrior" "mechwarrior.gif"
 
 
 Vehicles

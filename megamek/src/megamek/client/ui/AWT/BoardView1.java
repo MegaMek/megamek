@@ -822,7 +822,11 @@ public class BoardView1
     public void addAttack(AttackAction aa) {
         // do not make a sprite unless we're aware of both entities
         // this is not a great solution but better than a crash
-        if (game.getEntity(aa.getEntityId()) == null || game.getEntity(aa.getTargetId()) == null) {
+        Entity ae = game.getEntity(aa.getEntityId());
+        Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
+        System.out.println("Got an attack against " + t.getDisplayName());
+        System.out.println("at " + t.getPosition());
+        if (ae == null || t == null) {
             return;
         }
         
@@ -1724,6 +1728,7 @@ public class BoardView1
         private Polygon attackPoly;
         
         private int entityId;
+        private int targetType;
         private int targetId;
         private String attackerDesc;
         private String targetDesc;
@@ -1732,14 +1737,15 @@ public class BoardView1
         public AttackSprite(AttackAction attack) {
             this.attacks.addElement(attack);
             this.entityId = attack.getEntityId();
+            this.targetType = attack.getTargetType();
             this.targetId = attack.getTargetId();
             
             final Entity ae = game.getEntity(attack.getEntityId());
-            final Entity te = game.getEntity(attack.getTargetId());
+            final Targetable target = game.getTarget(targetType, targetId);
             final Point a = getHexLocation(ae.getPosition());
-            final Point t = getHexLocation(te.getPosition());
+            final Point t = getHexLocation(target.getPosition());
         
-            final double an = (ae.getPosition().radian(te.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            final double an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             final double lw = 3; // line width
         
             // make a polygon
@@ -1758,7 +1764,7 @@ public class BoardView1
             
             // set names & stuff
             attackerDesc = ae.getDisplayName();
-            targetDesc = te.getDisplayName();
+            targetDesc = target.getDisplayName();
             if (attack instanceof WeaponAttackAction) {
                 addWeapon((WeaponAttackAction)attack);
             }

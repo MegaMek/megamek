@@ -24,7 +24,7 @@ import megamek.common.actions.*;
  * terrain.
  */
 public abstract class Entity 
-    implements Serializable, Transporter
+    implements Serializable, Transporter, Targetable
 {
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?
@@ -192,7 +192,7 @@ public abstract class Entity
             Mounted mounted = (Mounted)i.nextElement();
             mounted.restore();
         }   
-    }
+    }    
   
     public int getId() {
         return id;
@@ -343,6 +343,12 @@ public abstract class Entity
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }
+    
+    // Targetable interface
+    public int getTargetType() { return Targetable.TYPE_ENTITY; }
+    public int getTargetID() { return getId(); }
+    public int getHeight() { return height(); }
+    // End Targetable interface
     
     /**
      * Determine if this entity participate in the current game phase.

@@ -351,7 +351,7 @@ public class MegaMek
     
     private static void testDice() {
         // test RNG
-        long rolls = 100000000;
+        long rolls = 1000000;
         int sides = 14;
         long[] hits = new long[sides];
         
@@ -367,6 +367,25 @@ public class MegaMek
         for (int i = 0; i < sides; i++) {
             System.out.println("hits on " + i + " : " + hits[i] + "; probability = " + ((double)hits[i] / (double)rolls));
         }
+        
+        int[][] pairs = new int[7][7];
+        System.out.println("testing streaks, " + rolls + " rolls...");
+        
+        int nLastLastRoll = 0, nLastRoll = 0, nRoll = 0;
+        for (long i = 0; i < rolls; i++) {
+            nRoll = megamek.common.Compute.d6();
+            pairs[nLastLastRoll][nRoll]++;
+            nLastLastRoll = nRoll;
+            nLastRoll = nRoll;
+        }
+        for (int x = 0; x < pairs.length; x++) {
+            for (int y = 0; y < pairs[x].length; y++) {
+                System.out.println(x + "," + y + ": " + pairs[x][y]);
+            }
+        }
+        // odd, but necessary
+        System.out.flush();
+                
     }
     
     public static void main(String[] args) {

@@ -232,7 +232,7 @@ public class MovementDisplay
                 butCharge.setEnabled(true);
             }
 
-            UpdateRACButton();
+            updateRACButton();
 
             break;
         case 2:
@@ -278,18 +278,21 @@ public class MovementDisplay
             butCharge.setEnabled(false);
             butDfa.setEnabled(false);
         } else {
-        butCharge.setEnabled(ce().getWalkMP() > 0);
-        butDfa.setEnabled(ce().getJumpMP() > 0);
+            butCharge.setEnabled(ce().getWalkMP() > 0);
+            butDfa.setEnabled(ce().getJumpMP() > 0);
         }
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
 
         if (ce().isProne()) {
             butUp.setEnabled(true);
-        } else {
             butDown.setEnabled(false);
+        } else {
+            butUp.setEnabled(false);
+            butDown.setEnabled(true);
         }
 
-        UpdateRACButton();
+        updateProneButtons();
+        updateRACButton();
         loadedUnits = ce().getLoadedUnits();
         updateLoadButtons();
 
@@ -361,7 +364,8 @@ public class MovementDisplay
         cmd = new MovementData();
         client.bv.clearMovementData();
         butDone.setLabel("Done");
-        UpdateRACButton();
+        updateProneButtons();
+        updateRACButton();
         loadedUnits = ce().getLoadedUnits();
         updateLoadButtons();
     }
@@ -541,13 +545,18 @@ public class MovementDisplay
             }
 
             butDone.setLabel("Move");
-
-            UpdateRACButton();
+            updateProneButtons();
+            updateRACButton();
             updateLoadButtons();
         }
     }
 
-    private void UpdateRACButton() {
+    private void updateProneButtons() {
+        butUp.setEnabled(md.getFinalProne(ce().isProne()));
+        butDown.setEnabled(!(butUp.isEnabled()));
+    }
+    
+    private void updateRACButton() {
         if ( null == ce() || null == md ) {
             return;
         }
@@ -810,9 +819,18 @@ public class MovementDisplay
         } else if (ev.getSource() == butUp) {
             clearAllMoves();
             gear = Compute.GEAR_LAND;
-            if (!md.contains(MovementData.STEP_GET_UP)) {
+            if (md.getFinalProne(ce().isProne())) {
                 md.addStep(MovementData.STEP_GET_UP);
             }
+            cmd = new MovementData(md);
+            client.bv.drawMovementData(ce(), cmd);
+            butDone.setLabel("Move");
+        } else if (ev.getSource() == butDown) {
+            gear = Compute.GEAR_LAND;
+            if (!md.getFinalProne(ce().isProne())) {
+                md.addStep(MovementData.STEP_GO_PRONE);
+            }
+            cmd = new MovementData(md);
             client.bv.drawMovementData(ce(), cmd);
             butDone.setLabel("Move");
         } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
@@ -855,9 +873,9 @@ public class MovementDisplay
             }
         }
 
-        UpdateRACButton();
+        updateProneButtons();
+        updateRACButton();
         updateLoadButtons();
-
     }
 
 

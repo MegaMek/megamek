@@ -46,6 +46,7 @@ public class MovementData
     
     private boolean compiled = false;
     
+    
     /**
      * Generates a new, empty, movement data object.
      */
@@ -218,6 +219,22 @@ public class MovementData
             }
         }
         return facing;
+    }
+    
+    /**
+     * Returns whether or not a unit would end up prone after all of the steps
+     */
+    public boolean getFinalProne(boolean bCurProne) {
+        boolean bProne = bCurProne;
+        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+            final Step step = (Step)i.nextElement();
+            if (step.getType() == STEP_GO_PRONE) {
+                bProne = true;
+            } else if (step.getType() == STEP_GET_UP) {
+                bProne = false;
+            }
+        }
+        return bProne;
     }
     
     /**

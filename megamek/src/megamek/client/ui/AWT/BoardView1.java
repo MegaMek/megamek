@@ -1572,34 +1572,31 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 // draw movement cost
-                String costString = null;
-                StringBuffer costStringBuf = new StringBuffer();
-                costStringBuf.append( step.getMpUsed() );
-
-                // If the step is using a road bonus, mark it.
-                if ( step.isOnPavement() ) { 
-                    costStringBuf.append( "+" );
-                }
-
-                // If the step is dangerous, mark it.
-                if ( step.isDanger() ) { 
-                    costStringBuf.append( "*" );
-                }
-
-                // If the step is past danger, mark that.
-                if (step.isPastDanger()) {
-                    costStringBuf.insert( 0, "(" );
-                    costStringBuf.append( ")" );
-                }
-
-                // Convert the buffer to a String and draw it.
-                costString = costStringBuf.toString();
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
-                int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+                drawMovementCost(step, stepPos, graph, col);
+                break;
+            case MovementData.STEP_GO_PRONE:
+                // draw arrow indicating dropping prone
+                Polygon downPoly = movementPolys[3];
+                myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
                 graph.setColor(Color.darkGray);
-                graph.drawString(costString, costX, stepPos.y + 39);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 40);
+                graph.drawPolygon(myPoly);
                 graph.setColor(col);
-                graph.drawString(costString, costX - 1, stepPos.y + 38);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                drawMovementCost(step, stepPos, graph, col);
+                break;
+            case MovementData.STEP_GET_UP:
+                // draw arrow indicating standing up
+                Polygon upPoly = movementPolys[0];
+                myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 42);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                drawMovementCost(step, stepPos, graph, col);
                 break;
             case MovementData.STEP_TURN_LEFT:
             case MovementData.STEP_TURN_RIGHT:
@@ -1653,6 +1650,38 @@ public class BoardView1
         public MovementData.Step getStep() {
             return step;
         }
+        
+        private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col) {
+            String costString = null;
+            StringBuffer costStringBuf = new StringBuffer();
+            costStringBuf.append( step.getMpUsed() );
+
+            // If the step is using a road bonus, mark it.
+            if ( step.isOnPavement() ) { 
+                costStringBuf.append( "+" );
+            }
+
+            // If the step is dangerous, mark it.
+            if ( step.isDanger() ) { 
+                costStringBuf.append( "*" );
+            }
+
+            // If the step is past danger, mark that.
+            if (step.isPastDanger()) {
+                costStringBuf.insert( 0, "(" );
+                costStringBuf.append( ")" );
+            }
+
+            // Convert the buffer to a String and draw it.
+            costString = costStringBuf.toString();
+            graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+            graph.setColor(Color.darkGray);
+            graph.drawString(costString, costX, stepPos.y + 39);
+            graph.setColor(col);
+            graph.drawString(costString, costX - 1, stepPos.y + 38);
+        }
+
     }
     
     /**

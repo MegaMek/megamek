@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2005 Ben Mazur (bmazur@sev.org)
  * UnitStatusFormatter.java - Copyright (C) 2002,2004 Joshua Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -27,34 +27,55 @@ public abstract class UnitStatusFormatter
     public static String format(Entity e)
     {
         StringBuffer sb = new StringBuffer(2048);
-        sb.append("=============================================================\n");
+        sb.append("=============================================================")
+            .append( Settings.NL );
         sb.append(formatHeader(e));
         sb.append("--- Armor: ")
             .append(e.getTotalArmor())
             .append("/")
             .append(e.getTotalOArmor())
-            .append("-------------------------------------------\n");
+            .append("-------------------------------------------")
+            .append( Settings.NL );
+        sb.append("--- Internal: ")
+            .append(e.getTotalInternal())
+            .append("/")
+            .append(e.getTotalOInternal())
+            .append("----------------------------------------")
+            .append( Settings.NL );
         sb.append(formatArmor(e));
         if ( e instanceof Mech ||
              e instanceof Protomech ) {
-            sb.append("-------------------------------------------------------------\n");
+            sb.append("-------------------------------------------------------------")
+                .append( Settings.NL );
             sb.append(formatCrits(e));
         }
-        sb.append("-------------------------------------------------------------\n");
+        sb.append("-------------------------------------------------------------")
+            .append( Settings.NL );
         sb.append(formatAmmo(e));
-        sb.append("=============================================================\n");
+        sb.append("=============================================================")
+            .append( Settings.NL );
         return sb.toString();
     }
 
     private static String formatHeader(Entity e)
     {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("Model: ").append(e.getChassis()).append(" - ").append(e.getModel()).append("\n");
-        sb.append("Pilot: ").append(e.crew.getName());
-        sb.append(" (").append(e.crew.getGunnery()).append("/");
-        sb.append(e.crew.getPiloting()).append(")\n");
+        sb.append("Model: ")
+            .append(e.getChassis())
+            .append(" - ")
+            .append(e.getModel())
+            .append( Settings.NL );
+        sb.append("Pilot: ")
+            .append(e.crew.getName());
+        sb.append(" (")
+            .append(e.crew.getGunnery())
+            .append("/");
+        sb.append(e.crew.getPiloting())
+            .append(")")
+            .append( Settings.NL );
         if (e.isCaptured()) {
-            sb.append( "  *** CAPTURED BY THE ENEMY ***\n" );
+            sb.append( "  *** CAPTURED BY THE ENEMY ***" );
+            sb.append( Settings.NL );
         }
         return sb.toString();
     }
@@ -65,11 +86,13 @@ public abstract class UnitStatusFormatter
         Mounted weap;
 
         for (Enumeration en = e.getAmmo(); en.hasMoreElements(); )
-        {
-            weap = (Mounted)en.nextElement();
-            sb.append(weap.getName());
-            sb.append(": ").append(weap.getShotsLeft()).append("\n");
-        }
+            {
+                weap = (Mounted)en.nextElement();
+                sb.append(weap.getName());
+                sb.append(": ")
+                    .append(weap.getShotsLeft())
+                    .append( Settings.NL );
+            }
 
         return sb.toString();
     }
@@ -86,7 +109,8 @@ public abstract class UnitStatusFormatter
                 if (cs == null) continue;
                 nCount++;
                 if (nCount == 7) {
-                    sb.append("\n              ");
+                    sb.append( Settings.NL );
+                    sb.append("              ");
                 }
                 else if (nCount > 1) {
                     sb.append(",");
@@ -111,7 +135,7 @@ public abstract class UnitStatusFormatter
                     sb.append(m.getName());
                 }
             }
-            sb.append("\n");
+            sb.append( Settings.NL );
         }
         return sb.toString();
     }
@@ -136,43 +160,72 @@ public abstract class UnitStatusFormatter
     private static String formatArmorTank(Tank t)
     {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("      ARMOR               INTERNAL\n    __________           __________\n    |\\      /|           |\\      /|\n");
+        sb.append("      ARMOR               INTERNAL")
+            .append( Settings.NL )
+            .append("    __________           __________")
+            .append( Settings.NL )
+            .append("    |\\      /|           |\\      /|")
+            .append( Settings.NL );
         // front
-        sb.append("    | \\ ").append(renderArmor(t.getArmor(Tank.LOC_FRONT))).append(" / |           | \\ ");
-        sb.append(renderArmor(t.getInternal(Tank.LOC_FRONT))).append(" / |\n    |  \\__/  |           |  \\__/  |\n");
+        sb.append("    | \\ ")
+            .append(renderArmor(t.getArmor(Tank.LOC_FRONT)))
+            .append(" / |           | \\ ");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_FRONT)))
+            .append(" / |")
+            .append( Settings.NL )
+            .append("    |  \\__/  |           |  \\__/  |")
+            .append( Settings.NL );
         // left, turret and right
-        sb.append("    |").append(renderArmor(t.getArmor(Tank.LOC_LEFT))).append("/");
+        sb.append("    |")
+            .append(renderArmor(t.getArmor(Tank.LOC_LEFT)))
+            .append("/");
         if (!t.hasNoTurret())
-        {
-            sb.append(renderArmor(t.getArmor(Tank.LOC_TURRET))).append("\\");
-        } else {
-            sb.append("  \\");
-        }
-        sb.append(renderArmor(t.getArmor(Tank.LOC_RIGHT))).append("|           |");
-        sb.append(renderArmor(t.getInternal(Tank.LOC_LEFT))).append("/");
+            {
+                sb.append(renderArmor(t.getArmor(Tank.LOC_TURRET)))
+                    .append("\\");
+            } else {
+                sb.append("  \\");
+            }
+        sb.append(renderArmor(t.getArmor(Tank.LOC_RIGHT)))
+            .append("|           |");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_LEFT)))
+            .append("/");
         if (t.hasNoTurret())
-        {
-            sb.append(renderArmor(t.getInternal(Tank.LOC_TURRET))).append("\\");
-        } else {
-            sb.append("  \\");
-        }    
-        sb.append(renderArmor(t.getInternal(Tank.LOC_RIGHT))).append("|\n");
+            {
+                sb.append(renderArmor(t.getInternal(Tank.LOC_TURRET)))
+                    .append("\\");
+            } else {
+                sb.append("  \\");
+            }    
+        sb.append(renderArmor(t.getInternal(Tank.LOC_RIGHT)))
+            .append("|")
+            .append( Settings.NL );
         // rear
-        sb.append("    | /____\\ |           | /____\\ |\n    | / ").append(renderArmor(t.getArmor(Tank.LOC_REAR))).append(" \\ |           | / ");
-        sb.append(renderArmor(t.getInternal(Tank.LOC_REAR))).append(" \\ |\n    |/______\\|           |/______\\|\n");
+        sb.append("    | /____\\ |           | /____\\ |")
+            .append( Settings.NL )
+            .append("    | / ")
+            .append(renderArmor(t.getArmor(Tank.LOC_REAR)))
+            .append(" \\ |           | / ");
+        sb.append(renderArmor(t.getInternal(Tank.LOC_REAR)))
+            .append(" \\ |")
+            .append( Settings.NL )
+            .append("    |/______\\|           |/______\\|")
+            .append( Settings.NL );
 
-        sb.append("\n");
+        sb.append( Settings.NL );
         return sb.toString();
     }
 
     private static String formatArmorMech(Mech m)
     {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("         FRONT                REAR                INTERNAL\n");
+        sb.append("         FRONT                REAR                INTERNAL");
+        sb.append( Settings.NL );
         if (m.getWeight() < 70) {
             // head
             sb.append("         (").append(renderArmor(m.getArmor(Mech.LOC_HEAD))).append(")                 (**)                  (");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append(")\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append(")");
+            sb.append( Settings.NL );
             // torsos
             sb.append("      /").append(renderArmor(m.getArmor(Mech.LOC_LT))).append("|");
             sb.append(renderArmor(m.getArmor(Mech.LOC_CT))).append("|");
@@ -182,25 +235,30 @@ public abstract class UnitStatusFormatter
             sb.append(renderArmor(m.getArmor(Mech.LOC_RT, true))).append("\\            /");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LT))).append("|");
             sb.append(renderArmor(m.getInternal(Mech.LOC_CT))).append("|");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\");
+            sb.append( Settings.NL );
             // arms
             sb.append("     (").append(renderArmor(m.getArmor(Mech.LOC_LARM)));
             sb.append("/ || \\").append(renderArmor(m.getArmor(Mech.LOC_RARM)));
             sb.append(")         (   |  |   )          (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LARM))).append("/ || \\");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
+            sb.append( Settings.NL );
             // legs
-            sb.append("       /  /\\  \\               /  \\                /  /\\  \\\n");
+            sb.append("       /  /\\  \\               /  \\                /  /\\  \\");
+            sb.append( Settings.NL );
             sb.append("      (").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append("/  \\").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append(")             /    \\              (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
-            sb.append("/  \\").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append(")\n");
+            sb.append("/  \\").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append(")");
+            sb.append( Settings.NL );
         }
         else {
             // head
             sb.append("      .../").append(renderArmor(m.getArmor(Mech.LOC_HEAD))).append("\\...           .../**\\...            .../");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append("\\...\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_HEAD))).append("\\...");
+            sb.append( Settings.NL );
             // torsos
             sb.append("     /").append(renderArmor(m.getArmor(Mech.LOC_LT))).append("| ");
             sb.append(renderArmor(m.getArmor(Mech.LOC_CT))).append(" |");
@@ -210,22 +268,26 @@ public abstract class UnitStatusFormatter
             sb.append(renderArmor(m.getArmor(Mech.LOC_RT, true))).append("\\          /");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LT))).append("| ");
             sb.append(renderArmor(m.getInternal(Mech.LOC_CT))).append(" |");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_RT))).append("\\");
+            sb.append( Settings.NL );
             // arms
             sb.append("    (").append(renderArmor(m.getArmor(Mech.LOC_LARM)));
             sb.append("). -- .(").append(renderArmor(m.getArmor(Mech.LOC_RARM)));
             sb.append(")       (   |    |   )        (");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LARM))).append("). -- .(");
-            sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")\n");
+            sb.append(renderArmor(m.getInternal(Mech.LOC_RARM))).append(")");
+            sb.append( Settings.NL );
             // legs
-            sb.append("       /  /\\  \\             /      \\              /  /\\  \\\n");
+            sb.append("       /  /\\  \\             /      \\              /  /\\  \\");
+            sb.append( Settings.NL );
             sb.append("      /").append(renderArmor(m.getArmor(Mech.LOC_LLEG)));
             sb.append(".\\/.").append(renderArmor(m.getArmor(Mech.LOC_RLEG)));
             sb.append("\\           /        \\            /");
             sb.append(renderArmor(m.getInternal(Mech.LOC_LLEG)));
-            sb.append(".\\/.").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append("\\\n");
+            sb.append(".\\/.").append(renderArmor(m.getInternal(Mech.LOC_RLEG))).append("\\");
+            sb.append( Settings.NL );
         }
-        sb.append("\n");
+        sb.append( Settings.NL );
         return sb.toString();
     }
     
@@ -233,7 +295,7 @@ public abstract class UnitStatusFormatter
         StringBuffer sb = new StringBuffer(32);
         sb.append("Surviving troopers: ")
             .append( renderArmor(i.getInternal(0)) )
-            .append('\n');
+            .append( Settings.NL );
         return sb.toString();
     }
     
@@ -244,7 +306,7 @@ public abstract class UnitStatusFormatter
                 .append( renderArmor(b.getArmor(i)) )
                 .append(" / ")
                 .append( renderArmor(b.getInternal(i)) );
-            sb.append('\n');
+            sb.append( Settings.NL );
         }
         return sb.toString();
     }
@@ -252,7 +314,8 @@ public abstract class UnitStatusFormatter
     private static String formatArmorProtomech(Protomech m)
     {
         StringBuffer sb = new StringBuffer(1024);
-        sb.append("         FRONT                INTERNAL\n");
+        sb.append("         FRONT                INTERNAL");
+        sb.append( Settings.NL );
 
         // head & main gun
         sb.append("        ");
@@ -271,11 +334,14 @@ public abstract class UnitStatusFormatter
         }
         sb.append(" (");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_HEAD),1))
-            .append(")\n");
+            .append(")");
+        sb.append( Settings.NL );
         if ( m.hasMainGun() ) {
-            sb.append("         \\/ \\                   \\/ \\\n");
+            sb.append("         \\/ \\                   \\/ \\");
+            sb.append( Settings.NL );
         } else {
-            sb.append("          / \\                    / \\\n");
+            sb.append("          / \\                    / \\");
+            sb.append( Settings.NL );
         }
         // arms & torso
         sb.append("      (")
@@ -290,15 +356,19 @@ public abstract class UnitStatusFormatter
             .append(renderArmor(m.getInternal(Protomech.LOC_TORSO)))
             .append(" \\");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM)))
-            .append(")\n");
+            .append(")");
+        sb.append( Settings.NL );
         // legs
-        sb.append("         | | |                  | | |\n");
+        sb.append("         | | |                  | | |");
+        sb.append( Settings.NL );
         sb.append("        ( ")
             .append(renderArmor(m.getArmor(Protomech.LOC_LEG)));
         sb.append("  )                ( ");
         sb.append(renderArmor(m.getInternal(Protomech.LOC_LEG)))
-            .append("  )\n");
-        sb.append("\n");
+            .append("  )");
+        sb.append( Settings.NL );
+        sb.append("");
+        sb.append( Settings.NL );
         return sb.toString();
     }
 

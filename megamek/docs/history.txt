@@ -122,6 +122,7 @@ v 0.29 release candidate 2 (CVS)
   internal) are now dark grey instead of red.
 + Bug 757449: don't swarm if the target was destroyed by weapons fire.
 + Bug 757383: Mechs with MASC have correct BV again.
++ Skidding mechs only use MASC movement when player intended it.
 
 v 0.29 release candidate 1 (06-16-03, 11pm)
 + Bug 748959: fixed bug with moved units not updating

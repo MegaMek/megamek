@@ -161,7 +161,9 @@ public class CEntity  {
     this.base_psr_odds = Compute.oddsAbove(Compute.getBasePilotingRoll(game,entity.getId()).getValue())/100;
     //begin weapons characterization
     double heat_mod = .9; //these estimates are consistently too high
-    if (entity.heat > 7) heat_mod = .6; //reduce effectiveness
+    if (entity.heat > 7) heat_mod = .7; //reduce effectiveness
+    if (entity.heat > 12) heat_mod = .4;
+    if (entity.heat > 16) heat_mod = .2;
     int capacity = entity.getHeatCapacity();
     int heat_total = 0;
     Enumeration weapons = entity.getWeapons();

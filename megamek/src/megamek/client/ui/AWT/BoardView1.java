@@ -785,6 +785,10 @@ public class BoardView1
         }
     }
     
+    /**
+     * Specifies that this should mark the deployment hexes for a player.  If
+     * the player is set to null, no hexes will be marked.
+     */
     public void markDeploymentHexesFor(Player p)
     {
         m_plDeployer = p;

@@ -104,6 +104,9 @@ v next
 + mechs making DFA no longer make landing PSRs during movement
 + secondary target modifiers applied
 + can't fire weapons from both arms while prone
+- significantly changed how rear locations and weapons work:
++ weapons can now be rear-mounted anywhere legal (head, legs)
++ rear limb hits transfer to rear torso locations
 
 v 0.24.1 (03-17-02, 11pm)
 + changed RNG routine to avoid very unlikely chance of rounding errors (:-P)

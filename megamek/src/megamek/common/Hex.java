@@ -135,14 +135,44 @@ public class Hex
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
 
             // Roads exit into pavement, too.
-            if ( cTerr.getType() == Terrain.ROAD &&
+            if ( other != null &&
+                 cTerr.getType() == Terrain.ROAD &&
                  other.contains(Terrain.PAVEMENT) ) {
                 cTerr.setExit( direction, true );
             }
         }
         invalidateCache();
     }
-    
+
+    /**
+     * Determine if this <code>Hex</code> contains the indicated terrain
+     * that exits in the specified direction.
+     *
+     * @param   terrType - the <code>int</code> type of the terrain.
+     * @param   direction - the <code>int</code> direction of the exit.
+     *          This value should be between 0 and 5 (inclusive).
+     * @return  <code>true</code> if this <code>Hex</code> contains the
+     *          indicated terrain that exits in the specified direction.
+     *          <code>false</code> if bad input is supplied, if no such
+     *          terrain exists, or if it doesn't exit in that direction.
+     */
+    public boolean containsTerrainExit( int terrType, int direction ) {
+        boolean result = false;
+        final Terrain terr = getTerrain( terrType );
+
+        // Do we have the given terrain that has exits?
+        if ( terr != null && terr.hasExitsSpecified() ) {
+
+            // See if we have an exit in the given direction.
+            final int exits = terr.getExits();
+            if ( 0 >= direction && 5 <= direction &&
+                 (exits ^ (int) Math.pow(2, direction)) > 0 ) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns the highest level that features in this hex extend to.  Above
      * this level is assumed to be air.

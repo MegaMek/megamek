@@ -956,11 +956,11 @@ public class ChatLounge
                 		playerValue += entity.getWeight();     
                 	}
                }
-               if (useBv) {
-                   lisBVs.add(player.getName() + " BV=" + (int) playerValue);
-               } else {
-                   lisBVs.add(player.getName() + " Tons=" + playerValue);
-               }
+            }
+            if (useBv) {
+                lisBVs.add(player.getName() + " BV=" + (int) playerValue);
+            } else {
+                lisBVs.add(player.getName() + " Tons=" + playerValue);
             }
         }
     }

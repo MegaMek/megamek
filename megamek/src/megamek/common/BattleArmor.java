@@ -50,7 +50,7 @@ public class BattleArmor
                                                         "Trooper 2",
                                                         "Trooper 3",
                                                         "Trooper 4" };
-    private static final int[]    CLAN_NUM_OF_SLOTS   = {7,1,1,1,1,1};
+    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,1,1,1,1,1};
     private static final String[] CLAN_LOCATION_ABBRS = { "Point",
                                                           "Trooper 1",
                                                           "Trooper 2",

@@ -58,6 +58,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_FERRO_FIBROUS     = 0x04000000;
     public static final int     F_ENDO_STEEL        = 0x08000000;
     public static final int     F_AP_POD            = 0x10000000;
+    public static final int     F_SEARCHLIGHT       = 0x20000000;
 
     // Define constants for Ferro-Fibrous and Endo-Steel.
     public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
@@ -269,6 +270,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType( createSingleHexECM() );
         EquipmentType.addType( createMimeticCamo() );
         EquipmentType.addType( createParafoil() );
+        EquipmentType.addType( createBASearchlight() );
     }
     
     public static MiscType createHeatSink() {
@@ -1113,6 +1115,24 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
+        
+        return misc;
+    }
+
+    public static MiscType createBASearchlight() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Searchlight";
+        misc.internalName = "BASearchlight";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
+        misc.tonnage = 0.0f;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_SEARCHLIGHT;
+        misc.bv = 0;
         
         return misc;
     }

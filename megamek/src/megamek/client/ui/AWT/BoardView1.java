@@ -1444,6 +1444,9 @@ public class BoardView1
                 if (aa instanceof DfaAttackAction) {
                     sprite.addWeapon((DfaAttackAction)aa);
                 }
+                if (aa instanceof ProtomechPhysicalAttackAction) {
+                	sprite.addWeapon((ProtomechPhysicalAttackAction)aa);
+                }
                 return;
             }
         }
@@ -3264,6 +3267,9 @@ public class BoardView1
             if (attack instanceof DfaAttackAction) {
                 addWeapon((DfaAttackAction)attack);
             }
+            if (attack instanceof ProtomechPhysicalAttackAction) {
+            	addWeapon((ProtomechPhysicalAttackAction)attack);
+            }
 
             // nullify image
             this.image = null;
@@ -3435,7 +3441,10 @@ public class BoardView1
             final String roll = Compute.toHitDfa(game, attack).getValueAsString();
             weaponDescs.addElement("DFA. Needs " + roll);
         }
-
+        public void addWeapon(ProtomechPhysicalAttackAction attack) {
+        	final String roll = Compute.toHitProto(game, attack).getValueAsString();
+        	weaponDescs.addElement("Makes a protomech physical attack. Needs " + roll);
+        }
 
         private String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];

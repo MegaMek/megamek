@@ -2048,8 +2048,8 @@ implements Runnable, ConnectionHandler {
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
 
-        // only mechs have physical attacks (except tank charges)
-        if (!(entity instanceof Mech)) {
+        // only mechs and protos have physical attacks (except tank charges)
+        if (!(entity instanceof Mech || entity instanceof Protomech)) {
             return false;
         }
 
@@ -2161,7 +2161,10 @@ implements Runnable, ConnectionHandler {
 
         canHit |= new ThrashAttackAction(entityId, target).toHit(game).getValue()
             != ToHitData.IMPOSSIBLE;
-
+        
+        canHit |= Compute.toHitProto(game, entityId, target).getValue()
+            != ToHitData.IMPOSSIBLE;
+        
         Mounted club = Compute.clubMechHas( game.getEntity(entityId) );
         if ( null != club ) {
             canHit |= Compute.toHitClub
@@ -6538,6 +6541,10 @@ implements Runnable, ConnectionHandler {
                 ThrashAttackAction taa = (ThrashAttackAction)o;
                 resolveThrashAttack(taa, cen);
                 cen = taa.getEntityId();
+            } else if (o instanceof ProtomechPhysicalAttackAction) {
+            	ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)o;
+            	resolveProtoAttack(ppaa, cen);
+            	cen = ppaa.getEntityId();
             } else if (o instanceof ClubAttackAction) {
                 ClubAttackAction caa = (ClubAttackAction)o;
                 resolveClubAttack(caa, cen);
@@ -6849,6 +6856,105 @@ implements Runnable, ConnectionHandler {
         phaseReport.append("\n");
     }
 
+    /**
+     * Handle a Protomech physicalattack
+     */
+    
+    private void resolveProtoAttack(ProtomechPhysicalAttackAction ppaa, int lastEntityId) {
+        final Entity ae = game.getEntity(ppaa.getEntityId());
+        final Targetable target = game.getTarget(ppaa.getTargetType(), ppaa.getTargetId());
+        Entity te = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity)target;
+        }
+        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+
+        // Which building takes the damage?
+        Building bldg = game.board.getBuildingAt( target.getPosition() );
+
+        if (lastEntityId != ae.getId()) {
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
+        }
+
+        phaseReport.append("    Protomech physical attack" ).append( " at " ).append( target.getDisplayName());
+        // compute to-hit
+        ToHitData toHit = Compute.toHitProto(game, ppaa);
+        int roll = 0;
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
+            return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            phaseReport.append(", the attack is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
+            roll = Integer.MAX_VALUE;
+        } else {
+            // roll
+            roll = Compute.d6(2);
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
+        }
+
+        int damage = Compute.getProtoPhysicalDamageFor(ae);
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            // miss
+            phaseReport.append("misses.\n");
+
+            // If the target is in a building, the building absorbs the damage.
+            if ( targetInBuilding && bldg != null ) {
+
+                // Only report if damage was done to the building.
+                if ( damage > 0 ) {
+                    phaseReport.append( "  " )
+                        .append( damageBuilding( bldg, damage ) )
+                        .append( "\n" );
+                }
+
+            }
+            return;
+        }
+
+        // Targeting a building.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+
+            // The building takes the full brunt of the attack.
+            phaseReport.append( "hits.\n  " )
+                .append( damageBuilding( bldg, damage ) )
+                .append( "\n" );
+
+            // Damage any infantry in the hex.
+            this.damageInfantryIn( bldg, damage );
+
+            // And we're done!
+            return;
+        }
+
+        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
+
+        // The building shields all units from a certain amount of damage.
+        // The amount is based upon the building's CF at the phase's start.
+        if ( targetInBuilding && bldg != null ) {
+            int bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+            int toBldg = Math.min( bldgAbsorbs, damage );
+            damage -= toBldg;
+            phaseReport.append( "\n  " )
+                .append( damageBuilding( bldg, toBldg ) );
+        }
+
+        // A building may absorb the entire shot.
+        if ( damage == 0 ) {
+            phaseReport.append( "\n  " )
+                .append( te.getDisplayName() )
+                .append( " suffers no damage." );
+        } else {
+            phaseReport.append( damageEntity(te, hit, damage) );
+        }
+        
+        phaseReport.append("\n");
+    }
+
+    
     /**
      * Handle a brush off attack
      */

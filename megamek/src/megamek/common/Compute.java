@@ -1714,7 +1714,7 @@ public class Compute
                          game.getTarget(kaa.getTargetType(), kaa.getTargetId()),
                          kaa.getLeg());
     }
-
+    
     /**
      * To-hit number for the specified leg to kick
      */
@@ -1915,8 +1915,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
+        // target immobile
+        toHit.append(getImmobileMod(te));
 
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
@@ -2017,10 +2017,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
 
-  // non-mechs can't club
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
-  }
+        // non-mechs can't club
+        if (!(ae instanceof Mech)) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
+        }
 
         //Quads can't club
         if ( ae.entityIsQuad() ) {
@@ -2138,17 +2138,17 @@ public class Compute
         }
 
         //Set the base BTH
-          int base = 4;
+        int base = 4;
 
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-          }
+        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
+        	base = ae.getCrew().getPiloting() - 1;
+        }
 
-          if (club.getType().hasFlag(MiscType.F_SWORD)) {
+        if (club.getType().hasFlag(MiscType.F_SWORD)) {
             base--;
-          }
+        }
 
-          toHit = new ToHitData(base, "base");
+        toHit = new ToHitData(base, "base");
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -2201,8 +2201,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
+        // target immobile
+        toHit.append(getImmobileMod(te));
 
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
@@ -2287,10 +2287,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
 
-  // non-mechs can't push
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
-  }
+        // non-mechs can't push
+        if (!(ae instanceof Mech)) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
+        }
 
         //Quads can't push
         if ( ae.entityIsQuad() ) {
@@ -2440,8 +2440,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
+        // target immobile
+        toHit.append(getImmobileMod(te));
 
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
@@ -2450,8 +2450,174 @@ public class Compute
         // done!
         return toHit;
     }
+    
+    /**
+     * Damage a Protomech does with it's Combo-physicalattack.
+     */
+    public static int getProtoPhysicalDamageFor(Entity entity) {
+    	if (entity.getWeight() >= 2 && entity.getWeight() < 6) {
+    		return 1;
+    	} else return 2;
+    }
+    
+    public static ToHitData toHitProto(Game game, ProtomechPhysicalAttackAction ppaa) {
+        return toHitProto(game, ppaa.getEntityId(),
+                         game.getTarget(ppaa.getTargetType(), ppaa.getTargetId()));
+    }
+    
+    public static ToHitData toHitProto(Game game, int attackerId, Targetable target) {
+    	final Entity ae = game.getEntity(attackerId);
+        int targetId = Entity.NONE;
+        Entity te = null;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+            te = (Entity) target;
+            targetId = target.getTargetId();
+        }
+        final int attackerElevation = ae.getElevation();
+        final int targetHeight = target.absHeight();
+        final int targetElevation = target.getElevation();
+        final boolean targetInBuilding = isInBuilding( game, te );
+        Building bldg = null;
+        if ( targetInBuilding ) {
+            bldg = game.board.getBuildingAt( te.getPosition() );
+        }
+        
+        ToHitData toHit;
 
-  /**
+        // arguments legal?
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
+
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+
+        // non-protos can't make protomech-physicalattacks
+        if (!(ae instanceof Protomech)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
+        }
+
+        // can't make physical attacks while spotting
+        if (ae.isSpotting()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
+        }
+
+        // Can't target a transported entity.
+        if ( te != null && Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
+        // check range
+        final int range = ae.getPosition().distance(target.getPosition());
+        if ( range > 1 ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        }
+
+        // check elevation
+        if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+        }
+
+        // can't physically attack mechs making dfa attacks
+        if ( te != null && te.isMakingDfa() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        }
+        
+        //can only target targets in adjacent hexes, not in same hex
+        if (range == 0) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in adjacent hex");
+        }
+        
+        // check facing
+        // Don't check arc for stomping infantry or tanks.
+        if (0 != range &&
+            !isInArc(ae.getPosition(), ae.getFacing(),
+                     target.getPosition(), Compute.ARC_FORWARD)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+        }
+
+        // Can't target units in buildings (from the outside).
+        if ( 0 != range && targetInBuilding ) {
+            if ( !isInBuilding(game, ae) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+            }
+            else if ( !game.board.getBuildingAt( ae.getPosition() )
+                      .equals( bldg ) ) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+            }
+        }
+
+        // Attacks against adjacent buildings automatically hit.
+        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+                                  "Targeting adjacent building." );
+        }
+
+        // Can't target woods or ignite a building with a physical.
+        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
+             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
+             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
+
+        //Set the base BTH
+        int base = 4;
+
+        // Start the To-Hit
+        toHit = new ToHitData(base, "base");
+
+        // attacker movement
+        toHit.append(getAttackerMovementModifier(game, attackerId));
+
+        // target movement
+        toHit.append(getTargetMovementModifier(game, targetId));
+
+        // attacker terrain
+        toHit.append(getAttackerTerrainModifier(game, attackerId));
+
+        // target terrain
+        toHit.append(getTargetTerrainModifier(game, te));
+
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
+        // target immobile
+        toHit.append(getImmobileMod(te));
+
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+
+        // elevation
+        if (attackerElevation < targetHeight) {
+            toHit.setHitTable(ToHitData.HIT_KICK);
+        } else if (te.height() > 0) {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        } else {
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        }
+
+        // factor in target side
+        toHit.setSideTable(targetSideTable(ae,te));
+
+        // done!
+        return toHit;
+    }
+
+    /**
      * Checks if a death from above attack can hit the target, including movement
      */
     public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, MovePath md) {
@@ -2464,9 +2630,9 @@ public class Compute
         MoveStep chargeStep = null;
 
         // Infantry CAN'T dfa!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
-  }
+        if ( ae instanceof Infantry ) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
+        }
 
         // let's just check this
         if (!md.contains(MovePath.STEP_DFA)) {
@@ -2518,7 +2684,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
 
-  return toHitDfa(game, attackerId, target, chargeSrc);
+        return toHitDfa(game, attackerId, target, chargeSrc);
     }
 
     public static ToHitData toHitDfa(Game game, DfaAttackAction daa) {
@@ -2553,10 +2719,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
 
-  // Infantry CAN'T dfa!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
-  }
+        // Infantry CAN'T dfa!!!
+        if ( ae instanceof Infantry ) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
+        }
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
@@ -2608,18 +2774,18 @@ public class Compute
         }
 
         //Set the base BTH
-          int base = 5;
+        int base = 5;
 
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
+        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
             base = ae.getCrew().getPiloting();
-          }
+        }
 
-          toHit = new ToHitData(base, "base");
+        toHit = new ToHitData(base, "base");
 
-  // BMR(r), page 33. +3 modifier for DFA on infantry.
-  if ( te instanceof Infantry ) {
-      toHit.addModifier( 3, "Infantry target" );
-  }
+          // BMR(r), page 33. +3 modifier for DFA on infantry.
+        if ( te instanceof Infantry ) {
+        	toHit.addModifier( 3, "Infantry target" );
+        }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -2648,8 +2814,8 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
+        // target immobile
+        toHit.append(getImmobileMod(te));
 
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
@@ -3608,5 +3774,5 @@ public class Compute
     	}
     	return coords;
     }
-
+    
 } // End public class Compute

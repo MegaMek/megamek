@@ -673,6 +673,8 @@ public class MegaMek implements ActionListener {
                 // start server
                 Server dedicated = new Server(Settings.lastServerPass,
                                               Settings.lastServerPort);
+                // load game options from xml file if available
+                dedicated.getGame().getOptions().loadOptions(null, null);
                 if (null != savegameFileName) {
                     dedicated.loadGame(new File(savegameFileName));
                 };

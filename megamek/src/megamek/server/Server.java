@@ -5483,6 +5483,10 @@ implements Runnable, ConnectionHandler {
       boolean bFlechette = (usesAmmo &&
                             atype.getMunitionType() == AmmoType.M_FLECHETTE);
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+      boolean glancing = false; // For Glancing Hits Rule
+      int glancingMissileMod = 0;
+      int glancingCritMod = 0;
+      
       if (!bInferno) {
         // also check for inferno infantry
         bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
@@ -5639,7 +5643,22 @@ implements Runnable, ConnectionHandler {
 
       // do we hit?
       boolean bMissed = wr.roll < toHit.getValue();
-
+      if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
+        if (wr.roll == toHit.getValue()) {
+            glancing = true;
+            glancingMissileMod = -4;
+            glancingCritMod = -2;
+        } else {
+            glancing = false;
+            glancingMissileMod = 0;
+            glancingCritMod = 0;
+        }
+      } else {
+        glancing = false;
+        glancingMissileMod = 0;
+        glancingCritMod = 0;
+      }
+      
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
         Coords coords = target.getPosition();
@@ -6174,8 +6193,8 @@ implements Runnable, ConnectionHandler {
             // Large MRM missile racks roll twice.
             // MRM missiles never recieve hit bonuses.
             if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier, maxtechmissiles) +
-                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier, maxtechmissiles);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing) +
+                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing);
             }
 
             // Battle Armor units multiply their racksize by the number
@@ -6191,10 +6210,10 @@ implements Runnable, ConnectionHandler {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20, nMissilesModifier, maxtechmissiles );
+                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing );
                         temp -= 20;
                     }
-                    hits += Compute.missilesHit( temp, nMissilesModifier, maxtechmissiles );
+                    hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod, maxtechmissiles | glancing );
                 } // End not-all-shots-hit
             }
 
@@ -6205,7 +6224,7 @@ implements Runnable, ConnectionHandler {
 
             // In all other circumstances, roll for hits.
             else {
-                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier, maxtechmissiles);
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | glancing);
             }
 
             // Advanced SRM's only hit with even numbers of missles.
@@ -6219,7 +6238,11 @@ implements Runnable, ConnectionHandler {
             bSalvo = true;
             hits = wtype.getRackSize();
             if ( !bAllShotsHit ) {
-                hits = Compute.missilesHit( hits );
+                if (!glancing) {
+                    hits = Compute.missilesHit( hits );
+                } else {
+                    hits = Compute.missilesHit(hits, glancingMissileMod, glancing);
+                }
             }
             nDamPerHit = 1;
         } else if (nShots > 1) {
@@ -6252,6 +6275,9 @@ implements Runnable, ConnectionHandler {
                 } else if (nRange <= wtype.getExtremeRange()) {
                     nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
                 }
+            }
+            if (glancing) {
+                nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
             }
         }
 
@@ -6740,15 +6766,24 @@ implements Runnable, ConnectionHandler {
                             .append( " suffers no damage." );
                     } else if (bFragmentation) {
                         // If it's a frag missile...
+                        if (glancing) {
+                            hit.makeGlancingBlow();
+                        }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 1) );
                     } else if (bFlechette) {
                         // If it's a frag missile...
+                        if (glancing) {
+                            hit.makeGlancingBlow();
+                        }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 2) );
                     } else {
                         if ((atype != null) && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                             hit.makeArmorPiercing(atype);
+                        if (glancing) {
+                            hit.makeGlancingBlow();
+                        }
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
                     }
@@ -6883,6 +6918,7 @@ implements Runnable, ConnectionHandler {
         int roll = paa.getArm() == PunchAttackAction.LEFT
         ? pr.roll : pr.rollRight;
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( target.getPosition() );
@@ -6961,6 +6997,9 @@ implements Runnable, ConnectionHandler {
                 .append( te.getDisplayName() )
                 .append( " suffers no damage." );
         } else {
+            if (glancing) {
+                damage = (int)Math.floor((double)damage/2.0);
+            }
             phaseReport.append( damageEntity(te, hit, damage) );
         }
 
@@ -6987,6 +7026,7 @@ implements Runnable, ConnectionHandler {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( target.getPosition() );
@@ -7068,6 +7108,9 @@ implements Runnable, ConnectionHandler {
                 .append( te.getDisplayName() )
                 .append( " suffers no damage." );
         } else {
+            if (glancing) {
+                damage = (int)Math.floor((double)damage/2.0);
+            }
             phaseReport.append( damageEntity(te, hit, damage) );
         }
 
@@ -7097,6 +7140,7 @@ implements Runnable, ConnectionHandler {
             te = (Entity)target;
         }
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( target.getPosition() );
@@ -7172,6 +7216,9 @@ implements Runnable, ConnectionHandler {
                 .append( te.getDisplayName() )
                 .append( " suffers no damage." );
         } else {
+            if (glancing) {
+                damage = (int)Math.floor((double)damage/2.0);
+            }
             phaseReport.append( damageEntity(te, hit, damage) );
         }
         
@@ -7268,6 +7315,7 @@ implements Runnable, ConnectionHandler {
         int hits = pr.damage;
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
         
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
         final Entity te = game.getEntity(taa.getTargetId());
@@ -7308,6 +7356,9 @@ implements Runnable, ConnectionHandler {
         }
 
         // Standard damage loop in 5 point clusters.
+        if (glancing) {
+            hits = (int)Math.floor((double)hits/2.0);
+        }
         phaseReport.append( " and deals " )
             .append( hits)
             .append( " points of damage in 5 point clusters.");
@@ -7362,6 +7413,7 @@ implements Runnable, ConnectionHandler {
             te = (Entity)target;
         }
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( target.getPosition() );
@@ -7444,6 +7496,9 @@ implements Runnable, ConnectionHandler {
                 .append( te.getDisplayName() )
                 .append( " suffers no damage." );
         } else {
+            if (glancing) {
+                damage = (int)Math.floor((double)damage/2.0);
+            }
             phaseReport.append( damageEntity(te, hit, damage) );
         }
 
@@ -7591,6 +7646,7 @@ implements Runnable, ConnectionHandler {
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( caa.getTargetPos() );
@@ -7695,7 +7751,7 @@ implements Runnable, ConnectionHandler {
         }
         else {
             // Resolve the damage.
-            resolveChargeDamage( ae, te, toHit, direction );
+            resolveChargeDamage( ae, te, toHit, direction, glancing );
         }
         return;
     }
@@ -7704,6 +7760,10 @@ implements Runnable, ConnectionHandler {
      * Handle a charge's damage
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
+        resolveChargeDamage (ae, te, toHit, direction, false);
+    }
+
+    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing) {
 
         // we hit...
         int damage = ChargeAttackAction.getChargeDamageFor(ae);
@@ -7802,6 +7862,7 @@ implements Runnable, ConnectionHandler {
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
+        final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( daa.getTargetPos() );
@@ -7902,6 +7963,9 @@ implements Runnable, ConnectionHandler {
 
         // Target isn't building.
         else {
+            if (glancing) {
+                damage = (int)Math.floor((double)damage/2.0);
+            }
             phaseReport.append("\n    Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
             while (damage > 0) {
                 int cluster = Math.min(5, damage);

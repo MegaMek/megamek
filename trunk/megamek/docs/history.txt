@@ -88,7 +88,7 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.26.2 (06-14-02, 5pm)
 + actually applied level 2 patch to Server.java
 + added quad lateral shifts
 + 564632: fixed typo allowing leg weapons to be fired while prone

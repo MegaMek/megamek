@@ -2075,8 +2075,10 @@ public class Server
         boolean anyRolls = false;
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
+            final int rollsNeeded = e.getCrew().getRollsNeeded();
+            e.crew.setRollsNeeded(0);
 
-            if (!e.isTargetable() || !e.getCrew().isActive() || e.getCrew().getRollsNeeded() == 0) {
+            if (!e.isTargetable() || !e.getCrew().isActive() || rollsNeeded == 0) {
                 continue;
             }
             anyRolls = true;
@@ -2095,7 +2097,6 @@ public class Server
                     break;
                 }
             }
-            e.crew.setRollsNeeded(0);
         }
         if (anyRolls) {
             phaseReport.append("\n");

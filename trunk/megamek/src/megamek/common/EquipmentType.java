@@ -57,7 +57,39 @@ public class EquipmentType {
     public EquipmentType() {
         ;
     }
+
+    public String getName() {
+        return name;
+    }
     
+    public String getDesc() {
+        return name;
+    }
+    
+    public String getInternalName() {
+        return internalName;
+    }
+    
+    public String getMepName() {
+        return mepName;
+    }
+    
+    public String getMtfName() {
+        return mtfName;
+    }
+    
+    public float getTonnage(Entity entity) {
+        return tonnage;
+    }
+
+    public int getCriticals(Entity entity) {
+        return criticals;
+    }
+
+    public int getBV(Entity entity) {
+        return bv;
+    }
+
     public static void initializeTypes() {
         allTypes = new Vector();
         // will I need any others?
@@ -135,39 +167,4 @@ public class EquipmentType {
             mtfNameHash.put(type.getMtfName(), type);
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    public String getName() {
-        return name;
-    }
-    
-    public String getInternalName() {
-        return internalName;
-    }
-    
-    public String getMepName() {
-        return mepName;
-    }
-    
-    public String getMtfName() {
-        return mtfName;
-    }
-    
-    public float getTonnage(Entity entity) {
-        return tonnage;
-    }
-
-    public int getCriticals(Entity entity) {
-        return criticals;
-    }
-
-    public int getBV(Entity entity) {
-        return bv;
-    }
-
 }

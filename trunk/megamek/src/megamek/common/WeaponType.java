@@ -462,8 +462,8 @@ public class WeaponType extends EquipmentType
         return weapon;
     }
     
-  
-  public String toString() {
+    
+    public String toString() {
         return "WeaponType: " + name;
-  }
+    }
 }

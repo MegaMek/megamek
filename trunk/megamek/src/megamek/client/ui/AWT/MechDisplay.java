@@ -138,11 +138,14 @@ class MovementPanel
     public Label    mpL, mpR, curMoveL, curMoveR, heatL, heatR;
         
     public MovementPanel() {
-        super(new GridBagLayout());
+        super();
+        
+        GridBagLayout gridbag;
+        GridBagConstraints c;
             
         mechTypeL = new Label("LCT-1L Loc0st", Label.CENTER);
-            
-        // status panel
+
+        // status stuff
         statusL = new Label("Status:", Label.RIGHT);
         playerL = new Label("Player:", Label.RIGHT);
         teamL = new Label("Team:", Label.RIGHT);
@@ -155,22 +158,7 @@ class MovementPanel
         weightR = new Label("?", Label.LEFT);
         pilotR = new Label("?", Label.LEFT);
             
-        statusP = new Panel(new GridLayout(5, 2));
-        statusP.add(statusL);
-        statusP.add(statusR);
-        statusP.add(playerL);
-        statusP.add(playerR);
-        statusP.add(teamL);
-        statusP.add(teamR);
-        statusP.add(weightL);
-        statusP.add(weightR);
-        statusP.add(pilotL);
-        statusP.add(pilotR);
-            
-        // terrain panel
-        terrainP = new Panel();
-            
-        // movement panel
+        // movement stuff
         mpL = new Label("Movement:", Label.RIGHT);
         curMoveL = new Label("Currently:", Label.RIGHT);
         heatL = new Label("Heat:", Label.RIGHT);
@@ -179,36 +167,126 @@ class MovementPanel
         curMoveR = new Label("No Movement", Label.LEFT);
         heatR = new Label("2 (10 capacity)", Label.LEFT);
             
-        moveP = new Panel(new GridLayout(3, 2));
-        moveP.add(mpL);
-        moveP.add(mpR);
-        moveP.add(curMoveL);
-        moveP.add(curMoveR);
-        moveP.add(heatL);
-        moveP.add(heatR);
+        statusP = new Panel();
+        gridbag = new GridBagLayout();
+        c = new GridBagConstraints();
+        statusP.setLayout(gridbag);
+        
+        c.insets = new Insets(1, 1, 1, 1);
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;    c.weighty = 1.0;
+        
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(statusL, c);
+        statusP.add(statusL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(statusR, c);
+        statusP.add(statusR);
+
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(playerL, c);
+        statusP.add(playerL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(playerR, c);
+        statusP.add(playerR);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(teamL, c);
+        statusP.add(teamL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(teamR, c);
+        statusP.add(teamR);
+
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(weightL, c);
+        statusP.add(weightL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(weightR, c);
+        statusP.add(weightR);
+
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(pilotL, c);
+        statusP.add(pilotL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(pilotR, c);
+        statusP.add(pilotR);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(mpL, c);
+        statusP.add(mpL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(mpR, c);
+        statusP.add(mpR);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(curMoveL, c);
+        statusP.add(curMoveL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(curMoveR, c);
+        statusP.add(curMoveR);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(heatL, c);
+        statusP.add(heatL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(heatR, c);
+        statusP.add(heatR);
             
         // layout main panel
-        GridBagConstraints c = new GridBagConstraints();
+        gridbag = new GridBagLayout();
+        c = new GridBagConstraints();
+        setLayout(gridbag);
+        
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
-        
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout)getLayout()).setConstraints(mechTypeL, c);
+        gridbag.setConstraints(mechTypeL, c);
         add(mechTypeL);
         
-        //c.gridwidth = 1;
-        ((GridBagLayout)getLayout()).setConstraints(statusP, c);
+        c.weightx = 1.0;    c.weighty = 1.0;
+        gridbag.setConstraints(statusP, c);
         add(statusP);
-        
-        /*
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout)getLayout()).setConstraints(terrainP, c);
-        add(terrainP);
-        */
-        
-        ((GridBagLayout)getLayout()).setConstraints(moveP, c);
-        add(moveP);
     }
         
     /**
@@ -217,9 +295,9 @@ class MovementPanel
     public void displayMech(Entity en) {
         this.mechTypeL.setText(en.getModel() + " " + en.getName());
 
-        this.statusR.setText("not yet");
+        this.statusR.setText(en.isProne() ? "prone" : "normal");
         this.playerR.setText(en.getOwner().getName());
-        this.teamR.setText("not yet");
+        this.teamR.setText(en.getOwner().getTeam() == 0 ? "No Team" : "Team " + en.getOwner().getTeam());
         this.weightR.setText(Integer.toString((int)en.getWeight()));
         this.pilotR.setText(en.crew.getDesc());
 
@@ -475,8 +553,7 @@ class WeaponPanel
         for(int i = 0; i < weapons.size(); i++) {
             Mounted mounted = en.getWeapon(i);
             WeaponType wtype = (WeaponType)mounted.getType();
-            String wn = i + " : " + (mounted.isReady() ? "" : "*" ) 
-                        + mounted.getName() 
+            String wn = mounted.getDesc() 
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
             if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
                 if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() == 0) {
@@ -516,7 +593,7 @@ class WeaponPanel
         Mounted mounted = (Mounted)weapons.elementAt(weaponList.getSelectedIndex());
         WeaponType wtype = (WeaponType)mounted.getType();
         // update weapon display
-        wNameR.setText(wtype.getName());
+        wNameR.setText(mounted.getDesc());
         wHeatR.setText(wtype.getHeat() + "");
         if(wtype.getDamage() != WeaponType.DAMAGE_MISSILE) {
             wDamR.setText(wtype.getDamage() + "");
@@ -565,13 +642,15 @@ class SystemPanel
     extends Panel
     implements ItemListener 
 {
-    public Label    locLabel, slotLabel;
-    public java.awt.List        locList, slotList;
+    public Label locLabel;
+    public Label slotLabel;
+    public java.awt.List slotList;
+    public java.awt.List locList;
     
     Entity en;
     
     public SystemPanel() {
-        super(new GridBagLayout());
+        super();
         
         locLabel = new Label("Location", Label.CENTER);
         slotLabel = new Label("Slot", Label.CENTER);
@@ -582,26 +661,29 @@ class SystemPanel
         slotList.setEnabled(false);
         
         // layout main panel
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+        
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = 1;
-        ((GridBagLayout)getLayout()).setConstraints(locLabel, c);
+        gridbag.setConstraints(locLabel, c);
         add(locLabel);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout)getLayout()).setConstraints(slotLabel, c);
+        gridbag.setConstraints(slotLabel, c);
         add(slotLabel);
         
         c.weightx = 1.0;    c.weighty = 1.0;
         c.gridwidth = 1;
-        ((GridBagLayout)getLayout()).setConstraints(locList, c);
+        gridbag.setConstraints(locList, c);
         add(locList);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout)getLayout()).setConstraints(slotList, c);
+        gridbag.setConstraints(slotList, c);
         add(slotList);
     }
 
@@ -634,13 +716,13 @@ class SystemPanel
                     slotList.add((cs.isDestroyed() ? "*" : "") + Mech.systemNames[cs.getIndex()]);
                     break;
                 case CriticalSlot.TYPE_WEAPON :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getWeapon(cs.getIndex()).getName());
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getWeapon(cs.getIndex()).getDesc());
                     break;
                 case CriticalSlot.TYPE_AMMO :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getAmmo(cs.getIndex()).getName());
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getAmmo(cs.getIndex()).getDesc());
                     break;
                 case CriticalSlot.TYPE_MISC :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getMisc(cs.getIndex()).getName());
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getMisc(cs.getIndex()).getDesc());
                     break;
                 }
             }

@@ -525,6 +525,11 @@ implements Runnable, ConnectionHandler {
 
         // log it
         System.out.println("s: removed player " + player.getName());
+
+        // Reset the game after Elvis has left the building.
+        if ( 0 == game.getNoOfPlayers() ) {
+            resetGame();
+        }
     }
 
     /**
@@ -556,6 +561,9 @@ implements Runnable, ConnectionHandler {
         // reset all players
         resetPlayersDone();
         transmitAllPlayerDones();
+
+        // Write end of game to stdout so controlling scripts can rotate logs.
+        System.out.println( "END OF GAME" );
 
         changePhase(Game.PHASE_LOUNGE);
     }

@@ -495,7 +495,7 @@ public class Server
             Coords center = new Coords(game.board.width / 2, game.board.height / 2);
             for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 Entity entity = (Entity)i.nextElement();
-                deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center);
+                deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center, 10);
             }
             break;
         case Game.PHASE_INITIATIVE :
@@ -659,21 +659,23 @@ public class Server
      * @param pos the point to deploy near
      * @param towards another point that the deployed mechs will face towards
      */
-    private void deploy(Entity entity, Coords pos, Coords towards) {
-        boolean deployed = false;
+    private boolean deploy(Entity entity, Coords pos, Coords towards, int recurse) {
         if (game.board.contains(pos) && game.getEntity(pos) == null) {
             placeEntity(entity, pos, pos.direction(towards));
-            deployed = true;
+            return true;
         }
-
+        
         // if pos is filled, try some different positions
-        for (int i = 0; i < 6; i++) {
-            Coords deployPos = pos.translated(i);
-            if (!deployed && game.board.contains(deployPos) && game.getEntity(deployPos) == null) {
-                placeEntity(entity, deployPos, deployPos.direction(towards));
-                deployed = true;
+        for (int j = 0; j < recurse; j++) {
+            for (int i = 0; i < 6; i++) {
+                Coords deployPos = pos.translated(i);
+                if (deploy(entity, deployPos, towards, j)) {
+                    return true;
+                }
             }
         }
+        
+        return false;
     }
 
     /**
@@ -1187,7 +1189,9 @@ public class Server
                            + " is displaced into hex "
                            + dest.getBoardNum() + ".\n");
                 entity.setPosition(dest);
-                pilotRolls.addElement(roll);
+                if (roll != null) {
+                    pilotRolls.addElement(roll);
+                }
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
@@ -1208,7 +1212,9 @@ public class Server
                            + dest.getBoardNum() + ", occupied by "
                            + target.getDisplayName() + ".\n");
             entity.setPosition(dest);
-            pilotRolls.addElement(roll);
+            if (roll != null) {
+                pilotRolls.addElement(roll);
+            }
             doEntityDisplacement(target, dest, dest.translated(direction), new PilotingRollData(target.getId(), 0, "domino effect"));
             return;
         } else {
@@ -1684,6 +1690,7 @@ public class Server
     private void resolveChargeAttack(ChargeAttackAction caa, int lastEntityId) {
         final Entity ae = game.getEntity(caa.getEntityId());
         final Entity te = game.getEntity(caa.getTargetId());
+        final int direction = ae.getFacing();
 
         if (lastEntityId != caa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
@@ -1713,30 +1720,59 @@ public class Server
 
         // do we hit?
         if (roll < toHit.getValue()) {
+            Coords src = ae.getPosition();
+            Coords dest = Compute.getMissedChargeDisplacement(game, ae.getId(), src, direction);
             phaseReport.append("misses.\n");
+            // move attacker to side hex
+            doEntityDisplacement(ae, src, dest, null);
             return;
         }
 
         // we hit...
-        int direction = ae.getFacing();
+        int damage = Compute.getChargeDamageFor(ae);
+        int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
 
+        // we hit, now what arc are we hitting?
+        if (toHit.getSideTable() != ToHitData.SIDE_FRONT) {
+            String tdesc = new String();
+            switch(toHit.getSideTable()) {
+            case ToHitData.SIDE_RIGHT :
+                tdesc += "Right Side ";
+                break;
+            case ToHitData.SIDE_LEFT :
+                tdesc += "Left Side ";
+                break;
+            case ToHitData.SIDE_REAR :
+                tdesc += "Rear ";
+                break;
+            }
+            phaseReport.append("(using " + tdesc + "table) ");
+        }
+
+        phaseReport.append("hits.");
+        phaseReport.append("\n  Defender takes " + damage + " damage.");
+        while (damage > 0) {
+            int cluster = Math.min(5, damage);
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            phaseReport.append(damageEntity(te, hit, cluster));
+            damage -= cluster;
+        }
+        phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
+        while (damageTaken > 0) {
+            int cluster = Math.min(5, damageTaken);
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            phaseReport.append(damageEntity(ae, hit, cluster));
+            damageTaken -= cluster;
+        }
+        // move attacker and target, if possible
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             Coords src = te.getPosition();
             Coords dest = src.translated(direction);
-            phaseReport.append("succeeds: target is pushed into hex "
-                               + dest.getBoardNum()
-                               + "\n");
-            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
-
-            // if push actually moved the target, attacker follows thru
-            if (game.getEntity(src) == null) {
-                ae.setPosition(src);
-            }
-        } else {
-            phaseReport.append("succeeds, but target can't be moved.\n");
-            pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
+            
+            phaseReport.append("\n");
+            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged"));
+            doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
         }
-
 
         phaseReport.append("\n");
     }

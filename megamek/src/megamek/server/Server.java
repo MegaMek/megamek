@@ -13106,12 +13106,17 @@ implements Runnable, ConnectionHandler {
                     }
                 }
             } else if (entity instanceof Tank) {
-                if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                    // For Tanks, we need to check if the tank had more MPs because it was moving along a road
-                    if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
+                if (step.getMovementType() == Entity.MOVE_WALK
+                    || step.getMovementType() == Entity.MOVE_RUN) {
+                    // For Tanks, we need to check if the tank had
+                    // more MPs because it was moving along a road.
+                    if (step.getMpUsed() > entity.getRunMP(false)
+                        && !step.isOnlyPavement()) {
                         rollTarget = entity.checkMovedTooFast(step);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                            if (!doSkillCheckWhileMoving(entity, curPos,
+                                                         curPos, rollTarget,
+                                                         false)) {
                                 int j=step.getMpUsed();
                                 int damage = 0;
                                 while (j > entity.getRunMP(false)) {
@@ -13121,42 +13126,27 @@ implements Runnable, ConnectionHandler {
                                 doExtremeGravityDamage(entity, damage);
                             }
                         }
-                    } else if (step.getMovementType() == Entity.MOVE_WALK) {
-                        // If the tank was just cruising, he got a flat +1 road bonus
-                        if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
-                            rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                                    int j=step.getMpUsed();
-                                    int damage = 0;
-                                    while (j > entity.getRunMP(false) + 1) {
-                                        j--;
-                                        damage++;
-                                    }
-                                    doExtremeGravityDamage(entity, damage);
-                                }
-                            }
-                        }
-                    } else if (step.getMovementType() == Entity.MOVE_RUN) {
-                        // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
-                        // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to
-                        // cruising speed, thus possibly gaining 2 flanking MPs
-                        int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
-                        if (step.getMpUsed() > entity.getRunMP(false) + k) {
-                            rollTarget = entity.checkMovedTooFast(step);
-                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                                    int j=step.getMpUsed();
-                                    int damage = 0;
-                                    while (j > entity.getRunMP(false) + k) {
-                                        j--;
-                                        damage++;
-                                    }
-                                    doExtremeGravityDamage(entity, damage);
-                                }
-                            }
-                        }
                     }
+                    else if (step.getMpUsed() > entity.getRunMP(false) + 1) {
+                        // If the tank was moving on a road, he got a +1 bonus.
+                        // N.B. The Ask Precentor Martial forum said that a 4/6
+                        //      tank on a road can move 5/7, **not** 5/8.
+                       
+                        rollTarget = entity.checkMovedTooFast(step);
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            if (!doSkillCheckWhileMoving(entity, curPos,
+                                                         curPos, rollTarget,
+                                                         false)) {
+                                int j=step.getMpUsed();
+                                int damage = 0;
+                                while (j > entity.getRunMP(false) + 1) {
+                                    j--;
+                                    damage++;
+                                }
+                                doExtremeGravityDamage(entity, damage);
+                            }
+                        }
+                    } // End tank-has-road-bonus
                 }
             }
         }

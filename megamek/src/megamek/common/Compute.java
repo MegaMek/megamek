@@ -1285,6 +1285,11 @@ public class Compute
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
         
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+        
         // weapon operational?
         if (weapon.isDestroyed()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
@@ -2052,6 +2057,11 @@ public class Compute
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
         ToHitData toHit;
 
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+        
 	// non-mechs can't punch
 	if (!(ae instanceof Mech)) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
@@ -2242,6 +2252,11 @@ public class Compute
         final int targetElevation = te.elevation();
         int[] kickLegs = new int[2];
 
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+        
 	// non-mechs can't kick
 	if (!(ae instanceof Mech)) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
@@ -2457,6 +2472,11 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
 
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+        
 	// non-mechs can't club
 	if (!(ae instanceof Mech)) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
@@ -2653,8 +2673,13 @@ public class Compute
         ToHitData toHit = null;
 
         // arguments legal?
-        if (ae == null || te == null || ae == te) {
+        if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
 	// non-mechs can't push
@@ -2896,6 +2921,11 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+        }
+        
 	// Infantry CAN'T charge!!!
 	if ( ae instanceof Infantry ) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
@@ -3104,6 +3134,11 @@ public class Compute
         // arguments legal?
         if (ae == null || te == null || ae == te) {
             throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        // can't target yourself
+        if (ae.equals(te)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
 	// Infantry CAN'T dfa!!!

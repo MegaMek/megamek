@@ -1229,7 +1229,7 @@ public class BoardView1
      */
     public boolean doScroll() {
         if (!isScrolling) {
-            return true;
+            return false;
         }
         final Point oldScroll = new Point(scroll);
         final int sf = 3; // scroll factor

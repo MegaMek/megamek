@@ -58,6 +58,8 @@ public class Client implements Runnable {
 
     // I send out game events!
     private Vector gameListeners = new Vector();
+    //And close client events!
+    private Vector closeClientListeners = new Vector();
 
     // we might want to keep a server log...
     private megamek.server.ServerLog serverlog;
@@ -113,7 +115,12 @@ public class Client implements Runnable {
         } catch (NullPointerException e) {
             // not a big deal, just never connected
         }
+        
+        for (int i = 0; i < closeClientListeners.size(); i++){
+        	((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
+        }
         System.out.println("client: died");
+        
     }
 
     /**
@@ -271,6 +278,17 @@ public class Client implements Runnable {
      */
     public void addGameListener(GameListener l) {
         gameListeners.addElement(l);
+    }
+    
+    /**
+     * Adds the specified close client listener to receive
+     * close client events.
+     * This is used by external programs running megamek
+     *
+     * @param l            the game listener.
+     */
+    public void addCloseClientListener(CloseClientListener l) {
+        closeClientListeners.addElement(l);
     }
 
     /**

@@ -120,6 +120,13 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.14-dev
++ Eliminated unused local variables thanks to (forgot to write down name).
++ Infantry should be moving last again when the option is selected.
++ MovementData.Step.clearAllFlags() should be working now.
++ Added more building images from kurt_kajal.
++ 721548 & 721991: don't blow up when everybody dies.
+
 v 0.28.13 (04-12-03, 5:30pm)
 + Players aren't allowed to target infantry with Inferno rounds.
 + Physical attacks can now use Targetable interface.

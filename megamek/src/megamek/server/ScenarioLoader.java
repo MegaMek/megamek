@@ -76,7 +76,6 @@ public class ScenarioLoader
         
         // build the entities
         int nIndex = 0;
-        Coords center = new Coords(g.board.width / 2, g.board.height / 2);
         for (int x = 0; x < players.length; x++) {
             Entity[] entities = buildFactionEntities(p, players[x].getName());
             for (int y = 0; y < entities.length; y++) {

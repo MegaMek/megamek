@@ -181,7 +181,6 @@ public class CEntity  {
       WeaponType weapon = (WeaponType)m.getType();
       final boolean usesAmmo = weapon.getAmmoType() != AmmoType.T_NA;
       final Mounted ammo = usesAmmo ? m.getLinked() : null;
-      final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
       if (m.isDestroyed()) continue;
       if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) continue;
       heat_total += weapon.getHeat();
@@ -191,7 +190,6 @@ public class CEntity  {
       int lr = weapon.getLongRange();
       double ed = Compute.getExpectedDamage(weapon);
       double odds = 0;
-      double min_total = 0;
       for (int range = 1; range <= lr && range <= MAX_RANGE; range++) {
         if (range <= min) {
           if (range < 7) this.MinRanges[range] += 1 + min - range;

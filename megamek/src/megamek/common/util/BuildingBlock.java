@@ -210,7 +210,6 @@ public class BuildingBlock {
     public String[] getDataAsString(String blockName) {
         
         String [] data;
-        String line;
         int startIndex = 0, endIndex = 0;
         
         startIndex = this.findStartIndex(blockName);
@@ -362,7 +361,6 @@ public class BuildingBlock {
     public Vector getDataAsVector(String blockName) {
         
         Vector data;
-        String line;
         int startIndex = 0, endIndex = 0;
         
         startIndex = this.findStartIndex(blockName);
@@ -376,13 +374,9 @@ public class BuildingBlock {
             return data;
             
         }
-        
-        //calculate the size of our data array by subtracting the two indexes ...
-        int size = endIndex - startIndex;
-    
+
         data = new Vector();
-        
-                        
+
         //fill up the data vector with the raw data we want...
         for ( int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
          

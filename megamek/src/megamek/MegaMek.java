@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.28.13";
+    public static String    VERSION = "0.28.14-dev";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
     
     public Frame            frame;
@@ -382,12 +382,11 @@ public class MegaMek
         int[][] pairs = new int[7][7];
         System.out.println("testing streaks, " + rolls + " rolls...");
         
-        int nLastLastRoll = 0, nLastRoll = 0, nRoll = 0;
+        int nLastLastRoll = 0, nRoll = 0;
         for (long i = 0; i < rolls; i++) {
             nRoll = megamek.common.Compute.d6();
             pairs[nLastLastRoll][nRoll]++;
             nLastLastRoll = nRoll;
-            nLastRoll = nRoll;
         }
         for (int x = 0; x < pairs.length; x++) {
             for (int y = 0; y < pairs[x].length; y++) {
@@ -428,7 +427,7 @@ public class MegaMek
                 if ( i >= args.length ) {
                     System.err.println( "The '-testxml' flag requires a file name." );
                 } else {
-                    TinyXMLTest test = new TinyXMLTest( "xml", args[i] );
+                    new TinyXMLTest( "xml", args[i] );
                 }
                 return;
             }

@@ -263,9 +263,7 @@ public class FiringDisplay
             clearAttacks();
             refreshAll();
         }
-        
-	boolean isInfantry;
-        
+
         if (client.game.getEntity(en) != null) {
             this.cen = en;
 
@@ -294,8 +292,6 @@ public class FiringDisplay
                 }
 
             } // End ce()-not-on-board
-
-	    isInfantry = (ce() instanceof Infantry);
 
             target(null);
             client.game.board.highlight(ce().getPosition());
@@ -398,7 +394,6 @@ public class FiringDisplay
         clearVisibleTargets();
         
         Vector vec = client.game.getValidTargets( ce() );
-        Coords myPos = ce().getPosition();
         com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
           public int compare(java.lang.Object x, java.lang.Object y) {
             Entity entX = (Entity)x;

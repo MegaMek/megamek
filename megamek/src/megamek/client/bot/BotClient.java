@@ -314,8 +314,7 @@ public class BotClient extends Client
      
      // mostly ripped from Server
      public PhysicalOption getBestPhysical(Entity entity) {
-        boolean canHit = false;
-        
+
         // Infantry can't conduct physical attacks.
 	if ( entity instanceof Infantry ) {
 	    return null;
@@ -423,8 +422,6 @@ public class BotClient extends Client
          // and do it first.
          int entNum = game.getFirstEntityNum();
          int first = entNum;
-	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
-	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
 
          MoveOption opt = null;
          int theEnt = -1;

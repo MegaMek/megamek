@@ -38,10 +38,16 @@ public class WhoCommand extends ServerCommand {
     
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Listing all connections...");
-        server.sendServerChat(connId, "[id#] : [name], [address], [pending]");
+        server.sendServerChat(connId, "[id#] : [name], [address], [pending], [bytes]");
         for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
             Connection conn = (Connection)i.nextElement();
-            server.sendServerChat(connId, conn.getId() + " : " + server.getPlayer(conn.getId()).getName() + ", " + conn.getSocket().getInetAddress() + ", " + conn.hasPending());
+            StringBuffer cb = new StringBuffer();
+            cb.append(conn.getId()).append(" : ");
+            cb.append(server.getPlayer(conn.getId()).getName()).append(", ");
+            cb.append(conn.getSocket().getInetAddress());
+            cb.append(", ").append(conn.hasPending()).append(", ");
+            cb.append(conn.bytesSent());
+            server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");
     }    

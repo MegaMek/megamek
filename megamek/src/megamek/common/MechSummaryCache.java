@@ -104,8 +104,10 @@ public class MechSummaryCache
                     ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
                     ms.setBV(Integer.parseInt(s.substring(nIndex2 + 1)));
                     
-                    // verify that this file still exists
-                    if (ms.getSourceFile().exists()) {
+                    // Verify that this file still exists and is older than
+                    //  the cache.
+                    File fSource = ms.getSourceFile();
+                    if (fSource.exists() && fSource.lastModified() < lLastCheck) {
                         vMechs.addElement(ms);
                         sKnownFiles.add(ms.getSourceFile().toString());
                         if (waitDialog != null) {

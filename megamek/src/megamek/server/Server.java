@@ -6558,7 +6558,7 @@ implements Runnable, ConnectionHandler {
                 // hmm, error.
             }
             // Not all targets are Entities.
-            Target target = game.getTarget( aa.getTargetType(),
+            Targetable target = game.getTarget( aa.getTargetType(),
                                             aa.getTargetId() );
             if ( target instanceof Entity ) {
                 creditKill( (Entity) target, game.getEntity(cen) );

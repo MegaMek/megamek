@@ -103,6 +103,7 @@ v next
 + fixed descriptions for base physical attack to-hit
 + fixed a bug that would stop wakeup rolls under certain circumstances
 + added a picture for quads (not used yet)
++ fixed an error that occured when a mech had no operational weapons
 
 v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels

@@ -254,7 +254,7 @@ public class BattleArmor
 
     /**
     * Returns this entity's walking mp, factored
-    * for heat, extreme temperatures and gravity.
+    * for extreme temperatures and gravity.
     */
     public int getWalkMP() {
         return applyGravityEffectsOnMP(walkMP);
@@ -267,15 +267,11 @@ public class BattleArmor
      * Certain types of equipment prevent a squad from jumping.
      */
     public int getJumpMP() {
-        float j;
         if ( this.isBurdened() ) {
             return 0;
+        } else {
+            return super.getJumpMP();
         }
-        if (game != null) {
-            j = jumpMP / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            return (int)j;    
-        } else return jumpMP;
     }
 
     /**

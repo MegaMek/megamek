@@ -560,13 +560,41 @@ public class BoardView1
         // now we can allocate an array of strings
         String[] strings = new String[stringsSize];
         int stringsIndex = 0;
+        Hex mhex = game.board.getHex(mcoords);
 
+ 	// If the hex contains a building or rubble, make more space.
+ 	if ( mhex != null &&
+ 	     (mhex.contains(Terrain.RUBBLE) ||
+ 	      mhex.contains(Terrain.BUILDING)) ) {
+            stringsSize += 1;
+ 	}
+ 
         // are we on a hex?
-        if (game.board.contains(mcoords)) {
-            Hex mhex = game.board.getHex(mcoords);
+        if (mhex != null) {
             strings[stringsIndex] = "Hex " + mcoords.getBoardNum() 
                         + "; level " + mhex.getElevation();
-//                        + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
+            stringsIndex += 1;
+
+	    // Do we have rubble?
+	    if ( mhex.contains(Terrain.RUBBLE) ) {
+		strings[stringsIndex] = "Rubble";
+		stringsIndex += 1;
+            }
+        }
+
+        // Do we have a building?
+        if ( mhex.contains(Terrain.BUILDING) ) {
+            StringBuffer buf = new StringBuffer( "Height " );
+            buf.append( mhex.levelOf(Terrain.BLDG_ELEV) );
+            switch ( mhex.levelOf(Terrain.BUILDING) ) {
+            case 1: buf.append( " Light " ); break;
+            case 2: buf.append( " Medium " ); break;
+            case 3: buf.append( " Heavy " ); break;
+            case 4: buf.append( " Hardened " ); break;
+            }
+            buf.append( "building, CF: " );
+            buf.append( mhex.levelOf(Terrain.BLDG_CF) );
+            strings[stringsIndex] = buf.toString();
             stringsIndex += 1;
         }
 

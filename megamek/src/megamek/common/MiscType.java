@@ -198,6 +198,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLECM());
         EquipmentType.addType(createISTargComp());
         EquipmentType.addType(createCLTargComp());
+        EquipmentType.addType(createMekStealth());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -784,6 +785,26 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_OTHER;
         misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createMekStealth() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Stealth Armor";
+        misc.internalName = Mech.STEALTH;
+        misc.mepName = misc.internalName;
+        misc.mtfName = "Stealth Armor";
+        misc.tonnage = 0;       //???
+        misc.criticals = 12;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_OTHER;
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(false);
+        misc.bv = 0;            //???
         
         return misc;
     }

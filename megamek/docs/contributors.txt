@@ -19,7 +19,8 @@ Lot of people have contributed to the MegaMek project.
      Joshua Yockey <joshua@sublimity.net>
      John Rowat
      Hugh "TigerWraith" Peeples
-     James "Suvarov454" Damour
+     James "Suvarov454" Damour <suvarov454@users.sourceforge.net>
+     Jason "Ensign" Bush <ensign@users.sourceforge.net>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
@@ -43,7 +44,11 @@ Lot of people have contributed to the MegaMek project.
      Bob Dee
      Doug Moore
      #player2player on Sorcery
-     
+
+  Various Images:
+     Nehal Mistry
+     Paolo D'Inca <paolodinca@hotmail.com>
+     Ian Hamilton <jabberwocky@planethalflife.com>
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

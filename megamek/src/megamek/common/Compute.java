@@ -1376,22 +1376,46 @@ public class Compute
             }
         }
 
+        int longRange = wtype.getLongRange();
+        int mediumRange = wtype.getMediumRange();
+        int shortRange = wtype.getShortRange();
+        int minimumRange = wtype.getMinimumRange();
+
+        // modify the ranges for ATM missile systems based on the ammo selected
+        if (wtype.getAmmoType() == AmmoType.T_ATM)
+        {
+            if (atype.hasFlag(AmmoType.F_ATM_ER))
+            {
+                longRange = 27;
+                mediumRange = 18;
+                shortRange = 9;
+                minimumRange = 4;
+            }
+            else if (atype.hasFlag(AmmoType.F_ATM_HE))
+            {
+                longRange = 9;
+                mediumRange = 6;
+                shortRange = 3;
+                minimumRange = 0;
+            }
+        }
+         
         // if out of range, short circuit logic
-        if (range > wtype.getLongRange()) {
+        if (range > longRange) {
             return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
         }
-        if (range > wtype.getMediumRange()) {
+        if (range > mediumRange) {
             // Infantry LRMs suffer an additional maximum range penaltie.
             if ( isWeaponInfantry &&
                  wtype.getAmmoType() == AmmoType.T_LRM &&
-		 range == wtype.getLongRange() ) {
+		 range == longRange ) {
                 toHit.addModifier(5, "infantry LRM maximum range");
             } else {
 		// long range, add +4
 		toHit.addModifier(4, "long range");
             }
             // reduce range modifier back to short if a C3 spotter is at short range
-            if (c3range <= wtype.getShortRange()) {
+            if (c3range <= shortRange) {
                 toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() +
                                   " at short range");
                 if ( te.isStealthActive() ) {
@@ -1399,7 +1423,7 @@ public class Compute
                 }
             }
             // reduce range modifier back to medium if a C3 spotter is at medium range
-            else if (c3range <= wtype.getMediumRange()) {
+            else if (c3range <= mediumRange) {
                 toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
                                   " at medium range");
                 if ( te.isStealthActive() ) {
@@ -1409,11 +1433,11 @@ public class Compute
             else if ( te.isStealthActive() ) {
                 toHit.append( te.getStealthModifier(Entity.RANGE_LONG) );
             }
-        } else if (range > wtype.getShortRange()) {
+        } else if (range > shortRange) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
             // reduce range modifier back to short if a C3 spotter is at short range
-            if (c3range <= wtype.getShortRange()) {
+            if (c3range <= shortRange) {
                 toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
                                   " at short range");
                 if ( te.isStealthActive() ) {
@@ -1459,8 +1483,8 @@ public class Compute
         } // End short-range
 
         // also check for minimum range
-        if (range <= wtype.getMinimumRange()) {
-            int minPenalty = wtype.getMinimumRange() - range + 1;
+        if (range <= minimumRange) {
+            int minPenalty = minimumRange - range + 1;
             // Infantry LRMs suffer double minimum range penalties.
             if ( isWeaponInfantry &&
                  wtype.getAmmoType() == AmmoType.T_LRM ) {
@@ -3734,7 +3758,7 @@ public class Compute
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         
         if (a == null || b == null) return false;
-        
+
         // Only grab enemies with active ECM
         Vector vEnemyCoords = new Vector(16);
         Vector vECMRanges = new Vector(16);

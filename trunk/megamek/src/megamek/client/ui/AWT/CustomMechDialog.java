@@ -679,7 +679,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private void refreshUnitNum( Enumeration others ) {
         // Clear the list of old values
         choUnitNum.removeAll();
-        entityUnitNum.clear();
+        entityUnitNum.removeAllElements();
 
         // Make an entry for "no change".
         choUnitNum.add( "-- Do Not Swap Units --" );

@@ -336,7 +336,7 @@ Equipment
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Yes		None
-- iNarc				Partial		Nemesis Pods not implemented.
+- iNarc				Yes		None
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None

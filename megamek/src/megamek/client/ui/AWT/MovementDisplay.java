@@ -26,26 +26,34 @@ public class MovementDisplay
     implements BoardListener,  ActionListener,
     KeyListener, ComponentListener, MouseListener, GameListener
 {
+    private static final int    NUM_BUTTON_LAYOUTS = 2;
+    
     // parent game
     public Client client;
 
     // displays
-    private Label                       statusL;
-
-    private boolean                    mechdOn;
+    private Label             statusL;
 
     // buttons
     private Panel             panButtons;
+    
     private Button            butWalk;
     private Button            butJump;
     private Button            butBackup;
-    private Button            butGetup;
-    private Button            butProne;
+    private Button            butTurn;
+    
+    private Button            butUp;
+    private Button            butDown;
     private Button            butCharge;
     private Button            butDfa;
-    private Button            butOther;
+    
+    private Button            butSpace;
+   
     private Button            butNext;
-    private Button            butMove;
+    private Button            butDone;
+    private Button            butMore;
+
+    private int               buttonLayout;
 
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
@@ -76,68 +84,57 @@ public class MovementDisplay
         statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
 
         butWalk = new Button("Walk");
-        butWalk.setActionCommand("walk");
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
 
         butJump = new Button("Jump");
-        butJump.setActionCommand("jump");
         butJump.addActionListener(this);
         butJump.setEnabled(false);
 
         butBackup = new Button("Back Up");
-        butBackup.setActionCommand("backup");
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
 
-        butGetup = new Button("Get Up");
-        butGetup.setActionCommand("getup");
-        butGetup.addActionListener(this);
-        butGetup.setEnabled(false);
+        butTurn = new Button("Turn");
+        butTurn.addActionListener(this);
+        butTurn.setEnabled(false);
+        
 
-        butProne = new Button("Go Prone");
-        butProne.setActionCommand("prone");
-        butProne.addActionListener(this);
-        butProne.setEnabled(false);
+        butUp = new Button("Get Up");
+        butUp.addActionListener(this);
+        butUp.setEnabled(false);
+
+        butDown = new Button("Go Prone");
+        butDown.addActionListener(this);
+        butDown.setEnabled(false);
 
         butCharge = new Button("Charge");
-        butCharge.setActionCommand("charge");
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
 
         butDfa = new Button("D.F.A.");
-        butDfa.setActionCommand("dfa");
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
+        
+        butSpace = new Button(".");
+        butSpace.setEnabled(false);
 
-        butNext = new Button("Next Unit");
-        butNext.setActionCommand("next");
+        butMore = new Button("More...");
+        butMore.addActionListener(this);
+        butMore.setEnabled(false);
+
+        butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
         butNext.setEnabled(false);
 
-        butOther = new Button("Other...");
-        butOther.setActionCommand("other");
-        butOther.addActionListener(this);
-        butOther.setEnabled(false);
-
-        butMove = new Button("Move");
-        butMove.setActionCommand("move");
-        butMove.addActionListener(this);
-        butMove.setEnabled(false);
+        butDone = new Button("Move");
+        butDone.addActionListener(this);
+        butDone.setEnabled(false);
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 3));
-        panButtons.add(butWalk);
-        panButtons.add(butJump);
-        panButtons.add(butBackup);
-        panButtons.add(butGetup);
-        panButtons.add(butNext);
-        panButtons.add(butCharge);
-        panButtons.add(butDfa);
-        panButtons.add(butOther);
-        panButtons.add(butProne);
-        panButtons.add(butMove);
+        buttonLayout = 0;
+        setupButtonPanel();
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -176,6 +173,36 @@ public class MovementDisplay
         comp.addKeyListener(this);
     }
     
+    private void setupButtonPanel() {
+        panButtons.removeAll();
+        panButtons.setLayout(new GridLayout(2, 4));
+        
+        switch (buttonLayout) {
+        case 0 :
+            panButtons.add(butWalk);
+            panButtons.add(butJump);
+            panButtons.add(butBackup);
+            panButtons.add(butNext);
+            panButtons.add(butTurn);
+            panButtons.add(butSpace);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        case 1 :
+            panButtons.add(butUp);
+            panButtons.add(butCharge);
+            panButtons.add(butDfa);
+            panButtons.add(butNext);
+            panButtons.add(butDown);
+            panButtons.add(butSpace);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        }
+        
+        validate();
+    }
+    
     /**
      * Selects an entity, by number, for movement.
      */
@@ -198,9 +225,9 @@ public class MovementDisplay
         butCharge.setEnabled(ce().getWalkMP() > 0);
         butDfa.setEnabled(ce().getJumpMP() > 0);
         if (ce().isProne()) {
-            butGetup.setEnabled(true);
+            butUp.setEnabled(true);
         } else {
-            butProne.setEnabled(false);
+            butDown.setEnabled(false);
         }
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
@@ -214,9 +241,10 @@ public class MovementDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        butMove.setLabel("Done");
-        butMove.setEnabled(true);
+        butDone.setLabel("Done");
+        butDone.setEnabled(true);
         butNext.setEnabled(true);
+        butMore.setEnabled(true);
         moveMechDisplay();
         client.mechW.setVisible(true);
         moveMechDisplay();
@@ -244,13 +272,13 @@ public class MovementDisplay
         butWalk.setEnabled(false);
         butJump.setEnabled(false);
         butBackup.setEnabled(false);
-        butGetup.setEnabled(false);
-        butProne.setEnabled(false);
+        butUp.setEnabled(false);
+        butDown.setEnabled(false);
         butCharge.setEnabled(false);
         butDfa.setEnabled(false);
         butNext.setEnabled(false);
-        butOther.setEnabled(false);
-        butMove.setEnabled(false);
+        butMore.setEnabled(false);
+        butDone.setEnabled(false);
     }
     /**
      * Clears out the curently selected movement data and
@@ -262,7 +290,7 @@ public class MovementDisplay
         md = new MovementData();
         cmd = new MovementData();
         client.bv.clearMovementData();
-        butMove.setLabel("Done");;
+        butDone.setLabel("Done");;
     }
 
     /**
@@ -393,8 +421,8 @@ public class MovementDisplay
                 }
             }
             
-            butMove.setLabel("Move");
-            butMove.setEnabled(true);
+            butDone.setLabel("Move");
+            butDone.setEnabled(true);
 
         }
     }
@@ -435,21 +463,27 @@ public class MovementDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("ready") && client.isMyTurn()) {
-                client.sendEntityReady(cen);
-                client.sendReady(true);
-        } else if (ev.getActionCommand().equalsIgnoreCase("move") && client.isMyTurn()) {
-                moveTo(md);
-        } else if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
-                clearAllMoves();
-                selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
-        } else if (ev.getActionCommand().equalsIgnoreCase("walk") && client.isMyTurn()) {
+        if (!client.isMyTurn()) {
+            // odd...
+            return;
+        }
+        
+        if (ev.getSource() == butDone) {
+            moveTo(md);
+        } else if (ev.getSource() == butNext) {
+            clearAllMoves();
+            selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
+        } else if (ev.getSource() == butMore) {
+            buttonLayout++;
+            buttonLayout %= NUM_BUTTON_LAYOUTS;
+            setupButtonPanel();
+        } else if (ev.getSource() == butWalk) {
             if (gear == Compute.GEAR_JUMP) {
-                            clearAllMoves();
+                clearAllMoves();
             }
             gear = Compute.GEAR_LAND;
             butJump.setEnabled(ce().getJumpMP() > 0);
-        } else if (ev.getActionCommand().equalsIgnoreCase("jump") && client.isMyTurn()) {
+        } else if (ev.getSource() == butJump) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
@@ -459,21 +493,21 @@ public class MovementDisplay
             gear = Compute.GEAR_JUMP;
             butWalk.setEnabled(true);
             butBackup.setEnabled(true);
-        } else if (ev.getActionCommand().equalsIgnoreCase("backup") && client.isMyTurn()) {
+        } else if (ev.getSource() == butBackup) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;
             butWalk.setEnabled(true);
             butJump.setEnabled(ce().getJumpMP() > 0);
-        } else if (ev.getActionCommand().equalsIgnoreCase("charge") && client.isMyTurn()) {
+        } else if (ev.getSource() == butCharge) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_CHARGE;
             butWalk.setEnabled(true);
             butJump.setEnabled(ce().getJumpMP() > 0);
-        } else if (ev.getActionCommand().equalsIgnoreCase("dfa") && client.isMyTurn()) {
+        } else if (ev.getSource() == butDfa) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
@@ -483,16 +517,16 @@ public class MovementDisplay
             }
             butWalk.setEnabled(true);
             butBackup.setEnabled(true);
-        } else if (ev.getActionCommand().equalsIgnoreCase("getup") && client.isMyTurn()) {
+        } else if (ev.getSource() == butUp) {
             clearAllMoves();
             gear = Compute.GEAR_LAND;
             if (!md.contains(MovementData.STEP_GET_UP)) {
                 md.addStep(MovementData.STEP_GET_UP);
             }
             client.bv.drawMovementData(ce(), cmd);
-            butMove.setLabel("Move");
-            butMove.setEnabled(true);
-        } 
+            butDone.setLabel("Move");
+            butDone.setEnabled(true);
+        }
     }
     
 

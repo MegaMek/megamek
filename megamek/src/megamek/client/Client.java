@@ -61,6 +61,7 @@ public class Client extends Panel
     
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
+//    private ButtonMenuDialog        buttonMenuDialog;
 
         
     // message pump listening to the server
@@ -202,6 +203,13 @@ public class Client extends Panel
         }
         return boardSelectionDialog;
     }
+    
+//    public ButtonMenuDialog getButtonMenuDialog() {
+//        if (buttonMenuDialog == null) {
+//            buttonMenuDialog = new ButtonMenuDialog(frame);
+//        }
+//        return buttonMenuDialog;
+//    }
     
     /**
      * Changes the game phase, and the displays that go

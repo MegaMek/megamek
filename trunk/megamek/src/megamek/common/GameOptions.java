@@ -57,6 +57,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level2, new GameOption("minefields", "Minefields", "If checked, minefields can be used.\n\nChecked by default.", true));
         addOption(level2, new GameOption("temperature", "Temperature", "The temperature the game takes place at, for use with the Extreme Temperatures rule.\n\nDefaults to 25 degrees Celsius, thus having no effect.", 25));
         addOption(level2, new GameOption("gravity", "Gravity", "The gravity of the world the game takes place at, for use with the High/Low Gravity rule.\n\nDefaults to 1 G, thus having no effect.", (float)1.0));
+        addOption(level2, new GameOption("vacuum", "Vacuum", "If checked, the game takes place in Vacuum.\n\nUnchecked by default.", false));
 
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);

@@ -3969,8 +3969,9 @@ implements Runnable, ConnectionHandler {
             if (entity instanceof Mech && !entity.isProne()
                 && hex.levelOf(Terrain.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    // TODO : handle vacuum
-                    entity.setLocationStatus(loop, Entity.LOC_NORMAL);
+                	if (game.getOptions().booleanOption("vacuum"))
+                		entity.setLocationStatus(loop, Entity.LOC_VACUUM);
+                    else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
                 }
                 // BMRr, page 94 says that only Meks standing in Level 2 water,
                 // or prone in Level 1 water are "underwater" and thus subject
@@ -3991,8 +3992,9 @@ implements Runnable, ConnectionHandler {
             }
         }else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                // TODO : handle vacuum
-                entity.setLocationStatus(loop, Entity.LOC_NORMAL);
+                if (game.getOptions().booleanOption("vacuum"))
+                	entity.setLocationStatus(loop, Entity.LOC_VACUUM);
+                else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
             }
         }
         
@@ -9457,7 +9459,7 @@ implements Runnable, ConnectionHandler {
             //already destroyed or breached? don't bother
             return desc.toString();
         }
-        desc.append( "<<<" )
+        desc.append( " <<<" )
             .append( entity.getShortName() )
 			.append( " ")
 			.append( entity.getLocationAbbr(loc) )
@@ -9486,8 +9488,10 @@ implements Runnable, ConnectionHandler {
             entity.crew.setDoomed(true);
             desc.append( destroyEntity(entity, "hull breach") );
             desc.append( "\n*** " )
-                .append( entity.getDisplayName() )
-                .append( " Pilot Drowned! ***" );
+                .append( entity.getDisplayName() );
+            if (entity.getLocationStatus(loc) == Entity.LOC_WET)
+            	desc.append( " Pilot Drowned! ***" );
+            else desc.append( " Pilot died to explosive decompression! ***");
         }
 
         //if it's a leg, apply PSRs for actuators

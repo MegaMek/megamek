@@ -769,7 +769,7 @@ public class MoveStep implements Serializable {
         final int stepType = getType();
 
         Coords curPos = getPosition();
-        Coords lastPos = entity.getPosition();
+        Coords lastPos = prev.getPosition();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
 
         // Infantry get a first step if all they've done is spin on the spot.
@@ -780,10 +780,10 @@ public class MoveStep implements Serializable {
             //   getMp() is the MPs used in the last (illegal) step (this step)
             //   if the difference between the whole path and this step is 0
             //   then this must be their first step
+            // TODO : Why are these *here*???
             prevStepOnPavement = prev.isPavementStep();
             isTurning = prev.isTurning();
             isUnloaded = prev.isUnloaded();
-            lastPos = prev.getPosition();
         }
 
         // guilty until proven innocent
@@ -1062,8 +1062,17 @@ public class MoveStep implements Serializable {
         final Hex destHex = game.board.getHex(dest);
         final Entity entity = parent.getEntity();
 
+        if (null == dest) {
+            throw new IllegalStateException( "Step has no position." );
+        }
         if (src.distance(dest) > 1) {
-            throw new IllegalArgumentException("Coordinates must be adjacent.");
+            StringBuffer buf = new StringBuffer();
+            buf.append( "Coordinates " )
+                .append( src.toString() )
+                .append( " and " )
+                .append( dest.toString() )
+                .append( " are not adjacent." );
+            throw new IllegalArgumentException( buf.toString() );
         }
 
         /* 2004-03-31 : don't look at overall movement, just this step. **

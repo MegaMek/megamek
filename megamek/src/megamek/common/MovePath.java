@@ -124,7 +124,8 @@ public class MovePath implements Cloneable, Serializable {
      * @param type the type of movement.
      */
     public MovePath addStep(int type) {
-        return addStep(new MoveStep(this, type));
+        // TODO : detect steps off the map *here*.
+        return addStep( new MoveStep( this, type ) );
     }
 
     /**
@@ -160,6 +161,8 @@ public class MovePath implements Cloneable, Serializable {
         try {
             step.compile(game, entity, prev);
         } catch (RuntimeException re) {
+//             // N.B. the pathfinding will try steps off the map.
+//             re.printStackTrace();
             step.setMovementType(Entity.MOVE_ILLEGAL);
         }
 

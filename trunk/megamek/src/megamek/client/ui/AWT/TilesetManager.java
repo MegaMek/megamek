@@ -113,11 +113,11 @@ public class TilesetManager {
      */
     public Image imageFor(Entity entity) {
         // mechs look like they're facing their secondary facing
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech || entity instanceof Protomech) {
 	    	return imageFor(entity, entity.getSecondaryFacing());
         } else {
 	    	return imageFor(entity, entity.getFacing());
-	    }
+        }
     }
 
     public Image imageFor(Entity entity, int facing) {

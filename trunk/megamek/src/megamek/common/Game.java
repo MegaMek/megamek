@@ -40,9 +40,14 @@ public class Game
 	private int turn; // whose turn it is
 
     public Board board = new Board();
-    private Hashtable entities = new Hashtable();
-    private Hashtable graveyard = new Hashtable(); // for dead entities
-    private Hashtable players = new Hashtable();
+    
+    private Vector entities = new Vector();
+    private Hashtable entityIds = new Hashtable();
+    
+    private Vector graveyard = new Vector(); // for dead entities
+    
+    private Vector players = new Vector();
+    private Hashtable playerIds = new Hashtable();
 	
 	/**
 	 * Constructor
@@ -69,15 +74,23 @@ public class Game
 	 * Returns the individual player assigned the id parameter.
 	 */
 	public Player getPlayer(int id) {
-        return (Player)players.get(new Integer(id));
+        return (Player)playerIds.get(new Integer(id));
 	}
 	
     public void addPlayer(int id, Player player) {
-        players.put(new Integer(id), player);
+        players.addElement(player);
+        playerIds.put(new Integer(id), player);
+    }
+  
+    public void setPlayer(int id, Player player) {
+        final Player oldPlayer = getPlayer(id);
+        players.setElementAt(player, players.indexOf(oldPlayer));
+        playerIds.put(new Integer(id), player);
     }
   
     public void removePlayer(int id) {
-        players.remove(new Integer(id));
+        players.removeElement(getPlayer(id));
+        playerIds.remove(new Integer(id));
     }
   
     /**
@@ -86,12 +99,12 @@ public class Game
      */
     public int getEntitiesOwnedBy(Player player) {
         int count = 0;
-	      	for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-	      		Entity entity = (Entity)i.nextElement();
-	      		if (entity.getOwner().equals(player)) {
-	      			count++;
-	      		}
-	      	}
+	    for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+	    	Entity entity = (Entity)i.nextElement();
+	    	if (entity.getOwner().equals(player)) {
+	    		count++;
+	    	}
+	    }
         return count;
     }
   
@@ -117,14 +130,16 @@ public class Game
 	}
 	
 	/**
-	 * Returns the actual hashtable for the entities
+	 * Returns the actual vector for the entities
 	 */
-	public Hashtable getEntitiesHash() {
+	public Vector getEntitiesVector() {
         return entities;
 	}
 	
-	public void setEntitiesHash(Hashtable entities) {
+	public void setEntitiesVector(Vector entities) {
         this.entities = entities;
+        reindexEntities();
+        
 	}
 	
 	/**
@@ -138,21 +153,37 @@ public class Game
 	 * Returns the entity with the given id number, if any.
 	 */
 	public Entity getEntity(int id) {
-        return (Entity)entities.get(new Integer(id));
+        return (Entity)entityIds.get(new Integer(id));
 	}
   
     public void addEntity(int id, Entity entity) {
-        entities.put(new Integer(id), entity);
+        entities.addElement(entity);
+        entityIds.put(new Integer(id), entity);
     }
 	
     public void setEntity(int id, Entity entity) {
-        entities.put(new Integer(id), entity);
+        final Entity oldEntity = getEntity(id);
+        entities.setElementAt(entity, entities.indexOf(oldEntity));
+        entityIds.put(new Integer(id), entity);
     }
   
     public void removeEntity(int id) {
-        entities.remove(new Integer(id));
+        entities.removeElement(getEntity(id));
+        entityIds.remove(new Integer(id));
     }
 	
+    /**
+     * Regenerates the entities by id hashtable by going thru all entities
+     * in the Vector
+     */
+    private void reindexEntities() {
+        entityIds.clear();
+		for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+			final Entity entity = (Entity)i.nextElement();
+            entityIds.put(new Integer(entity.getId()), entity);
+        }
+    }
+    
 	/**
 	 * Returns the entity at the given coordinate, if any.
 	 * 
@@ -160,7 +191,7 @@ public class Game
 	 */
 	public Entity getEntity(Coords c) {
 		for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-			Entity entity = (Entity)i.nextElement();
+			final Entity entity = (Entity)i.nextElement();
 			if (c.equals(entity.getPosition()) && entity.isTargetable()) {
 				return entity;
 			}
@@ -173,10 +204,10 @@ public class Game
      * out every phase.
      */
     public void moveToGraveyard(int id) {
-        Entity entity = getEntity(id);
+        final Entity entity = getEntity(id);
         if (entity != null) {
             removeEntity(id);
-            graveyard.put(new Integer(id), entity);
+            graveyard.addElement(entity);
         }
     }
 	
@@ -198,7 +229,7 @@ public class Game
 	 */
 	public int getFirstEntityNum(Player player) {
 		for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-			Entity entity = (Entity)i.nextElement();
+			final Entity entity = (Entity)i.nextElement();
 			if (player.equals(entity.getOwner()) && entity.isSelectable()) {
 				return entity.getId();
 			}
@@ -227,7 +258,7 @@ public class Game
 	public int getNextEntityNum(Player player, int start) {
         boolean startPassed = false;
 		for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-			Entity entity = (Entity)i.nextElement();
+			final Entity entity = (Entity)i.nextElement();
             if (entity.getId() == start) {
                 startPassed = true;
             } else if (startPassed && player.equals(entity.getOwner()) 

@@ -719,6 +719,8 @@ public class ClientGUI
     }
 
     protected void showBoardPopup(Point point) {
+    	if (!bv.mayDrawPopup())
+    		return;
         fillPopup(bv.getCoordsAt(point));
 
         if (popup.getItemCount() > 0) {

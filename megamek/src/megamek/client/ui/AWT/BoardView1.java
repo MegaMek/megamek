@@ -162,6 +162,15 @@ public class BoardView1
     private Color rulerStartColor; // added by kenn
     private Color rulerEndColor; // added by kenn
 
+    // Position of the mouse before right mouse button was pressed. Used to have an anchor for scrolling 
+    private Point oldMousePosition = null;
+    
+    // Remembers which mouse button are pressed.
+    private int oldMouseButtonPressed = 0;
+
+    // Indicate that a scrolling took place, so no popup should be drawn on right mouse button release
+    private boolean scrolled = false;
+    
     /**
      * Construct a new board view for the specified game
      */
@@ -730,9 +739,10 @@ public class BoardView1
         }
     }
 
-    /** This method creates an image the size of the entire board (all
+    /** 
+     * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
-    */
+     */
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics temp = boardImage.getGraphics();
@@ -1640,9 +1650,21 @@ public class BoardView1
      * scrolls the board image on the canvas.
      */
     public boolean doScroll() {
-        if (Settings.explicitScrollOnly || !isScrolling) {
-            return false;
+    	if (Settings.explicitScrollOnly) {
+    	   Point oldScroll = new Point(scroll);
+           if (mousePos.equals(oldMousePosition) || oldMouseButtonPressed != MouseEvent.BUTTON3) {
+           	   return false;
+           }
+           scroll.x -= mousePos.x - oldMousePosition.x;
+           scroll.y -= mousePos.y - oldMousePosition.y;
+           checkScrollBounds();
+	       oldMousePosition.setLocation(mousePos);
+	       boolean s = !oldScroll.equals(scroll);
+	       scrolled = scrolled || s;
+	       return s;
         }
+        if (!isScrolling)
+            return false;
         final Point oldScroll = new Point(scroll);
         final int sf = 3; // scroll factor
         // adjust x scroll
@@ -1661,6 +1683,7 @@ public class BoardView1
         checkScrollBounds();
         if (!oldScroll.equals(scroll)) {
             //            repaint();
+            scrolled = true;
             return true;
         }
         return false;
@@ -1886,24 +1909,26 @@ public class BoardView1
     // KeyListener
     //
     public void keyPressed(KeyEvent ke) {
-        switch(ke.getKeyCode()) {
-        case KeyEvent.VK_UP :
-            scroll.y -= 36;
-            break;
-        case KeyEvent.VK_DOWN :
-            scroll.y += 36;
-            break;
-        case KeyEvent.VK_LEFT :
-            scroll.x -= 36;
-            break;
-        case KeyEvent.VK_RIGHT :
-            scroll.x += 36;
-            break;
-        case KeyEvent.VK_SHIFT :
-            shiftKeyHeld = true;
-            initShiftScroll = true;
-            break;
-        }
+    	if (!Settings.explicitScrollOnly) {
+	        switch(ke.getKeyCode()) {
+	        case KeyEvent.VK_UP :
+	            scroll.y -= 36;
+	            break;
+	        case KeyEvent.VK_DOWN :
+	            scroll.y += 36;
+	            break;
+	        case KeyEvent.VK_LEFT :
+	            scroll.x -= 36;
+	            break;
+	        case KeyEvent.VK_RIGHT :
+	            scroll.x += 36;
+	            break;
+	        case KeyEvent.VK_SHIFT :
+	            shiftKeyHeld = true;
+	            initShiftScroll = true;
+	            break;
+	        }
+    	}
         if (isTipShowing()) {
             hideTooltip();
         }
@@ -1924,9 +1949,12 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
+    	scrolled = false; // not scrolled yet    	
         if ( null == me.getPoint() ) {
             return;
         }
+        oldMousePosition = me.getPoint();
+        oldMouseButtonPressed = me.getButton();
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
@@ -1938,14 +1966,6 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if ( !Settings.alwaysScrollOnRightClick &&
-             game.getPhase() == Game.PHASE_FIRING ) {
-            // In the firing phase, also disable scrolling if
-            //  the right or middle buttons are clicked, since
-            //  this means the user wants to activate the
-            //  popup menu or ruler tool.
-            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        }
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         }
@@ -1957,6 +1977,7 @@ public class BoardView1
     }
     public void mouseReleased(MouseEvent me) {
         isTipPossible = true;
+        oldMousePosition = null;
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
             if (disp.isReleased()) {
@@ -1964,6 +1985,9 @@ public class BoardView1
             }
         }
         isScrolling = false;
+        // no click action triggered if click was for scrolling the map. Real clicks are without scrolling.
+        if (scrolled)
+            return;
         if (me.getClickCount() == 1) {
             game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers());
         } else {
@@ -1997,14 +2021,6 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if ( !Settings.alwaysScrollOnRightClick &&
-             game.getPhase() == Game.PHASE_FIRING) {
-            // In the firing phase, also disable scrolling if
-            //  the right or middle buttons are clicked, since
-            //  this means the user wants to activate the
-            //  popup menu or ruler tool.
-            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        }
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         }
@@ -2031,7 +2047,7 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
-        if (shiftKeyHeld) {
+        if (shiftKeyHeld && !Settings.explicitScrollOnly) {
             if (initShiftScroll) {
                 previousMouseX = me.getX();
                 previousMouseY = me.getY();
@@ -3507,4 +3523,11 @@ public class BoardView1
     }
     // end kenn
 
+    /**
+     * Return, whether a popup may be drawn, this currently means, whether no scrolling took place.
+     */
+    public boolean mayDrawPopup() {
+    	return !scrolled;
+    }
+    
 }

@@ -81,6 +81,23 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         addComponentListener(this);
         m_dialog.addComponentListener(this);
         m_dialog.setResizable(false);
+
+        // TODO: replace this quick-and-dirty with some real size calculator.
+        Dimension size = getSize();
+        boolean updateSize = false;
+        if ( size.width < Settings.minimumSizeWidth ) {
+            size.width = Settings.minimumSizeWidth;
+            updateSize = true;
+        }
+        if ( size.height < Settings.minimumSizeHeight ) {
+            size.height = Settings.minimumSizeHeight; 
+            updateSize = true;
+        }
+        if ( updateSize ) {
+            setSize( size );
+        }
+        setLocation( Settings.minimapPosX, Settings.minimapPosY );
+
     }
     
     public MiniMap(Dialog d, Client c, BoardView1 bview) throws IOException {

@@ -344,6 +344,13 @@ public abstract class Mech
     public boolean locationIsTorso(int loc) {
         return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
     }
+    
+    /**
+     * Returns true if the location in question is a leg
+     */
+    public boolean locationIsLeg(int loc) {
+        return loc == LOC_LLEG || loc == LOC_RLEG;
+    }
                                     
     /**
 	 * Count the number of destroyed or breached legs on the mech

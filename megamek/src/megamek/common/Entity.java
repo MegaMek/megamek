@@ -1273,12 +1273,18 @@ public abstract class Entity
         return getInternal(loc) == ARMOR_DESTROYED;
     }
 
-    //returns exposure or breached flag for location
+    /**
+     * returns exposure or breached flag for location
+     */
     public int getLocationStatus(int loc) {
         return exposure[loc];
     }
 
-    //sets location exposure
+    /**
+     * sets location exposure
+     * @param loc    the location who's exposure is to be set 
+     * @param status the status to set
+     */
     public void setLocationStatus(int loc, int status) {
         if (exposure[loc] > LOC_BREACHED) { //can't change BREACHED status
             exposure[loc] = status;

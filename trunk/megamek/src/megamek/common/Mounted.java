@@ -49,7 +49,7 @@ public class Mounted implements Serializable{
     /** Creates new Mounted */
     public Mounted(EquipmentType type) {
         this.type = type;
-        this.typeName = type.getName();
+        this.typeName = type.getInternalName();
         
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();

@@ -90,6 +90,7 @@ v next
 + .mtf reader now reads MG ammo properly
 + added .blk reader from Nathan Rowden <njrkrynn@attbi.com>
   see his editor at http://tntbn.cjb.net/
++ fixed a BV issue with half tons of MG ammo
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

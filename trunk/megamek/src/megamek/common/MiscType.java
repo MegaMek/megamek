@@ -68,13 +68,13 @@ public class MiscType extends EquipmentType {
         return 1;
     }
     
-    public int getBV(Entity entity) {
+    public float getBV(Entity entity) {
         if (bv != BV_VARIABLE) {
             return bv;
         }
         // check for known formulas
         if (internalName.equals("Hatchet")) {
-            return (int)Math.ceil(entity.getWeight() / 15.0);
+            return (float)Math.ceil(entity.getWeight() / 15.0);
         }
         // maybe it's 0
         return 0;

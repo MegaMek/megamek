@@ -149,15 +149,15 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createMGAmmoHalf() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Machine Gun Ammo";
-        ammo.internalName = ammo.name + " half";
+        ammo.name = "Half Machine Gun Ammo";
+        ammo.internalName = "Machine Gun Ammo - Half";
         ammo.mepName = "Ammo MG - Half";
         ammo.mtfName = "MG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_MG;
         ammo.shots = 100;
-        ammo.bv = 1;
+        ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
         
         return ammo;

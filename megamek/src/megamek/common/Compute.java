@@ -851,6 +851,7 @@ public class Compute
         
         ToHitData toHit;
         boolean pc = false; // partial cover
+        boolean apc = false; // attacker partial cover
         
         // sensors operational?
         final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
@@ -859,7 +860,8 @@ public class Compute
         }
         
         // weapon in arc?
-        if (!isInArc(ae.getPosition(), ae.getSecondaryFacing(), 
+        int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
+        if (!isInArc(ae.getPosition(), facing, 
             te.getPosition(), ae.getWeaponArc(weaponId))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
@@ -907,11 +909,21 @@ public class Compute
             if (te.getPosition().distance(in[i]) <= 1 && hel == tel && ael <= tel) {
                 pc = true;
             }
+            
+            // check for attacker partial cover
+            if (ae.getPosition().distance(in[i]) <= 1 && hel == ael && ael >= tel) {
+                apc = true;
+            }
         }
         
         // more than 1 heavy woods or more than two light woods block LOS
         if (ilw + ihw * 2 >= 3) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
+        }
+        
+        // attacker partial cover means no leg weapons
+        if (apc && (w.getLocation() == Mech.LOC_RLEG || w.getLocation() == Mech.LOC_LLEG)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons");
         }
         
         

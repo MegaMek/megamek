@@ -1,19 +1,15 @@
 
 CODE IDEAS:
 -----------
-SHORTER TERM CODE CHANGES:
-
 could almost be combined:
 - boardlisteners listen to boardview, not board
 - seperate client and gui, allowing for other guis
-- somehow improve board display, especially on sun java
 
 - clean up report generation in Server.java
 
 - improve code readibility, commenting; break up 80+ character lines, etc.
 - make fields private, classes encapsulated
 
-LONGER TERM IDEAS:
 ? javax.swing gui
 ? unify equipment (anything that takes up a critical slot)
 
@@ -64,7 +60,7 @@ weapon attacks:
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
-- leg-mounted weapons should not fire through a hex that provides partial cover
+- eliminate leg weapons & kicks in level 1 water
 
 physical attacks:
 - clubbing
@@ -94,8 +90,11 @@ v 0.25
 VERSION HISTORY:
 ----------------
 v next
-+ hitting back up should not clear movement if you are not jumping
-+ some display glitches with movement paths
++ 534490: hitting back up should not clear movement if you are not jumping
++ fixed some display glitches with movement paths
++ torso twisting doesn't rotate leg firing arcs (thx Niels Naumann)
++ leg weapons blocked by terrain that gives attacker partial cover
++ fixed another bug with transfer damage
 
 v 0.24.3 (03-24-02, 9:30pm) 
 + 532083: transfer damage no longer counts double towards damage this phase

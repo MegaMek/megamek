@@ -25,8 +25,7 @@ import megamek.common.actions.*;
 public class FiringDisplay 
     extends AbstractPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
-    KeyListener, ComponentListener, MouseListener,
-    ItemListener
+    KeyListener, ItemListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     
@@ -34,7 +33,10 @@ public class FiringDisplay
     public Client client;
     
     // displays
-    private Label              labStatus;
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
     
     // buttons
     private Container        panButtons;
@@ -88,7 +90,7 @@ public class FiringDisplay
         // fire
         attacks = new Vector();
 
-        labStatus = new Label("Waiting to begin Weapon Attack phase...", Label.CENTER);
+        setupStatusBar();
         
         butFire = new Button("Fire");
         butFire.addActionListener(this);
@@ -161,7 +163,7 @@ public class FiringDisplay
 
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(labStatus, gridbag, c);
+        addBag(panStatus, gridbag, c);
 
         c.gridwidth = 1;
         c.weightx = 1.0;    c.weighty = 0.0;
@@ -174,10 +176,8 @@ public class FiringDisplay
         addKeyListener(this);
         
         // mech display.
-        client.mechD.addMouseListener(this);
         client.mechD.wPan.weaponList.addItemListener(this);
         client.mechD.wPan.weaponList.addKeyListener(this);
-        client.frame.addComponentListener(this);
     
     }
     
@@ -187,6 +187,40 @@ public class FiringDisplay
         comp.addKeyListener(this);
     }
     
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
     private void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(2, 4));
@@ -279,9 +313,8 @@ public class FiringDisplay
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-        butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.mechW.setVisible(true);
-        client.mechW.setVisible(true);
-        moveMechDisplay();
+        butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+        client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
         selectEntity(client.getFirstEntityNum());
@@ -297,7 +330,7 @@ public class FiringDisplay
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.mechW.setVisible(false);
+        client.setDisplayVisible(false);
         client.bv.clearMovementData();
         disableButtons();
         
@@ -597,18 +630,6 @@ public class FiringDisplay
         return client.game.getEntity(cen);
     }
         
-    /**
-     * Moves the mech display window to the proper position.
-     */
-    private void moveMechDisplay() {
-        if(client.bv.isShowing()) {
-            client.mechW.setLocation(client.bv.getLocationOnScreen().x 
-                                     + client.bv.getSize().width 
-                                     - client.mechD.getSize().width - 20, 
-                                     client.bv.getLocationOnScreen().y + 20);
-        }
-    }
-    
     //
     // BoardListener
     //
@@ -668,10 +689,8 @@ public class FiringDisplay
         if(client.game.phase !=  Game.PHASE_FIRING) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
-            client.mechD.removeMouseListener(this);
             client.mechD.wPan.weaponList.removeItemListener(this);
             client.mechD.wPan.weaponList.removeKeyListener(this);
-            client.frame.removeComponentListener(this);
             client.bv.removeKeyListener(this);
             client.cb.getComponent().removeKeyListener(this);
 
@@ -682,6 +701,13 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             return;
         }
@@ -765,42 +791,6 @@ public class FiringDisplay
         }
     }
     public void keyTyped(KeyEvent ev) {
-        ;
-    }
-    
-    //
-    // ComponentListener
-    //
-    public void componentHidden(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-    }
-    public void componentMoved(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentResized(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentShown(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-        moveMechDisplay();
-    }
-    
-    //
-    // MouseListener
-    //
-    public void mouseEntered(MouseEvent ev) {
-        ;
-    }
-    public void mouseExited(MouseEvent ev) {
-        ;
-    }
-    public void mousePressed(MouseEvent ev) {
-        ;
-    }
-    public void mouseReleased(MouseEvent ev) {
-        ;
-    }
-    public void mouseClicked(MouseEvent ev) {
         ;
     }
     

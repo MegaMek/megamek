@@ -493,10 +493,20 @@ public class MegaMek
         // also minimap
         if (client != null && client.minimapW != null 
         && client.minimapW.getSize().width != 0 && client.minimapW.getSize().height != 0) {
+            Settings.minimapEnabled = client.minimapW.isVisible();
             Settings.minimapPosX = client.minimapW.getLocation().x;
             Settings.minimapPosY = client.minimapW.getLocation().y;
             Settings.minimapSizeWidth = client.minimapW.getSize().width;
             Settings.minimapSizeHeight = client.minimapW.getSize().height;
+        }
+        
+        // also mech display
+        if (client != null && client.mechW != null 
+        && client.mechW.getSize().width != 0 && client.mechW.getSize().height != 0) {
+            Settings.displayPosX = client.mechW.getLocation().x;
+            Settings.displayPosY = client.mechW.getLocation().y;
+            Settings.displaySizeWidth = client.mechW.getSize().width;
+            Settings.displaySizeHeight = client.mechW.getSize().height;
         }
         
         // save settings

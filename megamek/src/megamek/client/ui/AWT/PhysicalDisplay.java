@@ -25,14 +25,17 @@ import megamek.common.actions.*;
 public class PhysicalDisplay 
     extends AbstractPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
-    KeyListener, ComponentListener
+    KeyListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
     private Client          client;
         
     // displays
-    private Label            labStatus;
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
         
     // buttons
     private Container         panButtons;
@@ -71,7 +74,7 @@ public class PhysicalDisplay
     
         attacks = new Vector();
 
-        labStatus = new Label("Waiting to begin Physical Attack phase...", Label.CENTER);
+        setupStatusBar();
             
         butPunch = new Button("Punch");
         butPunch.addActionListener(this);
@@ -131,7 +134,7 @@ public class PhysicalDisplay
 
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(labStatus, gridbag, c);
+        addBag(panStatus, gridbag, c);
 
         c.gridwidth = 1;
         c.weightx = 1.0;    c.weighty = 0.0;
@@ -143,9 +146,6 @@ public class PhysicalDisplay
         
         addKeyListener(this);
         
-        // mech display.
-        client.frame.addComponentListener(this);
-    
     }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -154,6 +154,40 @@ public class PhysicalDisplay
         comp.addKeyListener(this);
     }
     
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
     private void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(2, 3));
@@ -216,7 +250,7 @@ public class PhysicalDisplay
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-        client.mechW.setVisible(true);
+        client.setDisplayVisible(true);
         moveMechDisplay();
         client.game.board.select(null);
         client.game.board.highlight(null);
@@ -234,7 +268,7 @@ public class PhysicalDisplay
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.mechW.setVisible(false);
+        client.setDisplayVisible(false);
         client.bv.clearMovementData();
         disableButtons();
     }
@@ -725,7 +759,6 @@ public class PhysicalDisplay
         if (client.game.phase !=  Game.PHASE_PHYSICAL) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
-            client.frame.removeComponentListener(this);
             client.bv.removeKeyListener(this);
             client.cb.getComponent().removeKeyListener(this);
         }
@@ -735,6 +768,13 @@ public class PhysicalDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -783,22 +823,5 @@ public class PhysicalDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
-    
-    //
-    // ComponentListener
-    //
-    public void componentHidden(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-    }
-    public void componentMoved(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentResized(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentShown(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-        moveMechDisplay();
-    }
-    
+
 }

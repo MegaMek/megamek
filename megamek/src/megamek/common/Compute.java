@@ -70,6 +70,9 @@ public class Compute
 	 * will be rolled on 2d6.
 	 */
 	public static double oddsAbove(int n) {
+        if (n < 2) {
+            return Double.MAX_VALUE;
+        }
 		double[] odds = {Double.MAX_VALUE, Double.MAX_VALUE,
 						 100.0, 97.2, 91.6, 83.3, 72.2, 58.3, 
 						 41.6, 27.7, 16.6, 8.3, 5.56, 2.78, 0};
@@ -701,6 +704,11 @@ public class Compute
 		int ihw = 0;  // intervening heavy woods
 		
 		for (int i = 0; i < in.length; i++) {
+            // don't count attacker or target hexes
+            if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
+                continue;
+            }
+            
 			final Hex h = game.board.getHex(in[i]);
 			final int hel = h.getElevation();
 			

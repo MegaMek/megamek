@@ -949,24 +949,18 @@ public class ChatLounge
             float playerValue = 0;
             for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
                 Entity entity = (Entity) j.nextElement();
-                if (entity.getOwner().equals(player)) {
-                    if (!client.game.getOptions().booleanOption("real_blind_drop")
-                        || entity.getOwner().equals(client.getLocalPlayer())) {
-                        if (useBv) {
-                          playerValue += entity.calculateBattleValue();
-                        }
-                        else {
-                          playerValue += entity.getWeight();
-                        }
-                    } else {
-                        // NOP
-                    }
-                }
-            }
-            if (useBv) {
-                lisBVs.add(player.getName() + " BV=" + (int) playerValue);
-            } else {
-                lisBVs.add(player.getName() + " Tons=" + playerValue);
+                if (entity.getOwner().equals(player)) {  
+                	if (useBv) 
+                		playerValue += entity.calculateBattleValue();        
+                	else{
+                		playerValue += entity.getWeight();     
+                	}
+               }
+               if (useBv) {
+                   lisBVs.add(player.getName() + " BV=" + (int) playerValue);
+               } else {
+                   lisBVs.add(player.getName() + " Tons=" + playerValue);
+               }
             }
         }
     }

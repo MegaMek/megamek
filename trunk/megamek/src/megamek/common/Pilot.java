@@ -147,7 +147,7 @@ public class Pilot
           for (Enumeration j = group.options(); j.hasMoreElements();) {
               GameOption option = (GameOption)j.nextElement();
               
-              option.setValue(false);
+              option.clearValue();
           }
       }
       

@@ -166,6 +166,7 @@ public class WeaponAttackAction
         boolean isINarcGuided = false;
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
+                atype != null &&
                 atype.getMunitionType() == AmmoType.M_STANDARD &&
                 (wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM ||

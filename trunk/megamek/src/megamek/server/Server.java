@@ -1634,7 +1634,7 @@ public boolean isPassworded() {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final int direction = src.direction(dest);
-        int fallElevation = srcHex.floor() - destHex.floor();
+        int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
         Entity target = game.getEntity(dest);
 
         // can't fall upwards
@@ -1661,7 +1661,9 @@ public boolean isPassworded() {
                            + dest.getBoardNum() + ".\n");
                 // only given a modifier, so flesh out into a full piloting roll
                 PilotingRollData pilotRoll = Compute.getBasePilotingRoll(game, entity.getId());
-                pilotRoll.append(roll);
+                if (roll != null) {
+                    pilotRoll.append(roll);
+                }
                 doEntityFall(entity, dest, fallElevation, pilotRoll);
                 return;
             }

@@ -52,9 +52,9 @@ public class MechSummaryCache
             if (CACHE.exists() && CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP) {
                 System.out.println("Reading from mechcache file");
                 lLastCheck = CACHE.lastModified();
-                DataInputStream dis = new DataInputStream(new FileInputStream(CACHE));
+                BufferedReader br = new BufferedReader(new FileReader(CACHE));
                 String s;
-                while ((s = dis.readLine()) != null) {
+                while ((s = br.readLine()) != null) {
                     MechSummary ms = new MechSummary();
                     // manually do a string tokenizer.  Much faster
                     int nIndex1 = s.indexOf(SEPARATOR);

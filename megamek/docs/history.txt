@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.53 (CVS)
+
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.
 + Patch 1040096: PPC Field Inhibitor Disengaging (MaxTech Rule)

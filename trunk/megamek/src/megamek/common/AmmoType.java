@@ -772,7 +772,7 @@ public class AmmoType extends EquipmentType {
         
         ammo.name = "AMS Ammo";
         ammo.internalName = "ISAMS Ammo";
-        ammo.mepName = ammo.internalName;  // ?
+        ammo.mepName = "IS Ammo AMS";
         ammo.mtfName = ammo.internalName;
         ammo.damagePerShot = 1; // only used for ammo crits
         ammo.rackSize = 2; // only used for ammo crits
@@ -787,7 +787,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Pods";
         ammo.internalName = "ISNarc Pods";
-        ammo.mepName = ammo.internalName; // ?
+        ammo.mepName = "IS Ammo Narc";
         ammo.mtfName = ammo.internalName;
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 1;
@@ -1252,7 +1252,7 @@ public class AmmoType extends EquipmentType {
         
         ammo.name = "AMS Ammo";
         ammo.internalName = "CLAMS Ammo";
-        ammo.mepName = ammo.internalName;  // ?
+        ammo.mepName = "Clan Ammo AMS";
         ammo.mtfName = ammo.internalName;
         ammo.damagePerShot = 1; // only used for ammo crits
         ammo.rackSize = 2; // only used for ammo crits
@@ -1267,7 +1267,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Pods";
         ammo.internalName = "CLNarc Pods";
-        ammo.mepName = ammo.internalName; // ?
+        ammo.mepName = "Clan Ammo Narc";
         ammo.mtfName = ammo.internalName;
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 1;

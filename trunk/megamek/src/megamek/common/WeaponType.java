@@ -1221,7 +1221,7 @@ public class WeaponType extends EquipmentType {
         
         weapon.name = "AMS";
         weapon.internalName = "ISAntiMissileSystem";
-        weapon.mepName = weapon.internalName; // ?
+        weapon.mepName = "IS Anti-Missile System";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 1;
         weapon.rackSize = 2; 
@@ -1243,7 +1243,7 @@ public class WeaponType extends EquipmentType {
         
         weapon.name = "Narc";
         weapon.internalName = "ISNarcBeacon";
-        weapon.mepName = weapon.internalName; // ?
+        weapon.mepName = "IS Narc Beacon";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.rackSize = 1; 
@@ -2196,7 +2196,7 @@ public class WeaponType extends EquipmentType {
         
         weapon.name = "AMS";
         weapon.internalName = "CLAntiMissileSystem";
-        weapon.mepName = weapon.internalName; // ?
+        weapon.mepName = "Clan Anti-Missile Sys";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 1;
         weapon.rackSize = 2;
@@ -2218,7 +2218,7 @@ public class WeaponType extends EquipmentType {
         
         weapon.name = "Narc";
         weapon.internalName = "CLNarcBeacon";
-        weapon.mepName = weapon.internalName; // ?
+        weapon.mepName = "Clan Narc Beacon";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.rackSize = 1; 

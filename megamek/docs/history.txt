@@ -77,6 +77,7 @@ v CVS
 + bot deploys itself
 + 648967: fixed typos in mechset.txt
 + updated vehicles to use new naming system
++ scenarios now use full unit name (and can use vehicles, omnis, etc)
 
 v 0.27.9 (12-01-02, 12:19pm)
 + 642892: charging units don't move into the target's hex until resolution

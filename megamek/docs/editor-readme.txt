@@ -117,7 +117,7 @@ information on the board file format, and the tileset file format.
         bridge: 1-4 (not functional in 0.26); 1 = light ... 4 = reinforced
         bridge_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bridge_elev: any; surface of the bridge, defaults to 0 if not present
-        fluff: 2,4-9 (no 1 or 3 in v0.29); see the notes above.
+        fluff: 1-9; see the notes above.
         
     Future additions may include ice, as well as some of the terrain present in
     the Maximum Tech sourcebook (jungle, magma, etc.)

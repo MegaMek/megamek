@@ -25,6 +25,7 @@ Lot of people have contributed to the MegaMek project.
      Ryan "Oscar" McConnell  <oscarmm@users.sourceforge.net>
      Slava Zipunov <zipp32@users.sourceforge.net>
      Michael Newcomb <mnewcomb@users.sourceforge.net>
+     Wirianto Djunaidi
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
@@ -56,6 +57,8 @@ Lot of people have contributed to the MegaMek project.
      Charlie Brown
      <Cyric27@users.sourceforge.net>
      <rakkasan@users.sourceforge.net>
+     Blazindizzy
+     Kurt Aronnax Kajal<kurt_kajal@users.sourceforge.net>
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

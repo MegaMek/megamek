@@ -126,6 +126,9 @@ v 0.28.14-dev
 + MovementData.Step.clearAllFlags() should be working now.
 + Added more building images from kurt_kajal.
 + 721548 & 721991: don't blow up when everybody dies.
++ 706086: Included Blazindizzy's images.
++ 723157: Skimmer file updated.
++ Allow a player to configure a log to track Mek Hit Location rolls.
 
 v 0.28.13 (04-12-03, 5:30pm)
 + Players aren't allowed to target infantry with Inferno rounds.

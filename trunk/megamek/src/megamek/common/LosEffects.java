@@ -201,13 +201,23 @@ public class LosEffects {
             attOnLand = !(attUnderWater || attInWater);
         }
         
-        boolean targetUnderWater = targetHex.contains(Terrain.WATER) && 
-            targetHex.depth() > 0 && 
-            targEl < targetHex.surface();
-        boolean targetInWater = targetHex.contains(Terrain.WATER) &&
-            targetHex.depth() > 0 && 
-            targEl == targetHex.surface();
-        boolean targetOnLand = !(targetUnderWater || targetInWater);
+        boolean targetOffBoard = !game.board.contains(target.getPosition());
+        boolean targetUnderWater;
+        boolean targetInWater;
+        boolean targetOnLand;
+        if (targetOffBoard) {
+            targetUnderWater = true;
+            targetInWater = false;
+            targetOnLand = true;
+        } else {
+            targetUnderWater = targetHex.contains(Terrain.WATER) && 
+                targetHex.depth() > 0 && 
+                targEl < targetHex.surface();
+            targetInWater = targetHex.contains(Terrain.WATER) &&
+                targetHex.depth() > 0 && 
+                targEl == targetHex.surface();
+            targetOnLand = !(targetUnderWater || targetInWater);
+        }
 		
         boolean underWaterCombat = targetUnderWater || attUnderWater;
         

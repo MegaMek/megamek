@@ -10004,7 +10004,7 @@ implements Runnable, ConnectionHandler {
 
     private boolean doBlind() {
         return (game.getOptions().booleanOption("double_blind") &&
-        game.getPhase() >= Game.PHASE_INITIATIVE);
+        game.getPhase() >= Game.PHASE_DEPLOYMENT);
     }
 
     /**

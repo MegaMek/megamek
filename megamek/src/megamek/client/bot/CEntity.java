@@ -254,6 +254,13 @@ public class CEntity  {
                 break;
         }
       }
+      else if (this.entity instanceof Infantry) {
+          for (int i = 0; i < this.entity.locations(); i++) {
+               temp = this.getArmorValues(i, false);
+               total += 2*temp[0];
+               points += 2*temp[1];
+          }
+      }
       else {
            switch (arc) {
              case ToHitData.SIDE_REAR:

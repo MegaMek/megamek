@@ -1043,19 +1043,19 @@ public abstract class Mech
         dbv += getWeight();
         
         // subtract for explosive ammo
-        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
+        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             int loc = mounted.getLocation();
-            AmmoType atype = (AmmoType)mounted.getType();
+            EquipmentType etype = mounted.getType();
             
             // only count explosive ammo
-            if (!atype.isExplosive()) {
+            if (!etype.isExplosive()) {
                 continue;
             }
             
             if (isClan()) {
                 // clan mechs only count ammo in ct, legs or head
-                if (loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG 
+                if (loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
                 && loc != LOC_HEAD) {
                     continue;
                 }
@@ -1076,7 +1076,14 @@ public abstract class Mech
                 }
             }
             
-            dbv -= (int)(20.0 * atype.getTonnage(this));
+            float tonnage = etype.getTonnage(this);
+            
+            // gauss rifles only count as one ton for this
+            if (etype instanceof WeaponType && etype.getName().indexOf("Gauss") != -1) {
+                tonnage = 1.0f;
+            }
+            
+            dbv -= (int)(20.0 * tonnage);
         }
         
         

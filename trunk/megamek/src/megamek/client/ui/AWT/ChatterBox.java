@@ -131,7 +131,7 @@ implements GameListener, KeyListener {
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if(ev.getKeyCode() == ev.VK_ENTER) {
+        if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
             client.sendChat(inputField.getText());
             inputField.setText("");
         }

@@ -16,6 +16,7 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import megamek.common.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
@@ -183,9 +184,9 @@ public class ReportDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if(ev.getKeyCode() == ev.VK_ESCAPE) {
+        if(ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
         }
-        if(ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
+        if(ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             ready();
         }
     }

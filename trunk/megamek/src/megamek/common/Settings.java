@@ -463,14 +463,14 @@ scan:
     private static Color loadColor(StreamTokenizer st, Color cDefault) {
         try {
             st.nextToken();
-            if (st.ttype == st.TT_NUMBER) {
+            if (st.ttype == StreamTokenizer.TT_NUMBER) {
                 int red = (int)st.nval;
                 st.nextToken();
                 int green = (int)st.nval;
                 st.nextToken();
                 int blue = (int)st.nval;
                 return new Color(red, green, blue);
-            } else if (st.ttype == st.TT_WORD) {
+            } else if (st.ttype == StreamTokenizer.TT_WORD) {
                 String sName = st.sval;
                 for (int x = 0; x < m_sColorNames.length; x++) {
                     if (m_sColorNames[x].equalsIgnoreCase(sName)) {

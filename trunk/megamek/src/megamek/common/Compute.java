@@ -414,8 +414,8 @@ public class Compute
               atype.getMunitionType() == AmmoType.M_INFERNO ) ||
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
-        boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == game.PHASE_FIRING;
-        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == game.PHASE_TARGETING || game.getPhase() == game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
+        boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
+        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
 
 
         ToHitData toHit = null;
@@ -425,7 +425,7 @@ public class Compute
         	!AmmoType.canDeliverMinefield(atype)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
-        if((game.getPhase() == game.PHASE_TARGETING) && !isArtilleryIndirect) {
+        if((game.getPhase() == Game.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
         }
 

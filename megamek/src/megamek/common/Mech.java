@@ -72,9 +72,11 @@ public abstract class Mech
     private int[] rearArmor;
     private int[] orig_rearArmor;
     
-    // MASCLevel is the # of turns MASC has been used - the # of turns it hasn't, kind of
+    // MASCLevel is the # of turns MASC has been used previously
     private int nMASCLevel = 0;
-    
+    // This is if mask it was used
+    private boolean usedMASC = false;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -118,47 +120,51 @@ public abstract class Mech
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
     
-    private static int[] MASC_FAILURE = { 0, 2, 4, 6, 10, 12, 12, 12 };
+    private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
     
     public boolean checkForMASCFailure(StringBuffer phaseReport)
     {        
         if (hasActiveMASC()) {
             boolean bFailure = false;
-            
-            // iterate before checking
-            nMASCLevel++;
-            
-            int nRoll = Compute.d6(2);
-            
-            phaseReport.append("\n" + getDisplayName() +
-                   " checking for MASC failure.\n");       
-            phaseReport.append("Needs " + (MASC_FAILURE[nMASCLevel] + 1) +
-                    ", rolls " + nRoll + " : ");
-            
-            
-            if (nRoll <= MASC_FAILURE[nMASCLevel]) {
-                // uh oh
-                bFailure = true;
-                phaseReport.append("MASC fails!.\n");
+
+            // if usedMASC is already set, then we've already checked MASC
+            // this turn.  
+
+            // If we succeded before, return false.
+
+            // If we failed before, the MASC was destroyed, and we wouldn't
+            // have gotten here (havActiveMASC would return false)
+            if (!usedMASC) {
                 
-                // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
-                // just do the hip crits
-                getCritical(LOC_RLEG, 0).setDestroyed(true);
-                getCritical(LOC_LLEG, 0).setDestroyed(true);
-                for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-                    Mounted m = (Mounted)e.nextElement();
-                    if (m.getType().hasFlag(MiscType.F_MASC)) {
-                        m.setDestroyed(true);
-                    }
-                }                
-            }
-            else {
-                phaseReport.append("succeeds.\n");
-            }
+                int nRoll = Compute.d6(2);
+                
+                usedMASC = true;
+                phaseReport.append("\n" + getDisplayName() +
+                                   " checking for MASC failure.\n");       
+                phaseReport.append("Needs " + (MASC_FAILURE[nMASCLevel] + 1) +
+                                   ", rolls " + nRoll + " : ");
             
-            // also iterate after checking, to make up for the decrement that all 
-            // mechs have at the end of the turn
-            nMASCLevel++;
+            
+                if (nRoll <= MASC_FAILURE[nMASCLevel]) {
+                    // uh oh
+                    bFailure = true;
+                    phaseReport.append("MASC fails!.\n");
+                    
+                    // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
+                    // just do the hip crits
+                    getCritical(LOC_RLEG, 0).setDestroyed(true);
+                    getCritical(LOC_LLEG, 0).setDestroyed(true);
+                    for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+                        Mounted m = (Mounted)e.nextElement();
+                        if (m.getType().hasFlag(MiscType.F_MASC)) {
+                            m.setDestroyed(true);
+                        }
+                    }                
+                }
+                else {
+                    phaseReport.append("succeeds.\n");
+                }
+            }
             return bFailure;
         }
         return false;
@@ -197,8 +203,13 @@ public abstract class Mech
         } // Check the next piece of equipment.
 
         super.newRound();
+        // If MASC was used last turn, increment the counter,
+        // otherwise decrement.  Then, clear the counter 
+        if (usedMASC) {
+                nMASCLevel++;
+        } else
+            nMASCLevel = Math.max(0, nMASCLevel - 1);        
 
-        nMASCLevel = Math.max(0, nMASCLevel - 1);        
         setSecondaryFacing(getFacing());
         
         // resolve ammo dumps 
@@ -1359,10 +1370,10 @@ public abstract class Mech
                 weaponHeat *= 2;
             }
 
-	    // Six times heat for RAC
-	    if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-		weaponHeat *= 6;
-	    }
+            // Six times heat for RAC
+            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                weaponHeat *= 6;
+            }
 
             // half heat for streaks
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {

@@ -97,6 +97,7 @@ v 0.26.4 (06-28-02, 4pm)
 + a little more safety when loading mech files
 + non-cluster LBX ammo now actually fits in LBX autocannons
 + MRMs deal damage now
++ fixed mechselector position for mcwizard
 
 v 0.26.3 (06-21-02, 9pm)
 + bot improvements--hawkprime

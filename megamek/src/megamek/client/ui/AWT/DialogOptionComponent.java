@@ -23,9 +23,10 @@ package megamek.client;
 import java.awt.*;
 
 import java.awt.event.MouseListener;
+import java.awt.event.ItemListener;
 import megamek.common.options.GameOption;
 
-public class DialogOptionComponent extends Panel implements MouseListener
+public class DialogOptionComponent extends Panel implements MouseListener, ItemListener
 {
     GameOption option;
     
@@ -49,6 +50,7 @@ public class DialogOptionComponent extends Panel implements MouseListener
             case GameOption.BOOLEAN :
                 checkbox = new Checkbox(option.getFullName(), option.booleanValue());
                 checkbox.addMouseListener(this);
+                checkbox.addItemListener(this);
                 add(checkbox, BorderLayout.CENTER);
                 
                 if ( !editable )
@@ -119,6 +121,10 @@ public class DialogOptionComponent extends Panel implements MouseListener
         }
     }
 
+    public void setState(boolean state) {
+        checkbox.setState(state);
+    }
+
     /**
      * Returns a new option, representing the option in it's changed state.
      */
@@ -136,6 +142,10 @@ public class DialogOptionComponent extends Panel implements MouseListener
     public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
     }
     public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+    }
+    
+    public void itemStateChanged(java.awt.event.ItemEvent itemEvent) {
+        parent.optionClicked(this, option, checkbox.getState());
     }
     
 }

@@ -1621,7 +1621,11 @@ implements Runnable, ConnectionHandler {
 
         // Go through each team, update the turn count,
         // and then generate the team order on each team.
-        boolean infLast = game.getOptions().booleanOption("inf_move_last") && game.getPhase() != Game.PHASE_DEPLOYMENT;
+
+        //  This boolean determines whether infantry move and/or
+        //   deploy last according to game options.
+        boolean infLast = game.getOptions().booleanOption("inf_move_last") && (game.getPhase() != Game.PHASE_DEPLOYMENT || game.getOptions().booleanOption("inf_deploy_last"));
+
         TurnVectors team_order;
         for (Enumeration t = game.getTeams(); t.hasMoreElements(); ) {
             final Team team = (Team)t.nextElement();
@@ -9353,10 +9357,10 @@ implements Runnable, ConnectionHandler {
         }
 
         int changed = 0;
-        boolean infLastValue =
-            game.getOptions().getOption("inf_move_last").booleanValue();
-        boolean infMultiValue =
-            game.getOptions().getOption("inf_move_multi").booleanValue();
+        //        boolean infLastValue =
+        //            game.getOptions().getOption("inf_move_last").booleanValue();
+        //        boolean infMultiValue =
+        //            game.getOptions().getOption("inf_move_multi").booleanValue();
 
         for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
             GameOption option = (GameOption)i.nextElement();
@@ -9375,7 +9379,7 @@ implements Runnable, ConnectionHandler {
                 .append( option.stringValue() )
                 .append( "." );
             sendServerChat( message.toString() );
-
+            /*
             // Record mutually-exclusive infantry move options.
             if ( option.getShortName().equals("inf_move_last") ) {
                 infLastValue = option.booleanValue();
@@ -9383,11 +9387,11 @@ implements Runnable, ConnectionHandler {
             else if ( option.getShortName().equals("inf_move_multi") ) {
                 infMultiValue = option.booleanValue();
             }
-
+            */
             originalOption.setValue(option.getValue());
             changed++;
         }
-
+        /*
         // Infantry move options can't BOTH be on!!!
         if ( infLastValue && (infLastValue == infMultiValue) ) {
             sendServerChat("Player " + player.getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
@@ -9396,7 +9400,7 @@ implements Runnable, ConnectionHandler {
             game.getOptions().getOption("inf_move_multi").setValue(false);
             changed += 2;
         }
-
+        */
         // Set proper RNG
         Compute.setRNG(game.getOptions().intOption("rng_type"));
 

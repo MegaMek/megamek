@@ -287,25 +287,17 @@ public class FiringDisplay
 	}
   
     /**
-     * Consider torso twisting by showing the mech twisted in the right
-     * direction.
-     */
-    private void considerTorsoTwist(Coords target) {
-        int direction = ce().getPosition().direction(target);
-        direction = ce().clipSecondaryFacing(direction);
-        ce().setSecondaryFacing(direction);
-        client.bv.redrawEntity(ce());
-    }
-	
-    /**
      * Torso twist in the proper direction.
      */
     private void doTorsoTwist(Coords target) {
-        int direction = ce().getPosition().direction(target);
-        direction = ce().clipSecondaryFacing(direction);
+        int direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
         //System.out.println("firingDisplay: removed all pending fire due to torso twist");
-        clearAttacks();
-        attacks.addElement(new TorsoTwistAction(cen, direction));
+        if (direction != ce().getSecondaryFacing()) {
+            clearAttacks();
+            attacks.addElement(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+            client.bv.redrawEntity(ce());
+        }
     }
 	
 	/**
@@ -344,7 +336,7 @@ public class FiringDisplay
 		        if (!b.getCoords().equals(client.game.board.lastCursor)) {
                     if (shiftheld) {
                         // consider torso twist towards selected hex
-                        considerTorsoTwist(b.getCoords());
+                        doTorsoTwist(b.getCoords());
                     }
 					client.game.board.cursor(b.getCoords());
 				}
@@ -427,22 +419,18 @@ public class FiringDisplay
 				//
 			}
 		}
-    if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
-      shiftheld = true;
-      if (client.isMyTurn() && client.game.board.lastCursor != null) {
-        // consider torso twist towards cursor
-        considerTorsoTwist(client.game.board.lastCursor);
-      }
-    }
+        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
+            shiftheld = true;
+            if (client.isMyTurn() && client.game.board.lastCursor != null) {
+                // torso twist towards cursor
+                doTorsoTwist(client.game.board.lastCursor);
+            }
+        }
 	}
 	public void keyReleased(KeyEvent ev) {
-    if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
-      shiftheld = false;
-      if (client.isMyTurn() && client.game.board.lastCursor != null) {
-        // commit torso twist towards cursor
-        doTorsoTwist(client.game.board.lastCursor);
-      }
-    }
+        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
+            shiftheld = false;
+        }
 	}
 	public void keyTyped(KeyEvent ev) {
 		;

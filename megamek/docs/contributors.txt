@@ -41,6 +41,7 @@ Lot of people have contributed to the MegaMek project.
      Immanuel Scholz <immanuel.scholz@gmx.de>
      Stefan Bissell <weaselflink@users.sourceforge.net>
      Reinhard Vicinus <rvicinus@users.sourceforge.net>
+     Chris Nelson <albinosqrl@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -18,6 +18,7 @@ v0.29.33 (CVS)
 + Refinement to the earlier fix for Bug 937734
 + Bug 940811: MM menu still visible fixed
 + Bug 938300: Bot is now able to stand
++ Added random minefield support for the bot.
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

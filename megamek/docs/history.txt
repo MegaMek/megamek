@@ -95,6 +95,7 @@ v next
 + 570487: prevent crash when an unseen (double-blind) mech dies or attacks
 + a little more safety when loading mech files
 + non-cluster LBX ammo now actually fits in LBX autocannons
++ MRMs deal damage now
 
 v 0.26.3 (06-21-02, 9pm)
 + bot improvements--hawkprime

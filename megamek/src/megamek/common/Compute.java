@@ -489,7 +489,9 @@ public class Compute
     
     /**
      * Check thru movement data and flag stacking violations.  Step backwards
-     * until we get to the first (last) legal step.  
+     * until we get to the first (last) legal step.  Then check if we have a
+     * stacking violation.  If we do, then that step's illegal.  Check the next
+     * step backwards.
      */
     private static void compileStackingViolations(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
@@ -503,8 +505,8 @@ public class Compute
                 continue;
             }
             
-            final Entity entityInHex = game.getEntity(step.getPosition());
-            if (entityInHex != null && !entityInHex.equals(entity)
+            final Entity violation = stackingViolation(game, entityId, step.getPosition());
+            if (violation != null
                     && step.getType() != MovementData.STEP_CHARGE
                     && step.getType() != MovementData.STEP_DFA) {
                 // can't move here
@@ -513,6 +515,45 @@ public class Compute
                 lastMoveLegal = true;
             }
         }
+    }
+    
+    /**
+     * Returns an entity if the specified entity would cause a stacking
+     * violation entering a hex, or returns null if it would not.
+     *
+     * The returned entity is the entity causing the violation.
+     */
+    public static Entity stackingViolation(Game game, int enteringId, Coords coords) {
+        Entity entering = game.getEntity(enteringId);
+        
+        // is the entering entity a mech?
+        if (entering instanceof Mech) {
+            // then any other mech in the hex is a violation
+            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+                final Entity inHex = (Entity)i.nextElement();
+                if (inHex instanceof Mech) {
+                    return inHex;
+                }
+            }
+        }
+        
+        // otherwise, if there are two present entities controlled by this
+        // player, returns a random one of the two.
+        // somewhat arbitrary, but how else should we resolve it?
+        Entity firstEntity = null;
+        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity inHex = (Entity)i.nextElement();
+            if (inHex.getOwner().equals(entering.getOwner())) {
+                if (firstEntity == null) {
+                    firstEntity = inHex;
+                } else {
+                    return d6() > 3 ? firstEntity : inHex;
+                }
+            }
+        }
+        
+        // okay, all clear
+        return null;
     }
     
     /**
@@ -666,14 +707,22 @@ public class Compute
             && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
             return false;
         }
-        // can't move into a hex with an enemy unit, unless charging or jumping
+        
+        // ugh, stacking checks.  well, maybe we're immune!
         if (entityMoveType != Entity.MOVE_JUMP
-            && stepType != MovementData.STEP_CHARGE
-            && stepType != MovementData.STEP_DFA
-            && game.getEntity(dest) != null
-            && entity.isEnemyOf(game.getEntity(dest))) {
-            return false;
+        && stepType != MovementData.STEP_CHARGE
+        && stepType != MovementData.STEP_DFA) {
+            // can't move a mech into a hex with an enemy mech
+            if (entity instanceof Mech && isEnemyMechIn(game, entityId, dest)) {
+                return false;
+            }
+            // can't move out of a hex with an enemy unit unless we started there
+            if (!src.equals(entity.getPosition()) && isEnemyUnitIn(game, entityId, src)) {
+                return false;
+            }
+            
         }
+
         // can't jump over too-high terrain
         if (entityMoveType == Entity.MOVE_JUMP
             && destHex.getElevation() 
@@ -688,6 +737,36 @@ public class Compute
         }
         
         return true;
+    }
+    
+    /**
+     * Returns true if there is a mech that is an enemy of the specified unit
+     * in the specified hex
+     */
+    public static boolean isEnemyMechIn(Game game, int entityId, Coords coords) {
+        Entity entity = game.getEntity(entityId);
+        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity inHex = (Entity)i.nextElement();
+            if (inHex instanceof Mech && inHex.getOwner().isEnemyOf(entity.getOwner())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if there is a mech that is an enemy of the specified unit
+     * in the specified hex
+     */
+    public static boolean isEnemyUnitIn(Game game, int entityId, Coords coords) {
+        Entity entity = game.getEntity(entityId);
+        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity inHex = (Entity)i.nextElement();
+            if (inHex.getOwner().isEnemyOf(entity.getOwner())) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /** 

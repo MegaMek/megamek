@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -184,7 +184,7 @@ public class XMLStreamParser implements XMLResponder {
      *          warning occurs during parsing.  Typically, this only
      *          occurs when the XML is not well-formed.
      */
-    public void XMLStreamParser( InputStream input ) throws ParseException {
+    public XMLStreamParser( InputStream input ) throws ParseException {
         this.parse( input );
     }
 

@@ -30,7 +30,7 @@ import java.awt.*;
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon{
-    private int[] pointX, pointY;
+
     private Polygon hotArea = new Polygon();
     private Point startPoint;
     private Point endPoint;

@@ -88,7 +88,6 @@ public abstract class TurnOrdered implements Serializable
 	int total_inf_turns = 0;
 	int total_oth_turns = 0;
 	int idx;
-	int total_turns;
         TurnOrdered[] order = new TurnOrdered[v.size()];
         int oi = 0;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -31,7 +31,7 @@ public class KeyAlphaFilter extends RGBImageFilter
     
     public int filterRGB(int x, int y, int RGB) {
         if (RGB == keyColor) {
-            return RGB & 0x00ffffff;
+            return 0;
         } else {
             return RGB;
         }

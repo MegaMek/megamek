@@ -55,7 +55,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
      */
     
     public void removeBgDrawer(BackGroundDrawer bd){
-         bgDrawers.removeElement(bd);
+        bgDrawers.removeElement(bd);
     }
 
     /**
@@ -63,80 +63,79 @@ public class BufferedPanel extends Panel implements ComponentListener {
      */
     
     public void removeBgDrawers(){
-         bgDrawers.removeAllElements();
+        bgDrawers.removeAllElements();
     }
 
-     /**
-      * overriden to eliminate flicker.
-      */
-     public void update(Graphics g) {
-	   paint(g);
-     }
+    /**
+     * overriden to eliminate flicker.
+     */
+    public void update(Graphics g) {
+        paint(g);
+    }
 
-     /**
-      * Paint the panel. Must call super.paint() from any subclass that
-      * wished to override this to ensure any contained lightweight components
-      * get repainted.
-      */
-     public void paint(Graphics g) {
-         // create and off-screen image if needed.
-         Image offScr = createImage(getSize().width, getSize().height);
-         // Get a Graphics object to draw with.
-         Graphics offG = offScr.getGraphics();
-         // set clipping to current size.
-         offG.setClip(0, 0, getSize().width, getSize().height);
-         // Clear the panel as needed 
-         clearGraphics(offG);
-         //Draw background
-         Enumeration enum = bgDrawers.elements();
-         while(enum.hasMoreElements()){
-             BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
-             bgd.drawInto(offG, getSize().width, getSize().height);
-         }
-         // Let the parent panel repaint the components inside.
-         super.paint(offG);
-         // draw the off-screen image to the sreen.
-         g.drawImage(offScr, 0, 0, null);
+    /**
+     * Paint the panel. Must call super.paint() from any subclass that
+     * wished to override this to ensure any contained lightweight components
+     * get repainted.
+     */
+    public void paint(Graphics g) {
+        // create an off-screen image
+        Image offScr = createImage(getSize().width, getSize().height);
+        // Get a Graphics object to draw with.
+        Graphics offG = offScr.getGraphics();
+        // set clipping to current size.
+        offG.setClip(0, 0, getSize().width, getSize().height);
+        // Clear the panel as needed 
+        clearGraphics(offG);
+        //Draw background
+        Enumeration enum = bgDrawers.elements();
+        while(enum.hasMoreElements()){
+            BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
+            bgd.drawInto(offG, getSize().width, getSize().height);
+        }
+        // Let the parent panel repaint the components inside.
+        super.paint(offG);
+        // draw the off-screen image to the sreen.
+        g.drawImage(offScr, 0, 0, null);
 
-         //crean up the local graphics reference.
-         offG.dispose();
-     }
+        //crean up the local graphics reference.
+        offG.dispose();
+    }
 
-     private void clearGraphics(Graphics offG) {
-	  Color c = offG.getColor();
-	  offG.setColor(getBackground());
-	  offG.fillRect(0, 0, getSize().width, getSize().height);
-	  offG.setColor(c);
-     }
+    private void clearGraphics(Graphics offG) {
+        Color c = offG.getColor();
+        offG.setColor(getBackground());
+        offG.fillRect(0, 0, getSize().width, getSize().height);
+        offG.setColor(c);
+    }
 
-     // Required component listener methods...
+    // Required component listener methods...
 
-     public void componentResized(ComponentEvent e) {
-	    repaint();
-     }
+    public void componentResized(ComponentEvent e) {
+        repaint();
+    }
 
-     public void componentMoved(ComponentEvent e) {
-	    repaint();
-     }
+    public void componentMoved(ComponentEvent e) {
+        repaint();
+    }
 
-     public void componentShown(ComponentEvent e) {
-	    repaint();
-     }
+    public void componentShown(ComponentEvent e) {
+        repaint();
+    }
 
-     public void componentHidden(ComponentEvent e) {
-	    repaint();
-     }
+    public void componentHidden(ComponentEvent e) {
+        repaint();
+    }
 
     public Dimension getPreferredSize() {
         return preferredSize;
     }
 
-	public void setPreferredSize(Dimension dimension) {
-		preferredSize = dimension;
-	}
-	public void setPreferredSize(int width, int height) {
-		setPreferredSize(new Dimension(width, height));
-	}
+    public void setPreferredSize(Dimension dimension) {
+        preferredSize = dimension;
+    }
+    public void setPreferredSize(int width, int height) {
+        setPreferredSize(new Dimension(width, height));
+    }
 
 }
-

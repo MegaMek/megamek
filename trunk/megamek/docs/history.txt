@@ -12,6 +12,7 @@ v0.29.39
 + Bug 845271, 876771, 917814: The offscreen buffer wasn't resizing with window.
 + MechDisplay.SystemPanel#getSelectedEquipment() didn't handle empty slots.
 + Bug 984459: Vehicle extra road movement does not cause Extreme Gravity PSR anymore
++ Updates to work with GCJ.
 
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages

@@ -189,21 +189,24 @@ public class MegaMek implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         frame.setLayout(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
         c.insets = new Insets(4, 4, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
         c.ipadx = 10;
         c.ipady = 5;
+
         c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
 
         c.gridwidth = 1;
         c.gridheight = 8;
         addBag(panTitle, gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = .05;
+        c.weighty = 1.0;
         c.gridx = 1;
         c.gridheight = 1;
         c.fill = GridBagConstraints.HORIZONTAL;

@@ -859,7 +859,7 @@ public class TestBot extends BotClient {
                 front.add(c);
                 attacks[0] = Math.max(attacks[0], c.size());
             }
-            if (!es.getFinalProne()) {
+            if ( !es.getFinalProne() && en.canChangeSecondaryFacing() ) {
                 en.setSecondaryFacing((o_facing + 5) % 6);
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
@@ -873,11 +873,15 @@ public class TestBot extends BotClient {
                     attacks[2] = Math.max(attacks[2], c.size());
                 }
             }
+            else {
+                attacks[1] = 0;
+                attacks[2] = 0;
+            }
             en.setSecondaryFacing(o_facing);
         }
         Vector arcs = new Vector();
         arcs.add(front);
-        if (!es.getFinalProne()) {
+        if ( !es.getFinalProne() && en.canChangeSecondaryFacing() ) {
             arcs.add(left);
             arcs.add(right);
         }

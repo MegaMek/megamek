@@ -514,7 +514,8 @@ public class Tank
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
         double xbv = 0.0;
-        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
+        if ((hasC3MM() && calculateFreeC3MNodes() < 2) ||
+            (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {

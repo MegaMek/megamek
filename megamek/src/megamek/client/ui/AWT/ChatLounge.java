@@ -633,8 +633,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                 localUnits = true;
             }
 
+            // Reset the tree strings.
+            strTreeSet = "";
+            strTreeView = "";
+
+            // Set the tree strings based on C3 settings for the unit.
             if(entity.hasC3i()) {
-                strTreeSet = "";
                 if(entity.calculateFreeC3Nodes() == 5) strTreeSet = "**";
                 strTreeView = " (" + entity.getC3NetId() + ")";
             }
@@ -644,22 +648,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                         strTreeSet = "***";
                     else
                         strTreeSet = "*";
-                    strTreeView = "";
                 }
-                else {
-                    strTreeSet = "";
-                    if(!entity.C3MasterIs(entity)) {
-                        strTreeSet = ">";
-                        if(entity.getC3Master().getC3Master() != null && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
-                            strTreeSet = ">>";
-                        strTreeView = " -> " + entity.getC3Master().getDisplayName();
-                    }
+                else if(!entity.C3MasterIs(entity)) {
+                    strTreeSet = ">";
+                    if(entity.getC3Master().getC3Master() != null &&
+                       !entity.getC3Master().C3MasterIs(entity.getC3Master()))
+                        strTreeSet = ">>";
+                    strTreeView = " -> " +
+                        entity.getC3Master().getDisplayName();
                 }
             }
-            else {
-                strTreeSet = "";
-                strTreeView = "";
-            }            
 
             if ( !client.game.getOptions().booleanOption("pilot_advantages") ) {
               entity.getCrew().clearAdvantages();
@@ -979,6 +977,20 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
+
+        // When we customize a single entity's C3 network setting,
+        // **ALL** members of the network may get changed.
+        Entity c3master = entity.getC3Master();
+        Vector c3members = new Vector();
+        Enumeration playerUnits = client.game.getPlayerEntities
+            ( client.getLocalPlayer() ).elements();
+        while ( playerUnits.hasMoreElements() ) {
+            Entity unit = (Entity) playerUnits.nextElement();
+            if ( !entity.equals(unit) && entity.onSameC3NetworkAs(unit) ) {
+                c3members.addElement( unit );
+            }
+        }
+
         // display dialog
         CustomMechDialog cmd = new CustomMechDialog(client, entity, editable);
         cmd.refreshOptions();
@@ -986,6 +998,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (editable && cmd.isOkay()) {
             // send changes
             client.sendUpdateEntity(entity);
+
+            // Do we need to update the members of our C3 network?
+            if ( (c3master != null && !c3master.equals(entity.getC3Master()))||
+                 (c3master == null && entity.getC3Master() != null) ) {
+                playerUnits = c3members.elements();
+                while ( playerUnits.hasMoreElements() ) {
+                    Entity unit = (Entity) playerUnits.nextElement();
+                    client.sendUpdateEntity( unit );
+                }
+            }
         }
     }
     

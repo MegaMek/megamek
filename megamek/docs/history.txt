@@ -125,8 +125,12 @@ v 0.29.9-dev
 + Bug 796081: updated "BMRr Feature List.txt" to indicate how to face off-board
 + Fixed repeating "Player X disconnected" problem
 + Bug 794377: fixed main menu not reappearing when client disconnected
++ Data 796410: Added Uziel.gif (submitted by brandfuchs).
 + Fixed MSJDK compatibility issues
 + Continue movement state refactoring (some PSR warnings broken, watch out)
++ RFE 706481: recognize units with two C3Master computers.
++ Bug 686063: Count the members of the C3 network and alert the user.
++ Bug 791578: C3 range: use Entity#isActive() not Entity#isSelectableThisTurn()
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

@@ -556,6 +556,86 @@ public class Game implements Serializable
     }
 
     /**
+     * Returns a <code>Vector</code> containing the <code>Entity</code>s
+     * that are in the same C3 network as the passed-in unit.  The output
+     * will contain the passed-in unit, if the unit has a C3 computer.  If
+     * the unit has no C3 computer, the output will be empty (but it will
+     * never be <code>null</code>).
+     *
+     * @param   entity - the <code>Entity</code> whose C3 network co-
+     *          members is required.  This value may be <code>null</code>.
+     * @return  a <code>Vector</code> that will contain all other
+     *          <code>Entity</code>s that are in the same C3 network
+     *          as the passed-in unit.  This <code>Vector</code> may
+     *          be empty, but it will not be <code>null</code>.
+     * @see     #getC3SubNetworkMembers( Entity )
+     */
+    public Vector getC3NetworkMembers( Entity entity ){
+        Vector members = new Vector();
+
+        // Does the unit have a C3 computer?
+        if ( entity != null && (entity.hasC3() || entity.hasC3i()) ) {
+
+            // Walk throught the entities in the game, and add all
+            // members of the C3 network to the output Vector.
+            Enumeration units = entities.elements();
+            while ( units.hasMoreElements() ) {
+                Entity unit = (Entity) units.nextElement();
+                if ( entity.equals(unit) || entity.onSameC3NetworkAs(unit) ) {
+                    members.addElement( unit );
+                }
+            }
+
+        } // End entity-has-C3
+
+        return members;
+    }
+
+    /**
+     * Returns a <code>Vector</code> containing the <code>Entity</code>s
+     * that are in the C3 sub-network under the passed-in unit.  The output
+     * will contain the passed-in unit, if the unit has a C3 computer.  If
+     * the unit has no C3 computer, the output will be empty (but it will
+     * never be <code>null</code>).  If the passed-in unit is a company
+     * commander or a member of a C3i network, this call is the same as
+     * <code>getC3NetworkMembers</code>.
+     *
+     * @param   entity - the <code>Entity</code> whose C3 network sub-
+     *          members is required.  This value may be <code>null</code>.
+     * @return  a <code>Vector</code> that will contain all other
+     *          <code>Entity</code>s that are in the same C3 network
+     *          under the passed-in unit.  This <code>Vector</code> may
+     *          be empty, but it will not be <code>null</code>.
+     * @see     #getC3NetworkMembers( Entity )
+     */
+    public Vector getC3SubNetworkMembers( Entity entity ){
+
+        // Handle null, C3i, and company commander units.
+        if ( entity == null || entity.hasC3i() || entity.C3MasterIs(entity) ) {
+            return getC3NetworkMembers( entity );
+        }
+
+        Vector members = new Vector();
+
+        // Does the unit have a C3 computer?
+        if ( entity.hasC3() ) {
+
+            // Walk throught the entities in the game, and add all
+            // sub-members of the C3 network to the output Vector.
+            Enumeration units = entities.elements();
+            while ( units.hasMoreElements() ) {
+                Entity unit = (Entity) units.nextElement();
+                if ( entity.equals(unit) || unit.C3MasterIs(entity) ) {
+                    members.addElement( unit );
+                }
+            }
+
+        } // End entity-has-C3
+
+        return members;
+    }
+
+    /**
      * Returns a <code>Hashtable</code> that maps the <code>Coords</code>
      * of each unit in this <code>Game</code> to a <code>Vector</code>
      * of <code>Entity</code>s at that positions.  Units that have no

@@ -2820,6 +2820,10 @@ public class BoardView1
             String[] tipStrings = new String[3];
             tipStrings[0] = entity.getChassis() + " (" + entity.getOwner().getName() + "); "
                 + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
+            if (entity.getCrew().countAdvantages() > 0) {
+                tipStrings[0] = tipStrings[0].concat("*");
+            };
+
             tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance
                 + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");"
                 + " Heat " + entity.heat;

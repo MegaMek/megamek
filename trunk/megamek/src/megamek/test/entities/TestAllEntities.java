@@ -15,7 +15,7 @@ import gd.xml.tiny.*;
 
 public class TestAllEntities implements MechSummaryCache.Listener
 {
-    public final static String CONFIG_FILENAME = "data/mechfiles/testallentities.xml";
+    public final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml";
 
     public final static String BASE_NODE = "testallentities";
     public final static String BASE_MECH_NODE = "mech";
@@ -127,7 +127,7 @@ public class TestAllEntities implements MechSummaryCache.Listener
                         ms[i].getEntryName());
                 if (entity==null)
                     continue;
-
+                System.out.println("\nchecking entity #" + i);
                 checkEntity(entity, false);
             }
         }

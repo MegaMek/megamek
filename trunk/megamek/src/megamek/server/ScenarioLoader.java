@@ -171,7 +171,7 @@ public class ScenarioLoader
                                   ch.loc + ":" + (ch.slot+1) );
                         } else {
                             CriticalSlot cs = new CriticalSlot
-                                ( CriticalSlot.TYPE_SYSTEM, ch.slot );
+                                ( CriticalSlot.TYPE_SYSTEM, ch.slot+1 );
                             System.out.print( s.applyCriticalHit(chp.entity,
                                                                    Entity.NONE,
                                                                    cs,

@@ -1743,7 +1743,7 @@ implements Runnable {
 					// destroyed target's player?
 					if ( targetOwnerId == ( (GameTurn)turns.elementAt(loop) ).getPlayerNum() ) {
 					    // Yup. Remove the turn and stop looping.
-					    turns.remove( loop );
+					    turns.removeElement( loop );
 					    break;
 					}
 				    } // Check the next turn

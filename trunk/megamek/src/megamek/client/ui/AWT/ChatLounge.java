@@ -19,6 +19,8 @@ import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import com.sun.java.util.collections.Iterator;
+
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotGUI;
 import megamek.client.bot.TestBot;
@@ -198,6 +200,21 @@ public class ChatLounge
         labPlayerInfo = new Label("Player Setup");
 
         lisPlayerInfo = new List(5);
+        lisPlayerInfo.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                Client c = getPlayerListSelected(lisPlayerInfo);
+                if (c == null) {
+                    lisPlayerInfo.select(-1);
+                    return;
+                }
+                if (c instanceof BotClient) {
+                    butRemoveBot.setEnabled(true);
+                } else {
+                    butRemoveBot.setEnabled(false);
+                }
+				choTeam.select(c.getLocalPlayer().getTeam());
+            }
+        });
         
         butAddBot = new Button("Add Bot");
         butAddBot.setActionCommand("add_bot");
@@ -919,7 +936,7 @@ public class ChatLounge
             }
         }
     }
-
+    
     private void refreshCamos() {
         // Get the local player's selected camo.
         String curCat = client.getLocalPlayer().getCamoCategory();
@@ -990,9 +1007,10 @@ public class ChatLounge
      * Change local player team.
      */
     public void changeTeam(int team) {
-        if (client.getLocalPlayer().getTeam() != team) {
-            client.getLocalPlayer().setTeam(team);
-            client.sendPlayerInfo();
+        Client c = getPlayerListSelected(lisPlayerInfo);
+        if (c != null && c.getLocalPlayer().getTeam() != team) {
+            c.getLocalPlayer().setTeam(team);
+            c.sendPlayerInfo();
         }
     }
 
@@ -1246,14 +1264,22 @@ public class ChatLounge
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);
             refreshDoneButton(done);
+            for (Iterator i = clientgui.getBots().values().iterator(); i.hasNext();) {
+                ((Client)i.next()).sendDone(done);
+            }
         } else if (ev.getSource() == butLoad) {
             loadMech();
         } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {
             // delete mech
+			Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+            Client c = (Client)clientgui.getBots().get(e.getOwner().getName());
+			if (c == null) {
+			    c = client;
+			}
             if (lisEntities.getSelectedIndex() != -1) {
-                client.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+                c.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
@@ -1279,21 +1305,12 @@ public class ChatLounge
             clientgui.getGameOptionsDialog().show();
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             clientgui.getStartingPositionDialog().update();
-			if (lisStarts.getSelectedIndex() != -1) {
-				String name = lisStarts.getSelectedItem().substring(
-						0,
-						Math.max(0, lisStarts.getSelectedItem().indexOf(" :")));
-				Client c = (BotClient) clientgui.getBots().get(name);
-				if (c == null) {
-				    if (client.getName().equals(name)) {
-				        c = client;
-				    } else {
-				        clientgui.doAlertDialog("Improper command", "Please select a bot you control or your player from the player list.");
-				        return;
-				    }
-				}
-				clientgui.getStartingPositionDialog().setClient(c);
-			}
+            Client c = getPlayerListSelected(lisStarts);
+            if (c == null) {
+				clientgui.doAlertDialog("Improper command", "Please select a bot you control or your player from the player list.");
+                return;
+            }
+			clientgui.getStartingPositionDialog().setClient(c);
             clientgui.getStartingPositionDialog().show();
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
@@ -1316,25 +1333,31 @@ public class ChatLounge
 			try {
 				c.connect();
 			} catch (Exception e) {
-				;
+				clientgui.doAlertDialog("Error", "Could not add bot");
 			}
 			c.retrieveServerInfo();
 			clientgui.getBots().put(name, c);
-			butRemoveBot.setEnabled(true);
         } else if (ev.getSource() == butRemoveBot) {
-            if (lisPlayerInfo.getSelectedIndex() == -1) {
-                clientgui.doAlertDialog("Improper command", "Please select the bot you wish to remove from the player list.");
-            } else {
-                String name = lisPlayerInfo.getSelectedItem().substring(0, Math.max(0,lisPlayerInfo.getSelectedItem().indexOf(" :")));
-                BotClient c = (BotClient)clientgui.getBots().remove(name);
-                if (c != null) {
-                    c.die();
-                }
-                if (clientgui.getBots().size() == 0) {
-                    butRemoveBot.setEnabled(false);
-                }
-            }
+            Client c = getPlayerListSelected(lisPlayerInfo);
+            if (c == null || c == client) {
+				clientgui.doAlertDialog("Improper command", "Please select a bot you control from the player list.");
+				return;
+            } 
+            c.die();
+            clientgui.getBots().remove(c.getName());
         }
+    }
+    
+    private Client getPlayerListSelected(List l) {
+        if (l.getSelectedIndex() == -1) {
+            return client;
+        }
+		String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :")));
+	    BotClient c = (BotClient)clientgui.getBots().get(name);
+	    if (c == null && client.getName().equals(name)) {
+	        return client;
+	    }
+	    return c;
     }
     
     /**

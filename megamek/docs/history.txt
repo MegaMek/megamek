@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.72 (CVS)
++ Data 1171465: Use the "lunar" theme in moonscapes boards.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

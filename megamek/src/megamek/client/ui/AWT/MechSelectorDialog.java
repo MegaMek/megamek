@@ -108,12 +108,12 @@ public class MechSelectorDialog
         setSize(760, 320);
         setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
                     m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
-        populateChoices(MechSummaryCache.getInstance().getAllMechs());
+        populateChoices();
         filterMechs();
     }
     
     
-    private void populateChoices(MechSummary[] msa) {
+    private void populateChoices() {
         
         
         m_chWeightClass.addItem("Light");

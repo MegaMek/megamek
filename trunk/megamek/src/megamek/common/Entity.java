@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import megamek.common.actions.*;
+import megamek.common.MovementData.Step;
 
 /**
  * Entity is a master class for basically anything on the board except
@@ -2136,9 +2137,323 @@ public abstract class Entity
       }
     
     /**
+     * Returns an entity's base piloting skill roll needed
+     */
+    public PilotingRollData getBasePilotingRoll() {
+        final int entityId = getId();
+        
+        PilotingRollData roll;
+        
+        // gyro operational?
+        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+        }
+        // both legs present?
+        if ( this instanceof BipedMech ) {
+          if ( ((BipedMech)this).countDestroyedLegs() == 2 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+        } else if ( this instanceof QuadMech ) {
+          if ( ((QuadMech)this).countDestroyedLegs() >= 3 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)this).countDestroyedLegs() + " legs destroyed");
+        }
+        // entity shut down?
+        if (isShutDown()) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
+        }
+        // Pilot dead?
+        if ( getCrew().isDead() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
+        // pilot awake?
+        else if (!getCrew().isActive()) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+        }
+        
+        // okay, let's figure out the stuff then
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(), "Base piloting skill");
+        
+        //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
+        //object and adjust as necessary
+          roll = addEntityBonuses(roll);
+        
+        return roll;
+    }
+
+    /**
      * Add in any piloting skill mods
      */
       public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
+
+    /**
+     * Checks if the entity is getting up.  If so, returns the
+     *  target roll for the piloting skill check.
+     */
+    public PilotingRollData checkGetUp(Step step) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (step.getType() != MovementData.STEP_GET_UP) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            return roll;
+        }
+
+        if (!needsRollToStand() && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
+            roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,"\n" + getDisplayName() + " does not need to make a piloting skill check to stand up because it has all four of its legs.");
+            return roll;
+        }
+        
+        // append the reason modifier
+        roll.append(new PilotingRollData(getId(), 0, "getting up"));
+        
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is attempting to run with damage that would
+     *  force a PSR.  If so, returns the target roll for the piloting
+     *  skill check.
+     */
+    public PilotingRollData checkRunningWithDamage(int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (overallMoveType == Entity.MOVE_RUN
+            && !isProne()
+            && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
+                                             Mech.SYSTEM_GYRO,
+                                             Mech.LOC_CT) > 0
+                || hasHipCrit())
+            ) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is landing (from a jump) with damage that would
+     *  force a PSR.  If so, returns the target roll for the piloting
+     *  skill check.
+     */
+    public PilotingRollData checkLandingWithDamage() {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                                  Mech.LOC_CT) > 0
+            || hasLegActuatorCrit()) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity might skid on pavement.  If so, returns
+     *  the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkSkid(int moveType, Hex prevHex,
+                                      int overallMoveType, Step prevStep,
+                                      int prevFacing, int curFacing,
+                                      Coords lastPos, Coords curPos,
+                                      boolean isInfantry, int distance) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        // TODO: add check for elevation of pavement, road,
+        //       or bridge matches entity elevation.
+        if (moveType != Entity.MOVE_JUMP
+            && prevHex != null
+            /* Bug 754610: Revert fix for bug 702735.
+               && ( prevHex.contains(Terrain.PAVEMENT) ||
+               prevHex.contains(Terrain.ROAD) ||
+               prevHex.contains(Terrain.BRIDGE) )
+            */
+            && prevStep.isOnPavement()
+            && overallMoveType == Entity.MOVE_RUN
+            && prevFacing != curFacing
+            && !lastPos.equals(curPos)
+            && !isInfantry) {
+            // append the reason modifier
+            if ( this instanceof Mech ) {
+                roll.append(new PilotingRollData(getId(),
+                                      getMovementBeforeSkidPSRModifier(distance),
+                                      "running & turning on pavement"));
+            } else {
+                roll.append(new PilotingRollData(getId(),
+                                      getMovementBeforeSkidPSRModifier(distance),
+                                      "reckless driving on pavement"));
+            }
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is moving into rubble.  If so, returns
+     *  the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkRubbleMove(Step step, Hex curHex,
+                                            Coords lastPos, Coords curPos) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (!lastPos.equals(curPos)
+            && step.getMovementType() != Entity.MOVE_JUMP
+            && curHex.levelOf(Terrain.RUBBLE) > 0
+            && this instanceof Mech) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), 0, "entering Rubble"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is moving into depth 1+ water.  If so,
+     *  returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkWaterMove(Step step, Hex curHex,
+                                           Coords lastPos, Coords curPos,
+                                           boolean isPavementStep) {
+        if (curHex.levelOf(Terrain.WATER) > 0
+            && !lastPos.equals(curPos)
+            && step.getMovementType() != Entity.MOVE_JUMP
+            && getMovementType() != Entity.MovementType.HOVER
+            && !isPavementStep) {
+            return checkWaterMove(curHex.levelOf(Terrain.WATER));
+        } else {
+            return checkWaterMove(0);
+        }
+    }
+
+    /**
+     * Checks if the entity is moving into depth 1+ water.  If so,
+     *  returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkWaterMove(int waterLevel) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        int mod;
+        if (waterLevel == 1) {
+            mod = -1;
+        } else if (waterLevel == 2) {
+            mod = 0;
+        } else {
+            mod = 1;
+        }
+
+        if (waterLevel > 0) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), mod, "entering Depth "
+                                             + waterLevel + " Water"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks to see if an entity is moving through buildings.
+     *  Note: this method returns true/false, unlike the other
+     *  checkStuff() methods above.
+     */
+    public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
+                                           Step step, Hex curHex,
+                                           Hex prevHex) {
+        
+        if ( !lastPos.equals(curPos) &&
+             step.getMovementType() != Entity.MOVE_JUMP &&
+             ( curHex.contains(Terrain.BUILDING) ||
+               (prevHex != null && prevHex.contains(Terrain.BUILDING)) ) &&
+             !(this instanceof Infantry) ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Calculates and returns the roll for an entity moving in buildings.
+     */
+    public PilotingRollData rollMovementInBuilding(Building bldg,
+                                                  int distance, String why) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        int mod = 0;
+        String desc;
+        
+        if (why == "") {
+            desc = "moving through ";
+        } else {
+            desc = why + " ";
+        }
+
+        switch ( bldg.getType() ) {
+        case Building.LIGHT:
+            desc = "Light";
+            break;
+        case Building.MEDIUM:
+            mod = 1;
+            desc = "Medium";
+            break;
+        case Building.HEAVY:
+            mod = 2;
+            desc = "Heavy";
+            break;
+        case Building.HARDENED:
+            mod = 5;
+            desc = "Hardened";
+            break;
+        }
+        
+        // append the reason modifier
+        roll.append(new PilotingRollData(getId(), mod, "moving through "
+                                         + desc + " " + bldg.getName()));
+
+        // Modify the roll by the distance moved so far.      
+        if (distance >= 3 && distance <= 4) {
+            roll.addModifier(1, "moved 3-4 hexes");
+        } else if (distance >= 5 && distance <= 6) {
+            roll.addModifier(2, "moved 5-6 hexes");
+        } else if (distance >= 7 && distance <= 9) {
+            roll.addModifier(3, "moved 7-9 hexes");
+        } else if (distance >= 10) {
+            roll.addModifier(4, "moved 10+ hexes");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Calculate the piloting skill roll modifier, based upon the number
+     * of hexes moved this phase.  Used for skidding.
+     */
+    public int getMovementBeforeSkidPSRModifier( int distance ) {
+        int mod = -1;
+        
+        if ( distance > 10 ) // 11+ hexes
+            mod = 4;
+        else if ( distance > 7 ) // 8-10 hexes
+            mod = 2;
+        else if ( distance > 4 ) // 5-7 hexes
+            mod = 1;
+        else if ( distance > 2 ) // 3-4 hexes
+            mod = 0;
+        else // 0-2 hexes
+            mod = -1;
+        
+        if ( getCrew().getOptions().booleanOption("maneuvering_ace") )
+          mod--;
+          
+        return mod; 
+    }
       
     /**
      * The maximum elevation change the entity can cross

@@ -1301,49 +1301,6 @@ public class Compute
     }
     
     /**
-     * Returns an entity's base piloting skill roll needed
-     */
-    public static PilotingRollData getBasePilotingRoll(Game game, int entityId) {
-        final Entity entity = game.getEntity(entityId);
-        
-        PilotingRollData roll;
-        
-        // gyro operational?
-        if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
-        }
-        // both legs present?
-        if ( entity instanceof BipedMech ) {
-          if ( ((BipedMech)entity).countDestroyedLegs() == 2 )
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
-        } else if ( entity instanceof QuadMech ) {
-          if ( ((QuadMech)entity).countDestroyedLegs() >= 3 )
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)entity).countDestroyedLegs() + " legs destroyed");
-        }
-        // entity shut down?
-        if (entity.isShutDown()) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
-        }
-        // Pilot dead?
-        if ( entity.getCrew().isDead() ) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
-        }
-        // pilot awake?
-        else if (!entity.getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
-        }
-        
-        // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, entity.getCrew().getPiloting(), "Base piloting skill");
-        
-        //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
-        //object and adjust as necessary
-          roll = entity.addEntityBonuses(roll);
-        
-        return roll;
-    }
-    
-    /**
      * @deprecated no more prevattacks
      */
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa, Vector prevAttacks) {

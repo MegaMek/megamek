@@ -432,7 +432,6 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     if (degree > 180) degree = (degree + 180)%360;
     if (degree == 30 || degree == 90 || degree == 150) {
       Vector result = new Vector();
-      in = Compute.toLineOrder(in, ae.getPosition());
       result.addElement(in[0]); //attacker spot
       int w_total = 0;
       for (int i = 1; i < in.length - 2 && toHita.getValue() != ToHitData.IMPOSSIBLE; i+=3) {

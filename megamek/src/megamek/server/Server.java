@@ -2032,7 +2032,7 @@ implements Runnable {
                 }                    
                 
 		// LBX ACs use shots, not missles.
-		if ( wtype.getAmmoType() = AmmoType.T_AC_LBX ) {
+		if ( wtype.getAmmoType() == AmmoType.T_AC_LBX ) {
 		    hitType = " shot(s)";
 		}
 

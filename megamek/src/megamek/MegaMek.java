@@ -263,7 +263,38 @@ public class MegaMek
         frame.add(comp);
     }
     
+    private static void testDice() {
+        // test RNG
+        long rolls = 1000000;
+        int sides = 14;
+        long[] hits = new long[sides];
+        
+        System.out.println("testing dice, " + rolls + " rolls...");
+
+        long start = System.currentTimeMillis();
+        for (long i = 0; i < rolls; i++) {
+            hits[Compute.d6(2)]++;
+        }
+        long end = System.currentTimeMillis();
+        
+        System.out.println("done testing dice in " + (end - start) + " ms.");
+        for (int i = 0; i < sides; i++) {
+            System.out.println("hits on " + i + " : " + hits[i] + "; probability = " + ((double)hits[i] / (double)rolls));
+        }
+    }
+    
     public static void main(String[] args) {
+        boolean dedicated = false;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-testdice")) {
+                testDice();
+                return;
+            }
+            if (args[i].equals("-dedicated")) {
+                dedicated = true;
+            }
+        }
+        
         Frame frame = new Frame("MegaMek");
         MegaMek mm = new MegaMek(frame);
     }

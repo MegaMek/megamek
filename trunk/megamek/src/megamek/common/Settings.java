@@ -438,7 +438,7 @@ scan:
                         st.nextToken();
                         rightDragScroll = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if(key.equals("ctlScroll")) {
+                    else if(key.equals("ctlscroll")) {
                         st.nextToken();
                         ctlScroll = Boolean.valueOf(st.sval).booleanValue();
                     }
@@ -585,7 +585,7 @@ scan:
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
 
             cw.write("rightdragscroll " + rightDragScroll + "\r\n");
-            cw.write("ctlScroll " + ctlScroll + "\r\n");
+            cw.write("ctlscroll " + ctlScroll + "\r\n");
             cw.write("clickedgescroll " + clickEdgeScroll + "\r\n");
             cw.write("autoedgescroll " + autoEdgeScroll + "\r\n");
             cw.write("scrollsensitivity " + scrollSensitivity + "\r\n");

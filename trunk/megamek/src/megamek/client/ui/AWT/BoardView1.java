@@ -1984,13 +1984,10 @@ public class BoardView1
         };
         
         if ( Settings.rightDragScroll ) {
-System.out.println("trying to turn off left and middle mouse buttons in mousePressed()");
-//            mask |= InputEvent.BUTTON1_MASK;
             mask |= InputEvent.BUTTON2_MASK;
         };
 
         if ( (me.getModifiers() & mask ) == 0 ) {
-System.out.println("gonna scroll in mousePressed()");
             isScrolling = true; //activate scrolling
         } else {
             isScrolling = false; //activate scrolling
@@ -2063,7 +2060,6 @@ System.out.println("gonna scroll in mousePressed()");
         };
 
         if ( Settings.rightDragScroll ) {
-System.out.println("trying to turn off left and middle mouse buttons in mouseDragged()");
             mask |= InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK;
         };
 
@@ -2078,7 +2074,6 @@ System.out.println("trying to turn off left and middle mouse buttons in mouseDra
         };
         
         if ( (me.getModifiers() & mask ) == 0 ) {
-System.out.println("gonna scroll in mouseDragged()");
             isScrolling = true; //activate scrolling
         } else {
             isScrolling = false; //activate scrolling

@@ -12,6 +12,7 @@ v 0.29.28 (CVS)
 + RFE 915158: Infantry/Protomechs should not be forced to fire last.
 + Bug 811987: Level 3 PSR rules tweak.
 + Data 914815: updated readme.txt and readme
++ Bug 802867: Game save bug finally quashed.
 
 v 0.29.27 (2004-03-07 9:35pm)
 + Bug 897585: Initiative phase bug fixed.

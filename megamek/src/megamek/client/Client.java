@@ -376,6 +376,7 @@ public class Client extends Panel
         case Game.PHASE_INITIATIVE :
             game.resetActions();
             game.resetCharges();
+            bv.clearAllAttacks();
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :

@@ -419,6 +419,21 @@ extends Dialog implements ActionListener, DialogOptionListener {
             if(entity.getC3Master() == null) choC3.select(listIndex);
             entityCorrespondance[listIndex++] = entity.getId();
         }
+        else if ( entity.hasC3MM() ) {
+            int mNodes = entity.calculateFreeC3MNodes();
+            int sNodes = entity.calculateFreeC3Nodes();
+
+            choC3.add("Set as company-level master (" + mNodes + "M / " 
+                      + sNodes + "S free)");
+            if(entity.C3MasterIs(entity)) choC3.select(listIndex);
+            entityCorrespondance[listIndex++] = entity.getId();
+
+            choC3.add("Set as independant master (" + sNodes + " free)");
+            if(entity.getC3Master() == null) choC3.select(listIndex);
+            entityCorrespondance[listIndex++] = -1;
+
+        }
+
         else if(entity.hasC3M()) {
             int nodes = entity.calculateFreeC3Nodes();
 
@@ -442,6 +457,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
+            if ( e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e) ) {
+                nodes = e.calculateFreeC3MNodes();
+            }
             if (entity.C3MasterIs(e) && !entity.equals(e)) {
                 nodes++;
             }
@@ -461,9 +479,21 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
                 entityCorrespondance[listIndex++] = e.getId();
             }
-            else if (e.C3MasterIs(e) != entity.hasC3M()) {
-                // if we're a slave-unit, we can only connect to sub-masters, not main masters
-                // likewise, if we're a master unit, we can only connect to main master units, not sub-masters
+            else if ( e.C3MasterIs(e) && e.hasC3MM()) {
+                // Company masters with 2 computers can have
+                // *both* sub-masters AND slave units.
+                choC3.add( "Connect to " + e.getDisplayName() +
+                           " (" + nodes + " free)" );
+                entityCorrespondance[listIndex] = e.getId();
+                if (entity.C3MasterIs(e)) {
+                    choC3.select(listIndex);
+                }
+                listIndex++;
+            }
+            else if ( e.C3MasterIs(e) != entity.hasC3M() ) {
+                // If we're a slave-unit, we can only connect to sub-masters,
+                // not main masters likewise, if we're a master unit, we can
+                // only connect to main master units, not sub-masters.
             }
             else if (entity.C3MasterIs(e)) {
                 choC3.add("Connect to " + e.getDisplayName() + " [" + (nodes - 1) + " free]");
@@ -501,7 +531,31 @@ extends Dialog implements ActionListener, DialogOptionListener {
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
-                entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+                Entity chosen = client.getEntity
+                    ( entityCorrespondance[choC3.getSelectedIndex()] );
+                int entC3nodeCount = 
+                    client.game.getC3SubNetworkMembers( entity ).size();
+                int choC3nodeCount = 
+                    client.game.getC3NetworkMembers( chosen ).size();
+                if ( entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES ) {
+                    entity.setC3Master( chosen );
+                }
+                else {
+                    StringBuffer message = new StringBuffer();
+                    message.append( entity.getShortName() )
+                        .append( " can't join the C3 network of\n" )
+                        .append( chosen.getShortName() )
+                        .append( " because that would add " )
+                        .append( entC3nodeCount )
+                        .append( "\nunits to a network that already has " )
+                        .append( choC3nodeCount )
+                        .append( ",\nwhich is more than the maximum of " )
+                        .append( Entity.MAX_C3_NODES )
+                        .append( "." );
+                    client.doAlertDialog( "C3 Network Too Big",
+                                          message.toString() );
+                    refreshC3();
+                }
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));

@@ -1480,17 +1480,17 @@ public class Compute
              null == los.getThruBldg() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
         }
-        
+
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Nearby terrain blocks leg weapons.");
         }
 
-    // Weapon in arc?
-    if (!isInArc(game, attackerId, weaponId, target)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
-    }
+        // Weapon in arc?
+        if (!isInArc(game, attackerId, weaponId, target)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
+        }
 
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
@@ -1576,69 +1576,69 @@ public class Compute
         }
         
         // determine some more variables
-    int aElev = ae.getElevation();
-    int tElev = target.getElevation();
-    int distance = effectiveDistance(game, ae, target);
+        int aElev = ae.getElevation();
+        int tElev = target.getElevation();
+        int distance = effectiveDistance(game, ae, target);
 
-    // Attacks against adjacent buildings automatically hit.
-    if ( distance == 1 &&
-       ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-         target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
-      return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
-                  "Targeting adjacent building." );
-    }
+        // Attacks against adjacent buildings automatically hit.
+        if ( distance == 1 &&
+             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting adjacent building." );
+        }
 
-    // Attacks against buildings from inside automatically hit.
-    if ( null != los.getThruBldg() &&
-       ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-         target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
-      return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
-                  "Targeting building from inside (are you SURE this is a good idea?)." );
-    }
-    
-    // add range mods
-    toHit.append(getRangeMods(game, ae, weaponId, target));
+        // Attacks against buildings from inside automatically hit.
+        if ( null != los.getThruBldg() &&
+             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
+               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
+                                  "Targeting building from inside (are you SURE this is a good idea?)." );
+        }
+
+        // add range mods
+        toHit.append(getRangeMods(game, ae, weaponId, target));
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
         }
-        
+
         // Indirect fire has a +1 mod
         if (isIndirect) {
-      toHit.addModifier( 1, "indirect fire" );
+            toHit.addModifier( 1, "indirect fire" );
         }
 
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
-        
+
         // target movement
         if (te != null) {
             ToHitData thTemp = getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
-            
+
             // precision ammo reduces this modifier
             if (atype != null && atype.getAmmoType() == AmmoType.T_AC && 
-                    atype.getMunitionType() == AmmoType.M_PRECISION) {
+                atype.getMunitionType() == AmmoType.M_PRECISION) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
                 }
             }
         }
-        
+
         // spotter movement, if applicable
         if (isIndirect) {
-          toHit.append(getAttackerMovementModifier(game, spotter.getId()));
+            toHit.append(getAttackerMovementModifier(game, spotter.getId()));
         }
-        
+
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
         // target terrain, not applicable when delivering minefields
-		if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-			toHit.append(getTargetTerrainModifier(game, target));
-		}
+        if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+            toHit.append(getTargetTerrainModifier(game, target));
+        }
         
         // target in water?
         Hex attHex = game.board.getHex(ae.getPosition());
@@ -1995,16 +1995,24 @@ public class Compute
     }
     Entity c3spotter = attacker;
     int c3range = attacker.getPosition().distance(target.getPosition());
+
     for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
       Entity friend = (Entity)i.nextElement();
-      if (!friend.isSelectableThisTurn(game) || !attacker.onSameC3NetworkAs(friend) || !canSee(game, friend, target)) {
+
+      // TODO : can units being transported be used for C3 spotting?
+      if ( attacker.equals(friend) ||
+           !friend.isActive() ||
+           !attacker.onSameC3NetworkAs(friend) ||
+           !canSee(game, friend, target) ) {
         continue; // useless to us...
       }
+
       int buddyRange = effectiveDistance(game, friend, target);
       if(buddyRange < c3range) {
         c3range = buddyRange;
         c3spotter = friend;
       }
+
     }
     return c3spotter;
   }

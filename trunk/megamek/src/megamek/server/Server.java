@@ -4319,7 +4319,7 @@ implements Runnable, ConnectionHandler {
                 // Don't trigger the same pod twice.
                 if ( !triggerPodActions.contains( tapa ) ) {
                     triggerAPPod(entity, tapa.getPodId());
-                    triggerPodActions.add( tapa );
+                    triggerPodActions.addElement( tapa );
                 } else {
                     System.err.print( "AP Pod #" );
                     System.err.print( tapa.getPodId() );

@@ -15,8 +15,26 @@
  * Created on May 10, 2004
  *
  */
-package megamek.common;
+package megamek.common.weapons;
+import megamek.common.AmmoType;
+import megamek.common.AttackHandler;
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.Infantry;
+import megamek.common.LosEffects;
+import megamek.common.Mech;
+import megamek.common.MinefieldTarget;
+import megamek.common.Mounted;
+import megamek.common.Tank;
+import megamek.common.Targetable;
+import megamek.common.Terrain;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
+
 import java.util.Enumeration;
 import megamek.common.actions.*;
 import megamek.client.FiringDisplay;
@@ -25,7 +43,9 @@ import megamek.client.FiringDisplay;
  * A class representing a weapon.
  */
 public abstract class Weapon extends WeaponType {
-	abstract public AttackHandler fire(WeaponAttackAction waa, Game g);
+	public AttackHandler fire(WeaponAttackAction waa, Game g) {
+		return new WeaponHandler();
+	}
 	public ToHitData toHit(WeaponAttackAction waa, Game game) {
 		Targetable target = waa.getTarget(game);
 		int attackerId = waa.getEntityId();
@@ -237,7 +257,7 @@ public abstract class Weapon extends WeaponType {
         Hex attHex = game.board.getHex(ae.getPosition());
         Hex targHex = game.board.getHex(target.getPosition());
         if (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
-            los.targetCover = true;
+            los.setTargetCover(true);
             losMods = los.losModifiers(game);
         }
 
@@ -287,22 +307,6 @@ public abstract class Weapon extends WeaponType {
         if (wtype.getToHitModifier() != 0) {
             toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
         }
-
-        // ammo to-hit modifier
-        if (usesAmmo && atype.getToHitModifier() != 0) {
-            toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
-        }
-
-        // add targeting computer (except with LBX cluster ammo)
-        if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
-          aimingAt != Mech.LOC_NONE) {
-          toHit.addModifier(3, "aiming with targeting computer");
-        } else {
-          if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-               (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
-              toHit.addModifier(-1, "targeting computer");
-          }
-      }
         return toHit;
 	}
 	/**
@@ -341,7 +345,7 @@ public abstract class Weapon extends WeaponType {
 
         // Change hit table for partial cover, accomodate for partial underwater(legs)
         Hex targHex = game.board.getHex(target.getPosition());
-        if (los.targetCover) {
+        if (los.isTargetCover()) {
             if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
                 //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -467,7 +471,7 @@ public abstract class Weapon extends WeaponType {
          }
 
          // attacker partial cover means no leg weapons
-         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
+         if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation())) {
              return new ToHitData(ToHitData.IMPOSSIBLE,
                                   "Nearby terrain blocks leg weapons.");
          }
@@ -478,4 +482,6 @@ public abstract class Weapon extends WeaponType {
          }
         return new ToHitData();
 	}
+	
 }
+

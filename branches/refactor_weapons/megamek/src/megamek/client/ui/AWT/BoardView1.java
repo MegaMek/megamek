@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.weapons.Weapon;
+
 import java.util.Properties;
 
 /**

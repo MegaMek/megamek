@@ -25,6 +25,7 @@ import megamek.server.commands.*;
 import megamek.common.net.*;
 import megamek.common.options.*;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.Weapon;
 
 /**
  * @author Ben Mazur

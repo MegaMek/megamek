@@ -178,7 +178,7 @@ public class Tank
 
     public void setStunnedTurns( int turns ) {
         m_nStunnedTurns = turns;
-        this.crew.setUnconcious(true);
+        this.crew.setUnconscious(true);
     }
 
     public void stunCrew()
@@ -214,7 +214,7 @@ public class Tank
         if (m_nStunnedTurns > 0) {
             m_nStunnedTurns--;
             if (m_nStunnedTurns == 0) {
-                this.crew.setUnconcious(false);
+                this.crew.setUnconscious(false);
             }
         }
         

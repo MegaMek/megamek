@@ -3128,14 +3128,14 @@ public class Compute
     }
 
     /**
-     * Returns the conciousness roll number
+     * Returns the consciousness roll number
      *
      * @param hit - the <code>int</code> number of the crew hit currently
      *    being rolled.
      * @return  The <code>int</code> number that must be rolled on 2d6
-     *    for the crew to stay concious.
+     *    for the crew to stay conscious.
      */
-    public static int getConciousnessNumber(int hit) {
+    public static int getConsciousnessNumber(int hit) {
         switch(hit) {
         case 0:
             return 2;

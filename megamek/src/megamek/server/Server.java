@@ -6423,7 +6423,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Removes all attacks by any dead entities.  It does this by going through
      * all the attacks and only keeping ones from active entities.  DFAs are
-     * kept even if the pilot is unconcious, so that he can fail.
+     * kept even if the pilot is unconscious, so that he can fail.
      */
     private void removeDeadAttacks() {
         Vector toKeep = new Vector(game.actionsSize());
@@ -7910,7 +7910,7 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * This checks if the mech pilot goes unconcious from the damage he has
+     * This checks if the mech pilot goes unconscious from the damage he has
      * taken this phase.
      */
     private void resolveCrewDamage() {
@@ -7931,16 +7931,16 @@ implements Runnable, ConnectionHandler {
                 if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
                   roll = Math.min(12, roll + 1);
 
-                int rollTarget = Compute.getConciousnessNumber( hit );
+                int rollTarget = Compute.getConsciousnessNumber( hit );
                 phaseReport.append("\nPilot of " ).append( e.getDisplayName()
                                    ).append( " \"" ).append( e.getCrew().getName()
                                    ).append( "\" needs a " ).append( rollTarget
-                                   ).append( " to stay concious.  Rolls " ).append( roll
+                                   ).append( " to stay conscious.  Rolls " ).append( roll
                                    ).append( " : ");
                 if (roll >= rollTarget) {
                     phaseReport.append("successful!");
                 } else {
-                    e.crew.setUnconcious(true);
+                    e.crew.setUnconscious(true);
                     e.crew.setKoThisRound(true);
                     phaseReport.append("blacks out.");
                     break;
@@ -7953,7 +7953,7 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Make the rolls indicating whether any unconcious crews wake up
+     * Make the rolls indicating whether any unconscious crews wake up
      */
     private void resolveCrewWakeUp() {
         boolean anyRolls = false;
@@ -7961,7 +7961,7 @@ implements Runnable, ConnectionHandler {
             final Entity e = (Entity)i.nextElement();
 
             // only unconscious pilots of mechs and proto's can roll to wake up
-            if ( !e.isTargetable() || !e.crew.isUnconcious() ||
+            if ( !e.isTargetable() || !e.crew.isUnconscious() ||
                  e.crew.isKoThisRound() ||
                 !(e instanceof Mech || e instanceof Protomech)) {
                 continue;
@@ -7972,15 +7972,15 @@ implements Runnable, ConnectionHandler {
             if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
               roll = Math.min(12, roll + 1);
 
-            int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
+            int rollTarget = Compute.getConsciousnessNumber( e.crew.getHits() );
             roundReport.append("\nPilot of " ).append( e.getDisplayName()
                                ).append( " \"" ).append( e.crew.getName()
                                ).append( "\" needs a " ).append( rollTarget
-                               ).append( " to regain conciousness.  Rolls " ).append( roll
+                               ).append( " to regain consciousness.  Rolls " ).append( roll
                                ).append( " : ");
             if (roll >= rollTarget) {
                 roundReport.append("successful!");
-                e.crew.setUnconcious(false);
+                e.crew.setUnconscious(false);
             } else {
                 roundReport.append("fails.");
             }

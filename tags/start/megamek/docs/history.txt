@@ -1,0 +1,465 @@
+
+CODE IDEAS:
+-----------
+PLANNED NEAR-TERM CODE CHANGES:
+
+could almost be combined:
+- boardlisteners listen to boardview, not board
+- seperate client and gui, allowing for other guis
+- somehow improve board display, especially on sun java
+
+- clean up report generation in Server.java
+
+- improve code readibility, commenting; break up 80+ character lines, etc.
+- make fields private, classes encapsulated
+
+LONGER TERM IDEAS:
+? javax.swing gui
+? unify equipment (anything that takes up a critical slot)
+
+- the turn report could keep a list of "message" objects 
+  instead of a large report string.  This would allow some customizing of the
+  display, or even translation.
+- more server validation of client data
+  
+
+RULES TO DO:
+------------
+general:
+- connects/disconnects mid-game need to be handled better
+- properly notify when server disconnects (quit client, too)
+? have server only send entity add/deletes in lounge
+- double reports when firing phase happens and physical phase is skipped
+
+board display:
+? display something in exchange phase
+? show dead mechs as rubble?
+? some way to resize chat to be bigger or smaller
+? hex numbers are hard to read on dark tiles
+? seperate client and GUI
+- nice to be able to see other mech's stats while waiting (or firing, or whatever)
+- bug: movement arrows dissappear when scrolled off the screen
+- mechs not disappearing properly when moved/dead
+- extra heat capacity due to underwater heat sinks doesn't show up on display
+
+mechs:
+- more weapons!  more mechs!
+- parse XML files (from BTTC, even!)
+
+initiative:
+? ineligible units should actually count in the action queue, but be skipped
+- roll-off ties
+
+movement:
+? a better pathfinder
+? mech can try moving again if failed getting up
+? make jump jets above water work when jumping out of water
+? pavement movement and skidding?
+- for unavoidable stacking situations, implement "domino effect" rules
+- mechs should always be able to move 1 square forwards, if standing
+- mechs should always be able to try to get up if one leg & gyro is intact
+
+physical attacks:
+- pushing
+- charging
+- death from above!
+- somehow show the to-hit numbers
+
+weapon attacks:
+-- check:sometimes, fire for a mech is skipped
+- make sure you always get cover when standing next to level 2 (v. strange)
+- mulitple targets modifier
+? notify the player that attacks are reset due to torso twisting
+
+falling:
+- account for water
+- account for elevation
+
+
+FUTURE VERSION PLANS:
+---------------------
+INITIAL RELEASE
+- all reasonable level 1 non-optional rules without bugs
+- interface cleaned up: reasonably intuitive & bug-free
+
+to be more specific, these should be in the initial release:
+- domino effect rules
+- pushing (maybe)
+- other v. small rules fixes
+
+these will probably not be:
+- a way to get up in the middle of your movement
+- looking at other mechs
+- faster board code
+- charging & death from above
+
+v 0.23
+- game ends when only one player is left
+- observer mode
+- players that connect with the same name as a "ghost" take control of that player
+
+
+VERSION HISTORY:
+----------------
+v 0.22.3
++ connections handled differently on the server
++ units moving backwards can't change elevation levels
++ players that disconnect are "ghosts"
+
+v 0.22.2 (02-18-02, 11:30pm)
++ targets prone in depth 1 water can't be hit
++ sensors critical hit means a +2 to weapons fire, not +1 (oops)
++ can't shoot arm-mounted weapons while prone and opposite arm destroyed
++ critical hits more noticable in report
++ in lounge, changing starting pos no longer resets BV
++ cleaned up some equals methods
++ refactored stuff dealing with piloting skill rolls
++ mepfiles: lower arm & hand actuators properly removed (victor loads now)
++ underwater heat sinks work twice as much
+- extra heat capacity due to underwater heat sinks doesn't show up on display
++ shut down mechs gain no extra heat from engine criticals
++ fixed a bug which caused critical hits to self-heal sometimes
++ all critical hits in destroyed location are considered hit
++ mechwarrior effects from broken life support
++ criticals transfer from empty locations
++ running or jumping with damaged gyro or certain actuators now needs a roll
+
+v 0.22.1 (02-17-02, 9pm)
++ an automatic fall no longer results in the pilot automatically avoiding damage
++ most common stacking violations prevented
++ rough terrain doesn't actually need a piloting roll (oops)
++ engines & gyros taking more than one hit in the same turn are properly destroyed
++ mep files parse heat sinks & jump jets properly
++ changed a few function names dealing with critical slots
++ now displays "immobile" for shut down or pilot unconcious
++ will now skip the movement phase if nobody can act
++ destroyed jump jets reduce jump movement
++ destroyed heat sinks reduce capacity
++ heat capacity shown on mech display
++ hitting "get up" then "move" works now
++ empty weapons try to reload "on the fly"
+
+v 0.22.0 (02-16-02, 7pm)
++ torso twisting now turns in the correct direction
++ any button except button1 does not select hexes (so you can scroll)
+- movement arrows dissappear when scrolled off the screen
++ turn order recalculated every phase for eligible entities
++ now, once again, factors in target movement (oops)
++ physical attacks skipped for entities that can't use them
+- units should actually count in the action queue, but be skipped on their turns
++ internal setting "friendly fire" off if more than one player in the game
+
+v 0.21.5 (02-16-02, 12pm)
++ weapons stored differently; may reduce network traffic
++ report at end of movement/firing if necessary
+
+v 0.21.4 (02-13-02, 4pm)
++ kicks do normal kick damage now
++ engine hit heat added in a way that you can see
++ fixed a torso twisting bug introduced in the last version
++ no running backwards
++ some movement requires a piloting skill roll
++ display differences for movement needing a piloting skill roll
++ jump jets don't work in water
+- all jump jets don't work, not just the ones underwater (ugh)
++ getting up revised, but you still can't get up except as your first move
++ many of the standard piloting skill rolls during movement now
++ turning is free after getting up
++ can't jump over too-high terrain (poor urbanmechs)
++ missing actuators figure into punches and kicks
++ BoardView crashes with null entities possibly fixed
+
+v 0.21.3 (02-12-02, 6:22pm)
++ can't fire at underwater units
++ punching & kicking account for prone/elevation changes
++ status bar during physical attacks says "physical attacks" now
++ can't do physical attacks while prone
++ fixed text bug in targetting modifiers
++ walking/jumping back to normal levels of brokenness
++ moving somewhat re-done internally
+- backup/getup not working
+- server may allow certain types of illegal movement (stacking)
+
+v 0.21.2 (02-11-02, 3pm)
++ punching supported
++ just about everything that has to do with hitting re-written or modified
++ button placement changes in the gui
++ kicking supported
+- regression: getting up, jumping, backwards movement is broken
+
+v 0.21.1 (02-07-02, 11:43am)
++ pilots can wake up from unconciousness
++ starting position selection (on any 8 primary/secondary compass directions)
+
+v 0.21.0 (01-27-02, 10:30pm)
++ fixed movement heat costs
++ ammo exploding doesn't empty the bin until the end of the turn
++ mepfiles: 1/2 ton MG ammo parsed
++ mepfiles: flamers (damage only) added
++ mepfiles: rear facing weapons parsed
++ rear facing weapons working (torsos only)
++ initiative phase just displays the report, which has initiative info now
++ dead entities aren't sent out every phase (just kept on server)
++ game rounds counted & displayed at the top of the report
+
+v 0.20.5 (01-27-02, 12pm)
++ fixed a bug where mechs destroyed did't stay dead (yikes!)
++ fixed a bug causing turns to go to players without active mechs
++ fixed a bug causing shutdown mechs not to be displayed
++ changed how crew conditions are handled internally
++ leg destruction now results in a piloting skill check
++ server now uses game player data instead of its own
++ player objects are now aware of their own id
++ changed how client handles connects/disconnects
++ changed how server handles players internally
++ entities are now aware of their id numbers and act accordingly
++ changed how selected weapons & pending fire are handled internally
+++ AAARGH!! fixed another bug with torso twisting, hopefully the last
++ mech display kept by client
+
+v 0.20.4 (01-26-02, 6:30pm)
++ fixed a bug with keyboard listeners lingering
+
+v 0.20.3 (01-26-02, 6pm)
++ torso twisting hopefully fixed
++ different random number routine accessed
+
+v 0.20.2 (01-26-02, 11:30am)
++ changed how certain mech status conditions (destroyed, prone) were
+  handled internally
++ testing release to track down why torso twists sometimes fail
+
+v 0.20.1 (01-25-02, 1pm)
++ added some more maps, mechs
+
+v 0.20.0 (01-23-02, 10:40pm)
++ fixed a bug in the new network code (thread synchronization issues)
++ added interface for modifying board layout parameters
++ added "delete mech button"
++ if mechs or board layout changes in the lounge, all players are unreadied
++ you can no longer start the game without a mech
++ calculating battle value
++ fixed a .mep parsing bug with armor
++ display total BV for player during startup
++ auto-center on active mech working again
++ color selection working again
++ fixed a bug in initiative where only one player had to click "ready"
+
+v 0.19.3 (01-21-02, 9:30pm)
++ re-did network communication to use java object serialization exclusively
++ mapsheet combiner working
++ new map format!  tile based
++ editor works with new map format
+- saving doesn't really work with new map format yet
+
+v 0.19.2 (01-16-02, 9:30am)
++ seperated code into packages: server, client & common
++ all data in data folder
++ removed several unused data from board file (reducing size by about 1/4)
++ seperation of board, game and client.  only one attricious hack needed, too!
++ at some point, jumping got broken.  fixed it.
+
+v 0.19.1 (01-12-02, 11pm)
++ chat area now doesn't go to the top every phase change (yay!)
++ fixed a bug that was giving 10 extra heatsinks to loaded mechs
++ fixed a number format bug in mech loading: stalker loads now
++ code: renamed "Game" to "Client" and "GameServer" to "Server"
+
+v 0.19.0 (01-12-02, 9:30pm)
++ remade initiative and lounge screens
++ lounge screen now allows loading of mechs
++ all 3025 weapons & ammo except flamers
++ mechs deploy around a point instead of at fixed points
++ code: "location" (and associated) in Entity replaced with "position"
++ editor: making a new map resets save name
++ editor: default board size is now 16x17
++ more maps & tiles added
+
+v 0.18.0 (01-09-02, 2am)
++ weapon attacks held client-side and sent in a bunch
++ torso twisting
++ ammo tracking
++ ammo auto-reloads if more is availiable
++ fixed number of leg critical slots (now 6)
++ ammo explosions from critical hits and heat
+
+v 0.17.0 (12-01-01, 1:49am)
++ some settings saved (yay!)
++ walking backwards
+
+v 0.16.7 (10-20-01, 1pm)
++ falling
++ falling from actuator hits
++ falling from 20+ damage
++ pilot damage due to falling
++ piloting skill rolls
+
+v 0.16.1
++ mechs have pilots now, and the pilots can take damage
++ fixed a bug not allowing you to jump over enemy mechs
+
+v 0.16.0 (09-06-01, 1pm)
++ fixed board edges in new graphics engine
++ editor enabled
++ added jumping support
++ test scenario: spider vs. urbanmech
+
+v 0.15.5 (08-20-01, 8:22pm)
+++ new graphics engine (sorry, it's slower) should allow almost unlimited board size
++ criticals on rear torso locations now resolve properly against the main torso
++ added the rest of the missile hit tables in (oops!)
+
+v 0.15.4 (08-19-01, 9:39pm)
++ fixed an infinite damage loop bug
++ firing lines clear properly
++ added more effects of system criticals
++ limb blown off criticals work
++ fixed a bug with partial cover not being assigned
++ reworked the damage loop so that hit locations 2 should actually critical
++ people with no mechs don't have to click okay
+
+
+v 0.15.3 (08-19-01, 1:46am)
++ fixed a bug with player color selection
+
+v 0.15.2 (08-19-01, 1:11am)
++ image tint cache
++ lines to show fire
++ critical hits to weapons & systems (no system effects)
++ changes to damage readout
+
+v 0.15.1 (08-17-01, 12:40am)
++ removed the stalker from the default mechs
++ new rangefinder formula ( http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp )
+
+v 0.15.0 (08-16-01, 11pm)
++ logic to stop people from selecting the same color
++ 4 different starting positions on the default board
++ clears target when using "next unit" button
++ centers current unit in map view area
++ missile damage displays as "missile" on the weapon list
++ arms destroyed when torso is destroyed
++ fixed some errors in keyboard handling
++++ partial intervening terrain & LOS added (splines handled badly)
++ dead mechs should be dissapearing better
++ should be no empty line at the bottom of chat text
++ ready/moved/shutdown mechs display slightly differently
++ mech display is movable window
++ fixed movement data font changing
++ deselect hex at end of turn
++ attacker terrain
++ defender terrain
+
+v 0.14.2 (08-09-01) 6:49pm
++ partially fixed initiative
++ next mech button
++ medium mech graphics added
++ colors changed to pastelly stuff
+
+v 0.14.1
++ fixed a range finding bug
++ overhead pictures of mechs, tinted to the player color
+
+v 0.14 (8-08-01)
++ disable weapons in destroyed sections
++ some stacking violations prevented
++ fixed bug with rear torso internal structure
++ destroyed mechs don't show up on the map any more
+
+v 0.13.3 (8-07-01, 12:25am)
++ don't target destroyed mechs
++ don't resolve fire against destroyed mechs
++ target immobile modifierx
+
+v 0.13.2 (8-06-01, 3:30pm)
++ bug fixed with missile damage display
++ added target arcs
++ better turn status messages
++ heat buildup should not resolve until the end of the turn
++ heat shutdown & startup effects
++ rotate w/o moving (shift click in movement)
+
+
+v 0.13.1 (8-06-01, 1:00am)
++ added weapon arcs
++ added missiles and missile damage resolution
+
+v 0.13 (8-04-01, 4:14pm)
++ fixed initiative bug with uneven sides
++ added heat
+
+v 0.12.1 (8-01-01, 12:50am)
++ can't fire at invalid target/out of range
+
+v 0.12 (7-31-01)
++ damage
++ hit location tables
++ end of turn report
+
+v 0.11 (7-24-01)
++ more firing
++ some cursor stuff
+
+v 0.10 (7-08-01)
++ firing phase
+
+v 0.09 (2-20-01, 10:31pm)
++ initiative phase
++ more movement overhauls
+
+v 0.081 (2-13-01, 5:10pm)
++ lazy ground pathfinder
+  - bug: allows running into water
+  - generally unintelligent path choices
++ displays movement on map
++ server forbids moving too far
+
+v 0.080
++ redraws the sides when the screen area is larger than the board
++ preliminary display of mechs on the map
++ preliminary mech movement
+
+v 0.076 (02-09-01, 12:02am)
++ preliminary game phase progression
+
+v 0.075
++ buffered map reading.  now about twice as fast!
++ fixed: sometimes not all the tile pictures will load when 
+you load a map, or they'll load halfway.
++ fixed: when you change the elevation in the editor, the 
+little picture in the corner doesn't change
++ testing fog in the editor: press "f" to toggle
+
+v 0.073 (02-06-01, 10:50pm)
++ player list in chat
++ player ready button in chat
+
+v 0.071
++ resized the tiles to 84 * 72 pixels
++ redrew the "boring" tileset to match
+
+v 0.07
++ main menu!
++ added some multiplayer host/connection support
+
+Version 0.063
++ fixed: in the editor, clicking on a new tile while holding 
+CTRL won't paint that tile, but releasing and then tapping CTRL
+will.
++ fixed a bug in showing elevation changes while editing boards
++ CTRL is now the paintbrush and ALT is the eyedropper in the 
+editor
++ internal difference between dragging and selecting a hex.
+
+Version 0.062 (02-05-01, 3:40pm)
++ tiles have borders to represent elevation changes
+
+Version 0.061 (02-05-01, 3:40pm)
++ fixed a small bug loading terrain tiles with underscores
+
+version 0.06
++ saving and loading of maps
++ slightly more intuitive new map starting
+
+versions before 0.06
++ i dunno

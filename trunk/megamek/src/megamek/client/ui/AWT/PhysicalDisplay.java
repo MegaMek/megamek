@@ -497,9 +497,18 @@ public class PhysicalDisplay
         }
 
         // Build the rest of the warning string.
-        warn.append( "\nbrush off the swarming infantry?" )
-            .append( "\nWARNING: any arm that misses the infantry" )
-            .append( "\n\thits the Mek on the Punch table!" );
+        // Use correct text when the target is an iNarc pod.
+        if (Targetable.TYPE_INARC_POD == target.getTargetType()) {
+            warn.append( "\nbrush off the " )
+                .append( target.getDisplayName() )
+                .append( "?\nWARNING: any arm that misses the pod" )
+                .append( "\n\thits the Mek on the Punch table!" );
+        }
+        else {
+            warn.append( "\nbrush off the swarming infantry?" )
+                .append( "\nWARNING: any arm that misses the infantry" )
+                .append( "\n\thits the Mek on the Punch table!" );
+        }
 
         // If we can hit with the left arm, get
         // the damage and construct the string.
@@ -640,7 +649,7 @@ public class PhysicalDisplay
         attacks.addElement( act );
         
         ready();
-      };
+      }
     }
 
     /**
@@ -787,6 +796,17 @@ public class PhysicalDisplay
         Building bldg = client.game.board.getBuildingAt( pos );
         if ( bldg != null ) {
             targets.addElement( new BuildingTarget(pos, client.game.board, false) );
+        }
+
+        // Is the attacker targeting its own hex?
+        if (ce().getPosition().equals( pos )) {
+            // Add any iNarc pods attached to the entity.
+            Enumeration pods = ce().getINarcPodsAttached();
+            while ( pods.hasMoreElements() ) {
+                choice = (Targetable) pods.nextElement();
+//                 // TODO : uncomment me and test the @#$% out of this code!!!
+//                 targets.addElement( choice );
+            }
         }
 
         // Do we have a single choice?

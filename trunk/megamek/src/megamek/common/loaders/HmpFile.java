@@ -1305,13 +1305,13 @@ public class HmpFile
         String nl = "\r\n";  // DOS friendly
 
         // Write Output MTF
-	sb.append( "Version:1.0" ).append( nl );
-	sb.append( name ).append( nl );
-	sb.append( model ).append( nl );
-	sb.append( nl );
+        sb.append( "Version:1.0" ).append( nl );
+        sb.append( name ).append( nl );
+        sb.append( model ).append( nl );
+        sb.append( nl );
 
         sb.append( "Config:" ).append( chassisType );
-	sb.append( nl );
+        sb.append( nl );
         sb.append( "TechBase:" ).append( techType );
         if (techType == TechType.MIXED) {
             sb.append( " (" );
@@ -1325,28 +1325,28 @@ public class HmpFile
             sb.append( " Chassis)" );
         }
         sb.append( nl );
-	sb.append( "Era:" ).append( year ).append( nl );
-	sb.append( "Rules Level:" ).append( rulesLevel );
-	sb.append( nl );
+        sb.append( "Era:" ).append( year ).append( nl );
+        sb.append( "Rules Level:" ).append( rulesLevel );
+        sb.append( nl );
         sb.append( nl );
 
         sb.append( "Mass:" ).append( tonnage ).append( nl );
-	sb.append( "Engine:" ).append( engineRating ).append( " " )
+        sb.append( "Engine:" ).append( engineRating ).append( " " )
             .append( engineType ).append( " Engine" );
         if (mixedBaseTechType != engineTechType)
             sb.append( " (" ).append(engineTechType).append( ")" );
         sb.append(nl);
         sb.append( "Structure:" ).append( internalStructureType ).append(nl);
-	sb.append( "Myomer:" ).append( myomerType ).append( nl );
+        sb.append( "Myomer:" ).append( myomerType ).append( nl );
         sb.append( nl );
 
         sb.append( "Heat Sinks:" ).append( heatSinks ).append( " " )
             .append( heatSinkType ).append( nl );
-	sb.append( "Walk MP:" ).append( walkMP ).append( nl );
-	sb.append( "Jump MP:" ).append( jumpMP ).append( nl );
-	sb.append( nl );
+        sb.append( "Walk MP:" ).append( walkMP ).append( nl );
+        sb.append( "Jump MP:" ).append( jumpMP ).append( nl );
+        sb.append( nl );
 
-	sb.append( "Armor:" ).append( armorType );
+        sb.append( "Armor:" ).append( armorType );
         if (mixedBaseTechType != armorTechType)
             sb.append( " (" ).append(armorTechType).append( ")" );
         sb.append(nl);
@@ -1396,7 +1396,7 @@ public class HmpFile
         if (isPatchwork)
             sb.append( " (" ).append( ctrArmorType ).append( ")" );
         sb.append( nl );
-	sb.append( nl );
+        sb.append( nl );
 
         sb.append( "Weapons:" ).append( totalWeaponCount ).append( nl );
         for( int x = 0; x < totalWeaponCount; x++ ) {
@@ -1407,46 +1407,46 @@ public class HmpFile
             if (weaponArray[x][3] > 0)
                 sb.append( ", Ammo:" ).append(weaponArray[x][3]);
             sb.append( nl );
-	}
+        }
 
         sb.append( nl );
-	sb.append( "Left Arm:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        sb.append( "Left Arm:" ).append( nl );
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(laCriticals[x])).append( nl );
         sb.append( nl );
 
-	sb.append( "Right Arm:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        sb.append( "Right Arm:" ).append( nl );
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(raCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Left Torso:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(ltCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Right Torso:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(rtCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Center Torso:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(ctCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Head:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(headCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Left Leg:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(llCriticals[x])).append( nl );
         sb.append( nl );
 
         sb.append( "Right Leg:" ).append( nl );
-	for( int x = 0; x < 12; x++ )
+        for( int x = 0; x < 12; x++ )
             sb.append(getCriticalName(rlCriticals[x])).append( nl );
 
         return sb.toString();

@@ -17,7 +17,7 @@ Lot of people have contributed to the MegaMek project.
      Joseph Tyx <spikezom@yahoo.com>
      Robert Hinkle <Rasia@planettribes.com>
      Joshua Yockey <joshua@sublimity.net>
-     John Rowat <jrowat@chat.carleton.ca>
+     John Rowat
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

@@ -4014,13 +4014,13 @@ implements Runnable {
             // miss
             bMissed = true;
             phaseReport.append("misses.\n"); 
-           if (wr.amsShotDown > 0) {
+            if (wr.amsShotDown > 0) {
                 phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
             }
             
             // Non-streaks can set fires on misses
             // Buildings can't be accidentally ignited.
-            if ( bldg != null &&
+            if ( bldg == null &&
                  entityTarget != null &&
                  toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
                  wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {

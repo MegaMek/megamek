@@ -118,6 +118,7 @@ v 0.28.22-dev (CVS)
 + Applied Wirianto Djunaidi's 2003-05-30 updates.
 + Bug 721574: several changes to GAAttack and GALance to avoid lockup problem.
 + Data 744969: added shockmilk's boards
++ Bug 746671: misses accidentally start fires again
 
 v 0.28.21 (06-01-03, 10pm)
 + Bug 743355, Data 742085: applied updated infantry.zip from Hopalong.

@@ -532,7 +532,7 @@ public abstract class Mech
     }
     
     /**
-     * Returns this mech's jumping MP, modified for missing & underwater jets.
+     * Returns this mech's jumping MP, modified for missing & underwater jets and gravity.
      */
     public int getJumpMPWithTerrain() {
         if (getPosition() == null) {
@@ -545,7 +545,7 @@ public abstract class Mech
         } else if (waterLevel > 1) {
             return 0;
         } else { // waterLevel == 1
-            return torsoJumpJets();
+            return applyGravityEffectsOnMP(torsoJumpJets());
         }
     }
     

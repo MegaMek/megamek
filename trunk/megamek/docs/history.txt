@@ -92,6 +92,9 @@ v next
 + added quad lateral shifts
 + 564632: fixed typo allowing leg weapons to be fired while prone
 + 565004: now enforcing jump along shortest path rule
++ added CASE equipment
++ added fields for entity year, tech level, omni
++ MEP weapon loading works (a little) better
 
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified

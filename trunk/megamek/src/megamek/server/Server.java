@@ -303,7 +303,7 @@ public class Server
      */
     public void validatePlayerInfo(int playerId) {
         final Player player = getPlayer(playerId);
-        
+    
 //        maybe this isn't actually useful
 //        // replace characters we don't like with "X"
 //        StringBuffer nameBuff = new StringBuffer(player.getName());
@@ -2554,9 +2554,9 @@ public class Server
      * @param te the target entity
      * @param hit the hit data for the location hit
      * @param damage the damage to apply
-     * @param internalOnly whether the damage should be applied to only the internal structures
+     * @param ammoExplosion ammo explosion type damage is handled slightly differently
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean internalOnly) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
         String desc = new String();
 
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
@@ -2574,7 +2574,7 @@ public class Server
             }
 
             // is there armor in the location hit?
-            if (!internalOnly && te.getArmor(hit) > 0) {
+            if (!ammoExplosion && te.getArmor(hit) > 0) {
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
@@ -2624,9 +2624,13 @@ public class Server
                         // no need for further damage
                         damage = 0;
                         crits = 0;
+                    } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
+                        // remaining damage prevented
+                        desc += " remaining " + damage + " damage prevented by CASE.";
+                        damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers
-                         desc += " " + damage + " damage transfers to "
+                        desc += " " + damage + " damage transfers to "
                             + te.getLocationAbbr(nextHit) + ".";
                     }
                 }

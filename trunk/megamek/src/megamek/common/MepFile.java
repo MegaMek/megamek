@@ -138,16 +138,12 @@ public class MepFile
     }
   
     public Mech getMech() {
-        Mech mech = null;
+        Mech mech;
         
-        if ( "Quad".equals(chassisType) )
-          mech = new QuadMech();
+        if ( "Quad".equals(chassisType.trim()) )
+            mech = new QuadMech();
         else
-          mech = new BipedMech();
-    
-        if(this.techYear == null || !this.techYear.equalsIgnoreCase("3025")) {
-            return null;
-        }
+            mech = new BipedMech();
     
         int firstSpace = this.name.indexOf(" ");
         if(firstSpace != -1) {
@@ -159,6 +155,19 @@ public class MepFile
         }
     
         mech.weight = (float)Integer.decode(this.tonnage.trim()).intValue();
+        mech.setYear(Integer.parseInt(this.techYear.trim()));
+        mech.setOmni("OmniMech".equals(this.chassisType.trim()));
+        
+        //TODO: this ought to be a better test
+        if ("InnerSphere".equals(this.innerSphere.trim())) {
+            if (mech.getYear() == 3025) {
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+            } else {
+                mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+            }
+        } else {
+            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        }
     
         mech.setOriginalWalkMP(Integer.parseInt(this.walkMP.trim()));
         mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
@@ -196,6 +205,14 @@ public class MepFile
         
         // hmm, what to do with the rest of equipment list... I dunno.
     
+        // prefix is "Clan " or "IS "
+        String prefix;
+        if (mech.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+            prefix = "Clan ";
+        } else {
+            prefix = "IS ";
+        }
+        
         // parse the critical hit slots
         for (int i = 0; i < critData.length; i++) {
             int loc = mech.getLocationFromAbbr(critData[i].substring(3, 5));
@@ -208,15 +225,24 @@ public class MepFile
                 critName = critName.substring(3).trim();
             }
             
+            
             EquipmentType etype = EquipmentType.getByMepName(critName);
             if (etype != null) {
                 mech.addEquipment(etype, loc, rearMounted);
             } else {
+                etype = EquipmentType.getByMepName(prefix + critName);
+                if (etype != null) {
+                    mech.addEquipment(etype, loc, rearMounted);
+                }
 //                System.out.println("mepfile: could not find equipment " + critName);
             }
             
         }
     
+        if (mech.isClan()) {
+            mech.addClanCase();
+        }
+            
     return mech;
   }
   

@@ -18,7 +18,7 @@ import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import com.keypoint.PngEncoder;
+import keypoint.PngEncoder;
 
 import megamek.common.*;
 
@@ -476,24 +476,32 @@ public class BoardEditor extends Container
             boardSaveAsImage();
             return;
         }
+        Dialog waitD = new Dialog(this.frame, "Please wait...");
+        waitD.add(new Label("Saving board as image..."));
+        waitD.setSize(250,130);
+        // move to middle of screen
+        Dimension screenSize = frame.getToolkit().getScreenSize();
+        waitD.setLocation(
+                    frame.getSize().width / 2 - waitD.getSize().width / 2,
+                    frame.getSize().height / 2 - waitD.getSize().height / 2);
+        waitD.show();
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
-        boolean encodeAlpha = false;
         int filter = 0; //0 - no filter; 1 - sub; 2 - up
         int compressionLevel = 9; // 0 to 9 with 0 being no compression
         PngEncoder png =  new PngEncoder( bv.getEntireBoardImage(),
-                                          (encodeAlpha) ? PngEncoder.ENCODE_ALPHA : PngEncoder.NO_ALPHA,
-                                          0,
-                                          9);
+                                          PngEncoder.NO_ALPHA,
+                                          filter,
+                                          compressionLevel);
         try {
             FileOutputStream outfile = new FileOutputStream( curfileImage );
             byte[] pngbytes;
             pngbytes = png.pngEncode();
-            if (pngbytes == null)
-            {
+            if (pngbytes == null) {
                 System.out.println("Failed to save board as image:Null image");
             }
-            else
-            {
+            else {
                 outfile.write( pngbytes );
             }
             outfile.flush();
@@ -501,6 +509,8 @@ public class BoardEditor extends Container
         } catch (IOException e) {
             e.printStackTrace();
         }
+        waitD.hide();
+        frame.setCursor(Cursor.getDefaultCursor());
     }
 
     /**

@@ -2198,6 +2198,15 @@ public class BoardView1
                 graph.drawString("SWARMED", 16, 21);
             }
 
+            // If this unit is transporting another, say so.
+            if ((entity.getLoadedUnits()).size() > 0) {
+                // draw "T"
+                graph.setColor(Color.darkGray);
+                graph.drawString("T", 20, 71);
+                graph.setColor(Color.black);
+                graph.drawString("T", 19, 70);
+            }
+
             //Lets draw our armor and internal status bars
               int baseBarLength = 23;
               int barLength = 0;

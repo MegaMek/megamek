@@ -781,24 +781,23 @@ public class Compute
         
         // gyro operational?
         if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FALL, "Gyro destroyed");
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
         // both legs present?
         if (entity.isLocationDestroyed(Mech.LOC_RLEG) && entity.isLocationDestroyed(Mech.LOC_LLEG)) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FALL, "Both legs destroyed");
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
         }
         // entity shut down?
         if (entity.isShutDown()) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FALL, "Reactor shut down");
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
         }
         // pilot awake?
         if (!entity.getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FALL, "Pilot unconcious");
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
         }
         
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, entity.getCrew().getPiloting(),  
-                                    entity.getCrew().getPiloting() + " (Base piloting skill)");
+        roll = new PilotingRollData(entityId, entity.getCrew().getPiloting(), "Base piloting skill");
         
         // right leg destroyed?
         if (entity.isLocationDestroyed(Mech.LOC_RLEG)) {
@@ -961,14 +960,13 @@ public class Compute
         
         
         // first: gunnery skill
-        toHit = new ToHitData(ae.crew.getGunnery(), 
-                              ae.crew.getGunnery() + " (gunnery skill)");
+        toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         
         // determine range
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
         if (range > wtype.getLongRange()) {
-            return new ToHitData(ToHitData.AUTOMATIC_MISS, "Target out of range");
+            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
         }
         if (range > wtype.getMediumRange()) {
             // long range, add +4
@@ -1983,7 +1981,7 @@ public class Compute
      */
     public static ToHitData getAttackerMovementModifier(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
-        ToHitData toHit = new ToHitData(0, "");
+        ToHitData toHit = new ToHitData();
         
         if (entity.moved == Entity.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
@@ -2009,7 +2007,7 @@ public class Compute
      * Target movement modifer for the specified delta_distance
      */
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped) {
-        ToHitData toHit = new ToHitData(0, "");
+        ToHitData toHit = new ToHitData();
       
         if (distance >= 3 && distance <= 4) {
             toHit.addModifier(1, "target moved 3-4 hexes");
@@ -2032,7 +2030,7 @@ public class Compute
      */
     public static ToHitData getAttackerTerrainModifier(Game game, int entityId) {
         final Hex hex = game.board.getHex(game.getEntity(entityId).getPosition());
-        ToHitData toHit = new ToHitData(0, "");
+        ToHitData toHit = new ToHitData();
 
         if (hex.getTerrainType() == Terrain.WATER) {
             toHit.addModifier(1, "attacker in water");
@@ -2050,10 +2048,10 @@ public class Compute
         
         // you don't get terrain modifiers in midair
         if (target.isMakingDfa()) {
-            return new ToHitData(0, "");
+            return new ToHitData();
         }
         
-        ToHitData toHit = new ToHitData(0, "");
+        ToHitData toHit = new ToHitData();
 
         switch (hex.getTerrainType()) {
         case Terrain.WATER :

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -14,69 +14,27 @@
 
 package megamek.common;
 
-public class PilotingRollData
+public class PilotingRollData extends TargetRoll
 {
-    public static final int AUTOMATIC_FALL = Integer.MAX_VALUE;
-    
     private int entityId;
     
-    private int value;
-    private StringBuffer desc;
-    
     public PilotingRollData(int entityId, int value, String desc) {
+        super(value, desc);
         this.entityId = entityId;
-        this.value = value;
-        this.desc = new StringBuffer(desc);
+    }
+    
+    /**
+     * Double-logging style for situations where the mech automatically falls,
+     * but the pilot can still save to avoid damage.
+     */
+    public PilotingRollData(int entityId, int value, int pilotValue, String desc) {
+        super(value, desc);
+        addModifier(pilotValue, desc);
+        this.entityId = entityId;
     }
     
     public int getEntityId() {
         return entityId;
     }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public void setValue(int value) {
-        this.value = value;
-    }
-    
-    public String getDesc() {
-        return desc.toString();
-    }
-    
-    public void setDesc(String desc) {
-        this.desc = new StringBuffer(desc);
-    }
-    
-    /**
-     * Adds a modifer on to the target number
-     */
-    public void addModifier(int modifier, String reason) {
-        if (this.getValue() == AUTOMATIC_FALL) {
-            // leave it
-        } else if (modifier == AUTOMATIC_FALL) {
-            this.value = AUTOMATIC_FALL;
-            this.desc = new StringBuffer(reason);
-        } else {
-            this.value += modifier;
-            this.desc.append(" " + (modifier >= 0 ? "+ " : "- ") 
-                             + Math.abs(modifier) + " (" + reason + ")");
-        }
-    }
-    
-    /**
-     * Append another PilotingRollData.
-     */
-    public void append(PilotingRollData other) {
-        if (this.getValue() == AUTOMATIC_FALL) {
-            // leave it
-        } else if (other.getValue() == AUTOMATIC_FALL) {
-            this.value = AUTOMATIC_FALL;
-            this.desc = new StringBuffer(other.getDesc());
-        } else {
-            this.value += other.getValue();
-            this.desc.append(other.getDesc());
-        }
-    }
+
 }

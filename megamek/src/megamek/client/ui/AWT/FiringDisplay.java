@@ -391,13 +391,13 @@ public class FiringDisplay
                 client.mechD.wPan.wToHitR.setText("Already fired");
                 butFire.setEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-                client.mechD.wPan.wToHitR.setText("Impossible");
+                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 butFire.setEnabled(false);
-            } else if (toHit.getValue() == ToHitData.AUTOMATIC_MISS) {
-                client.mechD.wPan.wToHitR.setText("Automatic miss");
+            } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 butFire.setEnabled(true);
             } else {
-                client.mechD.wPan.wToHitR.setText(toHit.getValue() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
                 butFire.setEnabled(true);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());

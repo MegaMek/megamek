@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -17,7 +17,7 @@ package megamek.common;
 /**
  * Contains the to-hit number and a short description of how it was reached
  */
-public class ToHitData
+public class ToHitData extends TargetRoll
 {
     public static final int HIT_NORMAL      = 0;
     public static final int HIT_PUNCH       = 1;
@@ -28,13 +28,15 @@ public class ToHitData
     public static final int SIDE_LEFT       = 2;
     public static final int SIDE_RIGHT      = 3;
   
-    public final static int IMPOSSIBLE      = Integer.MAX_VALUE;
-    public final static int AUTOMATIC_MISS  = Integer.MAX_VALUE - 1;
+    private int             hitTable = HIT_NORMAL;
+    private int             sideTable = SIDE_FRONT;
     
-    private int             value;
-    private StringBuffer    desc;
-    private int             hitTable;
-    private int             sideTable;
+    /**
+     * Construct default.
+     */
+    public ToHitData() {
+        super();
+    }
     
     /**
      * Construct with value and desc.  Other values default.
@@ -47,26 +49,9 @@ public class ToHitData
      * Construct with all variables.
      */
     public ToHitData(int value, String desc, int hitTable, int sideTable) {
-        this.value = value;
-        this.desc = new StringBuffer(desc);
+        super(value, desc);
         this.hitTable = hitTable;
         this.sideTable = sideTable;
-    }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public void setValue(int value) {
-        this.value = value;
-    }
-    
-    public String getDesc() {
-        return desc.toString();
-    }
-    
-    public void setDesc(String desc) {
-        this.desc = new StringBuffer(desc);
     }
     
     public int getHitTable() {
@@ -83,37 +68,6 @@ public class ToHitData
     
     public void setSideTable(int sideTable) {
         this.sideTable = sideTable;
-    }
-    
-    /**
-     * Adds a modifer on to the to hit number
-     */
-    public void addModifier(int modifier, String reason) {
-        if (this.getValue() == IMPOSSIBLE) {
-            // leave it
-        } else if (modifier == IMPOSSIBLE) {
-            this.value = IMPOSSIBLE;
-            this.desc = new StringBuffer(reason);
-        } else {
-            this.value += modifier;
-            this.desc.append(" " + (modifier >= 0 ? "+ " : "- ") 
-                             + Math.abs(modifier) + " (" + reason + ")");
-        }
-    }
-    
-    /**
-     * Append another ToHitData.  Do not change hit tables.
-     */
-    public void append(ToHitData other) {
-        if (this.getValue() == IMPOSSIBLE) {
-            // leave it
-        } else if (other.getValue() == IMPOSSIBLE) {
-            this.value = IMPOSSIBLE;
-            this.desc = new StringBuffer(other.getDesc());
-        } else {
-            this.value += other.getValue();
-            this.desc.append(other.getDesc());
-        }
     }
     
     /**

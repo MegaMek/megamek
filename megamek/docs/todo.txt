@@ -78,10 +78,10 @@ infantry:
 -- VTOL movement
 -- Underwater movement
 -- Torpedos
--- Minefields
--- Minesweepers
 - implement BattleArmor units as their special rules are implemented
         (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
+- allow Fa Shih to lay minefields
+- allow players to configure Fa Shih mine loads
 
 buildings:
 - Test all of my assumptions.

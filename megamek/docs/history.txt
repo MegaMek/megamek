@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v 0.29.15 (CVS)
++ Fa Shih units have superior mine-clearing capabilities.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.
@@ -33,6 +35,7 @@ PARTIAL IMPLEMENTATION:
 + Data 808992: added tallasia maps from German box set
 + Added Deploy-menu.
 + Sorts camolist
++ Added common settings dialog.
 
 v 0.29.11 (09-15-03, 3pm)
 + All movement resets result in the "walk" gear being selected

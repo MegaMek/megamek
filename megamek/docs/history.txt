@@ -4,6 +4,7 @@ v0.29.58 (CVS)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.
 + Patch 1087661: Show BV when real_blind_drop option is enabled
 + Bug 1090777: Vehicles not handled correctly at extreme G's
++ Bug 1090370: impossible to eject/abandon from immobile vehicles
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

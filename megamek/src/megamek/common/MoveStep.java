@@ -987,10 +987,10 @@ public class MoveStep implements Serializable {
         }
         /* 2004-03-31 : don't look at overall movement, just this step. */
 
-        // If we're a tank and immobile, check if we try to unjam and
-        // the crew is not unconscious
+        // If we're a tank and immobile, check if we try to unjam
+        // or eject and the crew is not unconscious
         if (parent.getEntity() instanceof Tank && !parent.getEntity().getCrew().isUnconscious()
-             && type == MovePath.STEP_UNJAM_RAC) {
+             && ( type == MovePath.STEP_UNJAM_RAC || type == MovePath.STEP_EJECT) ) {
             return true;
         }
         

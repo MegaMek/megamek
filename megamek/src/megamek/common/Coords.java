@@ -37,6 +37,8 @@ import java.io.Serializable;
 public class Coords
     implements Serializable
 {
+    public static final double HEXSIDE = Math.PI / 3.0;
+    
     public int            x;
     public int            y;
     
@@ -138,22 +140,7 @@ public class Coords
      * @param d the destination coordinate.
      */
     public int direction(Coords d) {
-        int dir = degree(d);
-        if (dir > 330 || dir < 30) {
-            return 0;
-        } else if (dir >= 30 && dir < 90) {
-            return 1;
-        } else if (dir >= 90 && dir <= 150) {
-            return 2;
-        } else if (dir > 150 && dir < 210) {
-            return 3;
-        } else if (dir >= 210 && dir <= 270) {
-            return 4;
-        } else if (dir > 270 && dir < 330) {
-            return 5;
-        } else {
-            return 0;
-        }
+        return (int)Math.round(radian(d) / HEXSIDE) % 6;
     }
     
     /**
@@ -191,13 +178,16 @@ public class Coords
     /**
      * Returns the radian direction of another Coords.
      * 
-     * TODO: this has some precision errors
-     * 
      * @param d the destination coordinate.
      */
     public double radian(Coords d) {
         final IdealHex src = IdealHex.get(this);
         final IdealHex dst = IdealHex.get(d);
+        
+        // don't divide by 0
+        if (src.cy == dst.cy) {
+            return (src.cx < dst.cx) ? Math.PI / 2 : Math.PI * 1.5;
+        }
         
         double r = Math.atan((double)(dst.cx - src.cx) / (double)(src.cy - dst.cy));
         // flip if we're upside down
@@ -208,7 +198,7 @@ public class Coords
         if (r < 0) {
             r += Math.PI * 2;
         }
-        
+
         return r;
     }
     

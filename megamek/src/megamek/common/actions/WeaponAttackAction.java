@@ -16,6 +16,8 @@ package megamek.common.actions;
 
 import java.util.Vector;
 import megamek.common.Mounted;
+import megamek.common.Mech;
+import megamek.client.FiringDisplay;
 
 /**
  * Represents intention to fire a weapon at the target.
@@ -25,6 +27,8 @@ public class WeaponAttackAction
 {
     private int weaponId;
     private int ammoId = -1;
+    private int aimedLocation = Mech.LOC_NONE;
+    private int aimMode = FiringDisplay.AIM_MODE_NONE;
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -49,6 +53,14 @@ public class WeaponAttackAction
         return ammoId;
     }
     
+    public int getAimedLocation() {
+        return aimedLocation;
+    }
+    
+    public int getAimingMode() {
+        return aimMode;
+    }
+    
     public Vector getCounterEquipment() {
         return vCounterEquipment;
     }
@@ -59,6 +71,14 @@ public class WeaponAttackAction
     
     public void setAmmoId(int ammoId) {
         this.ammoId = ammoId;
+    }
+    
+    public void setAimedLocation(int aimedLocation) {
+        this.aimedLocation = aimedLocation;
+    }
+    
+    public void setAimimgMode(int aimMode) {
+        this.aimMode = aimMode;
     }
     
     public void addCounterEquipment(Mounted m) {

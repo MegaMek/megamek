@@ -867,6 +867,8 @@ public abstract class Entity
     /**
      * Rolls the to-hit number 
      */
+    public abstract HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode);
+
     public abstract HitData rollHitLocation(int table, int side);
 
     /**
@@ -1699,6 +1701,15 @@ public abstract class Entity
         return false;
     }
     
+    public boolean hasAimModeTargComp() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+            }
+        }
+        return false;
+    }
     /**
      * Returns whether this 'mech is part of a C3 network.
      */

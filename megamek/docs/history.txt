@@ -97,10 +97,10 @@ v 0.25
 
 v 0.24
 - new display system
- - edges cleared
- - handle where screen is bigger than map
- - redo movement path display to avoid memory thrashing
- - center on unit working
+ - needs edges cleared
+ - needs to be able to handle where screen is bigger than map
+ - needs redo of movement path display to avoid memory thrashing
+ - needs center on unit working
 - dfa
 - intiative ties re-rolled
 
@@ -114,6 +114,8 @@ v next
 + "2" on rear table now results in CTR (critical) hit, not CT (thx bob dee)
 + falling in water is only half damage
 + tooltips work better
++ successful charge always results in PSR for attacker and target
++ pilot roll to avoid damage is +1/level fallen, not just always +1
 
 v 0.23.4 (03-14-02, 12pm)
 + charging

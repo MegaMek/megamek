@@ -1774,6 +1774,10 @@ public class Server
             phaseReport.append("\n");
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 2, "was charged"));
             doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
+        } else {
+            // they stil have to roll
+            pilotRolls.addElement(new PilotingRollData(te.getId(), 2, "was charged"));
+            pilotRolls.addElement(new PilotingRollData(ae.getId(), 2, "charging"));
         }
 
         phaseReport.append("\n");
@@ -2395,7 +2399,7 @@ public class Server
 
         // pilot damage?
         if (roll != PilotingRollData.AUTOMATIC_FALL) {
-            roll += 1;
+            roll += height;
         }
         if (roll > 12) {
             phaseReport.append("\nPilot of " + entity.getDisplayName() + " \"" + entity.crew.getName() + "\" cannot avoid damage.\n");

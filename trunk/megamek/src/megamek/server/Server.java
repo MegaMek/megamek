@@ -1270,6 +1270,7 @@ implements Runnable, ConnectionHandler {
                 phaseReport = game.getPhaseReport(); //HACK
                 break;
             case Game.PHASE_END :
+                resetEntityPhase(phase);
                 game.resetPhaseReport();
                 phaseReport = game.getPhaseReport(); //HACK
                 resolveHeat();
@@ -1280,7 +1281,6 @@ implements Runnable, ConnectionHandler {
                 resolveAmmoDumps();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
-                resetEntityPhase(phase);
                 checkForObservers();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());

@@ -195,8 +195,8 @@ Holding the Shift key while clicking on the map allows you to change the
 unit's facing without moving.  Since you automatically change facing while 
 moving, this is best done at the end of any movement.
 
-To back up, click the "Back Up" button before clicking a hex in the arc behind 
-the unit.  To jump, click the "Jump" button before the destination hex.  
+To move backwards, click the "Back Up" button before clicking a hex in the arc
+behind the unit.  To jump, click the "Jump" button before the destination hex.
 Facing changes during jumps are free.
 
 Prone units can change facing without getting up at the normal cost.  To get up, 
@@ -325,7 +325,7 @@ After this phase, it's time for initiative again!  Hurrah!
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------
-Although MegaMek tries to be faithful to the original board game rules.  In
+Although MegaMek tries to be faithful to the original board game rules, in
 some cases, due to technical or design limitations, this is not possible.
 These differences are not considered "bugs."  If you spot any more 
 discrepancies, please contact the author (see "CONTACT" below.)

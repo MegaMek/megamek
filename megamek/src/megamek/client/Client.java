@@ -68,7 +68,8 @@ public class Client extends Panel
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
     private GameOptionsDialog       gameOptionsDialog;
-    private MechSelectorDialog 		mechSelectorDialog;
+    private MechSelectorDialog      mechSelectorDialog;
+    private StartingPositionDialog  startingPositionDialog;
 
     // message pump listening to the server
     private Thread              pump;
@@ -322,6 +323,13 @@ public class Client extends Panel
     
     public MechSelectorDialog getMechSelectorDialog() {
     	return mechSelectorDialog;
+    }
+    
+    public StartingPositionDialog getStartingPositionDialog() {
+        if (startingPositionDialog == null) {
+            startingPositionDialog = new StartingPositionDialog(this);
+        }
+    	return startingPositionDialog;
     }
     
 //    public ButtonMenuDialog getButtonMenuDialog() {

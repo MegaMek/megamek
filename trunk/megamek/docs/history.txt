@@ -125,6 +125,7 @@ v 0.28.17 CVS
 + similar fixes to charge against destroyed target
 + Bug 729877: save games load without error again
 + Bug 729795: fixed bug with split weapons not counting for physical attacks
++ Mech selector, mech display, minimap windows close normally (X in corner)
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

@@ -1166,6 +1166,9 @@ class SystemPanel
                 if (!m.isDestroyed() && en.isActive()) {
                     m_chMode.setEnabled(true);
                 }
+                if (!m.isDestroyed() && m.getType().hasFlag(MiscType.F_STEALTH)) {
+                    m_chMode.setEnabled(true);
+                }
                 modeLabel.setEnabled(true);
                 m_chMode.removeAll();
                 String[] saModes = m.getType().getModes();
@@ -1189,7 +1192,10 @@ class SystemPanel
 					clientgui.systemMessage("Switched " + m.getName() + " to " + m.curMode());
                 }
                 else {
-					clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
+                    if (Game.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase() ) {
+                         clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
+                            " at start of game.");
+                    } else clientgui.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
                             " at end of turn.");
                 }
                 displaySlots();

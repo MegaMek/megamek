@@ -277,14 +277,14 @@ public class Protomech
      		case 0:
      		break;
      		case 1:
-     		jump--;
+     		if (jump > 0) jump--;
      		break;
      		case 2:
      		jump=jump/2;
      		break;
      	}
-        if (applyGravityEffectsOnMP(jump) > jump) return Math.max(0,jump);
-        else return Math.max(0, applyGravityEffectsOnMP(jump));
+        if (applyGravityEffectsOnMP(jump) > jump) return jump;
+        else return applyGravityEffectsOnMP(jump);
     }
 
     /**

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.49 (CVS)
+v0.29.49 (2004-09-20 7:45am)
 + RFE 1022892, Patch 1023640: Maxtech Missile Hit Penalties, MaxTech revised page 23.
 + Bug 1026657: Flank MP not recalculated in extreme temperatures
 + Bug 942946: PSRs for 20+ damage in Off-Board Attack phase was missing

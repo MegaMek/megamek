@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 import megamek.common.*;
@@ -29,7 +30,7 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.29.49-dev";
+    public static String VERSION = "0.29.49";
     public static long TIMESTAMP = new File("timestamp").lastModified();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
@@ -275,6 +276,38 @@ public class MegaMek implements ActionListener {
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+
+        /* WORK IN PROGRESS **
+        // Register the game, if appropriate.
+        String metaserver = null;
+        if (hd.register) {
+            StringBuffer buff = new StringBuffer (hd.metaserver);
+            buff.append ("?action=register")
+                .append ("&port=")
+                .append (hd.port)
+                .append ("&owner=")
+                .append (hd.name)
+                .append ("&goalPlayers=")
+                .append (hd.goalPlayers)
+                .append ("&version=")
+                .append (MegaMek.VERSION)
+                ;
+            metaserver = buff.toString();
+            try {
+                URL metaURL = new URL (metaserver);
+                BufferedReader reader = new BufferedReader
+                    (new InputStreamReader (metaURL.openStream()));
+                String line = reader.readLine();
+                while (null != line) {
+                    System.out.println (line);
+                    line = reader.readLine();
+                }
+            }
+            catch (Exception except) {
+                except.printStackTrace();
+            }
+        }
+        /* WORK IN PROGRESS **/
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
@@ -773,9 +806,17 @@ class HostDialog extends Dialog implements ActionListener {
     public String name;
     public String serverPass;
     public int port;
+    public boolean register;
+    public String metaserver;
+    public int goalPlayers;
 
     protected Label yourNameL, serverPassL, portL;
     protected TextField yourNameF, serverPassF, portF;
+    protected Checkbox registerC;
+    protected Label     metaserverL;
+    protected TextField metaserverF;
+    protected Label     goalL;
+    protected TextField goalF;
     protected Button okayB, cancelB;
 
     public HostDialog(Frame frame) {
@@ -791,6 +832,37 @@ class HostDialog extends Dialog implements ActionListener {
         serverPassF.addActionListener(this);
         portF = new TextField(Settings.lastServerPort + "", 4);
         portF.addActionListener(this);
+ 
+        metaserver = Settings.getInstance().get
+            ("megamek.megamek.metaservername",
+             "http://www.damour.info/cgi-bin/james/metaserver");
+        metaserverL = new Label ("Megaserver Name:", Label.RIGHT);
+        metaserverF = new TextField (metaserver);
+        metaserverL.setEnabled (register);
+        metaserverF.setEnabled (register);
+
+        String goalNumber = Settings.getInstance().get
+            ("megamek.megamek.goalplayers", "2");
+        goalL = new Label ("# Players:", Label.RIGHT);
+        goalF = new TextField (goalNumber, 2);
+        goalL.setEnabled (register);
+        goalF.setEnabled (register);
+
+        registerC = new Checkbox ("Register Game");
+        register = false;
+        registerC.setState (register);
+        registerC.addItemListener( new ItemListener() {
+                public void itemStateChanged (ItemEvent event) {
+                    boolean state = false;
+                    if (ItemEvent.SELECTED == event.getStateChange()) {
+                        state = true;
+                    }
+                    metaserverL.setEnabled (state);
+                    metaserverF.setEnabled (state);
+                    goalL.setEnabled (state);
+                    goalF.setEnabled (state);
+                }
+            });
 
         okayB = new Button("Okay");
         okayB.setActionCommand("done");
@@ -841,6 +913,33 @@ class HostDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(portF, c);
         add(portF);
 
+        /* WORK IN PROGRESS **
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(registerC, c);
+        add(registerC);
+
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(metaserverL, c);
+        add(metaserverL);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(metaserverF, c);
+        add(metaserverF);
+
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(goalL, c);
+        add(goalL);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(goalF, c);
+        add(goalF);
+        /* WORK IN PROGRESS **/
+
         c.ipadx = 20;
         c.ipady = 5;
         c.gridwidth = 1;
@@ -864,15 +963,24 @@ class HostDialog extends Dialog implements ActionListener {
             try {
                 name = yourNameF.getText();
                 serverPass = serverPassF.getText();
-                port = Integer.decode(portF.getText()).intValue();
+                register = registerC.getState();
+                metaserver = metaserverF.getText();
+                port = Integer.parseInt (portF.getText());
+                goalPlayers = Integer.parseInt (goalF.getText());
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
+                port = 2346;
+                goalPlayers = 2;
             }
 
             // update settings
             Settings.lastPlayerName = name;
             Settings.lastServerPass = serverPass;
             Settings.lastServerPort = port;
+            Settings.getInstance().set ("megamek.megamek.metaservername",
+                                        metaserver);
+            Settings.getInstance().set ("megamek.megamek.goalplayers",
+                                        Integer.toString (goalPlayers));
         }
         setVisible(false);
     }

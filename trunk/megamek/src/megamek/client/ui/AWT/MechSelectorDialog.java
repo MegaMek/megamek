@@ -29,8 +29,11 @@
   */
   
  public class MechSelectorDialog 
- 	extends Dialog implements ActionListener, ItemListener
+ 	extends Dialog implements ActionListener, ItemListener, KeyListener
  {
+        // how long after a key is typed does a new search begin
+        private final static int KEY_TIMEOUT = 1000;
+     
  	// these indices should match up with the static values in the MechSummaryComparator
  	private String[] m_saSorts = { "Name", "Ref", "Weight", "BV" };
  	
@@ -38,6 +41,9 @@
  	private MechSummary[] m_mechsCurrent;
  	private File m_fRootDir;
  	private Client m_client;
+        
+        private StringBuffer m_sbSearch = new StringBuffer();
+        private long m_nLastSearch = 0;
  	
  	private Label m_labelYear = new Label("Year: ", Label.RIGHT);
  	private Choice m_chYear = new Choice();
@@ -78,6 +84,7 @@
  		setLayout(new BorderLayout());
  		add(m_pParams, BorderLayout.NORTH);
  		m_mechList.setFont(new Font("Courier", Font.PLAIN, 12));
+                m_mechList.addKeyListener(this);
  		add(m_mechList, BorderLayout.CENTER);
  		add(m_pButtons, BorderLayout.SOUTH);
  		
@@ -186,6 +193,15 @@
     	repaint();
     }
     
+    private void searchFor(String search) {
+    	for (int i = 0; i < m_mechsCurrent.length; i++) {
+            if (m_mechsCurrent[i].getName().toLowerCase().startsWith(search)) {
+                m_mechList.select(i);
+                break;
+            }
+    	}
+    }
+    
     private String formatMech(MechSummary ms)
     {
     	return makeLength(ms.getRef(), 10) + " " + 
@@ -234,4 +250,21 @@
 			return s + SPACES.substring(0, nLength - s.length());
 		}
 	}
+        
+        public void keyReleased(java.awt.event.KeyEvent ke) {
+        }
+        
+        public void keyPressed(java.awt.event.KeyEvent ke) {
+            long curTime = System.currentTimeMillis();
+            if (curTime - m_nLastSearch > KEY_TIMEOUT) {
+                m_sbSearch = new StringBuffer();
+            }
+            m_nLastSearch = curTime;
+            m_sbSearch.append(ke.getKeyChar());
+            searchFor(m_sbSearch.toString().toLowerCase());
+        }
+        
+        public void keyTyped(java.awt.event.KeyEvent ke) {
+        }
+        
 }

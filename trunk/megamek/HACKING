@@ -33,15 +33,15 @@ computer is running Debian Sarge with GCC installed.  Therefore, I can build
 MegaMek with the following command; please modify the command to meet your
 environment (email me if you have any problems).
 
-jikes-gij -q -d classes --target 1.1 --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar `find megamek -name '*.java'`
+jikes-gij -q -d classes --target 1.1 --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar `find megamek -name '*.java'`
 
 Once MegaMek is built, I can run it with GIJ with the following command.
 
-gij --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:classes megamek.MegaMek -log | tee MegaMek.log
+gij --classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
 
 I can run it under Kaffe with a similar command.
 
-kaffe -classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:classes megamek.MegaMek -log | tee MegaMek.log
+kaffe -classpath collections.jar:TinyXML.jar:Ostermiller.jar:PngEncoder.jar:TabPanel.jar:classes megamek.MegaMek -log | tee MegaMek.log
 
 The following runtime flags are available:
         -testdice : Test the random number generator used by MegaMek, and exit.
@@ -70,4 +70,4 @@ TODO list:
 
 James Damour
 suvarov454@users.sourceforge.net
-2004-07-24
+last updated 2004-09-15

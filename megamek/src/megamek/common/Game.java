@@ -210,19 +210,29 @@ public class Game
         final Entity oldEntity = getEntity(id);
         entity.setGame(this);
         if (oldEntity == null) {
-        	entities.addElement(entity);
-        }
-        else {
-        entities.setElementAt(entity, entities.indexOf(oldEntity));
+            entities.addElement(entity);
+        } else {
+            entities.setElementAt(entity, entities.indexOf(oldEntity));
         }
         entityIds.put(new Integer(id), entity);
     }
   
+    /**
+     * Remove an entity from the master list.  If we can't find that entity,
+     * (probably due to double-blind) ignore it.
+     */
     public void removeEntity(int id) {
-        entities.removeElement(getEntity(id));
-        entityIds.remove(new Integer(id));
+        Entity toRemove = getEntity(id);
+        if (toRemove != null) {
+            entities.removeElement(toRemove);
+            entityIds.remove(new Integer(id));
+        }
     }
     
+    /**
+     * Checks to see if we have an entity in the master list, and if so,
+     * returns its id number.  Otherwise returns -1.
+     */
     public int getEntityID(Entity entity) {
         for (Enumeration i = entityIds.keys();i.hasMoreElements();) {
             Integer key = (Integer)i.nextElement();
@@ -246,7 +256,8 @@ public class Game
     }
     
     /**
-     * Returns the entity at the given coordinate, if any.
+     * Returns the entity at the given coordinate, if any.  Only returns
+     * targetable (non-dead) entities.
      * 
      * @param c the coordinates to search at
      */

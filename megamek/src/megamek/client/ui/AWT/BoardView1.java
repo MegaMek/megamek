@@ -647,6 +647,12 @@ public class BoardView1
      * Adds an attack to the sprite list.
      */
     public void addAttack(AttackAction aa) {
+        // do not make a sprite unless we're aware of both entities
+        // this is not a great solution but better than a crash
+        if (game.getEntity(aa.getEntityId()) == null || game.getEntity(aa.getTargetId()) == null) {
+            return;
+        }
+        
         for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
             final AttackSprite sprite = (AttackSprite)i.next();
             

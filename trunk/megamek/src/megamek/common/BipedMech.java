@@ -70,14 +70,9 @@ public class BipedMech extends Mech {
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
-        float j = wmp;
         
         //gravity
-        if (game != null) {
-            j = wmp / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            wmp = (int) j;
-        }
+        wmp = applyGravityEffectsOnMP(wmp);
         
         for ( int i = 0; i < locations(); i++ ) {
             if ( locationIsLeg(i) ) {

@@ -68,14 +68,13 @@ public class Tank
     */
     public int getWalkMP() {
         int i;
-        float j;
+        int j;
+        j = applyGravityEffectsOnMP(getOriginalWalkMP());
         if (game != null) {
-            j = getOriginalWalkMP() / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
             i = game.getTemperatureDifference();
-            return Math.max((int)j - i, 0);
-        } 
-        return walkMP;
+            return Math.max(j - i, 0);
+        }
+        return j;
     }    
 
     public boolean isTurretLocked() {

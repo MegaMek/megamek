@@ -186,13 +186,10 @@ public class Protomech
      	int wmp=getOriginalWalkMP();
      	int legCrits=this.getCritsHit(LOC_LEG);
         int i;
-        float j;
-        if (game != null) {
-            j = getOriginalWalkMP() / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            if (j > getOriginalWalkMP()) j = wmp;
-            wmp = (int) j;
-        }
+        int j;
+        // Gravity, Protos can't get faster
+        j = applyGravityEffectsOnMP(wmp);
+        if (j < wmp) wmp = j;
         switch(legCrits)
      	{
      		case 0:

@@ -257,15 +257,7 @@ public class BattleArmor
     * for heat, extreme temperatures and gravity.
     */
     public int getWalkMP() {
-        int i;
-        float j;
-        if (game != null) {
-            i = game.getTemperatureDifference();
-            j = getOriginalWalkMP() / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            return Math.max((int)j - i, 0);    
-        }
-        else return walkMP;
+        return applyGravityEffectsOnMP(walkMP);
     }
 
     

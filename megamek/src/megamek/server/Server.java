@@ -441,21 +441,31 @@ implements Runnable {
         }
         
     }
-    
     /**
      * Called when it is sensed that a connection has terminated.
-     */
-    public void disconnected(int connId) {
-        final Connection conn = getClient(connId);
-        final Player player = getPlayer(connId);
+     */ 
+    public void disconnected(Connection conn) {
+        // write something in the log
+        System.out.println("s: connection " + conn.getId() + " disconnected");
         
-        // if the connection's even still there, remove it
-        if (conn != null) {
-            conn.die();
-            connections.removeElement(conn);
-            connectionIds.remove(new Integer(connId));
+        // kill the connection and remove it from any lists it might be on
+        conn.die();
+        connections.removeElement(conn);
+        connectionsPending.removeElement(conn);
+        connectionIds.remove(new Integer(conn.getId()));
+        
+        // if there's a player for this connection, remove it too
+        if (getPlayer(conn.getId()) != null) {
+            disconnected(getPlayer(conn.getId()));
         }
-        
+    }
+    
+    /**
+     * Called when it's been determined that an actual player
+     * disconnected.  Notifies the other players and does the appropriate
+     * housekeeping.
+     */
+    void disconnected(Player player) {
         // in the lounge, just remove all entities for that player
         if (game.getPhase() == Game.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
@@ -465,27 +475,26 @@ implements Runnable {
         if (game.getEntitiesOwnedBy(player) > 0) {
             player.setGhost(true);
             player.setDone(true);
-            send(createPlayerUpdatePacket(connId));
+            send(createPlayerUpdatePacket(player.getId()));
         } else {
-            game.removePlayer(connId);
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(connId)));
+            game.removePlayer(player.getId());
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
         }
         
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase())) {
-            if (game.getTurn().getPlayerNum() == connId) {
+            if (game.getTurn().getPlayerNum() == player.getId()) {
                 sendGhostSkipMessage();
             }
         } else {
             checkReady();
         }
         
-        System.out.println("s: player " + connId + " disconnected");
-        if (player != null) {
-            sendServerChat(player.getName() + " disconnected.");
-        } else {
-            sendServerChat("Player #" + connId + " disconnected.");
-        }
+        // notify other players
+        sendServerChat(player.getName() + " disconnected.");
+        
+        // log it
+        System.out.println("s: removed player " + player.getName());
     }
     
     /**

@@ -100,15 +100,15 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
     }
     
-    public MiniMap(Dialog d, Client c, BoardView1 bview) throws IOException {
-        this (d, c.game, bview);
+    public MiniMap(Dialog d, ClientGUI c, BoardView1 bview) throws IOException {
+        this (d, c.getClient().game, bview);
         
-        c.addGameListener(this);
+        c.getClient().addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);
         addKeyListener(c.menuBar);
 
         // this may come in useful later...
-        m_client=c;
+        m_client=c.getClient();
     }
 
     public synchronized void update(Graphics g) {
@@ -980,4 +980,28 @@ scan:
 
 
     // end ComponentListener implementation
+    public void gameBoardChanged(GameEvent e) {
+        ;
+    }
+
+    public void gameDisconnected(GameEvent e) {
+        ;    
+    }
+
+    public void boardChangedEntity(BoardEvent b) {
+        ;
+    }
+
+    public void boardNewAttack(BoardEvent a) {
+        ;
+    }
+
+    public void gameEnd(GameEvent e) {
+        ;
+    }
+
+    public void gameReport(GameEvent e) {
+        ;
+    }
+
 }

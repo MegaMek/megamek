@@ -15,33 +15,19 @@ package megamek.client.bot;
 
 import java.util.Enumeration;
 
-import com.sun.java.util.collections.ArrayList;
-
-import megamek.client.AlertDialog;
 import megamek.client.Client;
-import megamek.client.DeploymentDisplay;
-import megamek.client.FiringDisplay;
 import megamek.client.GameEvent;
-import megamek.client.MovementDisplay;
-import megamek.client.PhysicalDisplay;
-import megamek.client.ConfirmDialog;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.MovePath;
-import megamek.common.Packet;
-import megamek.common.Settings;
+import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 
+import com.sun.java.util.collections.ArrayList;
+
 public abstract class BotClient extends Client {
 
-    public BotClient(String playerName) {
-        super(playerName);
-        this.setHelpFileName( "ai-readme.txt" );
+    public BotClient(String playerName, String host, int port) {
+        super(playerName, host, port);
     }
 
     BotConfiguration config = new BotConfiguration();
@@ -85,7 +71,7 @@ public abstract class BotClient extends Client {
         try {
             switch (phase) {
                 case Game.PHASE_LOUNGE :
-                    notifyOfBot();
+                    sendChat("Hi, I'm a bot client!");
                     break;
                 case Game.PHASE_DEPLOYMENT :
                     initialize();
@@ -119,28 +105,6 @@ public abstract class BotClient extends Client {
         }
     }
 
-    protected void notifyOfBot() {
-        if (true==Settings.nagForBotReadme) {
-            String title = "Please read the ai-readme.txt";
-            String body = 
-                "The bot does not work with all units or game options.\n"+
-                "Please read the ai-readme.txt file before using the bot.\n"+
-                " \nWould you like to read the AI documentation now?\n";
-            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
-            confirm.show();
-
-            if ( !confirm.getShowAgain() ) {
-                Settings.nagForBotReadme = false;
-                Settings.save();
-            };
-
-            if ( confirm.getAnswer() ) {
-                this.showHelp();
-            };
-        };
-        sendChat("Hi, I'm a bot client!");
-    }
-
     protected void processGameEvent(GameEvent ge) {
         super.processGameEvent(ge);
 
@@ -166,7 +130,7 @@ public abstract class BotClient extends Client {
 
     protected void calculateMyTurn() {
         try {
-            if (curPanel instanceof MovementDisplay) {
+            if (game.getPhase() == Game.PHASE_MOVEMENT) {
 				MovePath mp = null;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
@@ -176,17 +140,17 @@ public abstract class BotClient extends Client {
                     mp = calculateMoveTurn();
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (curPanel instanceof FiringDisplay) {
+            } else if (game.getPhase() == Game.PHASE_FIRING) {
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     MovePath mp = continueMovementFor(game.getEntity(turn.getEntityNum()));
                     moveEntity(mp.getEntity().getId(), mp);
                 }
                 calculateFiringTurn();
-            } else if (curPanel instanceof PhysicalDisplay) {
+            } else if (game.getPhase() == Game.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 sendAttackData(po.attacker.getId(), po.getVector());
-            } else if (curPanel instanceof DeploymentDisplay) {
+            } else if (game.getPhase() == Game.PHASE_DEPLOYMENT) {
                 calculateDeployment();
             }
         } catch (Throwable t) {

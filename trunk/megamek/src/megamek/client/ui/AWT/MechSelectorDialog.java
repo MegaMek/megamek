@@ -16,16 +16,14 @@ package megamek.client;
  
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.AWTEvent.*;
-import java.io.File;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import com.sun.java.util.collections.HashSet;
-import com.sun.java.util.collections.Arrays;
+
+import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
-import megamek.common.loaders.*;
-import megamek.client.util.widget.*;
+import megamek.common.loaders.EntityLoadingException;
+
+import com.sun.java.util.collections.Arrays;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -43,6 +41,7 @@ public class MechSelectorDialog
     
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
+    private ClientGUI m_clientgui;
     private UnitLoadingDialog unitLoadingDialog;
         
     private StringBuffer m_sbSearch = new StringBuffer();
@@ -68,10 +67,11 @@ public class MechSelectorDialog
     private Panel m_pUpper = new Panel();
 	BufferedPanel m_pPreview = new BufferedPanel();
 
-    public MechSelectorDialog(Client cl, UnitLoadingDialog uld)
+    public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld)
     {
         super(cl.frame, "Select Mech...", true);
-        m_client = cl;
+        m_client = cl.getClient();
+        m_clientgui = cl;
         unitLoadingDialog = uld;
         
         for (int x = 0; x < m_saSorts.length; x++) {
@@ -120,8 +120,8 @@ public class MechSelectorDialog
         m_bPick.addActionListener(this);
         m_bCancel.addActionListener(this);
         setSize(760, 320);
-        setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
-                    m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
+        setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
+                    m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         populateChoices();
         addWindowListener(this);
     }
@@ -136,8 +136,9 @@ public class MechSelectorDialog
 
         final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
-            UnitFailureDialog unitFailureDialog = new UnitFailureDialog(m_client.frame, hFailedFiles); // self-showing dialog
+            UnitFailureDialog unitFailureDialog = new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing dialog
         }
+        m_client.setMechsLoaded(true);
     }
     
     
@@ -227,8 +228,8 @@ public class MechSelectorDialog
     }
     
     public void show() {
-        setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
-                    m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
+        setLocation(m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width/2 - getSize().width/2,
+                    m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height/2 - getSize().height/2);
         super.show();
     }
     
@@ -317,7 +318,7 @@ public class MechSelectorDialog
         m_mechViewRight.setCaretPosition(0);
 
 		// Preview image of the unit...
-		m_client.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
+		m_clientgui.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
 		m_pPreview.paint(m_pPreview.getGraphics());
     }
     

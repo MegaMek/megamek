@@ -751,6 +751,10 @@ public class BoardEditor extends Container
     }    
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
+    public void boardNewAttack(BoardEvent a) {
+        ;
+    }
+
 }
 
 /**

@@ -14,116 +14,50 @@
 
 package megamek.client;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.util.*;
-import java.io.*;
-
-import java.applet.Applet;
-import java.applet.AudioClip;
-import sun.audio.*; //undocumented audio class used for older JVMs.
+import java.awt.Component;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.util.Distractable;
-import megamek.client.util.widget.*;
 
-public class Client extends Panel
-    implements Runnable, MouseListener, WindowListener, ActionListener, KeyListener
-{
-	// Action commands.
-	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
-	public static final String VIEW_MINI_MAP         = "viewMiniMap";
-	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
-	public static final String VIEW_UNIT_OVERVIEW    = "viewUnitOverview";
-	public static final String VIEW_ZOOM_IN    		 = "viewZoomIn";
-	public static final String VIEW_ZOOM_OUT   		 = "viewZoomOut";
-
-    // a frame, to show stuff in
-    public Frame                frame;
-
-    // A menu bar to contain all actions.
-    protected CommonMenuBar             menuBar = new CommonMenuBar(this);
-    private CommonAboutDialog           about   = null;
-    private CommonHelpDialog            help    = null;
-    private CommonSettingsDialog        setdlg  = null;
-    private String                      helpFileName = "readme.txt";
-
+public class Client implements Runnable {
     // we need these to communicate with the server
-    private String              name;
-    Socket                      socket;
-    private ObjectInputStream   in = null;
-    private ObjectOutputStream  out = null;
+    private String name;
+    Socket socket;
+    private ObjectInputStream in = null;
+    private ObjectOutputStream out = null;
 
     // some info about us and the server
-    private boolean             connected = false;
-    public int                  local_pn = -1;
-    private int                 connFailures = 0;
-    private static final int    MAX_CONN_FAILURES = 100;
-
+    private boolean connected = false;
+    public int local_pn = -1;
+    private int connFailures = 0;
+    private static final int MAX_CONN_FAILURES = 100;
+    private String host;
+    private int port;
+    
     // the game state object
-    public Game                 game = new Game();
+    public Game game = new Game();
 
     // here's some game phase stuff
-    private MapSettings         mapSettings;
-    public String               eotr;
-
-    // keep me
-    private ChatterBox          cb;
-    public BoardView1           bv;
-    public BoardComponent       bc;
-    public Dialog               mechW;
-    public MechDisplay          mechD;
-    public Dialog               minimapW;
-    public MiniMap              minimap;
-    public PopupMenu            popup = new PopupMenu("Board Popup...");
-    private UnitOverview 		uo;
-    public Ruler                ruler; // added by kenn
-    protected Component         curPanel;
-
-    // some dialogs...
-    private BoardSelectionDialog    boardSelectionDialog;
-    private GameOptionsDialog       gameOptionsDialog;
-    private MechSelectorDialog      mechSelectorDialog;
-    public Thread                   mechSelectorDialogThread;
-    private StartingPositionDialog  startingPositionDialog;
-	private PlayerListDialog 		playerListDialog;
-
-    // message pump listening to the server
-    private Thread              pump;
+    private MapSettings mapSettings;
+    public String eotr;
+    
+    private boolean mechsLoaded = false;
+    
+    private Thread pump;
 
     // I send out game events!
-    private Vector              gameListeners = new Vector();
-
-    /**
-     * Save and Open dialogs for MegaMek Unit List (mul) files.
-     */
-    private FileDialog dlgLoadList = null;
-    private FileDialog dlgSaveList = null;
-
-    /**
-     * Cache for the "bing" soundclip.
-     */
-    AudioClip bingClip = null;
-
-    /** Map each phase to the name of the card for the main display area. */
-    private Hashtable mainNames = new Hashtable();
-
-    /** The <code>Panel</code> containing the main display area. */
-    private Panel panMain = new Panel();
-
-    /** The <code>CardLayout</code> of the main display area. */
-    private CardLayout cardsMain = new CardLayout();
-
-    /** Map each phase to the name of the card for the secondary area. */
-    private Hashtable secondaryNames = new Hashtable();
-
-    /** The <code>Panel</code> containing the secondary display area. */
-    private Panel panSecondary = new Panel();
-
-    /** The <code>CardLayout</code> of the secondary display area. */
-    private CardLayout cardsSecondary = new CardLayout();
+    private Vector gameListeners = new Vector();
 
     /** Map phase component names to phase component objects. */
     private Hashtable phaseComponents = new Hashtable();
@@ -137,471 +71,53 @@ public class Client extends Panel
      * @param port the host port
      */
     public Client(String name, String host, int port) {
-    	// construct new client
-    	this(name);
-
-    	// try to connect
-        if(!connect(host, port)) {
-            StringBuffer error = new StringBuffer();
-            error.append( "Error: could not connect to server at " )
-                .append( host )
-                .append( ":" )
-                .append( port )
-                .append( "." );
-            new AlertDialog(frame, "Host a Game", error.toString()).show();
-            frame.setVisible(false);
-            die();
-        }
-
-        // wait for full connection
-        retrieveServerInfo();
-
-        loadSoundClip();
+        // construct new client
+		this.name = name;
+        this.host = host;
+        this.port = port;
     }
 
-    /**
-     * Construct a client which will display itself in a new frame.  It will
-     * not try to connect to a server yet.  When the frame closes, this client
-     * will clean up after itself as much as possible, but will not call
-     * System.exit().
-     */
-    public Client(String playername) {
-        super(new BorderLayout());
-        panMain.setLayout( cardsMain );
-        panSecondary.setLayout( cardsSecondary );
-        Panel panDisplay = new Panel( new BorderLayout() );
-        panDisplay.add( panMain, BorderLayout.CENTER );
-        panDisplay.add( panSecondary, BorderLayout.SOUTH );
-        this.add( panDisplay, BorderLayout.CENTER );
-
-        this.name = playername;
-
-        Settings.load();
-
-        loadSoundClip();
-
-        initializeFrame();
-
-        try {
-            bv = new BoardView1(game, frame);
-        } catch (IOException e) {
-            doAlertDialog("Fatal Error", "Could not initialise:\n"+e);
-            die();
-        }
-
-/*	ChatterBox2 cb2 = new ChatterBox2(this);
-	bv.addDisplayable(cb2);
-        addGameListener(cb2);
-        bv.addKeyListener(cb2);
-*/
-
-        cb = new ChatterBox(this);
-        this.add( cb.getComponent(), BorderLayout.SOUTH );
-        changePhase(Game.PHASE_UNKNOWN);
-
-        layoutFrame();
-
-        frame.setVisible(true);
-    }
-
-    /*
-     * Try to load the "bing" sound clip.
-     */
-    public void loadSoundClip() {
-        if (Settings.soundBingFilename == null) return;
-        try {
-            File file = new File( Settings.soundBingFilename );
-            if (!file.exists()) {
-                System.err.println("Failed to load audio file: " + Settings.soundBingFilename);
-                return;
-            }
-            bingClip = Applet.newAudioClip(file.toURL());
-        }
-        catch (NoSuchMethodError e) {
-            //Ok, that didn't work.  We will fall back on our other
-            // sound class.
-            System.out.println("Failed to find AudioClip class, using AudioPlayer instead.");
-            if (!Settings.soundBingFilename.endsWith(".au")) {
-                //The older sound class only understands .au files
-                Settings.soundBingFilename = new String(Settings.soundBingFilename.substring(0,Settings.soundBingFilename.lastIndexOf(".")) + ".au");
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void keyPressed(KeyEvent ke) {
-        switch(ke.getKeyCode()) {
-        case KeyEvent.VK_PAGE_DOWN :
-            bv.zoomIn();
-            break;
-        case KeyEvent.VK_PAGE_UP :
-        	bv.zoomOut();
-            break;
-        }
-    }
-    
-    public void keyTyped(KeyEvent ke) {
-        ;
-    }
-    
-    public void keyReleased(KeyEvent ke) {
-    	;
-    }
-    
-    /**
-     * Display a system message in the chat box.
-     *
-     * @param   message the <code>String</code> message to be shown.
-     */
-    public void systemMessage( String message ) {
-        this.cb.systemMessage( message );
-    }
-
-    /**
-     * Initializes a number of things about this frame.
-     */
-    private void initializeFrame() {
-        this.frame = new Frame("MegaMek Client");
-        menuBar.setGame( this.game );
-        frame.setMenuBar( menuBar );
-        if (Settings.windowSizeHeight != 0) {
-            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
-        } else {
-            frame.setSize(800, 600);
-        }
-
-        frame.setBackground(SystemColor.menu);
-        frame.setForeground(SystemColor.menuText);
-
-        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
-
-        // When frame closes, save settings and clean up.
-        // I'm going to chance leaving this here as
-        // it may not constitute an escape.
-        // Move to #initializeListeners() if I'm wrong.
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                frame.setVisible(false);
-                saveSettings();
-                die();
-            }
-        });
-    }
-
-    /**
-     * Lays out the frame by setting this Client object to take up the full
-     * frame display area.
-     */
-    private void layoutFrame() {
-        frame.setTitle(this.name + " - MegaMek");
-        frame.setLayout(new BorderLayout());
-        frame.add(this, BorderLayout.CENTER);
-        frame.validate();
-    }
-
-    /**
-     * Have the client register itself as a listener wherever it's needed.
-     * <p/>
-     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html
-     * it is a major bad no-no to perform these registrations before the
-     * constructor finishes, so this function has to be called after the
-     * <code>Client</code> is created.
-     */
-    public void initializeListeners() {
-
-        // moved from initializeFrame()
-        menuBar.addActionListener( this );
-        frame.addKeyListener(this);
-
-        // from constructor
-        initializeDialogs();
-
-        // from connect
-        pump.start();
-    }
-
-    /**
-     * Get the menu bar for this client.
-     *
-     * @return  the <code>CommonMenuBar</code> of this client.
-     */
-    public CommonMenuBar getMenuBar() {
-        return this.menuBar;
-    }
-
-    /**
-     * Called when the user selects the "Help->About" menu item.
-     */
-    private void showAbout() {
-        // Do we need to create the "about" dialog?
-        if ( this.about == null ) {
-            this.about = new CommonAboutDialog( this.frame );
-        }
-
-        // Show the about dialog.
-        this.about.show();
-    }
-
-    /**
-     * Change the default help file name for this client.
-     * <p/>
-     * This method should only be called by the constructor
-     * of subclasses.
-     *
-     * @param   fileName the <code>String</code> name of the help file
-     *          for this <code>Client</code> subclass.  This value should
-     *          not be <code>null</code>.
-     */
-    protected void setHelpFileName( String fileName ) {
-        if ( null != fileName ) {
-            this.helpFileName = fileName;
-        }
-    }
-
-    /**
-     * Called when the user selects the "Help->Contents" menu item.
-     * <p/>
-     * This method can be called by subclasses.
-     */
-    protected void showHelp() {
-        // Do we need to create the "help" dialog?
-        if ( this.help == null ) {
-            File helpfile = new File( helpFileName );
-            this.help = new CommonHelpDialog( this.frame, helpfile );
-        }
-
-        // Show the help dialog.
-        this.help.show();
-    }
-
-    /**
-     * Called when the user selects the "View->Client Settings" menu item.
-     */
-    private void showSettings() {
-        // Do we need to create the "settings" dialog?
-        if ( this.setdlg == null ) {
-            this.setdlg = new CommonSettingsDialog( this.frame );
-        }
-
-        // Show the settings dialog.
-        this.setdlg.show();
-    }
-
-    /**
-     * Called when the user selects the "View->Game Options" menu item.
-     */
-    private void showOptions() {
-        if ( game.getPhase() == Game.PHASE_LOUNGE) {
-            getGameOptionsDialog().setEditable( true );
-        } else {
-            getGameOptionsDialog().setEditable( false );
-        }
-        // Display the game options dialog.
-        getGameOptionsDialog().update(game.getOptions());
-        getGameOptionsDialog().show();
-	}
-
-    /**
-     * Called when the user selects the "View->Player List" menu item.
-     */
-    private void showPlayerList() {
-        if (playerListDialog == null) {
-            playerListDialog = new PlayerListDialog(frame, this);
-        }
-        playerListDialog.show();
-    }
-
-    /**
-     * Called when the user selects the "View->Turn Report" menu item.
-     */
-    private void showTurnReport() {
-        new MiniReportDisplay(frame, eotr).show(); ;
-    }
-
-    /**
-     * Implement the <code>ActionListener</code> interface.
-     */
-    public void actionPerformed(ActionEvent event) {
-        if(event.getActionCommand().equalsIgnoreCase("helpAbout")) {
-            showAbout();
-        }
-        if(event.getActionCommand().equalsIgnoreCase("helpContents")) {
-            showHelp();
-        }
-        if(event.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
-            showSettings();
-        }
-        if(event.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
-            showOptions();
-        }
-        if(event.getActionCommand().equalsIgnoreCase("viewPlayerList")) {
-            showPlayerList();
-        }
-        if(event.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
-            showTurnReport();
-        }
-		if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
-			toggleDisplay();
-		} else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
-			toggleMap();
-		} else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
-			toggleUnitOverview();
-		} else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
-			bv.zoomIn();
-		} else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
-			bv.zoomOut();
-		} else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
-			showLOSSettingDialog();
-		}
-    }
-
-    /**
-     * Initializes dialogs and some displays for this client.
-     */
-    private void initializeDialogs() {
-        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        unitLoadingDialog.show();
-
-        uo = new UnitOverview(this);
-		bv.addDisplayable(uo);
-
-        bv.addMouseListener(this);
-        bv.addKeyListener(this);
-
-        bv.add(popup);
-
-        mechW = new Dialog(frame, "Mech Display", false);
-        mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
-        mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
-        mechW.setResizable(true);
-        mechW.addWindowListener(this);
-        mechW.addKeyListener(this);
-        mechD = new MechDisplay(this);
-        mechW.add(mechD);
-
-        // added by kenn
-        Ruler.color1 = Settings.rulerColor1;
-        Ruler.color2 = Settings.rulerColor2;
-        ruler = new Ruler(frame, this, bv);
-        ruler.setLocation(Settings.rulerPosX, Settings.rulerPosY);
-        ruler.setSize(Settings.rulerSizeWidth, Settings.rulerSizeHeight);
-        // end kenn
-
-        // minimap
-        minimapW = new Dialog(frame, "MiniMap", false);
-        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-        try {
-            minimap = new MiniMap(minimapW, this, bv);
-        } catch (IOException e) {
-            doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
-            die();
-        };
-        minimap.addKeyListener(this);
-        minimapW.addWindowListener(this);
-        minimapW.addKeyListener(this);
-        minimapW.add(minimap);
-
-        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        mechSelectorDialogThread = new Thread(mechSelectorDialog);
-        mechSelectorDialogThread.start();
-
-    }
 
     /**
      * Attempt to connect to the specified host
      */
-    public boolean connect(String hostname, int port) {
-        try {
-            socket = new Socket(hostname, port);
-        } catch(UnknownHostException ex) {
-            return false;
-        } catch(IOException ex) {
-            return false;
-        }
-
-        pump = new Thread(this);
-
-        return true;
-    }
-
-    /**
-     * Saves the current settings to the cfg file.
-     */
-    public void saveSettings() {
-    	// save frame location
-        Settings.windowPosX = frame.getLocation().x;
-        Settings.windowPosY = frame.getLocation().y;
-        Settings.windowSizeWidth = frame.getSize().width;
-        Settings.windowSizeHeight = frame.getSize().height;
-
-        // also minimap
-        if (minimapW != null
-            && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
-            Settings.minimapPosX = minimapW.getLocation().x;
-            Settings.minimapPosY = minimapW.getLocation().y;
-            Settings.minimapZoom = minimap.getZoom();
-        }
-
-        // also mech display
-        if (mechW != null
-            && (mechW.getSize().width * mechW.getSize().height) > 0) {
-            Settings.displayPosX = mechW.getLocation().x;
-            Settings.displayPosY = mechW.getLocation().y;
-            Settings.displaySizeWidth = mechW.getSize().width;
-            Settings.displaySizeHeight = mechW.getSize().height;
-        }
-
-        // added by kenn
-        // also ruler display
-        if (ruler != null && ruler.getSize().width != 0 && ruler.getSize().height != 0) {
-            Settings.rulerPosX = ruler.getLocation().x;
-            Settings.rulerPosY = ruler.getLocation().y;
-            Settings.rulerSizeWidth = ruler.getSize().width;
-            Settings.rulerSizeHeight = ruler.getSize().height;
-        }
-        // end kenn
-
-        // save settings to disk
-        Settings.save();
+    public void connect() throws UnknownHostException, IOException {
+        socket = new Socket(host, port);
+		pump = new Thread(this);
+		pump.start();
     }
 
     /**
      * Shuts down threads and sockets
      */
     public void die() {
-
         // If we're still connected, tell the server that we're going down.
-        if ( connected ) {
+        if (connected) {
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
         connected = false;
-        pump = null;
+		pump = null;
 
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         Enumeration names = phaseComponents.keys();
-        while ( names.hasMoreElements() ) {
-            Component component = (Component) phaseComponents.get
-                ( names.nextElement() );
-            if ( component instanceof ReportDisplay ) {
-                if ( reportHandled ) {
+        while (names.hasMoreElements()) {
+            Component component = (Component) phaseComponents.get(names.nextElement());
+            if (component instanceof ReportDisplay) {
+                if (reportHandled) {
                     continue;
                 } else {
                     reportHandled = true;
                 }
             }
-            if ( component instanceof Distractable ) {
-                ( (Distractable) component ).removeAllListeners();
+            if (component instanceof Distractable) {
+                ((Distractable) component).removeAllListeners();
             }
 
         } // Handle the next component
 
         // shut down threads & sockets
         try {
-            frame.removeAll();
             socket.close();
             in.close();
             out.close();
@@ -610,32 +126,6 @@ public class Client extends Panel
         } catch (NullPointerException e) {
             // not a big deal, just never connected
         }
-
-        frame.setVisible(false);
-/* Avoid the infinite loop until we can fix this bug!!!
-        boolean disposed = false;
-        while ( !disposed ) {
-*/
-        {
-            try {
-                frame.dispose();
-/*
-                disposed = true;
-*/
-            }
-            catch ( Throwable error ) {
-                error.printStackTrace();
-                System.err.println( "Attempting to close the InputContext in java.client.Client#die()..." );
-                try {
-                    curPanel.getInputContext().endComposition();
-                }
-                catch ( Throwable thr ) {
-                    thr.printStackTrace();
-                    frame.dispose();
-                }
-            }
-        }
-
         System.out.println("client: died");
     }
 
@@ -643,14 +133,11 @@ public class Client extends Panel
      * The client has become disconnected from the server
      */
     protected void disconnected() {
-        if ( connected ) {
+        if (connected) {
             connected = false;
-            AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
-            alert.show();
-
-            frame.setVisible(false);
             die();
         }
+        processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getLocalPlayer(), ""));
     }
 
     /**
@@ -658,19 +145,6 @@ public class Client extends Panel
      */
     public Enumeration getPlayers() {
         return game.getPlayers();
-    }
-
-    /**
-     * Return the current number of players the client knows about
-     */
-    public int getNoOfPlayers() {
-        int count = 0;
-        for(Enumeration e = getPlayers(); e.hasMoreElements();) {
-            if(e.nextElement() != null) {
-                count++;
-            }
-        }
-        return count;
     }
 
     public Entity getEntity(int enum) {
@@ -682,7 +156,7 @@ public class Client extends Panel
      * parameter.
      */
     public Player getPlayer(int idx) {
-        return (Player)game.getPlayer(idx);
+        return (Player) game.getPlayer(idx);
     }
 
     /**
@@ -696,8 +170,8 @@ public class Client extends Panel
      * Returns an <code>Enumeration</code> of the entities that match
      * the selection criteria.
      */
-    public Enumeration getSelectedEntities( EntitySelector selector ) {
-        return game.getSelectedEntities( selector );
+    public Enumeration getSelectedEntities(EntitySelector selector) {
+        return game.getSelectedEntities(selector);
     }
 
     /**
@@ -718,14 +192,14 @@ public class Client extends Panel
      * Returns the number of the first deployable entity
      */
     public int getFirstDeployableEntityNum() {
-      return game.getFirstDeployableEntityNum();
+        return game.getFirstDeployableEntityNum();
     }
 
     /**
      * Returns the number of the next deployable entity
      */
     public int getNextDeployableEntityNum(int entityId) {
-      return game.getNextDeployableEntityNum(entityId);
+        return game.getNextDeployableEntityNum(entityId);
     }
 
     /**
@@ -747,456 +221,57 @@ public class Client extends Panel
     }
 
     /**
-     * Returns the board selection dialog, creating it on the first call
-     */
-    public BoardSelectionDialog getBoardSelectionDialog() {
-        if (boardSelectionDialog == null) {
-            boardSelectionDialog = new BoardSelectionDialog(this);
-        }
-        return boardSelectionDialog;
-    }
-
-    public GameOptionsDialog getGameOptionsDialog() {
-        if (gameOptionsDialog == null) {
-            gameOptionsDialog = new GameOptionsDialog(this);
-        }
-        return gameOptionsDialog;
-    }
-
-    public MechSelectorDialog getMechSelectorDialog() {
-      return mechSelectorDialog;
-    }
-
-    public StartingPositionDialog getStartingPositionDialog() {
-        if (startingPositionDialog == null) {
-            startingPositionDialog = new StartingPositionDialog(this);
-        }
-      return startingPositionDialog;
-    }
-
-    /**
      * Changes the game phase, and the displays that go
      * along with it.
      */
     protected void changePhase(int phase) {
-        boolean showRerollButton = false;
-
         this.game.setPhase(phase);
 
-        // Don't let the tooltip cover up anything during a report phase.
-        bv.hideTooltip();
-
-        // Swap to this phase's panel.
-        switchPanel( phase );
-
         // Handle phase-specific items.
-        switch(phase) {
-        case Game.PHASE_LOUNGE :
-            game.reset();
-            break;
-        case Game.PHASE_STARTING_SCENARIO :
-            sendDone(true);
-            break;
-        case Game.PHASE_EXCHANGE :
-            sendDone(true);
-            break;
-        case Game.PHASE_DEPLOY_MINEFIELDS :
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            break;
-        case Game.PHASE_DEPLOYMENT :
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering deployment phase" );
-            break;
-        case Game.PHASE_TARGETING:
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering targeting phase" );
-            break;
-        case Game.PHASE_MOVEMENT :
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering movement phase" );
-            break;
-        case Game.PHASE_OFFBOARD:
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering offboard phase" );
-            break;
-        case Game.PHASE_FIRING :
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering firing phase" );
-            break;
-        case Game.PHASE_PHYSICAL :
-            game.resetActions();
-            bv.refreshAttacks();
-            if (Settings.minimapEnabled && !minimapW.isVisible()) {
-                setMapVisible(true);
-            }
-            memDump( "entering physical phase" );
-            break;
-        case Game.PHASE_INITIATIVE :
-            game.resetActions();
-            game.resetCharges();
-            bv.clearAllAttacks();
-            showRerollButton = game.hasTacticalGenius( getLocalPlayer() );
-        case Game.PHASE_MOVEMENT_REPORT :
-        case Game.PHASE_OFFBOARD_REPORT :
-        case Game.PHASE_FIRING_REPORT :
-        case Game.PHASE_END :
-        case Game.PHASE_VICTORY :
-            ( (ReportDisplay) curPanel ).showRerollButton( showRerollButton );
-
-            setMapVisible(false);
-
-            // nemchenk, 2004-01-01 -- hide MechDisplay at the end
-            mechW.setVisible(false);
-            break;
+        switch (phase) {
+            case Game.PHASE_LOUNGE :
+                game.reset();
+                break;
+            case Game.PHASE_STARTING_SCENARIO :
+                sendDone(true);
+                break;
+            case Game.PHASE_EXCHANGE :
+                sendDone(true);
+                break;
+            case Game.PHASE_DEPLOY_MINEFIELDS :
+                break;
+            case Game.PHASE_DEPLOYMENT :
+                memDump("entering deployment phase");
+                break;
+            case Game.PHASE_TARGETING :
+                memDump("entering targeting phase");
+                break;
+            case Game.PHASE_MOVEMENT :
+                memDump("entering movement phase");
+                break;
+            case Game.PHASE_OFFBOARD :
+                memDump("entering offboard phase");
+                break;
+            case Game.PHASE_FIRING :
+                memDump("entering firing phase");
+                break;
+            case Game.PHASE_PHYSICAL :
+                game.resetActions();
+                memDump("entering physical phase");
+                break;
+            case Game.PHASE_INITIATIVE :
+                game.resetActions();
+                game.resetCharges();
+            case Game.PHASE_MOVEMENT_REPORT :
+            case Game.PHASE_OFFBOARD_REPORT :
+            case Game.PHASE_FIRING_REPORT :
+            case Game.PHASE_END :
+            case Game.PHASE_VICTORY :
+                break;
         }
 
-        menuBar.setPhase( phase );
-        this.cb.getComponent().setVisible(true);
-        this.validate();
-        this.doLayout();
-        this.cb.moveToEnd();
         processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
     }
-
-    private void switchPanel(int phase) {
-        // Clear the old panel's listeners.
-        if ( curPanel instanceof BoardViewListener ) {
-            bv.removeBoardViewListener( (BoardViewListener) curPanel );
-        }
-        if ( curPanel instanceof ActionListener ) {
-            menuBar.removeActionListener( (ActionListener) curPanel );
-        }
-        if ( curPanel instanceof Distractable ) {
-            ( (Distractable) curPanel ).setIgnoringEvents( true );
-        }
-
-        // Get the new panel.
-        String name = String.valueOf( phase );
-        curPanel = (Component) phaseComponents.get( name );
-        if ( null == curPanel ) {
-            curPanel = initializePanel( phase );
-        }
-        cardsMain.show( panMain, mainNames.get(name).toString() );
-        cardsSecondary.show( panSecondary,
-                             secondaryNames.get(name).toString() );
-
-        // Set the new panel's listeners
-    	if ( curPanel instanceof BoardViewListener ) {
-            bv.addBoardViewListener( (BoardViewListener) curPanel );
-    	}
-        if ( curPanel instanceof ActionListener ) {
-            menuBar.addActionListener( (ActionListener) curPanel );
-        }
-        if ( curPanel instanceof Distractable ) {
-            ( (Distractable) curPanel ).setIgnoringEvents( false );
-        }
-        if ( curPanel instanceof DoneButtoned ) {
-            Button done = ( (DoneButtoned) curPanel ).getDoneButton();
-            this.cb.setDoneButton( done );
-            done.setVisible( true );
-        }
-        if ( curPanel instanceof ReportDisplay ) {
-            ( (ReportDisplay) curPanel ).resetReadyButton();
-        }
-
-        // Make the new panel the focus.
-        curPanel.requestFocus();
-    }
-
-    private Component initializePanel( int phase ) {
-
-        // Create the components for this phase.
-        String name = String.valueOf( phase );
-        Component component = null;
-        String secondary = null;
-        String main = null;
-        switch ( phase ) {
-        case Game.PHASE_LOUNGE:
-            component = new ChatLounge(this);
-            main = "ChatLounge";
-            secondary = main;
-            panMain.add( main, component );
-            panSecondary.add
-                ( secondary, ((ChatLounge) component).getSecondaryDisplay() );
-            break;
-        case Game.PHASE_STARTING_SCENARIO:
-            component = new Label("Starting scenario...");
-            main = "Label-StartingScenario";
-            secondary = main;
-            panMain.add( main, component );
-            panSecondary.add( secondary, new Label("") );
-            break;
-        case Game.PHASE_EXCHANGE:
-            component = new Label("Transmitting game data...");
-            main = "Label-Exchange";
-            secondary = main;
-            panMain.add( main, component );
-            panSecondary.add( secondary, new Label("") );
-            break;
-        case Game.PHASE_DEPLOY_MINEFIELDS:
-            component = new DeployMinefieldDisplay(this);
-
-            main = "BoardView";
-            secondary = "DeployMinefieldDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_DEPLOYMENT:
-            component = new DeploymentDisplay(this);
-            main = "BoardView";
-            secondary = "DeploymentDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_TARGETING:
-            component = new TargetingPhaseDisplay(this);
-            ( (TargetingPhaseDisplay) component ).initializeListeners();
-            main = "BoardView";
-            secondary = "TargetingPhaseDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_MOVEMENT:
-            component = new MovementDisplay(this);
-            main = "BoardView";
-            secondary = "MovementDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_OFFBOARD:
-            component = new OffboardAttackPhaseDisplay(this);
-            ( (OffboardAttackPhaseDisplay) component ).initializeListeners();
-            main = "BoardView";
-            secondary = "OffboardDisplay";
-            if ( !mainNames.contains(main) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add(secondary, component);
-            break;
-        case Game.PHASE_FIRING:
-            component = new FiringDisplay(this);
-            main = "BoardView";
-            secondary = "FiringDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_PHYSICAL:
-            component = new PhysicalDisplay(this);
-            main = "BoardView";
-            secondary = "PhysicalDisplay";
-            if ( !mainNames.contains( main ) ) {
-                panMain.add( main, this.bv );
-            }
-            panSecondary.add( secondary, component );
-            break;
-        case Game.PHASE_INITIATIVE:
-            component = new ReportDisplay
-                ( this, game.hasTacticalGenius(getLocalPlayer()) );
-            main = "ReportDisplay";
-            secondary = main;
-            panMain.add( main, component );
-            panSecondary.add
-                ( secondary, ((ReportDisplay) component).getSecondaryDisplay() );
-            break;
-        case Game.PHASE_MOVEMENT_REPORT:
-        case Game.PHASE_OFFBOARD_REPORT:
-        case Game.PHASE_FIRING_REPORT:
-        case Game.PHASE_END:
-        case Game.PHASE_VICTORY:
-            // Reuse the ReportDisplay for other phases.
-            component = (Component) phaseComponents.get( String.valueOf(Game.PHASE_INITIATIVE) );
-            if ( null == component ) {
-                // no ReportDisplay to re-use -- set up a new one...
-                initializePanel(Game.PHASE_INITIATIVE);
-                component = (Component) phaseComponents.get( String.valueOf(Game.PHASE_INITIATIVE) );
-            };
-            main = "ReportDisplay";
-            secondary = main;
-            break;
-        default:
-            component = new Label( "Waiting on the server..." );
-            main = "Label-Default";
-            secondary = main;
-            panMain.add( main, component );
-            panSecondary.add( secondary, new Label("") );
-        }
-        phaseComponents.put( name, component );
-        mainNames.put( name, main );
-        secondaryNames.put( name, secondary );
-
-        return component;
-    }
-
-    protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-    }
-
-    protected void showBoardPopup(Point point) {
-        fillPopup(bv.getCoordsAt(point));
-
-        if (popup.getItemCount() > 0) {
-            popup.show(bv, point.x, point.y);
-        }
-    }
-
-    private boolean canTargetEntities() {
-        return isMyTurn() && (curPanel instanceof FiringDisplay
-                              || curPanel instanceof PhysicalDisplay
-                              || curPanel instanceof TargetingPhaseDisplay);
-    }
-
-    private boolean canSelectEntities() {
-        return isMyTurn() && (curPanel instanceof FiringDisplay
-                              || curPanel instanceof PhysicalDisplay
-                              || curPanel instanceof MovementDisplay
-                              || curPanel instanceof TargetingPhaseDisplay);
-    }
-
-    /** Toggles the entity display window
-     */
-    public void toggleDisplay() {
-        mechW.setVisible(!mechW.isVisible());
-        if (mechW.isVisible()) {
-        	frame.requestFocus();
-        }
-    }
-
-    /** Sets the visibility of the entity display window
-     */
-    public void setDisplayVisible(boolean visible) {
-        mechW.setVisible(visible);
-        if (visible) {
-            frame.requestFocus();
-        }
-    }
-
-    public void toggleUnitOverview() {
-        uo.setVisible(!uo.isVisible());
-        bv.repaint();
-    }
-
-    /** Toggles the minimap window
-         Also, toggles the minimap enabled setting
-     */
-    public void toggleMap() {
-        if (minimapW.isVisible()) {
-            Settings.minimapEnabled = false;
-        } else {
-            Settings.minimapEnabled = true;
-        }
-        minimapW.setVisible(!minimapW.isVisible());
-        if (minimapW.isVisible()) {
-        	frame.requestFocus();
-        }
-    }
-
-    /** Sets the visibility of the minimap window
-     */
-    public void setMapVisible(boolean visible) {
-        minimapW.setVisible(visible);
-        if (visible) {
-            frame.requestFocus();
-        }
-    }
-
-    protected void fillPopup(Coords coords) {
-        popup.removeAll();
-
-        // add select options
-        if (canSelectEntities()) {
-            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity)i.nextElement();
-                if (game.getTurn().isValidEntity(entity, game)) {
-                    popup.add(new SelectMenuItem(entity));
-                }
-            }
-        }
-
-        if (popup.getItemCount() > 0) {
-            popup.addSeparator();
-        }
-
-        // add view options
-        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            popup.add(new ViewMenuItem(entity));
-        }
-
-        // add target options
-        if (canTargetEntities()) {
-            if (popup.getItemCount() > 0) {
-                popup.addSeparator();
-            }
-            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity)i.nextElement();
-                popup.add(new TargetMenuItem(entity));
-            }
-            // Can target weapons at the hex if it contains woods or building.
-            // Can target physical attacks at the hex if it contains building.
-            if ( curPanel instanceof FiringDisplay ||
-                 curPanel instanceof PhysicalDisplay ||
-                 curPanel instanceof TargetingPhaseDisplay) {
-                Hex h = game.board.getHex(coords);
-                if (h != null && h.contains(Terrain.WOODS) &&
-                    curPanel instanceof FiringDisplay ) {
-                    popup.add(new TargetMenuItem(new HexTarget
-                        (coords, game.board, Targetable.TYPE_HEX_CLEAR) ) );
-                    if (game.getOptions().booleanOption("fire")) {
-                        popup.add(new TargetMenuItem(new HexTarget
-                            (coords, game.board, Targetable.TYPE_HEX_IGNITE) ) );
-                    }
-                }
-                else if ( h != null && h.contains( Terrain.BUILDING ) ) {
-                    popup.add( new TargetMenuItem( new BuildingTarget
-                        ( coords, game.board, false ) ) );
-                    if (game.getOptions().booleanOption("fire")) {
-                        popup.add( new TargetMenuItem( new BuildingTarget
-                            ( coords, game.board, true ) ) );
-                    }
-                }
-                if (h != null && game.containsMinefield(coords) &&
-                    curPanel instanceof FiringDisplay ) {
-                    popup.add(new TargetMenuItem(new MinefieldTarget
-                        (coords, game.board) ) );
-                }
-                if (h != null && curPanel instanceof FiringDisplay) {
-					popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_MINEFIELD_DELIVER) ) );
-				}
-                if (h != null && curPanel instanceof FiringDisplay) {
-                                        popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_HEX_ARTILLERY) ) );
-                               }
-                if (h != null && curPanel instanceof TargetingPhaseDisplay) {
-                                        popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_HEX_ARTILLERY) ) );
-                }
-                }
-
-            }
-        }
-
-
 
     /**
      * Adds the specified game listener to receive
@@ -1225,31 +300,37 @@ public class Client extends Panel
      * @param be        the board event.
      */
     protected void processGameEvent(GameEvent ge) {
-        for(Enumeration e = gameListeners.elements(); e.hasMoreElements();) {
-            GameListener l = (GameListener)e.nextElement();
-            switch(ge.type) {
-            case GameEvent.GAME_PLAYER_CHAT :
-                l.gamePlayerChat(ge);
-                break;
-            case GameEvent.GAME_PLAYER_STATUSCHANGE :
-                l.gamePlayerStatusChange(ge);
-                break;
-            case GameEvent.GAME_PHASE_CHANGE :
-                l.gamePhaseChange(ge);
-                break;
-            case GameEvent.GAME_TURN_CHANGE :
-                l.gameTurnChange(ge);
-                break;
-            case GameEvent.GAME_NEW_ENTITIES :
-                l.gameNewEntities(ge);
-                break;
-            case GameEvent.GAME_NEW_SETTINGS :
-                l.gameNewSettings(ge);
-                break;
+        for (Enumeration e = gameListeners.elements(); e.hasMoreElements();) {
+            GameListener l = (GameListener) e.nextElement();
+            switch (ge.type) {
+                case GameEvent.GAME_PLAYER_CHAT :
+                    l.gamePlayerChat(ge);
+                    break;
+                case GameEvent.GAME_PLAYER_STATUSCHANGE :
+                    l.gamePlayerStatusChange(ge);
+                    break;
+                case GameEvent.GAME_PHASE_CHANGE :
+                    l.gamePhaseChange(ge);
+                    break;
+                case GameEvent.GAME_TURN_CHANGE :
+                    l.gameTurnChange(ge);
+                    break;
+                case GameEvent.GAME_NEW_ENTITIES :
+                    l.gameNewEntities(ge);
+                    break;
+                case GameEvent.GAME_NEW_SETTINGS :
+                    l.gameNewSettings(ge);
+                    break;
+                case GameEvent.GAME_PLAYER_DISCONNECTED :
+                    l.gameDisconnected(ge);
+                    break;
+                case GameEvent.GAME_END:
+                    l.gameEnd(ge);
+                    break;
+                case GameEvent.GAME_REPORT:
+                    l.gameReport(ge);
+                    break;
             }
-        }
-        if (playerListDialog != null) {
-        	playerListDialog.refreshPlayerList();
         }
     }
 
@@ -1258,11 +339,11 @@ public class Client extends Panel
      */
     public void retrieveServerInfo() {
         int retry = 50;
-        while(retry-- > 0 && !connected) {
-            synchronized(this) {
+        while (retry-- > 0 && !connected) {
+            synchronized (this) {
                 try {
                     wait(100);
-                } catch(InterruptedException ex) {
+                } catch (InterruptedException ex) {
                     ;
                 }
             }
@@ -1273,49 +354,23 @@ public class Client extends Panel
      * is it my turn?
      */
     public boolean isMyTurn() {
-        return game.getTurn() != null &&
-            game.getTurn().isValid( local_pn, game );
+        return game.getTurn() != null && game.getTurn().isValid(local_pn, game);
     }
 
     /**
      * Can I unload entities stranded on immobile transports?
      */
     public boolean canUnloadStranded() {
-        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn &&
-            game.getTurn().isValid( local_pn, game );
+        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn && game.getTurn().isValid(local_pn, game);
     }
 
     /**
      * Send command to unload stranded entities to the server
      */
-    public void sendUnloadStranded(int[] entityIds)
-    {
+    public void sendUnloadStranded(int[] entityIds) {
         Object[] data = new Object[1];
         data[0] = entityIds;
         send(new Packet(Packet.COMMAND_UNLOAD_STRANDED, data));
-    }
-
-    /**
-     * Pops up a dialog box giving the player a series of choices that
-     * are not mutually exclusive.
-     *
-     * @param   title the <code>String</code> title of the dialog box.
-     * @param   question the <code>String</code> question that has a
-     *          "Yes" or "No" answer.  The question will be split across
-     *          multiple line on the '\n' characters.
-     * @param   choices the array of <code>String</code> choices that
-     *          the player can select from.
-     * @return  The array of the <code>int</code> indexes of the from the
-     *          input array that match the selected choices.  If no choices
-     *          were available, if the player did not select a choice, or
-     *          if the player canceled the choice, a <code>null</code> value
-     *          is returned.
-     */
-    public int[] doChoiceDialog( String title, String question,
-                                   String[] choices ) {
-        ChoiceDialog choice = new ChoiceDialog(frame,title,question,choices);
-        choice.show();
-        return choice.getChoices();
     }
 
     /**
@@ -1328,68 +383,18 @@ public class Client extends Panel
     }
 
     /**
-     * Pops up a dialog box showing an alert
-     */
-    public void doAlertDialog(String title, String message) {
-        AlertDialog alert = new AlertDialog(frame, title, message);
-        alert.show();
-    }
-
-    /**
-     * Pops up a dialog box asking a yes/no question
-     *
-     * @param   title the <code>String</code> title of the dialog box.
-     * @param   question the <code>String</code> question that has a
-     *          "Yes" or "No" answer.  The question will be split across
-     *          multiple line on the '\n' characters.
-     * @return <code>true</code> if yes
-     */
-    public boolean doYesNoDialog(String title, String question) {
-        ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
-        confirm.show();
-        return confirm.getAnswer();
-    }
-
-    /**
-     * Pops up a dialog box asking a yes/no question
-     * <p/>
-     * The player will be given a chance to not show the dialog again.
-     *
-     * @param   title the <code>String</code> title of the dialog box.
-     * @param   question the <code>String</code> question that has a
-     *          "Yes" or "No" answer.  The question will be split across
-     *          multiple line on the '\n' characters.
-     * @param   bother a <code>Boolean</code> that will be set to match
-     *          the player's response to "Do not bother me again".
-     * @return  the <code>ConfirmDialog</code> containing the player's
-     *          responses.  The dialog will already have been shown to
-     *          the player, and is only being returned so the calling
-     *          function can see the answer to the question and the state
-     *          of the "Show again?" question.
-     */
-    public ConfirmDialog doYesNoBotherDialog( String title, String question ) {
-        ConfirmDialog confirm = new ConfirmDialog(frame,title,question,true);
-        confirm.show();
-        return confirm;
-    }
-
-    /**
      * Send mode-change data to the server
      */
-    public void sendModeChange(int nEntity, int nEquip, int nMode)
-    {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip),
-                          new Integer(nMode) };
+    public void sendModeChange(int nEntity, int nEquip, int nMode) {
+        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nMode)};
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
     /**
      * Send mode-change data to the server
      */
-    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo)
-    {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon),
-                          new Integer(nAmmo) };
+    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
+        Object[] data = { new Integer(nEntity), new Integer(nWeapon), new Integer(nAmmo)};
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -1412,8 +417,8 @@ public class Client extends Panel
      * @param   c - the <code>Coords</code> where the entity should be deployed
      * @param   nFacing - the <code>int</code> direction the entity should face
      */
-    public void deploy( int enum, Coords c, int nFacing ) {
-        this.deploy( enum, c, nFacing, new Vector() );
+    public void deploy(int enum, Coords c, int nFacing) {
+        this.deploy(enum, c, nFacing, new Vector());
     }
 
     /**
@@ -1426,19 +431,18 @@ public class Client extends Panel
      * @param   loadedUnits - a <code>List</code> of units that start the game
      *          being transported byt the deployed entity.
      */
-    public void deploy( int enum, Coords c, int nFacing,
-                        Vector loadedUnits ) {
+    public void deploy(int enum, Coords c, int nFacing, Vector loadedUnits) {
         int packetCount = 4 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
         data[index++] = new Integer(enum);
         data[index++] = c;
         data[index++] = new Integer(nFacing);
-        data[index++] = new Integer( loadedUnits.size() );
+        data[index++] = new Integer(loadedUnits.size());
 
         Enumeration iter = loadedUnits.elements();
-        while ( iter.hasMoreElements() ) {
-            data[index++] = new Integer( ((Entity) iter.nextElement()).getId() );
+        while (iter.hasMoreElements()) {
+            data[index++] = new Integer(((Entity) iter.nextElement()).getId());
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
@@ -1454,14 +458,6 @@ public class Client extends Panel
         data[1] = attacks;
 
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
-
-        /* DEBUG:
-        System.out.println("client: sent fire:");
-        for (Enumeration i = fire.elements(); i.hasMoreElements();) {
-          FiringData fd = (FiringData)i.nextElement();
-          System.out.println(fd);
-        }
-        */
     }
 
     /**
@@ -1477,8 +473,8 @@ public class Client extends Panel
     /**
      * Send the game settings to the server
      */
-    public void sendMapSettings(MapSettings mapSettings) {
-        send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings));
+    public void sendMapSettings(MapSettings settings) {
+        send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
     }
 
     /**
@@ -1513,11 +509,11 @@ public class Client extends Panel
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        Player player = game.getPlayer( local_pn );
+        Player player = game.getPlayer(local_pn);
         Settings.lastPlayerColor = player.getColorIndex();
         Settings.lastPlayerCategory = player.getCamoCategory();
         Settings.lastPlayerCamoName = player.getCamoFileName();
-        send( new Packet(Packet.COMMAND_PLAYER_UPDATE, player) );
+        send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
     /**
@@ -1548,13 +544,12 @@ public class Client extends Panel
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(enum)));
     }
 
-
     /**
      * Receives player information from the message packet.
      */
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        Player newPlayer = (Player)c.getObject(1);
+        Player newPlayer = (Player) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
         } else {
@@ -1570,34 +565,31 @@ public class Client extends Panel
      * Loads the turn list from the data in the packet
      */
     protected void receiveTurns(Packet packet) {
-        game.setTurnVector((Vector)packet.getObject(0));
+        game.setTurnVector((Vector) packet.getObject(0));
     }
 
     /**
      * Loads the board from the data in the net command.
      */
     protected void receiveBoard(Packet c) {
-        Board newBoard = (Board)c.getObject(0);
-        game.board.newData( newBoard );
+        Board newBoard = (Board) c.getObject(0);
+        game.board.newData(newBoard);
     }
 
     /**
      * Loads the entities from the data in the net command.
      */
     protected void receiveEntities(Packet c) {
-        Vector newEntities = (Vector)c.getObject(0);
-        Vector newOutOfGame = (Vector)c.getObject(1);
+        Vector newEntities = (Vector) c.getObject(0);
+        Vector newOutOfGame = (Vector) c.getObject(1);
 
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
-	        game.setOutOfGameEntitiesVector(newOutOfGame);
+            game.setOutOfGameEntitiesVector(newOutOfGame);
         }
 
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
-        //XXX Hack alert!
-        bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
-        //XXX
     }
 
     /**
@@ -1605,34 +597,21 @@ public class Client extends Panel
      */
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
-        Entity entity = (Entity)c.getObject(1);
-        Vector movePath = (Vector) c.getObject(2);
-        Coords oc = entity.getPosition();
-        if (game.getEntity(eindex) != null) {
-          oc = game.getEntity(eindex).getPosition();
-        }
+        Entity entity = (Entity) c.getObject(1);
         // Replace this entity in the game.
-        game.setEntity(eindex, entity);
-        //XXX Hack alert!
-        if (movePath.size() > 0 && Settings.showMoveStep) {
-        	bv.addMovingUnit(entity, movePath);
-        } else {
-	        bv.boardChangedEntity(new BoardEvent(game.board, oc, entity, 0, 0)); //XXX
-	    }
-        //XXX
+        game.setEntity(eindex, entity);        
+
+        processGameEvent(new GameEvent(c, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
     protected void receiveEntityAdd(Packet packet) {
         int entityId = packet.getIntValue(0);
-        Entity entity = (Entity)packet.getObject(1);
+        Entity entity = (Entity) packet.getObject(1);
 
         // Add the entity to the game.
         game.addEntity(entityId, entity);
 
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
-        //XXX Hack alert!
-        bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
-        //XXX
     }
 
     protected void receiveEntityRemove(Packet packet) {
@@ -1643,106 +622,95 @@ public class Client extends Panel
         game.removeEntity(entityId, condition);
 
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
-        //XXX Hack alert!
-        bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
-        //XXX
     }
 
     protected void receiveDeployMinefields(Packet packet) {
-    	Vector minefields = (Vector) packet.getObject(0);
+        Vector minefields = (Vector) packet.getObject(0);
 
-    	for (int i = 0; i < minefields.size(); i++) {
-    		Minefield mf = (Minefield) minefields.elementAt(i);
-
-    		game.addMinefield(mf);
-    	}
-    	bv.update(bv.getGraphics());
+        for (int i = 0; i < minefields.size(); i++) {
+            Minefield mf = (Minefield) minefields.elementAt(i);
+            game.addMinefield(mf);
+        }
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveSendingMinefields(Packet packet) {
-    	Vector minefields = (Vector) packet.getObject(0);
-    	game.clearMinefields();
+        Vector minefields = (Vector) packet.getObject(0);
+        game.clearMinefields();
 
-    	for (int i = 0; i < minefields.size(); i++) {
-    		Minefield mf = (Minefield) minefields.elementAt(i);
-
-    		game.addMinefield(mf);
-	   	}
+        for (int i = 0; i < minefields.size(); i++) {
+            Minefield mf = (Minefield) minefields.elementAt(i);
+            game.addMinefield(mf);
+        }
+		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveRevealMinefield(Packet packet) {
-		Minefield mf = (Minefield) packet.getObject(0);
-
-		game.addMinefield(mf);
-    	bv.update(bv.getGraphics());
+        Minefield mf = (Minefield) packet.getObject(0);
+        game.addMinefield(mf);
+		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
-		Minefield mf = (Minefield) packet.getObject(0);
-
-		game.removeMinefield(mf);
-    	bv.update(bv.getGraphics());
+        Minefield mf = (Minefield) packet.getObject(0);
+        game.removeMinefield(mf);
+		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
         Vector bldgs = (Vector) packet.getObject(0);
 
         // Update the board.  The board will notify listeners.
-        game.board.updateBuildingCF( bldgs );
+        game.board.updateBuildingCF(bldgs);
     }
 
     protected void receiveBuildingCollapse(Packet packet) {
         Vector bldgs = (Vector) packet.getObject(0);
 
         // Update the board.  The board will notify listeners.
-        game.board.collapseBuilding( bldgs );
+        game.board.collapseBuilding(bldgs);
     }
 
     /**
      * Loads entity firing data from the data in the net command
      */
     protected void receiveAttack(Packet c) {
-        Vector vector = (Vector)c.getObject(0);
+        Vector vector = (Vector) c.getObject(0);
         boolean charge = c.getBooleanValue(1);
         boolean addAction = true;
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
-            EntityAction ea = (EntityAction)i.nextElement();
+            EntityAction ea = (EntityAction) i.nextElement();
             int entityId = ea.getEntityId();
             if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
-                TorsoTwistAction tta = (TorsoTwistAction)ea;
+                TorsoTwistAction tta = (TorsoTwistAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-                //XXX Hack alert!
-                bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
-                //XXX
+				game.board.processBoardEvent(new BoardEvent(game.board, entity.getPosition(), entity, BoardEvent.BOARD_CHANGED_ENTITY, 0)); //XXX
             } else if (ea instanceof FlipArmsAction && game.hasEntity(entityId)) {
-                FlipArmsAction faa = (FlipArmsAction)ea;
+                FlipArmsAction faa = (FlipArmsAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
-                //XXX Hack alert!
-                bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
-                //XXX
+				game.board.processBoardEvent(new BoardEvent(game.board, entity.getPosition(), entity, BoardEvent.BOARD_CHANGED_ENTITY, 0)); //XXX
             } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
-
                 addAction = false;
             } else if (ea instanceof AttackAction) {
-                if ( ea instanceof ClubAttackAction ) {
+                if (ea instanceof ClubAttackAction) {
                     ClubAttackAction clubAct = (ClubAttackAction) ea;
-                    Entity entity = game.getEntity( clubAct.getEntityId() );
-                    clubAct.setClub( Compute.clubMechHas(entity) );
+                    Entity entity = game.getEntity(clubAct.getEntityId());
+                    clubAct.setClub(Compute.clubMechHas(entity));
                 }
-                bv.addAttack((AttackAction)ea);
+                game.board.processBoardEvent(new BoardEvent(ea, null, null, BoardEvent.BOARD_NEW_ATTACK, 0));
             }
 
-            if ( addAction ) {
-              // track in the appropriate list
-              if (charge) {
-                  game.addCharge((AttackAction)ea);
-              } else {
-                  game.addAction(ea);
-              }
+            if (addAction) {
+                // track in the appropriate list
+                if (charge) {
+                    game.addCharge((AttackAction) ea);
+                } else {
+                    game.addAction(ea);
+                }
             }
         }
     }
@@ -1750,8 +718,7 @@ public class Client extends Panel
     /**
      * Saves server entity status data to a local file
      */
-    private void saveEntityStatus(String sStatus)
-    {
+    private void saveEntityStatus(String sStatus) {
         try {
             FileWriter fw = new FileWriter("entitystatus.txt");
             fw.write(sStatus);
@@ -1762,7 +729,6 @@ public class Client extends Panel
         }
     }
 
-
     /**
      * Reads a complete net command from the given input stream
      */
@@ -1771,16 +737,16 @@ public class Client extends Panel
             if (in == null) {
                 in = new ObjectInputStream(socket.getInputStream());
             }
-            Packet packet = (Packet)in.readObject();
-//            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
+            Packet packet = (Packet) in.readObject();
+            //            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
 
             // All went well.  Reset the failure count.
             this.connFailures = 0;
             return packet;
         } catch (SocketException ex) {
-        	// assume client is shutting down
+            // assume client is shutting down
             System.err.println("client: Socket error (server closed?)");
-            if ( this.connFailures > MAX_CONN_FAILURES ) {
+            if (this.connFailures > MAX_CONN_FAILURES) {
                 disconnected();
             } else {
                 this.connFailures++;
@@ -1811,8 +777,8 @@ public class Client extends Panel
             out.reset(); // write each packet fresh; a lot changes
             out.writeObject(packet);
             out.flush();
-//            System.out.println("c: packet #" + packet.getCommand() + " sent");
-        } catch(IOException ex) {
+            //            System.out.println("c: packet #" + packet.getCommand() + " sent");
+        } catch (IOException ex) {
             System.err.println("client: error sending command.");
         }
     }
@@ -1821,448 +787,123 @@ public class Client extends Panel
     // Runnable
     //
     public void run() {
-        Thread currentThread = Thread.currentThread();
-        Packet c;
+		Thread currentThread = Thread.currentThread();
         while(pump == currentThread) {
-            c = readPacket();
+            Packet c = readPacket();
             if (c == null) {
                 System.out.println("client: got null packet");
                 continue;
             }
-            // obey command
-//             System.out.println( "Received a " + c.getCommand() + " packet." ); //commentme
-            switch(c.getCommand()) {
-            case Packet.COMMAND_CLOSE_CONNECTION :
-                disconnected();
-                break;
-            case Packet.COMMAND_SERVER_GREETING :
-                connected = true;
-                send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
-                break;
-            case Packet.COMMAND_LOCAL_PN :
-                this.local_pn = c.getIntValue(0);
-                break;
-            case Packet.COMMAND_PLAYER_UPDATE :
-                receivePlayerInfo(c);
-                break;
-            case Packet.COMMAND_PLAYER_READY :
-                getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-                processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
-                break;
-            case Packet.COMMAND_PLAYER_ADD :
-                receivePlayerInfo(c);
-                break;
-            case Packet.COMMAND_PLAYER_REMOVE :
-                game.removePlayer(c.getIntValue(0));
-                processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
-                break;
-            case Packet.COMMAND_CHAT :
-                processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String)c.getObject(0)));
-                bing();
-                break;
-            case Packet.COMMAND_ENTITY_ADD :
-                receiveEntityAdd(c);
-                break;
-            case Packet.COMMAND_ENTITY_UPDATE :
-                receiveEntityUpdate(c);
-                break;
-            case Packet.COMMAND_ENTITY_REMOVE :
-                receiveEntityRemove(c);
-                break;
-            case Packet.COMMAND_SENDING_MINEFIELDS :
-            	receiveSendingMinefields(c);
-            	break;
-            case Packet.COMMAND_DEPLOY_MINEFIELDS :
-            	receiveDeployMinefields(c);
-            	break;
-            case Packet.COMMAND_REVEAL_MINEFIELD :
-            	receiveRevealMinefield(c);
-            	break;
-            case Packet.COMMAND_REMOVE_MINEFIELD :
-            	receiveRemoveMinefield(c);
-            	break;
-            case Packet.COMMAND_CHANGE_HEX :
-                game.board.setHex((Coords)c.getObject(0), (Hex)c.getObject(1));
-                break;
-            case Packet.COMMAND_BLDG_UPDATE_CF :
-                receiveBuildingUpdateCF( c );
-                break;
-            case Packet.COMMAND_BLDG_COLLAPSE :
-                receiveBuildingCollapse( c );
-                break;
-            case Packet.COMMAND_PHASE_CHANGE :
-                changePhase(c.getIntValue(0));
-                break;
-            case Packet.COMMAND_TURN :
-                changeTurnIndex(c.getIntValue(0));
-                break;
-            case Packet.COMMAND_ROUND_UPDATE :
-                game.setRoundCount(c.getIntValue(0));
-                break;
-            case Packet.COMMAND_SENDING_TURNS :
-                receiveTurns(c);
-                break;
-            case Packet.COMMAND_SENDING_BOARD :
-                receiveBoard(c);
-                break;
-            case Packet.COMMAND_SENDING_ENTITIES :
-                receiveEntities(c);
-                break;
-            case Packet.COMMAND_SENDING_REPORT :
-                eotr = (String)c.getObject(0);
-                if (curPanel instanceof ReportDisplay) {
-                    ((ReportDisplay)curPanel).refresh();
-                    ((ReportDisplay)curPanel).resetReadyButton();
-                }
-                break;
-            case Packet.COMMAND_ENTITY_ATTACK :
-                receiveAttack(c);
-                break;
-            case Packet.COMMAND_SENDING_GAME_SETTINGS :
-                game.setOptions((GameOptions)c.getObject(0));
-                if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
-                    gameOptionsDialog.update(game.getOptions());
-                }
-                if (curPanel instanceof ChatLounge) {
-                	ChatLounge cl = (ChatLounge) curPanel;
-                	boolean useMinefields = game.getOptions().booleanOption("minefields");
-                	cl.enableMinefields(useMinefields);
+            switch (c.getCommand()) {
+                case Packet.COMMAND_CLOSE_CONNECTION :
+                    disconnected();
+                    break;
+                case Packet.COMMAND_SERVER_GREETING :
+                    connected = true;
+                    send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+                    break;
+                case Packet.COMMAND_LOCAL_PN :
+                    this.local_pn = c.getIntValue(0);
+                    break;
+                case Packet.COMMAND_PLAYER_UPDATE :
+                    receivePlayerInfo(c);
+                    break;
+                case Packet.COMMAND_PLAYER_READY :
+                    getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+                    processGameEvent(
+                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                    break;
+                case Packet.COMMAND_PLAYER_ADD :
+                    receivePlayerInfo(c);
+                    break;
+                case Packet.COMMAND_PLAYER_REMOVE :
+                    game.removePlayer(c.getIntValue(0));
+                    processGameEvent(
+                        new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                    break;
+                case Packet.COMMAND_CHAT :
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String) c.getObject(0)));
+                    break;
+                case Packet.COMMAND_ENTITY_ADD :
+                    receiveEntityAdd(c);
+                    break;
+                case Packet.COMMAND_ENTITY_UPDATE :
+                    receiveEntityUpdate(c);
+                    break;
+                case Packet.COMMAND_ENTITY_REMOVE :
+                    receiveEntityRemove(c);
+                    break;
+                case Packet.COMMAND_SENDING_MINEFIELDS :
+                    receiveSendingMinefields(c);
+                    break;
+                case Packet.COMMAND_DEPLOY_MINEFIELDS :
+                    receiveDeployMinefields(c);
+                    break;
+                case Packet.COMMAND_REVEAL_MINEFIELD :
+                    receiveRevealMinefield(c);
+                    break;
+                case Packet.COMMAND_REMOVE_MINEFIELD :
+                    receiveRemoveMinefield(c);
+                    break;
+                case Packet.COMMAND_CHANGE_HEX :
+                    game.board.setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                    break;
+                case Packet.COMMAND_BLDG_UPDATE_CF :
+                    receiveBuildingUpdateCF(c);
+                    break;
+                case Packet.COMMAND_BLDG_COLLAPSE :
+                    receiveBuildingCollapse(c);
+                    break;
+                case Packet.COMMAND_PHASE_CHANGE :
+                    changePhase(c.getIntValue(0));
+                    break;
+                case Packet.COMMAND_TURN :
+                    changeTurnIndex(c.getIntValue(0));
+                    break;
+                case Packet.COMMAND_ROUND_UPDATE :
+                    game.setRoundCount(c.getIntValue(0));
+                    break;
+                case Packet.COMMAND_SENDING_TURNS :
+                    receiveTurns(c);
+                    break;
+                case Packet.COMMAND_SENDING_BOARD :
+                    receiveBoard(c);
+                    break;
+                case Packet.COMMAND_SENDING_ENTITIES :
+                    receiveEntities(c);
+                    break;
+                case Packet.COMMAND_SENDING_REPORT :
+                    eotr = (String) c.getObject(0);
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_REPORT, null, ""));
+                    break;
+                case Packet.COMMAND_ENTITY_ATTACK :
+                    receiveAttack(c);
+                    break;
+                case Packet.COMMAND_SENDING_GAME_SETTINGS :
+                    game.setOptions((GameOptions) c.getObject(0));
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                    break;
+                case Packet.COMMAND_SENDING_MAP_SETTINGS :
+                    mapSettings = (MapSettings) c.getObject(0);
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                    break;
+                case Packet.COMMAND_QUERY_MAP_SETTINGS :
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                    break;
+                case Packet.COMMAND_END_OF_GAME :
+                    String sReport = (String) c.getObject(0);
+                    game.setVictoryPlayerId(c.getIntValue(1));
+                    game.setVictoryTeam(c.getIntValue(2));
+                    // save victory report
+                    saveEntityStatus(sReport);
 
-                	if (!useMinefields) {
-						getLocalPlayer().setNbrMFConventional(0);
-						getLocalPlayer().setNbrMFCommand(0);
-						getLocalPlayer().setNbrMFVibra(0);
-						sendPlayerInfo();
-					}
-                }
-                processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
-                break;
-            case Packet.COMMAND_SENDING_MAP_SETTINGS :
-                mapSettings = (MapSettings)c.getObject(0);
-                if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
-                    boardSelectionDialog.update((MapSettings)c.getObject(0), true);
-                }
-                processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
-                break;
-            case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
-                    boardSelectionDialog.update((MapSettings)c.getObject(0), false);
-                }
-                break;
-            case Packet.COMMAND_END_OF_GAME :
-                String sReport = (String)c.getObject(0);
-                game.setVictoryPlayerId(c.getIntValue(1));
-                game.setVictoryTeam(c.getIntValue(2));
-                // save victory report
-                saveEntityStatus(sReport);
-
-                // Clean up the board settings.
-                this.game.board.select(null);
-                this.game.board.highlight(null);
-                this.game.board.cursor(null);
-                this.bv.clearMovementData();
-
-                // Make a list of the player's living units.
-                Vector living = game.getPlayerEntities( getLocalPlayer() );
-
-                // Be sure to include all units that have retreated.
-                for ( Enumeration iter = game.getRetreatedEntities();
-                      iter.hasMoreElements(); ) {
-                    living.addElement( iter.nextElement() );
-                }
-
-                // Allow players to save their living units to a file.
-                // Don't bother asking if none survived.
-                if ( !living.isEmpty() &&
-                     doYesNoDialog( "Save Units?",
-                                    "Do you want to save all surviving units\n"
-                                    + "(including retreated units) to a file?")
-                     ) {
-
-                    // Allow the player to save the units to a file.
-                    saveListFile( living );
-
-                } // End user-wants-a-MUL
-                break;
-            }
-        }
-    }
-
-    public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
-    }
-
-    public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
-    }
-
-    public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
-    }
-
-    public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
-        if (mouseEvent.isPopupTrigger()) {
-            showBoardPopup(mouseEvent.getPoint());
-        }
-    }
-
-    public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
-        if (mouseEvent.isPopupTrigger()) {
-            showBoardPopup(mouseEvent.getPoint());
-        }
-    }
-
-
-    /**
-     * Allow the player to select a MegaMek Unit List file to load.  The
-     * <code>Entity</code>s in the file will replace any that the player
-     * has already selected.  As such, this method should only be called
-     * in the chat lounge.  The file can record damage sustained, non-
-     * standard munitions selected, and ammunition expended in a prior
-     * engagement.
-     */
-    protected void loadListFile() {
-
-        // Build the "load unit" dialog, if necessary.
-        if ( null == dlgLoadList ) {
-            dlgLoadList = new FileDialog( frame,
-                                          "Open Unit List File",
-                                          FileDialog.LOAD );
-
-            // Add a filter for MUL files
-            dlgLoadList.setFilenameFilter( new FilenameFilter() {
-                    public boolean accept( File dir, String name ) {
-                        return ( null != name && name.endsWith( ".mul" ) );
-                    }
-                } );
-
-            // use base directory by default
-            dlgLoadList.setDirectory(".");
-
-            // Default to the player's name.
-            //dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
-            // Instead, use setFile as a windoze hack, see Server.java
-            //  (search for "setFile") for details.
-            dlgLoadList.setFile("*.mul");
-        }
-
-        // Display the "load unit" dialog.
-        dlgLoadList.show();
-
-        // Did the player select a file?
-        String unitPath = dlgLoadList.getDirectory();
-        String unitFile = dlgLoadList.getFile();
-        if ( null != unitFile ) {
-            try {
-                // Read the units from the file.
-                Vector loadedUnits = EntityListFile.loadFrom( unitPath, unitFile );
-
-                // Add the units from the file.
-                for ( Enumeration iter = loadedUnits.elements();
-                      iter.hasMoreElements(); ) {
-                    final Entity entity = (Entity) iter.nextElement();
-                    entity.setOwner( getLocalPlayer() );
-                    sendAddEntity( entity );
-                }
-            } catch ( IOException excep ) {
-                excep.printStackTrace( System.err );
-                doAlertDialog( "Error Loading File", excep.getMessage() );
-            }
-        }
-    }
-
-    /**
-     * Allow the player to save a list of entities to a MegaMek Unit List
-     * file.  A "Save As" dialog will be displayed that allows the user to
-     * select the file's name and directory. The player can later load this
-     * file to quickly select the units for a new game.  The file will record
-     * damage sustained, non-standard munitions selected, and ammunition
-     * expended during the course of the current engagement.
-     *
-     * @param   unitList - the <code>Vector</code> of <code>Entity</code>s
-     *          to be saved to a file.  If this value is <code>null</code>
-     *          or empty, the "Save As" dialog will not be displayed.
-     */
-    protected void saveListFile( Vector unitList ) {
-
-        // Handle empty lists.
-        if ( null == unitList || unitList.isEmpty() ) {
-            return;
-        }
-
-        // Build the "save unit" dialog, if necessary.
-        if ( null == dlgSaveList ) {
-            dlgSaveList = new FileDialog( frame,
-                                          "Save Unit List As",
-                                          FileDialog.SAVE );
-
-            // Add a filter for MUL files
-            dlgSaveList.setFilenameFilter( new FilenameFilter() {
-                    public boolean accept( File dir, String name ) {
-                        return ( null != name && name.endsWith( ".mul" ) );
-                    }
-                } );
-
-            // use base directory by default
-            dlgSaveList.setDirectory(".");
-
-            // Default to the player's name.
-            dlgSaveList.setFile( getLocalPlayer().getName() + ".mul" );
-        }
-
-        // Display the "save unit" dialog.
-        dlgSaveList.show();
-
-        // Did the player select a file?
-        String unitPath = dlgSaveList.getDirectory();
-        String unitFile = dlgSaveList.getFile();
-        if ( null != unitFile ) {
-            try {
-                // Save the player's entities to the file.
-                EntityListFile.saveTo( unitPath, unitFile, unitList );
-            } catch ( IOException excep ) {
-                excep.printStackTrace( System.err );
-                doAlertDialog( "Error Saving File", excep.getMessage() );
-            }
-        }
-    }
-
-    //
-    // WindowListener
-    //
-    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-        if (windowEvent.getWindow() == minimapW) {
-            setMapVisible(false);
-        }
-        else if (windowEvent.getWindow() == mechW) {
-            setDisplayVisible(false);
-        }
-    }
-    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
-    }
-    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
-    }
-
-    /**
-     * A menu item that lives to view an entity.
-     */
-    private class ViewMenuItem extends MenuItem implements ActionListener {
-        Entity entity;
-
-        public ViewMenuItem(Entity entity) {
-            super("View " + entity.getDisplayName());
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            setDisplayVisible(true);
-            mechD.displayEntity(entity);
-        }
-    }
-
-    /**
-     * A menu item that would really like to select an entity.  You can use
-     * this during movement, firing & physical phases.  (Deployment would
-     * just be silly.)
-     */
-    private class SelectMenuItem extends MenuItem implements ActionListener {
-        Entity entity;
-
-        public SelectMenuItem(Entity entity) {
-            super("Select " + entity.getDisplayName());
-            this.entity = entity;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            if (curPanel instanceof MovementDisplay) {
-                ((MovementDisplay)curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay)curPanel).selectEntity(entity.getId());
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay)curPanel).selectEntity(entity.getId());
-            }
-        }
-    }
-
-    /**
-     * A menu item that will target an entity, provided that it's sensible to
-     * do so
-     */
-    private class TargetMenuItem extends MenuItem implements ActionListener {
-        Targetable target;
-
-        public TargetMenuItem(Targetable t) {
-            super("Target " + t.getDisplayName());
-            target = t;
-            addActionListener(this);
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            if (curPanel instanceof FiringDisplay) {
-                ((FiringDisplay)curPanel).target(target);
-            } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay)curPanel).target(target);
-            } else if (curPanel instanceof TargetingPhaseDisplay) {
-                ((TargetingPhaseDisplay)curPanel).target(target);
-            }
-        }
-    }
-
-    /**
-     * @return the frame this client is displayed in
-     */
-    public Frame getFrame() {
-        return frame;
-    }
-
-    // Shows a dialg where the player can select the entity types
-    // used in the LOS tool.
-    public void showLOSSettingDialog() {
-      	LOSDialog ld = new LOSDialog(frame, game.getMechInFirst(), game.getMechInSecond());
-      	ld.show();
-
-      	game.setMechInFirst(ld.getMechInFirst());
-      	game.setMechInSecond(ld.getMechInSecond());
-    }
-
-    // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(BufferedPanel bp, Entity entity) {
-		Player player = game.getPlayer(entity.getOwnerId());
-		loadPreviewImage(bp, entity, player);
-    }
-
-    public void loadPreviewImage( BufferedPanel bp, Entity entity,
-                                  Player player ) {
-        Image camo = bv.getTilesetManager().getPlayerCamo( player );
-        int tint = player.getColorRGB();
-        bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
-    }
-
-    /**
-     * Make a "bing" sound.
-     * This tries to use the newer AudioClip class first, then falls
-     * back on a Java 1.1 friendly (but undocumented!) class.
-     */
-    public void bing() {
-        if ( !Settings.soundMute ) {
-            if ( null != bingClip ) {
-                bingClip.play();
-            } else {
-                try{
-                    File file = new File( Settings.soundBingFilename );
-                    InputStream in = new FileInputStream(file);
-                    AudioStream bingClip = new AudioStream(in);
-                    AudioPlayer.player.start(bingClip);
-                } catch (Exception err){
-                    err.printStackTrace();
-                }
+                    // Clean up the board settings.
+                    this.game.board.select(null);
+                    this.game.board.highlight(null);
+                    this.game.board.cursor(null);
+                    
+                    processGameEvent(new GameEvent(this, GameEvent.GAME_END, null, ""));
+                    break;
             }
         }
     }
@@ -2280,24 +921,31 @@ public class Client extends Panel
      * @see     megamek.common.Settings#memoryDumpOn
      * @see     megamek.client.Client#changePhase(int)
      */
-    private void memDump( String where ) {
-        if ( Settings.memoryDumpOn ) {
+    private void memDump(String where) {
+        if (Settings.memoryDumpOn) {
             StringBuffer buf = new StringBuffer();
             final long total = Runtime.getRuntime().totalMemory();
-            final long free  = Runtime.getRuntime().freeMemory();
-            final long used  = total - free;
-            buf.append("Memory dump ")
-                .append(where);
+            final long free = Runtime.getRuntime().freeMemory();
+            final long used = total - free;
+            buf.append("Memory dump ").append(where);
             for (int loop = where.length(); loop < 25; loop++) {
                 buf.append(' ');
             }
-            buf.append(": used (")
-                .append( used )
-                .append(") + free (")
-                .append(free)
-                .append(") = ")
-                .append(total);
+            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total);
             System.out.println(buf.toString());
         }
     }
+    
+    public String getName() {
+        return name;
+    }
+
+    public boolean areMechsLoaded() {
+        return mechsLoaded;
+    }
+
+    public void setMechsLoaded(boolean mechsLoaded) {
+        this.mechsLoaded = mechsLoaded;
+    }
+
 }

@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.util.Distractable;
@@ -44,7 +43,8 @@ public class TargetingPhaseDisplay
     public static final String FIRE_REPORT     = "fireReport";
 
     // parent game
-    public Client client;
+    public ClientGUI clientgui;
+    private Client client;
 
     // buttons
     private Container        panButtons;
@@ -79,8 +79,9 @@ public class TargetingPhaseDisplay
      * Creates and lays out a new targeting phase display
      * for the specified client.
      */
-    public TargetingPhaseDisplay(Client client) {
-        this.client = client;
+    public TargetingPhaseDisplay(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+        this.client = clientgui.getClient();
 
         shiftheld = false;
 
@@ -135,7 +136,7 @@ public class TargetingPhaseDisplay
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
 //         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(client.bv, gridbag, c);
+//         addBag(clientgui.bv, gridbag, c);
 
 //         c.weightx = 1.0;    c.weighty = 0;
 //         c.gridwidth = 1;
@@ -165,12 +166,12 @@ public class TargetingPhaseDisplay
         this.client.addGameListener(this);
         this.client.game.board.addBoardListener(this);
 
-        this.client.bv.addKeyListener( this );
+        this.clientgui.bv.addKeyListener( this );
         addKeyListener(this);
 
         // mech display.
-        this.client.mechD.wPan.weaponList.addItemListener(this);
-        this.client.mechD.wPan.weaponList.addKeyListener(this);
+        this.clientgui.mechD.wPan.weaponList.addItemListener(this);
+        this.clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -247,12 +248,12 @@ public class TargetingPhaseDisplay
 
             refreshAll();
 
-            if (!client.bv.isMovingUnits()) {
-                client.bv.centerOnHex(ce().getPosition());
+            if (!clientgui.bv.isMovingUnits()) {
+                clientgui.bv.centerOnHex(ce().getPosition());
             }
 
             // Update the menu bar.
-            client.getMenuBar().setEntity( ce() );
+            clientgui.getMenuBar().setEntity( ce() );
 
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
@@ -270,8 +271,8 @@ public class TargetingPhaseDisplay
 
         selectEntity(client.getFirstEntityNum());
 
-        if (!client.bv.isMovingUnits()) {
-            client.setDisplayVisible(true);
+        if (!clientgui.bv.isMovingUnits()) {
+            clientgui.setDisplayVisible(true);
         }
 
         // There's special processing for triggering AP Pods.
@@ -279,7 +280,7 @@ public class TargetingPhaseDisplay
              null != ce() ) {
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog
-                ( client.getFrame(), ce() );
+                ( clientgui.getFrame(), ce() );
             dialog.show();
             attacks.removeAllElements();
             Enumeration actions = dialog.getActions();
@@ -304,14 +305,14 @@ public class TargetingPhaseDisplay
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
-            client.setDisplayVisible(false);
+            clientgui.setDisplayVisible(false);
         };
         cen = Entity.NONE;
         target(null);
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.bv.clearMovementData();
+        clientgui.bv.clearMovementData();
         disableButtons();
 
     }
@@ -342,7 +343,7 @@ public class TargetingPhaseDisplay
             String title = "Don't fire?";
             String body = "This unit has not fired any weapons.\n\n" +
                 "Are you really done?\n";
-            ConfirmDialog response = client.doYesNoBotherDialog(title, body);
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if ( !response.getShowAgain() ) {
                 Settings.nagForNoAction = false;
                 Settings.save();
@@ -365,7 +366,7 @@ public class TargetingPhaseDisplay
         attacks.removeAllElements();
 
         // Clear the menu bar.
-        client.getMenuBar().setEntity( null );
+        clientgui.getMenuBar().setEntity( null );
 
         // close aimed shot display, if any
 
@@ -377,7 +378,7 @@ public class TargetingPhaseDisplay
      */
     private void fire() {
         // get the sepected weaponnum
-        int weaponNum = client.mechD.wPan.getSelectedWeaponNum();
+        int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
 
         // validate
@@ -397,9 +398,9 @@ public class TargetingPhaseDisplay
 
         // and add it into the game, temporarily
         client.game.addAction(waa);
-        client.bv.addAttack(waa);
-        client.bv.repaint(100);
-        client.minimap.drawMap();
+        clientgui.bv.addAttack(waa);
+        clientgui.bv.repaint(100);
+        clientgui.minimap.drawMap();
 
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -414,8 +415,8 @@ public class TargetingPhaseDisplay
         }
 
         // otherwise, display firing info for the next weapon
-        client.mechD.wPan.displayMech(ce());
-        client.mechD.wPan.selectWeapon(nextWeapon);
+        clientgui.mechD.wPan.displayMech(ce());
+        clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
 
     }
@@ -424,13 +425,13 @@ public class TargetingPhaseDisplay
      * Skips to the next weapon
      */
     private void nextWeapon() {
-        int nextWeapon = ce().getNextWeapon(client.mechD.wPan.getSelectedWeaponNum());
+        int nextWeapon = ce().getNextWeapon(clientgui.mechD.wPan.getSelectedWeaponNum());
         // if there's no next weapon, forget about it
         if(nextWeapon == -1) {
             return;
         }
-        client.mechD.wPan.displayMech(ce());
-        client.mechD.wPan.selectWeapon(nextWeapon);
+        clientgui.mechD.wPan.displayMech(ce());
+        clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
     }
 
@@ -471,8 +472,8 @@ public class TargetingPhaseDisplay
     private void removeTempAttacks() {
         // remove temporary attacks from game & board
         client.game.removeActionsFor(cen);
-        client.bv.removeAttacksFor(cen);
-        client.bv.repaint(100);
+        clientgui.bv.removeAttacksFor(cen);
+        clientgui.bv.repaint(100);
 
     }
 
@@ -483,10 +484,10 @@ public class TargetingPhaseDisplay
         if (ce() == null) {
             return;
         }
-        client.bv.redrawEntity(ce());
-        client.mechD.displayEntity(ce());
-        client.mechD.showPanel("weapons");
-        client.mechD.wPan.selectWeapon(ce().getFirstWeapon());
+        clientgui.bv.redrawEntity(ce());
+        clientgui.mechD.displayEntity(ce());
+        clientgui.mechD.showPanel("weapons");
+        clientgui.mechD.wPan.selectWeapon(ce().getFirstWeapon());
         updateTarget();
     }
 
@@ -506,43 +507,43 @@ public class TargetingPhaseDisplay
         setFireEnabled(false);
 
         // make sure we're showing the current entity in the mech display
-        if (ce() != null && !ce().equals(client.mechD.getCurrentEntity())) {
-            client.mechD.displayEntity(ce());
+        if (ce() != null && !ce().equals(clientgui.mechD.getCurrentEntity())) {
+            clientgui.mechD.displayEntity(ce());
         }
 
         // update target panel
-        final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         if (target != null && weaponId != -1) {
             ToHitData toHit;
 
               toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
-              client.mechD.wPan.wTargetR.setText(target.getDisplayName());
+              clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
-            client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
+            clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
-                client.mechD.wPan.wToHitR.setText("Already fired");
+                clientgui.mechD.wPan.wToHitR.setText("Already fired");
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
-                client.mechD.wPan.wToHitR.setText("Auto-firing weapon");
+                clientgui.mechD.wPan.wToHitR.setText("Auto-firing weapon");
                 setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                client.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
                 setFireEnabled(true);
             }
-            client.mechD.wPan.toHitText.setText(toHit.getDesc());
+            clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            client.mechD.wPan.wTargetR.setText("---");
-            client.mechD.wPan.wRangeR.setText("---");
-            client.mechD.wPan.wToHitR.setText("---");
-            client.mechD.wPan.toHitText.setText("");
+            clientgui.mechD.wPan.wTargetR.setText("---");
+            clientgui.mechD.wPan.wRangeR.setText("---");
+            clientgui.mechD.wPan.wToHitR.setText("---");
+            clientgui.mechD.wPan.toHitText.setText("");
         }
     }
 
@@ -683,16 +684,16 @@ public class TargetingPhaseDisplay
         if (ev.getSource() == butDone) {
             ready();
         } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
-            new MiniReportDisplay(client.frame, client.eotr).show();
+            new MiniReportDisplay(clientgui.frame, client.eotr).show();
             return;
         } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
             // Make sure the game options dialog is not editable.
-            if ( client.getGameOptionsDialog().isEditable() ) {
-                client.getGameOptionsDialog().setEditable( false );
+            if ( clientgui.getGameOptionsDialog().isEditable() ) {
+                clientgui.getGameOptionsDialog().setEditable( false );
             }
             // Display the game options dialog.
-            client.getGameOptionsDialog().update(client.game.getOptions());
-            client.getGameOptionsDialog().show();
+            clientgui.getGameOptionsDialog().update(client.game.getOptions());
+            clientgui.getGameOptionsDialog().show();
         } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
             fire();
         } else if (ev.getActionCommand().equals(FIRE_SKIP)) {
@@ -729,23 +730,23 @@ public class TargetingPhaseDisplay
 
         private void setFireEnabled(boolean enabled) {
                 butFire.setEnabled(enabled);
-        client.getMenuBar().setFireFireEnabled(enabled);
+        clientgui.getMenuBar().setFireFireEnabled(enabled);
         }
         private void setTwistEnabled(boolean enabled) {
                 butTwist.setEnabled(enabled);
-        client.getMenuBar().setFireTwistEnabled(enabled);
+        clientgui.getMenuBar().setFireTwistEnabled(enabled);
         }
         private void setSkipEnabled(boolean enabled) {
                 butSkip.setEnabled(enabled);
-        client.getMenuBar().setFireSkipEnabled(enabled);
+        clientgui.getMenuBar().setFireSkipEnabled(enabled);
         }
         private void setFlipArmsEnabled(boolean enabled) {
                 butFlipArms.setEnabled(enabled);
-        client.getMenuBar().setFireFlipArmsEnabled(enabled);
+        clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
         }
         private void setNextEnabled(boolean enabled) {
                 butNext.setEnabled(enabled);
-        client.getMenuBar().setFireNextEnabled(enabled);
+        clientgui.getMenuBar().setFireNextEnabled(enabled);
         }
 
     //
@@ -804,7 +805,7 @@ public class TargetingPhaseDisplay
             return;
         }
 
-        if(ev.getItemSelectable() == client.mechD.wPan.weaponList) {
+        if(ev.getItemSelectable() == clientgui.mechD.wPan.weaponList) {
             // update target data in weapon display
             updateTarget();
         }
@@ -819,8 +820,8 @@ public class TargetingPhaseDisplay
         }
 
         if (client.isMyTurn() && ce() != null) {
-            client.setDisplayVisible(true);
-            client.bv.centerOnHex(ce().getPosition());
+            clientgui.setDisplayVisible(true);
+            clientgui.bv.centerOnHex(ce().getPosition());
         }
     }
 
@@ -837,10 +838,10 @@ public class TargetingPhaseDisplay
                 selectEntity(e.getId());
             }
             } else {
-            client.setDisplayVisible(true);
-            client.mechD.displayEntity(e);
+            clientgui.setDisplayVisible(true);
+            clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-                    client.bv.centerOnHex(e.getPosition());
+                    clientgui.bv.centerOnHex(e.getPosition());
             }
             }
     }
@@ -883,7 +884,7 @@ public class TargetingPhaseDisplay
     public void removeAllListeners() {
         client.removeGameListener(this);
         client.game.board.removeBoardListener(this);
-        client.mechD.wPan.weaponList.removeItemListener(this);
+        clientgui.mechD.wPan.weaponList.removeItemListener(this);
     }
 
 }

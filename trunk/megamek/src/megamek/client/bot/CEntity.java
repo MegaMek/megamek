@@ -23,9 +23,9 @@ import com.sun.java.util.collections.Iterator;
 public class CEntity {
 
     static class Table extends Hashtable {
-        
+
         private TestBot tb;
-        
+
         public Table(TestBot tb) {
             this.tb = tb;
         }
@@ -44,8 +44,8 @@ public class CEntity {
         }
 
         public CEntity get(int id) {
-            return (CEntity)get(new Integer(id));
-        }        
+            return (CEntity) get(new Integer(id));
+        }
     }
 
     //some helpful constants
@@ -119,16 +119,16 @@ public class CEntity {
 
     //relative position in the enemy array
     int enemy_num;
-    
+
     private TestBot tb;
 
     boolean engaged = false; //am i fighting
-	boolean moved = false;
-	boolean justMoved = false;
+    boolean moved = false;
+    boolean justMoved = false;
 
     public CEntity(Entity en, TestBot tb) {
         this.entity = en;
-		this.tb = tb;
+        this.tb = tb;
         this.reset();
     }
 
@@ -137,11 +137,12 @@ public class CEntity {
     }
 
     public boolean canMove() {
-        return (entity.isSelectableThisTurn(tb.game) && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
+        return (
+            entity.isSelectableThisTurn(tb.game) && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
     }
-    
-    public boolean justMoved() {	
-        return (!moved && !entity.isSelectableThisTurn(tb.game)) || justMoved; 
+
+    public boolean justMoved() {
+        return (!moved && !entity.isSelectableThisTurn(tb.game)) || justMoved;
     }
 
     public void reset() {
@@ -163,16 +164,16 @@ public class CEntity {
     public void refresh() {
         this.entity = tb.game.getEntity(this.entity.getId());
         if (justMoved()) {
-        	for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
-			    Arrays.fill(this.damages[a], 0);
-			} 
-			this.characterize();
+            for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
+                Arrays.fill(this.damages[a], 0);
+            }
+            this.characterize();
             this.resetPossibleDamage();
         }
     }
 
     public void resetPossibleDamage() {
-		Arrays.fill(this.possible_damage, 0);
+        Arrays.fill(this.possible_damage, 0);
     }
 
     int[] MinRanges = new int[7];
@@ -387,10 +388,10 @@ public class CEntity {
     }
 
     /**
-	 * Add a statistical damage into the damage table the arc is based upon
-	 * firing arc Compute.XXXX --this is not yet exact, rear tt not accounted
-	 * for, and arm flipping is ignored
-	 */
+     * Add a statistical damage into the damage table the arc is based upon
+     * firing arc Compute.XXXX --this is not yet exact, rear tt not accounted
+     * for, and arm flipping is ignored
+     */
     protected void addDamage(int arc, boolean secondary, int range, double ed) {
         this.damages[CEntity.firingArcToHitArc(arc)][range] += ed;
         if (arc != Compute.ARC_REAR && arc != Compute.ARC_360) {
@@ -408,8 +409,8 @@ public class CEntity {
     }
 
     /**
-	 * Computes the range (short, meduim, long, all) of the mec.
-	 */
+     * Computes the range (short, meduim, long, all) of the mec.
+     */
     protected void computeRange() {
         double[] values = new double[3];
         this.RangeDamages[3] = 0;
@@ -434,8 +435,8 @@ public class CEntity {
     }
 
     /**
-	 * Helper method to return point and actual values for armor
-	 */
+     * Helper method to return point and actual values for armor
+     */
     protected int[] getArmorValues(int loc, boolean rear) {
         int[] result = new int[2];
         double percent = 0;
@@ -452,9 +453,9 @@ public class CEntity {
     }
 
     /**
-	 * The utility of something done against me. -- uses the arcs defined by
-	 * ToHitData
-	 */
+     * The utility of something done against me. -- uses the arcs defined by
+     * ToHitData
+     */
     public double getThreatUtility(double threat, int arc) {
         double t1 = threat;
         double t2 = threat;
@@ -501,16 +502,16 @@ public class CEntity {
     }
 
     /**
-	 * From the current state, explore based upon an implementation of
-	 * Dijkstra's algorithm.
-	 */
+     * From the current state, explore based upon an implementation of
+     * Dijkstra's algorithm.
+     */
     protected MoveOption.Table calculateMoveOptions(MoveOption base) {
         ArrayList possible = new ArrayList();
         MoveOption.Table discovered = new MoveOption.Table();
 
-		if (entity.getJumpMPWithTerrain() > 0) {
-			possible.add(base.createMovePath(base).addStep(MovePath.STEP_START_JUMP));
-		}
+        if (entity.getJumpMPWithTerrain() > 0) {
+            possible.add(base.createMovePath(base).addStep(MovePath.STEP_START_JUMP));
+        }
 
         possible.add(base);
         discovered.put(base);
@@ -527,6 +528,19 @@ public class CEntity {
                     if (discovered.get(next) == null
                         || (next.getDistUtility() < discovered.get(next).getDistUtility())) {
                         discovered.put(next);
+                        if (next.isJumping()) {
+                            MovePath left = (MoveOption) next.clone();
+                            MovePath right = (MoveOption) next.clone();
+                            discovered.put(((MoveOption) next.clone()).addStep(MovePath.STEP_FORWARDS));
+                            for (int turn = 0; turn < 2; turn++) {
+                                left.addStep(MovePath.STEP_TURN_LEFT);
+                                right.addStep(MovePath.STEP_TURN_RIGHT);
+                                discovered.put(((MovePath) left.clone()).addStep(MovePath.STEP_FORWARDS));
+                                discovered.put(((MovePath) right.clone()).addStep(MovePath.STEP_FORWARDS));
+                            }
+                            right.addStep(MovePath.STEP_TURN_RIGHT);
+                            discovered.put(right.addStep(MovePath.STEP_FORWARDS));
+                        }
                         int index = Collections.binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
                         if (index < 0) {
                             index = -index - 1;
@@ -562,8 +576,8 @@ public class CEntity {
     public ArrayList findMoves(Coords dest) {
         ArrayList result = new ArrayList();
         for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 1; j++) {
-                MoveOption.Key key = new MoveOption.Key(dest, i, j==1);
+            for (int j = 1; j < 2; j++) {
+                MoveOption.Key key = new MoveOption.Key(dest, i, j);
                 MoveOption es = null;
                 if ((es = (MoveOption) moves.get(key)) != null) {
                     result.add(es);
@@ -574,9 +588,9 @@ public class CEntity {
     }
 
     /**
-	 * given my skill and the present modifiers, what is a better estimate of
-	 * my damage dealing -- actual and not utility
-	 */
+     * given my skill and the present modifiers, what is a better estimate of
+     * my damage dealing -- actual and not utility
+     */
     public double getModifiedDamage(int arc, int range, int modifier) {
         if (range > MAX_RANGE)
             return 0;
@@ -668,6 +682,7 @@ public class CEntity {
         }
         return 0;
     }
+    
     public boolean equals(Object obj) {
         if (obj instanceof Entity || obj instanceof CEntity) {
             return obj.hashCode() == hashCode();

@@ -38,6 +38,7 @@ public class DeploymentDisplay
 
     // parent game
     public Client client;
+    private ClientGUI clientgui;
     
     // buttons
     private Panel             panButtons;
@@ -60,8 +61,9 @@ public class DeploymentDisplay
      * Creates and lays out a new deployment phase display 
      * for the specified client.
      */
-    public DeploymentDisplay(Client client) {
-        this.client = client;
+    public DeploymentDisplay(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+        this.client = clientgui.getClient();
         client.addGameListener(this);
 
 
@@ -138,7 +140,7 @@ public class DeploymentDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        client.bv.addKeyListener( this );
+        clientgui.bv.addKeyListener( this );
         addKeyListener(this);
 
     }
@@ -176,11 +178,11 @@ public class DeploymentDisplay
         client.game.board.cursor(null);
         // RACE : if player clicks fast enough, ce() is null.
         if ( null != ce() ) {
-            client.mechD.displayEntity(ce());
-            client.mechD.showPanel("movement");
+            clientgui.mechD.displayEntity(ce());
+            clientgui.mechD.showPanel("movement");
         
             // Update the menu bar.
-            client.getMenuBar().setEntity( ce() );
+            clientgui.getMenuBar().setEntity( ce() );
         }
     }
 
@@ -188,13 +190,13 @@ public class DeploymentDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        client.setDisplayVisible(true);
+        clientgui.setDisplayVisible(true);
         selectEntity(client.getFirstDeployableEntityNum());
         setNextEnabled(true);
         Player p = client.getLocalPlayer();
         // mark deployment hexes
-        client.bv.markDeploymentHexesFor(p);
-        client.bv.repaint(100);
+        clientgui.bv.markDeploymentHexesFor(p);
+        clientgui.bv.repaint(100);
     }
 
     /**
@@ -208,14 +210,14 @@ public class DeploymentDisplay
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
-            client.setDisplayVisible(false);
+            clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.bv.markDeploymentHexesFor(null);
-        client.bv.repaint(100);
+        clientgui.bv.markDeploymentHexesFor(null);
+        clientgui.bv.repaint(100);
     }
 
     /**
@@ -251,7 +253,7 @@ public class DeploymentDisplay
         if (client.isMyTurn()) {
             endMyTurn();
         }
-        client.bv.markDeploymentHexesFor(null);
+        clientgui.bv.markDeploymentHexesFor(null);
         client.removeGameListener(this);
         client.game.board.removeBoardListener(this);
         
@@ -291,7 +293,7 @@ public class DeploymentDisplay
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
-            client.bv.redrawEntity(ce());
+            clientgui.bv.redrawEntity(ce());
             turnMode = false;
         }
         else if ( !client.game.board.isLegalDeployment
@@ -302,7 +304,7 @@ public class DeploymentDisplay
                 .append( " can not deploy into " )
                 .append( moveto.getBoardNum() )
                 .append( "." );
-            AlertDialog dlg = new AlertDialog( client.frame,
+            AlertDialog dlg = new AlertDialog( clientgui.frame,
                                                "Invalid deployment",
                                                buff.toString() );
             dlg.show();
@@ -313,7 +315,7 @@ public class DeploymentDisplay
         }
         else {    
             ce().setPosition(moveto);
-            client.bv.redrawEntity(ce());
+            clientgui.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
         client.game.board.select( moveto );
@@ -342,7 +344,7 @@ public class DeploymentDisplay
     
     public void gamePhaseChange(GameEvent ev) {
 
-        client.bv.markDeploymentHexesFor(null);
+        clientgui.bv.markDeploymentHexesFor(null);
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -376,7 +378,7 @@ public class DeploymentDisplay
             deploy();
         } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) { 
             ce().setPosition(null);
-            client.bv.redrawEntity(ce());
+            clientgui.bv.redrawEntity(ce());
             // Unload any loaded units.
             Enumeration iter =  ce().getLoadedUnits().elements();
             while ( iter.hasMoreElements() ) {
@@ -427,7 +429,7 @@ public class DeploymentDisplay
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
-                    new SingleChoiceDialog( client.frame,
+                    new SingleChoiceDialog( clientgui.frame,
                                             "Load Unit",
                                             question.toString(),
                                             names );
@@ -437,11 +439,11 @@ public class DeploymentDisplay
                     // Please note, the Server may never get this load order.
                     ce().load( other );
                     other.setTransportId( cen );
-                    client.mechD.displayEntity(ce());
+                    clientgui.mechD.displayEntity(ce());
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog( client.frame,
+                AlertDialog alert = new AlertDialog( clientgui.frame,
                                                      "Load Unit",
                                                      ce().getShortName() + " can not load any of the remaining units." );
                 alert.show();
@@ -465,7 +467,7 @@ public class DeploymentDisplay
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
-                    new SingleChoiceDialog( client.frame,
+                    new SingleChoiceDialog( clientgui.frame,
                                             "Unload Unit",
                                             question.toString(),
                                             names );
@@ -476,7 +478,7 @@ public class DeploymentDisplay
                     if ( ce().unload( other ) ) {
                         other.setTransportId( Entity.NONE );
                         other.newRound(client.game.getRoundCount());
-                        client.mechD.displayEntity(ce());
+                        clientgui.mechD.displayEntity(ce());
                     }
                     else {
                         System.out.println( "Could not unload " +
@@ -486,7 +488,7 @@ public class DeploymentDisplay
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog( client.frame,
+                AlertDialog alert = new AlertDialog( clientgui.frame,
                                                      "Unload Unit",
                                                      ce().getShortName() + " is not transporting any units." );
                 alert.show();
@@ -531,7 +533,7 @@ public class DeploymentDisplay
             if ( client.game.getTurn().isValidEntity(e,client.game) ) {
             	if (ce() != null) {
                     ce().setPosition(null);
-                    client.bv.redrawEntity(ce());
+                    clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
                     Enumeration iter =  ce().getLoadedUnits().elements();
                     while ( iter.hasMoreElements() ) {
@@ -545,33 +547,33 @@ public class DeploymentDisplay
 	            
                 selectEntity(e.getId());
                 if ( null != e.getPosition() ) {
-                    client.bv.centerOnHex(e.getPosition());
+                    clientgui.bv.centerOnHex(e.getPosition());
                 }
             }
     	} else {
-            client.setDisplayVisible(true);
-            client.mechD.displayEntity(e);
+            clientgui.setDisplayVisible(true);
+            clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-            	client.bv.centerOnHex(e.getPosition());
+            	clientgui.bv.centerOnHex(e.getPosition());
             }
     	}
     }
 
     private void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);
-        client.getMenuBar().setDeployNextEnabled(enabled);
+        clientgui.getMenuBar().setDeployNextEnabled(enabled);
     }
     private void setTurnEnabled(boolean enabled) {
         butTurn.setEnabled(enabled);
-        client.getMenuBar().setDeployTurnEnabled(enabled);
+        clientgui.getMenuBar().setDeployTurnEnabled(enabled);
     }
     private void setLoadEnabled(boolean enabled) {
         butLoad.setEnabled(enabled);
-        client.getMenuBar().setDeployLoadEnabled(enabled);
+        clientgui.getMenuBar().setDeployLoadEnabled(enabled);
     }
     private void setUnloadEnabled(boolean enabled) {
         butUnload.setEnabled(enabled);
-        client.getMenuBar().setDeployUnloadEnabled(enabled);
+        clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
     }
 
     /**

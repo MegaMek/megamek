@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -37,7 +36,8 @@ public class DeployMinefieldDisplay
     public static final String DEPLOY_MINE_VIBRA       = "deployMineVibra";
 
     // parent game
-    public Client client;
+    public ClientGUI clientgui;
+    private Client client;
     
     // buttons
     private Panel             panButtons;
@@ -67,8 +67,9 @@ public class DeployMinefieldDisplay
      * Creates and lays out a new deployment phase display 
      * for the specified client.
      */
-    public DeployMinefieldDisplay(Client client) {
-        this.client = client;
+    public DeployMinefieldDisplay(ClientGUI clientgui) {
+        this.clientgui = clientgui;
+        this.client = clientgui.getClient();
         client.addGameListener(this);
 
         client.game.board.addBoardListener(this);
@@ -144,7 +145,7 @@ public class DeployMinefieldDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        client.bv.addKeyListener( this );
+        clientgui.bv.addKeyListener( this );
         addKeyListener(this);
     }
     
@@ -229,11 +230,11 @@ public class DeployMinefieldDisplay
     			mf = Minefield.createCommandDetonatedMF(coords, p.getId());
     			p.setNbrMFCommand(p.getNbrMFCommand() - 1);
     		} else if (deployV) {
-    			VibrabombSettingDialog vsd  = new VibrabombSettingDialog(client.frame);
+    			VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
     			vsd.show();
 
 				// Hack warning...    			
-    			client.bv.stopScrolling();
+    			clientgui.bv.stopScrolling();
     			mf = Minefield.createVibrabombMF(coords, p.getId(), vsd.getSetting());
     			p.setNbrMFVibra(p.getNbrMFVibra() - 1);
     		} else {
@@ -241,7 +242,7 @@ public class DeployMinefieldDisplay
     		}
     		client.game.addMinefield(mf);
     		deployedMinefields.addElement(mf);
-    		client.bv.update(client.bv.getGraphics());
+    		clientgui.bv.update(clientgui.bv.getGraphics());
     	}
     	
     	if (p.getNbrMFConventional() == 0 &&
@@ -387,17 +388,17 @@ public class DeployMinefieldDisplay
     private void setConventionalEnabled(int nbr) {
         butM.setLabel("Minefield(" + nbr + ")");
        	butM.setEnabled(nbr > 0);
-        client.getMenuBar().setDeployConventionalEnabled(nbr);
+        clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
     private void setCommandEnabled(int nbr) {
         butC.setLabel("Command(" + nbr + ")");
        	butC.setEnabled(nbr > 0);
-        client.getMenuBar().setDeployCommandEnabled(nbr);
+        clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
     private void setVibrabombEnabled(int nbr) {
         butV.setLabel("Vibrabomb(" + nbr + ")");
        	butV.setEnabled(nbr > 0);
-        client.getMenuBar().setDeployVibrabombEnabled(nbr);
+        clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     /**

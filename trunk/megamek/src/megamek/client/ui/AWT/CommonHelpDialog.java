@@ -25,11 +25,7 @@ import megamek.client.util.AdvancedLabel;
  */
 public class CommonHelpDialog extends Dialog
 {
-    /**
-     * The help text that should be displayed to the user.
-     */
-    private String helpText = null;
-
+    private AdvancedLabel lblHelp;
     /**
      * Create a help dialog for the given parent <code>Frame</code> by
      * reading from the indicated <code>File</code>.
@@ -39,7 +35,7 @@ public class CommonHelpDialog extends Dialog
      * @param   helpfile - the <code>File</code> containing the help text.
      *          This value should <b>not</b> be <code>null</code>.
      */
-    public CommonHelpDialog( Frame frame, File helpfile ) {
+    public CommonHelpDialog(Frame frame, File helpfile) {
         // Construct the superclass.
         super( frame );
 
@@ -50,48 +46,9 @@ public class CommonHelpDialog extends Dialog
                 }
             } );
 
-        // Create a buffer to contain our help text.
-        StringBuffer buff = new StringBuffer();
-
-        // Were we passed a null helpfile?
-        if ( helpfile == null ) {
-            // Big error.
-            this.setTitle( "No Help Available" );
-            buff.append( "Help is currently unavailable." );
-        } else {
-            // Set our title.
-            this.setTitle( "Help File: " + helpfile.getName() );
-
-            // Try to read in the help file.
-            boolean firstLine = true;
-            try {
-                BufferedReader input = new BufferedReader
-                    ( new FileReader(helpfile) );
-                String line = input.readLine();
-                //                while ( line != null && line.length() > 0 ) {
-                while ( line != null ) {
-                    if ( firstLine ) {
-                        firstLine = false;
-                    } else {
-                        buff.append( " \n" ); // the space is to force a line-feed on empty lines
-                    }
-                    buff.append( line );
-                    line = input.readLine();
-                }
-            } catch ( IOException exp ) {
-                if ( !firstLine ) {
-                    buff.append( "\n \n" );
-                }
-                buff.append( "Error reading help file: " )
-                    .append( exp.getMessage() );
-                exp.printStackTrace();
-            }
-
-        } // End non-null-helpfile
-
         // Create the help dialog.
         this.setLayout( new BorderLayout() );
-        AdvancedLabel lblHelp = new AdvancedLabel( buff.toString() );
+        lblHelp = new AdvancedLabel("Help is currently unavailable.");
         ScrollPane scroll = new ScrollPane();
         scroll.add( lblHelp );
         this.add( scroll, BorderLayout.CENTER );
@@ -116,6 +73,49 @@ public class CommonHelpDialog extends Dialog
         this.setLocation(
             screenSize.width / 2 - windowSize.width / 2,
             screenSize.height / 2 - windowSize.height / 2 );
+        
+        setFile(helpfile);
+    }
+    
+    public void setFile(File helpfile) {
+		// Create a buffer to contain our help text.
+		StringBuffer buff = new StringBuffer();
+
+		// Were we passed a null helpfile?
+		if ( helpfile == null ) {
+			// Big error.
+			this.setTitle( "No Help Available" );
+			buff.append( "Help is currently unavailable." );
+		} else {
+			// Set our title.
+			this.setTitle( "Help File: " + helpfile.getName() );
+
+			// Try to read in the help file.
+			boolean firstLine = true;
+			try {
+				BufferedReader input = new BufferedReader
+					( new FileReader(helpfile) );
+				String line = input.readLine();
+				//                while ( line != null && line.length() > 0 ) {
+				while ( line != null ) {
+					if ( firstLine ) {
+						firstLine = false;
+					} else {
+						buff.append( " \n" ); // the space is to force a line-feed on empty lines
+					}
+					buff.append( line );
+					line = input.readLine();
+				}
+			} catch ( IOException exp ) {
+				if ( !firstLine ) {
+					buff.append( "\n \n" );
+				}
+				buff.append( "Error reading help file: " )
+					.append( exp.getMessage() );
+				exp.printStackTrace();
+			}
+		} // End non-null-helpfile
+		lblHelp.setText(buff.toString());
     }
 
     /**

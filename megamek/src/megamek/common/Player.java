@@ -76,10 +76,10 @@ public final class Player extends TurnOrdered
      */
     public static final String ROOT_CAMO = "-- General --";
 
-    private String camoCategory = null;
-    
+    private String camoCategory = Player.NO_CAMO;
+
     private String camoFileName = null;
-    
+
     private Vector visibleMinefields = new Vector();
     
     private boolean admitsDefeat = false;

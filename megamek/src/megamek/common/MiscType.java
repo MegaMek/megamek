@@ -342,7 +342,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "CASE";
         misc.internalName = "ISCASE";
-        misc.mepName = misc.name;
+        misc.mepName ="IS CASE";
         misc.mtfName = "ISCASE";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
@@ -358,7 +358,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "CASE";
         misc.internalName = "CLCASE";
-        misc.mepName = misc.name;
+        misc.mepName = "Clan CASE";
         misc.mtfName = "CLCASE";
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -374,7 +374,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "MASC";
         misc.internalName = "ISMASC";
-        misc.mepName = misc.name;
+        misc.mepName = "IS MASC";
         misc.mtfName = misc.internalName;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
@@ -394,7 +394,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "MASC";
         misc.internalName = "CLMASC";
-        misc.mepName = misc.name;
+        misc.mepName = "Clan MASC";
         misc.mtfName = misc.internalName;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
@@ -414,7 +414,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "TSM";
         misc.internalName = misc.name;
-        misc.mepName = "ISTSM";
+        misc.mepName = "IS TSM";
         misc.mtfName = "Triple Strength Myomer";
         misc.tonnage = 0;
         misc.criticals = 6;
@@ -431,7 +431,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "C3 Slave";
         misc.internalName = "ISC3SlaveUnit";
-        misc.mepName = "ISC3 Slave";
+        misc.mepName = "IS C3 Slave";
         misc.mtfName = "ISC3SlaveUnit";
         misc.tonnage = 1;
         misc.criticals = 1;
@@ -448,7 +448,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "C3 Master";
         misc.internalName = misc.name;
-        misc.mepName = "ISC3 Computer";
+        misc.mepName = "IS C3 Computer";
         misc.mtfName = "ISC3MasterComputer";
         misc.tonnage = 5;
         misc.criticals = 5;
@@ -481,7 +481,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "ISArtemisIV";
-        misc.mepName = "ISArtemis IV FCS";
+        misc.mepName = "IS Artemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -493,7 +493,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "CLArtemisIV";
-        misc.mepName = "CLArtemis IV FCS";
+        misc.mepName = "Clan Artemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -506,7 +506,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "Guardian ECM Suite";
         misc.internalName = misc.name;
-        misc.mepName = "ISGuardian ECM";
+        misc.mepName = "IS Guardian ECM";
         misc.mtfName = "ISGuardianECM";
         misc.tonnage = 1.5f;
         misc.criticals = 2;
@@ -523,7 +523,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "ECM Suite";
         misc.internalName = misc.name;
-        misc.mepName = "CLECM Suite";
+        misc.mepName = "Clan ECM Suite";
         misc.mtfName = "CLECMSuite";
         misc.tonnage = 1;
         misc.criticals = 1;

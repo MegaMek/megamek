@@ -434,6 +434,8 @@ public class Compute
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == game.PHASE_FIRING;
+        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == game.PHASE_TARGETING || game.getPhase() == game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
+
 
         ToHitData toHit = null;
 
@@ -442,6 +444,10 @@ public class Compute
         	!AmmoType.canDeliverMinefield(atype)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
+        if((game.getPhase() == game.PHASE_TARGETING) && !isArtilleryIndirect) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
+        }
+
 
         if ( atype != null &&
              atype.getAmmoType() == AmmoType.T_LRM &&
@@ -607,7 +613,7 @@ public class Compute
         }
 
         // if LOS is blocked, block the shot
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE && !isArtilleryIndirect) {
             return losMods;
         }
 
@@ -725,7 +731,7 @@ public class Compute
 
         // Handle direct artillery attacks.
         if(isArtilleryDirect) {
-          toHit.addModifier(5, "onboard artillery modifer");
+          toHit.addModifier(5, "direct artillery modifer");
           toHit.append(getAttackerMovementModifier(game, attackerId));
           toHit.append(losMods);
           toHit.append(getSecondaryTargetMod(game, ae, target));
@@ -751,6 +757,19 @@ public class Compute
           return toHit;
 
         }
+        if(isArtilleryIndirect) {
+            int boardRange=(int)Math.ceil(((float)distance)/17f);
+            if(boardRange>wtype.getLongRange()) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect artillery attack out of range");
+            }
+            if(distance<=17) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes.");
+            }
+            toHit.addModifier(7, "indirect artillery modifier");
+            return toHit;
+
+        }
+
 
         // Attacks against adjacent buildings automatically hit.
         if ( distance == 1 &&

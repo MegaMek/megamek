@@ -19,6 +19,7 @@ v0.29.32 (CVS)
 + Patch 927127, RFE 711582: allow players to zoom in and out on the board.
 + RFE 936863: ConfirmDialog can now have the Yes or No button focused
 + RFE 867650: More obvious help for a newbie
++ Indirect Artillery Fire.  INCOMPLETE and EXPERIMENTAL.  Working, but USE AT YOUR OWN RISK.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

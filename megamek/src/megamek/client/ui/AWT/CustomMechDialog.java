@@ -201,11 +201,11 @@ extends Dialog implements ActionListener {
             if(!entity.isEnemyOf(e) && !entity.equals(e)) {
                 int nodes = e.calculateFreeC3Nodes();
                 if (entity.C3MasterIs(e) && !entity.equals(e)) nodes++;
-                if(entity.hasC3i() && (entity.OnSameC3NetworkAs(e) || entity.equals(e))) nodes++;
+                if(entity.hasC3i() && (entity.onSameC3NetworkAs(e) || entity.equals(e))) nodes++;
                 if(entity.hasC3i() != e.hasC3i()) nodes = 0;
                 if(nodes > 0) {
                     if(e.hasC3i()) {
-                        if (entity.OnSameC3NetworkAs(e)) {
+                        if (entity.onSameC3NetworkAs(e)) {
                             choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetID() + ": " + (nodes - 1)  + " free]");
                             choC3.select(listIndex);                    
                         }

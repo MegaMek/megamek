@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.util.*;
 
 import megamek.common.actions.*;
-import megamek.common.MovementData.Step;
 
 /**
  * Entity is a master class for basically anything on the board except
@@ -2240,10 +2239,10 @@ public abstract class Entity
      * Checks if the entity is getting up.  If so, returns the
      *  target roll for the piloting skill check.
      */
-    public PilotingRollData checkGetUp(Step step) {
+    public PilotingRollData checkGetUp(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll();
 
-        if (step.getType() != MovementData.STEP_GET_UP) {
+        if (step.getType() != MovePath.STEP_GET_UP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
             return roll;
         }
@@ -2308,7 +2307,7 @@ public abstract class Entity
      *  the target roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(int moveType, Hex prevHex,
-                                      int overallMoveType, Step prevStep,
+                                      int overallMoveType, MoveStep prevStep,
                                       int prevFacing, int curFacing,
                                       Coords lastPos, Coords curPos,
                                       boolean isInfantry, int distance) {
@@ -2349,7 +2348,7 @@ public abstract class Entity
      * Checks if the entity is moving into rubble.  If so, returns
      *  the target roll for the piloting skill check.
      */
-    public PilotingRollData checkRubbleMove(Step step, Hex curHex,
+    public PilotingRollData checkRubbleMove(MoveStep step, Hex curHex,
                                             Coords lastPos, Coords curPos) {
         PilotingRollData roll = getBasePilotingRoll();
 
@@ -2370,7 +2369,7 @@ public abstract class Entity
      * Checks if the entity is moving into depth 1+ water.  If so,
      *  returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkWaterMove(Step step, Hex curHex,
+    public PilotingRollData checkWaterMove(MoveStep step, Hex curHex,
                                            Coords lastPos, Coords curPos,
                                            boolean isPavementStep) {
         if (curHex.levelOf(Terrain.WATER) > 0
@@ -2435,7 +2434,7 @@ public abstract class Entity
      *  checkStuff() methods above.
      */
     public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
-                                           Step step, Hex curHex,
+                                           MoveStep step, Hex curHex,
                                            Hex prevHex) {
         
         if ( !lastPos.equals(curPos) &&

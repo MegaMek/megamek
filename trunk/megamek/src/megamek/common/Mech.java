@@ -172,7 +172,7 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(StringBuffer phaseReport, MovementData md) {
+    public boolean checkForMASCFailure(StringBuffer phaseReport, MovePath md) {
         if (md.hasActiveMASC()) {
             boolean bFailure = false;
 

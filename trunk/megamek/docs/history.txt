@@ -47,7 +47,6 @@ initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
 - possibly stagger within packs
 ? might show whole initiative sequence in status bar
--- tied initiative rolls go after higher rolls for some reason (blackneto)
 
 movement:
 ? mech can try moving again if failed getting up
@@ -87,11 +86,16 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
+v next
++ "esc" clears fire even when focus is not on the map
++ prone mechs are at the terrain elevation for LOS, not 1 higher
++ hex graphics brighter, flatter, renamed; also reddish sinkhole hexes
+
 v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping
 + fixed some display glitches with movement paths
 + torso twisting doesn't rotate leg firing arcs (thx Niels Naumann)
-+ leg weapons blocked by terrain that gives attacker partial cover
++ leg weapons are blocked by terrain that gives attacker partial cover
 + fixed another bug with transfer damage
 + players can join the game at any time, to watch
 + 534820: mechs with 0 MP don't get the minimum 1 step movement rule applied

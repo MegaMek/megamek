@@ -105,6 +105,7 @@ v 0.28.12-dev
 + Added hopalong's infantry files (712083).
 + Reverted BattleArmor short names back to the default generation procedure.
 + 712054: Only Longinus and Purifier are "burdened" by their ammo.
++ applied Oscarmm's patch to hide the minimap  during report phases (712339)
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

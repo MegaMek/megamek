@@ -326,8 +326,4 @@ public class Pilot
     {
         this.ejected = abandoned;
     }
-    
-    public void setPiloting (int piloting) {
-        this.piloting = piloting;
-    }
 }

@@ -13246,15 +13246,6 @@ implements Runnable, ConnectionHandler {
             desc.append("Needs " ).append( rollTarget.getValueAsString()
             ).append( " [" ).append( rollTarget.getDesc() ).append( "]"
             ).append( ", rolls " ).append( diceRoll ).append( " : ");
-            if (diceRoll < rollTarget.getValue()) {
-                desc.append("fails.\n");
-                desc.append(damageCrew(entity, 1));
-                if (resolveCrewDamage(entity, false)) {
-                    desc.append("\n");
-                }
-            } else {
-                desc.append("succeeds.\n");
-            }
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);
@@ -13263,6 +13254,12 @@ implements Runnable, ConnectionHandler {
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
             pilot.setDone(true);
+            if (diceRoll < rollTarget.getValue()) {
+                desc.append("fails.\n");
+                desc.append(damageCrew(pilot, 1));
+            } else {
+                desc.append("succeeds.\n");
+            }
             if (entity.getCrew().isDoomed()) {
                 desc.append("but the pilot does not survive!\n");
                 desc.append(destroyEntity(pilot, "deadly ejection", false, false));
@@ -13282,7 +13279,7 @@ implements Runnable, ConnectionHandler {
                         desc.append("and the pilot ejects safely!\n");
                     }
 */
-                    desc.append("and the pilot ejects safely!\n");
+                    desc.append("\n The pilot ejects safely!\n");
                     if (game.getOptions().booleanOption("vacuum")) {
                         desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
                         desc.append(destroyEntity(pilot, "explosive decompression", false, false));
@@ -13296,7 +13293,7 @@ implements Runnable, ConnectionHandler {
                             entity.getPosition(),
                             targetCoords );
                 } else {
-                    desc.append("and the pilot ejects safely and lands far from the battle!");
+                    desc.append("\n The pilot ejects safely and lands far from the battle!");
                     if (game.getOptions().booleanOption("vacuum")) {
                         desc.append("Unfortunately, the pilot is not wearing a pressure suit.");
                         desc.append(destroyEntity(pilot, "explosive decompression", false, false));

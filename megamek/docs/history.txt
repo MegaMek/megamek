@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.38 (CVS)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages
++ Window focus grabbing now a Client Option
 
 v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl

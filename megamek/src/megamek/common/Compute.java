@@ -405,7 +405,7 @@ public class Compute
             los.setTargetCover(false);
             mods.append(getAttackerMovementModifier(game, other.getId()));
             // is this guy a better spotter?
-            if (true || mods.getValue() < bestMods.getValue()) {
+            if (spotter == null || mods.getValue() < bestMods.getValue()) {
                 spotter = other;
                 bestMods = mods;
             }

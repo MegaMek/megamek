@@ -6,6 +6,7 @@ v0.29.69 (CVS)
 + Patch 1158743, Bug 1154050: Infantry takes PSR after taking 20 dmg
 + Added new pics for Direwolf, Firemoth, Gargoyle, Nova, Sunmoner and Warhawk
     variants.
++ Don't allow missed charges to displace the attacker off the map.
 
 v0.29.68 (2005-03-06 4:45pm)
 + Bug 1153269 "configure unit" not remembering burst fire mg setup.

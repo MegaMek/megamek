@@ -169,9 +169,15 @@ public class MepFile
             mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         }
     
+        if ("XL".equals(this.engineType.trim())) {
+            mech.giveXL();
+        }
+        
         mech.setOriginalWalkMP(Integer.parseInt(this.walkMP.trim()));
         mech.setOriginalJumpMP(Integer.parseInt(this.jumpMP.trim()));
-        mech.heatSinks = Integer.parseInt(this.heatSinks.trim()) - 10;
+        
+        boolean dblSinks = "Double".equals(this.heatSinkType.trim());
+        mech.addEngineSinks(Integer.parseInt(this.heatSinks.trim()), dblSinks);
 
         decodeArmorAndInternals(mech, Mech.LOC_HEAD, headArmor);
         decodeArmorAndInternals(mech, Mech.LOC_LARM, larmArmor);
@@ -225,6 +231,10 @@ public class MepFile
                 critName = critName.substring(3).trim();
             }
             
+            // this is a bit a kludge, but MEP is stupid
+            if (critName.equals("Heat Sink") && dblSinks) {
+                critName = "Double Heat Sink";
+            }
             
             EquipmentType etype = EquipmentType.getByMepName(critName);
             if (etype != null) {

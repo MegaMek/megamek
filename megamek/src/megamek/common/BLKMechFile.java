@@ -124,10 +124,7 @@ public class BLKMechFile {
             
         //I keep internal(integral) heat sinks seperate...
         if (!dataFile.exists("heatsinks")) return null;
-            mech.heatSinks = 
-            dataFile.getDataAsInt("heatsinks")[0]+
-            dataFile.getDataAsInt("heatsinks")[1]-10;
-        
+            mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
         
             if (!dataFile.exists("armor") ) return null;
             

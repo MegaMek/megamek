@@ -946,7 +946,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
-        weapon.bv = 21;
+        weapon.bv = 30;
         
         return weapon;
     }
@@ -968,7 +968,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 3.0f;
         weapon.criticals = 1;
-        weapon.bv = 39;
+        weapon.bv = 59;
         
         return weapon;
     }
@@ -990,7 +990,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 4.5f;
         weapon.criticals = 2;
-        weapon.bv = 59;
+        weapon.bv = 89;
         
         return weapon;
     }

@@ -577,7 +577,7 @@ public class BotClient extends Client
         // and fire them in order, skipping weapons tht would exceed
         // the heat limit.
         sortFiringOptions(firOpts);
-        int capacity = en.getHeatCapacityWithWater(game);
+        int capacity = en.getHeatCapacityWithWater();
         int currentHeat = en.heatBuildup;
         
         int allowableHeatLevel = 5; // dunno.  pick a number.

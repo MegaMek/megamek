@@ -38,6 +38,7 @@ mechs:
 - allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
+- treat gauss rifles as explosive ammo
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
@@ -102,6 +103,7 @@ v next
 + CASE now applies to BV calculation
 + XL engines factor into BV
 + seperated LBX/Ultra/AC ammo; seperated Clan/IS ammo
++ changed heat sink handling, especially double & integral
 
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified

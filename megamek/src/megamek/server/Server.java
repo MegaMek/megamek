@@ -2300,7 +2300,7 @@ public class Server
             entity.heatBuildup = 0;
 
             // how much heat can we sink?
-            int tosink = Math.min(entity.getHeatCapacityWithWater(game), entity.heat);
+            int tosink = Math.min(entity.getHeatCapacityWithWater(), entity.heat);
 
             entity.heat -= tosink;
             roundReport.append(" sinks " + tosink + " heat and is now at " + entity.heat + " heat.\n");

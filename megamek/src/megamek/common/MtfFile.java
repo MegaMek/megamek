@@ -175,18 +175,12 @@ public class MtfFile {
         }
         
         mech.weight = (float)Integer.parseInt(tonnage.substring(5));
-        mech.heatSinks = Integer.parseInt(heatSinks.substring(11, 14).trim()) - 10;
-		//check for double heatsinks
-		if (heatSinks.substring(14).equalsIgnoreCase("Double")) {
-			mech.heatSinks = (mech.heatSinks + 10) * 2;
-			if (mech.heatSinks == 0) {
-				mech.heatSinks += 10;
-			}
-			mech.heatSinks -= 10;
-		}
         
         mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
         mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
+        
+        boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
+        mech.addEngineSinks(Integer.parseInt(heatSinks.substring(11, 14).trim()), dblSinks);
         
         mech.autoSetInternal();
         

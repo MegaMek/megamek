@@ -178,6 +178,26 @@ public abstract class Mech
     }
     
     /**
+     * Allocates torso engine crits for an XL engine.  Uses the mech's current
+     * techlevel for the engine.
+     */
+    public void giveXL() {
+        giveXL(isClan());
+    }
+    
+    /**
+     * Allocates torso engine crits for an XL engine.
+     */
+    public void giveXL(boolean clan) {
+        int crits = clan ? 2 : 3;
+        
+        for (int i = 0; i < crits; i++) {
+            setCritical(LOC_RT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+            setCritical(LOC_LT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+        }
+    }
+    
+    /**
      * This mech's jumping MP modified for missing jump jets
      */
     public int getJumpMP() {
@@ -217,20 +237,72 @@ public abstract class Mech
     }
     
     /**
+     * Adds heat sinks to the engine.  Uses clan/normal depending on the
+     * currently set techLevel
+     */
+    public void addEngineSinks(int totalSinks, boolean dblSinks) {
+        addEngineSinks(totalSinks, dblSinks, isClan());
+    }
+    
+    /**
+     * Adds heat sinks to the engine.  Adds either the engine capacity, or
+     * the entire number of heat sinks, whichever is less
+     */
+    public void addEngineSinks(int totalSinks, boolean dblSinks, boolean clan) {
+        // this relies on these being the correct internalNames for these items
+        EquipmentType sinkType;
+        if (dblSinks) {
+            sinkType = EquipmentType.getByInternalName(clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
+        } else {
+            sinkType = EquipmentType.getByInternalName("Heat Sink");
+        }
+        
+        if (sinkType == null) {
+            System.out.println("Mech: can't find heat sink to add to engine");
+        }
+        
+        int toAllocate = Math.min(totalSinks, integralSinkCapacity());
+        
+        if (toAllocate == 0) {
+            System.out.println("Mech: not putting any heat sinks in the engine?!?!");
+        }
+        
+        for (int i = 0; i < toAllocate; i++) {
+            addEquipment(new Mounted(this, sinkType), Mech.LOC_NONE, false);
+        }
+    }
+    
+    /**
+     * Returns the number if heat sinks that can be added to the engine
+     */
+    private int integralSinkCapacity() {
+        return engineRating() / 25;
+    }
+    
+    /**
+     * Returns the engine rating
+     */
+    public int engineRating() {
+        return (int)Math.round(walkMP * weight);
+    }
+    
+    /**
      * Returns the about of heat that the entity can sink each 
      * turn.
      */
     public int getHeatCapacity() {
-        int capacity = super.getHeatCapacity();
+        int capacity = 0;
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && mounted.isDestroyed()) {
-                capacity--;
+            if (mounted.isDestroyed()) {
+                continue;
             }
-			else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) && mounted.isDestroyed()) {
-				capacity = capacity - 2;
-			}
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                capacity++;
+            } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                capacity += 2;
+            }
         }
         
         return capacity;
@@ -240,31 +312,39 @@ public abstract class Mech
      * Returns the about of heat that the entity can sink each
      * turn, factoring for water.
      */
-    public int getHeatCapacityWithWater(Game game) {
-        int capacity = getHeatCapacity();
-        int sinksUnderwater = 0;
-        final Hex curHex = game.board.getHex(getPosition());
+    public int getHeatCapacityWithWater() {
+        return getHeatCapacity() + Math.min(sinksUnderwater(), 6);
+    }
+    
+    /**
+     * Gets the number of heat sinks that are underwater.
+     */
+    private int sinksUnderwater() {
+        Hex curHex = game.board.getHex(getPosition());
         // are we even in water?  is it depth 1+
-        if (curHex.levelOf(Terrain.WATER) >= 0) {
-            return capacity;
-        } else if (curHex.levelOf(Terrain.WATER) == 1) {
-            if ( isProne() ) {
-                sinksUnderwater = getHeatCapacity();
-            } else {
-                for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-                    Mounted mounted = (Mounted)i.nextElement();
-                    if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
-                        sinksUnderwater++;
-                    } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
-                        sinksUnderwater = sinksUnderwater + 2;
-                    }
-                }
-            }
-        } else if (curHex.levelOf(Terrain.WATER) >= 2) {
-            sinksUnderwater = getHeatCapacity();
+        if (curHex.levelOf(Terrain.WATER) <= 0) {
+            return 0;
         }
         
-        return capacity + Math.min(sinksUnderwater, 6);
+        // are we entirely underwater?
+        if (isProne() || curHex.levelOf(Terrain.WATER) >= 2) {
+            return getHeatCapacity();
+        }
+        
+        // okay, count leg sinks
+        int sinksUnderwater = 0;
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isDestroyed() || !locationIsLeg(mounted.getLocation())) {
+                continue;
+            }
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                sinksUnderwater++;
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                sinksUnderwater += 2;
+            }
+        }
+        return sinksUnderwater;
     }
 
     /**

@@ -287,7 +287,8 @@ public class MegaMek
         Settings.windowSizeHeight = frame.getSize().height;
         
         // also minimap
-        if (client != null && client.minimapW != null) {
+        if (client != null && client.minimapW != null 
+        && client.minimapW.getSize().width != 0 && client.minimapW.getSize().height != 0) {
             Settings.minimapPosX = client.minimapW.getLocation().x;
             Settings.minimapPosY = client.minimapW.getLocation().y;
             Settings.minimapSizeWidth = client.minimapW.getSize().width;

@@ -12831,12 +12831,13 @@ implements Runnable, ConnectionHandler {
     public void ejectEntity(Entity entity, boolean autoEject) {
       // check if there is already a MechWarrior
       // on the field that ejected from this entity
+      final Entity tempent = entity;
       Enumeration doubleMechWarriors =
             game.getSelectedEntities( new EntitySelector() {
                 public boolean accept(Entity esEntity) {
                     if (esEntity instanceof MechWarrior) {
                         MechWarrior mw = (MechWarrior)esEntity;
-                        if (mw.getOriginalRideId() == entity.getId()) {
+                        if (mw.getOriginalRideId() == tempent.getId()) {
                             return true;
                         }
                     }

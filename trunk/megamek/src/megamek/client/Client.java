@@ -561,7 +561,7 @@ public class Client extends Panel
      * @param   nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy( int enum, Coords c, int nFacing ) {
-        this.deploy( enum, c, nFacing, new LinkedList() );
+        this.deploy( enum, c, nFacing, new Vector() );
     }
 
     /**
@@ -575,7 +575,7 @@ public class Client extends Panel
      *          being transported byt the deployed entity.
      */
     public void deploy( int enum, Coords c, int nFacing,
-                        java.util.List loadedUnits ) {
+                        Vector loadedUnits ) {
         int packetCount = 4 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
@@ -584,9 +584,9 @@ public class Client extends Panel
         data[index++] = new Integer(nFacing);
         data[index++] = new Integer( loadedUnits.size() );
 
-        Iterator iter = loadedUnits.iterator();
-        while ( iter.hasNext() ) {
-            data[index++] = new Integer( ((Entity) iter.next()).getId() );
+        Enumeration iter = loadedUnits.elements();
+        while ( iter.hasMoreElements() ) {
+            data[index++] = new Integer( ((Entity) iter.nextElement()).getId() );
         }
         
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));

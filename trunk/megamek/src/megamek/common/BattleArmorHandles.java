@@ -215,11 +215,11 @@ import java.io.IOException;
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public final List getLoadedUnits() {
+    public final Vector getLoadedUnits() {
         // Return a list of our carried troopers.
-        List units = new ArrayList();
+        Vector units = new Vector(1);
         if ( null != this.troopers ) {
-            units.add( this.troopers );
+            units.addElement( this.troopers );
         }
         return units;
     }

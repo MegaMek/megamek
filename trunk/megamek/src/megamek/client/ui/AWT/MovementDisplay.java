@@ -80,7 +80,7 @@ public class MovementDisplay
     /**
      * A local copy of the current entity's loaded units.
      */
-    private java.util.List      loadedUnits = null;
+    private Vector              loadedUnits = null;
 
     /**
      * Creates and lays out a new movement phase display
@@ -697,7 +697,7 @@ public class MovementDisplay
             question.append( ce().getUnusedString() );
             question.append( "\n\nWhich unit do you want to unload?" );
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Entity)this.loadedUnits.get(loop) ).getShortName();
+                names[loop] = ( (Entity)this.loadedUnits.elementAt(loop) ).getShortName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( client.frame,
@@ -706,13 +706,14 @@ public class MovementDisplay
                                         names );
             choiceDialog.show();
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Entity) this.loadedUnits.get( choiceDialog.getChoice() );
+                choice = (Entity) this.loadedUnits.elementAt( choiceDialog.getChoice() );
             }
         } // End have-choices
 
         // Only one choice.
         else {
-            choice = (Entity) this.loadedUnits.remove( 0 );
+            choice = (Entity) this.loadedUnits.elementAt( 0 );
+            this.loadedUnits.removeElementAt( 0 );
         }
 
         // Return the chosen unit.

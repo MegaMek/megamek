@@ -47,14 +47,14 @@ public interface Transporter extends Serializable {
     public void load( Entity unit ) throws IllegalArgumentException;
 
     /**
-     * Get a <code>List</code> of the units currently loaded into this payload.
+     * Get a <code>Vector</code> of the units currently loaded into this payload.
      *
-     * @return  A <code>List</code> of loaded <code>Entity</code> units.
+     * @return  A <code>Vector</code> of loaded <code>Entity</code> units.
      *          This list will never be <code>null</code>, but it may be empty.
-     *          The returned <code>List</code> is independant from the under-
+     *          The returned <code>Vector</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public List getLoadedUnits();
+    public Vector getLoadedUnits();
 
     /**
      * Unload the given unit.

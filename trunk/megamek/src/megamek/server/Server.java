@@ -4748,16 +4748,16 @@ implements Runnable {
             entity.setDoomed(true);
 
             // Handle escape of transported units.
-            Iterator iter = entity.getLoadedUnits().iterator();
-            if ( iter.hasNext() ) {
+            Enumeration iter = entity.getLoadedUnits().elements();
+            if ( iter.hasMoreElements() ) {
                 Entity other = null;
                 Coords curPos = entity.getPosition();
                 Coords nextPos = null;
                 Hex entityHex = game.getBoard().getHex( curPos );
                 Hex nextHex = null;
                 int curFacing = entity.getFacing();
-                while ( iter.hasNext() ) {
-                    other = (Entity) iter.next();
+                while ( iter.hasMoreElements() ) {
+                    other = (Entity) iter.nextElement();
 
                     // Can the other unit survive?
                     if ( !survivable ) {

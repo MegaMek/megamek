@@ -29,7 +29,7 @@ import java.io.IOException;
     /**
      * The troops being carried.
      */
-    List troops = new LinkedList();
+    Vector troops = new Vector();
 
     /**
      * The total amount of space available for troops.
@@ -145,7 +145,7 @@ import java.io.IOException;
         this.currentSpace -= unit.getWeight();
 
         // Add the unit to our list of troops.
-        this.troops.add( unit );
+        this.troops.addElement( unit );
     }
 
     /**
@@ -156,9 +156,9 @@ import java.io.IOException;
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public List getLoadedUnits() {
+    public Vector getLoadedUnits() {
         // Return a copy of our list of troops.
-        return new ArrayList( this.troops );
+        return (Vector)this.troops.clone();
     }
 
     /**
@@ -170,7 +170,7 @@ import java.io.IOException;
      */
     public boolean unload( Entity unit ) {
         // Remove the unit if we are carrying it.
-        boolean retval = this.troops.remove( unit );
+        boolean retval = this.troops.removeElement( unit );
 
         // If we removed it, restore our space.
         if ( retval ) {

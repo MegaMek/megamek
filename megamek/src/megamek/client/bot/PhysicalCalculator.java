@@ -34,8 +34,8 @@ public class PhysicalCalculator {
 					double odds =
 						1.0
 							- (double) Compute.oddsAbove(
-								Compute
-									.toHitKick(bot.game, entNum, bestAttack.target, bestAttack.type - 3)
+								KickAttackAction
+									.toHit(bot.game, entNum, bestAttack.target, bestAttack.type - 3)
 									.getValue())
 								/ 100;
 
@@ -116,12 +116,12 @@ public class PhysicalCalculator {
 						boolean left = false;
 						boolean right = false;
 						ToHitData toHit =
-							Compute.toHitPunch(bot.game, en.getId(), bestAttack.target, PunchAttackAction.LEFT);
+						    PunchAttackAction.toHit(bot.game, en.getId(), bestAttack.target, PunchAttackAction.LEFT);
 						if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
 							left = true;
 						}
 						toHit =
-							Compute.toHitPunch(bot.game, en.getId(), bestAttack.target, PunchAttackAction.RIGHT);
+						    PunchAttackAction.toHit(bot.game, en.getId(), bestAttack.target, PunchAttackAction.RIGHT);
 						if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
 							right = true;
 						}
@@ -186,15 +186,15 @@ public class PhysicalCalculator {
 		if (from instanceof Infantry) {
 			return null;
 		}
-		ToHitData odds = Compute.toHitPunch(game, from.getId(), to, PunchAttackAction.LEFT);
+		ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
 		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = Compute.getPunchDamageFor(from, PunchAttackAction.LEFT);
+			damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
 			bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
 		}
 
-		odds = Compute.toHitPunch(game, from.getId(), to, PunchAttackAction.RIGHT);
+		odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
 		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = Compute.getPunchDamageFor(from, PunchAttackAction.RIGHT);
+			damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
 			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
 			if (dmg > 0 && bestDmg > 0) {
 				bestType = PhysicalOption.PUNCH_BOTH;
@@ -205,9 +205,9 @@ public class PhysicalCalculator {
 			}
 		}
 
-		odds = Compute.toHitKick(game, from.getId(), to, KickAttackAction.LEFT);
+		odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.LEFT);
 		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = Compute.getKickDamageFor(from, KickAttackAction.LEFT);
+			damage = KickAttackAction.getDamageFor(from, KickAttackAction.LEFT);
 			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
 			if (dmg > bestDmg) {
 				bestType = PhysicalOption.KICK_LEFT;
@@ -215,9 +215,9 @@ public class PhysicalCalculator {
 			}
 		}
 
-		odds = Compute.toHitKick(game, from.getId(), to, KickAttackAction.RIGHT);
+		odds = KickAttackAction.toHit(game, from.getId(), to, KickAttackAction.RIGHT);
 		if (odds.getValue() != ToHitData.IMPOSSIBLE) {
-			damage = Compute.getKickDamageFor(from, KickAttackAction.RIGHT);
+			damage = KickAttackAction.getDamageFor(from, KickAttackAction.RIGHT);
 			dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
 			if (dmg > bestDmg) {
 				bestType = PhysicalOption.KICK_RIGHT;

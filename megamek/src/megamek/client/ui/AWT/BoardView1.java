@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+
 import java.util.Properties;
 
 /**
@@ -3606,7 +3607,7 @@ public class BoardView1
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
             final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
-            final String roll = Compute.toHitWeapon(game, attack).getValueAsString();
+            final String roll = WeaponAttackAction.toHit(game, attack).getValueAsString();
             weaponDescs.addElement( wtype.getName() + "; needs " + roll );
         }
 
@@ -3617,16 +3618,16 @@ public class BoardView1
             final int leg = attack.getLeg();
             switch (leg){
             case KickAttackAction.BOTH:
-                rollLeft = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                rollRight = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollLeft = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                rollRight = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
                 bufer = "Kicks with both legs. Left needs " + rollLeft + "; Right needs " + rollRight;
                 break;
             case KickAttackAction.LEFT:
-                rollLeft = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                rollLeft = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
                 bufer = "Kicks with left leg. Needs " + rollLeft;
                 break;
             case KickAttackAction.RIGHT:
-                rollRight = Compute.toHitKick( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollRight = KickAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
                 bufer = "Kicks with right leg. Needs " + rollRight;
                 break;
             }
@@ -3640,16 +3641,16 @@ public class BoardView1
             final int arm = attack.getArm();
             switch (arm){
             case PunchAttackAction.BOTH:
-                rollLeft = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
-                rollRight = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
+                rollLeft = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
+                rollRight = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
                 bufer = "Punches with both arms. Left needs " + rollLeft + "; Right needs " + rollRight;
                 break;
             case PunchAttackAction.LEFT:
-                rollLeft = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
+                rollLeft = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT).getValueAsString();
                 bufer = "Punches with left arm. Needs " + rollLeft;
                 break;
             case PunchAttackAction.RIGHT:
-                rollRight = Compute.toHitPunch( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
+                rollRight = PunchAttackAction.toHit( game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT).getValueAsString();
                 bufer = "Punches with right arm. Needs " + rollRight;
                 break;
             }
@@ -3657,12 +3658,12 @@ public class BoardView1
         }
 
         public void addWeapon(PushAttackAction attack) {
-            final String roll = Compute.toHitPush(game, attack).getValueAsString();
+            final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.addElement("Pushes. Needs " + roll);
         }
 
         public void addWeapon(ClubAttackAction attack) {
-            final String roll = Compute.toHitClub(game, attack).getValueAsString();
+            final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.addElement("Hits with club. Needs " + roll);
         }
 
@@ -3671,11 +3672,11 @@ public class BoardView1
             weaponDescs.addElement("Charges. Needs " + roll);
         }
         public void addWeapon(DfaAttackAction attack) {
-            final String roll = Compute.toHitDfa(game, attack).getValueAsString();
+            final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.addElement("DFA. Needs " + roll);
         }
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
-        	final String roll = Compute.toHitProto(game, attack).getValueAsString();
+        	final String roll = attack.toHit(game).getValueAsString();
         	weaponDescs.addElement("Makes a protomech physical attack. Needs " + roll);
         }
 

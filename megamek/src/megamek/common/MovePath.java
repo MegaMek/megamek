@@ -123,6 +123,13 @@ public class MovePath
         steps.addElement(step);
     }
 
+    public void removeLastStep() {
+        if (steps.size() > 0) {
+        	steps.removeElementAt(steps.size() - 1);
+        }
+        compiled = false;
+    }
+
     public Enumeration getSteps() {
         return steps.elements();
     }

@@ -1,7 +1,7 @@
 VERSION HISTORY:
 ----------------
 
-v 0.29.14-dev
+v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.
 + Moved to-do list out of history.txt and into its own file
 + Data 809664: Added Brandfuchs Mech images.

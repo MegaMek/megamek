@@ -856,14 +856,14 @@ public class FiringDisplay
         int direction = ce().getSecondaryFacing();
         if (target == 0) {
             clearAttacks();
+            direction = ce().clipSecondaryFacing((direction+5)%6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
-            direction =  ce().clipSecondaryFacing((direction+5)%6);
             ce().setSecondaryFacing(direction);
             refreshAll();
         } else if (target == 1) {
             clearAttacks();
+            direction = ce().clipSecondaryFacing((direction+7)%6);
             attacks.addElement(new TorsoTwistAction(cen, direction));
-            direction =  ce().clipSecondaryFacing((direction+7)%6);
             ce().setSecondaryFacing(direction);
             refreshAll();
         }        
@@ -890,11 +890,11 @@ public class FiringDisplay
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
         }
-    // control pressed means a line of sight check.
-    // added ALT_MASK by kenn
-    if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
-      return;
-    }
+        // control pressed means a line of sight check.
+        // added ALT_MASK by kenn
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+            return;
+        }
         // check for shifty goodness
         if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;

@@ -38,7 +38,7 @@ public class Game
     public static final int PHASE_VICTORY           = 11;
     
     public int phase = PHASE_UNKNOWN;
-    private int turn; // whose turn it is
+    private GameTurn turn;
     
     private GameOptions options = new GameOptions();
 
@@ -168,16 +168,16 @@ public class Game
     }
     
     /**
-     * Returns the player number whose turn it is
+     * Returns the current GameTurn object
      */
-    public int getTurn() {
+    public GameTurn getTurn() {
         return turn;
     }
   
     /**
      * Sets the turn
      */
-    public void setTurn(int turn) {
+    public void setTurn(GameTurn turn) {
         this.turn = turn;
     }
     

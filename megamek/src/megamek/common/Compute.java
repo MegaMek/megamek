@@ -255,8 +255,8 @@ public class Compute
         int curFacing = entity.getFacing();
         Coords lastPos;
         Coords curPos = new Coords(entity.getPosition());
-        int mpUsed = 0;
-        int distance = 0;
+        int mpUsed = entity.mpUsed;
+        int distance = entity.delta_distance;
         boolean isProne = entity.isProne();
         boolean hasJustStood = false;
         boolean firstStep = true;

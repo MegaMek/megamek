@@ -250,15 +250,37 @@ public class Client extends Panel
      * Return the local player
      */
     public Player getLocalPlayer() {
-    return getPlayer(local_pn);
+        return getPlayer(local_pn);
+    }
+    
+    /**
+     * Returns the number of first selectable entity
+     */
+    public int getFirstEntityNum() {
+        if (game.getTurn().getEntityNum() == GameTurn.ENTITY_ANY) {
+            return game.getFirstEntityNum(getLocalPlayer());
+        } else {
+            return game.getTurn().getEntityNum();
+        }
+    }
+    
+    /**
+     * Returns the number of the next selectable entity after the one given
+     */
+    public int getNextEntityNum(int cen) {
+        if (game.getTurn().getEntityNum() == GameTurn.ENTITY_ANY) {
+            return game.getNextEntityNum(getLocalPlayer(), cen);
+        } else {
+            return game.getTurn().getEntityNum();
+        }
     }
   
-  /**
-   * Shortcut to game.board
-   */
-  public Board getBoard() {
-    return game.board;
-  }
+    /**
+     * Shortcut to game.board
+     */
+    public Board getBoard() {
+        return game.board;
+    }
     
     /**
      * Returns an emumeration of the entities in game.entities
@@ -427,15 +449,15 @@ public class Client extends Panel
      * is it my turn?
      */
     public boolean isMyTurn() {
-        return game.getTurn() == local_pn;
+        return game.getTurn() != null && game.getTurn().getPlayerNum() == local_pn;
     }
     
     /** 
      * Change whose turn it is.
      */
-    protected void changeTurn(int turn) {
-        this.game.setTurn(turn);
-        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, getPlayer(turn), ""));
+    protected void changeTurn(GameTurn turn) {
+        game.setTurn(turn);
+        processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, getPlayer(turn.getPlayerNum()), ""));
     }
     
     /**
@@ -780,7 +802,7 @@ public class Client extends Panel
                 changePhase(c.getIntValue(0));
                 break;
             case Packet.COMMAND_TURN :
-                changeTurn(c.getIntValue(0));
+                changeTurn((GameTurn)c.getObject(0));
                 break;
             case Packet.COMMAND_SENDING_BOARD :
                 receiveBoard(c);

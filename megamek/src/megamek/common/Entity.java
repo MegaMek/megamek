@@ -92,6 +92,7 @@ public abstract class Entity
     public int                  heat = 0;
     public int                  heatBuildup = 0;
     public int                  delta_distance = 0;
+    public int                  mpUsed = 0;
     public int                  moved = MOVE_NONE;
 
     private int[]               armor;
@@ -1471,6 +1472,7 @@ public abstract class Entity
     public void newRound()
     {
         delta_distance = 0;
+        mpUsed = 0;
         moved = Entity.MOVE_NONE;
         
         setDisplacementAttack(null);

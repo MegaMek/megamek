@@ -650,8 +650,8 @@ public class BoardView1
             final AttackSprite sprite = (AttackSprite)i.nextElement();
             
             // can we just add this attack to an existing one?
-            if (sprite.getAttack().getEntityId() == aa.getEntityId() 
-                && sprite.getAttack().getTargetId() == aa.getTargetId()) {
+            if (sprite.getEntityId() == aa.getEntityId() 
+                && sprite.getTargetId() == aa.getTargetId()) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     sprite.addWeapon((WeaponAttackAction)aa);
@@ -1352,15 +1352,19 @@ public class BoardView1
      */
     private class AttackSprite extends Sprite
     {
-        private AttackAction attack;
+        private Vector attacks = new Vector();
         private Polygon attackPoly;
         
+        private int entityId;
+        private int targetId;
         private String attackerDesc;
         private String targetDesc;
         private Vector weaponDescs = new Vector();
         
         public AttackSprite(AttackAction attack) {
-            this.attack = attack;
+            this.attacks.addElement(attack);
+            this.entityId = attack.getEntityId();
+            this.targetId = attack.getTargetId();
             
             final Entity ae = game.getEntity(attack.getEntityId());
             final Entity te = game.getEntity(attack.getTargetId());
@@ -1407,7 +1411,7 @@ public class BoardView1
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
             // draw attack poly
-            graph.setColor(game.getEntity(attack.getEntityId()).getOwner().getColor());
+            graph.setColor(game.getEntity(entityId).getOwner().getColor());
             graph.fillPolygon(attackPoly);
             graph.setColor(Color.white);
             graph.drawPolygon(attackPoly);
@@ -1425,8 +1429,12 @@ public class BoardView1
                                           point.y + view.y - bounds.y - offset.y);
         }
         
-        public AttackAction getAttack() {
-            return attack;
+        public int getEntityId() {
+            return entityId;
+        }
+        
+        public int getTargetId() {
+            return targetId;
         }
         
         /**
@@ -1435,7 +1443,7 @@ public class BoardView1
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
             final Weapon weapon = entity.getWeapon(attack.getWeaponId()).getType();
-            final int roll = Compute.toHitWeapon(game, attack).getValue();
+            final int roll = Compute.toHitWeapon(game, attack, attacks).getValue();
             weaponDescs.addElement(weapon.getName() + "; needs " + roll);
         }
         

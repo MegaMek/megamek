@@ -199,9 +199,9 @@ public class MepFile
             String critName = critData[i].substring(7).trim();
       
             // is it a weapon?
-            if (critName.startsWith("(R) ")) {
+            if (critName.startsWith("(R)")) {
                 rearMounted = true;
-                critName = critName.substring(4);
+                critName = critName.substring(3).trim();
             }
             Weapon weaponType = Weapon.getWeaponByMepName(critName);
             if (weaponType != null) {

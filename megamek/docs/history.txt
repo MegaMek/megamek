@@ -51,16 +51,16 @@ initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
 - possibly stagger within packs
 ? might show whole initiative sequence in status bar
+-- tied initiative rolls go after higher rolls for some reason (blackneto)
 
 movement:
 ? mech can try moving again if failed getting up
 - jump jets above water should work when jumping out of water
 - pavement movement and skidding?
 - go prone action
+- jump into level 1 water should need roll (bdee)
 
 weapon attacks:
--- sometimes, fire for a mech is skipped? (related to spamming "done"?)
--- sometimes, a torso twist is not done properly (DIE BUG, DIE!)
 - multiple targets modifier
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
@@ -70,9 +70,10 @@ weapon attacks:
 physical attacks:
 - clubbing
 - dfa should violate stacking
-- show the to-hit numbers, somehow
+? show the to-hit numbers, somehow
 - opposing pushes should counter each other
 - if a leg is kicked off, that leg should still be able to kick (theBlind)
+- no roll needed for landing with dfa (bdee)
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
@@ -96,6 +97,14 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
+v next
++ .mep files load weapons with no space between "(R)" and the weapon name now
++ fixed bug in DFA causing target to be displaced from wrong coordinates
++ new distance formula by John Uckele (buggy?)
++ mechs making DFA no longer make landing PSRs during movement
++ secondary target modifiers applied
++ can't fire weapons from both arms while prone
+
 v 0.24.1 (03-17-02, 11pm)
 + changed RNG routine to avoid very unlikely chance of rounding errors (:-P)
 + fixed bug causing pilot consciousness checks to never be made

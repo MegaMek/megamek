@@ -66,10 +66,11 @@ public class Tank
     * Returns this entity's walking/cruising mp, factored
     * for heat, extreme temperatures, and gravity.
     */
-    public int getWalkMP() {
+    public int getWalkMP(boolean gravity) {
         int i;
         int j;
-        j = applyGravityEffectsOnMP(getOriginalWalkMP());
+        if (gravity) j = applyGravityEffectsOnMP(getOriginalWalkMP());
+        else j = getOriginalWalkMP();
         if (game != null) {
             i = game.getTemperatureDifference();
             return Math.max(j - i, 0);

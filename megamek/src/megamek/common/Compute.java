@@ -1406,13 +1406,19 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         
+        // LOS fails if one of the entities is not deployed.
+        if (null == ae.getPosition() || null == te.getPosition()) {
+            LosEffects los = new LosEffects();
+            los.blocked = true; // TODO: come up with a better "impossible"
+            return los;
+        }
+        
         double degree = ae.getPosition().degree(te.getPosition());
         if (degree % 60 == 30) {
             return losDivided(game, attackerId, targetId);
         } else {
             return losStraight(game, attackerId, targetId);
         }
-        
     }
     
     /**
@@ -1456,7 +1462,7 @@ public class Compute
      *
      * This is not perfect as it takes partial cover as soon as it can, when
      * perhaps later might be better.
-     * Also, it doesn't account for the face that attacker partial cover blocks
+     * Also, it doesn't account for the fact that attacker partial cover blocks
      * leg weapons, as we want to return the same sequence regardless of
      * what weapon is attacking.
      */

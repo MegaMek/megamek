@@ -58,6 +58,14 @@ public class BufferedPanel extends Panel implements ComponentListener {
          bgDrawers.removeElement(bd);
     }
 
+    /**
+     * Removes all Background drawers from panel.
+     */
+    
+    public void removeBgDrawers(){
+         bgDrawers.removeAllElements();
+    }
+
      /**
       * Create a new off screen image at the current size of the panel.
       */

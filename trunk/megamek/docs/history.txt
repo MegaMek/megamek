@@ -121,6 +121,7 @@ v 0.29.9-dev
 + Bug 762509: Can't run or jump when unjamming a RAC.
 + Found and fixed an NPE when hit "done" in movement phase.
 + MSJDK compatibility changes(Vector issues). No net change.
++ Mech preview image in Select Mech... dialog and Mech Quick View dialog.
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

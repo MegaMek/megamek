@@ -29,6 +29,8 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import megamek.client.util.RotateFilter;
 import megamek.client.util.TintFilter;
+import megamek.client.util.widget.BufferedPanel;
+import megamek.client.util.widget.BackGroundDrawer;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -186,6 +188,26 @@ public class TilesetManager {
         hexTileset.loadAllImages(comp, tracker);
     }
     
+    // Loads a preview image of the unit into the BufferedPanel.
+    public void loadPreviewImage(Entity entity, String camo, int tint, BufferedPanel bp) {
+		Image base = mechTileset.imageFor(entity, comp);
+		EntityImage entityImage = new EntityImage(base, tint, camo, bp);
+		Image preview = entityImage.loadPreviewImage();
+		
+		BackGroundDrawer bgdPreview = new BackGroundDrawer(preview);
+		bp.removeBgDrawers();
+		bp.addBgDrawer(bgdPreview);
+
+		MediaTracker tracker = new MediaTracker(comp);
+		tracker.addImage(preview, 0);
+		try {
+			tracker.waitForID(0);
+		} catch (InterruptedException e) {
+			;
+		}
+
+    }
+
     /**
      * Load a single entity image
      */
@@ -265,6 +287,15 @@ public class TilesetManager {
           }
         }
         
+        public Image loadPreviewImage() {
+			if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
+                return comp.createImage(new FilteredImageSource(base.getSource(), new TintFilter(tint)));
+			} else {
+				applyColor();
+                return base;
+			}
+        }
+
         public Image getFacing(int facing) {
             return facings[facing];
         }

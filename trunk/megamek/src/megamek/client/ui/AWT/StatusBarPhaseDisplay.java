@@ -28,6 +28,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
     private Button butDisplay;
     private Button butMap;
     private Button butLOS;
+    private Button butUnit;
 
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
@@ -45,6 +46,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       butMap.addActionListener(this);
       butMap.setActionCommand(VIEW_MINI_MAP);
       
+      butUnit = new Button("U");
+      butUnit.addActionListener(this);
+      butUnit.setActionCommand(VIEW_UNIT_OVERVIEW);
+
       butLOS = new Button("L");
       butLOS.addActionListener(this);
       butLOS.setActionCommand(VIEW_LOS_SETTING);
@@ -56,18 +61,19 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
           
       c.insets = new Insets(0, 1, 0, 1);
       c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1.0;    c.weighty = 0.0;
-      gridbag.setConstraints(labStatus, c);
-      panStatus.add(labStatus);
       
       c.weightx = 0.0;    c.weighty = 0.0;
       gridbag.setConstraints(butDisplay, c);
-      panStatus.add(butDisplay);
 
+      panStatus.add(butDisplay);
 	  panStatus.add(butMap);
+	  panStatus.add(butUnit);
+      panStatus.add(butLOS);
 
       c.gridwidth = GridBagConstraints.REMAINDER;
-      panStatus.add(butLOS);
+      c.weightx = 1.0;    c.weighty = 0.0;
+      gridbag.setConstraints(labStatus, c);
+      panStatus.add(labStatus);
     }
     
     protected void setStatusBarText(String text) {
@@ -86,6 +92,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
         handled = true;
       } else if (ev.getActionCommand().equals(VIEW_MINI_MAP)) {
         client.toggleMap();
+        handled = true;
+      } else if (ev.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
+        client.toggleUnitOverview();
         handled = true;
       } else if (ev.getActionCommand().equals(VIEW_LOS_SETTING)) {
         client.showLOSSettingDialog();

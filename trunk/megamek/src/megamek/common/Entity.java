@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.*;
+import java.awt.*;
 
 import megamek.common.actions.*;
 
@@ -88,6 +89,7 @@ public abstract class Entity
     
     protected String            displayName = null;
     protected String            shortName = null;
+    protected String            iconName = null;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -133,6 +135,7 @@ public abstract class Entity
     
     public boolean        spotting;
     private boolean				clearingMinefield = false;
+    private boolean 			selected = false;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -653,6 +656,15 @@ public abstract class Entity
         }
         this.shortName = nbuf.toString();
     }
+    
+    public String getIconName(FontMetrics fm) {
+        if (iconName == null) {
+            generateIconName(fm);
+        }
+        return iconName;
+    }
+    
+    public abstract void generateIconName(FontMetrics fm);
     
     /**
      * Returns the primary facing, or -1 if n/a
@@ -3178,5 +3190,13 @@ public abstract class Entity
      */
     public boolean shouldDeploy(int round) {
         return ( !deployed && (getDeployRound() <= round) );
+    }
+    
+    public void setSelected(boolean selected) {
+    	this.selected = selected;
+    }
+    
+    public boolean isSelected() {
+    	return selected;
     }
 }

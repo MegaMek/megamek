@@ -72,6 +72,22 @@ public class TilesetManager {
 
     }
     
+    public Image iconFor(Entity entity) {
+        EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        if (entityImage == null) {
+            // probably double_blind.  Try to load on the fly
+            System.out.println("Loading image for " + entity.getShortName() + " on the fly.");
+            loadImage(entity);
+            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            if (entityImage == null) {
+                // now it's a real problem
+                System.out.println("Unable to load image for entity: " + entity.getShortName());
+            }            
+        }
+        // get image rotated for facing
+        return entityImage.getIcon();
+    }
+
     /**
      * Return the image for the entity
      */
@@ -259,6 +275,7 @@ public class TilesetManager {
      */
     private class EntityImage {
         private Image base;
+        private Image icon;
         private int tint;
         private String camo;
         private Image[] facings = new Image[6];
@@ -278,6 +295,7 @@ public class TilesetManager {
         public void loadFacings() {
             applyColor();
             
+            icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = comp.createImage(rotSource);
@@ -297,6 +315,10 @@ public class TilesetManager {
             return base;
         }
         
+        public Image getIcon() {
+            return icon;
+        }
+
         private void applyColor() {
           Image iMech, iCamo;
           File camoFile = new File("data/camo/" + camo + ".jpg");

@@ -75,6 +75,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem viewMiniMap = null;
     private MenuItem viewMekDisplay = null;
     private MenuItem viewLOSSetting = null;
+    private MenuItem viewUnitOverview = null;
     private MenuItem viewInitiativeReport = null;
     private MenuItem viewTurnReport = null;
     private MenuItem viewGameOptions = null;
@@ -224,6 +225,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         viewMiniMap.addActionListener( this );
         viewMiniMap.setActionCommand(AbstractPhaseDisplay.VIEW_MINI_MAP);
         menu.add( viewMiniMap );
+        viewUnitOverview = new MenuItem( "Unit Overview" );
+        viewUnitOverview.addActionListener( this );
+        viewUnitOverview.setActionCommand(AbstractPhaseDisplay.VIEW_UNIT_OVERVIEW);
+        menu.add( viewUnitOverview );
         viewLOSSetting = new MenuItem( "LOS Setting" );
         viewLOSSetting.addActionListener( this );
         viewLOSSetting.setActionCommand(AbstractPhaseDisplay.VIEW_LOS_SETTING);
@@ -524,10 +529,12 @@ public class CommonMenuBar extends MenuBar implements ActionListener
              this.phase == Game.PHASE_DEPLOYMENT ) {
             viewLOSSetting.setEnabled( true );
             viewMiniMap.setEnabled( true );
+            viewUnitOverview.setEnabled( true );
             viewPlayerList.setEnabled( true );
         } else {
             viewLOSSetting.setEnabled( false );
             viewMiniMap.setEnabled( false );
+            viewUnitOverview.setEnabled( false );
             viewPlayerList.setEnabled( false );
         }
 

@@ -250,7 +250,11 @@ public class MovementDisplay
             return;
         }
         // okay...
+        if (ce() != null) {
+        	ce().setSelected(false);
+        }
         this.cen = en;
+        ce().setSelected(true);
         clearAllMoves();
         updateButtons();
         
@@ -1212,4 +1216,22 @@ public class MovementDisplay
 			client.bv.centerOnHex(ce().getPosition());
 		}
 	}
+    public void selectUnit(BoardViewEvent b) {
+    	Entity e = client.game.getEntity(b.getEntityId());
+    	if (client.isMyTurn()) {
+    		if (!e.isSelectableThisTurn(client.game)) {
+            	client.setDisplayVisible(true);
+            	client.mechD.displayEntity(e);
+            	client.bv.centerOnHex(e.getPosition());
+            } else {
+	            selectEntity(e.getId());
+    		}
+    	} else {
+        	client.setDisplayVisible(true);
+        	client.mechD.displayEntity(e);
+    		if (e.isDeployed()) {
+            	client.bv.centerOnHex(e.getPosition());
+    		}
+    	}
+    }
 }

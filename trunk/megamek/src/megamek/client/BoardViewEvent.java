@@ -18,18 +18,31 @@ public class BoardViewEvent
     extends java.util.EventObject
 {
 	public static final int	FINISHED_MOVING_UNITS	= 0;
+	public static final int	SELECT_UNIT	= 1;
 
     private int				type;
+    private int				entityId;
     
     public BoardViewEvent(Object source, int type) {
         super(source);
         this.type = type;
+        entityId = megamek.common.Entity.NONE;
     }
     
+    public BoardViewEvent(Object source, int type, int entityId) {
+        super(source);
+        this.type = type;
+        this.entityId = entityId;
+    }
+
     /**
      * Returns the type of event that this is
      */
     public int getType() {
         return type;
+    }    
+
+    public int getEntityId() {
+        return entityId;
     }    
 }

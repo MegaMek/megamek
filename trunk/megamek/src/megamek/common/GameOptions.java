@@ -75,6 +75,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_fire", "MaxTech Fire/Smoke Rules", "If checked, fires create smoke that drifts and dissipates, instead of remaining static.  In addition, smoke is split into light and heavy varieties.", false));
         addOption(level3, new GameOption("maxtech_range", "MaxTech Extreme Range Rules", "If checked, Weapons have an extreme range bracket past their long range distance.", false));
         addOption(level3, new GameOption("maxtech_LOS1", "MaxTech Diagramming Line of Sight Rules", "If checked, LOS will be calculated using the Diagramming LOS rules from MaxTech revised, page 22", false));
+        addOption(level3, new GameOption("maxtech_altdmg", "MaxTech Altered Energy Weapons Damage", "If checked, the damage inflicted by energy weapons (Laser, Flamer, PPC) is altered as follows: Half damage (rounded up) at extreme range, -1 damage at long range, +1 damage at range <= 1. Defaults to false.", false));
 
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);

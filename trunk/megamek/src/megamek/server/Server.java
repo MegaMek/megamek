@@ -6040,6 +6040,21 @@ implements Runnable, ConnectionHandler {
             } else {
                 nDamPerHit = 10;
             }
+        } else if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+            // Check for Altered Damage from Energy Weapons (MTR, pg.22)
+            nDamPerHit = wtype.getDamage();
+            if (game.getOptions().booleanOption("maxtech_altdmg")) {
+                int nRange = ae.getPosition().distance(target.getPosition());
+                if (nRange<=1) {
+                    nDamPerHit++;
+                } else if (nRange <= wtype.getMediumRange()) {
+                    // Do NOthing for Short and Medium Range
+                } else if (nRange <= wtype.getLongRange()) {
+                    nDamPerHit--;
+                } else if (nRange <= wtype.getExtremeRange()) {
+                    nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
+                }
+            }
         }
 
         // Some weapons double the number of hits scored.

@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.28.8";
+    public static String    VERSION = "0.28.9-dev";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
     
     public Frame            frame;
@@ -407,12 +407,12 @@ public class MegaMek
                 testDice();
                 return;
             }
-            if (args[i].equals("-dedicated")) {
+            else if (args[i].equals("-dedicated")) {
                 Settings.load();
                 new Server(Settings.lastServerPass, Settings.lastServerPort);
                 return;
             }
-            if (args[i].equals("-log")) {
+            else if (args[i].equals("-log")) {
                 // Next argument is the log file's name.
                 i++;
                 if ( i >= args.length || args[i].equals("none")
@@ -421,6 +421,16 @@ public class MegaMek
                 } else {
                     logFileName = args[i];
                 }
+            }
+            else if ( args[i].equals("-testxml") ) {
+                // Next argument is the log file's name.
+                i++;
+                if ( i >= args.length ) {
+                    System.err.println( "The '-testxml' flag requires a file name." );
+                } else {
+                    TinyXMLTest test = new TinyXMLTest( "xml", args[i] );
+                }
+                return;
             }
         }
 

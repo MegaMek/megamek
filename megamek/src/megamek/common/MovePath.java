@@ -158,9 +158,10 @@ public class MovePath implements Cloneable, Serializable {
 
         // TODO: more elegant method possible here?
         if (prev != null && prev.isStackingViolation()) {
-            // if previous step is stacking violation, fully recompile
-            compile(game, entity);
-            return this;
+            //If the previous step was a stacking violation, mark it
+            // as legal in case this step moves us out of the stacking
+            // violation.
+            prev.compileIllegal(game, entity, getStep(steps.size() - 3));
         }
 
         try {

@@ -1050,7 +1050,7 @@ implements Serializable {
     public void collapseBuilding( Building bldg ) {
 
         // Remove the building from our building vector.
-        this.buildings.remove( bldg );
+        this.buildings.removeElement( bldg );
 
         // Walk through the building's hexes.
         Enumeration bldgCoords = bldg.getCoords();

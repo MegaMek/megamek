@@ -49,10 +49,11 @@ public class MovementDisplay
     private Button            butDown;
     private Button            butCharge;
     private Button            butDfa;
-    private Button            butFlee;
 
     // Hentai - for unjamming RAC (sets to Walk only)
     private Button            butRAC;
+    private Button            butFlee;
+    private Button            butEject;
 
     private Button            butLoad;
     private Button            butUnload;
@@ -99,6 +100,9 @@ public class MovementDisplay
 
         setupStatusBar();
 
+        butSpace = new Button("");
+        butSpace.setEnabled(false);
+
         butWalk = new Button("Walk");
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
@@ -136,7 +140,11 @@ public class MovementDisplay
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
 
-        butRAC = new Button("Unjam RAC");
+        butEject = new Button("Eject");
+        butEject.addActionListener(this);
+        butEject.setEnabled(false);
+
+        butRAC = new Button("Unjam");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
 
@@ -257,34 +265,19 @@ public class MovementDisplay
             panButtons.add(butDfa);
             panButtons.add(butNext);
             panButtons.add(butDown);
-            panButtons.add(butFlee);
+            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
-
-            // Disable DFA and Charge for Infantry.
-            if ( ce() instanceof Infantry ) {
-                butDfa.setEnabled(false);
-                butCharge.setEnabled(false);
-            } else {
-                butDfa.setEnabled(true);
-                butCharge.setEnabled(true);
-            }
-
-            updateRACButton();
-
             break;
         case 2:
-            panButtons.add(butWalk);
+            panButtons.add(butFlee);
             panButtons.add(butLoad);
             panButtons.add(butRAC);
             panButtons.add(butNext);
-            panButtons.add(butTurn);
+            panButtons.add(butEject);
             panButtons.add(butUnload);
             panButtons.add(butMore);
             panButtons.add(butDone);
-
-            updateLoadButtons();
-
             break;
         }
 
@@ -300,7 +293,6 @@ public class MovementDisplay
             clearAllMoves();
         }
         
-        boolean isInfantry;
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
@@ -308,14 +300,33 @@ public class MovementDisplay
         }
         // okay.
         this.cen = en;
-        isInfantry = (ce() instanceof Infantry);
 
         md = new MovementData();
         cmd = new MovementData();
         gear = Compute.GEAR_LAND;
+        loadedUnits = ce().getLoadedUnits();
+        
+        updateButtons();
+        
+        client.game.board.highlight(ce().getPosition());
+        client.game.board.select(null);
+        client.game.board.cursor(null);
+        client.mechD.displayEntity(ce());
+        client.mechD.showPanel("movement");
+        client.bv.centerOnHex(ce().getPosition());
+    }
+    
+    /**
+     * Sets the buttons to their proper states
+     */
+    private void updateButtons() {
+        boolean isMech = (ce() instanceof Mech);
+        boolean isInfantry = (ce() instanceof Infantry);
+        
         butWalk.setEnabled(ce().getWalkMP() > 0);
         butJump.setEnabled(ce().getJumpMP() > 0);
         butBackup.setEnabled(ce().getWalkMP() > 0);
+        
         // Infantry can't charge or DFA.
         if ( isInfantry ) {
             butCharge.setEnabled(false);
@@ -324,6 +335,7 @@ public class MovementDisplay
             butCharge.setEnabled(ce().getWalkMP() > 0);
             butDfa.setEnabled(ce().getJumpMP() > 0);
         }
+        
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
 
         if (ce().isProne()) {
@@ -331,21 +343,16 @@ public class MovementDisplay
             butDown.setEnabled(false);
         } else {
             butUp.setEnabled(false);
-            butDown.setEnabled(true);
+            butDown.setEnabled(isMech);
         }
 
         updateProneButtons();
         updateRACButton();
-        loadedUnits = ce().getLoadedUnits();
         updateLoadButtons();
 
         butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
-        client.game.board.highlight(ce().getPosition());
-        client.game.board.select(null);
-        client.game.board.cursor(null);
-        client.mechD.displayEntity(ce());
-        client.mechD.showPanel("movement");
-        client.bv.centerOnHex(ce().getPosition());
+        butEject.setEnabled(isMech);
+        
     }
 
     /**
@@ -383,6 +390,7 @@ public class MovementDisplay
         butBackup.setEnabled(false);
         butTurn.setEnabled(false);
         butFlee.setEnabled(false);
+        butEject.setEnabled(false);
         butRAC.setEnabled(false);
         butUp.setEnabled(false);
         butDown.setEnabled(false);
@@ -602,7 +610,7 @@ public class MovementDisplay
     private void updateProneButtons() {
         if (ce() != null) {
             butUp.setEnabled(md.getFinalProne(ce().isProne()));
-            butDown.setEnabled(!(butUp.isEnabled()));
+            butDown.setEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {
             butUp.setEnabled(false);
             butDown.setEnabled(false);
@@ -744,7 +752,7 @@ public class MovementDisplay
         // Is there a building in the hex?
         Building bldg = client.game.board.getBuildingAt( pos );
         if ( bldg != null ) {
-            targets.add( new BuildingTarget(pos, client.game.board, false) );
+            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
         }
 
         // Do we have a single choice?
@@ -902,6 +910,10 @@ public class MovementDisplay
         } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
             clearAllMoves();
             md.addStep(MovementData.STEP_FLEE);
+            moveTo(md);
+        } else if (ev.getSource() == butEject && client.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
+            clearAllMoves();
+            md.addStep(MovementData.STEP_EJECT);
             moveTo(md);
         }
         else if ( ev.getSource() == butLoad ) {

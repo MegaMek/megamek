@@ -41,6 +41,7 @@ public class MovementData
     public static final int        STEP_UNJAM_RAC                = 15;
     public static final int        STEP_LOAD                     = 16;
     public static final int        STEP_UNLOAD                   = 17;
+    public static final int        STEP_EJECT                    = 18;
 
     private Vector steps = new Vector();
     
@@ -538,6 +539,7 @@ public class MovementData
             case MovementData.STEP_UNJAM_RAC:return "Unjam";	
 	    case MovementData.STEP_LOAD:return "Load";	
 	    case MovementData.STEP_UNLOAD:return "Unload";	
+	    case MovementData.STEP_EJECT:return "Eject";	
             }
             return"";
         }

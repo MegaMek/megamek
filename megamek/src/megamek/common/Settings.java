@@ -633,7 +633,7 @@ scan:
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
 
             cw.write("rightdragscroll " + rightDragScroll + "\r\n");
-            cw.write("alwaysRightClickSroll " + alwaysRightClickScroll + "\r\n");
+            cw.write("alwaysrightclickscroll " + alwaysRightClickScroll + "\r\n");
             cw.write("ctlscroll " + ctlScroll + "\r\n");
             cw.write("clickedgescroll " + clickEdgeScroll + "\r\n");
             cw.write("autoedgescroll " + autoEdgeScroll + "\r\n");

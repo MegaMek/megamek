@@ -7,6 +7,7 @@ v0.29.56 (CVS)
 + RFE 1058008: Players now have a setting to disable auto-eject by default.
 + Bug 1070257: Duplicate pilot ejecting
 + Patch 1069530: Save autoeject status when saving a unit list
++ Data 1062852, 1057426: Pics for Tundra Wolf and Kingfisher
 
 v0.29.55 (2004-11-07 11:00pm)
 + Bug 1057995: Correctly handle configuring auto-ejection.

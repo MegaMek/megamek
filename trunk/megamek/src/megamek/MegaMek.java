@@ -29,7 +29,7 @@ import megamek.server.*;
 public class MegaMek
     implements ActionListener
 {
-    public static String    VERSION = "0.29.30-dev";
+    public static String    VERSION = "0.29.30";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;

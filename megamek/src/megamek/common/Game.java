@@ -513,12 +513,6 @@ public class Game implements Serializable
 
       return ( ((null == vec) || (vec.size() == 0)) ? false : true);
     }
-   /**
-    * Returns a vector of entities to deploy this round
-    */
-    private Vector getEntitiesToDeployThisRound() {
-      return getEntitiesToDeployForRound(getRoundCount());
-    }
     
     private Vector getEntitiesToDeployForRound(int round) {
       return (Vector)deploymentTable.get(new Integer(round));
@@ -916,18 +910,6 @@ public class Game implements Serializable
       Player player = (Player) players.nextElement();
             player.removeMinefields();
     }
-    }
-    
-    /**
-     * Checks to see if we have an entity in the master list, and if so,
-     * returns its id number.  Otherwise returns -1.
-     */
-    public int getEntityID(Entity entity) {
-        for (Enumeration i = entityIds.keys();i.hasMoreElements();) {
-            Integer key = (Integer)i.nextElement();
-            if (entityIds.get(key) == entity) return key.intValue();
-        }
-        return -1;
     }
         
     /**

@@ -1026,8 +1026,9 @@ public class BoardView1
 
         clearMovementData();
 
-        md.clearAllFlags();
-        Compute.compile(game, entity.getId(), md);
+        //md.clearAllFlags();
+        md.compile();
+        //Compute.compile(game, entity.getId(), md);
 
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
@@ -1226,9 +1227,6 @@ public class BoardView1
 	        LosEffects le = Compute.calculateLos(game, c1, c2, 
 	        						game.getMechInFirst(), 
 	        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
-	        int blocking = le.getHeavyWoods() * 2 +
-	            le.getLightWoods() +
-	            le.getSmoke() * 2;
 	        message.append( "Attacker(")
 	         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
 	         	.append(") hex is " )
@@ -1239,7 +1237,7 @@ public class BoardView1
 	         	.append(") hex is " )
 	            .append( c2.getBoardNum() )
 	            .append( ".\n" );
-	        if (le.isBlocked() || blocking > 2) {
+	        if (!le.canSee()) {
 	            message.append( "Line of sight is blocked.\n" );
 	            message.append( "Range is " )
 	                .append( c1.distance(c2) )
@@ -2252,7 +2250,7 @@ public class BoardView1
         private MoveStep step;
 
         public StepSprite(MoveStep step) {
-            this.step = (MoveStep)step.clone();
+            this.step = step;
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);

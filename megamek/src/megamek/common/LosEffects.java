@@ -108,5 +108,11 @@ public class LosEffects {
     public void setThruBldg(Building thruBldg) {
         this.thruBldg = thruBldg;
     }
-
+    
+	/**
+	 * LOS check from ae to te.
+	 */
+	public boolean canSee() {
+		return !blocked && lightWoods + ((heavyWoods + smoke) * 2) < 3;
+	}
 }

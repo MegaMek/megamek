@@ -1363,7 +1363,7 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_MOVEMENT :
                 if ( toSkip != null ) {
-                    processMovement(toSkip, new MovePath());
+                    processMovement(toSkip, new MovePath(game, toSkip));
                 }
                 endCurrentTurn(toSkip);
                 break;
@@ -2337,7 +2337,7 @@ implements Runnable, ConnectionHandler {
         PilotingRollData rollTarget;
         
         // Compile the move
-        Compute.compile(game, entity.getId(), md);
+        md.compile(game, entity);
 
         if (md.contains(MovePath.STEP_CLEAR_MINEFIELD)) {
             ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId());

@@ -78,7 +78,6 @@ public class MovementDisplay
 
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
-    private MovePath    md;        // movement data
     private MovePath    cmd;    // considering movement data
 
     // what "gear" is our mech in?
@@ -92,6 +91,13 @@ public class MovementDisplay
      */
     private Vector              loadedUnits = null;
 
+    public static final int        GEAR_LAND        = 0;
+    public static final int        GEAR_BACKUP      = 1;
+    public static final int        GEAR_JUMP        = 2;
+    public static final int        GEAR_CHARGE      = 3;
+    public static final int        GEAR_DFA         = 4;
+    public static final int        GEAR_TURN        = 5;
+
     /**
      * Creates and lays out a new movement phase display
      * for the specified client.
@@ -100,7 +106,7 @@ public class MovementDisplay
         this.client = client;
         client.addGameListener(this);
 
-        gear = Compute.GEAR_LAND;
+        gear = MovementDisplay.GEAR_LAND;
 
         shiftheld = false;
 
@@ -412,11 +418,10 @@ public class MovementDisplay
         client.game.board.cursor(null);
         
         // create new current and considered paths
-        md = new MovePath();
-        cmd = new MovePath();
+        cmd = new MovePath(client.game, ce());
         
         // set to "walk," or the equivalent
-        gear = Compute.GEAR_LAND;
+        gear = MovementDisplay.GEAR_LAND;
         
         // update some GUI elements
         client.bv.clearMovementData();
@@ -435,12 +440,12 @@ public class MovementDisplay
     }
 
     private void removeLastStep() {
-        md.removeLastStep();
+        cmd.removeLastStep();
         
         if (cmd.length() == 0) {
 	        clearAllMoves();
         } else {
-	        client.bv.drawMovementData(ce(), md);
+	        client.bv.drawMovementData(ce(), cmd);
         }
     }
 
@@ -512,7 +517,6 @@ public class MovementDisplay
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int distance = 0;
-        int mpUsed = 0;
         int moveType = Entity.MOVE_NONE;
         int overallMoveType = Entity.MOVE_NONE;
         boolean firstStep;
@@ -523,7 +527,7 @@ public class MovementDisplay
         PilotingRollData rollTarget;
         
         // Compile the move
-        Compute.compile(client.game, entity.getId(), md);
+        md.compile();
 
         overallMoveType = md.getLastStepMovementType();
         
@@ -556,8 +560,7 @@ public class MovementDisplay
             // set most step parameters
             moveType = step.getMovementType();
             distance = step.getDistance();
-            mpUsed = step.getMpUsed();
-
+ 
             // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
@@ -668,20 +671,18 @@ public class MovementDisplay
     /**
      * Returns new MovePath for the currently selected movement type
      */
-    private MovePath currentMove(Coords src, int facing, Coords dest) {
-        if (shiftheld || gear == Compute.GEAR_TURN) {
-            return Compute.rotatePathfinder(facing, src.direction(dest));
-        } else if (gear == Compute.GEAR_LAND || gear == Compute.GEAR_JUMP) {
-            return Compute.lazyPathfinder(src, facing, dest);
-        } else if (gear == Compute.GEAR_BACKUP) {
-            return Compute.backwardsLazyPathfinder(src, facing, dest);
-        } else if (gear == Compute.GEAR_CHARGE) {
-            return Compute.chargeLazyPathfinder(src, facing, dest);
-        } else if (gear == Compute.GEAR_DFA) {
-            return Compute.dfaLazyPathfinder(src, facing, dest);
+    private void currentMove(Coords dest) {
+        if (shiftheld || gear == GEAR_TURN) {
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest));
+        } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
+            cmd.lazyPathfinder(dest, MovePath.STEP_FORWARDS);
+        } else if (gear == GEAR_BACKUP) {
+            cmd.lazyPathfinder(dest, MovePath.STEP_BACKWARDS);
+        } else if (gear == GEAR_CHARGE) {
+            cmd.lazyPathfinder(dest, MovePath.STEP_CHARGE);
+        } else if (gear == GEAR_DFA) {
+            cmd.lazyPathfinder(dest, MovePath.STEP_DFA);
         }
-
-        return null;
     }
 
     //
@@ -703,12 +704,12 @@ public class MovementDisplay
         }
 
         if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
-            if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == Compute.GEAR_TURN) {
+            if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == MovementDisplay.GEAR_TURN) {
                 client.game.board.cursor(b.getCoords());
 
                 // either turn or move
-                if ( ce() != null && md != null ) {
-                    cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
+                if ( ce() != null) {
+                    currentMove(b.getCoords());
                     client.bv.drawMovementData(ce(), cmd);
                 }
             }
@@ -716,16 +717,15 @@ public class MovementDisplay
 
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
-            md = new MovePath(cmd);
 
             client.game.board.select(b.getCoords());
 
-            if (shiftheld || gear == Compute.GEAR_TURN) {
+            if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
                 butDone.setLabel("Move");
                 return;
             }
 
-            if (gear == Compute.GEAR_CHARGE) {
+            if (gear == MovementDisplay.GEAR_CHARGE) {
                 // check if target is valid
                 final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
@@ -738,7 +738,7 @@ public class MovementDisplay
                 ToHitData toHit = Compute.toHitCharge( client.game,
                                                        cen,
                                                        target,
-                                                       md);
+                                                       cmd);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
 
                     // Determine how much damage the charger will take.
@@ -761,14 +761,14 @@ public class MovementDisplay
                            " (" + Compute.oddsAbove(toHit.getValue()) +
                            "%)   (" + toHit.getDesc() + ")"
                            + "\nDamage to Target: "+
-                           Compute.getChargeDamageFor(ce(),md.getHexesMoved())+
+                           Compute.getChargeDamageFor(ce(),cmd.getHexesMoved())+
                            " (in 5pt clusters)"+ toHit.getTableDesc()
                            + "\nDamage to Self: " +
                            toAttacker +
                            " (in 5pt clusters)" ) ) {
                         // if they answer yes, charge the target.
-                        md.getStep(md.length()-1).setTarget(target);
-                        moveTo(md);
+                        cmd.getLastStep().setTarget(target);
+                        moveTo(cmd);
                     } else {
                         // else clear movement
                         clearAllMoves();
@@ -781,7 +781,7 @@ public class MovementDisplay
                     clearAllMoves();
                     return;
                 }
-            } else if (gear == Compute.GEAR_DFA) {
+            } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
                 final Targetable target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
@@ -794,7 +794,7 @@ public class MovementDisplay
                 ToHitData toHit = Compute.toHitDfa( client.game,
                                                     cen,
                                                     target,
-                                                    md);
+                                                    cmd);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if ( client.doYesNoDialog
@@ -809,8 +809,8 @@ public class MovementDisplay
                            Compute.getDfaDamageTakenBy(ce()) +
                            " (in 5pt clusters) (using Kick table)" ) ) {
                         // if they answer yes, DFA the target
-                        md.getStep(md.length()-1).setTarget(target);
-                        moveTo(md);
+                        cmd.getLastStep().setTarget(target);
+                        moveTo(cmd);
                     } else {
                         // else clear movement
                         clearAllMoves();
@@ -834,8 +834,8 @@ public class MovementDisplay
     }
 
     private void updateProneButtons() {
-        if (ce() != null && md != null && !ce().isImmobile()) {
-            setGetUpEnabled(md.getFinalProne(ce().isProne()));
+        if (ce() != null && !ce().isImmobile()) {
+            setGetUpEnabled(cmd.getFinalProne());
             setGoProneEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {
             setGetUpEnabled(false);
@@ -844,19 +844,19 @@ public class MovementDisplay
     }
     
     private void updateRACButton() {
-        if ( null == ce() || null == md ) {
+        if ( null == ce() ) {
             return;
         }
-        setUnjamEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
+        setUnjamEnabled(ce().canUnjamRAC() && (gear == MovementDisplay.GEAR_LAND || gear == MovementDisplay.GEAR_TURN || gear == MovementDisplay.GEAR_BACKUP) && cmd.getMpUsed() <= ce().getWalkMP() );
     }
 
     private void updateLoadButtons() {
 
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
-        if ( ( gear != Compute.GEAR_LAND &&
-               gear != Compute.GEAR_TURN &&
-               gear != Compute.GEAR_BACKUP ) ||
+        if ( ( gear != MovementDisplay.GEAR_LAND &&
+               gear != MovementDisplay.GEAR_TURN &&
+               gear != MovementDisplay.GEAR_BACKUP ) ||
              loadedUnits.size() == 0 
              || cen == Entity.NONE) {
             setUnloadEnabled( false );
@@ -866,7 +866,7 @@ public class MovementDisplay
         }
 
         // If the current entity has moved, disable "Load" button.
-        if ( md.length() > 0 || cen == Entity.NONE ) {
+        if ( cmd.length() > 0 || cen == Entity.NONE ) {
 
             setLoadEnabled( false );
 
@@ -1059,7 +1059,7 @@ public class MovementDisplay
         }
 
         if (ev.getSource() == butDone) {
-            moveTo(md);
+            moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {       	
@@ -1069,35 +1069,35 @@ public class MovementDisplay
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
         } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
-            if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_CHARGE || gear == MovementDisplay.GEAR_DFA || cmd.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
                 //clearAllMoves();
                 //gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
             }
             else {
-              md.addStep(MovePath.STEP_UNJAM_RAC);
-              moveTo(md);
+              cmd.addStep(MovePath.STEP_UNJAM_RAC);
+              moveTo(cmd);
             }
         } else if (ev.getActionCommand().equals(MOVE_WALK)) {
-            if (gear == Compute.GEAR_JUMP) {
+            if (gear == MovementDisplay.GEAR_JUMP) {
                 clearAllMoves();
             }
-            gear = Compute.GEAR_LAND;
+            gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
-            if (gear != Compute.GEAR_JUMP) {
+            if (gear != MovementDisplay.GEAR_JUMP) {
                 clearAllMoves();
             }
-            if (!md.contains(MovePath.STEP_START_JUMP)) {
-                md.addStep(MovePath.STEP_START_JUMP);
+            if (!cmd.isJumping()) {
+                cmd.addStep(MovePath.STEP_START_JUMP);
             }
-            gear = Compute.GEAR_JUMP;
+            gear = MovementDisplay.GEAR_JUMP;
         } else if (ev.getActionCommand().equals(MOVE_TURN)) {
-            gear = Compute.GEAR_TURN;
+            gear = MovementDisplay.GEAR_TURN;
         } else if (ev.getActionCommand().equals(MOVE_BACK_UP)) {
-            if (gear == Compute.GEAR_JUMP) {
+            if (gear == MovementDisplay.GEAR_JUMP) {
                 clearAllMoves();
             }
-            gear = Compute.GEAR_BACKUP;
+            gear = MovementDisplay.GEAR_BACKUP;
         } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {       	
 	    clearAllMoves();
 	    if (!client.game.containsMinefield(ce().getPosition())) {
@@ -1128,48 +1128,46 @@ public class MovementDisplay
                 .append( " or less." );
             if ( client.doYesNoDialog( "Clear the minefield?",
                                        buff.toString() ) ) {
-                md.addStep(MovePath.STEP_CLEAR_MINEFIELD);
-                moveTo(md);
+                cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD);
+                moveTo(cmd);
                         }
         } else if (ev.getActionCommand().equals(MOVE_CHARGE)) {
-            if (gear != Compute.GEAR_LAND) {
+            if (gear != MovementDisplay.GEAR_LAND) {
                 clearAllMoves();
             }
-            gear = Compute.GEAR_CHARGE;
+            gear = MovementDisplay.GEAR_CHARGE;
         } else if (ev.getActionCommand().equals(MOVE_DFA)) {
-            if (gear != Compute.GEAR_JUMP) {
+            if (gear != MovementDisplay.GEAR_JUMP) {
                 clearAllMoves();
             }
-            gear = Compute.GEAR_DFA;
-            if (!md.contains(MovePath.STEP_START_JUMP)) {
-                md.addStep(MovePath.STEP_START_JUMP);
+            gear = MovementDisplay.GEAR_DFA;
+            if (!cmd.isJumping()) {
+                cmd.addStep(MovePath.STEP_START_JUMP);
             }
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             clearAllMoves();
-            if (md.getFinalProne(ce().isProne())) {
-                md.addStep(MovePath.STEP_GET_UP);
+            if (cmd.getFinalProne()) {
+                cmd.addStep(MovePath.STEP_GET_UP);
             }
-            cmd = new MovePath(md);
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
-            gear = Compute.GEAR_LAND;
-            if (!md.getFinalProne(ce().isProne())) {
-                md.addStep(MovePath.STEP_GO_PRONE);
+            gear = MovementDisplay.GEAR_LAND;
+            if (!cmd.getFinalProne()) {
+                cmd.addStep(MovePath.STEP_GO_PRONE);
             }
-            cmd = new MovePath(md);
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getActionCommand().equals(MOVE_FLEE) && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
             clearAllMoves();
-            md.addStep(MovePath.STEP_FLEE);
-            moveTo(md);
+            cmd.addStep(MovePath.STEP_FLEE);
+            moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_EJECT) && client.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
             clearAllMoves();
-            md.addStep(MovePath.STEP_EJECT);
-            moveTo(md);
+            cmd.addStep(MovePath.STEP_EJECT);
+            moveTo(cmd);
         }
         else if ( ev.getActionCommand().equals(MOVE_LOAD) ) {
             // Find the other friendly unit in our hex, add it
@@ -1189,9 +1187,9 @@ public class MovementDisplay
 
             // Handle not finding a unit to load.
             if ( other != null ) {
-                md.addStep( MovePath.STEP_LOAD );
-                client.bv.drawMovementData(ce(), md);
-                gear = Compute.GEAR_LAND;
+                cmd.addStep( MovePath.STEP_LOAD );
+                client.bv.drawMovementData(ce(), cmd);
+                gear = MovementDisplay.GEAR_LAND;
             }
         }
         else if ( ev.getActionCommand().equals(MOVE_UNLOAD) ) {
@@ -1201,7 +1199,6 @@ public class MovementDisplay
             // Player can cancel the unload.
             if ( other != null ) {
                 cmd.addStep( MovePath.STEP_UNLOAD, other );
-                md = new MovePath(cmd);
                 client.bv.drawMovementData(ce(), cmd);
             }
         }
@@ -1234,25 +1231,24 @@ public class MovementDisplay
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
                 // switch to turning
                 //client.bv.clearMovementData();
-                cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
+                currentMove(client.game.board.lastCursor);
                 client.bv.drawMovementData(ce(), cmd);
             }
         }
         
         // arrow can also rotate when shift is down
         if (shiftheld && client.isMyTurn() && (ev.getKeyCode() == KeyEvent.VK_LEFT || ev.getKeyCode() == KeyEvent.VK_RIGHT)) {
-            int curDir = md.getFinalFacing(ce().getFacing());
+            int curDir = cmd.getFinalFacing();
             int dir = curDir;
             if (ev.getKeyCode() == KeyEvent.VK_LEFT) {
                 dir = (dir + 5) % 6;
             } else {
                 dir = (dir + 7) % 6;
             }
-            Coords curPos = md.getFinalCoords(ce().getPosition(), ce().getFacing());
+            Coords curPos = cmd.getFinalCoords();
             Coords target = curPos.translated(dir);
-            cmd = md.getAppended(currentMove(curPos, curDir, target));
+            currentMove(target);
             client.bv.drawMovementData(ce(), cmd);
-            md = new MovePath(cmd);
         }
     }
     public void keyReleased(KeyEvent ev) {
@@ -1261,7 +1257,7 @@ public class MovementDisplay
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
                 // switch to movement
                 client.bv.clearMovementData();
-                cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
+                currentMove(client.game.board.lastCursor);
                 client.bv.drawMovementData(ce(), cmd);
             }
         }

@@ -7467,7 +7467,7 @@ implements Runnable, ConnectionHandler {
                       }
 
                       if ( weightMod != 0 )
-                        weightModStr = " - " + weightMod + " weight mod";
+                        weightModStr = ": " + weightMod + " weight mod";
 
                       game.addPSR(new PilotingRollData(entity.getId(), damMod + weightMod, entity.damageThisPhase + " damage" + weightModStr));
                     } else {

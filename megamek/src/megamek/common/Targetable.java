@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,11 +16,13 @@ package megamek.common;
 
 public interface Targetable
 {
-    public static final int TYPE_ENTITY     = 0;
-    public static final int TYPE_HEX_CLEAR  = 1;
-    public static final int TYPE_HEX_IGNITE = 2;
-    public static final int TYPE_BUILDING   = 3;
-    public static final int TYPE_BLDG_IGNITE= 4;
+    public static final int TYPE_ENTITY				= 0;
+    public static final int TYPE_HEX_CLEAR			= 1;
+    public static final int TYPE_HEX_IGNITE			= 2;
+    public static final int TYPE_BUILDING			= 3;
+    public static final int TYPE_BLDG_IGNITE		= 4;
+    public static final int TYPE_MINEFIELD_CLEAR	= 5;
+    public static final int TYPE_MINEFIELD_DELIVER	= 6;
     
     public int getTargetType();
     public int getTargetId();    

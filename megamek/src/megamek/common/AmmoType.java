@@ -249,6 +249,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
+        EquipmentType.addType(createISThunderLRM5Ammo());
+        EquipmentType.addType(createISThunderLRM10Ammo());
+        EquipmentType.addType(createISThunderLRM15Ammo());
+        EquipmentType.addType(createISThunderLRM20Ammo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -298,6 +302,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
+        EquipmentType.addType(createCLThunderLRM5Ammo());
+        EquipmentType.addType(createCLThunderLRM10Ammo());
+        EquipmentType.addType(createCLThunderLRM15Ammo());
+        EquipmentType.addType(createCLThunderLRM20Ammo());
 
         // Start of BattleArmor ammo
         EquipmentType.addType( createBASRM2Ammo() );
@@ -465,6 +473,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISThunderLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 5 Ammo";
+        ammo.internalName = "IS Ammo Thunder LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 24;
+        ammo.bv = 6;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -478,6 +505,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISThunderLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 10 Ammo";
+        ammo.internalName = "IS Ammo Thunder LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 12;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
     }
@@ -499,6 +545,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISThunderLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 15 Ammo";
+        ammo.internalName = "IS Ammo Thunder LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 8;
+        ammo.bv = 17;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -516,6 +581,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISThunderLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 20 Ammo";
+        ammo.internalName = "IS Ammo Thunder LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 6;
+        ammo.bv = 23;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createISSRM2Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1596,6 +1680,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLThunderLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 5 Ammo";
+        ammo.internalName = "Clan Ammo Thunder LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 24;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1607,6 +1710,25 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 12;
+        ammo.bv = 14;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createCLThunderLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 10 Ammo";
+        ammo.internalName = "Clan Ammo Thunder LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
@@ -1632,6 +1754,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLThunderLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 15 Ammo";
+        ammo.internalName = "Clan Ammo Thunder LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 8;
+        ammo.bv = 21;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1650,6 +1791,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLThunderLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder LRM 20 Ammo";
+        ammo.internalName = "Clan Ammo Thunder LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER;
+        ammo.shots = 6;
+        ammo.bv = 27;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createCLSRM2Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -2277,5 +2437,29 @@ public class AmmoType extends EquipmentType {
     public String toString() {
         return "Ammo: " + name;
     }
+
+	public static boolean canClearMinefield(AmmoType at) {
+	
+		if (at != null &&
+			(at.getAmmoType() == T_LRM ||
+			at.getAmmoType() == T_MRM) &&
+			at.getRackSize() >= 20 &&
+			at.getMunitionType() == M_STANDARD) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	public static boolean canDeliverMinefield(AmmoType at) {
+	
+		if (at != null &&
+			at.getAmmoType() == T_LRM &&
+			at.getMunitionType() == M_THUNDER) {
+			return true;
+		}
+		
+		return false;
+	}
 
 }

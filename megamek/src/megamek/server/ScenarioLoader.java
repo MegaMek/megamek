@@ -138,7 +138,7 @@ public class ScenarioLoader
   // Set up the teams (for initiative)
   setupTeams(g);
 
-        g.setPhase(Game.PHASE_INITIATIVE);
+        g.setPhase(Game.PHASE_STARTING_SCENARIO);
         
         g.setupRoundDeployment();
         
@@ -304,6 +304,21 @@ public class ScenarioLoader
               }
               
             out[x].setTeam(team);
+
+            String minefields = p.getProperty("Minefields_" + out[x].getName());
+            if (minefields != null) {
+            	try {
+			        StringTokenizer mfs = new StringTokenizer(minefields, ",");
+			        out[x].setNbrMFConventional(Integer.parseInt(mfs.nextToken()));
+			        out[x].setNbrMFCommand(Integer.parseInt(mfs.nextToken()));
+			        out[x].setNbrMFVibra(Integer.parseInt(mfs.nextToken()));
+				} catch (Exception e) {
+			        out[x].setNbrMFConventional(0);
+			        out[x].setNbrMFCommand(0);
+			        out[x].setNbrMFVibra(0);
+			        System.err.println("Something wrong with " + out[x].getName() + "s minefields.");
+				}
+            }
         }
         
         return out;

@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
+import java.util.*;
 
 /**
  * Represents a player in the game.
@@ -60,9 +61,68 @@ public final class Player extends TurnOrdered
     private int num_tanks    = 0;
     private int num_infantry = 0;
 
+	// number of minefields
+    private int num_mf_conv  = 0;
+    private int num_mf_cmd   = 0;
+    private int num_mf_vibra = 0;
+
     public static final String NO_CAMO = "No Camo";
     
     private String camoFileName = null;
+    
+    private Vector visibleMinefields = new Vector();
+    
+    public Vector getMinefields() {
+    	return visibleMinefields;
+    }
+    
+    public void addMinefield(Minefield mf) {
+    	visibleMinefields.add(mf);
+    }
+    
+    public void addMinefields(Vector minefields) {
+    	visibleMinefields.addAll(minefields);
+    }
+    
+    public void removeMinefield(Minefield mf) {
+    	visibleMinefields.remove(mf);
+	}
+    
+    public void removeMinefields() {
+    	visibleMinefields.clear();
+	}
+    
+    public boolean containsMinefield(Minefield mf) {
+    	return visibleMinefields.contains(mf);
+    }
+    
+	public boolean hasMinefields() {
+    	return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
+    }
+    
+    public void setNbrMFConventional(int nbrMF) {
+    	num_mf_conv = nbrMF;
+    }
+    
+    public void setNbrMFCommand(int nbrMF) {
+    	num_mf_cmd = nbrMF;
+    }
+    
+    public void setNbrMFVibra(int nbrMF) {
+    	num_mf_vibra = nbrMF;
+    }
+    
+    public int getNbrMFConventional() {
+    	return num_mf_conv;
+    }
+    
+    public int getNbrMFCommand() {
+    	return num_mf_cmd;
+    }
+    
+    public int getNbrMFVibra() {
+    	return num_mf_vibra;
+    }
     
     public void setCamoFileName(String name) {
       this.camoFileName = name;

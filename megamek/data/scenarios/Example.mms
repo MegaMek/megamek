@@ -35,6 +35,11 @@ Factions=PlayerA,PlayerB
 Location_PlayerA=W
 Location_PlayerB=E
 
+# Faction minefields
+# Gives the player minefields to deploy, the first number is conventional, the second
+# command-detonated and the last is vibrabombs.
+Minefields_PlayerA=2,0,2
+Minefields_PlayerB=1,0,3
 
 # Mechlist for each faction
 #

@@ -77,8 +77,15 @@ public class BufferedPanel extends Panel implements ComponentListener {
      * Paint the panel. Must call super.paint() from any subclass that
      * wished to override this to ensure any contained lightweight components
      * get repainted.
+     *
+     * @param   g - the <code>Graphics</code> to draw onto.
+     *          This value may be <code>null</code>.
      */
     public void paint(Graphics g) {
+        // No Graphics, no painting.
+        if (null == g) {
+            return;
+        }
         // create an off-screen image
         Image offScr = createImage(getSize().width, getSize().height);
         // Get a Graphics object to draw with.

@@ -423,6 +423,8 @@ public class Client extends Panel
             game.addPlayer(pindex, newPlayer);
         }
 		processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
+        
+        System.out.println("client: player #" + newPlayer.getId() + " status change");
 	}
 
 	/**
@@ -538,17 +540,10 @@ public class Client extends Panel
 			switch(c.getCommand()) {
 			case Packet.COMMAND_SERVER_NAME :
 				serverName = (String)c.getObject(0);
-        send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+                send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
 				break;
-        /*
-			case Packet.COMMAND_MAX_PLAYERS :
-				this.max_players = c.getIntValue(0);
-				//game.players.setSize(max_players);
-				break;
-        */
 			case Packet.COMMAND_LOCAL_PN :
 				this.local_pn = c.getIntValue(0);
-        //this.localPlayer = game.getPlayer(local_pn);
 				break;
 			case Packet.COMMAND_PLAYER_UPDATE :
 				receivePlayerInfo(c);
@@ -559,12 +554,9 @@ public class Client extends Panel
 				break;
 			case Packet.COMMAND_PLAYER_ADD :
 				receivePlayerInfo(c);
-				//processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CONNECTED, getPlayer(c.getIntValue(0)), ""));
 				break;
 			case Packet.COMMAND_PLAYER_REMOVE :
-				//GameEvent e = new GameEvent(this, GameEvent.GAME_PLAYER_DISCONNECTED, getPlayer(c.getIntValue(0)), "");
 				game.removePlayer(c.getIntValue(0));
-				//processGameEvent(e);
 				processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
 				break;
 			case Packet.COMMAND_CHAT :

@@ -70,6 +70,21 @@ public class Mounted implements Serializable{
             shotsLeft = ((AmmoType)type).getShots();
         }
     }
+    
+    /**
+     * Changing ammo loadouts allows updating AmmoTypes of existing bins.
+     * This is the only circumstance under which this should happen.
+     */
+    
+    public void changeAmmoType(AmmoType at) {
+        if ( !(type instanceof AmmoType)) {
+            System.out.println("Attempted to change ammo type of non-ammo");
+            return;
+        }
+        this.type = at;
+        this.typeName = at.getInternalName();
+        shotsLeft = at.getShots();
+    }
 
     /**
      * Restores the equipment from the name

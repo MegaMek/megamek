@@ -1450,14 +1450,14 @@ public class Compute
         // modify the ranges for ATM missile systems based on the ammo selected
         if (wtype.getAmmoType() == AmmoType.T_ATM)
         {
-            if (atype.hasFlag(AmmoType.F_ATM_ER))
+            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
             {
                 longRange = 27;
                 mediumRange = 18;
                 shortRange = 9;
                 minimumRange = 4;
             }
-            else if (atype.hasFlag(AmmoType.F_ATM_HE))
+            else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
             {
                 longRange = 9;
                 mediumRange = 6;
@@ -1569,7 +1569,17 @@ public class Compute
         toHit.append(getAttackerMovementModifier(game, attackerId));
         
         // target movement
-        toHit.append(getTargetMovementModifier(game, targetId));
+        ToHitData thTemp = getTargetMovementModifier(game, targetId);
+        toHit.append(thTemp);
+        
+        // precision ammo reduces this modifier
+        if (atype != null && atype.getAmmoType() == AmmoType.T_AC && 
+                atype.getMunitionType() == AmmoType.M_PRECISION) {
+            int nAdjust = Math.min(2, thTemp.getValue());
+            if (nAdjust > 0) {
+                toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
+            }
+        }
         
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));

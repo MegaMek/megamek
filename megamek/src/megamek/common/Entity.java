@@ -2387,7 +2387,7 @@ public abstract class Entity
         for (Enumeration j = getAmmo(); j.hasMoreElements() && !found;) {
             Mounted amounted = (Mounted)j.nextElement();
             AmmoType atype = (AmmoType)amounted.getType();
-            if ( atype.hasFlag(AmmoType.F_INFERNO) &&
+            if ( atype.getMunitionType() == AmmoType.M_INFERNO &&
                  amounted.getShotsLeft() > 0 ) {
                 found = true;
             }

@@ -3189,7 +3189,7 @@ implements Runnable {
             Hex targetHex = game.getBoard().getHex(targetCoords);
 
             // Inferno rounds always cause fires.
-            if ( usesAmmo && atype.hasFlag(AmmoType.F_INFERNO) ) {
+            if ( usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO ) {
                 game.board.addInfernoTo( targetCoords,
                                          InfernoTracker.STANDARD_ROUND,
                                          1 );
@@ -3372,7 +3372,7 @@ implements Runnable {
 
             // If dealing with Inferno rounds set damage to zero and reset
             // all salvo bonuses (cannot mix with other special munitions).
-            if (usesAmmo && atype.hasFlag(AmmoType.F_INFERNO)) {
+            if (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO) {
                     nDamPerHit = 0;
                     nSalvoBonus = 0;
                     sSalvoType = " inferno missile(s) ";
@@ -3419,7 +3419,7 @@ implements Runnable {
                 hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
             }
 
-        } else if (atype != null && atype.hasFlag(AmmoType.F_CLUSTER)) {
+        } else if (atype != null && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = Compute.missilesHit(wtype.getRackSize());
@@ -5560,7 +5560,7 @@ implements Runnable {
 
         // Inferno ammo causes heat buildup as well as the damage
         if ( mounted.getType() instanceof AmmoType &&
-             ((AmmoType)mounted.getType()).hasFlag(AmmoType.F_INFERNO) ) {
+             ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO) {
             en.heatBuildup += 30;
         }
 
@@ -6665,7 +6665,7 @@ implements Runnable {
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType)mounted.getType();
                 if ( !atype.isExplosive() ||
-                     !atype.hasFlag(AmmoType.F_INFERNO) ) {
+                     atype.getMunitionType() != AmmoType.M_INFERNO) {
                     continue;
                 }
                 // Find the most destructive undamaged ammo.

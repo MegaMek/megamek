@@ -650,3 +650,87 @@ base 0 "woods:2" "snow" "themes/snow_heavy_forest_0.gif"
 base 1 "woods:2" "snow" "themes/snow_heavy_forest_1.gif"
 
 #------------------- END snow theme
+
+#------------------- BEGIN grass theme
+
+base 0 "" "" "grass/grass_plains_0.gif"
+base 1 "" "" "grass/grass_plains_1.gif"
+base 2 "" "" "grass/grass_plains_2.gif"
+base 3 "" "" "grass/grass_plains_3.gif"
+base 4 "" "" "grass/grass_plains_4.gif"
+base 5 "" "" "grass/grass_plains_5.gif"
+base 6 "" "" "grass/grass_plains_6.gif"
+base 7 "" "" "grass/grass_plains_7.gif"
+base 8 "" "" "grass/grass_plains_8.gif"
+base 9 "" "" "grass/grass_plains_9.gif"
+base 10 "" "" "grass/grass_plains_10.gif"
+base -1 "" "" "grass/grass_sinkhole_1.gif"
+base -2 "" "" "grass/grass_sinkhole_2.gif"
+base -3 "" "" "grass/grass_sinkhole_3.gif"
+
+base 0 "rough:1" "" "grass/grass_rough_0.gif"
+base 1 "rough:1" "" "grass/grass_rough_1.gif"
+base 3 "rough:1" "" "grass/grass_rough_3.gif"
+base 4 "rough:1" "" "grass/grass_rough_3.gif"
+base 5 "rough:1" "" "grass/grass_rough_5.gif"
+base -1 "rough:1" "" "grass/grass_sinkhole_rough_1.gif"
+base -2 "rough:1" "" "grass/grass_sinkhole_rough_2.gif"
+base -3 "rough:1" "" "grass/grass_sinkhole_rough_3.gif"
+
+#------------------- END grass theme
+
+#------------------- BEGIN mars theme
+
+base 0 "" "" "mars/mars_plains_0.gif"
+base 1 "" "" "mars/mars_plains_1.gif"
+base 2 "" "" "mars/mars_plains_2.gif"
+base 3 "" "" "mars/mars_plains_3.gif"
+base 4 "" "" "mars/mars_plains_4.gif"
+base 5 "" "" "mars/mars_plains_5.gif"
+base 6 "" "" "mars/mars_plains_6.gif"
+base 7 "" "" "mars/mars_plains_7.gif"
+base 8 "" "" "mars/mars_plains_8.gif"
+base 9 "" "" "mars/mars_plains_9.gif"
+base 10 "" "" "mars/mars_plains_10.gif"
+base -1 "" "" "mars/mars_sinkhole_1.gif"
+base -2 "" "" "mars/mars_sinkhole_2.gif"
+base -3 "" "" "mars/mars_sinkhole_3.gif"
+
+base 0 "rough:1" "" "mars/mars_rough_0.gif"
+base 1 "rough:1" "" "mars/mars_rough_1.gif"
+base 3 "rough:1" "" "mars/mars_rough_3.gif"
+base 4 "rough:1" "" "mars/mars_rough_3.gif"
+base 5 "rough:1" "" "mars/mars_rough_5.gif"
+base -1 "rough:1" "" "mars/mars_sinkhole_rough_1.gif"
+base -2 "rough:1" "" "mars/mars_sinkhole_rough_2.gif"
+base -3 "rough:1" "" "mars/mars_sinkhole_rough_3.gif"
+
+#------------------- END mars theme
+
+#------------------- BEGIN lunar theme
+
+base 0 "" "" "lunar/lunar_plains_0.gif"
+base 1 "" "" "lunar/lunar_plains_1.gif"
+base 2 "" "" "lunar/lunar_plains_2.gif"
+base 3 "" "" "lunar/lunar_plains_3.gif"
+base 4 "" "" "lunar/lunar_plains_4.gif"
+base 5 "" "" "lunar/lunar_plains_5.gif"
+base 6 "" "" "lunar/lunar_plains_6.gif"
+base 7 "" "" "lunar/lunar_plains_7.gif"
+base 8 "" "" "lunar/lunar_plains_8.gif"
+base 9 "" "" "lunar/lunar_plains_9.gif"
+base 10 "" "" "lunar/lunar_plains_10.gif"
+base -1 "" "" "lunar/lunar_sinkhole_1.gif"
+base -2 "" "" "lunar/lunar_sinkhole_2.gif"
+base -3 "" "" "lunar/lunar_sinkhole_3.gif"
+
+base 0 "rough:1" "" "lunar/lunar_rough_0.gif"
+base 1 "rough:1" "" "lunar/lunar_rough_1.gif"
+base 3 "rough:1" "" "lunar/lunar_rough_3.gif"
+base 4 "rough:1" "" "lunar/lunar_rough_3.gif"
+base 5 "rough:1" "" "lunar/lunar_rough_5.gif"
+base -1 "rough:1" "" "lunar/lunar_sinkhole_rough_1.gif"
+base -2 "rough:1" "" "lunar/lunar_sinkhole_rough_2.gif"
+base -3 "rough:1" "" "lunar/lunar_sinkhole_rough_3.gif"
+
+#------------------- END lunar theme

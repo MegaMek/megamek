@@ -24,6 +24,8 @@ Lot of people have contributed to the MegaMek project.
      Matt Trumbull
      Hugh "TigerWraith" Peeples
      Bob Dee
+     Douglas Moore
+     
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

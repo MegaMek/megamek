@@ -41,7 +41,7 @@ public class Compute
     public static final int        GEAR_DFA         = 4;
     public static final int        GEAR_TURN        = 5;
     
-    public static final DiceRandom random = new DiceRandom();
+    public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
     
     /**
      * Simulates six-sided die rolls.
@@ -49,7 +49,7 @@ public class Compute
     public static int d6(int dice) {
         int total = 0;
         for (int i = 0; i < dice; i++) {
-            total += random.nextD6();
+            total += random.nextInt(6) + 1;
         }
         return total;
     }

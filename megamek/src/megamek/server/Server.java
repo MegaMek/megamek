@@ -95,6 +95,7 @@ public class Server
         registerCommand(new HelpCommand(this));
         registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
+        registerCommand(new RollCommand(this));
         registerCommand(new WhoCommand(this));
     }
     

@@ -107,6 +107,8 @@ v next
 + 544496: dfa & charging to-hit uses piloting skill differential (not gunnery)
 + 545118: tree clubs work again
 + 543593: lock ups after heat phase possibly caught, not particularly fixed
++ using sun collections Random instead of equivalent custom class
++ added /roll command
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

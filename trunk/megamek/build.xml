@@ -32,6 +32,7 @@
   <property name="lib.collections" value="collections.jar"/>
   <property name="lib.tinyxml" value="TinyXML.jar"/>
   <property name="lib.ostermiller" value="Ostermiller.jar"/>
+  <property name="lib.png" value="PngEncoder.jar"/>
 
   <!-- Name of the target jarfile and the class containing the main-Method -->
   <property name="jarfile" value="MegaMek.jar"/>
@@ -41,7 +42,7 @@
   <property name="dataclasspath" value="."/>
   
   <!-- This is the classpath of the jar -->  
-  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller}"/>
+  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller} ${lib.png}"/>
 
   <!-- initializes system before build -->
   <target name="init">
@@ -59,6 +60,7 @@
             <pathelement location="${lib.collections}"/>
             <pathelement location="${lib.tinyxml}"/>
             <pathelement location="${lib.ostermiller}"/>
+            <pathelement location="${lib.png}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -73,6 +75,7 @@
             <pathelement location="${lib.collections}"/>
             <pathelement location="${lib.tinyxml}"/>
             <pathelement location="${lib.ostermiller}"/>
+            <pathelement location="${lib.png}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -99,6 +102,7 @@
            <pathelement location="${lib.collections}"/>
            <pathelement location="${lib.tinyxml}"/>
            <pathelement location="${lib.ostermiller}"/>
+           <pathelement location="${lib.png}"/>
 	    </classpath>
      </java>
   </target>
@@ -146,6 +150,7 @@
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.collections}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tinyxml}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.ostermiller}"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.png}"/>
     
     <antcall target="cvsdev-build"/>
     
@@ -184,6 +189,7 @@
            <pathelement location="${cvsmaindir}/${lib.collections}"/>
            <pathelement location="${cvsmaindir}/${lib.tinyxml}"/> 
            <pathelement location="${cvsmaindir}/${lib.ostermiller}"/> 
+           <pathelement location="${cvsmaindir}/${lib.png}"/>
         </classpath>
     </javac>
     

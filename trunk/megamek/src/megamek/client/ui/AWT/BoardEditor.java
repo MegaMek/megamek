@@ -18,6 +18,7 @@ import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import com.keypoint.PngEncoder;
 
 import megamek.common.*;
 
@@ -37,7 +38,7 @@ public class BoardEditor extends Container
 
     private Hex                 curHex = new Hex();
 
-    private String              curpath, curfile;
+    private String              curpath, curfile, curfileImage;
     
     private boolean             ctrlheld, altheld;
     
@@ -77,6 +78,7 @@ public class BoardEditor extends Container
     private Panel               panButtons;
     private Button              butBoardNew, butBoardLoad;
     private Button              butBoardSave, butBoardSaveAs;
+    private Button              butBoardSaveAsImage;
     private Button              butMiniMap;
     
     private Dialog              minimapW;
@@ -234,12 +236,18 @@ public class BoardEditor extends Container
         butBoardSaveAs = new Button("Save As...");
         butBoardSaveAs.setActionCommand( "fileBoardSaveAs" );
         butBoardSaveAs.addActionListener(this);
-        
-        panButtons = new Panel(new GridLayout(2, 2, 2, 2));
+
+        butBoardSaveAsImage = new Button("Save As Image...");
+        butBoardSaveAsImage.setActionCommand( "fileBoardSaveAsImage" );
+        butBoardSaveAsImage.addActionListener(this);
+
+        panButtons = new Panel(new GridLayout(3, 2, 2, 2));
+        panButtons.add(labBoard);
         panButtons.add(butBoardNew);
         panButtons.add(butBoardLoad);
         panButtons.add(butBoardSave);
         panButtons.add(butBoardSaveAs);
+        panButtons.add(butBoardSaveAsImage);
         
         blankL = new Label("", Label.CENTER);
         
@@ -275,7 +283,7 @@ public class BoardEditor extends Container
         addBag(blankL, gridbag, c);
         
         c.weightx = 1.0;    c.weighty = 0.0;
-        addBag(labBoard, gridbag, c);
+        //        addBag(labBoard, gridbag, c);
         addBag(panButtons, gridbag, c);
 
         minimapW = new Dialog(frame, "MiniMap", false);
@@ -459,7 +467,42 @@ public class BoardEditor extends Container
             System.err.println(ex);
         }
     }
-    
+
+    /**
+     * Saves the board in PNG image format.
+     */
+    public void boardSaveImage() {
+        if(curfileImage == null) {
+            boardSaveAsImage();
+            return;
+        }
+        // save!
+        boolean encodeAlpha = false;
+        int filter = 0; //0 - no filter; 1 - sub; 2 - up
+        int compressionLevel = 9; // 0 to 9 with 0 being no compression
+        PngEncoder png =  new PngEncoder( bv.getEntireBoardImage(),
+                                          (encodeAlpha) ? PngEncoder.ENCODE_ALPHA : PngEncoder.NO_ALPHA,
+                                          0,
+                                          9);
+        try {
+            FileOutputStream outfile = new FileOutputStream( curfileImage );
+            byte[] pngbytes;
+            pngbytes = png.pngEncode();
+            if (pngbytes == null)
+            {
+                System.out.println("Failed to save board as image:Null image");
+            }
+            else
+            {
+                outfile.write( pngbytes );
+            }
+            outfile.flush();
+            outfile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Opens a file dialog box to select a file to save as;
      * saves the board to the file.
@@ -486,8 +529,35 @@ public class BoardEditor extends Container
         
         boardSave();
     }
-    
-    
+
+    /**
+     * Opens a file dialog box to select a file to save as;
+     * saves the board to the file as an image.  Useful
+     * for printing boards.
+     */
+    public void boardSaveAsImage() {
+        FileDialog fd = new FileDialog(frame, "Save Board As Image...", FileDialog.SAVE);
+        //        fd.setDirectory("data" + File.separator + "boards");
+        fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fd.show();
+
+        if(fd.getFile() == null) {
+            // I want a file, y'know!
+            return;
+        }
+        curpath = fd.getDirectory();
+        curfileImage = fd.getFile();
+
+        // make sure the file ends in board
+        if (!curfileImage.toLowerCase().endsWith(".png")) {
+            curfileImage += ".png";
+        }
+
+        frame.setTitle("MegaMek Board Editor : " + curfileImage);
+
+        boardSaveImage();
+    }
+
     //
     // BoardListener
     //
@@ -651,6 +721,8 @@ public class BoardEditor extends Container
             boardSave();                                            
         } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) {
             boardSaveAs();
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) {
+            boardSaveAsImage();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());

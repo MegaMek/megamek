@@ -85,7 +85,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.9 (CVS)
+v 0.28.9 (03-15-03, 5pm)
 + Added XML parsing to MegaMek.
 + Changed MUL files to an XML format.
 + client now is more aware of charge-type attacks, and displays them

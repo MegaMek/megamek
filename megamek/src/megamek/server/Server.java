@@ -8537,6 +8537,13 @@ implements Runnable, ConnectionHandler {
                 desc.append( "\n        Infantry platoon caught in the open!!!  Damage doubled." );
             }
         }
+        // Is the infantry in vacuum?
+        if ( (isPlatoon || isBattleArmor ) && !te.isDestroyed() 
+                && !te.isDoomed() && game.getOptions().booleanOption("vacuum")) {
+            // PBI. Double damage.
+            damage = damage * 2;
+            desc.append( "\n        Infantry is in Vacuum!!! Space suits are breached!!! Damage doubled." );
+        }
         // If dealing with fragmentation missiles,
         // it does double damage to infantry...
         switch (bFrag)
@@ -9506,6 +9513,10 @@ implements Runnable, ConnectionHandler {
      */
     private String breachCheck(Entity entity, int loc, Hex hex) {
         StringBuffer desc = new StringBuffer();
+        // BattleArmor does not breach
+        if (entity instanceof BattleArmor) {
+            return "";
+        }
         // This handles both water and vacuum breaches.
         if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) {
             // Does the location have armor (check rear armor on Mek)

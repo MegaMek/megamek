@@ -108,6 +108,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("lobby_ammo_dump", "Allow Ammo Dumping in the Lobby", "If checked, Players may dump their Mech's ammo before the game starts.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("set_arty_player_homeedge", "Automatically set artillery home edge", "If checked, all of the players' artillery units will have their homeedge set to the deployment edge of the player,\nNW and NE are North, SW and SE are South.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_premove_vibra", "Do not damage Mek by Vibrabomb if it has not yet moved.", "If checked, vibrabombs that explode will not damage Meks that have not yet finished their move.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("auto_spot", "Any unit that does not do anything special is a spotter.", "If checked, units that don't fire weapons/search for clubs/etc automatically spot for indirect LRMs.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

@@ -641,6 +641,17 @@ implements Runnable {
             
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
+
+                // Is this unit swarming somebody?
+                final int swarmedId = entity.getSwarmTargetId();
+                if ( Entity.NONE != swarmedId ) {
+                    final Entity swarmed = game.getEntity( swarmedId );
+                    swarmed.setSwarmAttackerId( Entity.NONE );
+                    entity.setSwarmTargetId( Entity.NONE );
+                    phaseReport.append( swarmed.getDisplayName() );
+                    phaseReport.append( " is freed from its swarm attack.\n" );
+                    this.entityUpdate( swarmedId );
+                }
             }
             
             if (entity.isDestroyed() || entity.getCrew().isDead()) {
@@ -2275,6 +2286,16 @@ implements Runnable {
                             phaseReport.append
                                 ( "   Can not skid uphill into hex " +
                                   nextPos.getBoardNum() ).append( ".\n" );
+
+                            // Stay in the current hex and stop skidding.
+                            break;
+                        }
+
+                        // Have skidding units suffer falls.
+                        else if ( curElevation > nextElevation + 1 ) {
+                            doEntityFallsInto( entity, curPos, nextPos,
+                                               Compute.getBasePilotingRoll
+                                               (game, entity.getId()) );
 
                             // Stay in the current hex and stop skidding.
                             break;

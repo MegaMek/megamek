@@ -71,7 +71,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_leg_damage", "MaxTech Leg Damage Rule", "If checked, hip criticals are cummulative with other damage to legs, but reduce movement by 2 instead of halving. Destroying both hips does not reduce MPs to zero.", false));
         addOption(level3, new GameOption("maxtech_fire", "MaxTech Fire/Smoke Rules", "If checked, fires create smoke that drifts and dissipates, instead of remaining static.  In addition, smoke is split into light and heavy varieties.", false));
         addOption(level3, new GameOption("maxtech_range", "MaxTech Extreme Range Rules", "If checked, Weapons have an extreme range bracket past their long range distance.", false));
-        //        addOption(level3, new GameOption("maxtech_LOS", "MaxTech Line of Sight Rules", "If checked, LOS will be calculated using the ... rules from MaxTech revised, page 2.", false));
+        addOption(level3, new GameOption("maxtech_LOS1", "MaxTech Diagramming Line of Sight Rules", "If checked, LOS will be calculated using the Diagramming LOS rules from MaxTech revised, page 22", false));
 
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);

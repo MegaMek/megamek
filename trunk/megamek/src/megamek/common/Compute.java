@@ -872,6 +872,9 @@ public class Compute
         
         // LOS?
         for (int i = 0; i < in.length; i++) {
+            // skip this hex if it is not on the board
+            if (!game.board.contains(in[i])) continue;
+
             // don't count attacker or target hexes
             if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
                 continue;

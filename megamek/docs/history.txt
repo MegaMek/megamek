@@ -69,14 +69,15 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v CVS
+v 0.27.7 (11-15-02, 11:30pm)
 + Applied skids patch to CVS tree.
 + Successive consciousness checks should be made from low rolls to high.
 + fixed lockup when fire tries to spread beyond the edge of the map
 + smoke and woods in the same hex no longer both apply modifiers to LOS
 + setting fires made optional (on by default)
++ 639202: streak SRMs missing should not have a chance to start fires
 
-v 0.27.6 (11-08-01, 6pm)
+v 0.27.6 (11-08-02, 6pm)
 + Added Kai's fire patch (only working for missed shots, presently)
 + 633352: fixed NullPointerException when deploying during double blind
 + 632830: fixed typo causing small south deployment zone

@@ -30,6 +30,7 @@ public class HitData
     private int effect;
     private boolean hitAimedLocation = false;
     private int specCritMod = 0;
+    private int glancing = 0;
     
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
@@ -67,8 +68,12 @@ public class HitData
                 specCritMod = -1;
     }
     
+    public void makeGlancingBlow () {
+        glancing = -2;
+    }
+    
     public int getSpecCritMod() {
-        return specCritMod;
+        return specCritMod+glancing;
     }
     
     public int getLocation() {

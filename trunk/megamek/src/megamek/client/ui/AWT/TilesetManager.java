@@ -256,6 +256,13 @@ public class TilesetManager {
      *          no camo pattern or if there was an error loading it.
      */
     public Image getPlayerCamo( Player player ) {
+
+        // Return a null if the player has selected no camo file.
+        if ( null == player.getCamoCategory() ||
+             Player.NO_CAMO.equals( player.getCamoCategory() ) ) {
+            return null;
+        }
+
         // Try to get the player's camo file.
         Image camo = null;
         try {

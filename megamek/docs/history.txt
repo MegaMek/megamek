@@ -6,6 +6,7 @@ v0.29.53 (CVS)
 + Bug 1043230: Tooltip doesn't show T-Active or T-Inferno info
 + Bug 1039781: TCs and immobile targets
 + Bug 1044357: MS JRE doesn't support Vector#add
++ Add date/time stamp to "END OF GAME" message.
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

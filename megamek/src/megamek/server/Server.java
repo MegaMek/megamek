@@ -17,6 +17,7 @@ package megamek.server;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 import megamek.*;
 import megamek.common.*;
@@ -573,7 +574,10 @@ implements Runnable, ConnectionHandler {
         transmitAllPlayerDones();
 
         // Write end of game to stdout so controlling scripts can rotate logs.
-        System.out.println( "END OF GAME" );
+        SimpleDateFormat format = new SimpleDateFormat
+            ( "yyyy-MM-dd HH:mm:ss Z" );
+        System.out.print( format.format(new Date()) );
+        System.out.println( " END OF GAME" );
 
         changePhase(Game.PHASE_LOUNGE);
     }

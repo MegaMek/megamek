@@ -78,6 +78,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("inf_move_multi", Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle", "If checked, " + Game.INF_MOVE_MULTI + " platoons will have to move in place of a single Mek or Vehicle.  If there are less than " + Game.INF_MOVE_MULTI + " platoons remaining, they all must move.  The move order includes the presence of Infantry.\n\nMutually exclusive with \"Infantry move after Meks and Vehicles\".\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("blind_drop", "Blind Drop", "If checked, the configuration of a Mech won't be shown in the Chatroom to your opponents.", false)); 
         addOption(ruleBreakers, new GameOption("clan_ignore_eq_limits", "Ignore Clan Ammo Limitations", "If checked, Clan units can use ammo normally limited to IS units only; for example, Thunder-Augmented, Thunder-Inferno, and Thunder-Active LRM rounds.", false));
+        addOption(ruleBreakers, new GameOption("no_clan_physical", "No physical attacks for the clans", "If checked, clan Meks may not make physical attacks.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

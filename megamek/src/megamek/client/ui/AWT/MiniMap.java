@@ -228,8 +228,7 @@ scan:
             for (Enumeration enum = m_game.getEntities(); enum.hasMoreElements(); ) {
                 Entity e = (Entity)enum.nextElement();
                 if (e.getPosition() == null) continue;
-                g.setColor(e.getOwner().getColor());
-                paintUnit(g, e.getPosition().x, e.getPosition().y, true);
+                paintUnit(g, e, true);
             }
         }
         drawBtn(g);
@@ -388,9 +387,9 @@ scan:
         }
     }
 
-    private void paintUnit (Graphics g, int x, int y, boolean border) {
-        int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
-        int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
+    private void paintUnit (Graphics g, Entity entity, boolean border) {
+        int baseX = entity.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
+        int baseY = (2*entity.getPosition().y + 1 + entity.getPosition().x%2)* hexSideByCos30[zoom] + topMargin;
         int [] xPoints = new int[3];
         int [] yPoints = new int[3];
         xPoints[0] = baseX;
@@ -399,13 +398,20 @@ scan:
         yPoints[1] = baseY + unitSize/2;
         xPoints[2] = baseX + unitSize;
         yPoints[2] = baseY + unitSize/2;
+
+        g.setColor(entity.getOwner().getColor());
+        if (! entity.isSelectableThisTurn(m_game)) {
+            // entity has moved (or whatever) already
+            g.setColor(g.getColor().darker());
+        };
         g.fillPolygon(xPoints,yPoints,3);
+
         if (border) {
             Color oldColor = g.getColor();
             g.setColor(oldColor.darker().darker().darker());
             g.drawPolygon(xPoints,yPoints,3);
             g.setColor(oldColor);
-        }
+        };
     }
 
     private void paintRoads (Graphics g){

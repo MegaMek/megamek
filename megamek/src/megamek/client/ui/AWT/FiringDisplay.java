@@ -310,6 +310,20 @@ public class FiringDisplay
     }
     
     /**
+     * Skips to the next weapon
+     */
+    private void nextWeapon() {
+        selectedWeapon = ce().getNextWeapon(client.mechD.wPan.weaponList.getSelectedIndex());
+        // check; if there are no ready weapons, you're done.
+        if(selectedWeapon == -1) {
+            return;
+        }
+        client.mechD.wPan.displayMech(ce());
+        client.mechD.wPan.selectWeapon(selectedWeapon);
+        updateTarget();
+    }
+    
+    /**
      * The entity spends the rest of its turn finding a club
      */
     private void findClub() {
@@ -379,6 +393,7 @@ public class FiringDisplay
                 butFire.setEnabled(false);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());
+            butSkip.setEnabled(true);
         } else {
             client.mechD.wPan.wTargetR.setText("---");
             client.mechD.wPan.wRangeR.setText("---");
@@ -505,6 +520,8 @@ public class FiringDisplay
             ready();
         } else if (ev.getSource() == butFire) {
             fire();
+        } else if (ev.getSource() == butSkip) {
+            nextWeapon();
         } else if (ev.getSource() == butTwist) {
             twisting = true;
         } else if (ev.getSource() == butNext) {

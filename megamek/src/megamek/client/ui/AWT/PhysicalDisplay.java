@@ -355,6 +355,7 @@ public class PhysicalDisplay
             
         } else {
             butPunch.setEnabled(false);
+            butPush.setEnabled(false);
             butKick.setEnabled(false);
             butClub.setEnabled(false);
         }

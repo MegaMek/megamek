@@ -30,6 +30,7 @@ public class Tank
     private int m_nStunnedTurns = 0;
     private Mounted m_jammedGun = null;
     private boolean m_bImmobile = false;
+    private boolean m_bImmobileHit = false;
     
     // locations
     public static final int        LOC_BODY               = 0;
@@ -97,7 +98,7 @@ public class Tank
     
     public void immobilize()
     {
-        m_bImmobile = true;
+        m_bImmobileHit = true;
         setOriginalWalkMP(0);
     }
     
@@ -149,6 +150,10 @@ public class Tank
     {
         m_jammedGun = m;
         m_jammedGun.setHit(true);
+    }
+    
+    public void applyDamage() {
+        m_bImmobile |= m_bImmobileHit;
     }
     
     public void newRound()

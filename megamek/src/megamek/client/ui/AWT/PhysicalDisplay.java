@@ -186,7 +186,7 @@ public class PhysicalDisplay
         if (client.game.getEntity(en) == null) {
             System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en);
             System.err.println("PhysicalDisplay: sending ready signal...");
-            client.sendReady(true);
+            ready();
             return;
         }
         this.cen = en;
@@ -195,7 +195,7 @@ public class PhysicalDisplay
         client.game.board.select(null);
         client.game.board.cursor(null);
 
-        client.mechD.displayMech(ce());
+        client.mechD.displayEntity(ce());
         client.mechD.showPanel("movement");
 
         client.bv.centerOnHex(ce().getPosition());
@@ -261,8 +261,6 @@ public class PhysicalDisplay
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
-        client.sendEntityReady(cen);
-        client.sendReady(true);
     }
     
     

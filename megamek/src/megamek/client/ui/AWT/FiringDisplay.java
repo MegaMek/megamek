@@ -256,7 +256,7 @@ public class FiringDisplay
                          en);
                     System.err.println
                         ("FiringDisplay: sending ready signal...");
-                    client.sendReady(true);
+                    ready();
                     return;
                 }
 
@@ -308,7 +308,7 @@ public class FiringDisplay
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
-            client.sendReady(true);
+            ready();
         }
     }
     
@@ -465,18 +465,13 @@ public class FiringDisplay
      * Called when the current entity is done firing.
      */
     private void ready() {
-        if (cen == Entity.NONE) {
-            return;
-        }
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
 	// If we've moved an Infantry platoon, increment our turn counter.
-	if ( ce() instanceof Infantry ) {
+	if (ce() instanceof Infantry) {
 	    turnInfMoved++;
 	}
-        client.sendEntityReady(cen);
-        client.sendReady(true);
     }
     
     /**

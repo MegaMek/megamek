@@ -82,6 +82,11 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ player & entity "ready" changed to "done" to be more clear
++ no more player "done" transmitted in phases with turns
++ entity "done" implicit instead of seperately transmitted
+
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.
 + Track and report the difference between units that have Fled, still 

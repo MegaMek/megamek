@@ -102,8 +102,8 @@ public class ReportDisplay
      * Sets you as ready and disables the ready button.
      */
     public void ready() {
-        client.sendReady(true);
         readyB.setEnabled(false);
+        client.sendDone(true);
     }
     
 

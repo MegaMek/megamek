@@ -73,7 +73,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Panel panTop;
         
     private Label labStatus;
-    private Button butReady;
+    private Button butDone;
     
     /**
      * Creates a new chat lounge for the client.
@@ -108,9 +108,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         
         labStatus = new Label("", Label.CENTER);
                 
-        butReady = new Button("I'm Ready.");
-        butReady.setActionCommand("ready");
-        butReady.addActionListener(this);
+        butDone = new Button("I'm Done");
+        butDone.setActionCommand("ready");
+        butDone.addActionListener(this);
                 
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
@@ -132,7 +132,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
-        addBag(butReady, gridbag, c);
+        addBag(butDone, gridbag, c);
         
         validate();
     }
@@ -592,10 +592,15 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
   
     /**
-     * Refreshes the "ready" status of the ready button
+     * Refreshes the done button.  The label will say the opposite of the
+     * player's "done" status, indicating that clicking it will reverse the
+     * condition.
      */
-    private void refreshReadyButton() {
-        butReady.setLabel(client.getLocalPlayer().isReady() ? "Cancel Ready" : "I'm Ready.");
+    private void refreshDoneButton(boolean done) {
+        butDone.setLabel(done ? "Not Done" : "I'm Done");
+    }
+    private void refreshDoneButton() {
+        refreshDoneButton(client.getLocalPlayer().isDone());
     }
     
     /**
@@ -647,7 +652,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     // GameListener
     //
     public void gamePlayerStatusChange(GameEvent ev) {
-        refreshReadyButton();
+        refreshDoneButton();
         refreshBVs();
         refreshPlayerInfo();
         refreshStarts();
@@ -691,9 +696,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource() == butReady) {
-            client.sendReady(!client.getLocalPlayer().isReady());
-            refreshReadyButton();
+        if (ev.getSource() == butDone) {
+            boolean done = !client.getLocalPlayer().isDone();
+            client.sendDone(done);
+            refreshDoneButton(done);
         } else if (ev.getSource() == butLoad) {
             loadMech();
         } else if (ev.getSource() == butCustom ||  ev.getSource() == lisEntities) {
@@ -704,17 +710,17 @@ public class ChatLounge extends AbstractPhaseDisplay
                 client.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
-            // board settings 
+            // board settings
             client.getBoardSelectionDialog().update(client.getMapSettings(), true);
             client.getBoardSelectionDialog().show();
         } else if (ev.getSource() == butOptions) {
             // game options
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
-    } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
+        } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             client.getStartingPositionDialog().update();
             client.getStartingPositionDialog().show();
         }
     }
-    
+
 }

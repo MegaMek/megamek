@@ -157,7 +157,7 @@ public class Protomech
     {
         return new PilotingRollData( this.getId(),
                                      PilotingRollData.CHECK_FALSE,
-                                     "Protomech" );
+                                     "This mek is a Protomek, it takes no PSRs." );
     }
 
     /**

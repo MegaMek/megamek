@@ -995,11 +995,20 @@ public class Compute
 
         // Mek targets that have the dodge maneuver but didn't get a physical
         // turn (unless they're charging or DFAing) get the dodge bonus.
+        
+        /* I have currently made dodge slightly less useful than it is canonically because 
+         * otherwise MM will crash with an OutOfMemory error every time two mechs capable of dodging become
+         * adjacent to each other.
+         *
+         *TODO : Figure out a way to break the circular dependency on those two 
+         *
+         *Replace false with the fixed version of "
+               ( !target.hasDisplacementAttack() &&
+                 !target.isEligibleForPhysical() ) )" 
+         * */
         if ( target != null && target instanceof Mech &&
              target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
-             ( target.dodging ||
-               ( !target.hasDisplacementAttack() &&
-                 !target.isEligibleForPhysical() ) ) ) {
+             ( target.dodging || false )) {
             toHit.addModifier(2, "target is dodging");
         }
     }

@@ -27,4 +27,5 @@ public interface GameListener
     public void gameBoardChanged(GameEvent e);
     public void gameEnd(GameEvent e);
     public void gameReport(GameEvent e);
+    public void gameMapQuery(GameEvent e);
 }

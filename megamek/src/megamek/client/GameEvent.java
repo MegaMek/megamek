@@ -31,6 +31,7 @@ public class GameEvent extends java.util.EventObject {
     public static final int GAME_BOARD_CHANGE = 8;
     public static final int GAME_END = 9;
     public static final int GAME_REPORT = 10;
+    public static final int GAME_MAP_QUERY = 11;
 
     protected int type;
     protected Player player;

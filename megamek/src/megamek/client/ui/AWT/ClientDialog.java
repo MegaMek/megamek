@@ -36,6 +36,9 @@ public class ClientDialog extends Dialog {
     public ClientDialog(Frame owner, String title) {
         super(owner, title);
     }
+    public ClientDialog(Frame owner, String title, boolean modal) {
+        super(owner, title, modal);
+    }
 
     /**
      * Set the size and location to something sane (always within the screen).

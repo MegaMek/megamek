@@ -127,7 +127,7 @@ public abstract class Entity
     protected boolean           armsFlipped = false;
     protected boolean           unjammingRAC = false;
     protected boolean           hasSpotlight = false;
-    protected boolean           isIlluminated = false;
+    protected boolean           illuminated = false;
     protected boolean           spotlightIsActive = false;
     protected boolean           stuckInSwamp = false;
     
@@ -4033,29 +4033,49 @@ public abstract class Entity
     
     public void setSpotlightState (boolean arg) {
         if (this.hasSpotlight) this.spotlightIsActive = arg;
-        if (arg) this.isIlluminated = true;
+        if (arg) this.illuminated = true;
     }
     
     public boolean isIlluminated() {
-        return this.isIlluminated;
+        return this.illuminated;
     }
     
     public void setIlluminated (boolean arg) {
-        this.isIlluminated = arg;
+        this.illuminated = arg;
     }
-    
+
+    /**
+     * illuminate an entity and all entities that are between us and the hex
+     * @param target the <code>Entity</code> to illuminate
+     */
     public void illuminateTarget (Entity target) {
         if (this.hasSpotlight && this.spotlightIsActive && target != null) {
             if (!target.isIlluminated()) target.setIlluminated (true);
-            this.isIlluminated = true;
-            //TODO: Illuminate targets along LOS to target
+            this.illuminated = true;
+            Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
+            for (int i = 0; i < in.length; i++) {
+                for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
+                	Entity en = (Entity)e.nextElement();
+                	en.setIlluminated(true);
+                }
+            }
         }
     }
     
-    public void illuminateTarget (Hex target) {
+    /**
+     * illuminate a hex and all units that are between us and the hex
+     * @param target the <code>HexTarget</code> to illuminate
+     */
+    public void illuminateTarget (HexTarget target) {
         if (this.hasSpotlight && this.spotlightIsActive && target != null) {
-            this.isIlluminated = true;
-            //TODO: Illuminate targets along LOS to target
+            this.illuminated = true;
+            Coords[] in = Coords.intervening(this.getPosition(), target.getPosition());
+            for (int i = 0; i < in.length; i++) {
+                for (Enumeration e = game.getEntities(in[i]);e.hasMoreElements();) {
+                	Entity en = (Entity)e.nextElement();
+                	en.setIlluminated(true);
+                }
+            }
         }
     }
      /**

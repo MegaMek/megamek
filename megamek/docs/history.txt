@@ -36,7 +36,6 @@ board display:
 - zooming
 
 mech display:
-- many fields in movement panel are useless
 - extra heat capacity due to underwater heat sinks doesn't show up
 
 mechs:
@@ -47,24 +46,28 @@ mechs:
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
 - possibly stagger within packs
-? might show whole initiative sequence in status bar
+? might show whole initiative sequence somewhere
 
 movement:
 ? mech can try moving again if failed getting up
 - jump jets above water should work when jumping out of water
-- pavement movement and skidding?
+- pavement movement and skidding
 - go prone action
 - jump into level 1 water should need roll (bdee)
 
 weapon attacks:
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
-- eliminate leg weapons & kicks in level 1 water
+- eliminate leg weapons & kicks in level 1 water under level 1 rules
 
 physical attacks:
 - dfa should violate stacking
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
+
+displacement issues:
+- hide under the desk
+- cry
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
@@ -76,16 +79,21 @@ falling:
 
 FUTURE VERSION PLANS:
 ---------------------
-- all reasonable level 1 rules without bugs
-- interface cleaned up: reasonably intuitive & bug-free
+- any remaining level 1 rules without bugs
+- level 2!
+- more interface improvements, particularly in the lobby
 
 v 0.26
 - revise map code to support more terrain & terrain effects
 - also on map code, use a tileset, no more image names in map files
 - revise mech display code to be able to load mech pictures from tilesets too
+- physical attacks have a dialog showing to-hit factors and confirming attack
 
 VERSION HISTORY:
 ----------------
+v next
++ heat modifier to fire now applies at the correct levels
+
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon
 + mech display window resizable 

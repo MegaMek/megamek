@@ -427,9 +427,9 @@ public class MovementDisplay
         client.moveEntity(cen, md);
     }
 
-    private String addNag(String report, PilotingRollData rollTarget) {
-        report += "Need " + rollTarget.getValueAsString() + " [" + rollTarget.getDesc() + "]\n";
-        return report;
+    private String addNag(PilotingRollData rollTarget) {
+        String desc = "Need " + rollTarget.getValueAsString() + " [" + rollTarget.getDesc() + "]\n";
+        return desc;
     }
 
     /**
@@ -438,11 +438,11 @@ public class MovementDisplay
      *  simplified version of Server.processMovement(), except
      *  that it just reads information (no writing).  Note that
      *  Compute.compile() is called though, which changes the
-     *  md object.
+     *  md object (I think).
      */
     private String doPSRCheck(MovementData md) {
 
-        String nagReport = new String();
+        StringBuffer nagReport = new StringBuffer();
 
         final Entity entity = ce();
 
@@ -482,12 +482,12 @@ public class MovementDisplay
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
                 rollTarget = entity.checkRunningWithDamage(overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport = addNag(nagReport, rollTarget);
+                    nagReport.append(addNag(rollTarget));
                 }
                 firstStep = false;
             }
@@ -510,20 +510,20 @@ public class MovementDisplay
                                           distance);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             }
 
             // check if we've moved into rubble
             rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             }
             
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
                                                isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             }
 
             // Handle non-infantry moving into a building.
@@ -543,9 +543,9 @@ public class MovementDisplay
                     // Exiting one building and entering another.
                     //  Brave, aren't we?
                     rollTarget = entity.rollMovementInBuilding(bldgExited, distance, "exiting");
-                    nagReport = addNag(nagReport, rollTarget);
+                    nagReport.append(addNag(rollTarget));
                     rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering");
-                    nagReport = addNag(nagReport, rollTarget);
+                    nagReport.append(addNag(rollTarget));
                 } else {
                     Building bldg;
                     if (bldgEntered == null) {
@@ -556,14 +556,14 @@ public class MovementDisplay
                         bldg = bldgEntered;
                     }
                     rollTarget = entity.rollMovementInBuilding(bldg, distance, "");
-                    nagReport = addNag(nagReport, rollTarget);
+                    nagReport.append(addNag(rollTarget));
                 }
             }
 
             if (step.getType() == MovementData.STEP_GO_PRONE) {
                 rollTarget = entity.checkDislodgeSwarmers();
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport = addNag(nagReport, rollTarget);
+                    nagReport.append(addNag(rollTarget));
                 }
             }
 
@@ -584,17 +584,17 @@ public class MovementDisplay
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage();
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             }
             // jumped into water?
             int waterLevel = client.game.board.getHex(curPos).levelOf(Terrain.WATER);
             rollTarget = entity.checkWaterMove(waterLevel);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport = addNag(nagReport, rollTarget);
+                nagReport.append(addNag(rollTarget));
             }
         }
         
-        return nagReport;
+        return nagReport.toString();
     }
 
     /**

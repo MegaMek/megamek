@@ -5515,6 +5515,7 @@ implements Runnable {
         if (target == null || (target.getTargetType() == Targetable.TYPE_ENTITY
              && (te.isDestroyed() || te.isDoomed() || te.crew.isDead()))) {
             phaseReport.append("    Charge cancelled as the target has been destroyed.\n");
+            doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null);
             return;
         }
         
@@ -5535,6 +5536,7 @@ implements Runnable {
         // target still in the same position?
         if (!target.getPosition().equals(caa.getTargetPos())) {
             phaseReport.append(" but the target has moved.\n");
+            doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null);
             return;
         }
         

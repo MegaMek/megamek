@@ -56,6 +56,15 @@ public class MovementData
         append(md);
     }
     
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        for (Enumeration i =steps.elements();i.hasMoreElements();) {
+            sb.append((Step)i.nextElement());	
+            sb.append(' ');
+        }			
+        return sb.toString();
+    }
+    
     /**
      * Returns the number of steps in this movement
      */
@@ -238,6 +247,21 @@ public class MovementData
         
         public Step(int type) {
             this.type = type;
+        }
+        
+        public String toString() {
+            switch (type) {
+            case MovementData.STEP_BACKWARDS:return "B";	
+            case MovementData.STEP_CHARGE:return "Ch";	
+            case MovementData.STEP_DFA:return "DFA";	
+            case MovementData.STEP_FORWARDS:return "F";	
+            case MovementData.STEP_GET_UP:return "Up";	
+            case MovementData.STEP_GO_PRONE:return "Prone";	
+            case MovementData.STEP_START_JUMP:return "StrJump";	
+            case MovementData.STEP_TURN_LEFT:return "L";	
+            case MovementData.STEP_TURN_RIGHT:return "R";	
+            }
+            return"";
         }
         
         public int getType() {

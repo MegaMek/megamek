@@ -126,9 +126,6 @@ public class BoardSelectionDialog
         refreshMapSize();
         refreshMapButtons();
         
-        texBoardWidth.setEnabled(false);
-        texBoardHeight.setEnabled(false);
-        
         scrMapButtons.add(panMapButtons);
         
         // layout
@@ -292,17 +289,29 @@ public class BoardSelectionDialog
      * of maps from the server.
      */
     private void apply() {
-        int boardWidth = Integer.parseInt(texBoardWidth.getText());
-        int boardHeight = Integer.parseInt(texBoardHeight.getText());
-        int mapWidth = Integer.parseInt(texMapWidth.getText());
-        int mapHeight = Integer.parseInt(texMapHeight.getText());
+        int boardWidth;
+        int boardHeight;
+        int mapWidth;
+        int mapHeight;
+        
+        // read map size settings
+        try {
+            boardWidth = Integer.parseInt(texBoardWidth.getText());
+            boardHeight = Integer.parseInt(texBoardHeight.getText());
+            mapWidth = Integer.parseInt(texMapWidth.getText());
+            mapHeight = Integer.parseInt(texMapHeight.getText());
+        } catch (NumberFormatException ex) {
+            new AlertDialog(client.frame, "Invalid Map Size", "Invalid number in map size settings.").show();
+            return;
+        }
         
         // check settings
         if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0 || mapHeight <= 0) {
-            // alert...
-            
+            new AlertDialog(client.frame, "Invalid Map Size", "All map size settings must be greater than 0.").show();
             return;
         }
+        
+        butOkay.setEnabled(false);
         
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
@@ -331,6 +340,29 @@ public class BoardSelectionDialog
         }
         refreshBoardsSelected();
         refreshBoardsAvailable();
+        butOkay.setEnabled(true);
+    }
+    
+    /**
+     * Checks and sends the new map settings to the server
+     */
+    public void send() {
+        // check that they haven't modified the map size settings
+        if (!texBoardWidth.getText().equals(Integer.toString(mapSettings.getBoardWidth()))
+        || !texBoardHeight.getText().equals(Integer.toString(mapSettings.getBoardHeight()))
+        || !texMapWidth.getText().equals(Integer.toString(mapSettings.getMapWidth()))
+        || !texMapHeight.getText().equals(Integer.toString(mapSettings.getMapHeight()))) {
+            new AlertDialog(client.frame, "Please Update Map Size", "Please hit the Update Map Size button after changing map size settings.").show();
+            return;
+        }
+        
+        if (mapSettings.getBoardsAvailableVector().size() <= 0) {
+            new AlertDialog(client.frame, "No Boards of Selected Size", "There are no boards of the selected size.  Please select a valid size.").show();
+            return;
+        }
+        
+        client.sendMapSettings(mapSettings);
+        this.setVisible(false);
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -342,8 +374,7 @@ public class BoardSelectionDialog
         } else if (e.getSource() == butUpdate) {
             apply();
         } else if (e.getSource() == butOkay) {
-            client.sendMapSettings(mapSettings);
-            this.setVisible(false);
+            send();
         } else if (e.getSource() == butCancel) {
             this.setVisible(false);
         } else {

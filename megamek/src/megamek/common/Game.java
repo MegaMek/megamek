@@ -172,6 +172,14 @@ public class Game
         entityIds.remove(new Integer(id));
     }
     
+    public int getEntityID(Entity entity) {
+        for (Enumeration i = entityIds.keys();i.hasMoreElements();) {
+            Integer key = (Integer)i.nextElement();
+            if (entityIds.get(key) == entity) return key.intValue();
+        }
+        return -1;
+    }
+        
     /**
      * Regenerates the entities by id hashtable by going thru all entities
      * in the Vector

@@ -521,7 +521,7 @@ public class Game implements Serializable
         Player          player = null;
         Entity          unit = null;
         boolean         result;
-        Map             playerFlags = null;
+        Hashtable       playerFlags = null;
         Enumeration     enum = null;
         Iterator        units = null;
         Mounted         equip = null;
@@ -531,14 +531,13 @@ public class Game implements Serializable
         result = false;
 
         // Create a map of flags for the players.
-        playerFlags = new HashMap( this.getNoOfPlayers() );
+        playerFlags = new Hashtable( this.getNoOfPlayers() );
 
         // Walk through the game's entities.
-        units = this.entities.iterator();
-        while ( units.hasNext() ) {
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
 
             // Is the next unit a Battle Armor squad?
-            unit = (Entity) units.next();
+            unit = (Entity)i.nextElement();
             if ( unit instanceof BattleArmor ) {
 
                 // Does the unit have a Magnetic Clamp?
@@ -564,11 +563,10 @@ public class Game implements Serializable
         if ( result ) {
 
             // Walk through the game's entities again.
-            units = this.entities.iterator();
-            while ( units.hasNext() ) {
+            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
 
                 // Get this unit's player.
-                unit = (Entity) units.next();
+                unit = (Entity)i.nextElement();
                 player = unit.getOwner();
 
                 // Does this player need updated transporters?

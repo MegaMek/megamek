@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import megamek.common.*;
 
@@ -388,11 +387,11 @@ class MovementPanel
         String unused = en.getUnusedString();
         if ( unused.equals("") ) unused = "None";
         this.unusedR.setText( unused );
-        Iterator iter = en.getLoadedUnits().iterator();
+        Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
-        while ( iter.hasNext() ) {
-            carrysR.append( ((Entity)iter.next()).getShortName() );
-            if ( iter.hasNext() ) {
+        while ( iter.hasMoreElements() ) {
+            carrysR.append( ((Entity)iter.nextElement()).getShortName() );
+            if ( iter.hasMoreElements() ) {
                 carrysR.append( "\n" );
             }
         }

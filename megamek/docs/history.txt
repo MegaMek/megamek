@@ -95,6 +95,7 @@ v 0.28.1 (01-16-03, 4:06pm)
 + 669169: Turns while stacking with the enemy.
 + Applied the ATM patch written by ensign@users.sourceforge.net.
 + 660585: Implemented Mek Stealth Armor.
++ JDK 1.1 compatibilty restored(?)
 
 v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks

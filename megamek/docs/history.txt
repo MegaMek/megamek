@@ -19,6 +19,7 @@ v0.29.58 (CVS)
 + Bug 1069709: Display Bug with Auto Eject and Pilot Skills
 + Possible fix for Bug 1066354: Ejected MW represented with wrong graphic & color
 + Bug 1069925: minimap not shown in artillery auto hithex selection phase
++ Bug 841393: remove lower arm actuators on Blackjack BJ-1
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

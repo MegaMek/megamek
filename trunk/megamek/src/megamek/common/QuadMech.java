@@ -57,10 +57,7 @@ public class QuadMech extends Mech
       int legsDestroyed = 0;
       int hipHits = 0;
       int actuatorHits = 0;
-      
-      //gravity
-      if (gravity) wmp = applyGravityEffectsOnMP(wmp);
-      
+          
       for ( int i = 0; i < locations(); i++ ) {    
           if ( locationIsLeg(i) ) {
               if ( !isLocationBad(i) ) {
@@ -114,8 +111,11 @@ public class QuadMech extends Mech
                 wmp += 1;
             }
         }
+  
+        //gravity
+        if (gravity) wmp = applyGravityEffectsOnMP(wmp);
         
-      //For sanity sake...
+        //For sanity sake...
         wmp = Math.max(0, wmp);
         
         return wmp;

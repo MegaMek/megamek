@@ -24,7 +24,7 @@ import megamek.common.*;
 public class DeploymentDisplay 
     extends StatusBarPhaseDisplay
     implements BoardListener,  ActionListener,
-    KeyListener, GameListener
+    KeyListener, GameListener, BoardViewListener
 {    
 	// Action command names
 	public static final String DEPLOY_TURN        = "deployTurn";
@@ -143,7 +143,11 @@ public class DeploymentDisplay
         }
 
         // okay.
+        if (ce() != null) {
+        	ce().setSelected(false);
+        }
         this.cen = en;
+        ce().setSelected(true);
 
         butTurn.setEnabled(true);
         butDone.setEnabled(false);
@@ -457,5 +461,45 @@ public class DeploymentDisplay
 
     public void keyTyped(KeyEvent ev) {
         ;
+    }
+
+	//
+	// BoardViewListener
+	//
+    public void finishedMovingUnits(BoardViewEvent b) {
+    }
+    
+    // Selected a unit in the unit overview.
+    public void selectUnit(BoardViewEvent b) {
+    	Entity e = client.game.getEntity(b.getEntityId());
+    	if (client.isMyTurn()) {
+    		if (!e.isSelectableThisTurn(client.game)) {
+            	client.setDisplayVisible(true);
+            	client.mechD.displayEntity(e);
+            	client.bv.centerOnHex(e.getPosition());
+            } else {
+            	if (ce() != null) {
+		            ce().setPosition(null);
+		            client.bv.redrawEntity(ce());
+		            // Unload any loaded units.
+		            Enumeration iter =  ce().getLoadedUnits().elements();
+		            while ( iter.hasMoreElements() ) {
+		                Entity other = (Entity) iter.nextElement();
+		                // Please note, the Server never got this unit's load orders.
+		                ce().unload( other );
+		                other.setTransportId( Entity.NONE );
+		                other.newRound(client.game.getRoundCount());
+		            }
+				}
+	            
+	            selectEntity(e.getId());
+    		}
+    	} else {
+        	client.setDisplayVisible(true);
+        	client.mechD.displayEntity(e);
+    		if (e.isDeployed()) {
+            	client.bv.centerOnHex(e.getPosition());
+    		}
+    	}
     }
 }

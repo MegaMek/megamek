@@ -103,12 +103,12 @@ public class BoardView1
     // should be able to turn it off(board editor)
     private boolean              useLOSTool = true;
 
-    // Chatter box
-    private ChatterBox2			 chatBox;
+    // Displayables (Chat box, etc.)
+    private Vector               displayables = new Vector();
 
 	// Move units step by step
 	private Vector				 movingUnits = new Vector();
-	private long					 moveWait = 0;
+	private long				 moveWait = 0;
 
     // moving entity sprites
     private Vector movingEntitySprites = new Vector();
@@ -161,6 +161,9 @@ public class BoardView1
             case BoardViewEvent.FINISHED_MOVING_UNITS :
                 l.finishedMovingUnits(be);
                 break;
+            case BoardViewEvent.SELECT_UNIT :
+                l.selectUnit(be);
+                break;
             }
         }
     }
@@ -181,8 +184,12 @@ public class BoardView1
     	centerOnHex(new Coords(x, y));
     }
 
-	public void setChatBox(ChatterBox2 chatBox) {
-		this.chatBox = chatBox;
+	public void addDisplayable(Displayable disp) {
+		displayables.addElement(disp);
+    }
+
+	public void removeDisplayable(Displayable disp) {
+		displayables.removeElement(disp);
     }
 
     public void paint(Graphics g) {
@@ -265,8 +272,9 @@ public class BoardView1
             drawDeployment();
         }
 
-		if (chatBox != null) {
-			chatBox.drawChatterBox(backGraph, backSize);
+		for (int i = 0; i < displayables.size(); i++) {
+			Displayable disp = (Displayable) displayables.elementAt(i);
+			disp.draw(backGraph, backSize);
 		}
 		
         // draw the back buffer onto the screen
@@ -1409,13 +1417,14 @@ public class BoardView1
             }
 	        currentTime = System.currentTimeMillis();
 			boolean redraw = false;
-			if (chatBox != null) {
-				if (!chatBox.isSliding()) {
-					chatBox.setIdleTime(currentTime - lastTime, true);
+			for (int i = 0; i < displayables.size(); i++) {
+				Displayable disp = (Displayable) displayables.elementAt(i);
+				if (!disp.isSliding()) {
+					disp.setIdleTime(currentTime - lastTime, true);
 				} else {
-					redraw = redraw || chatBox.slide();
+					redraw = redraw || disp.slide();
 				}
-            }
+			}
             if (backSize != null) {
                 redraw = redraw || doMoveUnits(currentTime - lastTime);
                 redraw = redraw || doScroll();
@@ -1457,7 +1466,7 @@ public class BoardView1
 	    				redrawMovingEntity(e, new Coords(x, y), facing);
 	    				movePath.removeElementAt(0);
 	    			} else {
-	    				redrawEntity(e);
+	    				redrawEntity(game.getEntity(e.getId()));
 	    				spent.addElement(move);
 	    			}
 	    			
@@ -1516,23 +1525,28 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
-    	if (chatBox != null && chatBox.isHit(me.getPoint(), backSize)) {
-    		return;
-    	}
-        isScrolling = true;
         isTipPossible = false;
+		for (int i = 0; i < displayables.size(); i++) {
+			Displayable disp = (Displayable) displayables.elementAt(i);
+			if (disp.isHit(me.getPoint(), backSize)) {
+				return;
+			}
+		}
+        isScrolling = true;
         if (isTipShowing()) {
             hideTooltip();
         }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseReleased(MouseEvent me) {
-    	if (chatBox != null && chatBox.isScrolling()) {
-    		chatBox.stopScrolling();
-    		return;
-    	}
-        isScrolling = false;
         isTipPossible = true;
+		for (int i = 0; i < displayables.size(); i++) {
+			Displayable disp = (Displayable) displayables.elementAt(i);
+			if (disp.isReleased()) {
+				return;
+			}
+		}
+        isScrolling = false;
         if (me.getClickCount() == 1) {
             game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers());
         } else {
@@ -1553,13 +1567,15 @@ public class BoardView1
     // MouseMotionListener
     //
     public void mouseDragged(MouseEvent me) {
-    	if (chatBox != null && chatBox.isScrolling()) {
-    		chatBox.scroll(me.getPoint(), backSize);
-			repaint();
-    		return;
-    	}
-        mousePos = me.getPoint();
         isTipPossible = false;
+		for (int i = 0; i < displayables.size(); i++) {
+			Displayable disp = (Displayable) displayables.elementAt(i);
+			if (disp.isDragged(me.getPoint(), backSize)) {
+				repaint();
+				return;
+			}
+		}
+        mousePos = me.getPoint();
         isScrolling = true;
         if (backSize != null) {
             if (doScroll()) {
@@ -1569,13 +1585,16 @@ public class BoardView1
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseMoved(MouseEvent me) {
-    	if (chatBox != null && chatBox.isScrolling()) {
-	        isTipPossible = false;
-    		return;
-    	}
-    	if (chatBox != null && backSize != null) {
-    		chatBox.isMouseOver(me.getPoint(), backSize);
-    	}
+		for (int i = 0; i < displayables.size(); i++) {
+			Displayable disp = (Displayable) displayables.elementAt(i);
+			if (disp.isBeingDragged()) {
+		        isTipPossible = false;
+				return;
+			}
+			if (backSize != null) {
+	    		disp.isMouseOver(me.getPoint(), backSize);
+			}
+		}
         mousePos = me.getPoint();
         if (isTipShowing()) {
             hideTooltip();

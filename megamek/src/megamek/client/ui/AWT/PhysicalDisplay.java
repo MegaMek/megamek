@@ -25,7 +25,7 @@ import megamek.common.actions.*;
 public class PhysicalDisplay 
     extends StatusBarPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
-    KeyListener
+    KeyListener, BoardViewListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 3;
     // parent game
@@ -197,7 +197,11 @@ public class PhysicalDisplay
             System.err.println("PhysicalDisplay: tried to select non-existant entity: " + en);
             return;
         }
+        if (ce() != null) {
+        	ce().setSelected(false);
+        }
         this.cen = en;
+        ce().setSelected(true);
         
         Entity entity = ce();
         
@@ -817,5 +821,31 @@ public class PhysicalDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
+
+	//
+	// BoardViewListener
+	//
+    public void finishedMovingUnits(BoardViewEvent b) {
+    }
+    
+    public void selectUnit(BoardViewEvent b) {
+    	Entity e = client.game.getEntity(b.getEntityId());
+    	if (client.isMyTurn()) {
+    		if (!e.isSelectableThisTurn(client.game)) {
+            	client.setDisplayVisible(true);
+            	client.mechD.displayEntity(e);
+            	client.bv.centerOnHex(e.getPosition());
+            } else {
+	            selectEntity(e.getId());
+    		}
+    	} else {
+        	client.setDisplayVisible(true);
+        	client.mechD.displayEntity(e);
+    		if (e.isDeployed()) {
+            	client.bv.centerOnHex(e.getPosition());
+    		}
+    	}
+    }
+	
 
 }

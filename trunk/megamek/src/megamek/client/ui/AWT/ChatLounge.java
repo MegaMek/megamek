@@ -1128,6 +1128,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                     ( entityCorrespondance[lisEntities.getSelectedIndex()] );
                 butMechReadout.setEnabled
                     ( entity.getOwner().equals(client.getLocalPlayer()) );
+                butCustom.setEnabled
+                    ( entity.getOwner().equals(client.getLocalPlayer()) );
             } else {
                 butMechReadout.setEnabled(selected);
             }

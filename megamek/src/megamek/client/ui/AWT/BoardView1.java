@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -39,8 +39,6 @@ public class BoardView1
 
     private static final Font       FONT_HEXNUM = new Font("SansSerif", Font.PLAIN, 10);
     private static final Font       FONT_ELEV = new Font("SansSerif", Font.PLAIN, 9);
-    private static final Font       FONT_MINEFIELD = new Font("SansSerif", Font.PLAIN, 12);
-    private static final Font       FONT_MINEFIELD_SMALL = new Font("SansSerif", Font.PLAIN, 9);
 
     private Game game;
     private Frame frame;
@@ -73,8 +71,6 @@ public class BoardView1
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
     private CursorSprite selectedSprite;
-    private CursorSprite firstLOSSprite;
-    private CursorSprite secondLOSSprite;
 
     // sprite for current movement
     private Vector pathSprites = new Vector();
@@ -99,9 +95,6 @@ public class BoardView1
 
     // should we mark deployment hexes for a player?
     private Player               m_plDeployer = null;
-    
-    // should be able to turn it off(board editor)
-    private boolean              useLOSTool = true;
 
     /**
      * Construct a new board view for the specified game
@@ -126,8 +119,6 @@ public class BoardView1
         cursorSprite = new CursorSprite(Color.cyan);
         highlightSprite = new CursorSprite(Color.white);
         selectedSprite = new CursorSprite(Color.blue);
-        firstLOSSprite = new CursorSprite(Color.red);
-        secondLOSSprite = new CursorSprite(Color.red);
     }
 
     public void paint(Graphics g) {
@@ -147,7 +138,7 @@ public class BoardView1
         offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
-			g.drawString("loading images...", 20, 50);
+            g.drawString("loading images...", 20, 50);
             if (!tileManager.isStarted()) {
                 System.out.println("boardview1: load all images called");
                 tileManager.loadNeededImages(game);
@@ -175,9 +166,6 @@ public class BoardView1
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
 
-		// Minefield signs all over the place!
-        drawMinefields();
-
         // draw highlight border
         drawSprite(highlightSprite);
 
@@ -196,8 +184,6 @@ public class BoardView1
         // draw cursors
         drawSprite(cursorSprite);
         drawSprite(selectedSprite);
-        drawSprite(firstLOSSprite);
-        drawSprite(secondLOSSprite);
 
         // draw deployment indicators
         if (m_plDeployer != null) {
@@ -211,7 +197,7 @@ public class BoardView1
 //        final long finish = System.currentTimeMillis();
 //        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
     }
-    
+
     /**
      * Updates the boardSize variable with the proper values for this board.
      */
@@ -303,60 +289,6 @@ public class BoardView1
                             p.y + 71, p.y + 36, p.y + 35 };
                     backGraph.drawPolygon(xcoords, ycoords, 8);
                 }
-            }
-        }
-    }
-
-    /**
-     * Writes "MINEFIELD" in minefield hexes...
-     */
-    private void drawMinefields() {
-        // only update visible hexes
-        int drawX = view.x / 63 - 1;
-        int drawY = view.y / 72 - 1;
-
-        int drawWidth = view.width / 63 + 3;
-        int drawHeight = view.height / 72 + 3;
-
-        // loop through the hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                Coords c = new Coords(j + drawX, i + drawY);
-                Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
-                if (game.board.contains(c)) {
-			        if (game.containsMinefield(c)) {
-				        Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
-				        backGraph.drawImage(tileManager.getMinefieldSign(), p.x + 13, p.y + 13, this);
-				        backGraph.setFont(FONT_MINEFIELD_SMALL);
-				        int nbrMfs = game.getNbrMinefields(c);
-			        	if (nbrMfs > 1) {
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Multiple", p.x + 20, p.y + 51);
-			        	} else if (nbrMfs == 1) {				        		
-				    		switch (mf.getType()) {
-				    			case (Minefield.TYPE_CONVENTIONAL) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Conventional", p.x + 15, p.y + 51);
-				    			break;
-				    			case (Minefield.TYPE_THUNDER) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Thunder (" + mf.getDamage() + ")", p.x + 15, p.y + 51);
-				    			break;
-				    			case (Minefield.TYPE_COMMAND_DETONATED) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Command-", p.x + 20, p.y + 51);
-						        backGraph.drawString("detonated", p.x + 22, p.y + 60);
-				    			break;
-				    			case (Minefield.TYPE_VIBRABOMB) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Vibrabomb", p.x + 22, p.y + 51);
-						        backGraph.drawString("(" + mf.getSetting() + ")", p.x + 37, p.y + 60);
-				    			break;
-				    		}
-				    	}
-			        }
-			    }
             }
         }
     }
@@ -634,15 +566,13 @@ public class BoardView1
             }
         }
 
- 		// If the hex contains a building or rubble, make more space.
- 		if ( mhex != null &&
- 	     	(mhex.contains(Terrain.RUBBLE) ||
- 	    	  mhex.contains(Terrain.BUILDING)) ) {
-    	        stringsSize += 1;
-	 	}
+ 	// If the hex contains a building or rubble, make more space.
+ 	if ( mhex != null &&
+ 	     (mhex.contains(Terrain.RUBBLE) ||
+ 	      mhex.contains(Terrain.BUILDING)) ) {
+            stringsSize += 1;
+ 	}
         
-       	stringsSize += game.getNbrMinefields(mcoords);
-
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
             return null;
@@ -660,9 +590,9 @@ public class BoardView1
 
 	    // Do we have rubble?
 	    if ( mhex.contains(Terrain.RUBBLE) ) {
-			strings[stringsIndex] = "Rubble";
-			stringsIndex += 1;
-        }
+		strings[stringsIndex] = "Rubble";
+		stringsIndex += 1;
+            }
 
             // Do we have a building?
             else if ( mhex.contains(Terrain.BUILDING) ) {
@@ -678,31 +608,8 @@ public class BoardView1
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }
-
-	        if (game.containsMinefield(mcoords)) {
-	        	java.util.Vector minefields = game.getMinefields(mcoords);
-	        	for (int i = 0; i < minefields.size(); i++){
-	        		Minefield mf = (Minefield) minefields.elementAt(i);
-	        		String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-	        		
-	        		switch (mf.getType()) {
-	        			case (Minefield.TYPE_CONVENTIONAL) :
-		                strings[stringsIndex] = "Conventional minefield " + owner;
-	        			break;
-	        			case (Minefield.TYPE_THUNDER) :
-		                strings[stringsIndex] = "Thunder minefield(" + mf.getDamage() + ")" + owner;
-	        			break;
-	        			case (Minefield.TYPE_COMMAND_DETONATED) :
-		                strings[stringsIndex] = "Command-detonated minefield " + owner;
-	        			break;
-	        			case (Minefield.TYPE_VIBRABOMB) :
-		                strings[stringsIndex] = "Vibrabomb minefield(" + mf.getSetting() + ") " + owner;
-	        			break;
-	        		}
-	                stringsIndex++;
-	        	}
-	        }
         }
+
         // check if it's on any entities
         for (Iterator i = entitySprites.iterator(); i.hasNext();) {
             final EntitySprite eSprite = (EntitySprite)i.next();
@@ -1025,88 +932,25 @@ public class BoardView1
 
 
 
+
+
+
+
+
     public void boardHexMoused(BoardEvent b) {
+        ;
     }
     public void boardHexCursor(BoardEvent b) {
         moveCursor(cursorSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
     }
     public void boardHexSelected(BoardEvent b) {
         moveCursor(selectedSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
     }
     public void boardHexHighlighted(BoardEvent b) {
         moveCursor(highlightSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-		if (useLOSTool) {
-	        moveCursor(secondLOSSprite, null);
-    	    moveCursor(firstLOSSprite, b.getCoords());
-    	}
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c1) {
-		if (useLOSTool) {
-	        Coords c2 = b.getCoords();
-    	    moveCursor(firstLOSSprite, c1);
-	        moveCursor(secondLOSSprite, c2);
-	        
-	        LosEffects le = Compute.calculateLos(game, c1, c2, 
-	        						game.getMechInFirst(), 
-	        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
-	        int blocking = le.getHeavyWoods() * 2 +
-	            le.getLightWoods() +
-	            le.getSmoke() * 2;
-	        message.append( "Attacker(")
-	         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
-	         	.append(") hex is " )
-	            .append( c1.getBoardNum() )
-	            .append( ".\n" );
-	        message.append( "Target(")
-	         	.append(game.getMechInSecond() ? "Mech" : "non Mech")
-	         	.append(") hex is " )
-	            .append( c2.getBoardNum() )
-	            .append( ".\n" );
-	        if (le.isBlocked() || blocking > 2) {
-	            message.append( "Line of sight is blocked.\n" );
-	            message.append( "Range is " )
-	                .append( c1.distance(c2) )
-	                .append( " hex(es).\n");
-	        } else {
-	            message.append( "Line of sight is not blocked.\n" );
-	            message.append( "Range is " )
-	                .append( c1.distance(c2) )
-	                .append( " hex(es).\n");
-	            if (le.getHeavyWoods() > 0) {
-	                message.append( le.getHeavyWoods() )
-	                    .append( " heavy wood hex(es) in line of sight.\n" );
-	            }
-	            if (le.getLightWoods() > 0) {
-	                message.append( le.getLightWoods() )
-	                    .append( " light wood hex(es) in line of sight.\n" );
-	            }
-	            if (le.getSmoke() > 0) {
-	                message.append( le.getSmoke() )
-	                    .append( " smoke hex(es) in line of sight.\n" );
-	            }
-	            if (le.isTargetCover()) {
-	                message.append("Target has partial cover.\n");
-	            }
-	            if (le.isAttackerCover()) {
-	                message.append("Attacker has partial cover.\n");
-	            }
-	        }
-	        AlertDialog alert = new AlertDialog(frame,
-	                                            "Range / Line of Sight",
-	                                            message.toString(), false);
-	        alert.show();
-	     }
     }
     public void boardChangedHex(BoardEvent b) {
-        tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
+        tileManager.waitForHex( game.getBoard().getHex(b.getCoords()) );
         if (boardGraph != null) {
             boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
             redrawAround(b.getCoords());
@@ -1177,9 +1021,6 @@ public class BoardView1
         }
     }
 
-	protected void stopScrolling() {
-		isScrolling = false;
-	}
 
     /**
      * Initializes the various overlay polygons with their
@@ -1613,27 +1454,25 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // draw box with shortName
-            Color text, bkgd, bord;
-            if (entity.isDone()) {
-                text = Color.lightGray;
-                bkgd = Color.darkGray;
-                bord = Color.black;
-            } else if (entity.isImmobile()) {
-                text = Color.darkGray;
-                bkgd = Color.black;
-                bord = Color.lightGray;
+            Color col;
+            Color bcol;
+            if (entity.isImmobile()) {
+                col = Color.black;
+                bcol = Color.lightGray;
+            } else if (entity.isDone()) {
+                col = Color.darkGray;
+                bcol = Color.black;
             } else {
-                text = Color.black;
-                bkgd = Color.lightGray;
-                bord = Color.darkGray;
+                col = Color.lightGray;
+                bcol = Color.darkGray;
             }
             graph.setFont(font);
-            graph.setColor(bord);
+            graph.setColor(bcol);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             modelRect.translate(-1, -1);
-            graph.setColor(bkgd);
+            graph.setColor(col);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            graph.setColor(text);
+            graph.setColor(entity.isDone() ? Color.lightGray : Color.black);
             graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
 
             // draw facing
@@ -1907,7 +1746,7 @@ public class BoardView1
             costStringBuf.append( step.getMpUsed() );
 
             // If the step is using a road bonus, mark it.
-            if ( step.isPavementStep() ) {
+            if ( step.isOnPavement() ) {
                 costStringBuf.append( "+" );
             }
 
@@ -1924,7 +1763,7 @@ public class BoardView1
 
             if (step.isUsingMASC()) {
                 costStringBuf.append("[");
-                costStringBuf.append(step.getTargetNumberMASC());
+                costStringBuf.append(step.getMASCNumber());
                 costStringBuf.append("+]");
             }
 
@@ -2271,14 +2110,6 @@ public class BoardView1
      */
     public boolean isTileImagesLoaded() {
         return this.tileManager.isLoaded();
-    }
-    
-    public void setUseLOSTool(boolean use) {
-    	useLOSTool = use;
-    }
-    
-	public TilesetManager getTilesetManager() {
-    	return tileManager;
     }
 
 }

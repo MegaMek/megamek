@@ -676,9 +676,7 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_TARGCOMP;
         // see note above
         misc.spreadable = true;
-        String[] modes = { "Normal", "Aimed shot" };
-        misc.setModes(modes);
-
+        
         return misc;
     }
     
@@ -696,8 +694,6 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_TARGCOMP;
         // see note above
         misc.spreadable = true;
-        String[] modes = { "Normal", "Aimed shot" };
-        misc.setModes(modes);
         
         return misc;
     }

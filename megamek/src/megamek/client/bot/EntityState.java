@@ -243,7 +243,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       boolean lastStepOnPavement = false;
       if (this.length() > 1) {
 	  prevStep = (MovementData.Step)getStep(length() - 1);
-          lastStepOnPavement = prevStep.isPavementStep();
+          lastStepOnPavement = prevStep.isOnPavement();
       }
       // check for danger
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId,
@@ -325,7 +325,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       for (Enumeration i = game.getEntities(); i.hasMoreElements() && !found;) {
         final Entity en = (Entity)i.nextElement();
         CEntity cen = TestBot.enemies.get(en);
-        if (!en.isSelectableThisTurn(game) && this.curPos.equals(en.getPosition()) && en.isEnemyOf(this.entity)) {
+        if (!en.isSelectable() && this.curPos.equals(en.getPosition()) && en.isEnemyOf(this.entity)) {
           found = true;
           this.PhysicalTarget = cen;
         }

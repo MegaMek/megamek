@@ -21,15 +21,11 @@
 package megamek.client;
 
 import java.awt.*;
-import megamek.common.*;
-
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+
+import megamek.common.*;
 
 /**
  * A dialog that a player can use to customize his mech before battle.  
@@ -39,7 +35,7 @@ import megamek.common.options.GameOption;
  * @version 
  */
 public class CustomMechDialog 
-extends Dialog implements ActionListener, DialogOptionListener { 
+extends Dialog implements ActionListener {
     
     private Label labName = new Label("Name: ", Label.RIGHT);
     private TextField fldName = new TextField(20);
@@ -50,9 +46,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Label labC3 = new Label("C3 Network: ", Label.RIGHT);;
     private Choice choC3 = new Choice();
     private int[] entityCorrespondance;
-    private Label labDeployment = new Label("Deployment Round: ", Label.RIGHT);
-    private Choice choDeployment = new Choice();
-    
+
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
@@ -63,28 +57,12 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Entity entity;
     private boolean okay = false;
     private Client client;
-
-    private PilotOptions options;
-    
-    private Vector optionComps = new Vector();
-    
-    private Panel panOptions = new Panel();
-    private ScrollPane scrOptions = new ScrollPane();
-
-    private TextArea texDesc = new TextArea("Mouse over an option to see a description.", 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY);
-
-    private boolean editable;
-    
     /** Creates new CustomMechDialog */
     public CustomMechDialog(Client client, Entity entity, boolean editable) {
         super(client.frame, "Customize pilot/mech stats...", true);
         
         this.entity = entity;
         this.client = client;
-        this.options = entity.getCrew().getOptions();
-        this.editable = editable;
-        
-        texDesc.setEditable(false);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -124,31 +102,6 @@ extends Dialog implements ActionListener, DialogOptionListener {
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldPiloting, c);
         add(fldPiloting);
-        
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labDeployment, c);
-        add(labDeployment);
-      
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(choDeployment, c);
-        add(choDeployment);
-        refreshDeployment();
-
-        if ( client.game.getOptions().booleanOption("pilot_advantages") ) {
-          scrOptions.add(panOptions);
-        
-          c.weightx = 1.0;    c.weighty = 1.0;
-          c.fill = GridBagConstraints.BOTH;
-          c.gridwidth = GridBagConstraints.REMAINDER;
-          gridbag.setConstraints(scrOptions, c);
-          add(scrOptions);
-  
-          c.weightx = 1.0;    c.weighty = 0.0;
-          gridbag.setConstraints(texDesc, c);
-          add(texDesc);
-        }
         
         if(entity.hasC3() || entity.hasC3i())
         {        
@@ -191,12 +144,11 @@ extends Dialog implements ActionListener, DialogOptionListener {
             fldGunnery.setEnabled(false);
             fldPiloting.setEnabled(false);
             choC3.setEnabled(false);
-            choDeployment.setEnabled(false);
         }
         
         addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false); }
-  });
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
 
         pack();
         setResizable(false);
@@ -250,18 +202,6 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 && 
                         atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
-                }
-                
-                // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!client.game.getOptions().booleanOption("is_eq_limits")
-                    && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
-                    && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
-                    bTechMatch = true;
-                }
-
-                if (!client.game.getOptions().booleanOption("minefields") &&
-                	AmmoType.canDeliverMinefield(atCheck)) {
-                	continue;
                 }
 
                 // Battle Armor ammo can't be selected.
@@ -317,98 +257,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
         
     }
         
-    public void setOptions() {
-      GameOption option;
-      
-      for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
         
-        option = comp.getOption();
         
-        entity.getCrew().getOptions().getOption(option.getShortName()).setValue(comp.getValue());
-      }
-    }
-    
-    public void resetOptions() {
-      GameOption option;
-      
-      for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
-        
-        option = comp.getOption();
-        option.setValue(false);
-                
-        entity.getCrew().getOptions().getOption(option.getShortName()).setValue(comp.getValue());
-      }
-    }
-    
-    public void refreshOptions() {
-        panOptions.removeAll();
-        optionComps = new Vector();
-        
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panOptions.setLayout(gridbag);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.ipadx = 0;    c.ipady = 0;
-        
-        for (Enumeration i = options.groups(); i.hasMoreElements();) {
-            OptionGroup group = (OptionGroup)i.nextElement();
-            
-            addGroup(group, gridbag, c);
-            
-            for (Enumeration j = group.options(); j.hasMoreElements();) {
-                GameOption option = (GameOption)j.nextElement();
-
-                addOption(option, gridbag, c, editable);
-            }
-        }
-        
-        validate();
-    }
-    
-    private void addGroup(OptionGroup group, GridBagLayout gridbag, GridBagConstraints c) {
-        Label groupLabel = new Label(group.getName());
-        
-        gridbag.setConstraints(groupLabel, c);
-        panOptions.add(groupLabel);
-    }
-    
-    private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
-        
-        gridbag.setConstraints(optionComp, c);
-        panOptions.add(optionComp);
-        
-        optionComps.addElement(optionComp);
-    }
-    
-    public void showDescFor(GameOption option) {
-        texDesc.setText(option.getDesc());
-    }
     
     public boolean isOkay() {
         return okay;
     }
 
-    private void refreshDeployment() {
-      choDeployment.removeAll();
-      choDeployment.add("Start of game");
-      
-      if ( entity.getDeployRound() < 1 )
-        choDeployment.select(0);
-        
-      for ( int i = 1; i <= 15; i++ ) {
-        choDeployment.add("After round " + i);
-        
-        if ( entity.getDeployRound() == i )
-          choDeployment.select(i);
-      }
-    }
-    
     private void refreshC3() {
         choC3.removeAll();
         int listIndex = 0;
@@ -507,14 +362,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
             
-            entity.setDeployRound(choDeployment.getSelectedIndex());
-            
             // update munitions selections
             for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {
                 ((MunitionChoicePanel)e.nextElement()).applyChoice();
             }
-            
-            setOptions();
             
             okay = true;
         }

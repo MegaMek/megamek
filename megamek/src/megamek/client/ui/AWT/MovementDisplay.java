@@ -16,13 +16,12 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
 
 public class MovementDisplay
-    extends StatusBarPhaseDisplay
+    extends AbstractPhaseDisplay
     implements BoardListener,  ActionListener,
     KeyListener, GameListener
 {
@@ -30,6 +29,12 @@ public class MovementDisplay
 
     // parent game
     public Client client;
+
+    // displays
+    private Label             statusL;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
 
     // buttons
     private Panel             panButtons;
@@ -53,7 +58,7 @@ public class MovementDisplay
     private Button            butUnload;
     private Button            butReport;
 
-    private Button            butClear;
+    private Button            butSpace;
 
     private Button            butNext;
     private Button            butDone;
@@ -91,11 +96,10 @@ public class MovementDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Movement phase...");
+        setupStatusBar();
 
-		butClear = new Button("Clear mines");
-		butClear.addActionListener(this);
-        butClear.setEnabled(false);
+        butSpace = new Button("");
+        butSpace.setEnabled(false);
 
         butWalk = new Button("Walk");
         butWalk.addActionListener(this);
@@ -204,6 +208,40 @@ public class MovementDisplay
         comp.addKeyListener(this);
     }
     
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(statusL, c);
+        panStatus.add(statusL);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
     private void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(2, 4));
@@ -225,7 +263,7 @@ public class MovementDisplay
             panButtons.add(butDfa);
             panButtons.add(butNext);
             panButtons.add(butDown);
-            panButtons.add(butClear);
+            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -283,33 +321,27 @@ public class MovementDisplay
         boolean isMech = (ce() instanceof Mech);
         boolean isInfantry = (ce() instanceof Infantry);
         
-        butWalk.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
-        butJump.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
-        butBackup.setEnabled(butWalk.isEnabled());
+        butWalk.setEnabled(ce().getWalkMP() > 0);
+        butJump.setEnabled(ce().getJumpMP() > 0);
+        butBackup.setEnabled(ce().getWalkMP() > 0);
         
         // Infantry can't charge or DFA.
         if ( isInfantry ) {
             butCharge.setEnabled(false);
             butDfa.setEnabled(false);
-            if(client.game.containsMinefield(ce().getPosition())) {
-            	butClear.setEnabled(true);
-        	} else {
-            	butClear.setEnabled(false);
-        	}
         } else {
-            butCharge.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
-            butDfa.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
-            butClear.setEnabled(false);
+            butCharge.setEnabled(ce().getWalkMP() > 0);
+            butDfa.setEnabled(ce().getJumpMP() > 0);
         }
         
-        butTurn.setEnabled(!ce().isImmobile() && (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
+        butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
 
         if (ce().isProne()) {
-            butUp.setEnabled(!ce().isImmobile());
+            butUp.setEnabled(true);
             butDown.setEnabled(false);
         } else {
             butUp.setEnabled(false);
-            butDown.setEnabled(!ce().isImmobile() && isMech);
+            butDown.setEnabled(isMech);
         }
 
         updateProneButtons();
@@ -396,214 +428,23 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private void moveTo(MovementData md) {
-        if ( md != null ) {
-            if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
-                Mech m = (Mech)ce();
-                ConfirmDialog nag = new ConfirmDialog(client.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        Settings.nagForMASC = false;
-                    }
-                } else {
-                    return;
+        if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
+            Mech m = (Mech)ce();
+            ConfirmDialog nag = new ConfirmDialog(client.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    Settings.nagForMASC = false;
                 }
-            }
-
-            String check = doPSRCheck(md);
-            if (check.length() > 0 && Settings.nagForPSR) {
-                ConfirmDialog nag = 
-                    new ConfirmDialog(client.frame,
-                                      "Are you sure?", 
-                                      "You must make the following piloting\n" +
-                                      "skill check(s) for your movement:\n" +
-                                      check, true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        Settings.nagForPSR = false;
-                    }
-                } else {
-                    return;
-                }
+            } else {
+                return;
             }
         }
 
         disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);
-    }
-
-    private String addNag(PilotingRollData rollTarget) {
-        String desc = "Need " + rollTarget.getValueAsString() + " [" + rollTarget.getDesc() + "]\n";
-        return desc;
-    }
-
-    /**
-     * Checks to see if piloting skill rolls are needed for the
-     *  currently selected movement.  This code is basically a
-     *  simplified version of Server.processMovement(), except
-     *  that it just reads information (no writing).  Note that
-     *  Compute.compile() is called though, which changes the
-     *  md object (I think).
-     */
-    private String doPSRCheck(MovementData md) {
-
-        StringBuffer nagReport = new StringBuffer();
-
-        final Entity entity = ce();
-
-        // okay, proceed with movement calculations
-        Coords lastPos = entity.getPosition();
-        Coords curPos = entity.getPosition();
-        int curFacing = entity.getFacing();
-        int distance = 0;
-        int mpUsed = 0;
-        int moveType = Entity.MOVE_NONE;
-        int overallMoveType = Entity.MOVE_NONE;
-        boolean firstStep;
-        int prevFacing = curFacing;
-        Hex prevHex = null;
-        final boolean isInfantry = (entity instanceof Infantry);
-
-        PilotingRollData rollTarget;
-        
-        // Compile the move
-        Compute.compile(client.game, entity.getId(), md);
-
-        overallMoveType = md.getLastStepMovementType();
-        
-        // iterate through steps
-        firstStep = true;
-        /* Bug 754610: Revert fix for bug 702735. */
-        MovementData.Step prevStep = null;
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
-            boolean isPavementStep = step.isPavementStep();
-            
-            // stop for illegal movement
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
-                break;
-            }
-            
-            // check piloting skill for getting up
-            rollTarget = entity.checkGetUp(step);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            } else if (firstStep) {
-                // running with destroyed hip or gyro needs a check
-                rollTarget = entity.checkRunningWithDamage(overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(addNag(rollTarget));
-                }
-                firstStep = false;
-            }
-            
-            // set most step parameters
-            moveType = step.getMovementType();
-            distance = step.getDistance();
-            mpUsed = step.getMpUsed();
-
-            // set last step parameters
-            curPos = step.getPosition();
-            curFacing = step.getFacing();
-
-            final Hex curHex = client.game.board.getHex(curPos);
-
-            // Check for skid.
-            rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
-                                          prevStep, prevFacing, curFacing,
-                                          lastPos, curPos, isInfantry,
-                                          distance);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                // Have an entity-meaningful PSR message.
-                nagReport.append(addNag(rollTarget));
-            }
-
-            // check if we've moved into rubble
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            }
-            
-            // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
-                                               isPavementStep);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            }
-
-            // Handle non-infantry moving into a building.
-            if (entity.checkMovementInBuilding(lastPos, curPos, step,
-                                               curHex, prevHex)) {
-                
-                // Get the building being exited.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgExited = client.game.board.getBuildingAt( lastPos );
-
-                // Get the building being entered.
-                // TODO: allow units to climb on top of buildings.
-                Building bldgEntered = client.game.board.getBuildingAt( curPos );
-
-                if ( bldgExited != null && bldgEntered != null && 
-                     !bldgExited.equals(bldgEntered) ) {
-                    // Exiting one building and entering another.
-                    //  Brave, aren't we?
-                    rollTarget = entity.rollMovementInBuilding(bldgExited, distance, "exiting");
-                    nagReport.append(addNag(rollTarget));
-                    rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering");
-                    nagReport.append(addNag(rollTarget));
-                } else {
-                    Building bldg;
-                    if (bldgEntered == null) {
-                        // Exiting a building.
-                        bldg = bldgExited;
-                    } else {
-                        // Entering or moving within a building.
-                        bldg = bldgEntered;
-                    }
-                    rollTarget = entity.rollMovementInBuilding(bldg, distance, "");
-                    nagReport.append(addNag(rollTarget));
-                }
-            }
-
-            if (step.getType() == MovementData.STEP_GO_PRONE) {
-                rollTarget = entity.checkDislodgeSwarmers();
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(addNag(rollTarget));
-                }
-            }
-
-            // update lastPos, prevStep, prevFacing & prevHex
-            lastPos = new Coords(curPos);
-            prevStep = step;
-            /* Bug 754610: Revert fix for bug 702735.
-            if (prevHex != null && !curHex.equals(prevHex)) {
-            */
-            if (!curHex.equals(prevHex)) {
-                prevFacing = curFacing;
-            }
-            prevHex = curHex;
-        }
-        
-        // but the danger isn't over yet!  landing from a jump can be risky!
-        if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
-            // check for damaged criticals
-            rollTarget = entity.checkLandingWithDamage();
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            }
-            // jumped into water?
-            int waterLevel = client.game.board.getHex(curPos).levelOf(Terrain.WATER);
-            rollTarget = entity.checkWaterMove(waterLevel);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            }
-        }
-        
-        return nagReport.toString();
     }
 
     /**
@@ -638,10 +479,6 @@ public class MovementDisplay
     public void boardHexMoused(BoardEvent b) {
         // ignore buttons other than 1
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
-            return;
-        }
-        // control pressed means a line of sight check.
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
             return;
         }
         // check for shifty goodness
@@ -783,7 +620,7 @@ public class MovementDisplay
     }
 
     private void updateProneButtons() {
-        if (ce() != null && md != null && !ce().isImmobile()) {
+        if (ce() != null && md != null) {
             butUp.setEnabled(md.getFinalProne(ce().isProne()));
             butDown.setEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {
@@ -837,7 +674,7 @@ public class MovementDisplay
                     // then enable the "Load" button.
                     if ( ce().getWalkMP() > 0 &&
                          ce().canLoad(other) &&
-                         other.isSelectableThisTurn(client.game) ) {
+                         other.isSelectable() ) {
                         butLoad.setEnabled( true );
                     }
 
@@ -969,7 +806,7 @@ public class MovementDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
-        if (client.game.getPhase() != Game.PHASE_MOVEMENT) {
+        if (client.game.phase != Game.PHASE_MOVEMENT) {
             // ignore
             return;
         }
@@ -978,16 +815,16 @@ public class MovementDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText("It's your turn to move.");
+            statusL.setText("It's your turn to move.");
         } else {
-            setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
+            statusL.setText("It's " + ev.getPlayer().getName() + "'s turn to move.");
         }
     }
     public void gamePhaseChange(GameEvent ev) {
-        if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_MOVEMENT) {
+        if (client.isMyTurn() && client.game.phase != Game.PHASE_MOVEMENT) {
             endMyTurn();
         }
-        if (client.game.getPhase() !=  Game.PHASE_MOVEMENT) {
+        if (client.game.phase !=  Game.PHASE_MOVEMENT) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.bv.removeKeyListener(this);
@@ -999,9 +836,13 @@ public class MovementDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -1048,19 +889,6 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;
-        } else if (ev.getSource() == butClear) {       	
-			clearAllMoves();
-			if (!client.game.containsMinefield(ce().getPosition())) {
-				client.doAlertDialog("Can't clear minefield", "No minefield in hex!");
-				gear = Compute.GEAR_LAND;
-				return;
-			}
-			if (client.doYesNoDialog("Clear the minefield?", "The unit successfully clears the\nminefield on " +
-				Minefield.CLEAR_NUMBER_INFANTRY + "+. The minefield\nwill explode on " + Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT +
-				" or less.")) {
-				md.addStep(MovementData.STEP_CLEAR_MINEFIELD);
-				moveTo(md);
-			}
         } else if (ev.getSource() == butCharge) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();

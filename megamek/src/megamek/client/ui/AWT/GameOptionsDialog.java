@@ -34,7 +34,7 @@ import megamek.common.options.*;
  * @author  Ben
  * @version 
  */
-public class GameOptionsDialog extends Dialog implements ActionListener, DialogOptionListener {
+public class GameOptionsDialog extends Dialog implements ActionListener {
     
     private Client client;
     private GameOptions options;
@@ -51,7 +51,6 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private TextField texPass = new TextField(15);
     
     private Panel panButtons = new Panel();
-    private Button butSave = new Button("Save");
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
     
@@ -92,8 +91,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         add(panButtons);
         
         addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false); }
-  });
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
         
         pack();
         setSize(getSize().width, Math.max(getSize().height, 400));
@@ -111,7 +110,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         Vector changed = new Vector();
         
         for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+            OptionComponent comp = (OptionComponent)i.nextElement();
             
             if (comp.hasChanged()) {
                 changed.addElement(comp.changedOption());
@@ -121,23 +120,6 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (changed.size() > 0) {
             client.sendGameOptions(texPass.getText(), changed);
         }
-    }
-    
-    public void doSave() {
-      Vector options = new Vector();
-      
-      for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
-        
-        GameOption option = comp.getOption().deepCopy();
-        option.setValue(comp.getValue());
-        
-        options.addElement(option);
-      }
-      
-      GameOptions.saveOptions(options);
-      
-      new AlertDialog(client.frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.").show();
     }
     
     private void refreshOptions() {
@@ -176,7 +158,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this, option);
+        OptionComponent optionComp = new OptionComponent(option);
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
@@ -185,13 +167,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     
-    public void showDescFor(GameOption option) {
+    private void showDescFor(GameOption option) {
         texDesc.setText(option.getDesc());
     }
     
     
     private void setupButtons() {
-        butSave.addActionListener(this);
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         
@@ -209,12 +190,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         gridbag.setConstraints(butOkay, c);
         panButtons.add(butOkay);
             
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(butSave, c);
-        panButtons.add(butSave);
-            
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
@@ -230,12 +207,78 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
             send();
-        } else if (e.getSource() == butSave) {
-          doSave();
-          
-          return;
+        }
+        this.setVisible(false);
+    }
+
+    
+    private class OptionComponent extends Panel implements MouseListener
+    {
+        GameOption option;
+        
+        private Checkbox checkbox;
+        private TextField textField;
+        private Label label;
+        
+        public OptionComponent(GameOption option) {
+            this.option = option;
+            
+            addMouseListener(this);
+            
+            setLayout(new BorderLayout());
+            switch(option.getType()) {
+                case GameOption.BOOLEAN :
+                    checkbox = new Checkbox(option.getFullName(), option.booleanValue());
+                    checkbox.addMouseListener(this);
+                    add(checkbox, BorderLayout.CENTER);
+                    break;
+                default :
+                    textField = new TextField(option.stringValue(), 2);
+                    textField.addMouseListener(this);
+                    add(textField, BorderLayout.WEST);
+                    label = new Label(option.getFullName());
+                    label.addMouseListener(this);
+                    add(label, BorderLayout.CENTER);
+                    break;
+            }
+            
         }
         
-        this.setVisible(false);
+        public boolean hasChanged() {
+            return !option.getValue().equals(getValue());
+        }
+        
+        private Object getValue() {
+            switch(option.getType()) {
+                case GameOption.BOOLEAN :
+                    return new Boolean(checkbox.getState());
+                case GameOption.INTEGER :
+                    return Integer.valueOf(textField.getText());
+                case GameOption.FLOAT :
+                    return Float.valueOf(textField.getText());
+                default :
+                    return null;
+            }
+        }
+        
+        /**
+         * Returns a new option, representing the option in it's changed state.
+         */
+        public GameOption changedOption() {
+            return new GameOption(option.getShortName(), "", "", option.getType(), getValue());
+        }
+        
+        public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+            showDescFor(option);
+        }
+        public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+        }
+        
     }
 }

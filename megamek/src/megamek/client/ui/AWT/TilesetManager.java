@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,16 +21,14 @@
 package megamek.client;
 
 import com.sun.java.util.collections.*;
-import java.awt.image.*;
-import megamek.common.*;
-
-import java.awt.Component;
 import java.awt.Image;
+import java.awt.Component;
 import java.awt.MediaTracker;
-import megamek.client.util.RotateFilter;
-import megamek.client.util.TintFilter;
-import megamek.client.util.widget.BufferedPanel;
-import megamek.client.util.widget.BackGroundDrawer;
+import java.awt.image.*;
+import java.io.*;
+
+import megamek.common.*;
+import megamek.client.util.*;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -57,7 +55,6 @@ public class TilesetManager {
     // hex images
     private HexTileset hexTileset = new HexTileset();
     
-	private Image minefieldSign;    
 
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) {
@@ -95,7 +92,7 @@ public class TilesetManager {
         // get image rotated for facing
         return entityImage.getFacing(facing);
     }
-    
+
     /**
      * Return the base image for the hex
      */
@@ -113,9 +110,7 @@ public class TilesetManager {
         return hex.getSupers();
     }
     
-    public Image getMinefieldSign() {
-        return minefieldSign;
-    }    
+    
     
     /**
      * @returns true if we're in the process of loading some images
@@ -153,34 +148,31 @@ public class TilesetManager {
             loadImage((Entity)i.nextElement());
         }
         
-        // load minefield sign
-		minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
-
         started = true;
     }
-    
+
     /**
      * Loads the image(s) for this hex into the tracker.
      * @param hex the hex to load
      */
     private void loadHexImage(Hex hex) {
-		hexTileset.assignMatch(hex, comp);
-		hexTileset.trackHexImages(hex, tracker);
+        hexTileset.assignMatch(hex, comp);
+        hexTileset.trackHexImages(hex, tracker);
     }
-    
+
     /**
      * Waits until a certain hex's images are done loading.
      * @param hex the hex to wait for
      */
     public void waitForHex(Hex hex) {
-		loadHexImage(hex);
+        loadHexImage(hex);
         try {
             tracker.waitForID(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Loads all the hex tileset images
      */
@@ -188,26 +180,6 @@ public class TilesetManager {
         hexTileset.loadAllImages(comp, tracker);
     }
     
-    // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(Entity entity, String camo, int tint, BufferedPanel bp) {
-		Image base = mechTileset.imageFor(entity, comp);
-		EntityImage entityImage = new EntityImage(base, tint, camo, bp);
-		Image preview = entityImage.loadPreviewImage();
-		
-		BackGroundDrawer bgdPreview = new BackGroundDrawer(preview);
-		bp.removeBgDrawers();
-		bp.addBgDrawer(bgdPreview);
-
-		MediaTracker tracker = new MediaTracker(comp);
-		tracker.addImage(preview, 0);
-		try {
-			tracker.waitForID(0);
-		} catch (InterruptedException e) {
-			;
-		}
-
-    }
-
     /**
      * Load a single entity image
      */
@@ -215,7 +187,6 @@ public class TilesetManager {
     {
             Image base = mechTileset.imageFor(entity, comp);
             int tint = entity.getOwner().getColorRGB();
-            String camo = entity.getOwner().getCamoFileName();
             EntityImage entityImage = null;
             
             // check if we have a duplicate image already loaded
@@ -229,7 +200,7 @@ public class TilesetManager {
             
             // if we don't have a cached image, make a new one
             if (entityImage == null) {
-                entityImage = new EntityImage(base, tint, camo, comp);
+                entityImage = new EntityImage(base, tint);
                 mechImageList.add(entityImage);
                 entityImage.loadFacings();
                 for (int j = 0; j < 6; j++) {
@@ -256,46 +227,20 @@ public class TilesetManager {
     private class EntityImage {
         private Image base;
         private int tint;
-        private String camo;
         private Image[] facings = new Image[6];
-        private Component comp;
         
-        private final int IMG_WIDTH = 84;        
-        private final int IMG_HEIGHT = 72;
-        private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
-        
-        public EntityImage(Image base, int tint, String camo, Component comp) {
+        public EntityImage(Image base, int tint) {
             this.base = base;
             this.tint = tint;
-            this.camo = camo;
-            this.comp = comp;
         }
-
+        
         public void loadFacings() {
-          if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = comp.createImage(new FilteredImageSource(rotSource, new TintFilter(tint)));
             }
-          } else {
-            applyColor();
-            
-            for (int i = 0; i < 6; i++) {
-                ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-                facings[i] = comp.createImage(rotSource);
-            }
-          }
         }
         
-        public Image loadPreviewImage() {
-			if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
-                return comp.createImage(new FilteredImageSource(base.getSource(), new TintFilter(tint)));
-			} else {
-				applyColor();
-                return base;
-			}
-        }
-
         public Image getFacing(int facing) {
             return facings[facing];
         }
@@ -304,60 +249,8 @@ public class TilesetManager {
             return base;
         }
         
-        private void applyColor() {
-          Image iMech, iCamo;
-          
-          iMech = base;
-    
-          int[] pMech = new int[IMG_SIZE];
-          int[] pCamo = new int[IMG_SIZE];
-          PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
-    
-          try {
-              pgMech.grabPixels();
-          } catch (InterruptedException e) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage());
-              return;
-          }
-          if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
-              return;
-          }
-          
-          iCamo = comp.getToolkit().getImage("data/camo/" + camo + ".jpg");
-          PixelGrabber pgCamo = new PixelGrabber(iCamo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
-          try {
-              pgCamo.grabPixels();
-          } catch (InterruptedException e) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
-              return;
-          }
-          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
-              return;
-          }
-          
-          for (int i = 0; i < IMG_SIZE; i++) {
-            int pixel = pMech[i];
-            int alpha = (pixel >> 24) & 0xff;
-          
-            if (alpha != 0) {
-              int pixel1 = pCamo[i];
-              float red1   = ((float) ((pixel1 >> 16) & 0xff)) / 255;
-              float green1 = ((float) ((pixel1 >>  8) & 0xff)) / 255;
-              float blue1  = ((float) ((pixel1      ) & 0xff)) / 255;
-              
-              float black = (float) ((pMech[i]) & 0xff);
-
-              int red2   = (int)Math.round(red1   * black);
-              int green2 = (int)Math.round(green1 * black);
-              int blue2  = (int)Math.round(blue1  * black);
-
-              pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
-            }
-          }
-        
-          base = comp.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));        
+        public int getTint() {
+            return tint;
         }
     }
 

@@ -35,9 +35,9 @@ public class BoardView1
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
     // the dimensions of megamek's hex images
-    private static final int 	HEX_W = 84;
-    private static final int 	HEX_H = 72;
-    private static final int	HEX_WC = HEX_W - HEX_W/4;
+    private static final int        HEX_W = 84;
+    private static final int        HEX_H = 72;
+    private static final int        HEX_WC = HEX_W - HEX_W/4;
     
     // The list of valid zoom factors.  Other values cause map aliasing,
     // I can't be bothered figuring out why.  - Ben
@@ -1909,17 +1909,43 @@ public class BoardView1
     //
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
-        case KeyEvent.VK_UP :
+        case KeyEvent.VK_NUMPAD7 :
             scroll.y -= 36;
-            break;
-        case KeyEvent.VK_DOWN :
-            scroll.y += 36;
-            break;
-        case KeyEvent.VK_LEFT :
             scroll.x -= 36;
             break;
-        case KeyEvent.VK_RIGHT :
+        case KeyEvent.VK_NUMPAD8 :
+            scroll.y -= 36;
+            break;
+        case KeyEvent.VK_NUMPAD9 :
+            scroll.y -= 36;
             scroll.x += 36;
+            break;
+        case KeyEvent.VK_NUMPAD1 :
+            scroll.y += 36;
+            scroll.x -= 36;
+            break;
+        case KeyEvent.VK_NUMPAD2 :
+            scroll.y += 36;
+            break;
+        case KeyEvent.VK_NUMPAD3 :
+            scroll.y += 36;
+            scroll.x += 36;
+            break;
+        case KeyEvent.VK_NUMPAD4 :
+            scroll.x -= 36;
+            break;
+        case KeyEvent.VK_NUMPAD6 :
+            scroll.x += 36;
+            break;
+        case KeyEvent.VK_NUMPAD5 :
+            // center on the selected entity
+            java.util.Vector v = game.getPlayerEntities(localPlayer);
+            for (int i = 0; i < v.size(); i++) {
+                Entity e = (Entity) v.elementAt(i);
+                if (e.isSelected()) {
+                    centerOnHex(e.getPosition());
+                };
+            };
             break;
         case KeyEvent.VK_CONTROL :
             ctlKeyHeld = true;

@@ -101,10 +101,10 @@ public class Connection {
      * Kill off the thread
      */
     public void die() {
+        receiver = null;
+        sender = null;
         try {
             socket.close();
-            receiver = null;
-            sender = null;
         } catch (IOException ex) {
         }
     }

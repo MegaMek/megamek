@@ -104,6 +104,8 @@ public class Client extends Panel
                 System.exit(0);
             }
 	});
+        
+        frame.setVisible(true);
     }
     
     /**
@@ -133,6 +135,11 @@ public class Client extends Panel
         // layout
         setLayout(new BorderLayout());
         frame.setTitle(playername + " - MegaMek");
+        
+        frame.removeAll();
+        frame.setLayout(new BorderLayout());
+        frame.add(this, BorderLayout.CENTER);
+        frame.validate();
         
 //        // report frame
 //        reportFrame = new Frame("MegaMek Reports");

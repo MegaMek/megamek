@@ -127,6 +127,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem fireSpot           = null;
     private MenuItem fireCancel         = null;
 
+    private MenuItem physicalNext       = null;
+    private MenuItem physicalPunch      = null;
+    private MenuItem physicalKick       = null;
+    private MenuItem physicalPush       = null;
+    private MenuItem physicalClub       = null;
+    private MenuItem physicalBrushOff   = null;
+    private MenuItem physicalDodge      = null;
+    private MenuItem physicalThrash     = null;
+
     /**
      * A <code>Vector</code> containing the <code>ActionListener</code>s
      * that have registered themselves with this menu bar.
@@ -274,36 +283,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         // Create the Mines sub-menu.
         submenu = new Menu( "Mines" );
 
-        deployMinesConventional = new MenuItem( "Conventional" );
-        deployMinesConventional.addActionListener( this );
-        deployMinesConventional.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_CONV );
-        submenu.add( deployMinesConventional );
-        deployMinesCommand = new MenuItem( "Command" );
-        deployMinesCommand.addActionListener( this );
-        deployMinesCommand.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_COM );
-        submenu.add( deployMinesCommand );
-        deployMinesVibrabomb = new MenuItem( "Vibrabomb" );
-        deployMinesVibrabomb.addActionListener( this );
-        deployMinesVibrabomb.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_VIBRA );
-        submenu.add( deployMinesVibrabomb );
+        deployMinesConventional = createMenuItem(submenu, "Conventional", DeployMinefieldDisplay.DEPLOY_MINE_CONV);
+        deployMinesCommand = createMenuItem(submenu, "Command", DeployMinefieldDisplay.DEPLOY_MINE_COM);
+        deployMinesVibrabomb = createMenuItem(submenu, "Vibrabomb", DeployMinefieldDisplay.DEPLOY_MINE_VIBRA);
 
         // Finish off the deploy menu.
-        deployNext = new MenuItem( "Next Unit" );
-        deployNext.addActionListener( this );
-        deployNext.setActionCommand( DeploymentDisplay.DEPLOY_NEXT );
-        menu.add( deployNext );
-        deployTurn = new MenuItem( "Turn" );
-        deployTurn.addActionListener( this );
-        deployTurn.setActionCommand( DeploymentDisplay.DEPLOY_TURN );
-        menu.add( deployTurn );
-        deployLoad = new MenuItem( "Load" );
-        deployLoad.addActionListener( this );
-        deployLoad.setActionCommand( DeploymentDisplay.DEPLOY_LOAD );
-        menu.add( deployLoad );
-        deployUnload = new MenuItem( "Unload" );
-        deployUnload.addActionListener( this );
-        deployUnload.setActionCommand( DeploymentDisplay.DEPLOY_UNLOAD );
-        menu.add( deployUnload );
+        deployNext = createMenuItem(menu, "Next Unit", DeploymentDisplay.DEPLOY_NEXT, KeyEvent.VK_N);
+        deployTurn = createMenuItem(menu, "Turn", DeploymentDisplay.DEPLOY_TURN);
+        deployLoad = createMenuItem(menu, "Load", DeploymentDisplay.DEPLOY_LOAD);
+        deployUnload = createMenuItem(menu, "Unload", DeploymentDisplay.DEPLOY_UNLOAD);
 
         menu.addSeparator();
         
@@ -313,74 +301,29 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         menu = new Menu( "Move" );
         this.add( menu );
 
-        moveWalk = new MenuItem( "Walk" );
-        moveWalk.addActionListener( this );
-        moveWalk.setActionCommand(MovementDisplay.MOVE_WALK);
-        menu.add( moveWalk );
-        moveJump = new MenuItem( "Jump" );
-        moveJump.addActionListener( this );
-        moveJump.setActionCommand(MovementDisplay.MOVE_JUMP);
-        menu.add( moveJump );
-        moveBackUp = new MenuItem( "Back Up" );
-        moveBackUp.addActionListener( this );
-        moveBackUp.setActionCommand(MovementDisplay.MOVE_BACK_UP);
-        menu.add( moveBackUp );
-        moveGetUp = new MenuItem( "Get Up" );
-        moveGetUp.addActionListener( this );
-        moveGetUp.setActionCommand(MovementDisplay.MOVE_GET_UP);
-        menu.add( moveGetUp );
-        moveGoProne = new MenuItem( "Go Prone" );
-        moveGoProne.addActionListener( this );
-        moveGoProne.setActionCommand(MovementDisplay.MOVE_GO_PRONE);
-        menu.add( moveGoProne );
-        moveTurn = new MenuItem( "Turn" );
-        moveTurn.addActionListener( this );
-        moveTurn.setActionCommand(MovementDisplay.MOVE_TURN);
-        menu.add( moveTurn );
-        moveNext = new MenuItem( "Next" );
-        moveNext.addActionListener( this );
-        moveNext.setActionCommand(MovementDisplay.MOVE_NEXT);
-        menu.add( moveNext );
+        moveWalk = createMenuItem(menu, "Walk", MovementDisplay.MOVE_WALK, KeyEvent.VK_W);
+        moveJump = createMenuItem(menu, "Jump", MovementDisplay.MOVE_JUMP, KeyEvent.VK_J);
+        moveBackUp = createMenuItem(menu, "Back Up", MovementDisplay.MOVE_BACK_UP);
+        moveGetUp = createMenuItem(menu, "Get Up", MovementDisplay.MOVE_GET_UP);
+        moveGoProne = createMenuItem(menu, "Go Prone", MovementDisplay.MOVE_GO_PRONE);
+        moveTurn = createMenuItem(menu, "Turn", MovementDisplay.MOVE_TURN);
+        moveNext = createMenuItem(menu, "Next Unit", MovementDisplay.MOVE_NEXT, KeyEvent.VK_N);
 
         // Create the Special sub-menu.
         submenu = new Menu( "Special" );
 
-        moveLoad = new MenuItem( "Load" );
-        moveLoad.addActionListener( this );
-        moveLoad.setActionCommand(MovementDisplay.MOVE_LOAD);
-        submenu.add( moveLoad );
-        moveUnload = new MenuItem( "Unload" );
-        moveUnload.addActionListener( this );
-        moveUnload.setActionCommand(MovementDisplay.MOVE_UNLOAD);
-        submenu.add( moveUnload );
+        moveLoad = createMenuItem(submenu, "Load", MovementDisplay.MOVE_LOAD);
+        moveUnload = createMenuItem(submenu, "Unload", MovementDisplay.MOVE_UNLOAD);
         submenu.addSeparator();
-        moveCharge = new MenuItem( "Charge" );
-        moveCharge.addActionListener( this );
-        moveCharge.setActionCommand(MovementDisplay.MOVE_CHARGE);
-        submenu.add( moveCharge );
-        moveDFA= new MenuItem( "Death from Above" );
-        moveDFA.addActionListener( this );
-        moveDFA.setActionCommand(MovementDisplay.MOVE_DFA);
-        submenu.add( moveDFA );
+        moveCharge = createMenuItem(submenu, "Charge", MovementDisplay.MOVE_CHARGE);
+        moveDFA = createMenuItem(submenu, "Death From Above", MovementDisplay.MOVE_DFA);                
         submenu.addSeparator();
-        moveFlee = new MenuItem( "Flee" );
-        moveFlee.addActionListener( this );
-        moveFlee.setActionCommand(MovementDisplay.MOVE_FLEE);
-        submenu.add( moveFlee );
-        moveEject = new MenuItem( "Eject" );
-        moveEject.addActionListener( this );
-        moveEject.setActionCommand(MovementDisplay.MOVE_EJECT);
-        submenu.add( moveEject );
+        moveFlee = createMenuItem(submenu, "Flee", MovementDisplay.MOVE_FLEE);
+        moveEject = createMenuItem(submenu, "Eject", MovementDisplay.MOVE_EJECT);
         submenu.addSeparator();
-        moveUnjam = new MenuItem( "Unjam RAC" );
-        moveUnjam.addActionListener( this );
-        moveUnjam.setActionCommand(MovementDisplay.MOVE_UNJAM);
-        submenu.add( moveUnjam );
-        moveClear = new MenuItem( "Clear Minefield" );
-        moveClear.addActionListener( this );
-        moveClear.setActionCommand(MovementDisplay.MOVE_CLEAR);
-        submenu.add( moveClear );
-        
+        moveUnjam = createMenuItem(submenu, "Unjam RAC", MovementDisplay.MOVE_UNJAM);
+        moveClear = createMenuItem(submenu, "Clear Minefield", MovementDisplay.MOVE_CLEAR);
+
         menu.addSeparator();
         menu.add( submenu );
 
@@ -440,6 +383,19 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         fireCancel.setActionCommand(FiringDisplay.FIRE_CANCEL);
         menu.add( fireCancel );
 
+        // *** Create the physical menu.
+        menu = new Menu( "Physical" );
+        this.add( menu );
+
+        physicalPunch = createMenuItem(menu, "Punch", PhysicalDisplay.PHYSICAL_PUNCH);
+        physicalKick = createMenuItem(menu, "Kick", PhysicalDisplay.PHYSICAL_KICK);
+        physicalPush = createMenuItem(menu, "Push", PhysicalDisplay.PHYSICAL_PUSH);
+        physicalClub = createMenuItem(menu, "Club", PhysicalDisplay.PHYSICAL_CLUB);
+        physicalBrushOff = createMenuItem(menu, "Brush Off", PhysicalDisplay.PHYSICAL_BRUSH_OFF);
+        physicalThrash = createMenuItem(menu, "Thrash", PhysicalDisplay.PHYSICAL_THRASH);
+        physicalDodge = createMenuItem(menu, "Dodge", PhysicalDisplay.PHYSICAL_DODGE);
+        physicalNext = createMenuItem(menu, "Next Unit", PhysicalDisplay.PHYSICAL_NEXT, KeyEvent.VK_N);
+
         // *** Create the help menu.
         menu = new Menu( "Help" );
         this.setHelpMenu( menu );
@@ -457,6 +413,21 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         // Now manage the menu items.
         manageMenu();
     }
+
+	private MenuItem createMenuItem(Menu m, String label, String command, int shortcut) {
+		MenuItem mi = createMenuItem(m, label, command);
+		mi.setShortcut(new MenuShortcut(shortcut));
+		return mi;
+	}
+
+	private MenuItem createMenuItem(Menu m, String label, String command) {
+        MenuItem mi = new MenuItem( label );
+        mi.addActionListener( this );
+        mi.setActionCommand(command);
+        mi.setEnabled(false);
+        m.add( mi );
+        return mi;
+	}
 
     /**
      * Implement the <code>ActionListener</code> interface.
@@ -615,43 +586,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         // game options and client settings.
         viewGameOptions.setEnabled( true );
         viewClientSettings.setEnabled( true );
-
-        // As of 2003-09-04, we can't ever deploy command mines.
-        // If the phase is "deploy minefields", we can specify the mine type.
-        if ( this.phase != Game.PHASE_DEPLOY_MINEFIELDS ) {
-            deployMinesConventional.setEnabled( false );
-            deployMinesCommand.setEnabled( false );
-            deployMinesVibrabomb.setEnabled( false );
-        }
-
-        // We can only deploy units in the deployment phase.
-        // Some actions require an Entity to be selected.
-        if ( this.phase != Game.PHASE_DEPLOYMENT ) {
-            deployNext.setEnabled( false );
-            deployTurn.setEnabled( false );
-            deployLoad.setEnabled( false );
-            deployUnload.setEnabled( false );
-        }
-
-        // We can only move units in the movement phase.
-        // Some actions require an Entity to be selected.
-        if ( this.phase != Game.PHASE_MOVEMENT ) {
-			moveWalk.setEnabled( false );
-			moveNext.setEnabled( false );
-			moveTurn.setEnabled( false );
-			moveLoad.setEnabled( false );
-			moveUnload.setEnabled( false );
-			moveJump.setEnabled( false );
-			moveBackUp.setEnabled( false );
-			moveCharge.setEnabled( false );
-			moveDFA.setEnabled( false );
-			moveGoProne.setEnabled( false );
-			moveFlee.setEnabled( false );
-			moveEject.setEnabled( false );
-			moveUnjam.setEnabled( false );
-			moveClear.setEnabled( false );
-			moveGetUp.setEnabled( false );
-        }
 
         // We can only fire selected units in the firing phase.
         if ( this.phase != Game.PHASE_FIRING || entity == null ) {
@@ -850,4 +784,29 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         deployMinesVibrabomb.setEnabled(nbr > 0);
 	}
 
+	//Manages physical menu items...
+	public synchronized void setPhysicalNextEnabled(boolean enabled) {
+    	physicalNext.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalPunchEnabled(boolean enabled) {
+    	physicalPunch.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalKickEnabled(boolean enabled) {
+    	physicalKick.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalPushEnabled(boolean enabled) {
+    	physicalPush.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalClubEnabled(boolean enabled) {
+    	physicalClub.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalBrushOffEnabled(boolean enabled) {
+    	physicalBrushOff.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalDodgeEnabled(boolean enabled) {
+    	physicalDodge.setEnabled(enabled);
+	}
+	public synchronized void setPhysicalThrashEnabled(boolean enabled) {
+    	physicalThrash.setEnabled(enabled);
+	}
 }

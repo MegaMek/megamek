@@ -12461,12 +12461,12 @@ implements Runnable, ConnectionHandler {
                 for (Enumeration j = game.getArtilleryAttacks(); j.hasMoreElements();) {
                     ArtilleryAttackAction oaaa = (ArtilleryAttackAction) j.nextElement();
                     if ( oaaa.getWR().waa.getEntityId() == wr.waa.getEntityId() &&
-                    	 !oaaa.getWR().waa.getTarget(game).getPosition().equals(wr.waa.getTarget(game).getPosition())) {
+                         !oaaa.getWR().waa.getTarget(game).getPosition().equals(wr.waa.getTarget(game).getPosition())) {
                         firingAtNewHex = true;
                     }
                 }
                 if (firingAtNewHex) {
-                	clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
+                    clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
                 }
                 Enumeration spotters = game.getSelectedEntities(new EntitySelector() {
                     public int player = firingEntity.getOwnerId();
@@ -12503,9 +12503,9 @@ implements Runnable, ConnectionHandler {
      * @param attacker The <code>Entity</code> that did the killing.
      */
     private void creditKill(Entity target, Entity attacker) {
-    	if (target.isDoomed() && !target.getGaveKillCredit()) {
-    		attacker.addKill(target);
-    	}
+        if (target.isDoomed() && !target.getGaveKillCredit()) {
+            attacker.addKill(target);
+        }
     }
     
     /**
@@ -12518,98 +12518,96 @@ implements Runnable, ConnectionHandler {
      *            possible damage.
      */     
     private PhysicalResult preTreatPhysicalAttack(AbstractAttackAction aaa) {
-    	final Entity ae = game.getEntity(aaa.getEntityId());
-    	int damage = 0;
-    	PhysicalResult pr = new PhysicalResult();
-    	ToHitData toHit = new ToHitData();
-    	pr.roll = Compute.d6(2);
-    	pr.aaa = aaa;
-    	if (aaa instanceof BrushOffAttackAction) {
-    		BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
-    		int arm = baa.getArm();
-    		baa.setArm(BrushOffAttackAction.LEFT);
-    		toHit = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.LEFT);
-    		baa.setArm(BrushOffAttackAction.RIGHT);
-    		pr.toHitRight = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.RIGHT);
-    		damage = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.LEFT);
-    		pr.damageRight = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.RIGHT);
-    		baa.setArm(arm);
-    		pr.rollRight = Compute.d6(2);
-    		pr.aaa = (AbstractAttackAction)baa;
-    	} else if (aaa instanceof ChargeAttackAction) {
-    		ChargeAttackAction caa = (ChargeAttackAction)aaa;
-    		toHit = caa.toHit(game);
-    		damage = ChargeAttackAction.getChargeDamageFor(ae);
-    	} else if (aaa instanceof ClubAttackAction) {
-    		ClubAttackAction caa = (ClubAttackAction)aaa;
-    		toHit = Compute.toHitClub(game, caa);
-    		damage = Compute.getClubDamageFor(ae, caa.getClub());
-    	} else if (aaa instanceof DfaAttackAction) {
-    		DfaAttackAction daa = (DfaAttackAction)aaa;
-    		toHit = Compute.toHitDfa(game, daa);
-    		damage = Compute.getDfaDamageFor(ae);
-    	} else if (aaa instanceof KickAttackAction) {
-    		KickAttackAction kaa = (KickAttackAction)aaa;
-    		toHit = Compute.toHitKick(game, kaa);
-    		damage = Compute.getKickDamageFor(ae, kaa.getLeg());
-    	} else if (aaa instanceof ProtomechPhysicalAttackAction) {
-    		ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction)aaa;
-    		toHit = Compute.toHitProto(game, paa);
-    		damage = Compute.getProtoPhysicalDamageFor(ae);
-    	} else if (aaa instanceof PunchAttackAction) {
-    		PunchAttackAction paa = (PunchAttackAction)aaa;
-    		int arm = paa.getArm();
-    		int damageRight = 0;
-    		paa.setArm(PunchAttackAction.LEFT);
-    		toHit = Compute.toHitPunch(game, paa);
-    		paa.setArm(PunchAttackAction.RIGHT);
-    		ToHitData toHitRight = Compute.toHitPunch(game, paa);
-    		damage = Compute.getPunchDamageFor(ae, PunchAttackAction.LEFT);
-    		damageRight = Compute.getPunchDamageFor(ae, PunchAttackAction.RIGHT);
-    		paa.setArm(arm);
+        final Entity ae = game.getEntity(aaa.getEntityId());
+        int damage = 0;
+        PhysicalResult pr = new PhysicalResult();
+        ToHitData toHit = new ToHitData();
+        pr.roll = Compute.d6(2);
+        pr.aaa = aaa;
+        if (aaa instanceof BrushOffAttackAction) {
+            BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
+            int arm = baa.getArm();
+            baa.setArm(BrushOffAttackAction.LEFT);
+            toHit = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.LEFT);
+            baa.setArm(BrushOffAttackAction.RIGHT);
+            pr.toHitRight = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.RIGHT);
+            damage = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.LEFT);
+            pr.damageRight = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.RIGHT);
+            baa.setArm(arm);
+            pr.rollRight = Compute.d6(2);
+        } else if (aaa instanceof ChargeAttackAction) {
+            ChargeAttackAction caa = (ChargeAttackAction)aaa;
+            toHit = caa.toHit(game);
+            damage = ChargeAttackAction.getChargeDamageFor(ae);
+        } else if (aaa instanceof ClubAttackAction) {
+            ClubAttackAction caa = (ClubAttackAction)aaa;
+            toHit = Compute.toHitClub(game, caa);
+            damage = Compute.getClubDamageFor(ae, caa.getClub());
+        } else if (aaa instanceof DfaAttackAction) {
+            DfaAttackAction daa = (DfaAttackAction)aaa;
+            toHit = Compute.toHitDfa(game, daa);
+            damage = Compute.getDfaDamageFor(ae);
+        } else if (aaa instanceof KickAttackAction) {
+            KickAttackAction kaa = (KickAttackAction)aaa;
+            toHit = Compute.toHitKick(game, kaa);
+            damage = Compute.getKickDamageFor(ae, kaa.getLeg());
+        } else if (aaa instanceof ProtomechPhysicalAttackAction) {
+            ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction)aaa;
+            toHit = Compute.toHitProto(game, paa);
+            damage = Compute.getProtoPhysicalDamageFor(ae);
+        } else if (aaa instanceof PunchAttackAction) {
+            PunchAttackAction paa = (PunchAttackAction)aaa;
+            int arm = paa.getArm();
+            int damageRight = 0;
+            paa.setArm(PunchAttackAction.LEFT);
+            toHit = Compute.toHitPunch(game, paa);
+            paa.setArm(PunchAttackAction.RIGHT);
+            ToHitData toHitRight = Compute.toHitPunch(game, paa);
+            damage = Compute.getPunchDamageFor(ae, PunchAttackAction.LEFT);
+            damageRight = Compute.getPunchDamageFor(ae, PunchAttackAction.RIGHT);
+            paa.setArm(arm);
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.
-    		if ( ae.isProne() ) {
-    			double oddsLeft = Compute.oddsAbove(toHit.getValue());
-    			double oddsRight = Compute.oddsAbove(toHitRight.getValue());
+            if ( ae.isProne() ) {
+                double oddsLeft = Compute.oddsAbove(toHit.getValue());
+                double oddsRight = Compute.oddsAbove(toHitRight.getValue());
                 // Use the best attack.
                 if (  oddsLeft*damage > oddsRight*damageRight ) {
                     paa.setArm(PunchAttackAction.LEFT);
                 } else paa.setArm(PunchAttackAction.RIGHT);   
-    		}
-    		pr.damageRight = damageRight;
-    		pr.toHitRight = toHitRight;
-    		pr.rollRight = Compute.d6(2);
-    		pr.aaa = (AbstractAttackAction)paa;
-    	} else if (aaa instanceof PushAttackAction) {
-    		PushAttackAction paa = (PushAttackAction)aaa;
-    		toHit = Compute.toHitPush(game, paa);
-    	} else if (aaa instanceof ThrashAttackAction) {
-    		ThrashAttackAction taa = (ThrashAttackAction)aaa;
-    		toHit = taa.toHit(game);
-    		damage = ThrashAttackAction.getThrashDamageFor(ae);
-    	}
+            }
+            pr.damageRight = damageRight;
+            pr.toHitRight = toHitRight;
+            pr.rollRight = Compute.d6(2);
+        } else if (aaa instanceof PushAttackAction) {
+            PushAttackAction paa = (PushAttackAction)aaa;
+            toHit = Compute.toHitPush(game, paa);
+        } else if (aaa instanceof ThrashAttackAction) {
+            ThrashAttackAction taa = (ThrashAttackAction)aaa;
+            toHit = taa.toHit(game);
+            damage = ThrashAttackAction.getThrashDamageFor(ae);
+        }
         pr.toHit = toHit;
         pr.damage = damage;
-    	return pr;
+        return pr;
     }
     
     private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
-    	AbstractAttackAction aaa = pr.aaa;
-    	int roll = pr.roll;
-    	if (aaa instanceof PunchAttackAction) {
+        AbstractAttackAction aaa = pr.aaa;
+        int roll = pr.roll;
+        if (aaa instanceof PunchAttackAction) {
             PunchAttackAction paa = (PunchAttackAction)aaa;
             if (paa.getArm() == PunchAttackAction.BOTH) {
-            	paa.setArm(PunchAttackAction.LEFT);
-            	pr.aaa = (AbstractAttackAction)paa;
+                paa.setArm(PunchAttackAction.LEFT);
+                pr.aaa = (AbstractAttackAction)paa;
                 resolvePunchAttack(pr, cen);
                 cen = paa.getEntityId();
                 paa.setArm(PunchAttackAction.RIGHT);
                 pr.aaa = (AbstractAttackAction)paa;
                 resolvePunchAttack(pr, cen);
             } else {
-            	resolvePunchAttack(pr, cen);
-            	cen = paa.getEntityId();
+                resolvePunchAttack(pr, cen);
+                cen = paa.getEntityId();
             }            
         } else if (aaa instanceof KickAttackAction) {
             resolveKickAttack(pr, cen);
@@ -12632,8 +12630,8 @@ implements Runnable, ConnectionHandler {
             resolveThrashAttack(pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof ProtomechPhysicalAttackAction) {
-        	resolveProtoAttack(pr, cen);
-        	cen = aaa.getEntityId();
+            resolveProtoAttack(pr, cen);
+            cen = aaa.getEntityId();
         } else if (aaa instanceof ClubAttackAction) {
             resolveClubAttack(pr, cen);
             cen = aaa.getEntityId();

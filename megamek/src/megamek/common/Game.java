@@ -1615,6 +1615,14 @@ public class Game implements Serializable
         }
         this.actions = toKeep;
     }
+    
+    /**
+     * Remove a specified action
+     * @param o The action to remove.
+     */
+    public void removeAction(Object o) {
+    	actions.removeElement(o);
+    }
 
     public int actionsSize() {
         return actions.size();

@@ -37,7 +37,7 @@
   </target>
   
   <target depends="init" description="Test-compiles classes under MS JDK" name="test-msjdk">
-     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jvc">
+     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jvc.exe">
 	<arg line="/d classes megamek/*.java"/>
      </exec>
   </target>

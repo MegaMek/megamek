@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -636,7 +635,7 @@ public class MovementDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
 
-        if (b.getType() == b.BOARD_HEX_DRAGGED) {
+        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
             if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == Compute.GEAR_TURN) {
                 client.game.board.cursor(b.getCoords());
 
@@ -644,7 +643,7 @@ public class MovementDisplay
                 cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
                 client.bv.drawMovementData(ce(), cmd);
             }
-        } else if (b.getType() == b.BOARD_HEX_CLICKED) {
+        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
 
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
@@ -770,7 +769,7 @@ public class MovementDisplay
     }
 
     private void updateProneButtons() {
-        if (ce() != null) {
+        if (ce() != null && md != null) {
             butUp.setEnabled(md.getFinalProne(ce().isProne()));
             butDown.setEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {
@@ -1121,15 +1120,15 @@ public class MovementDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == ev.VK_ESCAPE) {
+        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAllMoves();
         }
-        if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
+        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 moveTo(cmd);
             }
         }
-        if (ev.getKeyCode() == ev.VK_SHIFT && !shiftheld) {
+        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
                 // switch to turning
@@ -1140,10 +1139,10 @@ public class MovementDisplay
         }
         
         // arrow can also rotate when shift is down
-        if (shiftheld && client.isMyTurn() && (ev.getKeyCode() == ev.VK_LEFT || ev.getKeyCode() == ev.VK_RIGHT)) {
+        if (shiftheld && client.isMyTurn() && (ev.getKeyCode() == KeyEvent.VK_LEFT || ev.getKeyCode() == KeyEvent.VK_RIGHT)) {
             int curDir = md.getFinalFacing(ce().getFacing());
             int dir = curDir;
-            if (ev.getKeyCode() == ev.VK_LEFT) {
+            if (ev.getKeyCode() == KeyEvent.VK_LEFT) {
                 dir = (dir + 5) % 6;
             } else {
                 dir = (dir + 7) % 6;

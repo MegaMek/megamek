@@ -326,6 +326,20 @@ public class Client extends Panel
     }
   
     /**
+     * Returns the number of the first deployable entity
+     */
+    public int getFirstDeployableEntityNum() {
+      return game.getFirstDeployableEntityNum();
+    }
+    
+    /**
+     * Returns the number of the next deployable entity
+     */
+    public int getNextDeployableEntityNum(int entityId) {
+      return game.getNextDeployableEntityNum(entityId);
+    }
+    
+    /**
      * Shortcut to game.board
      */
     public Board getBoard() {
@@ -376,7 +390,7 @@ public class Client extends Panel
      * along with it.
      */
     protected void changePhase(int phase) {
-        this.game.phase = phase;
+        this.game.setPhase(phase);
         
         bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
         
@@ -505,7 +519,7 @@ public class Client extends Panel
         if (canSelectEntities()) {
             for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = (Entity)i.nextElement();
-                if (game.getTurn().isValidEntity(entity)) {
+                if (game.getTurn().isValidEntity(entity, game)) {
                     popup.add(new SelectMenuItem(entity));
                 }
             }
@@ -1111,6 +1125,9 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_TURN :
                 changeTurnIndex(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_ROUND_UPDATE :
+                game.setRoundCount(c.getIntValue(0));
                 break;
             case Packet.COMMAND_SENDING_TURNS :
                 receiveTurns(c);

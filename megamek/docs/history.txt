@@ -125,6 +125,7 @@ v 0.29.6 (CVS)
 + Bug 775472: wait for new hex images (like smoke) to load before drawing
 + Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
 + Added a LOS tool setting dialog.
++ Added delayed deployment code
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay
@@ -1613,4 +1614,5 @@ version 0.06
 
 versions before 0.06
 + i dunno
+
 

@@ -44,7 +44,7 @@ public class GAAttack extends GA {
     Vector temp = new Vector();
     for (int i = 0; i < target_array.length; i++) {
       Entity entity = (Entity)target_array[i];
-      if (entity.isEnemyOf(attacker.entity)) {
+      if (entity.isEnemyOf(attacker.entity) && entity.isDeployed()) {
         temp.add(new Integer(i));
       }
     }

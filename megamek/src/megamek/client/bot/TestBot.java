@@ -97,10 +97,10 @@ public class TestBot extends BotClientWrapper {
         this.heat = w.getHeat();
         this.expected = this.odds*this.value;
         this.primary_expected = this.primary_odds*this.value;
-	final boolean isInfantryWeapon = 
-	    ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
+  final boolean isInfantryWeapon = 
+      ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
         final boolean usesAmmo = 
-	    (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
+      (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
           this.value = 0; //should have already been caught...
@@ -223,6 +223,10 @@ public class TestBot extends BotClientWrapper {
           int number = 0;
           while (e.hasMoreElements()) {
             Entity enemy = (Entity)e.nextElement();
+            
+            if ( null == enemy.getPosition() )
+              continue;
+              
             if (!enemy.isProne() && enemy.getPosition().distance(en.getPosition()) < 3) {
               if (enemy.isEnemyOf(en)) {
                 number++;
@@ -324,7 +328,7 @@ public class TestBot extends BotClientWrapper {
     //first check and make sure that someone else has moved so that we don't replan
     Object[] enemy_array = this.getEnemyEntities().toArray();
     for (int j = 0; j < enemy_array.length; j++) {
-      if (!((Entity)enemy_array[j]).isSelectable()) {
+      if (!((Entity)enemy_array[j]).isSelectableThisTurn(game)) {
         initiative++;
       }
     }
@@ -349,7 +353,7 @@ public class TestBot extends BotClientWrapper {
         CEntity cen = this.enemies.get(entity);
         
         // if we can't move this entity right now, ignore it
-        if (!game.getTurn().isValidEntity(entity)) {
+        if (!game.getTurn().isValidEntity(entity, game)) {
             continue;
         }
         
@@ -362,11 +366,11 @@ public class TestBot extends BotClientWrapper {
           e.printStackTrace();
         }
 
-	// If this entity can still move, add its
-	// move result to the list of possible moves.
-	if ( !cen.moved ) {
-	    possible.add(mt.result);
-	}
+  // If this entity can still move, add its
+  // move result to the list of possible moves.
+  if ( !cen.moved ) {
+      possible.add(mt.result);
+  }
 
         if (cen.entity.isImmobile() && !cen.moved) {
           cen.moved = true;
@@ -451,7 +455,7 @@ public class TestBot extends BotClientWrapper {
     CEntity self = this.enemies.get(entity);
     EntityState current = self.old;
     Object[] move_array;
-    if (entity.isSelectable() && !self.moved) {
+    if (entity.isSelectableThisTurn(game) && !self.moved) {
       move_array = self.getAllMoves().toArray();
     } else {
       move_array = new Object[] {current};
@@ -482,7 +486,7 @@ public class TestBot extends BotClientWrapper {
 
       // 2002-10-28 Suvarov454 : Discard impossible locations.
       if ( !game.getBoard().contains(option.entity.getPosition()) ) {
-	  continue;
+    continue;
       }
 
       if (option.damages == null) option.damages = new double[enemy_array.length];
@@ -500,7 +504,7 @@ public class TestBot extends BotClientWrapper {
           self.engaged = true;
           int mod = modifiers[EntityState.DEFENCE_MOD];
           double max = option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod, modifiers[EntityState.DEFENCE_PC]);
-          if (en.isSelectable()) { // let him turn a little
+          if (en.isSelectableThisTurn(game)) { // let him turn a little
             enemy.old.curFacing = (enemy.old.curFacing+1)%6;
             max = Math.max(option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
             enemy.old.curFacing = (enemy.old.curFacing+4)%6;
@@ -1052,29 +1056,29 @@ public class TestBot extends BotClientWrapper {
       CEntity enemy = enemies.get(e);
       ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);
       if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
-	  double expectedDmg;
+    double expectedDmg;
 
-	  // Are we an Infantry platoon?
-	  if ( en instanceof Infantry ) {
-	      // Get the expected damage, given our current 
-	      // manpower level.
-	      Infantry inf = (Infantry) en;
-	      expectedDmg = 
-		  inf.getDamage(inf.getShootingStrength());
-	  } else {
-	      // Get the expected damage of the weapon.
-	      expectedDmg = 
-		  Compute.getExpectedDamage((WeaponType)mw.getType());
-	  }
+    // Are we an Infantry platoon?
+    if ( en instanceof Infantry ) {
+        // Get the expected damage, given our current 
+        // manpower level.
+        Infantry inf = (Infantry) en;
+        expectedDmg = 
+      inf.getDamage(inf.getShootingStrength());
+    } else {
+        // Get the expected damage of the weapon.
+        expectedDmg = 
+      Compute.getExpectedDamage((WeaponType)mw.getType());
+    }
 
-	  // Infantry in the open suffer double damage.
-	  if ( e instanceof Infantry ) {
-	      Hex e_hex = game.getBoard().getHex( e.getPosition() );
-	      if ( !e_hex.contains(Terrain.WOODS) &&
-		   !e_hex.contains(Terrain.BUILDING) ) {
-		  expectedDmg *= 2;
-	      }
-	  }
+    // Infantry in the open suffer double damage.
+    if ( e instanceof Infantry ) {
+        Hex e_hex = game.getBoard().getHex( e.getPosition() );
+        if ( !e_hex.contains(Terrain.WOODS) &&
+       !e_hex.contains(Terrain.BUILDING) ) {
+      expectedDmg *= 2;
+        }
+    }
 
         a = new AttackOption(enemy, mw, expectedDmg, th);
         if (a.value > max.value) {

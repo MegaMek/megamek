@@ -149,7 +149,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
     }
     
-    public void newRound() {
+    public void newRound(int roundNumber) {
         setUsedThisRound(false);
         if (type.hasModes() && pendingMode != -1) {
             mode = pendingMode;

@@ -230,7 +230,7 @@ public abstract class Mech
     /**
      * Override Entity#newRound() method.
      */
-    public void newRound() {
+    public void newRound(int roundNumber) {
 
         // Walk through the Mech's miscellaneous equipment before
         // we apply our parent class' newRound() functionality
@@ -247,7 +247,7 @@ public abstract class Mech
 
         } // Check the next piece of equipment.
 
-        super.newRound();
+        super.newRound(roundNumber);
         // If MASC was used last turn, increment the counter,
         // otherwise decrement.  Then, clear the counter 
         if (usedMASC) {
@@ -255,8 +255,8 @@ public abstract class Mech
         } else
             nMASCLevel = Math.max(0, nMASCLevel - 1);        
 
-	// Clear the MASC flag 
-	usedMASC = false;
+  // Clear the MASC flag 
+  usedMASC = false;
 
         setSecondaryFacing(getFacing());
         

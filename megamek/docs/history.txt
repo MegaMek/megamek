@@ -95,6 +95,7 @@ v 0.28.12-dev
 + hex theme settable from the map editor
 + ".board" extention checked for in map editor
 + exits terrain parameter counts for base images too
++ applied Oscarmm's patch adding heat tracking to the firing display
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

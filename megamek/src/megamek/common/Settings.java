@@ -36,7 +36,7 @@ public class Settings
     public static int       displayPosX             = 0;
     public static int       displayPosY             = 0;
     public static int       displaySizeWidth        = 210;
-    public static int       displaySizeHeight       = 340;
+    public static int       displaySizeHeight       = 370;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;

@@ -129,17 +129,15 @@ public class TilesetManager {
     /**
      * Load all the images we'll need for the game and place them in the tracker
      */
-    public void loadAllImages(Game game) {
+    public void loadNeededImages(Game game) {
         loaded = false;
         
-        // load all images in the hex tileset
-        hexTileset.loadAllImages(comp, tracker);
-        
-        // pre-match all hexes with images
+        // pre-match all hexes with images, load hex images
         for (int y = 0; y < game.board.height; y++) {
             for (int x = 0; x < game.board.width; x++) {
                 Hex hex = game.board.getHex(x, y);
                 hexTileset.assignMatch(hex, comp);
+                hexTileset.trackHexImages(hex, tracker);
             }
         }
         
@@ -149,6 +147,13 @@ public class TilesetManager {
         }
         
         started = true;
+    }
+    
+    /**
+     * Loads all the hex tileset images
+     */
+    public void loadAllHexes() {
+        hexTileset.loadAllImages(comp, tracker);
     }
     
     /**

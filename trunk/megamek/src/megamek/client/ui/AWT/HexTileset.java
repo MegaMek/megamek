@@ -192,6 +192,29 @@ public class HexTileset {
     }
     
     /**
+     * Adds all images associated with the hex to the specified tracker
+     */
+    public void trackHexImages(Hex hex, MediaTracker tracker) {
+        // add base
+        tracker.addImage(hex.getBase(), 1);
+        
+        // add supers
+        List supers = hex.getSupers();
+        if (supers != null) {
+            for (Iterator i = supers.iterator(); i.hasNext();) {
+                tracker.addImage((Image)i.next(), 1);
+            }
+        }
+    }
+    
+    /**
+     * Loads the image for this hex.
+     */
+    public void loadHexImage(Hex hex, Component comp, MediaTracker tracker) {
+        
+    }
+    
+    /**
      * Match the two hexes using the "super" formula.  All matches must be
      * exact, however the match only depends on the original hex matching
      * all the elements of the comparision, not vice versa.

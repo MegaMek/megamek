@@ -25,10 +25,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
   // displays
     private Label labStatus;
     protected Panel panStatus;
-    private Button butDisplay;
-    private Button butMap;
-    private Button butLOS;
-    private Button butUnit;
 
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
@@ -38,22 +34,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
 
       labStatus = new Label(defStatus, Label.CENTER);
       
-      butDisplay = new Button("D");
-      butDisplay.addActionListener(this);
-      butDisplay.setActionCommand(VIEW_MEK_DISPLAY);
-      
-      butMap = new Button("M");
-      butMap.addActionListener(this);
-      butMap.setActionCommand(VIEW_MINI_MAP);
-      
-      butUnit = new Button("U");
-      butUnit.addActionListener(this);
-      butUnit.setActionCommand(VIEW_UNIT_OVERVIEW);
-
-      butLOS = new Button("L");
-      butLOS.addActionListener(this);
-      butLOS.setActionCommand(VIEW_LOS_SETTING);
-
       // layout
       GridBagLayout gridbag = new GridBagLayout();
       GridBagConstraints c = new GridBagConstraints();
@@ -61,14 +41,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
           
       c.insets = new Insets(0, 1, 0, 1);
       c.fill = GridBagConstraints.HORIZONTAL;
-      
-      c.weightx = 0.0;    c.weighty = 0.0;
-      gridbag.setConstraints(butDisplay, c);
-
-      panStatus.add(butDisplay);
-	  panStatus.add(butMap);
-	  panStatus.add(butUnit);
-      panStatus.add(butLOS);
 
       c.gridwidth = GridBagConstraints.REMAINDER;
       c.weightx = 1.0;    c.weighty = 0.0;
@@ -81,27 +53,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
     }
     
     protected void setDisplayButtonEnabled(boolean enabled) {
-      butDisplay.setEnabled(enabled);
+      ;
     }
 
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
-      boolean handled = false;
-
-      if (ev.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
-        client.toggleDisplay();
-        handled = true;
-      } else if (ev.getActionCommand().equals(VIEW_MINI_MAP)) {
-        client.toggleMap();
-        handled = true;
-      } else if (ev.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
-        client.toggleUnitOverview();
-        handled = true;
-      } else if (ev.getActionCommand().equals(VIEW_LOS_SETTING)) {
-        client.showLOSSettingDialog();
-        handled = true;
-      }
-      
-      return handled;
+      return false;
     }
 }
 

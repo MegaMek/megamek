@@ -5730,6 +5730,16 @@ implements Runnable {
 
             } // End has-transported-unit
 
+            // Handle transporting unit.
+            if ( Entity.NONE != entity.getTransportId() ) {
+                final Entity transport = game.getEntity
+                    ( entity.getTransportId() );
+                Coords curPos = transport.getPosition();
+                int curFacing = transport.getFacing();
+                this.unloadUnit( transport, entity, curPos, curFacing );
+                this.entityUpdate( transport.getId() );
+            } // End unit-is-transported
+
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
             if ( Entity.NONE != swarmerId ) {

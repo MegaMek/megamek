@@ -365,7 +365,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "ISLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 45;
         ammo.bv = 5;
         
@@ -381,7 +381,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "ISLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 20;
         ammo.bv = 10;
         
@@ -397,7 +397,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "ISLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 10;
         ammo.bv = 19;
         
@@ -413,7 +413,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "ISLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
         ammo.bv = 27;
         
@@ -725,7 +725,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "CLLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 45;
         ammo.bv = 6;
         
@@ -741,7 +741,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "CLLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 20;
         ammo.bv = 12;
         
@@ -757,7 +757,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "CLLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 10;
         ammo.bv = 19;
         
@@ -773,7 +773,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "CLLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
         ammo.bv = 33;
         

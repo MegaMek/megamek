@@ -226,6 +226,15 @@ public class EquipmentType {
     	addType(new ISAC5());
     	addType(new ISAC10());
     	addType(new ISAC20());
+    	//Ultras
+    	addType(new ISUAC2());
+    	addType(new ISUAC5());
+    	addType(new ISUAC10());
+    	addType(new ISUAC20());
+    	addType(new CLUAC2());
+    	addType(new CLUAC5());
+    	addType(new CLUAC10());
+    	addType(new CLUAC20());
     }
     
 }

@@ -142,11 +142,13 @@ public class WeaponHandler implements AttackHandler {
 	       
 
 		// yeech.  handle damage. . different weapons do this in very different ways
+	        boolean bAllShotsHit = allShotsHit();
 	        int hits = calcHits(), nCluster = calcnCluster(), nSalvoBonus = 0;
 	        int nDamPerHit = calcDamagePerHit();
 	        boolean bSalvo = false;
-	        String sSalvoType = " shot(s) ";
-	        boolean bAllShotsHit = allShotsHit();
+	        
+	        
+	        
 	       
 
 	        // We've calculated how many hits.  At this point, any missed
@@ -338,11 +340,17 @@ public class WeaponHandler implements AttackHandler {
 		
 	}
 	protected void addHeatUseAmmo() {
+		addHeat();
+		setDone();
+	}
+	protected void setDone() {
+		weapon.setUsedThisRound(true);
+	}
+	protected void addHeat() {
 		if(!(toHit.getValue()==TargetRoll.IMPOSSIBLE)) {
 
 	        ae.heatBuildup += (wtype.getHeat());
 		}
-		weapon.setUsedThisRound(true);
 	}
 
 }

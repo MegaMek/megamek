@@ -26,6 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
  *
  */
 public class AmmoWeaponHandler extends WeaponHandler {
+	Mounted ammo;
 	/**
 	 * @param t
 	 * @param w
@@ -33,17 +34,28 @@ public class AmmoWeaponHandler extends WeaponHandler {
 	 */
 	public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
 		super(t, w, g);
+		
 	}
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
 	 */
 	protected void addHeatUseAmmo() {
-		Mounted ammo=weapon.getLinked();
+		checkAmmo();
+		if(ammo==null) {//Can't happen.  w/o legal ammo, the weapon *shouldn't* fire.
+			System.out.println("Handler can't find any ammo!  Oh no!");
+		}
 		if (ammo.getShotsLeft() <= 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getShotsLeft() - 1);
 		super.addHeatUseAmmo();
+	}
+	protected void checkAmmo() {
+		ammo=weapon.getLinked();
+		if(ammo==null) {
+			ae.loadWeapon(weapon);
+            ammo = weapon.getLinked();
+		}
 	}
 }

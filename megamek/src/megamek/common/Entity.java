@@ -1569,6 +1569,33 @@ public abstract class Entity
             }
         }
     }
+    
+    /**
+     * Assign AMS systems to the most dangerous incoming missile attacks.
+     * This should only be called once per turn, or AMS will get extra attacks
+     */
+    public void assignAMS(Vector vAttacks, Vector vOtherAttacks) {
+        
+        for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
+            Mounted weapon = (Mounted)e.nextElement();
+            if (((WeaponType)weapon.getType()).getAmmoType() == AmmoType.T_AMS) {
+                if (!weapon.isReady() || weapon.isMissing()) {
+                    continue;
+                }
+                if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
+                    loadWeapon(weapon);
+                }
+                // try again
+                if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
+                    continue;
+                }
+                // find the most dangerous salvo by expected damage
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacks, vOtherAttacks);
+                waa.addCounterEquipment(weapon);
+            }
+        }
+    }
+                
   
     /**
      * Calculates the battle value of this entity

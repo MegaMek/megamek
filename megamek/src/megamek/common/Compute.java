@@ -2574,6 +2574,93 @@ public class Compute
     }
     
     /**
+     * Returns the weapon attack out of a list that has the highest expected damage
+     */
+    public static WeaponAttackAction getHighestExpectedDamage(Game g, Vector vAttacks, Vector vOtherAttacks)
+    {
+        float fHighest = -1.0f;
+        WeaponAttackAction waaHighest = null;
+        for (int x = 0, n = vAttacks.size(); x < n; x++) {
+            WeaponAttackAction waa = (WeaponAttackAction)vAttacks.elementAt(x);
+            float fDanger = getExpectedDamage(g, waa, vOtherAttacks);
+            if (fDanger > fHighest) {
+                fHighest = fDanger;
+                waaHighest = waa;
+            }
+        }
+        return waaHighest;
+    }
+    
+    // store these as constants since the tables will never change
+    private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f, 
+            4.0f, 0.0f, 0.0f, 5.47f, 6.31f, 0.0f, 8.14f, 0.0f, 0.0f, 9.5f, 0.0f, 0.0f, 0.0f, 
+            0.0f, 12.7f };
+        
+    /**
+     * Determines the expected damage of a weapon attack, based on to-hit, salvo sizes, etc.
+     */
+    public static float getExpectedDamage(Game g, WeaponAttackAction waa, Vector vOtherAttacks)
+    {
+        Entity attacker = g.getEntity(waa.getEntityId());
+        Mounted weapon = attacker.getEquipment(waa.getWeaponId());
+        System.out.println("Computing expected damage for " + attacker.getName() + " " + 
+                weapon.getName());
+        ToHitData hitData = Compute.toHitWeapon(g, waa, vOtherAttacks);
+        if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
+            return 0.0f;
+        }
+        
+        float fChance = 0.0f;
+        if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            fChance = 1.0f;
+        }
+        else {
+            fChance = (float)oddsAbove(hitData.getValue()) / 100.0f;
+        }
+        System.out.println("\tHit Chance: " + fChance);
+        
+        float fDamage = 0.0f;
+        WeaponType wt = (WeaponType)weapon.getType();
+        if (wt.getDamage() == wt.DAMAGE_MISSILE) {
+            if (weapon.getLinked() == null) return 0.0f;
+            AmmoType at = (AmmoType)weapon.getLinked().getType();
+            
+            float fHits = 0.0f;
+            if (wt.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                fHits = wt.getRackSize();
+            }
+            else if (wt.getRackSize() == 40 || wt.getRackSize() == 30) {
+                fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
+            }
+            else {
+                fHits = expectedHitsByRackSize[wt.getRackSize()];
+            }
+            // adjust for previous AMS
+            Vector vCounters = waa.getCounterEquipment();
+            if (vCounters != null) {
+                for (int x = 0; x < vCounters.size(); x++) {
+                    Mounted counter = (Mounted)vCounters.elementAt(x);
+                    if (counter.getType() instanceof WeaponType && 
+                            ((WeaponType)counter.getType()).getAmmoType() == AmmoType.T_AMS) {
+                        float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
+                        fHits = Math.max(0.0f, fHits - fAMS);
+                    }
+                }
+            }
+            System.out.println("\tExpected Hits: " + fHits);
+            // damage is expected missiles * damage per missile
+            fDamage = fHits * (float)at.getDamagePerShot();
+        }
+        else {
+            fDamage = (float)wt.getDamage();
+        }
+        
+        fDamage *= fChance;
+        System.out.println("\tExpected Damage: " + fDamage);
+        return fDamage;
+    }
+    
+    /**
      * Returns true if the target is in the specified arc.
      * @param src the attacker coordinate
      * @param facing the appropriate attacker sfacing

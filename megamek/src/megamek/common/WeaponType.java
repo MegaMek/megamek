@@ -27,6 +27,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_FLAMER        = 0x0002;
     public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
     public static final int     F_PPC           = 0x0008; //              "
+    public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
@@ -101,15 +102,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSRM4());
         EquipmentType.addType(createSRM6());
         
-	// Start of Infantry weapons (Level1)
-	EquipmentType.addType(createInfRifle());
-	EquipmentType.addType(createInfMG());
-	EquipmentType.addType(createInfSRM());
-	/* Need more detail on INF LRM.
-	EquipmentType.addType(createInfLRM());
-	*/
-	EquipmentType.addType(createInfLaser());
-	EquipmentType.addType(createInfFlamer());
+        // Start of Infantry weapons (Level1)
+        EquipmentType.addType(createInfRifle());
+        EquipmentType.addType(createInfMG());
+        EquipmentType.addType(createInfSRM());
+        /* Need more detail on INF LRM.
+        EquipmentType.addType(createInfLRM());
+        */
+        EquipmentType.addType(createInfLaser());
+        EquipmentType.addType(createInfFlamer());
         
         // Start of Inner Sphere Level2 weapons
         EquipmentType.addType(createISERPPC());
@@ -136,6 +137,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMRM20());
         EquipmentType.addType(createISMRM30());
         EquipmentType.addType(createISMRM40());
+        EquipmentType.addType(createISAMS());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -173,7 +175,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM2());
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
-        
+        EquipmentType.addType(createCLAMS());
     }
     
     public static WeaponType createFlamer() {
@@ -1108,6 +1110,25 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
+    public static WeaponType createISAMS() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "AMS";
+        weapon.internalName = "ISAntiMissileSystem";
+        weapon.mepName = weapon.internalName; // ?
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 1;
+        weapon.rackSize = 2; 
+        weapon.damage = 1;  // # of d6 of missiles affected
+        weapon.ammoType = AmmoType.T_AMS;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 32;
+        weapon.flags |= F_AUTO_TARGET;
+        
+        return weapon;
+    }
+    
     
     // Start of Clan Level2 weapons
     
@@ -2025,6 +2046,25 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY;
         weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+    
+    public static WeaponType createCLAMS() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "AMS";
+        weapon.internalName = "CLAntiMissileSystem";
+        weapon.mepName = weapon.internalName; // ?
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 1;
+        weapon.rackSize = 2;
+        weapon.damage = 2; // # of d6 of missiles affected
+        weapon.ammoType = AmmoType.T_AMS;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 63;
+        weapon.flags |= F_AUTO_TARGET;
         
         return weapon;
     }

@@ -851,9 +851,11 @@ public class CEntity  {
     if (this.jump_hexes != null)
       if ((obj = this.jump_hexes.get(key)) != null)
         matches.add(obj);
-    for (int i = 0; i < 6; i++) {
-      if ((obj = this.run_walk_moves.get(key+" "+i)) != null)
-        matches.add(obj);
+    if (this.run_walk_moves != null) {    
+       for (int i = 0; i < 6; i++) {
+         if ((obj = this.run_walk_moves.get(key+" "+i)) != null)
+           matches.add(obj);
+       }
     }
     return matches;
   }

@@ -129,7 +129,7 @@ public class ChatterBox2
 		setIdleTime(0, false);
 		slidingUp = false;
 		slidingDown = true;
-		clearMessageBox();
+//		clearMessageBox();
 	}
 	
 	private void stopSliding() {
@@ -259,11 +259,11 @@ public class ChatterBox2
 			return false;
 		}
 
-		if (message != null) {
+/*		if (message != null) {
 			clearMessageBox();
 			client.bv.repaint();
 		}
-
+*/
 
 		int x = p.x;
 		int y = p.y;
@@ -338,8 +338,10 @@ public class ChatterBox2
 			x < 260 &&
 			y > (((int) size.height) - 25) &&
 			y < (((int) size.height) - 11)) {
-			message = "";
-			visibleMessage = "";
+			if (message == null) {
+				message = "";
+				visibleMessage = "";
+			}
 			client.bv.repaint();
 			return true;
 		}

@@ -42,7 +42,7 @@
   
   <!-- This is the classpath of the jar -->  
   <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller}"/>
-  
+
   <!-- initializes system before build -->
   <target name="init">
      <!-- Create the time stamp -->

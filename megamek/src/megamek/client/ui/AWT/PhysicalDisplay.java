@@ -34,7 +34,7 @@ public class PhysicalDisplay
     private Label            labStatus;
         
     // buttons
-    private Container        panButtons;
+    private Container         panButtons;
     private Button            butPunch;
     private Button            butKick;
     private Button            butPush;

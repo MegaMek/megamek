@@ -76,9 +76,9 @@ public abstract class Entity
     protected int[]             internal;
     public int                  damageThisPhase;
 
-    public Vector               weapons = new Vector();
-    public Vector               ammo = new Vector();
-    public Vector               equipment = new Vector();
+    protected Vector               weaponList = new Vector();
+    protected Vector               ammoList = new Vector();
+    protected Vector               miscList = new Vector();
 
     protected int               heatSinks = 10;
 
@@ -103,9 +103,19 @@ public abstract class Entity
      */
     public void restore() {
         // restore all mounted weapons
-        for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-            MountedWeapon weapon = (MountedWeapon)i.nextElement();
-            weapon.restore();
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            mounted.restore();
+        }   
+        // restore all mounted ammo
+        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            mounted.restore();
+        }   
+        // restore all mounted misc eq.
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            mounted.restore();
         }   
     }
   
@@ -487,6 +497,9 @@ public abstract class Entity
             if (getArmor(i) > 0) {
                 totalArmor += getArmor(i);
             }
+            if (hasRearArmor(i) && getArmor(i, true) > 0) {
+                totalArmor += getArmor(i, true);
+            }
         }
         return totalArmor;
     }
@@ -596,23 +609,17 @@ public abstract class Entity
     /**
      * Mount the specified weapon in the specified location.
      */
-    public void addWeapon(MountedWeapon w, int loc) {
-        w.setLocation(loc);
-        this.weapons.addElement(w);
+    public void addWeapon(Mounted mounted, int loc, boolean rearMounted) {
+        mounted.setLocation(loc, rearMounted);
+        weaponList.addElement(mounted);
     }
     
     /**
      * Returns the weapon number of the specified weapon, or
      * -1 if weapon is not present.
      */
-    public int getWeaponNum(MountedWeapon w) {
-        for (int i = 0; i < weapons.size(); i++) {
-            if (getWeapon(i) == w) {
-                return i;
-            }
-        }
-        // else
-        return -1;
+    public int getWeaponNum(Mounted mounted) {
+        return weaponList.indexOf(mounted);
     }
     
     /**
@@ -628,13 +635,20 @@ public abstract class Entity
     public abstract boolean isSecondaryArcWeapon(int weaponId);
     
 
+    public Enumeration getWeapons() {
+        return weaponList.elements();
+    }
+
+    public Vector getWeaponList() {
+        return weaponList;
+    }
 
     /**
      * Returns the weapon, specified by number
      */
-    public MountedWeapon getWeapon(int wn) {
-        if (wn >= 0 && wn < weapons.size()) {
-            return (MountedWeapon)weapons.elementAt(wn);
+    public Mounted getWeapon(int wn) {
+        if (wn >= 0 && wn < weaponList.size()) {
+            return (Mounted)weaponList.elementAt(wn);
         }
         return null;
     }
@@ -645,7 +659,7 @@ public abstract class Entity
      * @return the index number of the first available weapon, or -1 if none are ready.
      */
     public int getFirstWeapon() {
-        for (int i = 0; i < weapons.size(); i++) {
+        for (int i = 0; i < weaponList.size(); i++) {
             if (getWeapon(i).isReady()) {
                 return i;
             }
@@ -657,7 +671,7 @@ public abstract class Entity
      * Returns the next ready weapon, starting at the specified index
      */
     public int getNextWeapon(int start) {
-        for (int i = start + 1; i < weapons.size(); i++) {
+        for (int i = start + 1; i < weaponList.size(); i++) {
             if (getWeapon(i).isReady()) {
                 return i;
             }
@@ -669,10 +683,11 @@ public abstract class Entity
      * Loads all weapons with ammo
      */
     public void loadAllWeapons() {
-        for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-            MountedWeapon w = (MountedWeapon)i.nextElement();
-            if (w.getType().getAmmoType() != Ammo.TYPE_NA) {
-                loadWeapon(w);
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+                loadWeapon(mounted);
             }
         }
     }
@@ -680,16 +695,17 @@ public abstract class Entity
     /**
      * Tries to load the specified weapon with the first available ammo
      */
-    public void loadWeapon(MountedWeapon w) {
+    public void loadWeapon(Mounted mounted) {
+        WeaponType wtype = (WeaponType)mounted.getType();
         for (int i = 0; i < this.locations(); i++) {
             for (int j = 0; j < this.getNumberOfCriticals(i); j++) {
                 CriticalSlot cs = this.getCritical(i, j);
                 if (cs != null && !cs.isDestroyed() 
                     && cs.getType() == CriticalSlot.TYPE_AMMO) {
-                    Ammo a = this.getAmmo(cs.getIndex());
-                    if (a.shots > 0 && a.type == w.getType().getAmmoType() 
-                        && a.rackSize == w.getType().getRackSize()) {
-                        w.setAmmoFeed(a);
+                    Mounted mountedAmmo = this.getAmmo(cs.getIndex());
+                    AmmoType atype = (AmmoType)mountedAmmo.getType();
+                    if (mountedAmmo.getShotsLeft() > 0 && atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+                        mounted.setLinked(mountedAmmo);
                     }
                 }
             }
@@ -699,20 +715,55 @@ public abstract class Entity
     /**
      * Adds the ammo to the specified location
      */
-    public void addAmmo(Ammo a, int loc) {
-        a.location = loc;
-        this.ammo.addElement(a);
+    public void addAmmo(Mounted ammo, int loc) {
+        ammo.setLocation(loc);
+        this.ammoList.addElement(ammo);
+    }
+    
+    public Enumeration getAmmo() {
+        return ammoList.elements();
     }
     
     /**
      * Returns the ammo, specified by index
      */
-    public Ammo getAmmo(int index) {
-        if (index >=0 && index < ammo.size()) {
-              return (Ammo)ammo.elementAt(index);
+    public Mounted getAmmo(int index) {
+        if (index >=0 && index < ammoList.size()) {
+              return (Mounted)ammoList.elementAt(index);
         }
         return null;
     }
+    
+    public int getAmmoNum(Mounted mounted) {
+        return ammoList.indexOf(mounted);
+    }
+    
+    /**
+     * Adds the specified piece of misc equipment to the mech
+     */
+    public void addMisc(Mounted misc, int loc) {
+        misc.setLocation(loc);
+        this.miscList.addElement(misc);
+    }
+    
+    public Enumeration getMisc() {
+        return miscList.elements();
+    }
+    
+    /**
+     * Returns the misc equipment, specified by index
+     */
+    public Mounted getMisc(int index) {
+        if (index >= 0 && index < miscList.size()) {
+              return (Mounted)miscList.elementAt(index);
+        }
+        return null;
+    }
+    
+    public int getMiscNum(Mounted mounted) {
+        return miscList.indexOf(mounted);
+    }
+    
     
     /**
      * Returns the about of heat that the entity can sink each 

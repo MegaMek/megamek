@@ -36,8 +36,6 @@ public class Mech
     public static final int        SYSTEM_COCKPIT        = 2;
     public static final int        SYSTEM_ENGINE        = 3;
     public static final int        SYSTEM_GYRO            = 4;
-    public static final int        SYSTEM_HEAT_SINK    = 5;
-    public static final int        SYSTEM_JUMP_JET        = 6;
 
     // actutors are systems too, for now
     public static final int        ACTUATOR_SHOULDER    = 7;
@@ -50,7 +48,7 @@ public class Mech
     public static final int        ACTUATOR_FOOT        = 14;
     
     public static final String systemNames[] = {"Life Support", "Sensors", "Cockpit",
-        "Engine", "Gyro", "Heat Sink", "Jump Jet", "Shoulder", "Upper Arm", 
+        "Engine", "Gyro", "x", "x", "Shoulder", "Upper Arm", 
         "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
     
     // locations
@@ -216,8 +214,11 @@ public class Mech
     public int getJumpMP() {
         int jump = 0;
         
-        for (int i = 0; i < locations(); i++) {
-            jump += getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_JUMP_JET, i);
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType() == MiscType.JUMP_JET && !mounted.isDestroyed()) {
+                jump++;
+            }
         }
         
         return jump;
@@ -230,9 +231,11 @@ public class Mech
     public int getHeatCapacity() {
         int capacity = super.getHeatCapacity();
         
-        for (int i = 0; i < locations(); i++) {
-            capacity -= getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                              Mech.SYSTEM_HEAT_SINK, i);
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType() == MiscType.HEAT_SINK && mounted.isDestroyed()) {
+                capacity--;
+            }
         }
         
         return capacity;
@@ -251,10 +254,13 @@ public class Mech
             || curHex.getElevation() >= 0) {
             return capacity;
         } else if (curHex.getElevation() == -1) {
-            sinksUnderwater += getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                        Mech.SYSTEM_HEAT_SINK, Mech.LOC_RLEG);
-            sinksUnderwater += getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                        Mech.SYSTEM_HEAT_SINK, Mech.LOC_LLEG);
+            for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+                Mounted mounted = (Mounted)i.nextElement();
+                if (mounted.getType() == MiscType.HEAT_SINK && !mounted.isDestroyed()
+                && (mounted.getLocation() == Mech.LOC_RLEG || mounted.getLocation() == Mech.LOC_LLEG)) {
+                    sinksUnderwater++;
+                }
+            }
         } else if (curHex.getElevation() <= -2) {
             sinksUnderwater = getHeatCapacity();
         }
@@ -381,13 +387,13 @@ public class Mech
      * Returns the Compute.ARC that the weapon fires into.
      */
     public int getWeaponArc(int wn) {
-        final MountedWeapon weapon = getWeapon(wn);
+        final Mounted mounted = getWeapon(wn);
         // rear mounted?
-        if (weapon.isRearMounted()) {
+        if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
         }
         // front mounted
-        switch(weapon.getLocation()) {
+        switch(mounted.getLocation()) {
         case LOC_HEAD :
         case LOC_CT :
         case LOC_RT :
@@ -716,19 +722,18 @@ public class Mech
      * 
      * Throw exception if full, maybe?
      */
-    public void addWeapon(MountedWeapon w, int loc) {
-        if(getEmptyCriticals(loc) < w.getType().getCriticals()) {
+    public void addWeapon(Mounted mounted, int loc, boolean rearMounted) {
+        if(getEmptyCriticals(loc) < mounted.getType().getCriticals(this)) {
             System.err.println("mech: tried to add weapon to full location");
             return;
         }
         
-        w.setLocation(loc);
-        this.weapons.addElement(w);
+        super.addWeapon(mounted, loc, rearMounted);
         
-        int wn = this.weapons.indexOf(w);
+        int num = getWeaponNum(mounted);
 
-        for(int i = 0; i < w.getType().getCriticals(); i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_WEAPON, wn));
+        for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_WEAPON, num));
         }        
     }    
 
@@ -736,120 +741,140 @@ public class Mech
     /**
      * Adds the specified ammo to the specified location.
      */
-    public void addAmmo(Ammo a, int loc) {
+    public void addAmmo(Mounted mounted, int loc) {
         if(getEmptyCriticals(loc) < 1) {
             System.err.println("mech: tried to add ammo to full location");
             return;
         }
         
-        a.location = loc;
-        this.ammo.addElement(a);
+        super.addAmmo(mounted, loc);
         
-        int idx = this.ammo.indexOf(a);
+        int num = getAmmoNum(mounted);
 
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_AMMO, idx));
+        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_AMMO, num));
     }    
   
-  /**
-   * Calculates the battle value of this mech
-   */
-  public int calculateBattleValue() {
-    double dbv = 0; // defensive battle value
-    double obv = 0; // offensive bv
-    
-    // total armor points
-    dbv += getTotalArmor() * 2;
-    
-    // total internal structure
-    dbv += getTotalInternal() * 1.5;
-    
-    // add weight
-    dbv += getWeight();
-    
-    // subtract for explosive ammo
-    dbv -= (ammo.size() * 20);
-    
-    // total up maximum heat generated
-    int maxumumHeatFront = 0;
-    int maxumumHeatRear = 0;
-    for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-      MountedWeapon weapon = (MountedWeapon)i.nextElement();
-      if (weapon.isRearMounted()) {
-        maxumumHeatRear += weapon.getType().getHeat();
-      } else {
-        maxumumHeatFront += weapon.getType().getHeat();
-      }
+    /**
+     * Adds the specified ammo to the specified location.
+     */
+    public void addMisc(Mounted mounted, int loc) {
+        if(getEmptyCriticals(loc) < 1) {
+            System.err.println("mech: tried to add misc eq. to full location");
+            return;
+        }
+        
+        super.addMisc(mounted, loc);
+        
+        int num = getMiscNum(mounted);
+
+        for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_MISC, num));
+        }        
+    }    
+  
+    /**
+     * Calculates the battle value of this mech
+     */
+    public int calculateBattleValue() {
+        double dbv = 0; // defensive battle value
+        double obv = 0; // offensive bv
+        
+        // total armor points
+        dbv += getTotalArmor() * 2.0;
+        
+        // total internal structure
+        dbv += getTotalInternal() * 1.5;
+        
+        // add weight
+        dbv += getWeight();
+        
+        // subtract for explosive ammo
+        dbv -= (ammoList.size() * 20);
+        
+        // total up maximum heat generated
+        int maxumumHeatFront = 0;
+        int maxumumHeatRear = 0;
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (mounted.isRearMounted()) {
+                maxumumHeatRear += wtype.getHeat();
+            } else {
+                maxumumHeatFront += wtype.getHeat();
+            }
+        }
+        int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
+        if (getJumpMP() > 0) {
+            maximumHeat += Math.max(3, getJumpMP());
+        } else {
+            maximumHeat += 2;
+        }
+        // adjust for heat efficiency
+        if (maximumHeat > getHeatCapacity()) {
+            dbv -= ((maximumHeat - getHeatCapacity()) * 5);
+        }
+        
+        // adjust for target movement modifier
+        int tmmRan = Compute.getTargetMovementModifier(getRunMP(), false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true).getValue();
+        int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
+        if (targetMovementModidifer > 5) {
+            targetMovementModidifer = 5;
+        }
+        double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 };
+        dbv *= tmmFactors[targetMovementModidifer];
+        
+        double weaponBV = 0;
+        
+        // figure out base weapon bv
+        int weaponsBVFront = 0;
+        int weaponsBVRear = 0;
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (mounted.isRearMounted()) {
+                weaponsBVRear += wtype.getBV(this);
+            } else {
+                weaponsBVFront += wtype.getBV(this);
+            }
+        }
+        if (weaponsBVFront > weaponsBVRear) {
+            weaponBV += weaponsBVFront;
+            weaponBV += (weaponsBVRear * 0.5);
+        } else {
+            weaponBV += weaponsBVRear;
+            weaponBV += (weaponsBVFront * 0.5);
+        }
+        
+        // add ammo bv
+        int ammoBV = 0;
+        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            AmmoType atype = (AmmoType)mounted.getType();
+            ammoBV += atype.getBV(this);
+        }
+        weaponBV += ammoBV;
+        
+        // adjust for heat efficiency
+        if (maximumHeat > getHeatCapacity()) {
+            double x = (getHeatCapacity()  * weaponBV) / maximumHeat;
+            double y = (weaponBV - x) / 2;
+            weaponBV = x + y;
+        }
+        
+        // adjust further for speed factor
+        double speedFactor = getRunMP() + getJumpMP() - 5;
+        speedFactor /= 10;
+        speedFactor++;
+        speedFactor = Math.pow(speedFactor, 1.2);
+        speedFactor = Math.round(speedFactor * 100) / 100.0;
+        
+        obv = weaponBV * speedFactor;
+        
+        // and then factor in pilot
+        double pilotFactor = crew.getBVSkillMultiplier();
+        
+        return (int)Math.round((dbv + obv) * pilotFactor);
     }
-    int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
-    if (getJumpMP() > 0) {
-      maximumHeat += Math.max(3, getJumpMP());
-    } else {
-      maximumHeat += 2;
-    }
-    // adjust for heat efficiency
-    if (maximumHeat > getHeatCapacity()) {
-      dbv -= ((maximumHeat - getHeatCapacity()) * 5);
-    }
-    
-    // adjust for target movement modifier
-    int tmmRan = Compute.getTargetMovementModifier(getRunMP(), false).getValue();
-    int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true).getValue();
-    int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
-    if (targetMovementModidifer > 5) {
-      targetMovementModidifer = 5;
-    }
-    double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 };
-    dbv *= tmmFactors[targetMovementModidifer];
-    
-    double weaponBV = 0;
-    
-    // figure out base weapon bv
-    int weaponsBVFront = 0;
-    int weaponsBVRear = 0;
-    for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
-      MountedWeapon weapon = (MountedWeapon)i.nextElement();
-      if (weapon.isRearMounted()) {
-        weaponsBVRear += weapon.getType().getBV();
-      } else {
-        weaponsBVFront += weapon.getType().getBV();
-      }
-    }
-    if (weaponsBVFront > weaponsBVRear) {
-      weaponBV += weaponsBVFront;
-      weaponBV += (weaponsBVRear * 0.5);
-    } else {
-      weaponBV += weaponsBVRear;
-      weaponBV += (weaponsBVFront * 0.5);
-    }
-    
-    // add ammo bv
-    int ammoBV = 0;
-    for (Enumeration i = ammo.elements(); i.hasMoreElements();) {
-      Ammo ammunition = (Ammo)i.nextElement();
-      ammoBV += ammunition.getBV();
-    }
-    weaponBV += ammoBV;
-    
-    // adjust for heat efficiency
-    if (maximumHeat > getHeatCapacity()) {
-      double x = (getHeatCapacity()  * weaponBV) / maximumHeat;
-      double y = (weaponBV - x) / 2;
-      weaponBV = x + y;
-    }
-    
-    // adjust further for speed factor
-    double speedFactor = getRunMP() + getJumpMP() - 5;
-    speedFactor /= 10;
-    speedFactor++;
-    speedFactor = Math.pow(speedFactor, 1.2);
-    speedFactor = Math.round(speedFactor * 100) / 100.0;
-    
-    obv = weaponBV * speedFactor;
-    
-    // and then factor in pilot
-    double pilotFactor = crew.getBVSkillMultiplier();
-    
-    return (int)Math.round((dbv + obv) * pilotFactor);
-  }
   
 }

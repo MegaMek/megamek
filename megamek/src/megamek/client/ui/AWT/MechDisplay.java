@@ -468,20 +468,21 @@ class WeaponPanel
      */
     public void displayMech(Entity en) {
         // update pointer to weapons
-        weapons = en.weapons;
+        weapons = en.getWeaponList();
             
         // update weapon list
         weaponList.removeAll();
-        for(int i = 0; i < en.weapons.size(); i++) {
-            MountedWeapon w = en.getWeapon(i);
-            String wn = i + " : " + (w.isReady() ? "" : "*" ) 
-                        + w.getName() 
-                        + " [" + en.getLocationAbbr(w.getLocation()) + "]";
-            if (w.getType().getAmmoType() != Ammo.TYPE_NA) {
-                if (w.getAmmoFeed() == null || w.getAmmoFeed().shots == 0) {
+        for(int i = 0; i < weapons.size(); i++) {
+            Mounted mounted = en.getWeapon(i);
+            WeaponType wtype = (WeaponType)mounted.getType();
+            String wn = i + " : " + (mounted.isReady() ? "" : "*" ) 
+                        + mounted.getName() 
+                        + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
+            if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+                if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() == 0) {
                     wn += " (empty)";
                 } else {
-                    wn += " (" + w.getAmmoFeed().shots + ")";
+                    wn += " (" + mounted.getLinked().getShotsLeft() + ")";
                 }
             }
             weaponList.add(wn);
@@ -512,36 +513,37 @@ class WeaponPanel
             wLongR.setText("---");
             return;
         }
-        Weapon w = ((MountedWeapon)weapons.elementAt(weaponList.getSelectedIndex())).getType();
+        Mounted mounted = (Mounted)weapons.elementAt(weaponList.getSelectedIndex());
+        WeaponType wtype = (WeaponType)mounted.getType();
         // update weapon display
-        wNameR.setText(w.getName());
-        wHeatR.setText(w.getHeat() + "");
-        if(w.getDamage() != Weapon.DAMAGE_MISSILE) {
-            wDamR.setText(w.getDamage() + "");
+        wNameR.setText(wtype.getName());
+        wHeatR.setText(wtype.getHeat() + "");
+        if(wtype.getDamage() != WeaponType.DAMAGE_MISSILE) {
+            wDamR.setText(wtype.getDamage() + "");
         } else {
             wDamR.setText("missile");
         }
             
         // update range
-        if(w.getMinimumRange() > 0) {
-            wMinR.setText(Integer.toString(w.getMinimumRange()));
+        if(wtype.getMinimumRange() > 0) {
+            wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
             wMinR.setText("---");
         }
-        if(w.getShortRange() > 1) {
-            wShortR.setText("1 - " + w.getShortRange());
+        if(wtype.getShortRange() > 1) {
+            wShortR.setText("1 - " + wtype.getShortRange());
         } else {
-            wShortR.setText("" + w.getShortRange());
+            wShortR.setText("" + wtype.getShortRange());
         }
-        if(w.getMediumRange() - w.getShortRange() > 1) {
-            wMedR.setText((w.getShortRange() + 1) + " - " + w.getMediumRange());
+        if(wtype.getMediumRange() - wtype.getShortRange() > 1) {
+            wMedR.setText((wtype.getShortRange() + 1) + " - " + wtype.getMediumRange());
         } else {
-            wMedR.setText("" + w.getMediumRange());
+            wMedR.setText("" + wtype.getMediumRange());
         }
-        if(w.getLongRange() - w.getMediumRange() > 1) {
-            wLongR.setText((w.getMediumRange() + 1) + " - " + w.getLongRange());
+        if(wtype.getLongRange() - wtype.getMediumRange() > 1) {
+            wLongR.setText((wtype.getMediumRange() + 1) + " - " + wtype.getLongRange());
         } else {
-            wLongR.setText("" + w.getLongRange());
+            wLongR.setText("" + wtype.getLongRange());
         }
     }
         
@@ -636,6 +638,9 @@ class SystemPanel
                     break;
                 case CriticalSlot.TYPE_AMMO :
                     slotList.add((cs.isDestroyed() ? "*" : "") + en.getAmmo(cs.getIndex()).getName());
+                    break;
+                case CriticalSlot.TYPE_MISC :
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getMisc(cs.getIndex()).getName());
                     break;
                 }
             }

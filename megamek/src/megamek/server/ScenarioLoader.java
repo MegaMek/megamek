@@ -109,7 +109,7 @@ public class ScenarioLoader
                 s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
                 if (s != null) {
                     int nBlocks = Integer.parseInt(s);
-                    m_vDamagePlans.add(new DamagePlan(e, nBlocks));
+                    m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
                 }
                 vEntities.addElement(e);
             }

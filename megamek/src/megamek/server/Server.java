@@ -1518,7 +1518,7 @@ implements Runnable {
             // player, remove it and stop looking.
             if ( unit.getOwnerId()  == 
                  ( (GameTurn)turns.elementAt(index) ).getPlayerNum() ) {
-                this.turns.remove( index );
+                this.turns.removeElementAt( index );
                 break;
             }
 

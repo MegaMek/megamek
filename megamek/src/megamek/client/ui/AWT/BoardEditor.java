@@ -85,6 +85,8 @@ public class BoardEditor extends Container
 		bv.addKeyListener(this);
         board.addBoardListener(this);
         
+        bv.setUseLOSTool(false);
+        
 		setupEditorPanel();
 		setupFrame();
 		

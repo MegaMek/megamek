@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -38,6 +38,8 @@ public class Game
     
     public int phase = PHASE_UNKNOWN;
     private int turn; // whose turn it is
+    
+    private GameOptions options = new GameOptions();
 
     public Board board = new Board();
     
@@ -54,6 +56,19 @@ public class Game
      */
     public Game() {
         ;
+    }
+    
+    public GameOptions getOptions() {
+        return options;
+    }
+    
+    public void setOptions(GameOptions options) {
+        this.options = options;
+    }
+    
+    
+    public Board getBoard() {
+        return board;
     }
     
     /**
@@ -85,12 +100,14 @@ public class Game
     }
     
     public void addPlayer(int id, Player player) {
+        player.setGame(this);
         players.addElement(player);
         playerIds.put(new Integer(id), player);
     }
   
     public void setPlayer(int id, Player player) {
         final Player oldPlayer = getPlayer(id);
+        player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
         playerIds.put(new Integer(id), player);
     }
@@ -116,17 +133,16 @@ public class Game
     }
   
     /**
-     * Get a vector of entity objects that are enemies of this player
+     * Get a vector of entity objects that are enemies of this entity
      */
-      public Vector getEnemyEntities(Player player) {
+      public Vector getEnemyEntities(Entity entity) {
         Vector ents = new Vector();
-        int thisTeam = player.getTeam();
         
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-          Entity entity = (Entity)i.nextElement();
+          Entity otherEntity = (Entity)i.nextElement();
             
-          if (player.isEnemyOf(entity.getOwner())) {
-            ents.addElement( entity );
+          if (entity.isEnemyOf(otherEntity)) {
+            ents.addElement( otherEntity );
           }
         }
         
@@ -182,12 +198,14 @@ public class Game
     }
   
     public void addEntity(int id, Entity entity) {
+        entity.setGame(this);
         entities.addElement(entity);
         entityIds.put(new Integer(id), entity);
     }
     
     public void setEntity(int id, Entity entity) {
         final Entity oldEntity = getEntity(id);
+        entity.setGame(this);
         entities.setElementAt(entity, entities.indexOf(oldEntity));
         entityIds.put(new Integer(id), entity);
     }
@@ -214,6 +232,8 @@ public class Game
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             entityIds.put(new Integer(entity.getId()), entity);
+            // may as well set this here as well
+            entity.setGame(this);
         }
     }
     

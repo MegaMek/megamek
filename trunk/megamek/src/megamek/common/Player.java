@@ -31,6 +31,8 @@ public final class Player
     
     public static final String  colorNames[] = {"Blue", "Cyan", "Gray", 
     "Green", "Brown", "Orange", "Pink", "White", "Yellow"};
+    
+    private transient Game  game;
 
     private String          name = "unnamed";
     private int             id;
@@ -51,6 +53,10 @@ public final class Player
         this.id = id;
     }
   
+    public void setGame(Game game) {
+        this.game = game;
+    }
+    
     public String getName() {
         return name;
     }
@@ -124,7 +130,14 @@ public final class Player
     }
     
     public boolean isEnemyOf(Player other) {
-        return id != other.getId() && (team == TEAM_NONE || team != other.getTeam());
+        boolean friendlyFire;
+        if (game == null) {
+            System.err.println("player: can't find game when I want it!!");
+            friendlyFire = false;
+        } else {
+            friendlyFire = game.getOptions().booleanOption("friendly_fire");
+        }
+        return friendlyFire || (id != other.getId() && (team == TEAM_NONE || team != other.getTeam()));
     }
     
     /**

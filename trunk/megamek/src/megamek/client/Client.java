@@ -19,6 +19,8 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 
+import com.sun.java.util.collections.HashMap;
+
 import megamek.common.*;
 import megamek.common.actions.*;
 
@@ -45,7 +47,6 @@ public class Client extends Panel
     public Game                 game;
         
     // here's some game phase stuff
-    public GameSettings gameSettings;
     private MapSettings mapSettings;
     public String                eotr;
         
@@ -60,7 +61,7 @@ public class Client extends Panel
     
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
-//    private ButtonMenuDialog        buttonMenuDialog;
+    private GameOptionsDialog       gameOptionsDialog;
 
         
     // message pump listening to the server
@@ -91,8 +92,6 @@ public class Client extends Panel
         mechD = new MechDisplay();
         mechW.add(mechD);
             
-        gameSettings = new GameSettings();
-
         changePhase(Game.PHASE_UNKNOWN);
                 
         // layout
@@ -195,6 +194,13 @@ public class Client extends Panel
             boardSelectionDialog = new BoardSelectionDialog(this);
         }
         return boardSelectionDialog;
+    }
+    
+    public GameOptionsDialog getGameOptionsDialog() {
+        if (gameOptionsDialog == null) {
+            gameOptionsDialog = new GameOptionsDialog(this);
+        }
+        return gameOptionsDialog;
     }
     
 //    public ButtonMenuDialog getButtonMenuDialog() {
@@ -396,10 +402,13 @@ public class Client extends Panel
     }
     
     /**
-     * Send the game settings to the server
+     * Send the game options to the server
      */
-    public void sendGameSettings() {
-        send(new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, gameSettings));
+    public void sendGameOptions(String password, Vector options) {
+        final Object[] data = new Object[2];
+        data[0] = password;
+        data[1] = options;
+        send(new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, data));
     }
     
     /**
@@ -667,7 +676,10 @@ public class Client extends Panel
                 receiveAttack(c);
                 break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS :
-                gameSettings = (GameSettings)c.getObject(0);
+                game.setOptions((GameOptions)c.getObject(0));
+                if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
+                    gameOptionsDialog.update(game.getOptions());
+                }
                 processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :

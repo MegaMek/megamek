@@ -35,6 +35,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Label labTeam;            
     private Choice choColor;
     private Choice choTeam;
+    private Button butOptions;
     private Panel panColor;
       
     private Label labBoardSize;
@@ -94,6 +95,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         choTeam.addItemListener(this);
         setupTeams();
         
+        butOptions = new Button("Game Options");
+        butOptions.addActionListener(this);
+        
         setupBoardSettings();
         refreshGameSettings();
             
@@ -119,7 +123,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         panColor.add(labColor);
         panColor.add(choColor);
         panColor.add(labTeam);
-        panColor.add(choTeam);        
+        panColor.add(choTeam);
+        panColor.add(butOptions);
                 
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
@@ -582,6 +587,10 @@ public class ChatLounge extends AbstractPhaseDisplay
             // board settings 
             client.getBoardSelectionDialog().update(client.getMapSettings(), true);
             client.getBoardSelectionDialog().show();
+        } else if (ev.getSource() == butOptions) {
+            // game options
+            client.getGameOptionsDialog().update(client.game.getOptions());
+            client.getGameOptionsDialog().show();
         } else if (ev.getActionCommand().startsWith("starting_pos_")) {
             // starting position
             client.getLocalPlayer().setStartingPos(Integer.parseInt(ev.getActionCommand().substring(13)));

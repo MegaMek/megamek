@@ -1408,6 +1408,11 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
                 resolveIndirectArtilleryAttacks();
+                checkFor20Damage();
+                resolveCrewDamage();
+                resolvePilotingRolls();
+                resolveCrewDamage(); // again, I guess
+                applyBuildingDamage();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                     changePhase(Game.PHASE_OFFBOARD_REPORT);

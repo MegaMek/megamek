@@ -1435,6 +1435,27 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
+        // Infantry can't clear woods.
+        if ( isAttackerInfantry &&
+             Targetable.TYPE_HEX_CLEAR == target.getTargetType() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
+        }
+
+        // Some weapons can't cause fires.
+        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) &&
+             Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
+        }
+
+        // Can't raise the heat of infantry or tanks.
+        if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
+             wtype.hasModes() &&
+             weapon.curMode().equals("Heat") &&
+             te != null &&
+             !(te instanceof Mech) ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can only raise the heat level of Meks.");
+        }
+
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
             for ( Enumeration i = game.getActions();

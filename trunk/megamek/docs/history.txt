@@ -91,10 +91,14 @@ v 0.28.11-dev
 + Added vehicle flamers--LDE
 + Flamers can now clear woods (per BMR's less stringent clearing)--LDE
 + Infantry can no longer clear woods (per BMR's more stringent clearing)--LDE
-+ Flamers (except unarmored infantry, they are ambiguous at best) now have 
++ Flamers (except platoon infantry flamers) now have 
   "Damage" and "Heat" modes (flamer option now default on)--LDE
 + 708441: Merged changes into "data/mechfiles/vehicles.zip"
 + Added new images for Highlander and Bushwacker.
++ BattleArmor troopers can still receive hits in the phase that they are killed
++ Players shouldn't be allowed to declare infantry to clear woods, some weapons
+  to ignite fires, or use flamers to raise the heat of infantry or tanks.
++ 708217: Meks with active stealth can't be on C3 networks.
 
 v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar

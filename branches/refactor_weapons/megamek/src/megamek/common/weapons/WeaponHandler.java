@@ -335,12 +335,12 @@ public class WeaponHandler implements AttackHandler {
 		
 		
 		roll=Compute.d6(2);
-		addHeatUseAmmo();
+		useAmmo();
+		addHeat();
 		
 		
 	}
-	protected void addHeatUseAmmo() {
-		addHeat();
+	protected void useAmmo() {
 		setDone();
 	}
 	protected void setDone() {

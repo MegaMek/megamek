@@ -33,14 +33,26 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 	 */
 	public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
 		super(t, w, g);
-		howManyShots=2;
+		
 	}
 	
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
 	 */
-	protected void addHeatUseAmmo() {
+	protected void useAmmo() {
+		setDone();       
 		checkAmmo();
+		int total =ae.getTotalAmmoOfType(ammo.getType());
+		if(total>1) {
+			howManyShots=2;
+		}
+		if(total==1) {
+			howManyShots=1;
+		}
+		if(total==0) {
+			//can't happen?
+			
+		}
 		if(ammo.getShotsLeft()==0) {
 			//Ugh, we need a new ammo!
 			ae.loadWeapon(weapon);
@@ -48,12 +60,15 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 			//there will be some ammo somewhere, otherwise shot will not have been fired.
 		}
 		if(ammo.getShotsLeft()==1)  {
-			//we need to revert.
-			howManyShots=1;
+			ammo.setShotsLeft(0);
+			ae.loadWeapon(weapon);
+			ammo = weapon.getLinked();
+			//that fired one, do we need to fire another?
+			ammo.setShotsLeft(ammo.getShotsLeft() - ((howManyShots==2)? 1 : 0));
+		} else {
+			ammo.setShotsLeft(ammo.getShotsLeft() - howManyShots);
 		}
-		ammo.setShotsLeft(ammo.getShotsLeft() - howManyShots);
-		addHeat();
-		setDone();        
+		
 	}
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.WeaponHandler#allShotsHit()

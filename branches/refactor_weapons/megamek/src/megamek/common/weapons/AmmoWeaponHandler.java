@@ -39,7 +39,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
 	 */
-	protected void addHeatUseAmmo() {
+	protected void useAmmo() {
 		checkAmmo();
 		if(ammo==null) {//Can't happen.  w/o legal ammo, the weapon *shouldn't* fire.
 			System.out.println("Handler can't find any ammo!  Oh no!");
@@ -49,7 +49,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getShotsLeft() - 1);
-		super.addHeatUseAmmo();
+		super.useAmmo();
 	}
 	protected void checkAmmo() {
 		ammo=weapon.getLinked();

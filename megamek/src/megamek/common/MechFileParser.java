@@ -35,8 +35,12 @@ public class MechFileParser {
             // try normal file
             try {
                 parse(new FileInputStream(f), f.getName());
-            } catch (FileNotFoundException ex) {
-                throw new EntityLoadingException(ex.getMessage());
+            } catch (Exception ex) {
+                if (ex instanceof EntityLoadingException) {
+                    throw new EntityLoadingException(ex.getMessage());
+                } else {
+                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+                }
             }
         } else {
             // try zip file
@@ -45,13 +49,25 @@ public class MechFileParser {
                 zFile = new ZipFile(f);
                 parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
             } catch (Exception ex) {
-                throw new EntityLoadingException(ex.getMessage());
+                if (ex instanceof EntityLoadingException) {
+                    throw new EntityLoadingException(ex.getMessage());
+                } else {
+                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+                }
             }
         }
     }
     
     public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
-        parse(is, fileName);
+        try {
+            parse(is, fileName);
+        } catch (Exception ex) {
+            if (ex instanceof EntityLoadingException) {
+                throw new EntityLoadingException(ex.getMessage());
+            } else {
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+            }
+        }
     }
     
     public Entity getEntity() { return m_entity; }

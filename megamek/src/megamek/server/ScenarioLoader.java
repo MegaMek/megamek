@@ -140,6 +140,9 @@ public class ScenarioLoader
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             throw new Exception("Unparseable entity line: " + s);
+        } catch (EntityLoadingException e) {
+            e.printStackTrace();
+            throw new Exception("Unparseable entity line: " + s + "\n   Unable to load mech: " + e.getMessage());
         }
     }
     

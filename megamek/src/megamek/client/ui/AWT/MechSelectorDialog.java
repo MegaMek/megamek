@@ -232,7 +232,7 @@ public class MechSelectorDialog
                 e.setOwner(m_client.getLocalPlayer());
                 m_client.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
-                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
                 ex.printStackTrace();
                 return;
             }
@@ -259,7 +259,7 @@ public class MechSelectorDialog
                 m_mechViewLeft.setCaretPosition(0);
                 m_mechViewRight.setCaretPosition(0);
             } catch (EntityLoadingException ex) {
-                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
                 ex.printStackTrace();
                 return;
             }

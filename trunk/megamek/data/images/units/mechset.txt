@@ -35,6 +35,8 @@ mech "JR7-*" "jenner0.gif"
 mech "SDR-*" "spider.gif"
 mech "ARC-*" "archer0.gif"
 
+mech "ARC-2R" "blackhawk.gif"
+
 # by Dima Nemchenko (nemchenk)
 mech "MAD-*" "marauder.gif"
 

@@ -302,6 +302,9 @@ class MovementPanel
         this.pilotR.setText(en.crew.getDesc());
 
         this.mpR.setText(Integer.toString(en.getWalkMP()) + "/" + Integer.toString(en.getRunMP()) + "/" + Integer.toString(en.getJumpMPWithTerrain()));
+        if (en.mpUsed > 0) {
+            this.mpR.setText(this.mpR.getText() + " (" + en.mpUsed + " used)");
+        }
         this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();

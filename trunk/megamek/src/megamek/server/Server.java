@@ -1383,6 +1383,7 @@ public boolean isPassworded() {
                 moveType = step.getMovementType();
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
+                mpUsed = step.getMpUsed();
                 fellDuringMovement = true;
                 break;
             }
@@ -1445,6 +1446,7 @@ public boolean isPassworded() {
             if (!wasProne && entity.isProne()) {
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
+                mpUsed = step.getMpUsed();
                 fellDuringMovement = true;
                 break;
             }
@@ -1487,7 +1489,8 @@ public boolean isPassworded() {
             entity.heatBuildup += Math.max(3, distance);
         }
 
-        if (fellDuringMovement && entity.mpUsed < entity.getRunMP()) {
+        // should we give another turn to the entity to keep moving?
+        if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
             entity.ready = true;
             turns.insertElementAt(new GameTurn(entity.getOwner().getId(), entity.getId()), turnIndex);
         } else {

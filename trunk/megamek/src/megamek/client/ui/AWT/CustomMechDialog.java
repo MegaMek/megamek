@@ -139,8 +139,11 @@ extends Dialog implements ActionListener {
         add(panButtons);
         
         fldName.setText(entity.getCrew().getName());
+        fldName.addActionListener(this);
         fldGunnery.setText(new Integer(entity.getCrew().getGunnery()).toString());
+        fldGunnery.addActionListener(this);
         fldPiloting.setText(new Integer(entity.getCrew().getPiloting()).toString());
+        fldPiloting.addActionListener(this);
         
         if (!editable) {
             fldName.setEnabled(false);
@@ -337,7 +340,7 @@ extends Dialog implements ActionListener {
 
 
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-        if (actionEvent.getSource() == butOkay) {
+        if (actionEvent.getSource() != butCancel) {
             // get values
             String name = fldName.getText();
             int gunnery;

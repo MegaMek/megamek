@@ -17,7 +17,6 @@ package megamek.client;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Panel;
 import java.awt.Window;
 
 /**

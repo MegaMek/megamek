@@ -769,6 +769,13 @@ public abstract class Entity
     public abstract int getRunMPwithoutMASC();
 
     /**
+     * Returns this entity's running/flank mp as a string.
+     */
+    public String getRunMPasString() {
+        return Integer.toString(getRunMP());
+    }
+
+    /**
      * Returns this entity's original jumping mp.
      */
     protected int getOriginalJumpMP() {

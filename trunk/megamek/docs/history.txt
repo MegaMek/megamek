@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.49 (CVS)
+
 v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.
 + Bug 1001924: Freeze when displacement does not work correctly, thanks weaselflink

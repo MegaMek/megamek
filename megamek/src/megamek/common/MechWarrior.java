@@ -76,7 +76,7 @@ public class MechWarrior extends Infantry {
     }
 
     /**
-     * Mek pilots have not inherent battle value.
+     * Mek pilots have no inherent battle value.
      * <p/>
      * Overrides <code>Infantry#calculateBattleValue()</code>.
      */

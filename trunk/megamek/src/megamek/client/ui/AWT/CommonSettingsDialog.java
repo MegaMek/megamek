@@ -19,7 +19,7 @@ import java.awt.event.*;
 
 import megamek.common.Settings;
 
-public class CommonSettingsDialog extends Dialog implements ActionListener {
+public class CommonSettingsDialog extends Dialog implements ActionListener, ItemListener {
 
     private ScrollPane  scrOptions = new ScrollPane();
 
@@ -43,6 +43,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    alwaysRightClickScroll;
     private Checkbox    autoEdgeScroll;
     private TextField   scrollSensitivity;
+
+    private Checkbox    keepServerlog;
+    private TextField   serverlogFilename;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -116,6 +119,18 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
         panSetting.add( unitStartChar );
         panSetting.add( new Label("ProtoMech unit codes.") );
+        tempPanel.add( panSetting );
+
+        // client-side gamelog settings
+        panSetting = new Panel();
+        keepServerlog
+            = new Checkbox( "Keep a copy of the game log." );
+        keepServerlog.addItemListener(this);
+        tempPanel.add( keepServerlog );
+        serverlogFilename
+            = new TextField(20);
+        panSetting.add( serverlogFilename );
+        panSetting.add( new Label("Game log filename (this file will be appended to.)") );
         tempPanel.add( panSetting );
 
         panSetting = new Panel();
@@ -245,6 +260,10 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         autoEdgeScroll.setState( Settings.autoEdgeScroll );
         scrollSensitivity.setText( Integer.toString(Settings.getScrollSensitivity() ) );
 
+        keepServerlog.setState( Settings.keepServerlog );
+        serverlogFilename.setEnabled(keepServerlog.getState());
+        serverlogFilename.setText( Settings.serverlogFilename );
+
 
         getFocus.setState( Settings.getFocus );
         super.show();
@@ -280,9 +299,13 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.autoEdgeScroll         = autoEdgeScroll.getState();
         Settings.setScrollSensitivity( Integer.parseInt(scrollSensitivity.getText()) );
 
-        Settings.maxPathfinderTime    = Integer.parseInt(maxPathfinderTime.getText());
+        Settings.maxPathfinderTime      = Integer.parseInt(maxPathfinderTime.getText());
 
-        Settings.getFocus =       getFocus.getState();
+        Settings.getFocus               = getFocus.getState();
+
+        Settings.keepServerlog          = keepServerlog.getState();
+        Settings.serverlogFilename      = serverlogFilename.getText();
+
         Settings.save();
         this.setVisible( false );
     }
@@ -304,4 +327,17 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         }
     }
 
+    /**
+     * Handle the player clicking checkboxes.
+     * <p/>
+     * Implements the <code>ItemListener</code> interface.
+     *
+     * @param   event - the <code>ItemEvent</code> that initiated this call.
+     */
+    public void itemStateChanged( ItemEvent event ) {
+        Object source = event.getItemSelectable();
+        if ( source.equals(keepServerlog) ) {
+            serverlogFilename.setEnabled(keepServerlog.getState());
+        }
+    }
 }

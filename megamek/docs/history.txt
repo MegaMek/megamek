@@ -88,13 +88,13 @@ v 0.27
 - deployment phase
 - ammo switching
 - level 2 tech
-- better mech loader
 
 VERSION HISTORY:
 ----------------
 v next
 + added stainedglass's minimap and mech selector patches, slightly modified
 + removed river terrain type
++ DFA against destroyed target now has similar results to successful DFA
 
 v 0.26.0 (06-03-02, 12pm)
 + the words "level" & "depth" no longer display on top of each other on a hex

@@ -59,8 +59,8 @@ public class BLKTankFile implements MechLoader {
         Tank t = new Tank();
         
         if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
-        t.setName(dataFile.getDataAsString("Name")[0]);
-        t.setModel(t.getName());
+        t.setChassis(dataFile.getDataAsString("Name")[0]);
+        t.setModel(t.getChassis());
         
         if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);

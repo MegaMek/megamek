@@ -2791,7 +2791,7 @@ public class Compute
     {
         Entity attacker = g.getEntity(waa.getEntityId());
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
-        System.out.println("Computing expected damage for " + attacker.getName() + " " + 
+        System.out.println("Computing expected damage for " + attacker.getShortName() + " " + 
                 weapon.getName());
         ToHitData hitData = Compute.toHitWeapon(g, waa, vOtherAttacks);
         if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {

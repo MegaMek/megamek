@@ -301,7 +301,7 @@ public class TestBot extends BotClientWrapper {
         Entity entity = (Entity)i.next();
         CEntity cen = this.enemies.get(entity);
         MoveThread mt = new MoveThread(entity); //so things don't slow down too much, use a thread
-        System.out.println("Contimplating movement of "+entity.getName()+" "+entity.getId());
+        System.out.println("Contimplating movement of "+entity.getShortName()+" "+entity.getId());
         mt.start();
         try {
           mt.join();
@@ -401,8 +401,8 @@ public class TestBot extends BotClientWrapper {
     Iterator k = min.tv.iterator();
     String threat = "";
     while(k.hasNext()) threat += k.next()+" ";
-    System.out.println(min.entity.getName()+" "+min.entity.getId()+" to "+min.getKey()+" from "+this.enemies.get(min.entity).old.getKey()+" "+min+"\n Utility: "+min.getUtility()+" \n"+threat+"\n");
-    sendChat("Moved " + min.entity.getName()+" to "+min.curPos);
+    System.out.println(min.entity.getShortName()+" "+min.entity.getId()+" to "+min.getKey()+" from "+this.enemies.get(min.entity).old.getKey()+" "+min+"\n Utility: "+min.getUtility()+" \n"+threat+"\n");
+    sendChat("Moved " + min.entity.getShortName()+" to "+min.curPos);
     this.my_mechs_moved++;
 
     // Record when Infantry are moved.
@@ -1474,7 +1474,7 @@ public class TestBot extends BotClientWrapper {
         } else if (centity.strategy.target < 2) { //go for the gusto
           centity.strategy.target += .3;  
         }
-        System.out.println(centity.entity.getName() + " " + centity.strategy.target);
+        System.out.println(centity.entity.getShortName() + " " + centity.strategy.target);
       }
     }
         
@@ -1549,7 +1549,7 @@ public class TestBot extends BotClientWrapper {
                   if (en.isEnemyOf((Entity)this.getEntitiesOwned().elementAt(0))) {
                     CEntity cen = this.enemies.get(en);
                     cen.strategy.target += 3;
-                    System.out.println(cen.entity.getName() + " " +  cen.strategy.target);
+                    System.out.println(cen.entity.getShortName() + " " +  cen.strategy.target);
                     understood = true;
                   }
                 }

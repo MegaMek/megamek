@@ -178,9 +178,9 @@ public class MtfFile implements MechLoader {
             // going to strip them out
             int pindex = name.indexOf("(");
             if (pindex == -1) {
-                mech.setName(name.trim());
+                mech.setChassis(name.trim());
             } else {
-                mech.setName(name.substring(0, pindex - 1).trim());
+                mech.setChassis(name.substring(0, pindex - 1).trim());
             }
             mech.setModel(model.trim());
             mech.setYear(Integer.parseInt(this.techYear.substring(4).trim()));

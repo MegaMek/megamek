@@ -2312,6 +2312,7 @@ implements Runnable {
             
             if (amsHits > 0) {
                 phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
+                hits -= amsHits;
             }
         }
 
@@ -4004,6 +4005,9 @@ implements Runnable {
         int equipId = c.getIntValue(1);
         int mode = c.getIntValue(2);
         Entity e = game.getEntity(entityId);
+        if (e.getOwner() != getPlayer(connIndex)) {
+            return;
+        }
         Mounted m = e.getEquipment(equipId);
         
         // a mode change for ammo means dumping

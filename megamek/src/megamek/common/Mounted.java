@@ -36,7 +36,8 @@ public class Mounted implements Serializable{
     private boolean missing = false;
     
     private int shotsLeft; // for ammo
-    private int firingMode; //Fire Mode - for detecting what mode a weapon is firing in
+    private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
+    private int pendingMode = -1; // if mode changes happen at end of turn
     
     private int location;
     private boolean rearMounted;
@@ -54,7 +55,6 @@ public class Mounted implements Serializable{
         this.entity = entity;
         this.type = type;
         this.typeName = type.getInternalName();
-        this.firingMode = 1;  // Fire Mode - Set the default Fire Mode for all mounted things to 1, Prolly should change this to only if it is a weapon        
         
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
@@ -75,6 +75,41 @@ public class Mounted implements Serializable{
     public EquipmentType getType() {
         return type;
     }
+    
+    public String curMode() {
+        return type.getModes()[mode];
+    }
+    
+    public String pendingMode() {
+        if (pendingMode == -1) {
+            return "None";
+        }
+        return type.getModes()[pendingMode];
+    }
+    
+    public void switchMode() {
+        if (type.hasModes()) {
+            if (type.hasInstantModeSwitch()) {
+                mode = (mode + 1) % type.getModes().length;
+            }
+            else if (pendingMode == -1) {
+                pendingMode = (mode + 1) % type.getModes().length;
+            }
+            else {
+                // already had a mode pending, so we need to iterate that
+                pendingMode = (pendingMode + 1) % type.getModes().length;
+            }
+        }
+    }
+    
+    public void newRound() {
+        setUsedThisRound(false);
+        if (type.hasModes() && pendingMode != -1) {
+            mode = pendingMode;
+            pendingMode = -1;
+        }
+    }
+    
     
     /**
      * Shortcut to type.getName()
@@ -145,14 +180,6 @@ public class Mounted implements Serializable{
         this.shotsLeft = shotsLeft;
     }
     
-   // Fire Mode - Reports current Fire mode, and sets the current Fire Mode respectively - Rasia
-    public int getFiringMode() {
-	return firingMode;
-    }
-
-    public void setFiringMode(int firingMode) {
-	this.firingMode = firingMode;
-    }
     
     public int getLocation() {
         return location;

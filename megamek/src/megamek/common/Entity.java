@@ -1510,9 +1510,8 @@ public abstract class Entity
 
         crew.setKoThisRound(false);
 
-        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            mounted.setUsedThisRound(false);
+        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
+            ((Mounted)i.nextElement()).newRound();
         }
     }
     
@@ -1582,6 +1581,11 @@ public abstract class Entity
                 if (!weapon.isReady() || weapon.isMissing()) {
                     continue;
                 }
+                // don't try if it's turned off
+                if (weapon.curMode().equals("Off")) {
+                    continue;
+                }
+                
                 if (weapon.getLinked() == null || weapon.getLinked().getShotsLeft() == 0) {
                     loadWeapon(weapon);
                 }

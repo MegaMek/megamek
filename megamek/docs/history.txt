@@ -71,6 +71,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v (next)
++ Abstracted equipment mode system
++ AMS can be turned off
+
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display
 + stacking rules (vehicles & infantry) partially implemented

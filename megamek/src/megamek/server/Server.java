@@ -1860,8 +1860,8 @@ implements Runnable {
                 // Fire Mode - Handles pulling the FireModeChangeActions out of the attack Vector
                 FiringModeChangeAction fmc = (FiringModeChangeAction)o;
                 final Entity fe = game.getEntity(fmc.getEntityId());
-                final Mounted fmcweapon = fe.getEquipment(fmc.getWeaponId());
-                fmcweapon.setFiringMode(fmc.getFiringMode());
+                final Mounted fmcweapon = fe.getEquipment(fmc.getEquipmentId());
+                fmcweapon.switchMode();
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
@@ -1956,12 +1956,12 @@ implements Runnable {
                 If you don't have enough ammo for a Double Rate shot, you can't do it!
                 Rasia
                  */
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && ammo != null && weapon.getFiringMode() == 2) {
+            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && ammo != null && weapon.curMode().equals("Ultra")) {
                 if (ammo.getShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
                     ammo = weapon.getLinked();
                     if (ammo.getShotsLeft() <= 0) {
-                        weapon.setFiringMode(1);
+                        weapon.switchMode();
                         phaseReport.append("(Out of Ammo, Single Rate Only):");
                     } else {
                         ammo.setShotsLeft(ammo.getShotsLeft() - 1);
@@ -1975,7 +1975,7 @@ implements Runnable {
         
         // build up some heat
         ae.heatBuildup += wtype.getHeat();
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) // Fire Mode - If we are shooting an Ultra AC twice
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) // Fire Mode - If we are shooting an Ultra AC twice
             ae.heatBuildup += wtype.getHeat();
         
         // set the weapon as having fired
@@ -1986,7 +1986,7 @@ implements Runnable {
         int roll = Compute.d6(2);
         phaseReport.append("rolls " + roll + " : ");
         
-        if (roll == 2 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) {
+        if (roll == 2 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
             phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
             weapon.setHit(true);
             return;
@@ -2005,16 +2005,9 @@ implements Runnable {
             return;
         }
         
-        // Fire Mode - If we roll 2 and shooting uAC twice, it Jams
-        if (roll < 3 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) {
-            phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
-            weapon.setHit(true);
-            return;
-        }
-        
         if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE 
         || wtype.getDamage() == WeaponType.DAMAGE_VARIABLE
-        || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
+        || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
              if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;

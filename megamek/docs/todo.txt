@@ -13,6 +13,8 @@ BoardView1.java:
 - the turn report could keep a list of "message" objects 
   instead of a large report string.  This would allow some customizing of the
   display, or even translation (vieleicht zum Deutcher sprache.)
+- This would also allow us to hide the chassis & model of units crossing
+  rivers during double-blind game when the enemy has no LOS to the unit.
   
 - More server validation of client data
 
@@ -26,6 +28,7 @@ BoardView1.java:
 -- stepping out of a domino effects chain
 -- target displacement hex after a failed DFA attack
 -- many other things the server auto-picks right now...
+-- ammo dumping and RAC unjamming during the end-of-turn phase
 
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------

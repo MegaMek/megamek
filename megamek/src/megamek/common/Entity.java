@@ -137,9 +137,9 @@ public abstract class Entity
     public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
     public boolean              dodging;
 
-    public boolean        spotting;
-    private boolean				clearingMinefield = false;
-    private boolean 			selected = false;
+    public boolean              spotting;
+    private boolean             clearingMinefield = false;
+    private boolean             selected = false;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -3519,4 +3519,13 @@ public abstract class Entity
         return MP;
      }
 
+    /** Whether this type of unit can perform charges */
+    public boolean canCharge() {
+        return !isImmobile() && getWalkMP() > 0;
+    };
+
+    /** Whether this type of unit can perform DFA attacks */
+    public boolean canDFA() {
+        return !isImmobile() && getJumpMP() > 0;
+    };
 }

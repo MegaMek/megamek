@@ -921,4 +921,13 @@ public class Protomech
         super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
     }
 
+    public boolean canCharge() {
+        // Protos can't Charge
+        return false;
+    };
+
+    public boolean canDFA() {
+        // Protos can't DFA
+        return false;
+    };
 }

@@ -112,6 +112,7 @@ implements Runnable {
         registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
+        registerCommand(new SeeAllCommand(this));
     }
     
     /**
@@ -7355,7 +7356,14 @@ implements Runnable {
         if (bTeamVision) {
             addTeammates(vCanSee, entity.getOwner());
         }
-        
+
+        for (Enumeration p = game.getPlayers(); p.hasMoreElements();) {
+            Player player = (Player)p.nextElement();
+           
+            if (player.canSeeAll() && !vCanSee.contains(p))
+                vCanSee.addElement(player);
+        }
+
         for (int i = 0; i < vEntities.size(); i++) {
             Entity e = (Entity)vEntities.elementAt(i);
             if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
@@ -7411,7 +7419,12 @@ implements Runnable {
         Vector vAllEntities = game.getEntitiesVector();
         Vector vMyEntities = new Vector();
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
-        
+
+        // If they can see all, return the input list
+        if (pViewer.canSeeAll()) {
+            return vEntities;
+        }
+
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = (Entity)vAllEntities.elementAt(x);
             if (e.getOwner() == pViewer || (bTeamVision && !e.getOwner().isEnemyOf(pViewer))) {

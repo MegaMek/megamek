@@ -116,7 +116,6 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 v 0.28.16 CVS
-+ Bug 724556: Fixed Multiple MASC failure checks 
 + RNG type changable in game options
 + RNG type changes print message to the logs
 + "Loading mechs..." dialog added.
@@ -126,6 +125,8 @@ v 0.28.16 CVS
 + It should no longer be necessary to delete mechcache.txt (Bug 691364)
 + Mech selector now has "All" option for weight and type.
 + bug 712051: ECM now correctly prevents narc & artemis iv bonus
++ Bug 724556: Fixed Multiple MASC failure checks 
++ Feature 698967: Added /seeall command to let an observer see in double blind
 
 v 0.28.15 (04-27-03, 7:30pm)
 + Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.

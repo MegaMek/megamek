@@ -41,28 +41,28 @@ public class KickCommand extends ServerCommand {
     public void run(int connId, String[] args) {
         int kickArg = server.isPassworded() ? 2 : 1;
         
-        if (server.isPassworded() && (args.length < 3 || server.isPassword(args[1]))) {
+        if (server.isPassworded() && (args.length < 3 || !server.isPassword(args[1]))) {
             server.sendServerChat(connId, "The password is incorrect.  Usage: /kick <password> [id#]");
         }
-        
-        try {
-            int kickedId = Integer.parseInt(args[kickArg]);
-            
-            if (kickedId == connId) {
-                server.sendServerChat("Don't be silly.");
-                return;
+        else 
+            try {
+                int kickedId = Integer.parseInt(args[kickArg]);
+                
+                if (kickedId == connId) {
+                    server.sendServerChat("Don't be silly.");
+                    return;
+                }
+                
+                server.sendServerChat(server.getPlayer(connId).getName() + " attempts to kick player #" + kickedId + " (" + server.getPlayer(kickedId).getName() + ")...");
+                server.getConnection(kickedId).die();
+                
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
+            } catch (NumberFormatException ex) {
+                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
+            } catch (NullPointerException ex) {
+                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
             }
-            
-            server.sendServerChat(server.getPlayer(connId).getName() + " attempts to kick player #" + kickedId + " (" + server.getPlayer(kickedId).getName() + ")...");
-            server.getConnection(kickedId).die();
-            
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
-        } catch (NumberFormatException ex) {
-            server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
-        } catch (NullPointerException ex) {
-            server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
-        }
     }
     
 }

@@ -256,7 +256,7 @@ public class Pilot
      */
     public double getBVSkillMultiplier() {
         double multiplier = 1.0;
-        /*        
+
         if (gunnery < 4) {
             multiplier += 0.20 * (4 - gunnery);
         } else {
@@ -264,7 +264,7 @@ public class Pilot
         }
         
         multiplier += 0.05 * (5 - piloting);
-        */         
+
         return multiplier;
     }
 }

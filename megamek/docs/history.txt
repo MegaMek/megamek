@@ -78,6 +78,7 @@ v next
 + 607206: jammed turrets no longer reset to face front
 + added lbx cluster ammo mtf designations for clan mechs
 + 603151: arms flip to front every round to be consistant
++ 607461: hovercraft always move along the surface of the water
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

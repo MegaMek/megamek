@@ -586,19 +586,10 @@ public class Compute
         }
         
         // account for elevation?
-        int nSrcEl = srcHex.floor();
-        int nDestEl = destHex.floor();
+        int nSrcEl = entity.elevationOccupied(srcHex);
+        int nDestEl = entity.elevationOccupied(destHex);
         int nMove = entity.getMovementType();
-        
-        // hovercraft on water don't care about depth
-        if (nMove == Entity.MovementType.HOVER) {
-            if (srcHex.contains(Terrain.WATER)) {
-                nSrcEl = srcHex.surface();
-            }
-            if (destHex.contains(Terrain.WATER)) {
-                nDestEl = destHex.surface();
-            }
-        }
+
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
             
@@ -644,18 +635,22 @@ public class Compute
             return false;
         }
         // check elevation difference > max
+        int nSrcEl = entity.elevationOccupied(srcHex);
+        int nDestEl = entity.elevationOccupied(destHex);
+        int nMove = entity.getMovementType();
+        
         if (entityMoveType != Entity.MOVE_JUMP 
-            && Math.abs(srcHex.floor() - destHex.floor()) > entity.getMaxElevationChange()) {
+            && Math.abs(nSrcEl - nDestEl) > entity.getMaxElevationChange()) {
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
         if ((stepType == MovementData.STEP_BACKWARDS || stepType == MovementData.STEP_LATERAL_LEFT_BACKWARDS
-            || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && srcHex.floor() != destHex.floor()) {
+            || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && nSrcEl != nDestEl) {
             return false;
         }
         // can't run into water (unless hovering)
         if (entityMoveType == Entity.MOVE_RUN 
-            && entity.getMovementType() != Entity.MovementType.HOVER
+            && nMove != Entity.MovementType.HOVER
             && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
             return false;
         }
@@ -676,7 +671,7 @@ public class Compute
         }
         
         // certain movement types have terrain restrictions
-        if (entity.getMovementType() == Entity.MovementType.WHEELED) {
+        if (nMove == Entity.MovementType.WHEELED) {
             if (destHex.contains(Terrain.WOODS) || destHex.contains(Terrain.ROUGH) ||
                     destHex.levelOf(Terrain.WATER) > 0 || destHex.contains(Terrain.RUBBLE)) {
                 return false;
@@ -687,7 +682,7 @@ public class Compute
                 return false;
             }
         }
-        else if (entity.getMovementType() == Entity.MovementType.HOVER) {
+        else if (nMove == Entity.MovementType.HOVER) {
             if (destHex.contains(Terrain.WOODS)) {
                 return false;
             }
@@ -728,6 +723,7 @@ public class Compute
         
         // check for water
         if (movementType != Entity.MOVE_JUMP
+            && entity.getMovementType() != Entity.MovementType.HOVER
             && destHex.levelOf(Terrain.WATER) > 0) {
             return true;
         }
@@ -768,7 +764,7 @@ public class Compute
         // can't go up 2+ levels
         for (int i = 0; i < intervening.length; i++) {
             final Hex hex = game.board.getHex(intervening[i]);
-            if (hex.floor() - srcHex.floor() > 1) {
+            if (entity.elevationOccupied(hex) - entity.elevationOccupied(srcHex) > 1) {
                 return false;
             }
         }
@@ -860,12 +856,13 @@ public class Compute
         Coords second = src.translated((direction + 5) % 6);
         Hex firstHex = game.board.getHex(first);
         Hex secondHex = game.board.getHex(second);
+        Entity entity = game.getEntity(entityId);
         
         if (firstHex == null || secondHex == null) {
             // leave it, will be handled
-        } else if (firstHex.floor() > secondHex.floor()) {
+        } else if (entity.elevationOccupied(firstHex) > entity.elevationOccupied(secondHex)) {
             // leave it
-        } else if (firstHex.floor() > secondHex.floor()) {
+        } else if (entity.elevationOccupied(firstHex) < entity.elevationOccupied(secondHex)) {
             // switch
             Coords temp = first;
             first = second;
@@ -2077,7 +2074,7 @@ public class Compute
     public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(src).floor();
+        final int attackerElevation = ae.elevationOccupied(game.board.getHex(src));
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = te.elevation();
         final int targetHeight = te.absHeight();

@@ -401,11 +401,9 @@ public abstract class Entity
 
     /**
      * Returns the elevation of this entity.
-     *
-     * By default, the entity is on the floor.
      */
     public int elevation() {
-        return game.board.getHex(getPosition()).floor();
+        return elevationOccupied(game.board.getHex(getPosition()));
     }
     
     /**
@@ -608,6 +606,25 @@ public abstract class Entity
     public int getJumpMPWithTerrain() {
         return jumpMP;
     }
+    
+    /**
+     * Returns the elevation that this entity would be on if it were placed
+     * into the specified hex.
+     */
+    public int elevationOccupied(Hex hex) {
+        return hex.floor();
+    }
+    
+    /**
+     * Returns the elevation that this entity would be on if it moved from an
+     * adjacent hex, at the specified elevation, into the specified hex.
+     *
+     * Mechs might move into upper building levels, subs/vtols might stay at
+     * their present elevation, etc.
+     */
+//    public int elevationOccupied(Hex hex, int elevation) {
+//        return hex.floor();
+//    }
 
     /**
      * Returns the name of the type of movement used.

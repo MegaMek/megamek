@@ -4014,6 +4014,13 @@ implements Runnable, ConnectionHandler {
         while (targets.hasMoreElements()) {
             Entity entity = (Entity) targets.nextElement();
 
+            // check for the "no_premove_vibra" option
+            // If it's set, and the target has not yet moved,
+            // it doesn't get damaged.
+            if (!(entity.isDone() && game.getOptions().booleanOption("no_premove_vibra"))) {
+                phaseReport.append(entity.getShortName() + " evades a vibrabomb attack.\n");
+                continue;
+            }
             phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 // normal vibrabombs do all damage in one pack
@@ -4034,8 +4041,10 @@ implements Runnable, ConnectionHandler {
             // we need to apply Damage now, in case the entity lost a leg,
             // otherwise it won't get a leg missing mod if it hasn't yet
             // moved and lost a leg, see bug 1071434 for an example
+            game.resetPSRs(entity);
             entity.applyDamage();
-            send(createEntityPacket(entity.getId()));
+            phaseReport.append("\n");
+            entityUpdate(entity.getId());
         }
 
         if (!mf.isOneUse()) {

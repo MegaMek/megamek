@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -17,6 +17,10 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
+import megamek.common.equip.AmmoState;
+import megamek.common.equip.EquipmentState;
+import megamek.common.equip.UsesAmmoType;
+import megamek.common.equip.UsesAmmoState;
 
 public class AmmoType extends EquipmentType {
     // ammo types
@@ -96,11 +100,11 @@ public class AmmoType extends EquipmentType {
         return m_vaMunitions[nAmmoType];
     }
 
-    private int damagePerShot;
-    private int rackSize;
+    protected int damagePerShot;
+    protected int rackSize;
     private int ammoType;
     private int munitionType;
-    private int shots;
+    protected int shots;
 
     public AmmoType() {
         criticals = 1;
@@ -114,6 +118,70 @@ public class AmmoType extends EquipmentType {
     
     public int getMunitionType() {
         return munitionType;
+    }
+
+    // 2003-07-13 Suvarov454 : Added xylaan's weapon refactoring
+
+    protected int heat;
+    protected RangeType range;
+    protected int tech;
+
+    // Most ammo is explosive
+    public boolean isExplosive() {
+	return true;
+    }
+
+    public int getHeat() {
+	return heat;
+    }
+    public int getShotDamage(Entity en, Targetable targ) {
+	return damagePerShot;
+    }
+
+    public RangeType getRange() {
+	return range;
+    }
+
+    // By default, all ballistic type weapons are 9.  If some are impossible 
+    // (i.e. Gauss Rifle or SRM-2, they will override)
+    public int getFireTN() {
+	return 9;
+    }
+    
+    // By default, adds no new modifiers (these are for ammo based modifiers)
+    public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
+	return new TargetRoll();
+    }
+    
+    // Note, we don't do any pre-stuff here, as that's done by the weapon
+/* TODO: uncomment me delete the empty method.
+    public abstract void resolveAttack(Game game, 
+				       WeaponResult wr, 
+				       UsesAmmoType weap, 
+				       EquipmentState weap_state);
+*/
+    public void resolveAttack(Game game, 
+				       WeaponResult wr, 
+				       UsesAmmoType weap, 
+        EquipmentState weap_state) {}
+
+    // Created using the base type, using the default number of shots
+    public EquipmentState getNewState(Mounted location) {
+	return new AmmoState(location, this, shots);
+    }
+    
+    // Be default, all ammo explodes, with shots remaining * damagePerShot
+    public void doCriticalDamage(EquipmentState state) {
+	if (isExplosive()) {
+	    AmmoState as = (AmmoState)state;
+	    // Get the amount of damage.
+	    int damage = this.getDamagePerShot() * as.shotsLeft();
+/* TODO : implement me
+	    super.doCriticalDamage(state); // Set it as destroyed
+*/
+	    // Do weapon explosion damage 
+// ########### 
+	}
     }
 
     public int getDamagePerShot() {
@@ -2170,4 +2238,5 @@ public class AmmoType extends EquipmentType {
     public String toString() {
         return "Ammo: " + name;
     }
+
 }

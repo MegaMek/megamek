@@ -2590,7 +2590,14 @@ implements Runnable {
                     curFacing = entity.getFacing();
                     curPos = entity.getPosition();
                     entity.setSecondaryFacing( curFacing );
-                    mpUsed = entity.getRunMP(); // skid consumes all movement
+
+                    // skid consumes all movement
+                    if (md.hasActiveMASC()) {
+                        mpUsed = entity.getRunMP();
+                    } else {
+                        mpUsed = entity.getRunMPwithoutMASC();
+                    }
+
                     entity.moved = moveType;
                     fellDuringMovement = true;
                     distance = entity.delta_distance;

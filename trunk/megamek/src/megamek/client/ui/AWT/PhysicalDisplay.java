@@ -664,36 +664,52 @@ public class PhysicalDisplay
      * Targets an entity
      */
     private void updateTarget() {
-        // dis/enable punch button
+        // dis/enable physical attach buttons
         if (cen != Entity.NONE && target != null) {
-            // punch?
-            final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.LEFT);
-            final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
-            boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
-                              || rightArm.getValue() != ToHitData.IMPOSSIBLE;
-            setPunchEnabled(canPunch);
-            
-            // kick?
-            ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
-            ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
-            boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
+            if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
+                // punch?
+                final ToHitData leftArm = PunchAttackAction.toHit
+                   (client.game, cen, target, PunchAttackAction.LEFT);
+                final ToHitData rightArm = PunchAttackAction.toHit
+                   (client.game, cen, target, PunchAttackAction.RIGHT);
+                boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
+                               || rightArm.getValue() != ToHitData.IMPOSSIBLE;
+                setPunchEnabled(canPunch);
+                
+                // kick?
+                ToHitData leftLeg = KickAttackAction.toHit
+                   (client.game, cen, target, KickAttackAction.LEFT);
+                ToHitData rightLeg = KickAttackAction.toHit
+                   (client.game, cen, target, KickAttackAction.RIGHT);
+                boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
-            setKickEnabled(canKick);
-            
-            // how about push?
-            ToHitData push = PushAttackAction.toHit(client.game, cen, target);
-            setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
-            
-            // clubbing?
-            Mounted club = Compute.clubMechHas(ce());
-            if (club != null) {
-                ToHitData clubToHit = ClubAttackAction.toHit(client.game, cen, target, club);
-                setClubEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
-            } else {
-                setClubEnabled(false);
+                setKickEnabled(canKick);
+                
+                // how about push?
+                ToHitData push = PushAttackAction.toHit
+                   (client.game, cen, target);
+                setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
+                
+                // clubbing?
+                Mounted club = Compute.clubMechHas(ce());
+                if (club != null) {
+                    ToHitData clubToHit = ClubAttackAction.toHit
+                       (client.game, cen, target, club);
+                    setClubEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
+                } else {
+                    setClubEnabled(false);
+                }
+                // Thrash at infantry?
+                ToHitData thrash = new ThrashAttackAction(cen, target).toHit
+                   (client.game);
+                setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
+                
+                // make a Protomech physical attack?
+                ToHitData proto = ProtomechPhysicalAttackAction.toHit
+                   ( client.game, cen, target);
+                setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
             }
-
-            // Brush off swarming infantry?
+            // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit
                 ( client.game, cen, target, BrushOffAttackAction.RIGHT );
             ToHitData brushLeft = BrushOffAttackAction.toHit
@@ -701,15 +717,6 @@ public class PhysicalDisplay
             boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
                                 brushLeft.getValue() != ToHitData.IMPOSSIBLE);
             setBrushOffEnabled( canBrush );
-
-            // Thrash at infantry?
-            ToHitData thrash = new ThrashAttackAction(cen, target).toHit(client.game);
-            setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
-            
-            // make a Protomech physical attack?
-            ToHitData proto = ProtomechPhysicalAttackAction.toHit
-			   ( client.game, cen, target);
-            setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
         } else {
             setPunchEnabled(false);
             setPushEnabled(false);
@@ -717,7 +724,7 @@ public class PhysicalDisplay
             setClubEnabled(false);
             setBrushOffEnabled(false);
             setThrashEnabled(false);
-			setProtoEnabled(false);
+            setProtoEnabled(false);
         }
     }
     
@@ -804,8 +811,7 @@ public class PhysicalDisplay
             Enumeration pods = ce().getINarcPodsAttached();
             while ( pods.hasMoreElements() ) {
                 choice = (Targetable) pods.nextElement();
-//                 // TODO : uncomment me and test the @#$% out of this code!!!
-//                 targets.addElement( choice );
+                targets.addElement( choice );
             }
         }
 

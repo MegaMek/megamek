@@ -1267,7 +1267,7 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_EXCHANGE :
                 resetPlayersDone();
                 // Build teams vector
-                setupTeams();
+                setupTeams(game);
                 applyBoardSettings();
                 game.setupRoundDeployment();
                 game.determineWindDirection();
@@ -1641,20 +1641,11 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Places a mech on the board
-     */
-    private void placeEntity(Entity entity, Coords pos, int facing) {
-        entity.setPosition(pos);
-        entity.setFacing(facing);
-        entity.setSecondaryFacing(facing);
-    }
-
-    /**
        Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
        placed in the appropriate vector.  Any player on 'No Team', is placed
        in their own object
     */
-    private void setupTeams()
+    static void setupTeams(Game game)
     {
         Vector teams = game.getTeamsVector();
         boolean useTeamInit =
@@ -2115,12 +2106,12 @@ implements Runnable, ConnectionHandler {
              KickAttackAction.RIGHT ).getValue()
             != ToHitData.IMPOSSIBLE;
 
-        canHit |= Compute.toHitBrushOff
+        canHit |= BrushOffAttackAction.toHitBrushOff
             ( game, entityId, target,
               BrushOffAttackAction.LEFT ).getValue()
             != ToHitData.IMPOSSIBLE;
 
-        canHit |= Compute.toHitBrushOff
+        canHit |= BrushOffAttackAction.toHitBrushOff
             ( game, entityId, target,
               BrushOffAttackAction.RIGHT ).getValue()
             != ToHitData.IMPOSSIBLE;
@@ -4344,7 +4335,7 @@ implements Runnable, ConnectionHandler {
                     while ( misc.hasMoreElements() ) {
                         final Mounted equip = (Mounted) misc.nextElement();
                         if ( equip.getType().hasFlag(MiscType.F_AP_POD) &&
-                             Compute.canFire( target, equip ) ) {
+                             equip.canFire()) {
 
                             // Yup.  Insert a game turn to handle AP pods.
                             // ASSUMPTION : AP pod declarations come
@@ -4633,7 +4624,7 @@ implements Runnable, ConnectionHandler {
         // Ignore the "used this round" flag.
         boolean oldFired = mount.isUsedThisRound();
         mount.setUsedThisRound( false );
-        boolean canFire = Compute.canFire( entity, mount );
+        boolean canFire = mount.canFire();
         mount.setUsedThisRound( oldFired );
         if ( !canFire ) {
             System.err.print( "Can not trigger the AP Pod at " );
@@ -6619,7 +6610,7 @@ implements Runnable, ConnectionHandler {
             .append( armName );
 
         // compute to-hit
-        ToHitData toHit = Compute.toHitBrushOff(game, baa);
+        ToHitData toHit = baa.toHit(game);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append( ", but the brush off is impossible (" )
                 .append( toHit.getDesc() )
@@ -6633,7 +6624,7 @@ implements Runnable, ConnectionHandler {
         phaseReport.append("rolls ").append(roll).append(" : ");
 
         // ASSUMPTION: buildings can't absorb *this* damage.
-        int damage = Compute.getBrushOffDamageFor(ae, baa.getArm());
+        int damage = BrushOffAttackAction.getBrushOffDamageFor(ae, baa.getArm());
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -10938,18 +10929,6 @@ implements Runnable, ConnectionHandler {
      */
     private Packet createCollapseBuildingPacket( Vector buildings ) {
         return new Packet( Packet.COMMAND_BLDG_COLLAPSE, buildings );
-    }
-
-    /**
-     * Tell the clients to update the CFs of the given building.
-     *
-     * @param   bldg - the <code>Building</code> that has collapsed.
-     * @return  a <code>Packet</code> for the command.
-     */
-    private Packet createUpdateBuildingCFPacket( Building bldg ) {
-        Vector buildings = new Vector();
-        buildings.addElement( bldg );
-        return this.createUpdateBuildingCFPacket( buildings );
     }
 
     /**

@@ -21,6 +21,7 @@ import megamek.common.*;
 import java.io.File;
 import java.io.FileInputStream;
 import megamek.client.ChatLounge;
+import megamek.common.loaders.*;
 import megamek.common.options.GameOption;
 
 public class ScenarioLoader 
@@ -50,51 +51,6 @@ public class ScenarioLoader
         }
     }
 
-    private void setupTeams(Game game)
-    {
-        Vector teams = game.getTeamsVector();
-        boolean useTeamInit =
-            game.getOptions().getOption("team_initiative").booleanValue();
-
-        // This is a reference to THE team vector,
-        // so we need to clear it before use.
-        teams.removeAllElements();
-
-        // Get all NO_TEAM players.  If team_initiative is false, all
-        // players are on their own teams for initiative purposes.
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if ( !useTeamInit || player.getTeam() == Player.TEAM_NONE ) {
-                Team new_team = new Team(Player.TEAM_NONE);
-                new_team.addPlayer(player);
-                teams.addElement(new_team);
-            }
-        }
-
-        // If useTeamInit is false, all players have been placed
-        if (!useTeamInit) {
-            return;
-        }
-
-        // Now, go through all the teams, and add the apropriate player
-        for (int t = Player.TEAM_NONE + 1; t < Player.MAX_TEAMS; t++) {
-            Team new_team = null;
-            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-                final Player player = (Player)i.nextElement();
-                if (player.getTeam() == t) {
-                    if (new_team == null) {
-                        new_team = new Team(t);
-                    }
-                    new_team.addPlayer(player);
-                }
-            }
-
-            if (new_team != null) {
-                teams.addElement(new_team);
-            }
-        }
-    }        
-    
     public Game createGame()
         throws Exception
     {
@@ -136,7 +92,7 @@ public class ScenarioLoader
 
 
   // Set up the teams (for initiative)
-  setupTeams(g);
+        Server.setupTeams(g);
 
         g.setPhase(Game.PHASE_STARTING_SCENARIO);
         

@@ -131,6 +131,7 @@ v 0.28.19-dev (CVS)
 + Bug 740276: reverted fix for bug 732188
 + buildings need all three parameters (building, bldg_elev, and bldg_cf)
 + Bug 737441: torso twists resolved before AMS is assigned
++ Patch 730635: updated mechdisplay
 
 v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.

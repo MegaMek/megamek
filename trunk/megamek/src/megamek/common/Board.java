@@ -17,6 +17,9 @@ package megamek.common;
 import java.util.*;
 import java.io.*;
 import java.awt.*;
+import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.HashSet;
+import com.sun.java.util.collections.Iterator;
 
 public class Board
     implements Serializable {

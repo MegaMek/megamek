@@ -451,8 +451,6 @@ implements Runnable {
         // in the lounge, just remove all entities for that player
         if (game.phase == Game.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
-            //send(createEntitiesPacket());
-            entityAllUpdate();
         }
         
         // if a player has active entities, he becomes a ghost
@@ -576,8 +574,9 @@ implements Runnable {
         
         for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
-            
-            game.removeEntity(entity.getId());
+            int id = entity.getId();
+            game.removeEntity(id, Entity.REMOVE_NEVER_JOINED);
+            send(createRemoveEntityPacket(id, Entity.REMOVE_NEVER_JOINED));
         }
     }
     
@@ -7733,8 +7732,8 @@ implements Runnable {
         int entityId = c.getIntValue(0);
         Entity entity = game.getEntity(entityId);
         if (entity != null && entity.getOwner() == getPlayer(connIndex)) {
-            game.removeEntity(entityId);
-            send(createRemoveEntityPacket(entityId, Entity.REMOVE_UNKNOWN));
+            game.removeEntity(entityId, Entity.REMOVE_NEVER_JOINED);
+            send(createRemoveEntityPacket(entityId, Entity.REMOVE_NEVER_JOINED));
         } else {
             // hey! that's not your entity
         }
@@ -7988,7 +7987,8 @@ implements Runnable {
         if ( condition != Entity.REMOVE_UNKNOWN &&
              condition != Entity.REMOVE_IN_RETREAT &&
              condition != Entity.REMOVE_SALVAGEABLE &&
-             condition != Entity.REMOVE_DEVASTATED ) {
+             condition != Entity.REMOVE_DEVASTATED &&
+             condition != Entity.REMOVE_NEVER_JOINED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
                                                 condition );
         }

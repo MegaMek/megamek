@@ -848,7 +848,7 @@ public class Compute
 
         // spotter movement, if applicable
         if (isIndirect) {
-            toHit.append(getAttackerMovementModifier(game, spotter.getId()));
+            toHit.append(getSpotterMovementModifier(game, spotter.getId()));
         }
 
         // attacker terrain
@@ -871,7 +871,7 @@ public class Compute
         toHit.append(losMods);
 
         // secondary targets modifier...
-    toHit.append(getSecondaryTargetMod(game, ae, target));
+        toHit.append(getSecondaryTargetMod(game, ae, target));
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -879,13 +879,13 @@ public class Compute
         }
 
         // actuator & sensor damage to attacker
-    toHit.append(getDamageWeaponMods(ae, weapon));
+        toHit.append(getDamageWeaponMods(ae, weapon));
 
         // target immobile
-    toHit.append(getImmobileMod(target, aimingAt, aimingMode));
+        toHit.append(getImmobileMod(target, aimingAt, aimingMode));
 
         // attacker prone
-    toHit.append(getProneMods(game, ae, weaponId));
+        toHit.append(getProneMods(game, ae, weaponId));
 
         // target prone
         if (te != null && te.isProne()) {
@@ -952,7 +952,7 @@ public class Compute
         // Change hit table for partial cover, accomodate for partial underwater(legs)
         if (los.targetCover) {
             if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
-            //weapon underwater, target in partial water
+                //weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_KICK);
             } else {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
@@ -2727,6 +2727,38 @@ public class Compute
             toHit.addModifier(2, "attacker ran");
         } else if (movement == Entity.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
+        }
+
+        return toHit;
+    }
+
+
+    /**
+     * Modifier to attacks due to spotter movement
+     */
+    public static ToHitData getSpotterMovementModifier(Game game, int entityId) {
+        return getSpotterMovementModifier(game, entityId, game.getEntity(entityId).moved);
+    }
+
+    /**
+     * Modifier to attacks due to spotter movement
+     */
+    public static ToHitData getSpotterMovementModifier(Game game, int entityId, int movement) {
+        final Entity entity = game.getEntity(entityId);
+        ToHitData toHit = new ToHitData();
+
+        // infantry aren't affected by their own movement
+        if (entity instanceof Infantry) {
+            return toHit;
+        }
+
+        if (movement == Entity.MOVE_WALK) {
+            toHit.addModifier(1, "spotter walked");
+        } else if (movement == Entity.MOVE_RUN ||
+                   movement == Entity.MOVE_SKID) {
+            toHit.addModifier(2, "spotter ran");
+        } else if (movement == Entity.MOVE_JUMP) {
+            toHit.addModifier(3, "spotter jumped");
         }
 
         return toHit;

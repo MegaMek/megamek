@@ -70,7 +70,7 @@ public abstract class PicMap extends Component {
     private boolean bgIsOpaque = true;
 
    /**
-    * Ñreates PicMap engine. If no areas, labels or Backround-drawers added
+    * ?reates PicMap engine. If no areas, labels or Backround-drawers added
     * this is just transparent layer over container.
     */
     public PicMap(){
@@ -138,7 +138,7 @@ public abstract class PicMap extends Component {
     	otherAreas.removeAll();
     	hotAreas.removeAll();
     	labels.removeAll();
-    	bgDrawers.clear();
+    	bgDrawers.removeAllElements();
     	areascount = 0;
     	activeHotArea = null;    	
     }
@@ -158,7 +158,7 @@ public abstract class PicMap extends Component {
      */
     
     public void removeBgDrawer(BackGroundDrawer bd){
-         bgDrawers.remove(bd);
+         bgDrawers.removeElement(bd);
     }
     
     /**
@@ -263,8 +263,8 @@ public abstract class PicMap extends Component {
     public Dimension getMinimumSize(){
        Rectangle r = rootGroup.getBounds();
        if (r != null){
-       	   return new Dimension((int)r.getMaxX() + rightMargin,
-       	                        (int)r.getMaxY() + bottomMargin);
+       	   return new Dimension(r.x + r.width + rightMargin,
+       	                        r.y + r.height + bottomMargin);
        }
        return new Dimension(minWidth, minHeight);
     }
@@ -278,10 +278,21 @@ public abstract class PicMap extends Component {
        //from end to start. Compare against zero works faster.
        for (int i = (areascount - 1); i >= 0; i--){
             PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
-            if((ha != null) && (ha.getAreaShape().contains((double) x, (double) y)))
+            if((ha != null) && intersects(ha.getAreaShape(),x,y))
                return ha;
        }
         return null;
+    }
+    
+    private boolean intersects(Shape sh, int x, int y){
+    	if (sh instanceof Rectangle){
+    		Rectangle r = (Rectangle) sh;
+    		return r.contains(x,y);
+    	} else if (sh instanceof Polygon){
+    		Polygon p = (Polygon)sh;
+    		return p.contains(x, y);
+    	}
+    	return false;
     }
     
     /**

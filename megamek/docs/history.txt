@@ -29,6 +29,10 @@ could almost be combined:
 -- revealing hidden units to make point blank shots
 -- stepping out of a domino effects chain
 
+- The megamek.common.Board needs a deserialization method that will restore
+  the transient bldgByCoords from the buildings member; then remove the
+  game.board.newData(game.board) call from Server#setGame().
+
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
@@ -94,11 +98,6 @@ buildings:
 - Do multihex buildings absorb damage charges within the building?
 - When a unit is displaced through a building, do we handle it like normal
   movement through a wall?
-- Combat inside a multi-hex building is wierd:
--- Targets get +3 cover bonus.
--- Each level difference is an additional +1 hex to range.
--- No minimum ranges mod (Archers go yay!).
--- Shots from above or below use special hit location tables.
 - Buildings need to roll for basements.
 -- Roll when first unit enters.
 -- Basement collapse drops floor of hex, but not surface or ceiling.
@@ -134,7 +133,10 @@ v 0.28.15-dev
 + 724966: Added corrected maps.
 + 726265: Added Dirk Wilhelm's "Blind Drop" patch.
 + Added Wirianto's formatting update.
-+ Added Wirianto's fix that prevents off-board fires from crashing the game.
++ 702704: Added Wirianto's fix that prevents fires from crashing the game.
++ Weapons fire inside multi-hex buildings now works.
++ 720663: Multi-hex bldgs were getting added multiple times because I'm moronic
++ 724780: Rebind Board's data after loadGame() (bldgByCoords was null).
 
 v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).

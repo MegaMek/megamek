@@ -32,6 +32,7 @@ public class LosEffects {
     int smoke = 0;
     boolean targetCover = false;  // that means partial cover
     boolean attackerCover = false;  // ditto
+    Building thruBldg = null;
     
     /** Creates a new instance of LosEffects */
     public LosEffects() {
@@ -45,6 +46,10 @@ public class LosEffects {
         this.smoke += other.smoke;
         this.targetCover |= other.targetCover;
         this.attackerCover |= other.attackerCover;
+        if ( null != this.thruBldg &&
+             !this.thruBldg.equals(other.thruBldg) ) {
+            this.thruBldg = null;
+        }
     }
     
     /** Getter for property targetCover.
@@ -60,7 +65,7 @@ public class LosEffects {
     public void setTargetCover(boolean targetCover) {
         this.targetCover = targetCover;
     }
-    
+
     /** Getter for property attackerCover.
      * @return Value of property attackerCover.
      */
@@ -74,5 +79,19 @@ public class LosEffects {
     public void setAttackerCover(boolean attackerCover) {
         this.attackerCover = attackerCover;
     }
+
+    /** Getter for property thruBldg.
+     * @return Value of property thruBldg.
+     */
+    public Building getThruBldg() {
+        return thruBldg;
+    }
     
+    /** Setter for property thruBldg.
+     * @param thruBldg New value of property thruBldg.
+     */
+    public void setThruBldg(Building thruBldg) {
+        this.thruBldg = thruBldg;
+    }
+
 }

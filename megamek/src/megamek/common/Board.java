@@ -234,7 +234,7 @@ implements Serializable {
 
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x,y);
-                    if ( !bldgByCoords.contains(coords) ) {
+                    if ( !bldgByCoords.containsKey(coords) ) {
 
                         // Nope.  Try to create an object for the new building.
                         try {
@@ -898,12 +898,6 @@ implements Serializable {
 
         // Update the tracker.
         tracker.add( round, hits );
-        /* remove this block after implementing Targetable.TYPE_BLDG_IGNITE **
-        System.err.print( "Adding " );//killme
-        System.err.print( hits );//killme
-        System.err.print( " Inferno rounds to " );//killme
-        System.err.println( coords.getBoardNum() );//killme
-        ** remove this block after implementing Targetable.TYPE_BLDG_IGNITE */
 
     }
 

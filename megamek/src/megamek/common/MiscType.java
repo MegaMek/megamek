@@ -843,6 +843,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(MiscType.ENDO_STEEL);
         misc.addLookupName("Endo-Steel");
         misc.addLookupName("EndoSteel");
+        misc.addLookupName("Endosteel");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;

@@ -2340,9 +2340,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry Rifle";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry Rifle";
-        weapon.mtfName = "ISInfantryRifle";
-        weapon.tdbName = "IS Infantry Rifle";
+        weapon.mepName = "Infantry Rifle";
+        weapon.mtfName = "InfantryRifle";
+        weapon.tdbName = "Infantry Rifle";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_AC;
@@ -2363,9 +2363,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry MG";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry MG";
-        weapon.mtfName = "ISInfantryMG";
-        weapon.tdbName = "IS Infantry MG";
+        weapon.mepName = "Infantry MG";
+        weapon.mtfName = "InfantryMG";
+        weapon.tdbName = "Infantry MG";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_MG;
@@ -2386,9 +2386,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry SRM";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry SRM";
-        weapon.mtfName = "ISInfantrySRM";
-        weapon.tdbName = "IS Infantry SRM";
+        weapon.mepName = "Infantry SRM";
+        weapon.mtfName = "InfantrySRM";
+        weapon.tdbName = "Infantry SRM";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_SRM;
@@ -2409,9 +2409,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry Inferno SRM";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry Inferno SRM";
-        weapon.mtfName = "ISInfantryInfernoSRM";
-        weapon.tdbName = "IS Infantry Inferno SRM";
+        weapon.mepName = "Infantry Inferno SRM";
+        weapon.mtfName = "InfantryInfernoSRM";
+        weapon.tdbName = "Infantry Inferno SRM";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_SRM;
@@ -2432,9 +2432,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry LRM";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry LRM";
-        weapon.mtfName = "ISInfantryLRM";
-        weapon.tdbName = "IS Infantry LRM";
+        weapon.mepName = "Infantry LRM";
+        weapon.mtfName = "InfantryLRM";
+        weapon.tdbName = "Infantry LRM";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_LRM;
@@ -2455,9 +2455,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry Laser";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry Laser";
-        weapon.mtfName = "ISInfantryLaser";
-        weapon.tdbName = "IS Infantry Laser";
+        weapon.mepName = "Infantry Laser";
+        weapon.mtfName = "InfantryLaser";
+        weapon.tdbName = "Infantry Laser";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_NA;
@@ -2478,9 +2478,9 @@ public class WeaponType extends EquipmentType {
 
         weapon.name = "Infantry Flamer";
         weapon.internalName = weapon.name;
-        weapon.mepName = "IS Infantry Flamer";
-        weapon.mtfName = "ISInfantryFlamer";
-        weapon.tdbName = "IS Infantry Flamer";
+        weapon.mepName = "Infantry Flamer";
+        weapon.mtfName = "InfantryFlamer";
+        weapon.tdbName = "Infantry Flamer";
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_NA;

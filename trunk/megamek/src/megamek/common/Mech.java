@@ -1542,7 +1542,6 @@ public abstract class Mech
             if (mounted.isDestroyed())
                 continue;
 
-            //TODO: antipersonal pods
             if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {

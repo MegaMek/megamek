@@ -17,6 +17,7 @@ v 0.29.26 (CVS)
 + Added static (decode|encode)Transporters to Entity.
 + Moved a bunch of Entity#set* methods into public access.
 + Bug 895717: check for previous count value before adding equipment.
++ Bug 799798: bot shouldn't try to torso twist; the server shouldn't let it.
 
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated

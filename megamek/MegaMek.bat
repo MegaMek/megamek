@@ -1,1 +1,1 @@
-@start wjview /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek ||( (ECHO *** Failed to find Microsoft Java VM.  Please consult the Readme.txt file for more information) && pause)
+start wjview /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek

@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.27.0 (09-27-02, 3:00pm)
 + 574898: bots don't instantly logout with double-blind
 + 612248: bots work tolerably with vehicles
 + 612429: turretless vehicles have their secondary facing set correctly

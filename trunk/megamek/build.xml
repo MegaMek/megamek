@@ -198,7 +198,7 @@
     <!-- keep in mind that directory references for 'excludes' are -->
     <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
     <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${maindir}/, ${builddir}/, com/"/>
+    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/, com/"/>
   </target>
   
   <target name="cvsdev-clean">

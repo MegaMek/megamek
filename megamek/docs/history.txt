@@ -83,7 +83,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.6-dev (CVS)
+v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.
 + 683267: correctly allocate spaces for Endo Steel and Ferro-Fibrous.
 + Allow scenarios to define a rotated board.

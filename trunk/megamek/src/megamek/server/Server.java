@@ -952,19 +952,22 @@ public boolean isPassworded() {
         int playersAlive = 0;
         int teamsAlive = 0;
         boolean teamKnownAlive[] = new boolean[Player.MAX_TEAMS];
+        boolean unteamedAlive = false;
         for (Enumeration e = game.getPlayers(); e.hasMoreElements();) {
             Player player = (Player)e.nextElement();
             int team = player.getTeam();
             if (game.getLiveEntitiesOwnedBy(player) > 0) {
                 playersAlive++;
-                if (team != Player.TEAM_NONE && !teamKnownAlive[team]) {
+                if (team == Player.TEAM_NONE) {
+                    unteamedAlive = true;
+                } else if (!teamKnownAlive[team]) {
                     teamsAlive++;
                     teamKnownAlive[team] = true;
                 }
             }
         }
         
-        return playersAlive == 1 || teamsAlive == 1;
+        return playersAlive <= 1 || (teamsAlive == 1 && !unteamedAlive);
     }
 
     /**
@@ -1280,6 +1283,11 @@ public boolean isPassworded() {
         
         if (entity == null) {
             // what causes this?  --Ben
+            return;
+        }
+        
+        if (!entity.ready) {
+            // the entity has already moved, apparently
             return;
         }
         

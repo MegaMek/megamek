@@ -1672,7 +1672,6 @@ public class Compute
         final Entity te = game.getEntity(targetId);
         final int attackerElevation = ae.elevation();
         final int targetElevation = te.elevation();
-        //HACK: this makes certain assumptions about the names of valid clubs
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         ToHitData toHit;
 
@@ -1745,8 +1744,8 @@ public class Compute
         }
 
         // check facing
-        if (!isInArc(ae.getPosition(), ae.getFacing(), 
-                     te.getPosition(), Compute.ARC_FORWARD)) {
+        int clubArc = bothArms ? Compute.ARC_FORWARD : (club.getLocation() == Mech.LOC_LARM ? Compute.ARC_LEFTARM : Compute.ARC_RIGHTARM);
+        if (!isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), clubArc)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         

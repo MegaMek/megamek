@@ -290,14 +290,15 @@ public class FiringDisplay
      * target.
      */
     private void fire() {
-        int wn = client.mechD.wPan.weaponList.getSelectedIndex();
-        if (ce() == null || te() == null || ce().getWeapon(wn) == null) {
+        int wn = client.mechD.wPan.getSelectedWeaponNum();
+        if (ce() == null || te() == null || ce().getEquipment(wn) == null 
+        || !(ce().getEquipment(wn).getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
     
         attacks.addElement(new WeaponAttackAction(cen, ten, wn));
     
-        ce().getWeapon(wn).setUsedThisTurn(true);
+        ce().getEquipment(wn).setUsedThisRound(true);
         selectedWeapon = ce().getNextWeapon(wn);
         // check; if there are no ready weapons, you're done.
         if(selectedWeapon == -1) {
@@ -314,7 +315,7 @@ public class FiringDisplay
      * Skips to the next weapon
      */
     private void nextWeapon() {
-        selectedWeapon = ce().getNextWeapon(client.mechD.wPan.weaponList.getSelectedIndex());
+        selectedWeapon = ce().getNextWeapon(client.mechD.wPan.getSelectedWeaponNum());
         // check; if there are no ready weapons, you're done.
         if(selectedWeapon == -1) {
             return;
@@ -347,7 +348,7 @@ public class FiringDisplay
                 Object o = i.nextElement();
                 if (o instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction)o;
-                    ce().getWeapon(waa.getWeaponId()).setUsedThisTurn(false);
+                    ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 }
             }
             attacks.removeAllElements();
@@ -381,7 +382,7 @@ public class FiringDisplay
     private void updateTarget() {
         butFire.setEnabled(false);
         // update target panel
-        final int weaponId = client.mechD.wPan.weaponList.getSelectedIndex();
+        final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
         if (ten != Entity.NONE && weaponId != -1) {
             ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, weaponId, attacks);
             client.mechD.wPan.wTargetR.setText(te().getDisplayName());

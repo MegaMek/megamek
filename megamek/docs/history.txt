@@ -17,6 +17,7 @@ v0.29.47 (CVS)
 + RFE 765114: Client Setting to dump chat and turn reports into a file.
     Also, a max file limit for the client-side file.
 + New Game Option to prevent autosave "spamming"
++ Applied corrections to Map Set 7 maps sent in by Endreffy Janos.
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

@@ -1572,24 +1572,14 @@ public abstract class Entity
         
         return num;
     }
-    
-    /**
-     * Returns true if the entity has a hip crit
-     */
-      public boolean hasHipCrit() {
-        boolean hasCrit = false;
 
-        for ( int i = 0; i < locations(); i++ ) {    
-          if ( locationIsLeg(i) ) {
-            if ( getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0 ) {
-              hasCrit = true;
-              break;
-            }
-          }
-        }
-        
-        return hasCrit;
-      }
+    /**
+     * Returns true if the entity has a hip crit.
+     * Overridden by sub-classes.
+     */
+    public boolean hasHipCrit() {
+        return false;
+    }
 
     /**
      * Returns true if the entity has a leg actuator crit

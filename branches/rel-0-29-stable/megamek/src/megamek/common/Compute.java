@@ -4606,10 +4606,23 @@ public class Compute
         Vector vECMRanges = new Vector(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = (Entity)e.nextElement();
-            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && ent.getPosition() != null) {
+            Coords entPos = ent.getPosition();
+            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(ent.getPosition());
+                vEnemyCoords.addElement( entPos );
                 vECMRanges.addElement( new Integer(ent.getECMRange()) );
+            }
+
+            // Check the ECM effects of the entity's passengers.
+            Vector passengers = ent.getLoadedUnits();
+            Enumeration iter = passengers.elements();
+            while ( iter.hasMoreElements() ) {
+                Entity other = (Entity) iter.nextElement();
+                if (other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null) {
+                    // TODO : only use the best ECM range in a given Coords.
+                    vEnemyCoords.addElement( entPos );
+                    vECMRanges.addElement( new Integer(other.getECMRange()) );
+                }
             }
         }
         

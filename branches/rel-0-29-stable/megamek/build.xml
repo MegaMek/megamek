@@ -10,8 +10,9 @@
   <property name="timestampfile" value="timestamp"/>
   <property name="jarfile" value="MegaMek.jar"/>
   <property name="jarmanifest" value="manifest.txt"/> 
-  <property name="cvsdir" value="cvsdev"/>
+  <property name="cvsdir" value="cvsrel"/>
   <property name="libraries" value="collections.jar;TinyXML.jar"/>
+  <property name="cvstag" value="rel-0-29-stable-2" />
 
   <target description="Initialize system before build" name="init">
      <!-- Create the time stamp -->
@@ -65,17 +66,17 @@
      />
   </target>
 
-  <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
-  <target name="cvsdev-init">
+  <!-- following cvsrel-* tasks get, build & package the current version from cvs -->
+  <target name="cvsrel-init">
     <tstamp/>
     <mkdir dir="${cvsdir}"/>
   </target>
 
-  <target depends="cvsdev-init" name="cvsdev-get">
-    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek" dest="${cvsdir}" command="checkout -P" package="megamek"/>
+  <target depends="cvsrel-init" name="cvsrel-get">
+    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek" dest="${cvsdir}" command="checkout -P -r ${cvstag}" package="megamek"/>
   </target>
 
-  <target depends="cvsdev-init" name="cvsdev-build">
+  <target depends="cvsrel-init" name="cvsrel-build">
     <mkdir dir="${cvsdir}/megamek/classes"/>
     <!-- compile -->
     <javac classpath="${cvsdir}/megamek;${cvsdir}/megamek/collections.jar;${cvsdir}/megamek/TinyXML.jar" destdir="${cvsdir}/megamek/classes" srcdir="${cvsdir}/megamek" target="1.1"/>
@@ -84,15 +85,15 @@
     <touch file="${cvsdir}/megamek/${timestampfile}"/>
   </target>
 
-  <target depends="cvsdev-init" name="cvsdev-package">
+  <target depends="cvsrel-init" name="cvsrel-package">
     <delete dir="${cvsdir}/megamek/classes"/>
     <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
   </target>
   
-  <target name="cvsdev-clean">
+  <target name="cvsrel-clean">
     <delete dir="${cvsdir}"/>
   </target>
 
-  <target depends="cvsdev-init, cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" name="cvsdev"/>
+  <target depends="cvsrel-init, cvsrel-get, cvsrel-build, cvsrel-package, cvsrel-clean" name="cvsrel"/>
 
 </project>

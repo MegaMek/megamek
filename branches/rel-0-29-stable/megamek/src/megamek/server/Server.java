@@ -2837,6 +2837,9 @@ implements Runnable {
                         curFacing = entity.getFacing();
                         curPos = entity.getPosition();
                         fellDuringMovement = true;
+                        // BUG 768425: preliminary fix, replace me.
+                        // check to see if we washed off infernos
+                        checkForWashedInfernos(entity, curPos);
                         break;
                     }
                 }

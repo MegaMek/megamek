@@ -126,6 +126,8 @@ v 0.29-stable-2 (CVS)
 + Updated FiringDisplay#findClub() from mainline.
 + Updated TargetRoll.java from mainline.
 + Bug 759032: fixed NPE in MovementDisplay
++ Bug 776522: Meks missing a leg should have a run MP of 1, not 2.
++ Bug 755001: Passengers with ECM should still affect enemy electronics.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

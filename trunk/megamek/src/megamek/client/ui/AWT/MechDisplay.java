@@ -953,7 +953,7 @@ class SystemPanel
         //slotList.setEnabled(false);
         
         m_chMode = new Choice();
-        m_chMode.add("   ");
+        m_chMode.add("      ");
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
         m_bDumpAmmo = new Button("Dump");
@@ -964,65 +964,27 @@ class SystemPanel
         modeLabel.setEnabled(false);
         
         // layout choice panel
-        Panel p = new Panel();
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        p.setLayout(gridbag);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.gridwidth = 1;    c.gridheight = 1;
-        gridbag.setConstraints(modeLabel, c);
-        p.add(modeLabel);
-        
-        c.gridx = 1;
-        c.weightx = 1.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(m_chMode, c);
-        p.add(m_chMode);
-        
-        c.gridx = 0;        c.gridy = 1;
-        gridbag.setConstraints(m_bDumpAmmo, c);
-        p.add(m_bDumpAmmo);
+        Panel choicePanel = new Panel();
+        choicePanel.setLayout(new BorderLayout());
+        choicePanel.add(modeLabel, BorderLayout.NORTH);
+        choicePanel.add(m_chMode, BorderLayout.CENTER);
+        choicePanel.add(m_bDumpAmmo, BorderLayout.SOUTH);
         
         // layout main panel
-        gridbag = new GridBagLayout();
-        c = new GridBagConstraints();
-        setLayout(gridbag);
-        
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        
-        c.weightx = 0.5;    c.weighty = 0.0;
-        c.gridwidth = 1;
-        gridbag.setConstraints(locLabel, c);
-        add(locLabel);
-        
-        c.weightx = 1.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(slotLabel, c);
-        add(slotLabel);
-        
-        c.weightx = 0.5;    c.weighty = 1.0;
-        c.gridwidth = 1;
-        c.gridheight = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(locList, c);
-        add(locList);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.gridheight = 2;
-        c.gridy = 1;
-        c.gridx = 1;
-        c.weightx = 1.0;
-        c.weighty = 0.8;
-        gridbag.setConstraints(slotList, c);
-        add(slotList);
-        
-        c.gridy = 4;
-        c.weighty = 0.2;
-        c.gridheight = 1;
-        gridbag.setConstraints(p, c);
-        add(p);
+        Panel leftPanel = new Panel();
+        leftPanel.setLayout(new BorderLayout());
+        leftPanel.add(locLabel, BorderLayout.NORTH);
+        leftPanel.add(locList, BorderLayout.CENTER);
+
+        Panel rightPanel = new Panel();
+        rightPanel.setLayout(new BorderLayout());
+        rightPanel.add(slotLabel, BorderLayout.NORTH);
+        rightPanel.add(slotList, BorderLayout.CENTER);
+        rightPanel.add(choicePanel, BorderLayout.SOUTH);
+
+        setLayout(new GridLayout(1,2));
+        add(leftPanel);
+        add(rightPanel);
     }
     
     public int getSelectedLocation() {

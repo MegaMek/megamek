@@ -9,6 +9,8 @@ v 0.29.20 (CVS)
 + Fix bug with turning using running movement after walking backwards
 + Patch 864818: added new ammo types
 + Bug 837828, Patch 865451: Double-blind entities aren't necessarily dead.
++ Bug 849863: Updated mechset.txt, changed existing images, and added Hatamoto.
++ Bug 856217: Updated document (a bit... suggestions welcome).
 
 v 0.29.19 (2003-12-16, 10:55pm)
 + Bug 849222: Need to check for clubbing in Server#canPhysicalTarget.

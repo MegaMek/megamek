@@ -4894,7 +4894,7 @@ implements Runnable, ConnectionHandler {
             else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
                 deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
             else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+                deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize(), wr.waa.getOtherAttackInfo());
             else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
                 deliverThunderActiveMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
             //else

@@ -264,7 +264,8 @@ public class FiringDisplay
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
-            butSpot.setEnabled(ce().canSpot());
+            butSpot.setEnabled(ce().canSpot()
+            	&& client.game.getOptions().booleanOption("indirect_fire"));
             butFlipArms.setEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);

@@ -494,6 +494,9 @@ public class BoardView1
      */
     public void redrawEntity(Entity entity) {
         EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
+        Vector newSprites = new Vector(entitySprites);
+        Hashtable newSpriteIds = new Hashtable(entitySpriteIds);
+        
         
         if (sprite != null) {
             entitySprites.removeElement(sprite);
@@ -510,13 +513,19 @@ public class BoardView1
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     private void redrawAllEntities() {
-        entitySprites.removeAllElements();
-        entitySpriteIds.clear();
+        Vector newSprites = new Vector(game.getNoOfEntities());
+        Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
         
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            redrawEntity(entity);
+            
+            EntitySprite sprite = new EntitySprite(entity);
+            newSprites.add(sprite);
+            newSpriteIds.put(new Integer(entity.getId()), sprite);
         }
+        
+        entitySprites = newSprites;
+        entitySpriteIds = newSpriteIds;
 
         repaint(100);
     }

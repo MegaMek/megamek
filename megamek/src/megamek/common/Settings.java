@@ -58,7 +58,9 @@ public class Settings
     public static boolean   showWrecks              = true;
     
     public static String    lastPlayerName          = "";
-    public static int       lastPlayerColor;
+    public static int       lastPlayerColor         = 0;
+    public static String    lastPlayerCamoName      = null;
+    public static String    lastPlayerCategory      = "";
     
     public static String    lastServerPass          = "";
     public static int       lastServerPort          = 2346;

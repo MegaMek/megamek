@@ -254,6 +254,12 @@ public class FiringDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
+        // clear any previously considered attacks
+        if (en != cen) {
+            clearAttacks();
+            refreshAll();
+        }
+        
 	boolean isInfantry;
         
         if (client.game.getEntity(en) != null) {
@@ -725,8 +731,6 @@ public class FiringDisplay
         } else if (ev.getSource() == butTwist) {
             twisting = true;
         } else if (ev.getSource() == butNext) {
-            clearAttacks();
-            refreshAll();
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;

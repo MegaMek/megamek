@@ -28,6 +28,12 @@ public class Settings
     public static int       windowPosY              = 0;
     public static int       windowSizeWidth         = 800;
     public static int       windowSizeHeight        = 600;
+
+    // the size and position of the MiniReport window
+    public static int       miniReportPosX          = 200;
+    public static int       miniReportPosY          = 150;
+    public static int       miniReportSizeWidth     = 400;
+    public static int       miniReportSizeHeight    = 300;
     
     public static boolean   minimapEnabled          = true;
     public static int       minimapPosX             = 0;
@@ -110,6 +116,10 @@ public class Settings
     // (b) Having "\" in the pathname **does not work**; for reasons that
     //          are *not* obvious to me, the "\" disappears from the
     //          MegaMek.cfg setting after repeated saves.
+    //
+    // nemchenk: I suspect the disappearance is to do with escaping -- 
+    // \sounds becomes sounds as \s is changed into s.
+    //
     public static String    soundBingFilename       = "data/sounds/call.wav";
 
     /**
@@ -274,6 +284,18 @@ scan:
                         windowSizeWidth = (int)st.nval;
                         st.nextToken();
                         windowSizeHeight = (int)st.nval;
+                    }
+                    else if(key.equals("minireportpos")) {
+                        st.nextToken();
+                        miniReportPosX = (int)st.nval;
+                        st.nextToken();
+                        miniReportPosY = (int)st.nval;
+                    }
+                    else if(key.equals("minireportsize")) {
+                        st.nextToken();
+                        miniReportSizeWidth = (int)st.nval;
+                        st.nextToken();
+                        miniReportSizeHeight = (int)st.nval;
                     }
                     else if (key.equals("minimapenabled")) {
                         st.nextToken();
@@ -588,6 +610,8 @@ scan:
             cw.write("\r\n");
             cw.write("windowpos " + windowPosX + " " + windowPosY + "\r\n");
             cw.write("windowsize " + windowSizeWidth + " " + windowSizeHeight + "\r\n");
+            cw.write("minireportpos " + miniReportPosX + " " + miniReportPosY + "\r\n");
+            cw.write("minireportsize " + miniReportSizeWidth + " " + miniReportSizeHeight + "\r\n");
             cw.write("minimapenabled " + minimapEnabled + "\r\n");
             cw.write("minimappos " + minimapPosX + " " + minimapPosY + "\r\n");
             cw.write("minimapzoom " + minimapZoom + "\r\n");

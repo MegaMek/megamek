@@ -180,6 +180,7 @@ public class Connection {
             return packet;
         } catch (IOException ex) {
             System.err.println("server(" + id + "): IO error reading command");
+//             ex.printStackTrace();
             server.disconnected(this);
             return null;
         } catch (ClassNotFoundException ex) {

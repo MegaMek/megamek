@@ -15,7 +15,8 @@ v0.29.32 (CVS)
 + Refactored code from the bot to MovePath to refine the A* path finder.
 + Refactored lots of other code.
 + Players can set the time for the pathfinder to "think".
-+ Bug 936861: LOS dialog locks up MM client
++ Bug 936861: LOS dialog no longer locks up MM client
++ Patch 927127, RFE 711582: allow players to zoom in and out on the board.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

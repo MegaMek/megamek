@@ -131,7 +131,8 @@ public class MechSelectorDialog
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
         filterMechs();
-        unitLoadingDialog.setVisible(false);
+
+        unitLoadingDialog.hide();
 
         final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {

@@ -28,6 +28,7 @@ public class Game implements Serializable
     public static final int PHASE_LOUNGE            = 1;
     public static final int PHASE_SELECTION         = 2;
     public static final int PHASE_EXCHANGE          = 3;
+    public static final int PHASE_DEPLOYMENT        = 12;  // reorder someday
     public static final int PHASE_INITIATIVE        = 4;
     public static final int PHASE_MOVEMENT          = 5;
     public static final int PHASE_MOVEMENT_REPORT   = 6;
@@ -56,6 +57,9 @@ public class Game implements Serializable
     
     private Vector players = new Vector();
     private Hashtable playerIds = new Hashtable();
+    
+    // have the entities been deployed?
+    private boolean m_bHasDeployed = false;
     
     /**
      * Constructor
@@ -184,6 +188,14 @@ public class Game implements Serializable
      */
     public void setTurn(GameTurn turn) {
         this.turn = turn;
+    }
+    
+    public boolean hasDeployed() {
+        return m_bHasDeployed;
+    }
+    
+    public void setHasDeployed(boolean in) {
+        m_bHasDeployed = in;
     }
     
     /**

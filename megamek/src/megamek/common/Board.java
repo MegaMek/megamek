@@ -470,6 +470,46 @@ implements Serializable {
         return boardx == x && boardy == y;
     }
     
+    /**
+     * Can the player deploy an entity here?
+     * There are no canon rules for the deployment phase (?!).  I'm using
+     * 3 hexes from map edge.
+     */
+    public boolean isLegalDeployment(Coords c, Player p)
+    {
+        if (c == null || p == null) return false;
+        
+        int nLimit = 3;
+        int nDir = p.getStartingPos();
+        switch (nDir) {
+            case 0 : // Any
+                return true;
+            case 1 : // NW
+                return (c.x < nLimit && c.y < height / 2) || 
+                        (c.y < nLimit && c.x < width / 2);
+            case 2 : // N
+                return c.y < nLimit;
+            case 3 : // NE
+                return (c.x > (width - nLimit) && c.y < height / 2) ||
+                        (c.y < nLimit && c.x > width / 2);
+            case 4 : // E
+                return c.x >= (width - nLimit);
+            case 5 : // SE
+                return (c.x >= (width - nLimit) && c.y > height / 2) ||
+                        (c.y >= (height - nLimit) && c.x > width / 2);
+            case 6 : // S
+                return c.y > (height - nLimit);
+            case 7 : // SW
+                return (c.x < nLimit && c.y > height / 2) ||
+                        (c.y >= (height - nLimit) && c.x < width / 2);
+            case 8 : // W
+                return c.x < nLimit;
+            default : // ummm. . 
+                return false;
+        }
+        
+    }
+    
     
     /**
      * Loads this board from a filename in data/boards

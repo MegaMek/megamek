@@ -78,7 +78,7 @@ public abstract class Entity
     protected boolean           doomed = false;
     protected boolean           destroyed = false;
 
-    private Coords              position = new Coords();
+    private Coords              position;// = new Coords();
 
     protected int               facing = 0;
     protected int               sec_facing = 0;

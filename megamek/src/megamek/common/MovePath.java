@@ -297,13 +297,14 @@ public class MovePath implements Serializable {
 
         if (step1.oppositeTurn(step3)
             && (step2.getType() == MovePath.STEP_BACKWARDS || step2.getType() == MovePath.STEP_FORWARDS)) {
-            int stepType = getStep(index).getType();
+            int stepType = step1.getType();
+            int direction = step2.getType();
             // remove all old steps
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             // add new step
-            MoveStep shift = new MoveStep(this, lateralShiftForTurn(stepType));
+            MoveStep shift = new MoveStep(this, lateralShiftForTurn(stepType, direction));
             addStep(shift);
         }
     }
@@ -311,39 +312,43 @@ public class MovePath implements Serializable {
     /**
 	 * Returns the lateral shift that corresponds to the turn direction
 	 */
-    public static int lateralShiftForTurn(int turn) {
-        switch (turn) {
-            case MovePath.STEP_TURN_LEFT :
-                return MovePath.STEP_LATERAL_LEFT;
-            case MovePath.STEP_TURN_RIGHT :
-                return MovePath.STEP_LATERAL_RIGHT;
-            default :
-                return turn;
+    public static int lateralShiftForTurn(int turn, int direction) {
+        if (direction == MovePath.STEP_FORWARDS) {
+            switch (turn) {
+                case MovePath.STEP_TURN_LEFT :
+                    return MovePath.STEP_LATERAL_LEFT;
+                case MovePath.STEP_TURN_RIGHT :
+                    return MovePath.STEP_LATERAL_RIGHT;
+                default :
+                    return turn;
+            }
+        } else {
+            switch (turn) {
+                case MovePath.STEP_TURN_LEFT :
+                    return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
+                case MovePath.STEP_TURN_RIGHT :
+                    return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
+                default :
+                    return turn;
+            }
         }
     }
-
+    
     /**
 	 * Returns the turn direction that corresponds to the lateral shift
 	 */
-    static int turnForLateralShift(int shift, int direction) {
-        if (direction == MovePath.STEP_FORWARDS) {
-            switch (shift) {
-                case MovePath.STEP_LATERAL_LEFT :
-                    return MovePath.STEP_TURN_LEFT;
-                case MovePath.STEP_LATERAL_RIGHT :
-                    return MovePath.STEP_TURN_RIGHT;
-                default :
-                    return shift;
-            }
-        } else {
-            switch (shift) {
-                case MovePath.STEP_TURN_LEFT :
-                    return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
-                case MovePath.STEP_TURN_RIGHT :
-                    return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
-                default :
-                    return shift;
-            }
+    static int turnForLateralShift(int shift) {
+        switch (shift) {
+            case MovePath.STEP_LATERAL_LEFT :
+                return MovePath.STEP_TURN_LEFT;
+            case MovePath.STEP_LATERAL_RIGHT :
+                return MovePath.STEP_TURN_RIGHT;
+            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
+                return MovePath.STEP_TURN_LEFT;
+            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
+                return MovePath.STEP_TURN_RIGHT;
+            default :
+                return shift;
         }
     }
 

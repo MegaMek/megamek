@@ -246,7 +246,7 @@ public class MoveStep implements Serializable {
                         (MovePath
                             .getAdjustedFacing(
                                 getFacing(),
-                                MovePath.turnForLateralShift(getType(), MovePath.STEP_FORWARDS))
+                                MovePath.turnForLateralShift(getType()))
                             + 3)
                             % 6);
                     setThisStepBackwards(true);
@@ -255,7 +255,7 @@ public class MoveStep implements Serializable {
                     moveInDir(
                         MovePath.getAdjustedFacing(
                             getFacing(),
-                            MovePath.turnForLateralShift(getType(), MovePath.STEP_FORWARDS)));
+                            MovePath.turnForLateralShift(getType())));
                     setThisStepBackwards(false);
                 }
 

@@ -29,6 +29,7 @@ public class Tank
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
     private Mounted m_jammedGun = null;
+    private boolean m_bImmobile = false;
     
     // locations
     public static final int        LOC_BODY               = 0;
@@ -92,6 +93,17 @@ public class Tank
             if (nTurretFacing < 0) nTurretFacing += 6;
             super.setSecondaryFacing(nTurretFacing);
         }
+    }
+    
+    public void immobilize()
+    {
+        m_bImmobile = true;
+        setOriginalWalkMP(0);
+    }
+    
+    public boolean isImmobile()
+    {
+        return super.isImmobile() || m_bImmobile;
     }
     
     /**

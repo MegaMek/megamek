@@ -2825,7 +2825,9 @@ public boolean isPassworded() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
 
-            if (!e.isTargetable() || !e.crew.isUnconcious() || e.crew.isKoThisRound()) {
+            // only unconscious pilots of mechs can roll to wake up
+            if (!e.isTargetable() || !e.crew.isUnconcious() || 
+                    e.crew.isKoThisRound() || !(e instanceof Mech)) {
                 continue;
             }
             anyRolls = true;

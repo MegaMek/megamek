@@ -21,7 +21,7 @@ import java.io.*;
  * <p/>
  * It makes use of an inner class to define an Inferno round.  This inner
  * class should not be directly accessed, but instead refered to by the
- * constants: <code>STANDARD_ROUND</code> and <code>ARROW_IV_ROUND</code>.
+ * constants: <code>STANDARD_ROUND</code> and <code>INFERNO_IV_ROUND</code>.
  */
 public class InfernoTracker
   implements Serializable, RoundUpdated

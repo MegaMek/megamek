@@ -66,14 +66,35 @@ public class Compute
      */
     public static double oddsAbove(int n) {
         if (n < 2) {
-            return Double.MAX_VALUE;
+            return 100.0;
+        } else if (n > 12) {
+            return 0;
         }
-        double[] odds = {Double.MAX_VALUE, Double.MAX_VALUE,
+        double[] odds = {100.0, 100.0,
                          100.0, 97.2, 91.6, 83.3, 72.2, 58.3, 
                          41.6, 27.7, 16.6, 8.3, 5.56, 2.78, 0};
         return odds[n];
     }
     
+    /** Returns the odds of rolling n exactly on 2d6
+     */
+    public static double oddsOf(int n) {
+        switch (n) {
+        case 2:return 1.0/36;
+        case 3:return 2.0/36;
+        case 4:return 3.0/36;
+        case 5:return 4.0/36;
+        case 6:return 5.0/36;
+        case 7:return 6.0/36;
+        case 8:return 5.0/36;
+        case 9:return 4.0/36;
+        case 10:return 3.0/36;
+        case 11:return 2.0/36;
+        case 12:return 1.0/36;
+        }
+        return 0;
+    }	
+     
     /**
      * Generates a MovementData to rotate the entity to it's new facing
      */

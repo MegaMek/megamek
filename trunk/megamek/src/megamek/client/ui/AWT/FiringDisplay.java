@@ -275,6 +275,7 @@ public class FiringDisplay
      * Targets an entity
      */
     private void updateTarget() {
+        butFire.setEnabled(false);
         // update target panel
         final int weaponId = client.mechD.wPan.weaponList.getSelectedIndex();
         if (ten != Entity.NONE && weaponId != -1) {
@@ -302,14 +303,12 @@ public class FiringDisplay
      */
     private void torsoTwist(Coords target) {
         int direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
-        //System.out.println("firingDisplay: removed all pending fire due to torso twist");
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             client.bv.redrawEntity(ce());
             // update target data in weapon display
-            butFire.setEnabled(false);
             updateTarget();
         }
     }
@@ -489,7 +488,6 @@ public class FiringDisplay
     //
     public void itemStateChanged(ItemEvent ev) {
         if(ev.getItemSelectable() == client.mechD.wPan.weaponList) {
-            butFire.setEnabled(false);
             // update target data in weapon display
             updateTarget();
         }

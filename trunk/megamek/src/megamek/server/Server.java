@@ -561,7 +561,7 @@ public class Server
         switch (phase) {
         case Game.PHASE_LOUNGE :
             mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
-            mapSettings.setNullBoardsSelected(DEFAULT_BOARD);
+            mapSettings.setNullBoards(DEFAULT_BOARD);
             break;
         case Game.PHASE_EXCHANGE :
             gameSettings.friendlyFire = game.getNoOfPlayers() <= 1;
@@ -2392,14 +2392,14 @@ public class Server
         int roll = Compute.d6(2);
         desc += "Roll = " + roll + ";";
         if (roll <= 7) {
-                desc += " no effect.";
-                return desc;
+            desc += " no effect.";
+            return desc;
         } else if (roll >= 8 && roll <= 9) {
-                hits = 1;
-                desc += " 1 location.";
+            hits = 1;
+            desc += " 1 location.";
         } else if (roll >= 10 && roll <= 11) {
-                hits = 2;
-                desc += " 2 locations.";
+            hits = 2;
+            desc += " 2 locations.";
         } else if (roll == 12) {
             if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
@@ -2688,33 +2688,29 @@ public class Server
     private Vector scanForBoards(int boardWidth, int boardHeight) {
         Vector boards = new Vector();
         
+        File boardDir = new File("data/boards");
+        
+        // just a check...
+        if (!boardDir.isDirectory()) {
+            return boards;
+        }
+        
+        // scan files
+        String[] fileList = boardDir.list();
+        for (int i = 0; i < fileList.length; i++) {
+            if (Board.boardIsSize(fileList[i], boardWidth, boardHeight)) {
+                boards.addElement(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
+            }
+        }
+        
         // if there are any boards, add these:
-        boards.addElement(MapSettings.BOARD_RANDOM);
-        boards.addElement(MapSettings.BOARD_SURPRISE);
+        if (boards.size() > 0) {
+            boards.insertElementAt(MapSettings.BOARD_RANDOM, 0);
+            boards.insertElementAt(MapSettings.BOARD_SURPRISE, 1);
+        }
         
-        // temp: just add these...
-        boards.addElement("battletech");
-        boards.addElement("citytech");
-        boards.addElement("deepcanyon1");
-        boards.addElement("deepcanyon2");
-        boards.addElement("deserthills");
-        boards.addElement("desertmountain1");
-        boards.addElement("desertmountain2");
-        boards.addElement("desertsinkhole1");
-        boards.addElement("desertsinkhole2");
-        boards.addElement("heavyforest1");
-        boards.addElement("heavyforest2");
-        boards.addElement("lakearea");
-        boards.addElement("largelakes1");
-        boards.addElement("largelakes2");
-        boards.addElement("openterrain1");
-        boards.addElement("openterrain2");
-        boards.addElement("rivervalley");
-        boards.addElement("rollinghills1");
-        boards.addElement("rollinghills2");
-        boards.addElement("scatteredwoods");
-        boards.addElement("woodland");
-        
+        //TODO: alphabetize files?
+
         return boards;
     }
     
@@ -3017,8 +3013,10 @@ public class Server
         case Packet.COMMAND_QUERY_MAP_SETTINGS :
             MapSettings temp = (MapSettings)packet.getObject(0);
             temp.setBoardsAvailableVector(scanForBoards(temp.getBoardWidth(), temp.getBoardHeight()));
-            temp.setNullBoardsSelected(DEFAULT_BOARD);
+            temp.removeUnavailable();
+            temp.setNullBoards(DEFAULT_BOARD);
             temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+            temp.removeUnavailable();
             send(connId, createMapQueryPacket(temp));
             break;
         }

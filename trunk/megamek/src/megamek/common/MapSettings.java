@@ -105,9 +105,9 @@ public class MapSettings implements Serializable {
     }
     
     /**
-     * Fills in all nulls in the boards available list with the specified board
+     * Fills in all nulls in the boards selected list with the specified board
      */
-    public void setNullBoardsSelected(String board) {
+    public void setNullBoards(String board) {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.elementAt(i) == null) {
                 boardsSelected.setElementAt(board, i);
@@ -123,6 +123,18 @@ public class MapSettings implements Serializable {
             if (boardsSelected.elementAt(i).equals(board)) {
                 int rindex = Compute.random.nextInt(boardsAvailable.size() - 2) + 2;
                 boardsSelected.setElementAt(boardsAvailable.elementAt(rindex), i);
+            }
+        }
+    }
+    
+    /**
+     * Removes selected boards that aren't listed in the available boards
+     */
+    public void removeUnavailable() {
+        for (int i = 0; i < boardsSelected.size(); i++) {
+            if (boardsSelected.elementAt(i) == null || boardsAvailable.size() == 0 
+            || boardsAvailable.indexOf(boardsSelected.elementAt(i)) == -1) {
+                boardsSelected.setElementAt(null, i);
             }
         }
     }

@@ -133,6 +133,8 @@ v 0.29.9-dev
 + Bug 791578: C3 range: use Entity#isActive() not Entity#isSelectableThisTurn()
 + Added the minimap to the map editor. Also, made minimap more efficient by 
   disabling its drawing if it's hidden (it can slow down the game on large maps)
++ Bug 797819: Pre-loaded infantry can now be deployed when using "Infantry move
+  after meks" option.
   
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

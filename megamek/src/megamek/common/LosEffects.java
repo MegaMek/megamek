@@ -193,21 +193,20 @@ public class LosEffects {
             attOnLand = true;
         } else {
             attUnderWater = attHex.contains(Terrain.WATER) && 
-                        attHex.depth() > 0 && 
-                        attEl < attHex.surface();
+                attHex.depth() > 0 && 
+                attEl < attHex.surface();
             attInWater = attHex.contains(Terrain.WATER) &&
-                        attHex.depth() > 0 && 
-                        attEl == attHex.surface();
+                attHex.depth() > 0 && 
+                attEl == attHex.surface();
             attOnLand = !(attUnderWater || attInWater);
         }
         
-        
         boolean targetUnderWater = targetHex.contains(Terrain.WATER) && 
-        						targetHex.depth() > 0 && 
-        						targEl < targetHex.surface();
+            targetHex.depth() > 0 && 
+            targEl < targetHex.surface();
         boolean targetInWater = targetHex.contains(Terrain.WATER) &&
-        						targetHex.depth() > 0 && 
-        						targEl == targetHex.surface();
+            targetHex.depth() > 0 && 
+            targEl == targetHex.surface();
         boolean targetOnLand = !(targetUnderWater || targetInWater);
 		
         boolean underWaterCombat = targetUnderWater || attUnderWater;
@@ -221,7 +220,7 @@ public class LosEffects {
         ai.underWaterCombat = underWaterCombat;
         ai.attOffBoard = attOffBoard;
         
-		return calculateLos(game, ai);
+        return calculateLos(game, ai);
     }
 
     public static LosEffects calculateLos(Game game, AttackInfo ai) {
@@ -232,11 +231,11 @@ public class LosEffects {
             return los;
         }
         if (ai.attOnLand && ai.targetUnderWater ||
-			     ai.attUnderWater && ai.targetOnLand) {
-			     LosEffects los = new LosEffects();
-			     los.blocked = true;
-			     return los;        	
-		    }
+            ai.attUnderWater && ai.targetOnLand) {
+            LosEffects los = new LosEffects();
+            los.blocked = true;
+            return los;        	
+        }
 		
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {

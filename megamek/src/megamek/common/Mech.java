@@ -567,7 +567,7 @@ public abstract class Mech
                 // normal front hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_CT, false, HitData.EFFECT_CRITICAL);
+                    return tac(table, side, Mech.LOC_CT, false);
                 case 3:
                 case 4:
                     return new HitData(Mech.LOC_RARM);
@@ -592,7 +592,7 @@ public abstract class Mech
                 // normal left side hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_LT, false, HitData.EFFECT_CRITICAL);
+                    return tac(table, side, Mech.LOC_LT, false);
                 case 3:
                     return new HitData(Mech.LOC_LLEG);
                 case 4:
@@ -618,7 +618,7 @@ public abstract class Mech
                 // normal right side hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_RT, false, HitData.EFFECT_CRITICAL);
+                    return tac(table, side, Mech.LOC_RT, false);
                 case 3:
                     return new HitData(Mech.LOC_RLEG);
                 case 4:
@@ -644,7 +644,7 @@ public abstract class Mech
                 // normal rear hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_CT, true, HitData.EFFECT_CRITICAL);
+                    return tac(table, side, Mech.LOC_CT, true);
                 case 3:
                 case 4:
                     return new HitData(Mech.LOC_RARM, true);
@@ -756,6 +756,22 @@ public abstract class Mech
             }
         }
         return null;
+    }
+    
+    /**
+     * Called when a thru-armor-crit is rolled.  Checks the game options and
+     * either returns no critical hit, rolls a floating crit, or returns a TAC 
+     * in the specified location.
+     */
+    private HitData tac(int table, int side, int location, boolean rear) {
+        if (game.getOptions().booleanOption("no_tac")) {
+            return new HitData(location, rear);
+        } else if (game.getOptions().booleanOption("floating_crits")) {
+            HitData hd = rollHitLocation(table, side);
+            return new HitData(hd.getLocation(), hd.isRear(), HitData.EFFECT_CRITICAL);
+        } else {
+            return new HitData(location, rear, HitData.EFFECT_CRITICAL);
+        }
     }
     
     /**

@@ -27,13 +27,23 @@ import megamek.server.Server;
  * @author Andrew Hunter
  *
  */
-public class MissileWeapon extends AmmoWeapon {
+public abstract class MissileWeapon extends AmmoWeapon {
+	protected int numMissiles;
+	protected int damagePerMissile;
+	/**
+	 * @return Returns the damagePerMissile.
+	 */
+	public int getDamagePerMissile() {
+		return damagePerMissile;
+	}
+	protected int damageCluster;
 
     /**
      * 
      */
     public MissileWeapon() {
         super();
+        this.damage = DAMAGE_MISSILE;
     }
     
 
@@ -44,4 +54,16 @@ public class MissileWeapon extends AmmoWeapon {
             WeaponAttackAction waa, Game game, Server server) {
         return new MissileHandler(toHit, waa, game, server);
     }
+	/**
+	 * @return Returns the damageCluster.
+	 */
+	public int getDamageCluster() {
+		return damageCluster;
+	}
+	/**
+	 * @return Returns the numMissles.
+	 */
+	public int getNumMissiles() {
+		return numMissiles;
+	}
 }

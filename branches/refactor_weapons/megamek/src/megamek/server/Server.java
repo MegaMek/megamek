@@ -4449,7 +4449,7 @@ implements Runnable, ConnectionHandler {
                 }
 
                 // Can only use AMS versus missles.
-                if (((WeaponType)weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
+                if (weapon.getType() instanceof MissileWeapon) {
                     Entity target = game.getEntity(waa.getTargetId());
                     Vector v = (Vector)htAttacks.get(target);
                     if (v == null) {

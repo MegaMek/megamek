@@ -24,7 +24,7 @@ import megamek.server.Server;
  * @author Andrew Hunter
  *
  */
-public class UACWeapon extends AmmoWeapon {
+public abstract class UACWeapon extends AmmoWeapon {
 	/**
 	 * 
 	 */

@@ -701,6 +701,19 @@ public class Compute
         if (!game.board.contains(dest)) {
             return false;
         }
+        
+        // mechs dumping ammo can't run
+        boolean bDumping = false;
+        for (Enumeration e = entity.getAmmo(); e.hasMoreElements(); ) {
+            if (((Mounted)e.nextElement()).isDumping()) {
+                bDumping = true;
+                break;
+            }
+        }
+        if (bDumping && entityMoveType == Entity.MOVE_RUN) {
+            return false;
+        }
+        
         // check elevation difference > max
         int nSrcEl = entity.elevationOccupied(srcHex);
         int nDestEl = entity.elevationOccupied(destHex);

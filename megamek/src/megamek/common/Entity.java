@@ -197,6 +197,7 @@ public abstract class Entity
         return weight;
     }
     
+    
     protected void setWeight(float weight) {
         this.weight = weight;
     }
@@ -1137,7 +1138,7 @@ public abstract class Entity
         for (Enumeration i = getAmmo(); i.hasMoreElements();) {
             Mounted mountedAmmo = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mountedAmmo.getType();
-            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
                 continue;
             }
             if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
@@ -1152,7 +1153,7 @@ public abstract class Entity
      */
     public void loadWeapon(Mounted mounted, Mounted mountedAmmo)
     {
-        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
             return;
         }
         

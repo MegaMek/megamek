@@ -632,12 +632,16 @@ class WeaponPanel
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
             // determine shots left & total shots left
             if (wtype.getAmmoType() != AmmoType.T_NA) {
-                int shotsLeft = mounted.getLinked() == null ? 0 : mounted.getLinked().getShotsLeft();
+                int shotsLeft = 0;
+                if (mounted.getLinked() != null && !mounted.getLinked().isDumping()) {
+                    shotsLeft = mounted.getLinked().getShotsLeft();
+                }
+                
                 EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
                 int totalShotsLeft = 0;
                 for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
                     Mounted amounted = (Mounted)j.nextElement();
-                    if (amounted.getType() == typeUsed) {
+                    if (amounted.getType() == typeUsed && !amounted.isDumping()) {
                         totalShotsLeft += amounted.getShotsLeft();
                     }
                 }
@@ -742,7 +746,7 @@ class WeaponPanel
             for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
                 Mounted mountedAmmo = (Mounted)j.nextElement();
                 AmmoType atype = (AmmoType)mountedAmmo.getType();
-                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
                     continue;
                 }
                 if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
@@ -804,7 +808,7 @@ class WeaponPanel
  */
 class SystemPanel 
     extends Panel
-    implements ItemListener 
+    implements ItemListener, ActionListener
 {
     private static Object SYSTEM = new Object();
     
@@ -842,6 +846,8 @@ class SystemPanel
         m_chMode.addItemListener(this);
         m_bDumpAmmo = new Button("Dump");
         m_bDumpAmmo.setEnabled(false);
+        m_bDumpAmmo.setActionCommand("dump");
+        m_bDumpAmmo.addActionListener(this);
         modeLabel = new Label("Mode", Label.CENTER);
         modeLabel.setEnabled(false);
         
@@ -982,7 +988,7 @@ class SystemPanel
             Mounted m = getSelectedEquipment();
           
             if (m != null && m.getType() instanceof AmmoType 
-                    && m.getShotsLeft() > 0) {
+                    && m.getShotsLeft() > 0 && !m.isDumping()) {
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && m.getType().hasModes()) {
@@ -1014,6 +1020,30 @@ class SystemPanel
                 }
                 displaySlots();
             }
+        }
+    }
+    
+    // ActionListener
+    public void actionPerformed(ActionEvent ae)
+    {
+        if (ae.getActionCommand().equals("dump")) {
+            Mounted m = getSelectedEquipment();
+            if (m == null || !(m.getType() instanceof AmmoType) || m.getShotsLeft() <= 0) {
+                return;
+            }
+            
+            boolean bDumping;
+            
+            if (m.isPendingDump()) {
+                bDumping = false;
+                client.cb.systemMessage(m.getName() + " WON'T be dumped next turn.");
+            }
+            else {
+                bDumping = true;
+                client.cb.systemMessage(m.getName() + " will be dumped next turn.");
+            }
+            m.setPendingDump(bDumping);
+            client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
         }
     }
 }

@@ -1743,7 +1743,9 @@ public class BoardView1
                 scroll.x -= Settings.getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
                 scroll.y -= Settings.getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
                 checkScrollBounds();
-                oldMousePosition.setLocation(mousePos);
+                if (mousePos != null) {
+                    oldMousePosition.setLocation(mousePos);
+                }
                 s = !oldScroll.equals(scroll);
                 scrolled = scrolled || s;
             };

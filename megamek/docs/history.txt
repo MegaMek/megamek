@@ -16,6 +16,7 @@ v0.29.53 (CVS)
 + Bug 1047592: Configure Unit dialogue broken
 + Bug 1047450: heat and leg damage movement point modifiers
     should be applied before gravity modifiers
++ Bug 1036351: scroll problems
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

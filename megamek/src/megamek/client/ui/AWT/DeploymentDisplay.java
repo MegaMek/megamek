@@ -326,24 +326,25 @@ public class DeploymentDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
-
+        
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
             return;
         }
-        
-        endMyTurn();
 
         if (client.isMyTurn()) {
             beginMyTurn();
             setStatusBarText("It's your turn to deploy.");
         } else {
+            endMyTurn();
             setStatusBarText("It's " + ev.getPlayer().getName() + 
                     "'s turn to deploy.");
         }
     }
     
     public void gamePhaseChange(GameEvent ev) {
+
+        client.bv.markDeploymentHexesFor(null);
 
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {
@@ -352,7 +353,6 @@ public class DeploymentDisplay
 
         if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
             setStatusBarText("Waiting to begin Deployment phase...");
-            beginMyTurn();
         }
     }
     

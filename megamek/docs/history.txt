@@ -18,6 +18,7 @@ v0.29.59 (CVS)
 + Bug 1093084: Infantry movement errata. Infantry can now walk and run,
    and we need to keep track of the movementtype because now infantry movement
    does count for spotting
++ Bug 1093536: missed DFA with target on the board egde crashes megamek
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

@@ -148,13 +148,6 @@ public class RotateFilter extends RGBImageFilter {
     }
     
     /**
-     * Get the rounded nearest-neighbor pixel at the coordinates.
-     */
-    private int pixelNear(double x, double y) {
-        return pixel((int)Math.round(x), (int)Math.round(y));
-    }
-    
-    /**
      * Get the bilinearly calculated pixel at the coordinates.  
      * Lazy black & white mode.
      */
@@ -201,14 +194,6 @@ public class RotateFilter extends RGBImageFilter {
         int green = (int)Math.round(mul0*green0 + mul1*green1 + mul2*green2 + mul3*green3);
         
         return combine(alpha, red, green, blue);
-    }
-    
-    /**
-     * Actually, I'm too dumb to program bicubic right now.  Might help image
-     * quality, though.
-     */
-    private int pixelBicubic(double x, double y) {
-        return 0;
     }
     
 }

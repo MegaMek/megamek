@@ -135,7 +135,7 @@ public class MiscType extends EquipmentType {
         return 1;
     }
     
-    public float getBV(Entity entity) {
+    public double getBV(Entity entity) {
         if (bv != BV_VARIABLE) {
             return bv;
         }

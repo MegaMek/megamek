@@ -107,6 +107,8 @@ public class BuildingBlock {
             
             };
             
+            in.close();
+            
         } catch (IOException e) {
             
             System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream.");

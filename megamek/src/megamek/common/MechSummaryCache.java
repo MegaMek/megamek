@@ -236,6 +236,12 @@ public class MechSummaryCache
             }
         }
         
+        try {
+            zFile.close();
+        } catch (Exception ex) {
+            // whatever.
+        }
+        
         return bNeedsUpdate;
     }
     

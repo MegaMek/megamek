@@ -193,13 +193,13 @@ public class Tank
      */
     public Mounted getMainWeapon()
     {
-        float fBestBV = -1;
+        double fBestBV = -1;
         Mounted mBest = null;
         for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.isDestroyed()) continue;
             
-            float fValue = m.getType().getBV(this);
+            double fValue = m.getType().getBV(this);
             if (fValue > fBestBV) {
                 fBestBV = fValue;
                 mBest = m;
@@ -382,7 +382,7 @@ public class Tank
         
         // total internal structure        
         dbv += getTotalInternal() * 2;
-
+        
         double typeModifier;
         switch (getMovementType()) {
             case Entity.MovementType.TRACKED:
@@ -451,7 +451,7 @@ public class Tank
         
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
-        
+
         return (int)Math.round((dbv + obv) * pilotFactor);
     }
     

@@ -82,6 +82,8 @@ public class MechFileParser {
             loader = new MtfFile(is);
         } else if (lowerName.endsWith(".hmp")) {
             loader = new HmpFile(is);           
+        } else if (lowerName.endsWith(".hmv")) {
+            loader = new HmvFile(is);           
         } else if (lowerName.endsWith(".xml")) {
             loader = new TdbFile(is);
         } else if (lowerName.endsWith(".ptf")) {

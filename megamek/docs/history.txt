@@ -128,6 +128,10 @@ v 0.28.16 CVS
 + Bug 724556: Fixed Multiple MASC failure checks 
 + Feature 698967: Added /seeall command to let an observer see in double blind
 + MegaMek.exe is now MegaMek.bat (the functionality has remained unchanged)
++ Bug 728603: bad developer, put a "not" where it didn't belong... no donut.
++ Feature 729851: Updated code for MW : DA squads.
++ Bug 731720: fixed data/mex/mechset.txt for Atlas AS7-S.
++ Data 729975, Feature 723876: added hopalong's Clan platoons.
 
 v 0.28.15 (04-27-03, 7:30pm)
 + Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.

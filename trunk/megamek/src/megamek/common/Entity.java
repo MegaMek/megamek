@@ -2707,7 +2707,8 @@ public abstract class Entity
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconscious");
+            //Following line switched from impossible to automatic failure -- bug fix for unconscious pilots taking PSRs
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Pilot unconscious");
         }
         // gyro operational?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
@@ -2749,7 +2750,7 @@ public abstract class Entity
         PilotingRollData roll = getBasePilotingRoll();
 
         if (step.getType() != MovePath.STEP_GET_UP) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not attempting to get up.");
             return roll;
         }
 
@@ -2782,7 +2783,7 @@ public abstract class Entity
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not attempting to run with damage");
         }
 
         return roll;
@@ -2802,7 +2803,7 @@ public abstract class Entity
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Entity does not have gyro or leg accutator damage -- checking for purposes of determining PSR after jump.");
         }
 
         return roll;
@@ -2815,12 +2816,12 @@ public abstract class Entity
             case Entity.MOVE_RUN:
                 if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
-                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity did not use more MPs walking/running than possible at 1G");
                 break;
             case Entity.MOVE_JUMP:
                 if (step.getMpUsed() > getOriginalJumpMP()) {
                     roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
-                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity did not use more MPs jumping than possible at 1G");
                 break;
         }
         return roll;
@@ -2865,7 +2866,7 @@ public abstract class Entity
                                       "reckless driving on pavement"));
             }
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not apparently skidding");
         }
 
         return roll;
@@ -2886,7 +2887,7 @@ public abstract class Entity
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "entering Rubble"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not entering rubble");
         }
 
         return roll;
@@ -2909,10 +2910,10 @@ public abstract class Entity
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
             // hovers don't care about swamp    
             } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");                
+                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Shouldn't have trouble entering swamp b/c movement type is hover");                
             }
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Not entering swamp, or jumping over the swamp");
         }
         return roll;
     }
@@ -2956,7 +2957,7 @@ public abstract class Entity
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "
                                              + waterLevel + " Water"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: No water here.");
         }
 
         return roll;
@@ -2970,7 +2971,7 @@ public abstract class Entity
 
         // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
-            return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,"Check false");
+            return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,"Check false: No swarmers attached");
         }
 
         // append the reason modifier
@@ -4092,5 +4093,37 @@ public abstract class Entity
      */
     public void setStuck(boolean arg) {
         stuckInSwamp = arg;
+    }
+    
+    /* The following methods support the eventual refactoring into the Entity class of a lot of the Server logic surrounding entity damage and death.  
+     * They are not currently called in Server anywhere, and so may as well not exist. */
+    
+    public String destroy(String reason, boolean survivable, boolean canSalvage) {
+        StringBuffer sb = new StringBuffer();
+        
+        int condition = Entity.REMOVE_SALVAGEABLE;
+        if ( !canSalvage ) {
+            setSalvage( canSalvage );
+            condition = Entity.REMOVE_DEVASTATED;
+        }
+        
+        if (isDoomed() || isDestroyed()) { 
+            return sb.toString();
+        }
+        
+        // working under the assumption that entity was neither doomed or destroyed before from here on out
+        
+        setDoomed(true);
+        
+        Enumeration iter = getPickedUpMechWarriors().elements();
+        while (iter.hasMoreElements() ) {
+            Integer mechWarriorId = (Integer)iter.nextElement();
+            Entity mw = game.getEntity(mechWarriorId.intValue());
+            mw.setDestroyed(true);
+            game.removeEntity( mw.getId(), condition );
+            sb.append("\n*** " ).append( mw.getDisplayName() +
+                    " died in the wreckage. ***\n");
+        }
+        return sb.toString();        
     }
 }

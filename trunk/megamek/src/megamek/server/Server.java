@@ -69,6 +69,13 @@ implements Runnable, ConnectionHandler {
     // Track Physical Action results, HACK to deal with opposing pushes 
     // canceling each other
     private Vector              physicalResults = new Vector();
+    
+    /* Tracks entities which have been destroyed recently.  Allows refactoring of the
+     * damage and kill logic from Server, where it is now, to the Entity subclasses eventually.  
+     * This has not been implemented yet -- I am just starting to build the groundwork into Server.
+     * It isn't in the execution path and shouldn't cause any bugs */
+    
+    private HashSet             knownDeadEntities = new HashSet();
 
     /**
      * Construct a new GameHost and begin listening for
@@ -2617,12 +2624,16 @@ implements Runnable, ConnectionHandler {
             final MoveStep step = (MoveStep)i.nextElement();
             wasProne = entity.isProne();
             boolean isPavementStep = step.isPavementStep();
+            boolean entityFellWhileAttemptingToStand = false;
 
             // stop for illegal movement
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
                 break;
             }
 
+            /* TODO by Patio11 3/11/05 -- Almost certain the following code is causing our 
+             * prone units taking PSR bug problem */
+            
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -2630,10 +2641,10 @@ implements Runnable, ConnectionHandler {
                 entity.setProne(false);
                 wasProne = false;
                 game.resetPSRs(entity);
-                doSkillCheckInPlace(entity, rollTarget);
+                entityFellWhileAttemptingToStand = !doSkillCheckInPlace(entity, rollTarget);
             }
             // did the entity just fall?
-            if (!wasProne && entity.isProne()) {
+            if (entityFellWhileAttemptingToStand) {
                 moveType = step.getMovementType();
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
@@ -4277,15 +4288,17 @@ implements Runnable, ConnectionHandler {
      * @param entity The <code>Entity</code> that should make the PSR
      * @param roll   The <code>PilotingRollData</code> to be used for this PSR.
      *
+     *@param Returns true if check succeeds, false otherwise.
+     *
      */
-    private void doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
+    private boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            return;
+            return true;
         }
 
         // non-mechs should never get here
         if (! (entity instanceof Mech) || entity.isProne()) {
-            return;
+            return true;
         }
 
         // okay, print the info
@@ -4300,8 +4313,10 @@ implements Runnable, ConnectionHandler {
         if (diceRoll < roll.getValue()) {
             phaseReport.append("falls.\n");
             doEntityFall(entity, roll);
+            return false;
         } else {
             phaseReport.append("succeeds.\n");
+            return true;
         }
     }
 
@@ -10397,6 +10412,7 @@ implements Runnable, ConnectionHandler {
         return sb.toString();
 
     }
+    
 
     /**
      * Makes a piece of equipment on a mech explode!  POW!  This expects either
@@ -13773,6 +13789,17 @@ implements Runnable, ConnectionHandler {
                      .append(entity.getDisplayName())
                      .append(" has removed all attached iNarc Pods.\n");
             }
+        }
+    }
+    
+    private void deadEntitiesCleanup() {
+        Entity en = null;
+        for(Enumeration k = game.getGraveyardEntities(); k.hasMoreElements(); en = (Entity) k.nextElement()) {
+            if (en != null) {
+        	    if (!knownDeadEntities.contains(en)) {
+                    knownDeadEntities.add(en);
+        	    }
+            }        	
         }
     }
 }

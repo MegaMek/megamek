@@ -104,8 +104,8 @@ public class GAAttack extends GA {
             result[k] = 0;
             if ((enemy = (CEntity) this.targets.get(new Integer(en.getId()))) != null) {
                 result[k] = getThreadUtility(enemy);
+                enemy.resetPossibleDamage();
             }
-            enemy.resetPossibleDamage();
         }
         return result;
     }

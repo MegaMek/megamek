@@ -84,6 +84,10 @@ public class WeaponType extends EquipmentType {
     public int getAmmoType() {
         return ammoType;
     }
+    
+    public int[] getRanges() {
+    	return new int[] {minimumRange, shortRange, mediumRange, longRange};
+    }
 
     public int getMinimumRange() {
         return minimumRange;

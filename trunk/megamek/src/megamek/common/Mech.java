@@ -1683,12 +1683,12 @@ public abstract class Mech
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - a <code>char</code> value that must match one
-     *          of the <code>Entity</code> class range constants.
+     * @param   range - an <code>int</code> value that must match one
+     *          of the <code>Compute</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( char range ) {
+    public TargetRoll getStealthModifier( int range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -1699,13 +1699,13 @@ public abstract class Mech
         // Determine the modifier based upon the range.
         else {
             switch ( range ) {
-            case Entity.RANGE_SHORT:
+            case Compute.RANGE_SHORT:
                 result = new TargetRoll( 0, "stealth" );
                 break;
-            case Entity.RANGE_MEDIUM:
+            case Compute.RANGE_MEDIUM:
                 result = new TargetRoll( 1, "stealth" );
                 break;
-            case Entity.RANGE_LONG:
+            case Compute.RANGE_LONG:
                 result = new TargetRoll( 2, "stealth" );
                 break;
             default:

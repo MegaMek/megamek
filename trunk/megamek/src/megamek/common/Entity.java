@@ -64,13 +64,6 @@ public abstract class Entity
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
 
-    /**
-     * Constants that represent range.
-     */
-    public static final char    RANGE_SHORT             = 'S';
-    public static final char    RANGE_MEDIUM            = 'M';
-    public static final char    RANGE_LONG              = 'L';
-
     protected transient Game    game;
 
     protected int               id = Entity.NONE;
@@ -859,7 +852,7 @@ public abstract class Entity
                 return i;
             }
         }
-      return this.LOC_NONE;
+      return Entity.LOC_NONE;
     }
 
     /**
@@ -2718,12 +2711,12 @@ public abstract class Entity
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - a <code>char</code> value that must match one
-     *          of the <code>Entity</code> class range constants.
+     * @param   range - an <code>int</code> value that must match one
+     *          of the <code>Compute</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( char range ) {
+    public TargetRoll getStealthModifier( int range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -2733,9 +2726,9 @@ public abstract class Entity
 
         // Get the range modifier.
         switch ( range ) {
-        case Entity.RANGE_SHORT:
-        case Entity.RANGE_MEDIUM:
-        case Entity.RANGE_LONG:
+        case Compute.RANGE_SHORT:
+        case Compute.RANGE_MEDIUM:
+        case Compute.RANGE_LONG:
             result = new TargetRoll( 0, "stealth not installed" );
             break;
         default:

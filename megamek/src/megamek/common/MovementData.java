@@ -24,19 +24,21 @@ import java.util.*;
 public class MovementData
     implements Serializable 
 {
-    public static final int        STEP_FORWARDS        = 1;
-    public static final int        STEP_BACKWARDS       = 2;
-    public static final int        STEP_TURN_LEFT       = 3;
-    public static final int        STEP_TURN_RIGHT      = 4;
-    public static final int        STEP_GET_UP          = 5;
-    public static final int        STEP_GO_PRONE        = 6;
-    public static final int        STEP_START_JUMP      = 7;
-    public static final int        STEP_CHARGE          = 8;
-    public static final int        STEP_DFA             = 9;
-    public static final int        STEP_FLEE            = 10;
-    public static final int        STEP_LATERAL_LEFT    = 11;
-    public static final int        STEP_LATERAL_RIGHT   = 12;
-    
+    public static final int        STEP_FORWARDS                 = 1;
+    public static final int        STEP_BACKWARDS                = 2;
+    public static final int        STEP_TURN_LEFT                = 3;
+    public static final int        STEP_TURN_RIGHT               = 4;
+    public static final int        STEP_GET_UP                   = 5;
+    public static final int        STEP_GO_PRONE                 = 6;
+    public static final int        STEP_START_JUMP               = 7;
+    public static final int        STEP_CHARGE                   = 8;
+    public static final int        STEP_DFA                      = 9;
+    public static final int        STEP_FLEE                     = 10;
+    public static final int        STEP_LATERAL_LEFT             = 11;
+    public static final int        STEP_LATERAL_RIGHT            = 12;
+    public static final int        STEP_LATERAL_LEFT_BACKWARDS   = 13;
+    public static final int        STEP_LATERAL_RIGHT_BACKWARDS  = 14;
+
     private Vector steps = new Vector();
     
     private transient boolean compiled = false;
@@ -178,6 +180,12 @@ public class MovementData
             case STEP_LATERAL_RIGHT :
                 curPos = curPos.translated((curFacing + 1) % 6);
                 break;
+            case STEP_LATERAL_LEFT_BACKWARDS :
+                curPos = curPos.translated((curFacing + 4) % 6);
+                break;
+            case STEP_LATERAL_RIGHT_BACKWARDS :
+                curPos = curPos.translated((curFacing + 2) % 6);
+                break;
             }
         }
         return curPos;
@@ -233,6 +241,24 @@ public class MovementData
             steps.insertElementAt(new Step(lateralShiftForTurn(stepType)), index);
         }
     }
+
+    /**
+     * Changes all turn-backwards-opposite-turn sequences into quad lateral 
+     * shifts.
+     *
+     * Finds the sequence of three steps that can be transformed,
+     * then removes all three and replaces them with the lateral shift step.
+     */
+    public void transformLateralShiftsBackwards() {
+        int index;
+        while ((index = firstLateralShiftBackwards()) != -1) {
+            int stepType = getStep(index).getType();
+            steps.removeElementAt(index);
+            steps.removeElementAt(index);
+            steps.removeElementAt(index);
+            steps.insertElementAt(new Step(lateralShiftBackwardsForTurn(stepType)), index);
+        }
+    }
     
     /**
      * Returns the index of the first step which starts movement that can be
@@ -245,6 +271,24 @@ public class MovementData
             int step3 = getStep(i + 2).getType();
             
             if (oppositeTurn(step1, step3) && step2 == MovementData.STEP_FORWARDS) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    /**
+     * Returns the index of the first step which starts movement that can be
+     * converted into a quad lateral shift backwards, or -1 if none are found.
+     */
+    private int firstLateralShiftBackwards() {
+        for (int i = 0; i < length() - 2; i++) {
+            int step1 = getStep(i).getType();
+            int step2 = getStep(i + 1).getType();
+            int step3 = getStep(i + 2).getType();
+            
+            if (oppositeTurn(step1, step3) && step2 == MovementData.STEP_BACKWARDS) {
                 return i;
             }
         }
@@ -279,6 +323,20 @@ public class MovementData
                 return turn;
         }
     }
+
+    /**
+     * Returns the lateral shift backwards that corresponds to the turn direction
+     */
+    public static int lateralShiftBackwardsForTurn(int turn) {
+        switch (turn) {
+            case MovementData.STEP_TURN_LEFT :
+                return MovementData.STEP_LATERAL_RIGHT_BACKWARDS;
+            case MovementData.STEP_TURN_RIGHT :
+                return MovementData.STEP_LATERAL_LEFT_BACKWARDS;
+            default :
+                return turn;
+        }
+    }
     
     /**
      * Returns the turn direction that corresponds to the lateral shift 
@@ -289,6 +347,20 @@ public class MovementData
                 return MovementData.STEP_TURN_LEFT;
             case MovementData.STEP_LATERAL_RIGHT :
                 return MovementData.STEP_TURN_RIGHT;
+            default :
+                return shift;
+        }
+    }
+    
+    /**
+     * Returns the turn direction that corresponds to the lateral shift backwards
+     */
+    public static int turnForLateralShiftBackwards(int shift) {
+        switch (shift) {
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
+                return MovementData.STEP_TURN_RIGHT;
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
+                return MovementData.STEP_TURN_LEFT;
             default :
                 return shift;
         }
@@ -329,7 +401,7 @@ public class MovementData
         return mpUsed;
     };
     /**
-     * Returns the number of hexes moved the path (does not count turns, etc)
+     * Returns the number of hexes moved the path (does not count turns, etc).
      */
     public int getHexesMoved() {
         int hexes = 0;
@@ -340,7 +412,9 @@ public class MovementData
             || (step.getType() == STEP_BACKWARDS)
             || (step.getType() == STEP_CHARGE)
             || (step.getType() == STEP_LATERAL_RIGHT)
-            || (step.getType() == STEP_LATERAL_LEFT) ) {
+            || (step.getType() == STEP_LATERAL_LEFT)
+            || (step.getType() == STEP_LATERAL_RIGHT_BACKWARDS)
+            || (step.getType() == STEP_LATERAL_LEFT_BACKWARDS) ) {
                 hexes++;
             };
         };
@@ -393,6 +467,8 @@ public class MovementData
             case MovementData.STEP_TURN_RIGHT:return "R";	
             case MovementData.STEP_LATERAL_LEFT:return "ShL";	
             case MovementData.STEP_LATERAL_RIGHT:return "ShR";	
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS:return "ShLB";	
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS:return "ShRB";	
             }
             return"";
         }

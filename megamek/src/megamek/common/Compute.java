@@ -260,24 +260,28 @@ public class Compute
         boolean isProne = entity.isProne();
         boolean hasJustStood = false;
         boolean firstStep = true;
-        
+        boolean lastWasBackwards = false;
+        boolean thisStepBackwards = false;
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
         boolean isRunProhibited = false;
-        
+
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
             overallMoveType = Entity.MOVE_JUMP;
             isJumping = true;
         }
         
-        // check for backwards movement
-        if (md.contains(MovementData.STEP_BACKWARDS)) {
-            isRunProhibited = true;
-        }
-        
         if (entity instanceof QuadMech && !isJumping) {
             md.transformLateralShifts();
+            md.transformLateralShiftsBackwards();
+        }
+
+        // check for backwards movement
+        if (md.contains(MovementData.STEP_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_LEFT_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
+            isRunProhibited = true;
         }
         
         // first pass: set position, facing and mpUsed; figure out overallMoveType
@@ -287,7 +291,7 @@ public class Compute
             int stepMp = 0;
             
             lastPos = new Coords(curPos);
-            
+
             // 
             switch(step.getType()) {
             case MovementData.STEP_TURN_LEFT :
@@ -302,8 +306,10 @@ public class Compute
                 // step forwards or backwards
                 if (step.getType() == MovementData.STEP_BACKWARDS) {
                     curPos = curPos.translated((curFacing + 3) % 6);
+                    thisStepBackwards = true;
                 } else {
                     curPos = curPos.translated(curFacing);
+                    thisStepBackwards = false;
                 }
 
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
@@ -313,11 +319,24 @@ public class Compute
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
+                if (lastWasBackwards != thisStepBackwards) {
+                    distance = 0; //start over after shifting gears
+                }
                 distance += 1;
                 break;
             case MovementData.STEP_LATERAL_LEFT :
             case MovementData.STEP_LATERAL_RIGHT :
-                curPos = curPos.translated(MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShift(step.getType())));
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
+                if (step.getType() == MovementData.STEP_LATERAL_LEFT_BACKWARDS 
+                    || step.getType() == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) {
+                    curPos = curPos.translated((MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
+                    thisStepBackwards = true;
+                } else {
+                    curPos = curPos.translated(MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShift(step.getType())));
+                    thisStepBackwards = false;
+                }
+
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
                                             overallMoveType) + 1;
                 // check for water
@@ -325,6 +344,9 @@ public class Compute
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
+                if (lastWasBackwards != thisStepBackwards) {  
+                    distance = 0;  //start over after shifting gears
+                }
                 distance += 1;
                 break;
             case MovementData.STEP_GET_UP :
@@ -349,6 +371,7 @@ public class Compute
             step.setFacing(curFacing);
             step.setMpUsed(mpUsed);
             step.setDistance(distance);
+            lastWasBackwards = thisStepBackwards;
         }
         
         // running with gyro or hip hit is dangerous!
@@ -600,8 +623,8 @@ public class Compute
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
-        if (stepType == MovementData.STEP_BACKWARDS
-            && srcHex.floor() != destHex.floor()) {
+        if ((stepType == MovementData.STEP_BACKWARDS || stepType == MovementData.STEP_LATERAL_LEFT_BACKWARDS
+            || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && srcHex.floor() != destHex.floor()) {
             return false;
         }
         // can't run into water
@@ -1874,7 +1897,9 @@ public class Compute
         }
 
         // no backwards
-        if (md.contains(MovementData.STEP_BACKWARDS)) {
+        if (md.contains(MovementData.STEP_BACKWARDS) 
+            || md.contains(MovementData.STEP_LATERAL_LEFT_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
 

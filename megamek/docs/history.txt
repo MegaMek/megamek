@@ -22,7 +22,6 @@ could almost be combined:
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
-? have server only send entity add/deletes in lounge, not entire list
 - double reports when firing phase happens and physical phase is skipped
 
 board display:
@@ -76,12 +75,9 @@ FUTURE VERSION PLANS:
 
 v 0.25
 - option to start dedicated server from command line
-- pick up club
 ? go prone
 ? aim
 - teams
-- /kick command for hung clients
-- passwords for /reset & /kick
 
 VERSION HISTORY:
 ----------------
@@ -100,6 +96,7 @@ v next
 + picking up tree clubs possible
 + /kick command added
 + server name changed to server password; used for /reset, /kick
++ server only sends entity add/delete packets in lounge, not entire list
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

@@ -467,7 +467,7 @@ public abstract class Entity
     public int elevation() {
         Coords  pos = getPosition();
 
-        if ( Entity.NONE == this.getTransportId() ) {
+        if ( Entity.NONE != this.getTransportId() ) {
             pos = game.getEntity( this.getTransportId() ).getPosition();
         }
 

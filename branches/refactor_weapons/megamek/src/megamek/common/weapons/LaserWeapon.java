@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 
 import megamek.common.*;
+import megamek.client.FiringDisplay;
 /**
  * @author Andrew Hunter
  *
@@ -30,4 +31,20 @@ public class LaserWeapon extends EnergyWeapon {
 	    ammoType = AmmoType.T_NA;
 	    minimumRange = WEAPON_NA;		
 	}
+	protected ToHitData calcMods(Game game, Targetable target, int attackerId, int weaponId, final Entity ae, int aimingAt, int aimingMode, Entity te, final Mounted weapon, final WeaponType wtype, boolean isAttackerInfantry, final boolean usesAmmo, final AmmoType atype, boolean isIndirect, Entity spotter, int targEl, LosEffects los, ToHitData losMods, int distance) {
+//		 add targeting computer (except with LBX cluster ammo)
+       ToHitData toHit=new ToHitData();
+       if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
+         aimingAt != Mech.LOC_NONE) {
+         toHit.addModifier(3, "aiming with targeting computer");
+       } else {
+         if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+              (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+             toHit.addModifier(-1, "targeting computer");
+         }
+       }
+       toHit.append(super.calcMods(game,target,attackerId,weaponId,ae,aimingAt,aimingMode,te,weapon,wtype,isAttackerInfantry,usesAmmo,atype,isIndirect,spotter,targEl,los,losMods,distance));          
+       return toHit;
+	}
 }
+

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-
+import megamek.client.FiringDisplay;
 /**
  * @author Andrew Hunter
  * N.B.  This class is overriden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC. 
@@ -35,9 +35,7 @@ public class ACWeapon extends AmmoWeapon {
         this.flags |= F_DIRECT_FIRE;
         this.ammoType = AmmoType.T_AC;
 	}
-	/* (non-Javadoc)
-	 * @see megamek.common.weapons.Weapon#calcMods(megamek.common.Game, megamek.common.Targetable, int, int, megamek.common.Entity, int, int, megamek.common.Entity, megamek.common.Mounted, megamek.common.WeaponType, boolean, boolean, megamek.common.AmmoType, boolean, megamek.common.Entity, int, megamek.common.LosEffects, megamek.common.ToHitData, int)
-	 */
+
 	protected ToHitData calcMods(Game game, Targetable target, int attackerId,
 			int weaponId, Entity ae, int aimingAt, int aimingMode, Entity te,
 			Mounted weapon, WeaponType wtype, boolean isAttackerInfantry,
@@ -48,6 +46,15 @@ public class ACWeapon extends AmmoWeapon {
 		toHit.append(super.calcMods(game, target, attackerId, weaponId, ae, aimingAt,
 				aimingMode, te, weapon, wtype, isAttackerInfantry, usesAmmo,
 				atype, isIndirect, spotter, targEl, los, losMods, distance));
+		if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
+		          aimingAt != Mech.LOC_NONE) {
+		          toHit.addModifier(3, "aiming with targeting computer");
+		        } else {
+		          if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+		               (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+		              toHit.addModifier(-1, "targeting computer");
+		          }
+		        }
 		switch(atype.getMunitionType()) {
 			case AmmoType.M_ARMOR_PIERCING:
 				toHit.addModifier( 1, "Armor-Piercing Ammo" );

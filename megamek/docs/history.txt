@@ -4,6 +4,17 @@ v0.29.43 (CVS)
 + Extra light woods hex in Citytech board.
 + RFE 959014 working again.
 + Dedicated server now loads game options from the xml file.
++ Patch 997507: Reworked how scrolling works, including a Drag-and-Drop right-
+    click scroll option, like it is used in lots of other games. The default 
+    scrolling is unchanged, except that now right-click default scrolling works
+    also in the firing phase, this was made possible because now we don't get a 
+    'Target Hex' context menu after scrolling with the right mouse button, which 
+    also made the 'always scroll using right click' option obsolete. Shift 
+    scrolling works the same as before, but it can't be used exclusively anymore.
+    To use the new Drag-and-Drop right-click scrolling option, activate the
+    corresponding option (this also disabled Arrow-Key and Shift-Key scrolling),
+    and see that you can scroll by holding the right mouse button and moving the
+    Mouse.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

@@ -75,8 +75,6 @@ public class Settings
      */    
     public static boolean   explicitScrollOnly      = false;
 
-    public static boolean   alwaysScrollOnRightClick = false;
-    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
     public static String    lastPlayerCamoName      = null;
@@ -447,10 +445,6 @@ scan:
                         st.nextToken();
                         explicitScrollOnly = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if(key.equals("alwaysscrollonrightclick")) {
-                        st.nextToken();
-                        alwaysScrollOnRightClick = Boolean.valueOf(st.sval).booleanValue();
-                    }
                     else if (key.equals("getfocus")) {
                         st.nextToken();
                         getFocus = Boolean.valueOf(st.sval).booleanValue();
@@ -582,7 +576,6 @@ scan:
             cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
             cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
-            cw.write("alwaysscrollonrightclick " + alwaysScrollOnRightClick + "\r\n");
             cw.write("getfocus " + getFocus + "\r\n");
             cw.write("mechdisplaysmallfontsize " + mechDisplaySmallFontSize + "\r\n");
             cw.write("mechdisplaymediumfontsize " + mechDisplayMediumFontSize + "\r\n");

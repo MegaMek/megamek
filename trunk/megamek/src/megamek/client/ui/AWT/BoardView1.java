@@ -1570,11 +1570,28 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 // draw movement cost
-                String costString = new Integer(step.getMpUsed()).toString()
-                                    + (step.isDanger() ? "*" : "");
-                if (step.isPastDanger()) {
-                    costString = "(" + costString + ")";
+                String costString = null;
+                StringBuffer costStringBuf = new StringBuffer();
+                costStringBuf.append( step.getMpUsed() );
+
+                // If the step is using a road bonus, mark it.
+                if ( step.isOnPavement() ) { 
+                    costStringBuf.append( "+" );
                 }
+
+                // If the step is dangerous, mark it.
+                if ( step.isDanger() ) { 
+                    costStringBuf.append( "*" );
+                }
+
+                // If the step is past danger, mark that.
+                if (step.isPastDanger()) {
+                    costStringBuf.insert( 0, "(" );
+                    costStringBuf.append( ")" );
+                }
+
+                // Convert the buffer to a String and draw it.
+                costString = costStringBuf.toString();
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
                 int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
                 graph.setColor(Color.darkGray);

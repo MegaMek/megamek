@@ -44,7 +44,6 @@ initiative:
 
 movement:
 - remaining todos in pavement skidding
-- road movement bonus for vehicles
 - go prone action
 
 weapon attacks:
@@ -90,6 +89,8 @@ v 0.28.7 (CVS)
 + log might finally contain correct ip address
 + Tank BV formula corrected.--LDE
 + Turrets no longer displayed on turretless tanks.--LDE
++ Implemented road bonuses to movement.  Includes moving through terrain.
++ Skids now use BMRr rules (and not CityTech) for hex that starts the skid.
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

@@ -42,6 +42,7 @@ public abstract class Entity
     
     public static final int        NONE                = -1;
 
+    public static final int        MOVE_SKID           = -2;
     public static final int        MOVE_ILLEGAL        = -1;
     public static final int        MOVE_NONE           = 0;
     public static final int        MOVE_WALK           = 1;

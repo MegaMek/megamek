@@ -553,6 +553,8 @@ public abstract class Mech
      */
     public String getMovementString(int mtype) {
         switch(mtype) {
+        case MOVE_SKID :
+            return "Skidded";
         case MOVE_NONE :
             return "None";
         case MOVE_WALK :
@@ -572,6 +574,8 @@ public abstract class Mech
      */
     public String getMovementAbbr(int mtype) {
         switch(mtype) {
+        case MOVE_SKID :
+            return "S";
         case MOVE_NONE :
             return "N";
         case MOVE_WALK :

@@ -1,13 +1,30 @@
-
-This is a guide to the bot that comes with MegaMek 0.28.  The bot was written
-by Steve Hawkins <hawk0166@umn.edu> building off of the work of Michael Hanson 
-<hanson@cs.stanford.edu> -- including this file.  
-It is a work in progress.
-
+The bot was written by Steve Hawkins <skh_mail@yahoo.com> building off of the work of 
+Michael Hanson <hanson@cs.stanford.edu>.
+  
 The bot works with most units: mechs, tanks and infantry.  There are a few rare
-bugs in 0.28 that will cause it to stop responding.  When this happens,
-disconnect and reconnect it.  The bot does not have double-blind support, and 
-will disconnect any time it cannot see an opponent.
+bugs that will cause it to stop responding.  When this happens,
+disconnect and reconnect it.  
+  
+History:
+
+.3 Current
+  A refactoring of the bot that removed about 1/3 of the code and most of the original code.  
+It also supports double-blind although not very well...  
+
+.2.x 
+  Various bug fixes and tweaks by MegaMek developers.  Support for infantry, 
+vehicles and automatic deployment.
+
+.2 TestBot - Steve Hawkins
+  Spurred on by taking an AI class, the original bot was improved to a more
+robust utility model and a polynomial movement exploration algorithm.  The movement
+algorithm was further enhanced to a hierarchical filtering process that included limited
+look ahead and planning.  Also, firing determination and lance movement were changed to 
+use genetic algorithms.  
+
+.1 The Original - Michael Hanson
+  Semi-utility based with an exponential movement exploration algorithm. No movement
+planning or look ahead. Support for some physical attacks.
 
   Starting A Game Against The Bot
     To play against the bot, host a game, and then start another copy of MegaMek
@@ -49,11 +66,15 @@ will disconnect any time it cannot see an opponent.
     to your playing style.
     Its thinking is mostly limited to a single turn, provided it does understand
     to move mechs to good ranges.
-    Unlike the last bot, it will move without los.
     The movement is not yet hierarcial, so with every new unit there is a 
     somewhat linear increase in the time the bot thinks. Unless you have 
-    patience, don't do something over 8 on 8. In fact, the bot has been 
-    optimized for lance on lance action.
-    The bot will preform will with most units on average terrain maps.  A lot or
+    patience, don't do something over 8 on 8. 
+    The bot will preform well with most units on average terrain maps.  A lot or
     too little terrain will hurt its performance. It also does no real path
     planning, so limited mobility mechs can get lost.
+
+TODO:
+
+Version 1.0
+- Gui-less
+ 

@@ -85,13 +85,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 	protected int calcHits() {
 		int shotsHit;
 		switch(howManyShots) {//necessary, missilesHit not defined for missiles=1
-			case 2:
-				shotsHit = allShotsHit()? 2:Compute.missilesHit(howManyShots);
-				game.getPhaseReport().append("Hits with " + shotsHit + " shot(s)\n");
-				break;
-			default:
+			case 1:
 				shotsHit = 1;
 				break;
+			default:
+				shotsHit = allShotsHit()? howManyShots:Compute.missilesHit(howManyShots);
+				game.getPhaseReport().append("Hits with " + shotsHit + " shot(s)\n");
+				break;
+				
 		}
 		return shotsHit;
 	}
@@ -99,14 +100,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.WeaponHandler#addHeat()
 	 */
-	protected void addHeat() {
-		switch(howManyShots) {//silly hack
-			case 2:
-				super.addHeat();
-			case 1:
-				super.addHeat();
-				break;
-				
+	protected void addHeat() {//silly hack
+		for(int x=0;x<howManyShots;x++) {
+			super.addHeat();
 		}
 	}
 	/* (non-Javadoc)

@@ -57,10 +57,8 @@ public class UACWeapon extends AmmoWeapon {
 			WeaponAttackAction waa, Game game, Server server) {
 		Mounted weapon=game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 		if(weapon.curMode()=="Ultra") {
-			server.sendServerChat("Getting an ultra Handler.");
 			return new UltraWeaponHandler(toHit,waa,game,server);
 		} else {
-			server.sendServerChat("Getting a normal.");
 			return super.getCorrectHandler(toHit, waa, game,server);
 		}
 	}

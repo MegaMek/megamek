@@ -533,6 +533,14 @@ public class FiringDisplay
                 return;
             }
         }
+        // auto spot if we can and the option is set
+        if (attacks.isEmpty() && 
+        		client.game.getOptions().booleanOption("auto_spot") &&
+				client.game.getPhase() == Game.PHASE_FIRING) {
+        	if (!ce().isINarcedWith( INarcPod.HAYWIRE )) {
+        		doSpot();
+        	}
+        }
 
         // stop further input (hopefully)
         disableButtons();

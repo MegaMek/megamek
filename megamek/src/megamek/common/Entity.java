@@ -46,6 +46,7 @@ public abstract class Entity
     public static final int REMOVE_UNKNOWN        = 0x0000;
     public static final int REMOVE_IN_RETREAT     = 0x0100;
     public static final int REMOVE_PUSHED         = 0x0110;
+    public static final int REMOVE_CAPTURED       = 0x0120;
     public static final int REMOVE_SALVAGEABLE    = 0x0200;
     public static final int REMOVE_EJECTED        = 0x0210;
     public static final int REMOVE_DEVASTATED     = 0x0400;
@@ -245,6 +246,9 @@ public abstract class Entity
      *  the enemy.  Used in double-blind.
      */
     private boolean visibleToEnemy = false;
+
+    /** Whether this entity is captured or not. */
+    private boolean captured = false;
 
     /**
      * Generates a new, blank, entity.
@@ -3856,4 +3860,23 @@ public abstract class Entity
     public Vector getPickedUpMechWarriors() {
         return pickedUpMechWarriors;
     }
+
+    /**
+     * Has this entity been captured?
+     *
+     * @return  <code>true</code> if it has.
+     */
+    public boolean isCaptured() {
+        return this.captured;
+    }
+
+    /**
+     * Specify that this entity has been captured.
+     *
+     * @param   arg the <code>boolean</code> value to assign.
+     */
+    public void setCaptured( boolean arg ) {
+        this.captured = arg;
+    }
+
 }

@@ -708,5 +708,10 @@ public class ChatterBox2
 
 	public void keyTyped(KeyEvent ke) {
 	}
+	
+    public void gameMapQuery(GameEvent e) {
+     	;
+    }
+
 
 }

@@ -93,4 +93,8 @@ public abstract class AbstractPhaseDisplay extends Panel implements BoardListene
         ;
     }
 
+    public void gameMapQuery(GameEvent e) {
+        ;
+    }
+
 }

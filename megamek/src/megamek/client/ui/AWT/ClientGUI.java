@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import com.sun.java.util.collections.HashMap;
+
 import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.util.Distractable;
@@ -104,6 +106,8 @@ public class ClientGUI
     /** Map phase component names to phase component objects. */
     private Hashtable phaseComponents = new Hashtable();
 
+	//TODO: there's a better place for this
+	private HashMap bots = new HashMap();
     /**
      * Construct a client which will display itself in a new frame.  It will
      * not try to connect to a server yet.  When the frame closes, this client
@@ -1349,6 +1353,16 @@ public class ClientGUI
             ((ReportDisplay) curPanel).refresh();
             ((ReportDisplay) curPanel).resetReadyButton();
         }
+    }
+
+    public void gameMapQuery(GameEvent e) {
+        if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+            boardSelectionDialog.update((MapSettings) e.getSource(), false);
+        }
+    }
+
+    public HashMap getBots() {
+        return bots;
     }
 
 }

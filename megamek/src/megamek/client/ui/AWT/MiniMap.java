@@ -1004,4 +1004,8 @@ scan:
         ;
     }
 
+    public void gameMapQuery(GameEvent e) {
+        ;
+    }
+
 }

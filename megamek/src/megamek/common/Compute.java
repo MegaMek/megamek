@@ -920,8 +920,15 @@ public class Compute
             if (entity instanceof Mech && isEnemyMechIn(game, entityId, dest)) {
                 return false;
             }
-            // can't move out of a hex with an enemy unit unless we started there
-            if (!src.equals(entity.getPosition()) && isEnemyUnitIn(game, entityId, src)) {
+
+            // Can't move out of a hex with an enemy unit unless we started
+            // there, BUT we're allowed to turn, unload, or go prone.
+            if ( isEnemyUnitIn(game, entityId, src) &&
+                 !src.equals(entity.getPosition()) &&
+                 stepType != MovementData.STEP_TURN_LEFT &&
+                 stepType != MovementData.STEP_TURN_RIGHT &&
+                 stepType != MovementData.STEP_UNLOAD &&
+                 stepType != MovementData.STEP_GO_PRONE ) {
                 return false;
             }
             
@@ -3730,10 +3737,13 @@ public class Compute
         
         // Only grab enemies with active ECM
         Vector vEnemyCoords = new Vector(16);
+        Vector vECMRanges = new Vector(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = (Entity)e.nextElement();
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && ent.getPosition() != null) {
+                // TODO : only use the best ECM range in a given Coords.
                 vEnemyCoords.addElement(ent.getPosition());
+                vECMRanges.addElement( new Integer(ent.getECMRange()) );
             }
         }
         
@@ -3743,15 +3753,17 @@ public class Compute
         // get intervening Coords.  See the comments for intervening() and losDivided()
         Coords[] coords = intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
+        Enumeration ranges = vECMRanges.elements();
         for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements(); ) {
             Coords c = (Coords)e.nextElement();
+            int range = ( (Integer) ranges.nextElement() ).intValue();
             int nLastDist = -1;
             
             // loop through intervening hexes and see if any of them are within range
             for (int x = 0; x < coords.length; x++) {
                 int nDist = c.distance(coords[x]);
-                
-                if (nDist <= 6) return true;
+
+                if ( nDist <= range ) return true;
                 
                 // optimization.  if we're getting farther away, forget it
                 // but ignore the doubled-up hexes intervening() adds along hexlines

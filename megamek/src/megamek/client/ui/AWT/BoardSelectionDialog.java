@@ -285,7 +285,9 @@ public class BoardSelectionDialog
         int[] selected = lisBoardsSelected.getSelectedIndexes();
         for (int i = 0; i < selected.length; i++) {
             String name = board;
-            if ( chkRotateBoard.getState() ) {
+            if ( !MapSettings.BOARD_RANDOM.equals(name) &&
+                 !MapSettings.BOARD_SURPRISE.equals(name) &&
+                 chkRotateBoard.getState() ) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
             lisBoardsSelected.replaceItem(selected[i] + ": " + name, selected[i]);

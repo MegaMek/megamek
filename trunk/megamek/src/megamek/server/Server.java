@@ -8327,6 +8327,31 @@ implements Runnable, ConnectionHandler {
                                       Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
+                        // If a sidetorso got destroyed, and the corresponding arm
+                        // is not yet destroyed, add it as a club to that hex (p.35 BMRr)
+                        
+                        if (te instanceof Mech &&
+                                (hit.getLocation() == Mech.LOC_RT ||
+                                 hit.getLocation() == Mech.LOC_LT)) {
+                                if (hit.getLocation() == Mech.LOC_RT &&
+                                    te.getInternal(Mech.LOC_RARM) > 0) {
+                                    Hex h = game.board.getHex(te.getPosition());
+                                    if (!h.contains( Terrain.ARMS)) {
+                                        h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                    }
+                                    else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                                    sendChangedHex(te.getPosition());
+                                }
+                                if (hit.getLocation() == Mech.LOC_LT &&
+                                        te.getInternal(Mech.LOC_LARM) > 0) {
+                                        Hex h = game.board.getHex(te.getPosition());
+                                        if (!h.contains( Terrain.ARMS)) {
+                                            h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                        }
+                                        else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                                        sendChangedHex(te.getPosition());
+                                    }
+                        }
 
                         // Destroy the location.
                         destroyLocation(te, hit.getLocation());
@@ -8343,6 +8368,24 @@ implements Runnable, ConnectionHandler {
                         if (te instanceof Mech &&
                             (hit.getLocation() == Mech.LOC_RT ||
                              hit.getLocation() == Mech.LOC_LT)) {
+                            if (hit.getLocation() == Mech.LOC_RT &&
+                                te.getInternal(Mech.LOC_RARM) > 0) {
+                                Hex h = game.board.getHex(te.getPosition());
+                                if (!h.contains( Terrain.ARMS)) {
+                                    h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                }
+                                else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                                sendChangedHex(te.getPosition());
+                            }
+                            if (hit.getLocation() == Mech.LOC_LT &&
+                                    te.getInternal(Mech.LOC_LARM) > 0) {
+                                    Hex h = game.board.getHex(te.getPosition());
+                                    if (!h.contains( Terrain.ARMS)) {
+                                        h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                    }
+                                    else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                                    sendChangedHex(te.getPosition());
+                                }
                             te.engineHitsThisRound +=
                                 te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
                                                     Mech.SYSTEM_ENGINE,

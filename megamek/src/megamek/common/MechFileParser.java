@@ -74,6 +74,9 @@ public class MechFileParser {
                 else if (sType.equals("Infantry")) {
                     loader = new BLKInfantryFile(bb);
                 }
+                else if (sType.equals("BattleArmor")) {
+                    loader = new BLKBattleArmorFile(bb);
+                }
                 else if (sType.equals("Mech")) {
                     loader = new BLKMechFile(bb);
                 }
@@ -94,10 +97,12 @@ public class MechFileParser {
     }
     
     /**
-     * File-format agnostic location to do post-load initialization on a unit
+     * File-format agnostic location to do post-load initialization on a unit.
+     * Automatically add BattleArmorHandles to all OmniMechs.
      */
     private void postLoadInit(Entity ent) throws EntityLoadingException {
-        // Artemis
+
+        // Link Artemis IV fire-control systems to their missle racks.
         for (Enumeration e = ent.getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
@@ -136,7 +141,13 @@ public class MechFileParser {
                 }
             }
         }
-    }
+
+        // Add BattleArmorHandles to OmniMechs.
+        if ( ent.isOmni() && ent instanceof Mech ) {
+            ent.addTransporter( new BattleArmorHandles() );
+        }
+
+    } // End private void postLoadInit(Entity) throws EntityLoadingException
             
         
 }

@@ -38,6 +38,8 @@ public class DeploymentDisplay
     private Button            butNext;
     private Button            butTurn;
     private Button            butSpace;
+    private Button              butLoad;
+    private Button              butUnload;
     private Button            butDone;
 
     private int                cen;    // current entity number
@@ -66,6 +68,14 @@ public class DeploymentDisplay
         butSpace = new Button(".");
         butSpace.setEnabled(false);
 
+        butLoad = new Button("Load");
+        butLoad.addActionListener(this);
+        butLoad.setEnabled(false);
+
+        butUnload = new Button("Unload");
+        butUnload.addActionListener(this);
+        butUnload.setEnabled(false);
+
         butNext = new Button("Next Unit");
         butNext.addActionListener(this);
         butNext.setEnabled(true);
@@ -76,10 +86,12 @@ public class DeploymentDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 2));
+        panButtons.setLayout(new GridLayout(2, 3));
         panButtons.add(butTurn);
+        panButtons.add(butLoad);
         panButtons.add(butNext);
         panButtons.add(butSpace);
+        panButtons.add(butUnload);
         panButtons.add(butDone);
 
         // layout screen
@@ -136,6 +148,8 @@ public class DeploymentDisplay
 
         butTurn.setEnabled(true);
         butDone.setEnabled(false);
+        butLoad.setEnabled(true);
+        butUnload.setEnabled(true);
         
         client.game.board.select(null);
         client.game.board.cursor(null);
@@ -181,6 +195,8 @@ public class DeploymentDisplay
         butTurn.setEnabled(false);
         butNext.setEnabled(false);
         butDone.setEnabled(false);
+        butLoad.setEnabled(false);
+        butUnload.setEnabled(false);
     }
 
     /**
@@ -188,7 +204,8 @@ public class DeploymentDisplay
      */
     private void deploy() {
         disableButtons();
-        client.deploy(cen, ce().getPosition(), ce().getFacing());
+        client.deploy( cen, ce().getPosition(), ce().getFacing(),
+                       ce().getLoadedUnits() );
         client.sendReady(true);
     }
 
@@ -298,11 +315,123 @@ public class DeploymentDisplay
         } else if (ev.getSource() == butNext) { 
             ce().setPosition(null);
             client.bv.redrawEntity(ce());
+            // Unload any loaded units.
+            Iterator iter =  ce().getLoadedUnits().iterator();
+            while ( iter.hasNext() ) {
+                Entity other = (Entity) iter.next();
+                // Please note, the Server never got this unit's load orders.
+                ce().unload( other );
+                other.setTransportId( Entity.NONE );
+                other.newRound();
+            }
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butTurn) {
             turnMode = true;
         } 
-    }
+        else if ( ev.getSource() == butLoad ) {
+
+            // What undeployed units can we load?
+            java.util.List choices = new Vector();
+            int otherId = client.getNextEntityNum( cen );
+            Entity other = client.getEntity( otherId );
+            while ( otherId != cen ) {
+
+                // Is the other entity deployed?
+                if ( other.getPosition() == null ) {
+
+                    // Can the current entity load the other entity?
+                    if ( ce().canLoad( other ) ) {
+                        choices.add( other );
+                    }
+
+                } // End other not yet deployed.
+
+                // Check the next entity.
+                otherId = client.getNextEntityNum( otherId );
+                other = client.getEntity( otherId );
+
+            } // End have list of choices.
+
+            // Do we have anyone to load?
+            if ( choices.size() > 0 ) {
+                String[] names = new String[ choices.size() ];
+                StringBuffer question = new StringBuffer();
+                question.append( ce().getShortName() );
+                question.append( " has the following unused space:\n" );
+                question.append( ce().getUnusedString() );
+                question.append( "\n\nWhich unit do you want to load?" );
+                for ( int loop = 0; loop < names.length; loop++ ) {
+                    names[loop] = ( (Entity)choices.get(loop) ).getShortName();
+                }
+                SingleChoiceDialog choiceDialog =
+                    new SingleChoiceDialog( client.frame,
+                                            "Load Unit",
+                                            question.toString(),
+                                            names );
+                choiceDialog.show();
+                if ( choiceDialog.getAnswer() == true ) {
+                    other = (Entity) choices.get( choiceDialog.getChoice() );
+                    // Please note, the Server may never get this load order.
+                    ce().load( other );
+                    other.setTransportId( cen );
+                    client.mechD.displayEntity(ce());
+                }
+            } // End have-choices
+            else {
+                AlertDialog alert = new AlertDialog( client.frame,
+                                                     "Load Unit",
+                                                     ce().getShortName() + " can not load any of the remaining units." );
+                alert.show();
+            }
+
+        } // End load-unit
+
+        else if ( ev.getSource() == butUnload ) {
+
+            // Do we have anyone to unload?
+            java.util.List choices = ce().getLoadedUnits();
+            if ( choices.size() > 0 ) {
+                Entity other = null;
+                String[] names = new String[ choices.size() ];
+                StringBuffer question = new StringBuffer();
+                question.append( ce().getShortName() );
+                question.append( " has the following unused space:\n" );
+                question.append( ce().getUnusedString() );
+                question.append( "\n\nWhich unit do you want to unload?" );
+                for ( int loop = 0; loop < names.length; loop++ ) {
+                    names[loop] = ( (Entity)choices.get(loop) ).getShortName();
+                }
+                SingleChoiceDialog choiceDialog =
+                    new SingleChoiceDialog( client.frame,
+                                            "Unload Unit",
+                                            question.toString(),
+                                            names );
+                choiceDialog.show();
+                if ( choiceDialog.getAnswer() == true ) {
+                    other = (Entity) choices.get( choiceDialog.getChoice() );
+                    // Please note, the Server never got this load order.
+                    if ( ce().unload( other ) ) {
+                        other.setTransportId( Entity.NONE );
+                        other.newRound();
+                        client.mechD.displayEntity(ce());
+                    }
+                    else {
+                        System.out.println( "Could not unload " +
+                                            other.getShortName() +
+                                            " from " + ce().getShortName() );
+                    }
+                }
+            } // End have-choices
+            else {
+                AlertDialog alert = new AlertDialog( client.frame,
+                                                     "Unload Unit",
+                                                     ce().getShortName() + " is not transporting any units." );
+                alert.show();
+            }
+
+        } // End unload-unit
+
+    } // End public void actionPerformed(ActionEvent ev)
     
 
     //

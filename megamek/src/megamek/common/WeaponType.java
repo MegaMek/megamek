@@ -21,6 +21,7 @@ package megamek.common;
 public class WeaponType extends EquipmentType {
     public static final int     DAMAGE_MISSILE = -2;
     public static final int     DAMAGE_VARIABLE = -3;
+    public static final int     DAMAGE_SPECIAL = -4;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
     
     // weapon flags (note: many weapons can be identified by their ammo type)
@@ -33,8 +34,14 @@ public class WeaponType extends EquipmentType {
     
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
-    public static final int	F_INFANTRY	= 0x0F00; // there's no 0x0BAR
-    
+    public static final int	F_INFANTRY	= 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
+
+    // Flags for implementing the vast number of BattleArmor special rules.
+    public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
+    public static final int     F_BATTLEARMOR   = 0x1000; // multiple shots resolved in one to-hit (kinda like RAC, only not)
+    public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
+    public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
+
     private int     heat;
     private int     damage;
     private int     rackSize; // or AC size, or whatever
@@ -193,6 +200,35 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM6());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
+
+        // Anti-Mek attacks are weapon-like in nature.
+        EquipmentType.addType( createLegAttack() );
+        EquipmentType.addType( createSwarmMek() );
+
+        // Start BattleArmor weapons
+        EquipmentType.addType( createBAMG() );
+        EquipmentType.addType( createBAFlamer() );
+        EquipmentType.addType( createBASmallLaser() );
+        EquipmentType.addType( createBACLERSmallLaser() );
+        EquipmentType.addType( createCLAdvancedSRM2() );
+        EquipmentType.addType( createBATwinFlamers() );
+        EquipmentType.addType( createBAInfernoSRM() );
+        EquipmentType.addType( createBACLMicroPulseLaser() );
+        EquipmentType.addType( createBAMicroBomb() );
+        EquipmentType.addType( createBACLERMicroLaser() );
+        EquipmentType.addType( createCLTorpedoLRM5() );
+        EquipmentType.addType( createBAISMediumPulseLaser() );
+        EquipmentType.addType( createFenrirSmallPulseLaser() );
+        EquipmentType.addType( createFenrirSmallLaser() );
+        EquipmentType.addType( createFenrirMG() );
+        EquipmentType.addType( createFenrirSRM4() );
+        EquipmentType.addType( createBAAutoGL() );
+        EquipmentType.addType( createBAMagshotGR() );
+        EquipmentType.addType( createBAISMediumLaser() );
+        EquipmentType.addType( createBAISERSmallLaser() );
+        EquipmentType.addType( createBACompactNARC() );
+        EquipmentType.addType( createSlothSmallLaser() );
+        EquipmentType.addType( createBAMineLauncher() );
     }
     
     public static WeaponType createFlamer() {
@@ -518,7 +554,7 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
@@ -1629,7 +1665,7 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = 0;
+        weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
@@ -2075,7 +2111,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 2; // No long range.
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
         
         return weapon;
@@ -2097,7 +2133,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 3;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
         
         return weapon;
@@ -2119,7 +2155,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 6;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
         
         return weapon;
@@ -2141,7 +2177,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
         
         return weapon;
@@ -2163,7 +2199,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 3;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
         
         return weapon;
@@ -2231,6 +2267,562 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES;
+        
+        return weapon;
+    }
+
+    // Anti-Mek attacks
+    public static WeaponType createLegAttack() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Leg Attack";
+        weapon.internalName = "LegAttack";
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_SPECIAL;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        
+        return weapon;
+    }
+
+    public static WeaponType createSwarmMek() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Swarm Mek";
+        weapon.internalName = "SwarmMek";
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_SPECIAL;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
+        
+        return weapon;
+    }
+
+    // Start BattleArmor weapons
+    public static WeaponType createBAMG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Machine Gun";
+        weapon.internalName = "BAMachineGun";
+        weapon.mepName = "BA-Machine Gun";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_BA_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
+        
+        return weapon;
+    }
+    public static WeaponType createBAFlamer() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Flamer";
+        weapon.internalName = "BAFlamer";
+        weapon.mepName = "BA-Flamer";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER;
+        
+        return weapon;
+    }
+    public static WeaponType createBASmallLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Small Laser";
+        weapon.internalName = "BASmallLaser";
+        weapon.mepName = "BA-Small Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_NO_FIRES;
+        
+        return weapon;
+    }
+    public static WeaponType createBACLERSmallLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "ER Small Laser";
+        weapon.internalName = "BACLERSmallLaser";
+        weapon.mepName = "BA-Clan ER Small Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createCLAdvancedSRM2() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Advanced SRM 2";
+        weapon.internalName = "CLAdvancedSRM2";
+        weapon.mepName = "Clan Advanced SRM-2";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_ADVANCED;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBATwinFlamers() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Twin Flamers";
+        weapon.internalName = "BATwinFlamers";
+        weapon.mepName = "BA-Twin Flamers";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER | F_DOUBLE_HITS;
+        
+        return weapon;
+    }
+    public static WeaponType createBAInfernoSRM() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Inferno SRM";
+        weapon.internalName = "BAInfernoSRM";
+        weapon.mepName = "BA-Inferno SRM";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_BA_INFERNO;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_BATTLEARMOR;
+        
+        return weapon;
+    }
+    public static WeaponType createBACLMicroPulseLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Micro Pulse Laser";
+        weapon.internalName = "BACLMicroPulseLaser";
+        weapon.mepName = "BA-Clan Micro Pulse Laser";
+        weapon.mtfName = "BACLMicroPulseLaser";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBAMicroBomb() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Micro Bomb";
+        weapon.internalName = "BAMicroBomb";
+        weapon.mepName = "BA-Micro Bomb";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_BA_MICRO_BOMB;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_BATTLEARMOR | F_NO_FIRES;
+        
+        return weapon;
+    }
+    public static WeaponType createBACLERMicroLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "ER Micro Laser";
+        weapon.internalName = "BACLERMicroLaser";
+        weapon.mepName = "BA-Clan ER Micro Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 4;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createCLTorpedoLRM5() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Torpedo/LRM 5";
+        weapon.internalName = "CLTorpedoLRM5";
+        weapon.mepName = "Clan Torpedo/LRM-5";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBAISMediumPulseLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Medium Pulse Laser";
+        weapon.internalName = "BAISMediumPulseLaser";
+        weapon.mepName = "BA-IS Medium Pulse Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 6;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createFenrirSmallPulseLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Twin Small Pulse Lasers";
+        weapon.internalName = "FenrirSmallPulseLaser";
+        weapon.mepName = "Fenrir Small Pulse Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.toHitModifier = -2;
+        weapon.ammoType = AmmoType.T_BA_SMALL_LASER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createFenrirSmallLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Triple Small Lasers";
+        weapon.internalName = "FenrirSmallLaser";
+        weapon.mepName = "Fenrir Small Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_BA_SMALL_LASER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createFenrirMG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Triple Machine Guns";
+        weapon.internalName = "FenrirMachineGun";
+        weapon.mepName = "Fenrir Machine Gun";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_BA_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE_HITS | F_DIRECT_FIRE;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createFenrirSRM4() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Fenrir SRM 4";
+        weapon.internalName = "FenrirSRM4";
+        weapon.mepName = "Fenrir SRM-4";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DOUBLE_HITS;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBAAutoGL() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Auto Gernade Launcher";
+        weapon.internalName = "BAAutoGL";
+        weapon.mepName = "BA-Auto GL";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_BA_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
+        
+        return weapon;
+    }
+    public static WeaponType createBAMagshotGR() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Magshot Gauss Rifle";
+        weapon.internalName = "BAMagshotGR";
+        weapon.mepName = "BA-Magshot GR";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
+        
+        return weapon;
+    }
+    public static WeaponType createBAISMediumLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Medium Laser";
+        weapon.internalName = "BAISMediumLaser";
+        weapon.mepName = "BA-IS Medium Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBAISERSmallLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "ER Small Laser";
+        weapon.internalName = "BAISERSmallLaser";
+        weapon.mepName = "BA-IS ER Small Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 5;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBACompactNARC() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Compact Narc";
+        weapon.internalName = "BACompactNARC";
+        weapon.mepName = "BA-Compact NARC";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 5;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_NO_FIRES | F_BATTLEARMOR;
+        
+        return weapon;
+    }
+    public static WeaponType createSlothSmallLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Twin Small Lasers";
+        weapon.internalName = "SlothSmallLaser";
+        weapon.mepName = "Sloth Small Laser";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_BA_SMALL_LASER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
+        weapon.bv = 0;
+        
+        return weapon;
+    }
+    public static WeaponType createBAMineLauncher() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Mine Launcher";
+        weapon.internalName = "BAMineLauncher";
+        weapon.mepName = "BA-Mine Launcher";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_SPECIAL;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_MINE;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 0;
+        weapon.longRange = 0;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
+        weapon.setModes(modes);
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_SOLO_ATTACK;
         
         return weapon;
     }

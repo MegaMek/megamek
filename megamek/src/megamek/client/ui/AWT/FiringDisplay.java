@@ -230,11 +230,42 @@ public class FiringDisplay
 
         if (client.game.getEntity(en) != null) {
             this.cen = en;
-	    isInfantry = (ce() instanceof Infantry);
+
+            // If the selected entity is not on the board, use the next one.
+            // ASSUMPTION: there will always be *at least one* entity on map.
+            if ( null == ce().getPosition() ) {
+
+		// Walk through the list of entities for this player.
+		for ( int nextId = client.getNextEntityNum(en);
+		      nextId != en;
+		      nextId = client.getNextEntityNum(nextId) ) {
+
+		    // If we find an Infantry platoon, make the
+		    // player move it instead, and stop looping.
+		    if (null != client.game.getEntity(nextId).getPosition()) {
+			this.cen = nextId;
+			break;
+		    }
+
+                } // Check the player's next entity.
+
+                // We were *supposed* to have found an on-board entity.
+                if ( null == ce().getPosition() ) {
+                    System.err.println
+                        ("FiringDisplay: could not find an on-board entity: " +
+                         en);
+                    System.err.println
+                        ("FiringDisplay: sending ready signal...");
+                    client.sendReady(true);
+                    return;
+                }
+
+            } // End ce()-not-on-board
 
 	    // If the current entity is not infantry, and we're in a middle
 	    // of an infantry fire block, make sure that the player has no
 	    // other infantry.
+	    isInfantry = (ce() instanceof Infantry);
 	    if ( !isInfantry && infMoveMulti && 
 		 (turnInfMoved % Game.INF_MOVE_MULTI) > 0 ) {
 

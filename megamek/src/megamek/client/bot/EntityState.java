@@ -117,6 +117,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     this.heatBuildup = entity.heatBuildup;
   }
   public void addStep(int step_type) {
+      // We *might* skid if we move after turning.
+      boolean isTurning = false;
     try {
       if (firstStep && step_type == MovementData.STEP_START_JUMP) {
         this.overallMoveType = Entity.MOVE_JUMP;
@@ -231,8 +233,23 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
 	  prevStep = (MovementData.Step)getStep(length() - 1);
       }
       // check for danger
-      isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType, prevStep, overallMoveType) || step_type == MovementData.STEP_GET_UP);
-      
+      isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType, isTurning, overallMoveType) || step_type == MovementData.STEP_GET_UP);
+
+      // Record if we're turning *after* check for danger,
+      // because the danger lies in moving *after* turn.
+      switch(step_type) {
+      case MovementData.STEP_UNLOAD:
+          // Unloading transported units doesn't protect vs. skids.
+          break;
+      case MovementData.STEP_TURN_LEFT :
+      case MovementData.STEP_TURN_RIGHT :
+          isTurning = true;
+          break;
+      default:
+          isTurning = false;
+          break;
+      }
+
       //this should be a more exact calculation, but for now it just serves as a deterent
       //for example it should actaully be a proportion of the threat if you end up stuck in
       //this state
@@ -611,7 +628,14 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   public MovementData getMovementData() {
     MovementData transmit = new MovementData();
     for (int j = 0; j < Steps.size(); j++) {
-      transmit.addStep(((Integer)Steps.elementAt(j)).intValue());
+        int stepType = ( (Integer)Steps.elementAt(j) ).intValue();
+      // Charges and DFA steps now identify their targets.
+      if ( stepType == MovementData.STEP_CHARGE ||
+           stepType == MovementData.STEP_DFA ) {
+          transmit.addStep( stepType, this.PhysicalTarget.entity );
+      } else {
+          transmit.addStep( stepType );
+      }
     }
     return transmit;
   }

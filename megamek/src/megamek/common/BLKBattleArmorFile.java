@@ -19,9 +19,10 @@
  */
 
 /**
+ * This class loads BattleArmor BLK files.
  *
- * @author  njrkrynn
- * @version 
+ * @author  Suvarov454@sourceforge.net (James A. Damour )
+ * @version $revision:$
  */
 package megamek.common;
 
@@ -29,49 +30,47 @@ import java.io.*;
 
 import megamek.common.util.*;
 
-public class BLKTankFile implements MechLoader {    
-    
+public class BLKBattleArmorFile implements MechLoader {
+
     BuildingBlock dataFile;
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover" };
-    
+    // HACK!!!  BattleArmor movement reuses Mech and Vehicle movement.
+    private static final String[] MOVES = { "", "Leg", "", "", "", "Jump" };
+
     /** Creates new BLkFile */
-    public BLKTankFile(InputStream is) {
-        
+    public BLKBattleArmorFile(InputStream is) {
+
         dataFile = new BuildingBlock(is);
-        
+
     }
-    
-    public BLKTankFile(BuildingBlock bb) {
+
+    public BLKBattleArmorFile(BuildingBlock bb) {
         dataFile = bb;
     }
-      
+
     //if it's a block file it should have this...
     public boolean isMine() {
-     
+
         if (dataFile.exists("blockversion") ) return true;
-        
+
         return false;
-        
+
     }
 
     public Entity getEntity() throws EntityLoadingException {
-    
-        Tank t = new Tank();
-        
-        if (!dataFile.exists("Name")) throw new EntityLoadingException("Could not find name block.");
+
+        BattleArmor t = new BattleArmor();
+
+        if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
-             t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-             t.setModel("");
-        }
-       
-        
+
+        if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find model block.");
+            t.setModel(dataFile.getDataAsString("Model")[0]);
+
         if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);
-            
+
         if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
-            
+
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (t.getYear() == 3025) {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_1);
@@ -81,10 +80,13 @@ public class BLKTankFile implements MechLoader {
         } else {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         }
-        
+
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
         t.weight = dataFile.getDataAsFloat("tonnage")[0];
-            
+
+        if (!dataFile.exists("BV")) throw new EntityLoadingException("Could not find BV block.");
+        t.setBattleValue( dataFile.getDataAsInt("BV")[0] );
+
         if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
@@ -96,66 +98,43 @@ public class BLKTankFile implements MechLoader {
         }
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementType(nMotion);
-        
-        if ( dataFile.exists("transporters")) {
-	    String[] transporters = dataFile.getDataAsString("transporters");
-	    // Walk the array of transporters.
-	    for (int index = 0; index < transporters.length; index++) {
-		// TroopSpace:
-		if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
-		    // Everything after the ':' should be the space's size.
-		    int size = Integer.parseInt
-			( transporters[index].substring(11) );
-		    t.addTransporter( new TroopSpace(size) );
-		}
-
-	    } // Handle the next transportation component.
-
-	} // End has-transporters
 
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
-            
-    
+
+        if (dataFile.exists("jumpingMP"))
+            t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
+
         if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
-        
+
         int[] armor = dataFile.getDataAsInt("armor");
-        
-        if (armor.length < 4 || armor.length > 5) {
-            throw new EntityLoadingException("Incorrect armor array length");   
+
+        // Each trooper has the same amount of armor
+        if (armor.length != 1) {
+            throw new EntityLoadingException("Incorrect armor array length");
         }
-        
-        t.setHasTurret(armor.length == 5);
-        
+
         // add the body to the armor array
-        int[] fullArmor = new int[armor.length + 1];
-        fullArmor[0] = 0;
-        System.arraycopy(armor, 0, fullArmor, 1, armor.length);
-        for (int x = 0; x < fullArmor.length; x++) {
-            t.initializeArmor(fullArmor[x], x);
+        for (int x = 1; x < t.locations(); x++) {
+            t.initializeArmor(armor[0], x);
         }
-        
-        
-        
+
         t.autoSetInternal();
-        
-        loadEquipment(t, "Front", Tank.LOC_FRONT);
-        loadEquipment(t, "Right", Tank.LOC_RIGHT);
-        loadEquipment(t, "Left", Tank.LOC_LEFT);
-        loadEquipment(t, "Rear", Tank.LOC_REAR);
-        if (t.hasTurret()) {
-            loadEquipment(t, "Turret", Tank.LOC_TURRET);
+
+        loadEquipment(t, "Squad", BattleArmor.LOC_SQUAD);
+        String[] abbrs = t.getLocationAbbrs();
+        for ( int loop = 1; loop < t.locations(); loop++ ) {
+            loadEquipment( t, abbrs[loop], loop );
         }
-        loadEquipment(t, "Body", Tank.LOC_BODY);
-        return t;        
+        return t;
     }
-    
-    private void loadEquipment(Tank t, String sName, int nLoc) 
+
+    private void loadEquipment(BattleArmor t, String sName, int nLoc)
             throws EntityLoadingException
-    {            
+    {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) return;
-        
+
         // prefix is "Clan " or "IS "
         String prefix;
         if (t.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
@@ -167,16 +146,16 @@ public class BLKTankFile implements MechLoader {
         for (int x = 0; x < saEquip.length; x++) {
             String equipName = saEquip[x].trim();
             EquipmentType etype = EquipmentType.getByMtfName(equipName);
-            
+
             if (etype == null) {
                 etype = EquipmentType.getByMepName(equipName);
             }
-            
+
             if (etype == null) {
                 // try w/ prefix
                 etype = EquipmentType.getByMepName(prefix + equipName);
             }
-            
+
             if (etype != null) {
                 try {
                     t.addEquipment(etype, nLoc);
@@ -184,7 +163,7 @@ public class BLKTankFile implements MechLoader {
                     throw new EntityLoadingException(ex.getMessage());
                 }
             }
+            else if ( !equipName.equals("0") ) { System.err.println("Could not find " + equipName + " for " + t.getShortName() ); } //killme
         }
     }
 }
-

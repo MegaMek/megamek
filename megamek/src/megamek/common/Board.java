@@ -243,6 +243,7 @@ implements Serializable {
      * @param c the Coords.
      */
     public boolean contains(Coords c) {
+        if ( c == null ) return false;
         return contains(c.x, c.y);
     }
     

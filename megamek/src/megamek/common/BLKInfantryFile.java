@@ -95,11 +95,12 @@ public class BLKInfantryFile implements MechLoader {
         }
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementType(nMotion);
-        
-        /* Infantry MPs determined by movement type and weapon type.
+
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
-	*/
+
+        if (dataFile.exists("jumpingMP"))
+            t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
 	/* Infanty *have* no armor (that's why they're PBI :).
         if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");

@@ -170,8 +170,11 @@ public class Game implements Serializable
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             Entity otherEntity = (Entity)i.nextElement();
 
-            //if friendly fire is acceptable, do not shoot yourself            
-            if (entity.isEnemyOf(otherEntity) || (friendlyFire && entity.getId() != otherEntity.getId() )) {
+            // Even if friendly fire is acceptable, do not shoot yourself
+            // Enemy units not on the board can not be shot.
+            if ( null != otherEntity.getPosition() &&
+                 ( entity.isEnemyOf(otherEntity) || 
+                   (friendlyFire && entity.getId() != otherEntity.getId()) ) ) {
                 ents.addElement( otherEntity );
             }
         }
@@ -349,11 +352,14 @@ public class Game implements Serializable
      */
     public Enumeration getEntities(Coords c) {
         Vector vector = new Vector();
-        
-        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            if (c.equals(entity.getPosition()) && entity.isTargetable()) {
-                vector.addElement(entity);
+
+        // Only build the list if the coords are off the board.
+        if ( this.board.contains(c) ) {
+            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                if (c.equals(entity.getPosition()) && entity.isTargetable()) {
+                    vector.addElement(entity);
+                }
             }
         }
 
@@ -496,4 +502,94 @@ public class Game implements Serializable
         }
         return false;
     }
+
+    /**
+     * Check each player for the presence of a Battle Armor squad equipped
+     * with a Magnetic Clamp.  If one unit is found, update that player's
+     * units to allow the squad to be transported.
+     * <p/>
+     * This method should be called </b>*ONCE*</b> per game, after all units
+     * for all players have been loaded.
+     *
+     * @return  <code>true</code> if a unit was updated, <code>false</code>
+     *          if no player has a Battle Armor squad equipped with a
+     *          Magnetic Clamp.
+     */
+    public boolean checkForMagneticClamp() {
+
+        // Declare local variables.
+        Player          player = null;
+        Entity          unit = null;
+        boolean         result;
+        Map             playerFlags = null;
+        Enumeration     enum = null;
+        Iterator        units = null;
+        Mounted         equip = null;
+        String          name = null;
+
+        // Assume that we don't need new transporters.
+        result = false;
+
+        // Create a map of flags for the players.
+        playerFlags = new HashMap( this.getNoOfPlayers() );
+
+        // Walk through the game's entities.
+        units = this.entities.iterator();
+        while ( units.hasNext() ) {
+
+            // Is the next unit a Battle Armor squad?
+            unit = (Entity) units.next();
+            if ( unit instanceof BattleArmor ) {
+
+                // Does the unit have a Magnetic Clamp?
+                enum = unit.getMisc();
+                while ( enum.hasMoreElements() ) {
+                    equip = (Mounted) enum.nextElement();
+                    name = equip.getType().getInternalName();
+                    if ( BattleArmor.MAGNETIC_CLAMP.equals( name ) ){
+                        // The unit's player needs new transporters.
+                        result = true;
+                        playerFlags.put( unit.getOwner(), Boolean.TRUE );
+
+                        // Stop looking.
+                        break;
+                    }
+                }
+
+            } // End unit-is-BattleArmor
+
+        } // Handle the next entity.
+
+        // Do we need to add any Magnetic Clamp transporters?
+        if ( result ) {
+
+            // Walk through the game's entities again.
+            units = this.entities.iterator();
+            while ( units.hasNext() ) {
+
+                // Get this unit's player.
+                unit = (Entity) units.next();
+                player = unit.getOwner();
+
+                // Does this player need updated transporters?
+                if ( Boolean.TRUE.equals( playerFlags.get(player) ) ) {
+
+                    // Add the appropriate transporter to the unit.
+                    if ( !unit.isOmni() && unit instanceof Mech ) {
+                        unit.addTransporter( new ClampMountMech() );
+                    }
+                    else if ( unit instanceof Tank ) {
+                        unit.addTransporter( new ClampMountTank() );
+                    }
+
+                }
+            } // End player-needs-transports
+
+        } // Handle the next unit.
+
+        // Return the result.
+        return result;
+
+    } // End private boolean checkForMagneticClamp()
+
 }

@@ -296,6 +296,11 @@ public class Compute
 
             // 
             switch(step.getType()) {
+	    case MovementData.STEP_UNLOAD:
+		// TODO: Can immobilized transporters unload?
+	    case MovementData.STEP_LOAD:
+		stepMp = 1;
+		break;
             case MovementData.STEP_TURN_LEFT :
             case MovementData.STEP_TURN_RIGHT :
 		// Infantry can turn for free.
@@ -402,8 +407,10 @@ public class Compute
     /**
      * Go thru movement data and set the moveType, illegal and danger flags.
      */
-    private static void compileIllegal(Game game, int entityId, MovementData md, 
-                                        int overallMoveType, boolean runProhibited) {
+    private static void compileIllegal( Game game, int entityId,
+                                        MovementData md,
+                                        int overallMoveType,
+                                        boolean runProhibited ) {
         final Entity entity = game.getEntity(entityId);
 
         Coords curPos = new Coords(entity.getPosition());
@@ -412,10 +419,13 @@ public class Compute
         boolean pastDanger = false;
         boolean firstStep = true;
 	boolean isInfantry = (entity instanceof Infantry);
+        boolean isTurning = false;
+        boolean isUnloaded = false;
 	MovementData.Step prevStep = null;
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
+            final int stepType = step.getType();
             
             Coords lastPos = new Coords(curPos);
             curPos = step.getPosition();
@@ -431,45 +441,69 @@ public class Compute
             }
             
             // check for valid walk/run mp
-            if ((overallMoveType == Entity.MOVE_WALK || overallMoveType == Entity.MOVE_RUN)
+            if ( (overallMoveType == Entity.MOVE_WALK ||
+                  overallMoveType == Entity.MOVE_RUN)
                 && (!entity.isProne() || md.contains(MovementData.STEP_GET_UP)
-                    || step.getType() == MovementData.STEP_TURN_LEFT 
-                    || step.getType() == MovementData.STEP_TURN_RIGHT)) {
+                    || stepType == MovementData.STEP_TURN_LEFT 
+                    || stepType == MovementData.STEP_TURN_RIGHT)) {
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
-                } else if (step.getMpUsed() <= entity.getRunMP() && !runProhibited) {
+                } else if ( step.getMpUsed() <= entity.getRunMP() &&
+                            !runProhibited ) {
                     moveType = Entity.MOVE_RUN;
                 }
             }
             
             // mechs with 1 MP are allowed to get up
-            if (step.getType() == MovementData.STEP_GET_UP && entity.getWalkMP() == 1) {
+            if ( stepType == MovementData.STEP_GET_UP &&
+                 entity.getWalkMP() == 1 ) {
                 moveType = Entity.MOVE_RUN;
             }
             
             // amnesty for the first step
-            if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && !entity.isProne() && step.getType() == MovementData.STEP_FORWARDS) {
+            if ( firstStep && moveType == Entity.MOVE_ILLEGAL &&
+                 entity.getWalkMP() > 0 && !entity.isProne() &&
+                 stepType == MovementData.STEP_FORWARDS ) {
                 moveType = Entity.MOVE_RUN;
             }
-            
+
+            // Is the entity unloading passeners?
+            if ( stepType == MovementData.STEP_UNLOAD ) {
+                // Prone Meks are able to unload.
+                if ( entity.isProne() && moveType == Entity.MOVE_ILLEGAL ) {
+                    moveType = Entity.MOVE_WALK;
+                }
+
+                // Can't unload units into prohibited terrain
+                // or into stacking violation.
+                Entity other = step.getTarget( game );
+                if ( null != stackingViolation(game, other.getId(), curPos)
+                     || other.isHexProhibited(game.board.getHex(curPos)) ) {
+                    moveType = Entity.MOVE_ILLEGAL;
+                }
+            }
+
             // check if this movement is illegal for reasons other than points
-            if (!isMovementPossible(game, entityId, lastPos, curPos, moveType, step.getType(), firstStep)) {
+            if ( !isMovementPossible(game, entityId, lastPos, curPos,
+                                     moveType, stepType, firstStep)
+                 || isUnloaded ) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
-            
+
             // no legal moves past an illegal one
             if (moveType == Entity.MOVE_ILLEGAL) {
                 legal = false;
             }
             
             // check for danger
+            // BUG: skid danger should really go on the prevStep, not on step.
             danger = step.isDanger();
-            danger |= isPilotingSkillNeeded(game, entityId, lastPos, 
-                                              curPos, moveType,
-					      prevStep, overallMoveType);
+            danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
+                                             curPos, moveType,
+                                             isTurning, overallMoveType );
             
             // getting up is also danger
-            if (step.getType() == MovementData.STEP_GET_UP) {
+            if (stepType == MovementData.STEP_GET_UP) {
                 danger = true;
             }
             
@@ -480,7 +514,23 @@ public class Compute
             
             // set past danger
             pastDanger |= danger;
-            
+
+            // Record if we're turning *after* check for danger,
+            // because the danger lies in moving *after* turn.
+            switch(stepType) {
+            case MovementData.STEP_TURN_LEFT :
+            case MovementData.STEP_TURN_RIGHT :
+                isTurning = true;
+                break;
+            case MovementData.STEP_UNLOAD:
+                // Unloading must be the last step.
+                isUnloaded = true;
+                break;
+            default:
+                isTurning = false;
+                break;
+            }
+
             firstStep = false;
 
 	    // Infantry can always move one hex in *any* direction.
@@ -547,8 +597,7 @@ public class Compute
 	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-	    if ( null == inHex ) 
-		System.out.println( "getEntities( Coords ) returns an enumeration with null values" ); //killme
+
 	    // Don't compare the entering entity to itself.
 	    if ( !(inHex.equals(entering)) ) {
 
@@ -683,6 +732,8 @@ public class Compute
      * 
      * This makes the assumtion that entity.getPosition() returns the 
      * position the movement started in.
+     *
+     * This method is called from compileIllegal.
      */
     public static boolean isMovementPossible(Game game, int entityId, 
                                              Coords src, Coords dest,
@@ -708,7 +759,51 @@ public class Compute
         if (!game.board.contains(dest)) {
             return false;
         }
-        
+
+        // The entity is trying to load.  Check for a valid move.
+        if ( stepType == MovementData.STEP_LOAD ) {
+
+            // Transports can't load after the first step.
+            if ( !firstStep ) {
+                return false;
+            }
+
+            // Find the unit being loaded.
+            Entity other = null;
+            Enumeration entities = game.getEntities( src );
+            while ( entities.hasMoreElements() ) {
+
+                // Is the other unit friendly and not the current entity?
+                other = (Entity)entities.nextElement();
+                if ( entity.getOwner() == other.getOwner() &&
+                     !entity.equals(other) ) {
+
+                    // The moving unit should be able to load the other unit.
+                    if ( !entity.canLoad(other) ) {
+                        return false;
+                    }
+
+                    // The other unit should be able to have a turn.
+                    if ( !other.isSelectable() ) {
+                        return false;
+                    }
+
+                    // We can stop looking.
+                    break;
+                } else {
+                    // Nope. Discard it.
+                    other = null;
+                }
+
+            } // Check the next entity in this position.
+
+            // We were supposed to find someone to load.
+            if ( other == null ) {
+                return false;
+            }
+
+        } // End STEP_LOAD-checks
+
         // mechs dumping ammo can't run
         boolean bDumping = false;
         for (Enumeration e = entity.getAmmo(); e.hasMoreElements(); ) {
@@ -810,7 +905,7 @@ public class Compute
     public static boolean isPilotingSkillNeeded(Game game, int entityId, 
                                                 Coords src, Coords dest,
                                                 int movementType,
-						MovementData.Step prevStep,
+						boolean isTurning,
 						int overallMoveType) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
@@ -845,13 +940,10 @@ public class Compute
         }
 
         // Check for skids.
-	// ASSUMPTION - only count pavement in the src hex.
 	if ( movementType != Entity.MOVE_JUMP
 	     && srcHex.contains(Terrain.PAVEMENT)
 	     && overallMoveType == Entity.MOVE_RUN
-	     && prevStep != null
-	     && (prevStep.getType() == MovementData.STEP_TURN_LEFT ||
-		 prevStep.getType() == MovementData.STEP_TURN_RIGHT)
+             && isTurning
 	     && !isInfantry ) {
 	    return true;
 	}
@@ -1076,16 +1168,18 @@ public class Compute
         final Mounted weapon = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)weapon.getType();
         Coords[] in = intervening(ae.getPosition(), te.getPosition());
-	// 2002-09-16 Infantry weapons have unlimited ammo.
 	boolean isAttackerInfantry = (ae instanceof Infantry);
-	// 2002-09-17 Infantry can only use infantry weapons
-	boolean isWeaponInfantry = isAttackerInfantry;
+	boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
+	// 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+            wtype.getAmmoType() != AmmoType.T_BA_MG &&
+            wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
 	    !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         
-        ToHitData toHit;
+        ToHitData toHit = null;
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
         
@@ -1104,16 +1198,45 @@ public class Compute
         if (sensorHits > 1) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker sensors destroyed.");
         }
-        
-        // weapon in arc?
-        if (!isInArc(game, attackerId, weaponId, targetId)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+
+        // Is the weapon blocked by a passenger?
+        if ( ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()) ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon blocked by passenger.");
         }
+
+        // weapon in arc?
+        // TODO? : move to after range calculation?
+        if (!isInArc(game, attackerId, weaponId, targetId)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
+        }
+
+        // Handle solo attack weapons.
+        if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
+            for ( Enumeration i = prevAttacks.elements();
+                  i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId) {
+
+                    // If the attacker fires another weapon, this attack fails.
+                    if ( weaponId != prevAttack.getWeaponId() ) {
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Other weapon attacks declared.");
+                    }
+                }
+            }
+        } // End current-weapon-is-solo
         
         int attEl = ae.elevation() + ae.height();
         int targEl = te.elevation() + te.height();
         
         //TODO: mech making DFA could be higher if DFA target hex is higher
+        //      BMRr pg. 43, "attacking unit is considered to be in the air
+        //      above the hex, standing on an elevation 1 level higher than
+        //      the target hex or the elevation of the hex the attacker is
+        //      in, whichever is higher."
         
         // check LOS
         LosEffects los = calculateLos(game, attackerId, targetId);
@@ -1126,11 +1249,31 @@ public class Compute
 
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons.");
         }
-        
-        // first: gunnery skill
-        toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
+
+        // Leg attacks, Swarm attacks, and
+        // Mine Launchers don't use gunnery.
+        if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
+            toHit = Compute.getLegAttackBaseToHit( ae, te );
+        }
+        else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+            toHit = Compute.getSwarmMekBaseToHit( ae, te );
+            // TODO : implement SwarmMek
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Not implemented yet.");
+        }
+        else if ( BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName()) ) {
+            // Mine launchers can not hit infantry.
+            if ( te instanceof Infantry ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE, 
+                                      "Can not attack infantry." );
+            } else {
+                toHit = new ToHitData(8, "magnetic mine attack");
+            }
+        }
+        else {
+            toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
+        }
         
         // determine range
         final int range = ae.getPosition().distance(te.getPosition());
@@ -1157,7 +1300,7 @@ public class Compute
         }
         if (range > wtype.getMediumRange()) {
             // Infantry LRMs suffer an additional maximum range penaltie.
-            if ( isAttackerInfantry &&
+            if ( isWeaponInfantry &&
                  wtype.getAmmoType() == AmmoType.T_LRM &&
 		 range == wtype.getLongRange() ) {
                 toHit.addModifier(5, "infantry LRM maximum range");
@@ -1166,47 +1309,90 @@ public class Compute
 		toHit.addModifier(4, "long range");
             }
             // reduce range modifier back to short if a C3 spotter is at short range
-            if (c3range <= wtype.getShortRange()) 
-              toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() + " at short range");
+            if (c3range <= wtype.getShortRange()) {
+                toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() +
+                                  " at short range");
+                if ( te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+                }
+            }
             // reduce range modifier back to medium if a C3 spotter is at medium range
-            else if (c3range <= wtype.getMediumRange())
-              toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() + " at medium range");
+            else if (c3range <= wtype.getMediumRange()) {
+                toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
+                                  " at medium range");
+                if ( te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_MEDIUM) );
+                }
+            }
+            else if ( te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_LONG) );
+            }
         } else if (range > wtype.getShortRange()) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
             // reduce range modifier back to short if a C3 spotter is at short range
-            if (c3range <= wtype.getShortRange())
-              toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() + " at short range");
-	} else if ( 0 == range ) {
-	    // Only Infantry shoot at zero range.
-	    if ( !isAttackerInfantry ) {
-		return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infantry shoot at zero range");
-	    }
+            if (c3range <= wtype.getShortRange()) {
+                toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
+                                  " at short range");
+                if ( te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+                }
+            }
+            else if ( te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_MEDIUM) );
+            }
 
-	    // Infantry can attack in the same hex with a base of 2.
-	    // Except for flamers and SRMs, which have a base of 3
-	    // and except LRMs, which suffer badly. 
-	    if ( (wtype.getFlags() & WeaponType.F_FLAMER) ==
-		 WeaponType.F_FLAMER ) {
-		toHit.addModifier(-1, "infantry flamer assault");
-	    } else if ( wtype.getAmmoType() == AmmoType.T_SRM ) {
-		toHit.addModifier(-1, "infantry SRM assault");
-	    } else if ( wtype.getAmmoType() != AmmoType.T_LRM ) {
-		toHit.addModifier(-2, "infantry assault");
-	    }
-        }
+
+	} else {
+            // short range
+
+            if ( 0 == range ) {
+                // Only Infantry shoot at zero range.
+                if ( !isAttackerInfantry ) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infantry shoot at zero range.");
+                }
+
+                // Only infantry weapons get zero-range attack bonuses.
+                if ( isWeaponInfantry ) {
+
+                    // Infantry platoons attacking with infantry weapons can attack
+                    // in the same hex with a base of 2, except for flamers and
+                    // SRMs, which have a base of 3 and LRMs, which suffer badly. 
+                    if ( wtype.hasFlag(WeaponType.F_FLAMER) ) {
+                        toHit.addModifier(-1, "infantry flamer assault");
+                    } else if ( wtype.getAmmoType() == AmmoType.T_SRM ) {
+                        toHit.addModifier(-1, "infantry SRM assault");
+                    } else if ( isWeaponInfantry &&
+                                wtype.getAmmoType() != AmmoType.T_LRM ) {
+                        toHit.addModifier(-2, "infantry assault");
+                    }
+
+                } // End infantry-weapon
+
+            } // End zero-range
+            if ( te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+            }
+
+        } // End short-range
+
         // also check for minimum range
         if (range <= wtype.getMinimumRange()) {
             int minPenalty = wtype.getMinimumRange() - range + 1;
             // Infantry LRMs suffer double minimum range penalties.
-            if ( isAttackerInfantry &&
+            if ( isWeaponInfantry &&
                  wtype.getAmmoType() == AmmoType.T_LRM ) {
                 toHit.addModifier(minPenalty*2, "infantry LRM minumum range");
             } else {
                 toHit.addModifier(minPenalty, "minumum range");
             }
         }
-        
+
+        // Battle Armor targets are hard for Meks and Tanks to hit.
+        if ( !isAttackerInfantry && te instanceof BattleArmor ) {
+            toHit.addModifier( 1, "battle armor target" );
+        }
+
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
         
@@ -1219,7 +1405,7 @@ public class Compute
         // attacker in water?
         Hex attHex = game.board.getHex(ae.getPosition());
         if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker underwater");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker underwater.");
         }
         
         // target terrain
@@ -1233,7 +1419,7 @@ public class Compute
                 los.targetCover = true;
                 losMods = losModifiers(los);
             } else if (targHex.surface() > targEl) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater");
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater.");
             }
         }
 
@@ -1264,6 +1450,13 @@ public class Compute
         }
         
         if (primaryTarget != Entity.NONE && primaryTarget != targetId) {
+
+            // Infantry can't attack secondary targets (BMRr, pg. 32).
+            if ( isAttackerInfantry ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE, 
+                                      "Can't have multiple targets." );
+            }
+
             if (curInFrontArc) {
                 toHit.addModifier(1, "secondary target modifier");
             } else {
@@ -1311,7 +1504,7 @@ public class Compute
                 if ( (legsDead == 1) || (legsDead == 2) ) {
                     // Need an intact front leg
                     if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed");
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
                     }
                     
                     // arm-mounted weapons have addidional trouble
@@ -1329,22 +1522,22 @@ public class Compute
                                 break;
                             }
                             if (prevAttack.getEntityId() == attackerId && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
-                                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already");
+                                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
                             }
                         }
                     }
                     // can't fire leg weapons
                     if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs");
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
                     }
                     toHit.addModifier(2, "attacker prone");
                 } else if ( legsDead >= 3 ) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed");
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
                 }
             } else {
                 // must have an arm intact
                 if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed");
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
                 }
                 // arm-mounted weapons have addidional trouble
                 if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
@@ -1362,13 +1555,13 @@ public class Compute
                         }
                         if (prevAttack.getEntityId() == attackerId
                         && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
-                            return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already");
+                            return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
                         }
                     }
                 }
                 // can't fire leg weapons
                 if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone");
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
                 }
                 toHit.addModifier(2, "attacker prone");
             }
@@ -1377,7 +1570,7 @@ public class Compute
         // target prone
         if (te.isProne()) {
             // easier when point-blank
-            if (range == 1) {
+            if (range <= 1) {
                 toHit.addModifier(-2, "target prone and adjacent");
             }
             // harder at range
@@ -1426,20 +1619,20 @@ public class Compute
     public static ToHitData losModifiers(LosEffects los) {
         ToHitData modifiers = new ToHitData();
         if (los.blocked) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
         }
         
         if (los.lightWoods + (los.heavyWoods * 2) > 2) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods.");
         }
         
         if (los.smoke > 1) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke");
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
         }
         
         if (los.smoke == 1) {
             if (los.lightWoods + los.heavyWoods > 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods");
+                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods.");
             } else {
                 modifiers.addModifier(2, "intervening smoke");
             }
@@ -1715,6 +1908,11 @@ public class Compute
         
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
+
+        // Battle Armor targets are hard for Meks and Tanks to hit.
+        if ( te instanceof BattleArmor ) {
+            toHit.addModifier( 1, "battle armor target" );
+        }
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1891,10 +2089,15 @@ public class Compute
         // okay, modifiers...
         toHit = new ToHitData(3, "base");
 
-	// BMR(r), page 42. +3 modifier for kicking infantry in same hex.
-	if ( 0 == range && (te instanceof Infantry) ) {
+	// BMR(r), page 33. +3 modifier for kicking infantry.
+	if ( te instanceof Infantry ) {
 	    toHit.addModifier( 3, "Stomping Infantry" );
 	}
+
+        // Battle Armor targets are hard for Meks and Tanks to hit.
+        if ( te instanceof BattleArmor ) {
+            toHit.addModifier( 1, "battle armor target" );
+        }
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1950,7 +2153,8 @@ public class Compute
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMech is attacking from the same hex."
         if ( 0 == range && te instanceof Tank ) {
-            toHit.setSideTable( random.nextInt(4) ); // results in 0 through 3
+            toHit.setRandom( Compute.random );
+            toHit.setSideTable( ToHitData.SIDE_RANDOM );
         }
 
         // done!
@@ -2095,6 +2299,11 @@ public class Compute
         
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
+
+        // Battle Armor targets are hard for Meks and Tanks to hit.
+        if ( te instanceof BattleArmor ) {
+            toHit.addModifier( 1, "battle armor target" );
+        }
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -2437,7 +2646,10 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
             }
         }
-            
+        else if ( te instanceof Infantry ) {
+            // Can't charge infantry.
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is infantry/");
+        }
         
         // target must be within 1 elevation level
         if (attackerElevation > targetHeight || attackerHeight < targetElevation) {
@@ -2632,6 +2844,16 @@ public class Compute
         
         // okay, modifiers...
         toHit = new ToHitData(5, "base");
+
+	// BMR(r), page 33. +3 modifier for DFA on infantry.
+	if ( te instanceof Infantry ) {
+	    toHit.addModifier( 3, "Infantry target" );
+	}
+
+        // Battle Armor targets are hard for Meks and Tanks to hit.
+        if ( te instanceof BattleArmor ) {
+            toHit.addModifier( 1, "battle armor target" );
+        }
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId, Entity.MOVE_JUMP));
@@ -2853,6 +3075,8 @@ public class Compute
             fChance = (float)oddsAbove(hitData.getValue()) / 100.0f;
         }
         System.out.println("\tHit Chance: " + fChance);
+
+        // TODO : update for BattleArmor.
         
         float fDamage = 0.0f;
         WeaponType wt = (WeaponType)weapon.getType();
@@ -3046,6 +3270,9 @@ public class Compute
      */
     public static boolean canMechFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
+        if ( null == entity.getPosition() ) {
+            return false;
+        }
         final Hex hex = game.board.getHex(entity.getPosition());
         
         //Non bipeds can't
@@ -3096,24 +3323,32 @@ public class Compute
     public static boolean canEntityFlee(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
         Coords pos = entity.getPosition();
-        return entity.getWalkMP() > 0 && !entity.isProne()
-        && (pos.x == 0 || pos.x == game.board.width - 1 
-            || pos.y == 0 || pos.y == game.board.height - 1);
+        return pos != null && entity.getWalkMP() > 0 && !entity.isProne()
+            && (pos.x == 0 || pos.x == game.board.width - 1 
+                || pos.y == 0 || pos.y == game.board.height - 1);
     }
-    
-    
+
+    /**
+     * Maintain backwards compatability.
+     *
+     * @param   missles - the <code>int</code> number of missles in the pack.
+     */
     public static int missilesHit(int missiles) {
         return missilesHit(missiles, 0);
     }
-    
+
     /**
      * Roll the number of missiles (or whatever) on the missile
      * hit table, with the specified mod to the roll.
+     *
+     * @param   missles - the <code>int</code> number of missles in the pack.
+     * @param   nMod - the <code>int</code> modifier to the roll for number
+     *          of missles that hit.
      */
     public static int missilesHit(int missiles, int nMod) {
         int nRoll = d6(2) + nMod;
         nRoll = Math.min(Math.max(nRoll, 2), 12);
-        
+
         if (missiles == 2) {
             switch(nRoll) {
             case 2 :
@@ -3131,8 +3366,27 @@ public class Compute
                 return 2;
             }
         }
-        
-        if (missiles == 4) {
+
+        else if (missiles == 3) {
+            switch(nRoll) {
+            case 2 :
+            case 3 :
+            case 4 :
+                return 1;
+            case 5 :
+            case 6 :
+            case 7 :
+            case 8 :
+            case 9 :
+                return 2;
+            case 10 :
+            case 11 :
+            case 12 :
+                return 3;
+            }
+        }
+
+        else if (missiles == 4) {
             switch(nRoll) {
             case 2 :
                 return 1;
@@ -3151,8 +3405,8 @@ public class Compute
                 return 4;
             }
         }
-        
-        if (missiles == 5) {
+
+        else if (missiles == 5) {
             switch(nRoll) {
             case 2 :
                 return 1;
@@ -3172,8 +3426,8 @@ public class Compute
                 return 5;
             }
         }
-        
-        if (missiles == 6) {
+
+        else if (missiles == 6) {
             switch(nRoll) {
             case 2 :
             case 3 :
@@ -3193,8 +3447,52 @@ public class Compute
                 return 6;
             }
         }
-        
-        if (missiles == 10) {
+
+        else if (missiles == 8) {
+            switch(nRoll) {
+            case 2 :
+                return 2;
+            case 3 :
+            case 4 :
+                return 3;
+            case 5 :
+            case 6 :
+                return 4;
+            case 7 :
+            case 8 :
+                return 5;
+            case 9 :
+                return 6;
+            case 10 :
+                return 7;
+            case 11 :
+            case 12 :
+                return 8;
+            }
+        }
+
+        else if (missiles == 9) {
+            switch(nRoll) {
+            case 2 :
+            case 3 :
+                return 3;
+            case 4 :
+                return 4;
+            case 5 :
+            case 6 :
+            case 7 :
+            case 8 :
+                return 5;
+            case 9 :
+            case 10 :
+                return 7;
+            case 11 :
+            case 12 :
+                return 9;
+            }
+        }
+
+        else if (missiles == 10) {
             switch(nRoll) {
             case 2 :
             case 3 :
@@ -3214,8 +3512,29 @@ public class Compute
                 return 10;
             }
         }
-        
-        if (missiles == 15) {
+
+        else if (missiles == 12) {
+            switch(nRoll) {
+            case 2 :
+            case 3 :
+                return 4;
+            case 4 :
+                return 5;
+            case 5 :
+            case 6 :
+            case 7 :
+            case 8 :
+                return 8;
+            case 9 :
+            case 10 :
+                return 10;
+            case 11 :
+            case 12 :
+                return 12;
+            }
+        }
+
+        else if (missiles == 15) {
             switch(nRoll) {
             case 2 :
             case 3 :
@@ -3236,7 +3555,7 @@ public class Compute
             }
         }
 
-        if (missiles == 20) {
+        else if (missiles == 20) {
             switch(nRoll) {
             case 2 :
             case 3 :
@@ -3256,7 +3575,7 @@ public class Compute
                 return 20;
             }
         }
-        
+
         return 0;
     }
     
@@ -3334,4 +3653,217 @@ public class Compute
         }
         return false;
     }    
+
+    /**
+     * Get the base to-hit number of a Leg Attack by the given attacker upon
+     * the given defender
+     *
+     * @param   attacker - the <code>Entity</code> conducting the leg attack.
+     * @param   defender - the <code>Entity</code> being attacked.
+     * @return  The base <code>ToHitData</code> of the attack.
+     */
+    public static ToHitData getLegAttackBaseToHit( Entity attacker,
+                                                   Entity defender ) {
+        int men = 0;
+        int base = ToHitData.IMPOSSIBLE;
+        StringBuffer reason = new StringBuffer();
+
+        // Can only attack a Mek's legs.
+        if ( !(defender instanceof Mech) ) {
+            reason.append( "Defender is not a Mek." );
+        }
+
+        // Handle BattleArmor attackers.
+        else if ( attacker instanceof BattleArmor ) {
+            BattleArmor inf = (BattleArmor) attacker;
+
+            // Battle Armor units can't Leg Attack if they're burdened.
+            if ( inf.isBurdened() ) {
+                reason.append( "Launcher not jettisoned." );
+            } else {
+                men = inf.getShootingStrength();
+                if ( men >= 4 ) base = 4;
+                else if ( men >= 3 ) base = 7;
+                else if ( men >= 2 ) base = 10;
+                else if ( men >= 1 ) base = 12;
+                reason.append( men );
+                reason.append( " trooper(s) active" );
+            }
+        }
+
+        // Non-BattleArmor infantry need many more men.
+        else if ( attacker instanceof Infantry ) {
+            Infantry inf = (Infantry) attacker;
+            men = inf.getShootingStrength();
+            if ( men >= 22 ) base = 4;
+            else if ( men >= 16 ) base = 7;
+            else if ( men >= 10 ) base = 10;
+            else if ( men >= 5 ) base = 12;
+            reason.append( men );
+            reason.append( " men alive" );
+        }
+
+        // No one else can conduct leg attacks.
+        else {
+            reason.append( "Attacker is not infantry." );
+        }
+
+        // Return the ToHitData for this attack.
+        // N.B. we attack the legs.
+        return new ToHitData( base, reason.toString(), 
+                              ToHitData.HIT_KICK, ToHitData.SIDE_FRONT );
+    }
+
+    /**
+     * Get the base to-hit number of a Swarm Mek by the given attacker upon
+     * the given defender.
+     *
+     * @param   attacker - the <code>Entity</code> swarming.
+     * @param   defender - the <code>Entity</code> being swarmed.
+     * @return  The base <code>ToHitData</code> of the mek.
+     */
+    public static ToHitData getSwarmMekBaseToHit( Entity attacker,
+                                                  Entity defender ) {
+        int men = 0;
+        int base = ToHitData.IMPOSSIBLE;
+        StringBuffer reason = new StringBuffer();
+
+        // Can only swarm a Mek.
+        if ( !(defender instanceof Mech) ) {
+            reason.append( "Defender is not a Mek." );
+        }
+
+        // Handle BattleArmor attackers.
+        else if ( attacker instanceof BattleArmor ) {
+            BattleArmor inf = (BattleArmor) attacker;
+
+            // Battle Armor units can't Leg Attack if they're burdened.
+            if ( inf.isBurdened() ) {
+                reason.append( "Launcher not jettisoned." );
+            } else {
+                men = inf.getShootingStrength();
+                if ( men >= 4 ) base = 7;
+                else if ( men >= 1 ) base = 10;
+                reason.append( men );
+                reason.append( " trooper(s) active" );
+            }
+        }
+
+        // Non-BattleArmor infantry need many more men.
+        else if ( attacker instanceof Infantry ) {
+            Infantry inf = (Infantry) attacker;
+            men = inf.getShootingStrength();
+            if ( men >= 22 ) base = 7;
+            else if ( men >= 16 ) base = 10;
+            reason.append( men );
+            reason.append( " men alive" );
+        }
+
+        // No one else can conduct leg attacks.
+        else {
+            reason.append( "Attacker is not infantry." );
+        }
+
+        // Return the ToHitData for this attack.
+        return new ToHitData( base, reason.toString() );
+    }
+
+    /**
+     * Determine the number of shots from a Battle Armor unit's attack hit.
+     *
+     * @param   shots - the <code>int</code> number of shots from the unit.
+     * @return  the <code>int</code> number of shots that hit the target.
+     */
+    public static int getBattleArmorHits( int shots ) {
+        // 2003-01-02 : Battle Armor attacks don't get modifiers.
+        int nMod = 0;
+
+        int nRoll = d6(2) + nMod;
+        nRoll = Math.min(Math.max(nRoll, 2), 12);
+
+        if (shots == 1) {
+            return 1;
+        }
+
+        else if (shots == 2) {
+            switch(nRoll) {
+            case 2 :
+            case 3 :
+            case 4 :
+            case 5 :
+            case 6 :
+                return 1;
+            case 7 :
+            case 8 :
+            case 9 :
+            case 10 :
+            case 11 :
+            case 12 :
+                return 2;
+            }
+        }
+
+        else if (shots == 3) {
+            switch(nRoll) {
+            case 2 :
+            case 3 :
+                return 1;
+            case 4 :
+            case 5 :
+            case 6 :
+            case 7 :
+            case 8 :
+                return 2;
+            case 9 :
+            case 10 :
+            case 11 :
+            case 12 :
+                return 3;
+            }
+        }
+
+        else if (shots == 4) {
+            switch(nRoll) {
+            case 2 :
+                return 1;
+            case 3 :
+            case 4 :
+            case 5 :
+            case 6 :
+                return 2;
+            case 7 :
+            case 8 :
+            case 9 :
+                return 3;
+            case 10 :
+            case 11 :
+            case 12 :
+                return 4;
+            }
+        }
+
+        else if (shots == 5) {
+            switch(nRoll) {
+            case 2 :
+                return 1;
+            case 3 :
+            case 4 :
+                return 2;
+            case 5 :
+            case 6 :
+            case 7 :
+                return 3;
+            case 8 :
+            case 9 :
+            case 10 :
+                return 4;
+            case 11 :
+            case 12 :
+                return 5;
+            }
+        }
+
+        return 0;
+    }
+
 }

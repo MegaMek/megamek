@@ -42,7 +42,7 @@ public class Infantry
      * The number of men originally in this platoon.
      */
     private int         menStarting = 0;
-
+ 
     /**
      * The number of men alive in this platoon at the beginning of the phase,
      * before it begins to take damage.
@@ -53,11 +53,6 @@ public class Infantry
      * The number of men left alive in this platoon.
      */
     private int         men     = 0;
-
-    /**
-     * The MP of this platoon.
-     */
-    private int         movePoints   = 0;
 
     /**
      * The kind of weapons used by this platoon.
@@ -75,6 +70,11 @@ public class Infantry
     private static final int[]  NUM_OF_SLOTS    = {0};
     private static final String[] LOCATION_ABBRS= { "Men" };
     private static final String[] LOCATION_NAMES= { "Men" };
+
+    /**
+     * Identify this platoon as anti-mek trained.
+     */
+    private boolean     antiMek = false;
 
     /**
      * Set up the damage array for this platoon for the given weapon type.
@@ -138,71 +138,7 @@ public class Infantry
 
     } // End private void setDamage( int ) throws Exception
 
-    /**
-     * Set the MPs for this platoon based upon its type and weapons.
-     *
-     * @param   type - the movement type of infantry in this platoon.
-     * @param   weapon - the type of weapons used by this platoon.
-     * @exception <code>IllegalArgumentException</code> if a bad mobility
-     *          type or weapon type is supplied.
-     */
-    private void setMovePoints( int type, int weapon ) {
-        // Handle the various weapons types.
-        switch ( weapon ) {
-        case INF_RIFLE:
-            if ( INF_LEG == type )
-                this.movePoints= 1;
-            else if ( INF_MOTORIZED == type )
-                this.movePoints= 3;
-            else if ( INF_JUMP == type )
-                this.movePoints= 3; // Pg. 61 of BMR(r)
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + type );
-            break;
-        case INF_MG:
-        case INF_FLAMER:
-            if ( INF_LEG == type )
-                this.movePoints= 1;
-            else if ( INF_MOTORIZED == type )
-                this.movePoints= 3;
-            else if ( INF_JUMP == type )
-                this.movePoints= 3;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + type );
-            break;
-        case INF_LASER:
-        case INF_SRM:
-            if ( INF_LEG == type )
-                this.movePoints= 1;
-            else if ( INF_MOTORIZED == type )
-                this.movePoints= 2;
-            else if ( INF_JUMP == type )
-                this.movePoints= 2; // BMRr, pg. 61
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + type );
-            break;
-        case INF_LRM:
-            if ( INF_LEG == type )
-                this.movePoints= 1;
-            else if ( INF_MOTORIZED == type )
-                this.movePoints= 2;
-            else if ( INF_JUMP == type )
-                this.movePoints= 3;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + type );
-            break;
-        default:
-            throw new IllegalArgumentException
-                ( "Unknown infantry weapon: " + weapon );
-        }
-
-    } // end private void setMovePoints( int, int )
-
-    // Public constants, constructors, and methods.
+    // Public and Protected constants, constructors, and methods.
 
     /**
      * The maximum number of men in an infantry platoon.
@@ -217,7 +153,7 @@ public class Infantry
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_CLAN_LEG_MAX_MEN = 25;
+    public static final int     INF_PLT_CLAN_MAX_MEN = 25;
 
     /*
      * The kinds of infantry platoons available.
@@ -233,6 +169,7 @@ public class Infantry
      * By incredible luck, the AmmoType and WeaponType constants
      * do not overlap for these six weapons.
      */
+    public static final int     INF_UNKNOWN     = -1;// T_NA
     public static final int     INF_RIFLE       = 1; // T_AC
     public static final int     INF_MG          = 3; // T_MG
     public static final int     INF_FLAMER      = 2; // F_FLAMER
@@ -244,6 +181,12 @@ public class Infantry
      * The location for infantry equipment.
      */
     public static final int     LOC_INFANTRY    = 0;
+
+    /**
+     * The internal names of the anti-Mek attacks.
+     */
+    public static final String  SWARM_MEK       = "SwarmMek";
+    public static final String  LEG_ATTACK      = "LegAttack";
 
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
@@ -272,7 +215,10 @@ public class Infantry
         this.setDamage(this.weapons);
 
         // Determine the number of MPs.
-        this.setMovePoints(this.getMovementType(), this.weapons);
+        this.setOriginalWalkMP(1);
+
+        // Clear the weapon type to be set later.
+        this.weapons = INF_UNKNOWN;
     }
 
     /**
@@ -301,59 +247,19 @@ public class Infantry
     public void setCrew(Pilot p) {
         super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
     }
-    
-
-    /**
-     * Infantry have only one speed.
-     */
-    public int getWalkMP() { 
-	// Jump infantry hava a walk of 1.
-        return (INF_JUMP == this.getMovementType() ? 1 : this.movePoints );
-    }
-
-    /**
-     * Infantry have only one speed.
-     */
-    public int getOriginalWalkMP() { 
-	// Jump infantry hava a walk of 1.
-        return (INF_JUMP == this.getMovementType() ? 1 : this.movePoints );
-    }
 
     /**
      * Infantry have only one speed.
      */
     public int getRunMP() {
-	// Jump infantry hava a walk of 1.
-        return (INF_JUMP == this.getMovementType() ? 1 : this.movePoints );
+        return this.getWalkMP();
     }
 
     /**
      * Infantry have only one speed.
      */
     protected int getOriginalRunMP() {
-	// Jump infantry hava a walk of 1.
-        return (INF_JUMP == this.getMovementType() ? 1 : this.movePoints );
-    }
-
-    /**
-     * Infantry have only one speed.  They can only jump if they are jump inf.
-     */
-    public int getJumpMP() {
-        return (INF_JUMP == this.getMovementType() ? this.movePoints: 0);
-    }
-
-    /**
-     * Infantry have only one speed.  They can only jump if they are jump inf.
-     */
-    protected int getOriginalJumpMP() { 
-        return (INF_JUMP == this.getMovementType() ? this.movePoints: 0);
-    }
-
-    /**
-     * Infantry have only one speed.  They can only jump if they are jump inf.
-     */
-    public int getJumpMPWithTerrain() {
-        return (INF_JUMP == this.getMovementType() ? this.movePoints: 0);
+        return this.getOriginalWalkMP();
     }
 
     /**
@@ -373,17 +279,17 @@ public class Infantry
             return "None";
         case MOVE_WALK :
         case MOVE_RUN :
-        case MOVE_JUMP :
             switch (this.getMovementType()) {
             case INF_LEG:
                 return "Walked";
             case INF_MOTORIZED:
                 return "Biked";
             case INF_JUMP:
-                return "Jumped";
             default :
                 return "Unknown!";
             }
+        case MOVE_JUMP :
+            return "Jumped";
         default :
             return "Unknown!";
         }
@@ -399,17 +305,16 @@ public class Infantry
             return "N";
         case MOVE_WALK :
         case MOVE_RUN :
-        case MOVE_JUMP :
             switch (this.getMovementType()) {
             case INF_LEG:
                 return "W";
             case INF_MOTORIZED:
                 return "B";
-            case INF_JUMP:
-                return "J";
             default :
                 return "?";
             }
+        case MOVE_JUMP :
+            return "J";
         default :
             return "?";
         }
@@ -444,31 +349,61 @@ public class Infantry
     }
 
     /**
-     * Infantry *have* no armor (that's why they're PBI :).
+     * Infantry platoons do wierd and wacky things with armor
+     * and internals, but not all Infantry objects are platoons.
+     *
+     * @see     megamek.common.BattleArmor#isPlatoon()
      */
-    public int getArmor( int loc, boolean rear ) { return Entity.ARMOR_NA; }
+    protected boolean isPlatoon() { return true; }
 
     /**
-     * Infantry *have* no armor (that's why they're PBI :).
+     * Infantry platoons *have* no armor (that's why they're PBI :).
      */
-    public int getOArmor( int loc, boolean rear ) { return Entity.ARMOR_NA; }
+    public int getArmor( int loc, boolean rear ) {
+        if ( !this.isPlatoon() ) {
+            return super.getArmor( loc, rear );
+        }
+        return Entity.ARMOR_NA;
+    }
 
     /**
-     * Infantry *have* no armor (that's why they're PBI :).
+     * Infantry platoons *have* no armor (that's why they're PBI :).
      */
-    public double getArmorRemainingPercent() { return 0.0; }
+    public int getOArmor( int loc, boolean rear ) {
+        if ( !this.isPlatoon() ) {
+            return super.getOArmor( loc, rear );
+        }
+        return Entity.ARMOR_NA;
+    }
+
+    /**
+     * Infantry platoons *have* no armor (that's why they're PBI :).
+     */
+    public double getArmorRemainingPercent() {
+        if ( !this.isPlatoon() ) {
+            return super.getArmorRemainingPercent();
+        }
+        return Entity.ARMOR_NA;
+    }
+
 
     /**
      * Returns the number of men left in the platoon, or Entity.ARMOR_DESTROYED.
      */
-    public int getInternal( int loc, boolean rear ) {
+    public int getInternal( int loc ) {
+        if ( !this.isPlatoon() ) {
+            return super.getInternal( loc );
+        }
         return ( this.men > 0 ? this.men : Entity.ARMOR_DESTROYED );
     }
 
     /**
      * Returns the number of men originally the platoon.
      */
-    public int getOInternal( int loc, boolean rear ) {
+    public int getOInternal( int loc ) {
+        if ( !this.isPlatoon() ) {
+            return super.getOInternal( loc );
+        }
         return this.menStarting;
     }
 
@@ -484,6 +419,9 @@ public class Infantry
      * Returns the percent of the men remaining in the platoon.
      */
     public double getInternalRemainingPercent() {
+        if ( !this.isPlatoon() ) {
+            return super.getInternalRemainingPercent();
+        }
 	int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
         return ((double) menTotal / this.menStarting);
     }
@@ -495,7 +433,7 @@ public class Infantry
       public void initializeInternal(int val, int loc) {
         this.menStarting = val;
         this.menShooting = val;
-        setInternal( val, loc );
+        super.initializeInternal( val, loc );
       }
 
     /**
@@ -506,7 +444,7 @@ public class Infantry
 
 	// Clan platoons have 25 men.
 	if ( this.isClan() ) {
-	    this.initializeInternal( INF_PLT_CLAN_LEG_MAX_MEN,
+	    this.initializeInternal( INF_PLT_CLAN_MAX_MEN,
 				     LOC_INFANTRY );
 	    return;
 	}
@@ -535,48 +473,51 @@ public class Infantry
                                  boolean rearMounted )
         throws LocationFullException 
     {
-	WeaponType weapon;
-	int weaponType;
+        EquipmentType equip = mounted.getType();
 
-	// Infantry can only mount an infantry weapon.
-	if ( !(mounted.getType() instanceof WeaponType) ) {
-	    throw new LocationFullException
-		( "Infantry can not be equiped with a " + mounted.getName() );
-	}
-	else {
-	    weapon = (WeaponType) mounted.getType();
-	    // Make certain the weapon is for infantry.
-	    if ( (weapon.getFlags() & WeaponType.F_INFANTRY) != 
-		 WeaponType.F_INFANTRY ) {
-		throw new LocationFullException
-		    ( "A " + weapon.getName() + " is too big for infantry" );
-	    }
-	}
+        // If the infantry can swarm, they're anti-mek infantry.
+        if ( Infantry.SWARM_MEK.equals( equip.getInternalName() ) ) {
+            this.antiMek = true;
+        }
+        // N.B. Clan Undine BattleArmor can leg attack, but aren't
+        //          classified as "anti-mek" in the BMRr, pg. 155).
+        else if ( Infantry.LEG_ATTACK.equals( equip.getInternalName() ) ) {
+            // Do nothing.
+        }
+        // Handle infantry weapons.
+        else if ( (mounted.getType() instanceof WeaponType) &&
+                  equip.hasFlag(WeaponType.F_INFANTRY) ) {
 
-        // The PBI can only mount one weapon.
-        if (this.getEquipment().hasMoreElements()) {
-	    weapon = (WeaponType) this.getEquipment(0).getType();
-	    throw new LocationFullException
-		( "Platoon is already equiped with an " + weapon.getName() +
-		  " and does not need a " + mounted.getType().getName() );
-	}
+            // Infantry can only mount one kind of infantry weapon.
+            WeaponType weapon = (WeaponType) mounted.getType();
+            int weaponType;
+            if ( this.weapons != INF_UNKNOWN ) {
+                throw new LocationFullException
+                    ( "Unit is already equiped with an infantry weapon" +
+                      " and does not need a " + weapon.getName() );
+            }
 
-	// If the weapon uses ammo, then *that* is our weapon type,
-	// otherwise it's a laser or flamer (get from equipment flags).
-	if ( weapon.getAmmoType() != AmmoType.T_NA ) {
-	    weaponType = weapon.getAmmoType();
-	}
-	else {
-	    weaponType = weapon.getFlags() & 
-		(WeaponType.F_LASER + WeaponType.F_FLAMER );
-	}
-	this.weapons = weaponType;
+            // If the weapon uses ammo, then *that* is our weapon type,
+            // otherwise it's a laser or flamer (get from equipment flags).
+            if ( weapon.getAmmoType() != AmmoType.T_NA ) {
+                weaponType = weapon.getAmmoType();
+            }
+            else {
+                weaponType = weapon.getFlags() & 
+                    (WeaponType.F_LASER + WeaponType.F_FLAMER );
+            }
+            this.weapons = weaponType;
 
-	// Update our damage profile.
-	this.setDamage( weaponType );
+                // Update our damage profile.
+            this.setDamage( weaponType );
 
-        // Update our movement points.
-	this.setMovePoints( this.getMovementType(), weaponType );
+        }
+        // Infantry platoons can't carry big equipment.
+        else if ( this.isPlatoon() ) {
+            throw new LocationFullException
+                ( "Infantry platoons can not be equiped with a " +
+                  mounted.getName() );
+        }
 
         // Update our superclass.
         super.addEquipment( mounted, loc, rearMounted );
@@ -610,92 +551,173 @@ public class Infantry
      * Infantry have no critical slots.
      */
     protected int[] getNoOfSlots() { return NUM_OF_SLOTS; }
+    
+    /**
+     * Infantry criticals can't be hit.
+     */
+    public boolean hasHittableCriticals(int loc) { return false; }
 
     /**
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
-        
+
         int nBV = 0;
-        
-        // BV is factor of movement type and weapon type.
-        switch ( this.weapons ) {
-        case INF_RIFLE:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 23;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 28;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 29;
-            else
+
+        // BV is factor of anti-Mek training, movement type and weapon type.
+        if ( this.antiMek ) {
+
+            switch ( this.weapons ) {
+            case INF_RIFLE:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 32;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 42;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 46;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_MG:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 47;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 63;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 62;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_FLAMER:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 41;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 54;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 51;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_LASER:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 60;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 70;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 71;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_SRM:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 60;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 70;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 71;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_LRM:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 56;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 75;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 87;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            default:
                 throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        case INF_MG:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 31;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 39;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 37;
-            else
+                    ( "Unknown infantry weapon: " + this.weapons );
+            }
+        } // End anti-Mek-trained
+        else {
+            switch ( this.weapons ) {
+            case INF_RIFLE:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 23;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 28;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 29;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_MG:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 31;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 39;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 37;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_FLAMER:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 28;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 35;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 32;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_LASER:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 37;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 42;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 41;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_SRM:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 60;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 70;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 71;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            case INF_LRM:
+                if ( INF_LEG == this.getMovementType() )
+                    nBV = 56;
+                else if ( INF_MOTORIZED == this.getMovementType() )
+                    nBV = 75;
+                else if ( INF_JUMP == this.getMovementType() )
+                    nBV = 87;
+                else
+                    throw new IllegalArgumentException
+                        ( "Unknown movement type: " + this.getMovementType() );
+                break;
+            default:
                 throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        case INF_FLAMER:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 28;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 35;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 32;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        case INF_LASER:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 37;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 42;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 41;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        case INF_SRM:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 60;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 70;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 71;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        case INF_LRM:
-            if ( INF_LEG == this.getMovementType() )
-                nBV = 56;
-            else if ( INF_MOTORIZED == this.getMovementType() )
-                nBV = 75;
-            else if ( INF_JUMP == this.getMovementType() )
-                nBV = 87;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementType() );
-            break;
-        default:
-            throw new IllegalArgumentException
-                ( "Unknown infantry weapon: " + this.weapons );
-        }
-        
+                    ( "Unknown infantry weapon: " + this.weapons );
+            }
+
+        } // End not-anti-Mek
+
         // adjust for crew
         double pilotFactor = crew.getBVSkillMultiplier();
-        
+
         return (int)(pilotFactor * (double)nBV);
-        
 
     } // End public int calculateBattleValue()
 
@@ -703,17 +725,15 @@ public class Infantry
      * Generates a string containing a report on all useful information about
      * this entity.
      */
-    public String victoryReport() { return getDisplayName(); }
-
-    /**
-     * Set the movement type of the entity
-     */
-    public void setMovementType(int movementType) {
-	// Call the base class' method.
-	super.setMovementType( movementType );
-
-	// Update this platoon's movement points.
-	this.setMovePoints( this.getMovementType(), this.weapons );
+    public String victoryReport() {
+        StringBuffer report = new StringBuffer();
+        
+        report.append(getDisplayName());
+        report.append('\n');
+        report.append("Gunnery skil : " + crew.getGunnery());
+        report.append('\n');
+        
+        return report.toString();
     }
 
     /**
@@ -735,7 +755,10 @@ public class Infantry
     /**
      * Update the platoon to reflect damages taken in this phase.
      */
-    public void applyDamage() { menShooting = men; }
+    public void applyDamage() { 
+        super.applyDamage();
+        menShooting = men;
+    }
 
     // The methods below aren't in the Entity interface.
 

@@ -18,6 +18,8 @@ import java.io.Serializable;
 
 public class AmmoType extends EquipmentType {
     // ammo types
+    public static final int     T_BA_SMALL_LASER    = -3; // !usesAmmo(), 3 damage per hit
+    public static final int     T_BA_MG             = -2; // !usesAmmo(), 2 damage per hit
     public static final int     T_NA                = -1;
     public static final int     T_AC                = 1;
     public static final int     T_VEHICLE_FLAMER    = 2;
@@ -42,6 +44,11 @@ public class AmmoType extends EquipmentType {
     public static final int     T_GAUSS_LIGHT       = 21;
     public static final int     T_GAUSS_HEAVY       = 22;
     public static final int     T_AC_ROTARY         = 23;
+    public static final int     T_SRM_ADVANCED      = 24;
+    public static final int     T_BA_INFERNO        = 25;
+    public static final int     T_BA_MICRO_BOMB     = 26;
+    public static final int     T_LRM_TORPEDO_COMBO = 27;
+    public static final int     T_MINE              = 28;
     
     // ammo flags
     public static final int     F_CLUSTER           = 0x0001; // for lbx
@@ -156,6 +163,17 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM6Ammo());
         EquipmentType.addType(createCLAMSAmmo());
         EquipmentType.addType(createCLNarcAmmo());
+
+        // Start of BattleArmor ammo
+        EquipmentType.addType( createBASRM2Ammo() );
+        EquipmentType.addType( createBASRM2OSAmmo() );
+        EquipmentType.addType( createBAInfernoSRMAmmo() );
+        EquipmentType.addType( createBAAdvancedSRM2Ammo() );
+        EquipmentType.addType( createBAMicroBombAmmo() );
+        EquipmentType.addType( createCLTorpedoLRM5Ammo() );
+        EquipmentType.addType( createFenrirSRM4Ammo() );
+        EquipmentType.addType( createBACompactNarcAmmo() );
+        EquipmentType.addType( createBAMineLauncherAmmo() );
     }
     
     public static AmmoType createISAC2Ammo() {
@@ -1277,7 +1295,153 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
+    // Start BattleArmor ammo
+    public static AmmoType createBASRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "SRM 2 Ammo";
+        ammo.internalName = "BA-SRM2 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BASRM2 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 2;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createBASRM2OSAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "SRM 2 Ammo";
+        ammo.internalName = "BA-SRM2 (one shot) Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BASRM2OS Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createBAInfernoSRMAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Inferno SRM Ammo";
+        ammo.internalName = "BA-Inferno SRM Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BAInfernoSRM Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_BA_INFERNO;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        ammo.flags |= F_INFERNO;
+        
+        return ammo;
+    }
+    public static AmmoType createBAAdvancedSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Advanced SRM 2 Ammo";
+        ammo.internalName = "BA-Advanced SRM2 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BAAdvancedSRM2 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.shots = 2;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createBAMicroBombAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Micro Bomb Ammo";
+        ammo.internalName = "BA-Micro Bomb Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BAMicroBomb Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createCLTorpedoLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Torpedo/LRM 5 Ammo";
+        ammo.internalName = "Clan Torpedo/LRM5 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "CLTorpedoLRM5 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
+        ammo.shots = 1;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createFenrirSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "SRM 4 Ammo";
+        ammo.internalName = "Fenrir SRM-4 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "FenrirSRM4 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 4;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createBACompactNarcAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Compact Narc Ammo";
+        ammo.internalName = "BA-Compact Narc Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BACompactNarc Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NARC;
+        ammo.shots = 2;
+        ammo.hittable = false;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+    public static AmmoType createBAMineLauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Mine Launcher Ammo";
+        ammo.internalName = "BA-Mine Launcher Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = "BAMineLauncher Ammo";
+        ammo.damagePerShot = 4;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MINE;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+
     public String toString() {
         return "Ammo: " + name;
     }

@@ -22,56 +22,66 @@ import java.util.*;
 import megamek.common.*;
 
 public class MovementDisplay
-extends AbstractPhaseDisplay
-implements BoardListener,  ActionListener,
-KeyListener, ComponentListener, MouseListener, GameListener {
-    private static final int    NUM_BUTTON_LAYOUTS = 2;
-    
+    extends AbstractPhaseDisplay
+    implements BoardListener,  ActionListener,
+    KeyListener, ComponentListener, MouseListener, GameListener
+{
+    private static final int    NUM_BUTTON_LAYOUTS = 3;
+
     // parent game
     public Client client;
-    
+
     // displays
     private Label             statusL;
-    
+
     // buttons
     private Panel             panButtons;
-    
+
     private Button            butWalk;
     private Button            butJump;
     private Button            butBackup;
     private Button            butTurn;
-    
+
     private Button            butUp;
     private Button            butDown;
     private Button            butCharge;
     private Button            butDfa;
     private Button            butFlee;
-    
-    private Button            butRAC; // Hentai - for unjamming RAC (sets to Walk only)
-    
+
+    // Hentai - for unjamming RAC (sets to Walk only)
+    private Button            butRAC;
+
+    private Button            butLoad;
+    private Button            butUnload;
+
     private Button            butSpace;
-    
+
     private Button            butNext;
     private Button            butDone;
     private Button            butMore;
-    
+
     private int               buttonLayout;
-    
+
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
     private MovementData    md;        // movement data
     private MovementData    cmd;    // considering movement data
-    
+
     // what "gear" is our mech in?
     private int                gear;
-    
+
     // is the shift key held?
     private boolean            mouseheld;
     private boolean            shiftheld;
-    
+
     // stuff for the current turn
-    private int			turnInfMoved = 0;
-    
+    private int                 turnInfMoved = 0;
+
+    /**
+     * A local copy of the current entity's loaded units.
+     */
+    private java.util.List      loadedUnits = null;
+
     /**
      * Creates and lays out a new movement phase display
      * for the specified client.
@@ -79,161 +89,183 @@ KeyListener, ComponentListener, MouseListener, GameListener {
     public MovementDisplay(Client client) {
         this.client = client;
         client.addGameListener(this);
-        
+
         gear = Compute.GEAR_LAND;
-        
+
         shiftheld = false;
-        
+
         client.game.board.addBoardListener(this);
-        
+
         statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
-        
+
         butWalk = new Button("Walk");
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
-        
+
         butJump = new Button("Jump");
         butJump.addActionListener(this);
         butJump.setEnabled(false);
-        
+
         butBackup = new Button("Back Up");
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
-        
+
         butTurn = new Button("Turn");
         butTurn.addActionListener(this);
         butTurn.setEnabled(false);
-        
-        
+
+
         butUp = new Button("Get Up");
         butUp.addActionListener(this);
         butUp.setEnabled(false);
-        
+
         butDown = new Button("Go Prone");
         butDown.addActionListener(this);
         butDown.setEnabled(false);
-        
+
         butCharge = new Button("Charge");
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
-        
+
         butDfa = new Button("D.F.A.");
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
-        
+
         butFlee = new Button("Flee");
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
-        
+
         butRAC = new Button(".");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
+
         butMore = new Button("More...");
         butMore.addActionListener(this);
         butMore.setEnabled(false);
-        
+
         butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
         butNext.setEnabled(false);
-        
+
         butDone = new Button("Move");
         butDone.addActionListener(this);
         butDone.setEnabled(false);
-        
+
+        butLoad = new Button("Load");
+        butLoad.addActionListener(this);
+        butLoad.setEnabled(false);
+
+        butUnload = new Button("Unload");
+        butUnload.addActionListener(this);
+        butUnload.setEnabled(false);
+
         // layout button grid
         panButtons = new Panel();
         buttonLayout = 0;
         setupButtonPanel();
-        
+
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(client.bv, gridbag, c);
-        
+
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(statusL, gridbag, c);
-        
+
         c.gridwidth = 1;
         c.weightx = 1.0;    c.weighty = 0.0;
         addBag(client.cb.getComponent(), gridbag, c);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
-        
+
         addKeyListener(this);
-        
+
         // mech display.
         client.mechD.addMouseListener(this);
-        
+
         client.frame.addComponentListener(this);
     }
-    
+
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
     }
-    
+
     private void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridLayout(2, 4));
-        
+
         switch (buttonLayout) {
-            case 0 :
-                panButtons.add(butWalk);
-                panButtons.add(butJump);
-                panButtons.add(butBackup);
-                panButtons.add(butNext);
-                panButtons.add(butTurn);
-                panButtons.add(butRAC);
-                panButtons.add(butMore);
-                panButtons.add(butDone);
-                break;
-            case 1 :
-                panButtons.add(butUp);
-                panButtons.add(butCharge);
-                panButtons.add(butDfa);
-                panButtons.add(butNext);
-                panButtons.add(butDown);
-                panButtons.add(butFlee);
-                panButtons.add(butMore);
-                panButtons.add(butDone);
-                
-                // Disable DFA and Charge for Infantry.
-                if ( ce() instanceof Infantry ) {
-                    butDfa.setEnabled(false);
-                    butCharge.setEnabled(false);
-                } else {
-                    butDfa.setEnabled(true);
-                    butCharge.setEnabled(true);
-                }
-                
-                UpdateRACButton();
-                
-                break;
+        case 0 :
+            panButtons.add(butWalk);
+            panButtons.add(butJump);
+            panButtons.add(butBackup);
+            panButtons.add(butNext);
+            panButtons.add(butTurn);
+            panButtons.add(butRAC);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        case 1 :
+            panButtons.add(butUp);
+            panButtons.add(butCharge);
+            panButtons.add(butDfa);
+            panButtons.add(butNext);
+            panButtons.add(butDown);
+            panButtons.add(butFlee);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+
+            // Disable DFA and Charge for Infantry.
+            if ( ce() instanceof Infantry ) {
+                butDfa.setEnabled(false);
+                butCharge.setEnabled(false);
+            } else {
+                butDfa.setEnabled(true);
+                butCharge.setEnabled(true);
+            }
+
+            UpdateRACButton();
+
+            break;
+        case 2:
+            panButtons.add(butWalk);
+            panButtons.add(butLoad);
+            panButtons.add(butBackup);
+            panButtons.add(butNext);
+            panButtons.add(butTurn);
+            panButtons.add(butUnload);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+
+            updateLoadButtons();
+
+            break;
         }
-        
+
         validate();
     }
-    
+
     /**
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
         boolean isInfantry;
         boolean infMoveLast =
-        client.game.getOptions().booleanOption("inf_move_last");
+            client.game.getOptions().booleanOption("inf_move_last");
         boolean infMoveMulti =
-        client.game.getOptions().booleanOption("inf_move_multi");
-        
+            client.game.getOptions().booleanOption("inf_move_multi");
+
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
@@ -244,16 +276,16 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         // okay.
         this.cen = en;
         isInfantry = (ce() instanceof Infantry);
-        
+
         // If the current entity is Infantry, and infantry move last, then
         // make sure that all other entities for the player have moved.
         if ( isInfantry && infMoveLast && turnInfMoved == 0 ) {
-            
+
             // Walk through the list of entities for this player.
             for ( int nextId = client.getNextEntityNum(en);
-            nextId != en;
-            nextId = client.getNextEntityNum(nextId) ) {
-                
+                  nextId != en;
+                  nextId = client.getNextEntityNum(nextId) ) {
+
                 // If we find a non-Infantry entity, make the
                 // player move it instead, and stop looping.
                 if ( !(client.game.getEntity(nextId) instanceof Infantry) ) {
@@ -261,21 +293,21 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                     isInfantry = false;
                     break;
                 }
-                
+
             } // Check the player's next entity.
-            
+
         } // End check-inf_move_last
-        
+
         // If the current entity is not infantry, and we're in a middle of an
         // infantry move block, make sure that the player has no other infantry
         else if ( !isInfantry && infMoveMulti &&
-        (turnInfMoved % Game.INF_MOVE_MULTI) > 0 ) {
-            
+                  (turnInfMoved % Game.INF_MOVE_MULTI) > 0 ) {
+
             // Walk through the list of entities for this player.
             for ( int nextId = client.getNextEntityNum(en);
-            nextId != en;
-            nextId = client.getNextEntityNum(nextId) ) {
-                
+                  nextId != en;
+                  nextId = client.getNextEntityNum(nextId) ) {
+
                 // If we find an Infantry platoon, make the
                 // player move it instead, and stop looping.
                 if ( client.game.getEntity(nextId) instanceof Infantry ) {
@@ -283,17 +315,17 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                     isInfantry = true;
                     break;
                 }
-                
+
             } // Check the player's next entity.
-            
+
             // If the current entity isn't infantry, all player's infantry
             // have been moved; reset the counter so we never check again.
             if ( !isInfantry ) {
                 turnInfMoved = 0;
             }
-            
+
         } // End check-inf_move_multi
-        
+
         md = new MovementData();
         cmd = new MovementData();
         gear = Compute.GEAR_LAND;
@@ -305,17 +337,21 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             butCharge.setEnabled(false);
             butDfa.setEnabled(false);
         } else {
-            butCharge.setEnabled(ce().getWalkMP() > 0);
-            butDfa.setEnabled(ce().getJumpMP() > 0);
+        butCharge.setEnabled(ce().getWalkMP() > 0);
+        butDfa.setEnabled(ce().getJumpMP() > 0);
         }
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
-        
+
         if (ce().isProne()) {
             butUp.setEnabled(true);
         } else {
             butDown.setEnabled(false);
         }
+
         UpdateRACButton();
+        loadedUnits = ce().getLoadedUnits();
+        updateLoadButtons();
+
         butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
@@ -324,7 +360,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         client.mechD.showPanel("movement");
         client.bv.centerOnHex(ce().getPosition());
     }
-    
+
     /**
      * Enables relevant buttons and sets up for your turn.
      */
@@ -338,7 +374,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         moveMechDisplay();
         selectEntity(client.getFirstEntityNum());
     }
-    
+
     /**
      * Clears out old movement data and disables relevant buttons.
      */
@@ -352,7 +388,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         client.mechW.setVisible(false);
         client.bv.clearMovementData();
     }
-    
+
     /**
      * Disables all buttons in the interface
      */
@@ -370,6 +406,8 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         butNext.setEnabled(false);
         butMore.setEnabled(false);
         butDone.setEnabled(false);
+        butLoad.setEnabled(false);
+        butUnload.setEnabled(false);
     }
     /**
      * Clears out the curently selected movement data and
@@ -381,10 +419,12 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         md = new MovementData();
         cmd = new MovementData();
         client.bv.clearMovementData();
-        butDone.setLabel("Done");;
+        butDone.setLabel("Done");
         UpdateRACButton();
+        loadedUnits = ce().getLoadedUnits();
+        updateLoadButtons();
     }
-    
+
     /**
      * Sends a data packet indicating the chosen movement.
      */
@@ -398,14 +438,14 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         }
         client.sendReady(true);
     }
-    
+
     /**
      * Returns the current entity.
      */
     private Entity ce() {
         return client.game.getEntity(cen);
     }
-    
+
     /**
      * Returns new MovementData for the currently selected movement type
      */
@@ -421,10 +461,10 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         } else if (gear == Compute.GEAR_DFA) {
             return Compute.dfaLazyPathfinder(src, facing, dest);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Moves the mech display window to the proper position.
      */
@@ -433,11 +473,11 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             return;
         }
         client.mechW.setLocation(client.bv.getLocationOnScreen().x
-        + client.bv.getSize().width
-        - client.mechD.getSize().width - 20,
-        client.bv.getLocationOnScreen().y + 20);
+                                 + client.bv.getSize().width
+                                 - client.mechD.getSize().width - 20,
+                                 client.bv.getLocationOnScreen().y + 20);
     }
-    
+
     //
     // BoardListener
     //
@@ -450,49 +490,59 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
-        
+
         if (b.getType() == b.BOARD_HEX_DRAGGED) {
             if (!b.getCoords().equals(client.game.board.lastCursor) || shiftheld || gear == Compute.GEAR_TURN) {
                 client.game.board.cursor(b.getCoords());
-                
+
                 // either turn or move
                 cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), b.getCoords()));
                 client.bv.drawMovementData(ce(), cmd);
             }
         } else if (b.getType() == b.BOARD_HEX_CLICKED) {
-            final Entity target = client.game.getFirstEntity(b.getCoords());
-            
+
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
             md = new MovementData(cmd);
-            
+
             client.game.board.select(b.getCoords());
-            
+
             if (shiftheld || gear == Compute.GEAR_TURN) {
                 butDone.setLabel("Move");
                 return;
             }
-            
+
             if (gear == Compute.GEAR_CHARGE) {
                 // check if target is valid
+                final Entity target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform charge", "No target!");
                     clearAllMoves();
                     gear = Compute.GEAR_LAND;
                     return;
                 }
-                
+
                 // check if it's a valid charge
-                ToHitData toHit = Compute.toHitCharge(client.game, cen, target.getId(), md);
+                ToHitData toHit = Compute.toHitCharge( client.game,
+                                                       cen,
+                                                       target.getId(),
+                                                       md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to charge
-                    
-                    if ( client.doYesNoDialog( "Charge " + target.getDisplayName() + "?",
-                    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-                    + "\nDamage to Target: "+Compute.getChargeDamageFor(ce(),md.getHexesMoved())+" (in 5pt clusters)"+toHit.getTableDesc()
-                    + "\nDamage to Self: " + Compute.getChargeDamageTakenBy(ce(),target)+" (in 5pt clusters)"
-                    ) ) {
-                        // if they answer yes, charge
+
+                    if ( client.doYesNoDialog
+                         ( "Charge " + target.getDisplayName() + "?",
+                           "To Hit: " + toHit.getValueAsString() +
+                           " (" + Compute.oddsAbove(toHit.getValue()) +
+                           "%)   (" + toHit.getDesc() + ")"
+                           + "\nDamage to Target: "+
+                           Compute.getChargeDamageFor(ce(),md.getHexesMoved())+
+                           " (in 5pt clusters)"+ toHit.getTableDesc()
+                           + "\nDamage to Self: " +
+                           Compute.getChargeDamageTakenBy(ce(),target) +
+                           " (in 5pt clusters)" ) ) {
+                        // if they answer yes, charge the target.
+                        md.getStep(md.length()).setTarget(target);
                         moveTo(md);
                     } else {
                         // else clear movement
@@ -501,56 +551,231 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                     return;
                 } else {
                     // if not valid, tell why
-                    client.doAlertDialog("Can't perform charge", toHit.getDesc());
+                    client.doAlertDialog( "Can't perform charge",
+                                          toHit.getDesc() );
                     clearAllMoves();
                     gear = Compute.GEAR_LAND;
                     return;
                 }
             } else if (gear == Compute.GEAR_DFA) {
                 // check if target is valid
+                final Entity target = this.chooseTarget( b.getCoords() );
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform D.F.A.", "No target!");
                     clearAllMoves();
                     gear = Compute.GEAR_LAND;
                     return;
                 }
-                
+
                 // check if it's a valid DFA
-                ToHitData toHit = Compute.toHitDfa(client.game, cen, target.getId(), md);
+                ToHitData toHit = Compute.toHitDfa( client.game,
+                                                    cen,
+                                                    target.getId(),
+                                                    md);
                 if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
-                    if ( client.doYesNoDialog( "D.F.A. " + target.getDisplayName() + "?",
-                    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-                    + "\nDamage to Target: "+Compute.getDfaDamageFor(ce())+" (in 5pt clusters)"+toHit.getTableDesc()
-                    + "\nDamage to Self: " + Compute.getDfaDamageTakenBy(ce())+" (in 5pt clusters) (using Kick table)"
-                    ) ) {
-                        // if they answer yes, go for it
+                    if ( client.doYesNoDialog
+                         ( "D.F.A. " + target.getDisplayName() + "?",
+                           "To Hit: " + toHit.getValueAsString() +
+                           " (" + Compute.oddsAbove(toHit.getValue()) +
+                           "%)   (" + toHit.getDesc() + ")"
+                           + "\nDamage to Target: " +
+                           Compute.getDfaDamageFor(ce()) +
+                           " (in 5pt clusters)" + toHit.getTableDesc()
+                           + "\nDamage to Self: " +
+                           Compute.getDfaDamageTakenBy(ce()) +
+                           " (in 5pt clusters) (using Kick table)" ) ) {
+                        // if they answer yes, DFA the target
+                        md.getStep(md.length()).setTarget(target);
                         moveTo(md);
                     } else {
                         // else clear movement
                         clearAllMoves();
                     };
                     return;
-                    
+
                 } else {
                     // if not valid, tell why
-                    client.doAlertDialog("Can't perform D.F.A.", toHit.getDesc());
+                    client.doAlertDialog( "Can't perform D.F.A.",
+                                          toHit.getDesc() );
                     clearAllMoves();
                     gear = Compute.GEAR_LAND;
                     return;
                 }
             }
-            
+
             butDone.setLabel("Move");
+
             UpdateRACButton();
+            updateLoadButtons();
         }
     }
-    
+
     private void UpdateRACButton() {
-        butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
-        butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
+        if ( null == ce() ) System.err.println( "MD: UpdateRACButton - no ce()");//killme
+        if ( null == md ) System.err.println( "MD: UpdateRACButton - no md");//killme
+            butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
+            butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
     }
-    
+
+    private void updateLoadButtons() {
+
+        // Disable the "Unload" button if we're in the wrong
+        // gear or if the entity is not transporting units.
+        if ( ( gear != Compute.GEAR_LAND &&
+               gear != Compute.GEAR_TURN &&
+               gear != Compute.GEAR_BACKUP ) ||
+             loadedUnits.size() == 0 ) {
+            butUnload.setEnabled( false );
+        }
+        else {
+            butUnload.setEnabled( true );
+        }
+
+        // If the current entity has moved, disable "Load" button.
+        if ( md.length() > 0 ) {
+
+            butLoad.setEnabled( false );
+
+        } else {
+
+            // Check the other entities in the current hex for friendly units.
+            Entity other = null;
+            Enumeration entities =
+                client.game.getEntities( ce().getPosition() );
+            while ( entities.hasMoreElements() ) {
+
+                // Is the other unit friendly and not the current entity?
+                other = (Entity)entities.nextElement();
+                if ( ce().getOwner() == other.getOwner() &&
+                     !ce().equals(other) ) {
+
+                    // Yup. If the current entity has at least 1 MP, if it can
+                    // transport the other unit, and if the other hasn't moved
+                    // then enable the "Load" button.
+                    if ( ce().getWalkMP() > 0 &&
+                         ce().canLoad(other) &&
+                         other.isSelectable() ) {
+                        butLoad.setEnabled( true );
+                    }
+
+                    // We can stop looking.
+                    break;
+                } else {
+                    // Nope. Discard it.
+                    other = null;
+                }
+            } // Check the next entity in this position.
+
+        } // End ce()-hasn't-moved
+
+    } // private void updateLoadButtons
+
+    /**
+     * Get the unit that the player wants to unload. This method will
+     * remove the unit from our local copy of loaded units.
+     *
+     * @return  The <code>Entity</code> that the player wants to unload.
+     *          This value will not be <code>null</code>.
+     */
+    private Entity getUnloadedUnit() {
+
+        Entity choice = null;
+
+        // Handle error condition.
+        if ( this.loadedUnits.size() == 0 ) {
+            System.err.println( "MovementDisplay#getUnloadedUnit() called without loaded units." );
+
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( this.loadedUnits.size() > 1 ) {
+            String[] names = new String[ this.loadedUnits.size() ];
+            StringBuffer question = new StringBuffer();
+            question.append( ce().getShortName() );
+            question.append( " has the following unused space:\n" );
+            question.append( ce().getUnusedString() );
+            question.append( "\n\nWhich unit do you want to unload?" );
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = ( (Entity)this.loadedUnits.get(loop) ).getShortName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( client.frame,
+                                        "Unload Unit",
+                                        question.toString(),
+                                        names );
+            choiceDialog.show();
+            if ( choiceDialog.getAnswer() == true ) {
+                choice = (Entity) this.loadedUnits.get( choiceDialog.getChoice() );
+            }
+        } // End have-choices
+
+        // Only one choice.
+        else {
+            choice = (Entity) this.loadedUnits.remove( 0 );
+        }
+
+        // Return the chosen unit.
+        return choice;
+    }
+
+    /**
+     * Have the player select a target from the entities at the given coords.
+     *
+     * @param   pos - the <code>Coords</code> containing targets.
+     */
+    private Entity chooseTarget( Coords pos ) {
+
+        // Assume that we have *no* choice.
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration choices = client.game.getEntities( pos );
+
+        // Convert the choices into a List of targets.
+        java.util.List targets = new Vector();
+        while ( choices.hasMoreElements() ) {
+            choice = (Entity) choices.nextElement();
+            if ( !ce().equals( choice ) ) {
+                targets.add( choice );
+            }
+        }
+
+        // Do we have a single choice?
+        if ( targets.size() == 1 ) {
+
+            // Return  that choice.
+            choice = (Entity) targets.get( 0 );
+
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( targets.size() > 1 ) {
+            String[] names = new String[ targets.size() ];
+            StringBuffer question = new StringBuffer();
+            question.append( "Hex " );
+            question.append( pos.getBoardNum() );
+            question.append( " contains the following units." );
+            question.append( "\n\nWhich unit do you want to target?" );
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = ( (Entity)targets.get(loop) ).getShortName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( client.frame,
+                                        "Target Unit",
+                                        question.toString(),
+                                        names );
+            choiceDialog.show();
+            if ( choiceDialog.getAnswer() == true ) {
+                choice = (Entity) targets.get( choiceDialog.getChoice() );
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+
+    } // End private Entity chooseTarget( Coords )
+
     //
     // GameListener
     //
@@ -561,7 +786,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         }
         // else, change turn
         endMyTurn();
-        
+
         if (client.isMyTurn()) {
             beginMyTurn();
             statusL.setText("It's your turn to move.");
@@ -584,7 +809,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             turnInfMoved = 0;
         }
     }
-    
+
     //
     // ActionListener
     //
@@ -593,7 +818,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             // odd...
             return;
         }
-        
+
         if (ev.getSource() == butDone) {
             moveTo(md);
         } else if (ev.getSource() == butNext) {
@@ -610,8 +835,8 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                 butRAC.setEnabled(false);
             }
             else {
-                md.addStep(MovementData.STEP_UNJAM_RAC);
-                moveTo(md);
+              md.addStep(MovementData.STEP_UNJAM_RAC);
+              moveTo(md);
             }
         } else if (ev.getSource() == butWalk) {
             if (gear == Compute.GEAR_JUMP) {
@@ -659,10 +884,47 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             md.addStep(MovementData.STEP_FLEE);
             moveTo(md);
         }
+        else if ( ev.getSource() == butLoad ) {
+            // Find the other friendly unit in our hex, add it
+            // to our local list of loaded units, and then stop.
+            Entity other = null;
+            Enumeration entities =
+                client.game.getEntities( ce().getPosition() );
+            while ( entities.hasMoreElements() ) {
+                other = (Entity)entities.nextElement();
+                if ( ce().getOwner() == other.getOwner() &&
+                     !ce().equals(other) ) {
+                    loadedUnits.add( other );
+                    break;
+                }
+                other = null;
+            }
+
+            // Handle not finding a unit to load.
+            if ( other != null ) {
+                md.addStep( MovementData.STEP_LOAD );
+                client.bv.drawMovementData(ce(), md);
+                gear = Compute.GEAR_LAND;
+            }
+        }
+        else if ( ev.getSource() == butUnload ) {
+            // Ask the user if we're carrying multiple units.
+            Entity other = getUnloadedUnit();
+
+            // Player can cancel the unload.
+            if ( other != null ) {
+                cmd.addStep( MovementData.STEP_UNLOAD, other );
+                md = new MovementData(cmd);
+                client.bv.drawMovementData(ce(), cmd);
+            }
+        }
+
         UpdateRACButton();
+        updateLoadButtons();
+
     }
-    
-    
+
+
     //
     // KeyListener
     //
@@ -699,7 +961,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
     public void keyTyped(KeyEvent ev) {
         ;
     }
-    
+
     //
     // ComponentListener
     //
@@ -716,7 +978,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         client.mechW.setVisible(false);
         moveMechDisplay();
     }
-    
+
     //
     // MouseListener
     //
@@ -735,5 +997,5 @@ KeyListener, ComponentListener, MouseListener, GameListener {
     public void mouseClicked(MouseEvent ev) {
         ;
     }
-    
+
 }

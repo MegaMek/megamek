@@ -43,7 +43,7 @@ initiative:
 ? might show whole initiative sequence somewhere
 
 movement:
-- remaining todos in pavement movement and skidding
+- remaining todos in pavement skidding
 - road movement bonus for vehicles
 - go prone action
 
@@ -62,8 +62,17 @@ falling:
 - only fall to surface of water
 
 infantry:
-- read MP from the BLK file instead of calculating it
-- implement BattleArmor as a sub-class of Infantry with multiple hit locations
+- implement the following special rules:
+-- Stealth
+-- Infernos
+-- Fire Protection
+-- VTOL movement
+-- Underwater movement
+-- Torpedos
+-- Minefields
+-- Mindsweepers
+- implement BattleArmor units as their special rules are implemented
+        (e.g. Inferno rounds for Salamander points, or VTOL for Sylph).
 
 
 FUTURE VERSION PLANS:
@@ -74,6 +83,14 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.1 (01-11-03, 11:36am)
++ COMPATABILITY BREAKER: allow Charges and DFAs to target *any* enemy in hex.
++ Allow vehicles to transport infantry.
++ Update skidding to better match the BMRr.
++ Better support for targeting units in the attacker's hex.
++ Anti-Mek Leg Attacks (Swarm Mek is not implemented).
++ BattleArmor initial implementation (many special rules not implemented).
+
 v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks
 + 662333: ams can't use more ammo than it has
@@ -107,7 +124,7 @@ v 0.27.14 (01-03-03, 9pm)
 + 623853: bot now completely recalculates movement when falling mid-move
 + bot should not move the wrong mech when directed
 
-v 0.27.13 (12-20-02, 5pm)
+v 0.27.13 (12-29-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.
 + 657119: streak SRMs fire again
 + Infantry don't take double damage in Rough or Rubble.

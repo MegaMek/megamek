@@ -45,6 +45,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_ARTEMIS           = 0x1000;
     public static final int     F_ECM               = 0x2000;
     public static final int     F_TARGCOMP          = 0x4000;
+    public static final int     F_OTHER             = 0x8000;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -197,6 +198,20 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLECM());
         EquipmentType.addType(createISTargComp());
         EquipmentType.addType(createCLTargComp());
+
+        // Start BattleArmor equipment
+        EquipmentType.addType( createBABoardingClaw() );
+        EquipmentType.addType( createBAAssaultClaws() );
+        EquipmentType.addType( createBAFireProtection() );
+        EquipmentType.addType( createStealth() );
+        EquipmentType.addType( createAdvancedStealth() );
+        EquipmentType.addType( createExpertStealth() );
+        EquipmentType.addType( createMine() );
+        EquipmentType.addType( createMinesweeper() );
+        EquipmentType.addType( createBAMagneticClamp() );
+        EquipmentType.addType( createSingleHexECM() );
+        EquipmentType.addType( createMimeticCamo() );
+        EquipmentType.addType( createParafoil() );
     }
     
     public static MiscType createHeatSink() {
@@ -578,4 +593,199 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
+
+    // Start BattleArmor equipment
+    public static MiscType createBABoardingClaw() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Boarding Claw";
+        misc.internalName = BattleArmor.BOARDING_CLAW;
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createBAAssaultClaws() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Assault Claws";
+        misc.internalName = BattleArmor.ASSAULT_CLAW;
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createBAFireProtection() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Fire Protection";
+        misc.internalName = "BA-Fire Protection";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createStealth() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Stealth";
+        misc.internalName = "Stealth";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createAdvancedStealth() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Advanced Stealth";
+        misc.internalName = "Advanced Stealth";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createExpertStealth() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Expert Stealth";
+        misc.internalName = "Expert Stealth";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createMine() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Mine";
+        misc.internalName = "Mine";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createMinesweeper() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Minesweeper";
+        misc.internalName = "Minesweeper";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createBAMagneticClamp() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Magnetic Clamp";
+        misc.internalName = BattleArmor.MAGNETIC_CLAMP;
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createSingleHexECM() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Single-Hex ECM";
+        misc.internalName = "Single-Hex ECM";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_ECM;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createMimeticCamo() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Mimetic Camoflage";
+        misc.internalName = "Mimetic Camo";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    public static MiscType createParafoil() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Parafoil";
+        misc.internalName = "Parafoil";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = false;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
 }

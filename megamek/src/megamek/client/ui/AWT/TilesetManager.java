@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,14 +21,14 @@
 package megamek.client;
 
 import com.sun.java.util.collections.*;
-import java.awt.Image;
-import java.awt.Component;
-import java.awt.MediaTracker;
 import java.awt.image.*;
-import java.io.*;
-
 import megamek.common.*;
-import megamek.client.util.*;
+
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import megamek.client.util.RotateFilter;
+import megamek.client.util.TintFilter;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -83,11 +83,11 @@ public class TilesetManager {
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
             }            
         }
-	// Not every entity has a secondary facing.
-	if ( entity.canChangeSecondaryFacing() ) {
+  // Not every entity has a secondary facing.
+  if ( entity.canChangeSecondaryFacing() ) {
         return entityImage.getFacing(entity.getSecondaryFacing());
     }
-	return entityImage.getFacing(entity.getFacing());
+  return entityImage.getFacing(entity.getFacing());
     }
     
     /**
@@ -163,6 +163,7 @@ public class TilesetManager {
     {
             Image base = mechTileset.imageFor(entity, comp);
             int tint = entity.getOwner().getColorRGB();
+            String camo = entity.getOwner().getCamoFileName();
             EntityImage entityImage = null;
             
             // check if we have a duplicate image already loaded
@@ -176,7 +177,7 @@ public class TilesetManager {
             
             // if we don't have a cached image, make a new one
             if (entityImage == null) {
-                entityImage = new EntityImage(base, tint);
+                entityImage = new EntityImage(base, tint, camo, comp);
                 mechImageList.add(entityImage);
                 entityImage.loadFacings();
                 for (int j = 0; j < 6; j++) {
@@ -203,18 +204,35 @@ public class TilesetManager {
     private class EntityImage {
         private Image base;
         private int tint;
+        private String camo;
         private Image[] facings = new Image[6];
+        private Component comp;
         
-        public EntityImage(Image base, int tint) {
+        public static final int IMG_WIDTH = 84;        
+        public static final int IMG_HEIGHT = 72;
+        public static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+        
+        public EntityImage(Image base, int tint, String camo, Component comp) {
             this.base = base;
             this.tint = tint;
+            this.camo = camo;
+            this.comp = comp;
         }
-        
+
         public void loadFacings() {
+          if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = comp.createImage(new FilteredImageSource(rotSource, new TintFilter(tint)));
             }
+          } else {
+            applyColor();
+            
+            for (int i = 0; i < 6; i++) {
+                ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
+                facings[i] = comp.createImage(rotSource);
+            }
+          }
         }
         
         public Image getFacing(int facing) {
@@ -225,8 +243,60 @@ public class TilesetManager {
             return base;
         }
         
-        public int getTint() {
-            return tint;
+        private void applyColor() {
+          Image iMech, iCamo;
+          
+          iMech = base;
+    
+          int[] pMech = new int[IMG_SIZE];
+          int[] pCamo = new int[IMG_SIZE];
+          PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
+    
+          try {
+              pgMech.grabPixels();
+          } catch (InterruptedException e) {
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage());
+              return;
+          }
+          if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
+              return;
+          }
+          
+          iCamo = comp.getToolkit().getImage("data/camo/" + camo + ".jpg");
+          PixelGrabber pgCamo = new PixelGrabber(iCamo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
+          try {
+              pgCamo.grabPixels();
+          } catch (InterruptedException e) {
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
+              return;
+          }
+          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
+              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
+              return;
+          }
+          
+          for (int i = 0; i < IMG_SIZE; i++) {
+            int pixel = pMech[i];
+            int alpha = (pixel >> 24) & 0xff;
+          
+            if (alpha != 0) {
+              int pixel1 = pCamo[i];
+              float red1   = ((float) ((pixel1 >> 16) & 0xff)) / 255;
+              float green1 = ((float) ((pixel1 >>  8) & 0xff)) / 255;
+              float blue1  = ((float) ((pixel1      ) & 0xff)) / 255;
+              
+              float black = (float) ((pMech[i]) & 0xff);
+
+              int red2   = (int)Math.round(red1   * black);
+              int green2 = (int)Math.round(green1 * black);
+              int blue2  = (int)Math.round(blue1  * black);
+
+              pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
+            }
+          }
+        
+          base = comp.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));        
         }
     }
 

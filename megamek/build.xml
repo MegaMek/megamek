@@ -103,9 +103,9 @@
      </java>
   </target>
 
-  <!-- generates MegaMek API Doc in ${apidoc} -->
+  <!-- generates MegaMek API Doc in ${apidocdir} -->
   <target name="apidoc">
-     <mkdir dir="${apidoc}"/>
+     <mkdir dir="${apidocdir}"/>
      <javadoc classpath="${basedir}" destdir="${apidocdir}" package="yes" packagenames="megamek.*" sourcepath="${srcdir}" windowtitle="MegaMek API"/>
   </target>
   

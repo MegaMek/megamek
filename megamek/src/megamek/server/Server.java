@@ -2888,7 +2888,7 @@ implements Runnable, ConnectionHandler {
             	Enumeration minefields = game.getMinefields(curPos).elements();
             	while (minefields.hasMoreElements()) {
             		Minefield mf = (Minefield) minefields.nextElement();
-v            		
+            		
             		switch (mf.getType()) {
             			case (Minefield.TYPE_CONVENTIONAL) :
             			case (Minefield.TYPE_THUNDER) :
@@ -3259,33 +3259,6 @@ v
         }
     }
     
-	// Adds a Thunder minefield to the hex.
-	private void deliverThunderMinefield(Coords coords, int playerId, int damage) {
-		Minefield minefield = null;
-		Enumeration minefields = game.getMinefields(coords).elements();
-		// Check if there already are Thunder minefields in the hex.
-		while (minefields.hasMoreElements()) {
-			Minefield mf = (Minefield) minefields.nextElement();
-			if (mf.getType() == Minefield.TYPE_THUNDER) {
-				minefield = mf;
-				break;
-			}
-		}
-		
-		// Create a new Thunder minefield
-		if (minefield == null) {
-			minefield = Minefield.createThunderMF(coords, playerId, damage);
-		// Add to the old one
-		} else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
-			removeMinefield(minefield);
-			int oldDamage = minefield.getDamage();
-			damage += oldDamage;
-			damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
-			minefield.setDamage(damage);
-		}
-		game.addMinefield(minefield);
-		revealMinefield(minefield);
-	}
 
     // Delivers a thunder-aug shot to the targetted hex area.
     // Thunder-Augs are 7 hexes, though, so...
@@ -3345,6 +3318,119 @@ v
 
         } // Handle the next coords
 
+    }
+
+    // Adds a Thunder minefield to the hex.
+    private void deliverThunderMinefield( Coords coords, int playerId,
+                                          int damage ) {
+        Minefield minefield = null;
+        Enumeration minefields = game.getMinefields(coords).elements();
+        // Check if there already are Thunder minefields in the hex.
+        while (minefields.hasMoreElements()) {
+            Minefield mf = (Minefield) minefields.nextElement();
+            if (mf.getType() == Minefield.TYPE_THUNDER) {
+                minefield = mf;
+                break;
+            }
+        }
+                
+        // Create a new Thunder minefield
+        if (minefield == null) {
+            minefield = Minefield.createThunderMF(coords, playerId, damage);
+            // Add to the old one
+        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+            removeMinefield(minefield);
+            int oldDamage = minefield.getDamage();
+            damage += oldDamage;
+            damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
+            minefield.setDamage(damage);
+        }
+        game.addMinefield(minefield);
+        revealMinefield(minefield);
+    }
+
+    // Adds a Thunder Inferno minefield to the hex.
+    private void deliverThunderInfernoMinefield(Coords coords, int playerId, int damage) {
+        Minefield minefield = null;
+        Enumeration minefields = game.getMinefields(coords).elements();
+        // Check if there already are Thunder minefields in the hex.
+        while (minefields.hasMoreElements()) {
+            Minefield mf = (Minefield) minefields.nextElement();
+            if (mf.getType() == Minefield.TYPE_THUNDER_INFERNO) {
+                minefield = mf;
+                break;
+            }
+        }
+                
+        // Create a new Thunder Inferno minefield
+        if (minefield == null) {
+            minefield = Minefield.createThunderInfernoMF(coords, playerId, damage);
+            // Add to the old one
+        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+            removeMinefield(minefield);
+            int oldDamage = minefield.getDamage();
+            damage += oldDamage;
+            damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
+            minefield.setDamage(damage);
+        }
+        game.addMinefield(minefield);
+        revealMinefield(minefield);
+    }
+    
+    // Adds a Thunder-Active minefield to the hex.
+    private void deliverThunderActiveMinefield(Coords coords, int playerId, int damage) {
+        Minefield minefield = null;
+        Enumeration minefields = game.getMinefields(coords).elements();
+        // Check if there already are Thunder minefields in the hex.
+        while (minefields.hasMoreElements()) {
+            Minefield mf = (Minefield) minefields.nextElement();
+            if (mf.getType() == Minefield.TYPE_THUNDER_ACTIVE) {
+                minefield = mf;
+                break;
+            }
+        }
+                
+        // Create a new Thunder-Active minefield
+        if (minefield == null) {
+            minefield = Minefield.createThunderActiveMF(coords, playerId, damage);
+            // Add to the old one
+        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+            removeMinefield(minefield);
+            int oldDamage = minefield.getDamage();
+            damage += oldDamage;
+            damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
+            minefield.setDamage(damage);
+        }
+        game.addMinefield(minefield);
+        revealMinefield(minefield);
+    }
+
+    // Adds a Thunder-Vibrabomb minefield to the hex.
+    private void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity) {
+        Minefield minefield = null;
+        Enumeration minefields = game.getMinefields(coords).elements();
+        // Check if there already are Thunder minefields in the hex.
+        while (minefields.hasMoreElements()) {
+            Minefield mf = (Minefield) minefields.nextElement();
+            if (mf.getType() == Minefield.TYPE_THUNDER_VIBRABOMB) {
+                minefield = mf;
+                break;
+            }
+        }
+                
+        // Create a new Thunder-Vibra minefield
+        if (minefield == null) {
+            minefield = Minefield.createThunderVibrabombMF(coords, playerId, damage, sensitivity);
+            // Add to the old one
+        } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+            removeMinefield(minefield);
+            int oldDamage = minefield.getDamage();
+            damage += oldDamage;
+            damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
+            minefield.setDamage(damage);
+        }
+        game.addVibrabomb(minefield);
+        revealMinefield(minefield);
     }
 
 	// When an entity enters a conventional or Thunder minefield.

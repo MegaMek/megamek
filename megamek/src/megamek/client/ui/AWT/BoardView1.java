@@ -1224,9 +1224,16 @@ public class BoardView1
     	    moveCursor(firstLOSSprite, c1);
 	        moveCursor(secondLOSSprite, c2);
 	        
-	        LosEffects le = Compute.calculateLos(game, c1, c2, 
-	        						game.getMechInFirst(), 
-	        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
+	        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+			ai.attackPos = c1;
+			ai.targetPos = c2;
+			ai.attackHeight = game.getMechInFirst()?1:0;
+			ai.targetHeight = game.getMechInSecond()?1:0;
+			ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
+			ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+	        
+	        LosEffects le = LosEffects.calculateLos(game, ai);
+	        StringBuffer message = new StringBuffer();
 	        message.append( "Attacker(")
 	         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
 	         	.append(") hex is " )

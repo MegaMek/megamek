@@ -39,7 +39,7 @@ public class MechFileParser {
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException(ex.getMessage());
                 } else {
-                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());                    
                 }
             }
         } else {
@@ -83,7 +83,7 @@ public class MechFileParser {
         } else if (lowerName.endsWith(".hmp")) {
             loader = new HmpFile(is);           
         } else if (lowerName.endsWith(".xml")) {
-            loader = new TdbFile(is,fileName);
+            loader = new TdbFile(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
@@ -107,6 +107,8 @@ public class MechFileParser {
             else {
                 loader = new BLKMechFile(bb);
             }
+        } else if (lowerName.endsWith(".dbm")) {
+            throw new EntityLoadingException("In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }

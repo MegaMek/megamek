@@ -35,32 +35,37 @@ public class TdbFile implements MechLoader {
     /**
      * The names of the various elements recognized by this parser.
      */
+    private static final String  CREATOR_SECTION    = "creator";
+    private static final String  BASICS_SECTION    = "basics";
+    private static final String  ITEM_DEFS_SECTION    = "itemdefs";
+    private static final String  MOUNTED_ITEMS_SECTION    = "mounteditems";
+    private static final String  CRIT_DEFS_SECTION    = "critdefs";
+
     private static final String  NAME    = "name";
+    private static final String  VERSION    = "version";
     private static final String  MODEL    = "model";
     private static final String  VARIANT    = "variant";
     private static final String  TECHNOLOGY    = "technology";
     private static final String  TONNAGE    = "tonnage";
     private static final String  TYPE    = "type";
-    private static final String  OMNI    = "movemechmod";
+    private static final String  OMNI    = "isomni";
     private static final String  WALK   = "walk";
     private static final String  JUMP    = "jump";
     private static final String  HEAT_SINKS    = "heatsinks";
-    private static final String  ARMOR    = "armor";
+    private static final String  ARMOR    = "armor"; // also attribute
     private static final String  MOUNTED_ITEM    = "mounteditem";
-    private static final String  ITEM_DEFS    = "itemdefs";
     private static final String  LOCATION= "location";
 
     /**
      * The names of the attributes recognized by this parser.
      */
     private static final String  LEVEL    = "level";
-    private static final String  POD_SPACE    = "podspace";
     private static final String  COUNT    = "count";
     private static final String  POINTS    = "points";
     private static final String  REAR_MOUNTED    = "rearmounted";
     private static final String  IS_SPREAD    = "isspread";
     private static final String  ITEM_INDEX    = "itemindex";
-
+    private static final String  REAR_ARMOR    = "reararmor";
 
     /**
      * Special values recognized by this parser.
@@ -68,14 +73,16 @@ public class TdbFile implements MechLoader {
     private static final String  TRUE    = "True";
     private static final String  FALSE   = "False";
     private static final String  DOUBLE   = "Double";
-
+    private static final String  TRUE_LOWER    = "true";
     
+    private String creatorName;
+    private String creatorVersion;
     private String name;
+    private boolean isOmni = false;
     private String model;
     private String variant;
     
     private String chassisConfig;
-    private String podSpace;
     private String techBase;
     private static final String techYear = "3068"; // TDB doesn't have era
     private String rulesLevel;
@@ -87,7 +94,6 @@ public class TdbFile implements MechLoader {
     private String walkMP;
     private String jumpMP;
     
-    private int totalArmor;
     private int larmArmor;
     private int rarmArmor;
     private int ltArmor;
@@ -108,7 +114,7 @@ public class TdbFile implements MechLoader {
     private Vector vSplitWeapons = new Vector();
     
     /** Creates new TdbFile */
-    public TdbFile(InputStream is, String fileName) throws EntityLoadingException {
+    public TdbFile(InputStream is) throws EntityLoadingException {
         try {
             root = TinyParser.parseXML(is);
         }
@@ -122,44 +128,62 @@ public class TdbFile implements MechLoader {
 
         critData = new String[8][12][2];
         parseNode((ParsedXML)root.elements().nextElement());
-
-        /** Ack!  There is no armor allocation information inside
-            a Drawing Board xml file.  We will have to pull this
-            information from a binary Drawing board (.dbm) save
-            file.  This means that both the .xml file and the .dbm
-            files have to be present (with the same name).
-        */
-
-        Vector armorValues = readArmor(fileName);
-        try {
-            larmArmor = ((Integer)armorValues.elementAt(0)).intValue();
-            rarmArmor = ((Integer)armorValues.elementAt(10)).intValue();
-            ltArmor = ((Integer)armorValues.elementAt(2)).intValue();
-            rtArmor = ((Integer)armorValues.elementAt(8)).intValue();
-            ctArmor = ((Integer)armorValues.elementAt(12)).intValue();
-            headArmor = ((Integer)armorValues.elementAt(14)).intValue();
-            llegArmor = ((Integer)armorValues.elementAt(4)).intValue();
-            rlegArmor = ((Integer)armorValues.elementAt(6)).intValue();
-            ltrArmor = ((Integer)armorValues.elementAt(16)).intValue();
-            rtrArmor = ((Integer)armorValues.elementAt(18)).intValue();
-            ctrArmor = ((Integer)armorValues.elementAt(20)).intValue();
-        } catch (Exception e) {
-            throw new EntityLoadingException("Could not parse armor from Drawing Board (.dbm) file: " + e.getMessage());
-        }
-
-        // The "if" block below should be removed eventually,
-        //  it is basically a debuging tool.
-        if (larmArmor != rarmArmor || ltArmor != rtArmor
-            || llegArmor != rlegArmor || ltrArmor != rtrArmor) {
-            System.out.println("  -Warning: This mech appears to have asymetrical armor.  If that is the case, then ignore this message.  If this mech's armor is supposed to be symetrical, then we have failed to read the armor from the '.dbm' file correctly");
-        }
-
     }
 
     private void parseNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
             //  are implicitly parsed when needed.
+            return;
+        }
+
+        Enumeration children = node.elements();
+
+        if (node.getName().equals(CREATOR_SECTION)) {
+            parseCreatorNode(node);
+        } else if (node.getName().equals(BASICS_SECTION)) {
+            parseBasicsNode(node);
+        } else if (node.getName().equals(ITEM_DEFS_SECTION)) {
+            return; // don't need item defs section of xml
+        } else if (node.getName().equals(MOUNTED_ITEMS_SECTION)) {
+            parseMountedNode(node);
+        } else if (node.getName().equals(CRIT_DEFS_SECTION)) {
+            parseCritNode(node);
+        } else if (children != null) {
+            // Use recursion to process all the children
+            while (children.hasMoreElements()) {
+                parseNode((ParsedXML)children.nextElement());
+            } 
+        }
+    }
+
+    private void parseCreatorNode(ParsedXML node) throws EntityLoadingException {
+        if (!node.getTypeName().equals("tag")) {
+            // We only want to parse element nodes, text nodes
+            //  are directly parsed below.
+            return;
+        }
+
+        Enumeration children = node.elements();
+
+        if (node.getName().equals(NAME)) {
+            creatorName = ((ParsedXML)children.nextElement()).getContent();
+        } else if (node.getName().equals(VERSION)) {
+            creatorVersion = ((ParsedXML)children.nextElement()).getContent();
+        } else if (children != null) {
+            // Use recursion to process all the children
+            while (children.hasMoreElements()) {
+                parseCreatorNode((ParsedXML)children.nextElement());
+            } 
+        }
+        // Other tags (that don't match any if blocks above)
+        //  are simply ignored.
+    }
+
+    private void parseBasicsNode(ParsedXML node) throws EntityLoadingException {
+        if (!node.getTypeName().equals("tag")) {
+            // We only want to parse element nodes, text nodes
+            //  are directly parsed below.
             return;
         }
 
@@ -179,7 +203,7 @@ public class TdbFile implements MechLoader {
         } else if (node.getName().equals(TYPE)) {
             chassisConfig = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(OMNI)) {
-            podSpace = node.getAttribute(POD_SPACE);
+            isOmni = ((ParsedXML)children.nextElement()).getContent().equals(TRUE_LOWER);
         } else if (node.getName().equals(WALK)) {
             walkMP = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(JUMP)) {
@@ -191,9 +215,26 @@ public class TdbFile implements MechLoader {
                 dblSinks = false;
             }
             heatSinks = node.getAttribute(COUNT);
-        } else if (node.getName().equals(ARMOR)) {
-            totalArmor = Integer.parseInt(node.getAttribute(POINTS));
-        } else if (node.getName().equals(MOUNTED_ITEM)) {
+        } else if (children != null) {
+            // Use recursion to process all the children
+            while (children.hasMoreElements()) {
+                parseBasicsNode((ParsedXML)children.nextElement());
+            }
+        }
+        // Other tags (that don't match any if blocks above)
+        //  are simply ignored.
+    }
+
+    private void parseMountedNode(ParsedXML node) throws EntityLoadingException {
+        if (!node.getTypeName().equals("tag")) {
+            // We only want to parse element nodes, text nodes
+            //  are directly parsed below.
+            return;
+        }
+
+        Enumeration children = node.elements();
+
+        if (node.getName().equals(MOUNTED_ITEM)) {
             if (node.getAttribute(REAR_MOUNTED).equals(TRUE)) {
                 isRearMounted[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = true;
             } else {
@@ -204,25 +245,57 @@ public class TdbFile implements MechLoader {
             } else {
                 isSplit[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = false;
             }
-        } else if (node.getName().equals(LOCATION)) {
+        } else if (children != null) {
+            // Use recursion to process all the children
+            while (children.hasMoreElements()) {
+                parseMountedNode((ParsedXML)children.nextElement());
+            }
+        }
+        // Other tags (that don't match any if blocks above)
+        //  are simply ignored.
+    }
+
+    private void parseCritNode(ParsedXML node) throws EntityLoadingException {
+        if (!node.getTypeName().equals("tag")) {
+            // We only want to parse element nodes, text nodes
+            //  are directly parsed below.
+            return;
+        }
+
+        Enumeration children = node.elements();
+
+        if (node.getName().equals(LOCATION)) {
             int loc = -1;
             int i = 0;
-            if (node.getAttribute(NAME).equals("LA") || node.getAttribute(NAME).equals("FLL"))
+            if (node.getAttribute(NAME).equals("LA") || node.getAttribute(NAME).equals("FLL")) {
                 loc = Mech.LOC_LARM;
-            else if (node.getAttribute(NAME).equals("RA") || node.getAttribute(NAME).equals("FRL"))
+                larmArmor = Integer.parseInt(node.getAttribute(ARMOR));
+            } else if (node.getAttribute(NAME).equals("RA") || node.getAttribute(NAME).equals("FRL")) {
                 loc = Mech.LOC_RARM;
-            else if (node.getAttribute(NAME).equals("LT"))
+                rarmArmor = Integer.parseInt(node.getAttribute(ARMOR));
+            } else if (node.getAttribute(NAME).equals("LT")) {
                 loc = Mech.LOC_LT;
-            else if (node.getAttribute(NAME).equals("RT"))
+                ltArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                ltrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+            } else if (node.getAttribute(NAME).equals("RT")) {
                 loc = Mech.LOC_RT;
-            else if (node.getAttribute(NAME).equals("CT"))
+                rtArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                rtrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+            } else if (node.getAttribute(NAME).equals("CT")) {
                 loc = Mech.LOC_CT;
-            else if (node.getAttribute(NAME).equals("H"))
+                ctArmor = Integer.parseInt(node.getAttribute(ARMOR));
+                ctrArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
+            } else if (node.getAttribute(NAME).equals("H")) {
                 loc = Mech.LOC_HEAD;
-            else if (node.getAttribute(NAME).equals("LL") || node.getAttribute(NAME).equals("RLL"))
+                headArmor = Integer.parseInt(node.getAttribute(ARMOR));
+            } else if (node.getAttribute(NAME).equals("LL") || node.getAttribute(NAME).equals("RLL")) {
                 loc = Mech.LOC_LLEG;
-            else if (node.getAttribute(NAME).equals("RL") || node.getAttribute(NAME).equals("RRL"))
+                llegArmor = Integer.parseInt(node.getAttribute(ARMOR));
+            } else if (node.getAttribute(NAME).equals("RL") || node.getAttribute(NAME).equals("RRL")) {
                 loc = Mech.LOC_RLEG;
+                rlegArmor = Integer.parseInt(node.getAttribute(ARMOR));
+            }
+
             if (loc == -1)
                 throw new EntityLoadingException("   Bad Mech location");
             while (children.hasMoreElements()) {
@@ -230,84 +303,28 @@ public class TdbFile implements MechLoader {
                 critData[loc][i][0] = ((ParsedXML)critSlotNode.elements().nextElement()).getContent();
                 critData[loc][i++][1] = critSlotNode.getAttribute(ITEM_INDEX);
             }
-        } else if (node.getName().equals(ITEM_DEFS)) {
-            return; // don't need item defs section of xml
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseNode((ParsedXML)children.nextElement());
-            } 
+                parseCritNode((ParsedXML)children.nextElement());
+            }
         }
+        // Other tags (that don't match any if blocks above)
+        //  are simply ignored.
     }
-    
-    private Vector readArmor(String fileName) throws EntityLoadingException {
-        /**
-           In a Drawing Board .dbm file, the bytes that hold the armor
-           distribution for each location seem to always be followed by
-           the following two bytes (in hex): 0,4D
-           This seems like a rather error prone method, so we'll also
-           have to verify the total amount of armor we read from the
-           .dbm file against the armor total listed in the .xml file.
-           One place where (0,4D) can be found is the name/model area
-           when a mechs name/model/etc starts with "M".  Another
-           possiblility is c3 slave eqipment.
 
-           Note: The above method fails for quad mechs (I knew it
-           wouldn't work!).  The following two bytes seem to follow
-           armor in the case of a quad mech (in hex): 0, 41.
-        */
-        try {
-            File BASE = new File(Settings.mechDirectory);
-            File armorFile = new File(BASE, fileName.substring(0,fileName.lastIndexOf(".")) + ".dbm");
-            FileInputStream fStream = new FileInputStream(armorFile);
-            DataInputStream dStream = new DataInputStream(fStream);
-
-            Vector armorValues = new Vector(24);
-
-            int keyByte;
-            if (chassisConfig.equals("Quad")) {
-                keyByte = 65; //hex 41
-            } else {
-                keyByte = 77; //hex 4d
-            }
-
-            for (int i = 0; i < 23; i++) {
-                armorValues.addElement(new Integer(dStream.readUnsignedByte()));
-            }
-
-            while (true) {
-                armorValues.addElement(new Integer(dStream.readUnsignedByte()));
-                armorValues.removeElementAt(0);
-                
-                if (((Integer)armorValues.elementAt(22)).intValue() == keyByte &&
-                    ((Integer)armorValues.elementAt(21)).intValue() == 0) {
-                    // Ok, looks like we've found the armor section.
-                    //  We could be wrong though, so let's see if
-                    //  the total number of armor points checks out.
-                    int tA = 0;
-                    for (int j = 0; j < 21; j = j + 2) {
-                        tA += ((Integer)armorValues.elementAt(j)).intValue();
-                    }
-                    if (tA == totalArmor) {
-                        // We found the armor!
-                        break;
-                    }
-                }
-            }
-            
-            return armorValues;
-
-        } catch (EOFException ex) {
-            throw new EntityLoadingException("Could not parse armor from Drawing Board (.dbm) file.  Premature end of file.");
-        } catch (IOException ex) {
-            throw new EntityLoadingException("Could not parse armor from Drawing Board (.dbm) file.  Note that both Drawing Board save files (.xml and .dbm) must be present for each Drawing Board mech.");
-        }
-    }
-    
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;
             
+            if (!creatorName.equals("The Drawing Board")
+                || Integer.parseInt(creatorVersion) != 2) {
+                // MegaMek no longer supports older versions of The
+                //  Drawing Board (pre 2.0.23) due to incomplete xml
+                //  file information in those versions.
+                throw new EntityLoadingException("This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
+            }
+
             if (chassisConfig.equals("Quad")) {
                 mech = new QuadMech();
             } else {
@@ -333,9 +350,7 @@ public class TdbFile implements MechLoader {
                 mech.setModel("");
             }
             mech.setYear(Integer.parseInt(techYear));
-            if (podSpace != null && podSpace.length() > 0) {
-                mech.setOmni(true);
-            }
+            mech.setOmni(isOmni);
 
             //TODO: this ought to be a better test
             if (techBase.equals("Inner Sphere")) {
@@ -480,7 +495,7 @@ public class TdbFile implements MechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = (Mounted)vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == getInnerLocation(nLoc)) 
+                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc)) 
                                         && m.getType() == etype) {
                                 bFound = true;
                                 break;
@@ -492,7 +507,7 @@ public class TdbFile implements MechLoader {
                                 vSplitWeapons.removeElement(m);
                             }
                             // give the most restrictive location for arcs
-                            m.setLocation(mostRestrictiveLoc(loc, m.getLocation()));
+                            m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
                         }
                         else {
                             // make a new one
@@ -517,52 +532,6 @@ public class TdbFile implements MechLoader {
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
-        }
-    }
-    
-    private int getInnerLocation(int n)
-    {
-        switch(n) {
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
-                return Mech.LOC_CT;
-            case Mech.LOC_LLEG :
-            case Mech.LOC_LARM :
-                return Mech.LOC_LT;
-            case Mech.LOC_RLEG :
-            case Mech.LOC_RARM :
-                return Mech.LOC_RT;
-            default:
-                return n;
-        }
-    }
-    
-    private int mostRestrictiveLoc(int n1, int n2)
-    {
-        if (n1 == n2) {
-            return n1;
-        }
-        else if (restrictScore(n1) >= restrictScore(n2)) {
-            return n1;
-        }
-        else {
-            return n2;
-        }
-    }
-    
-    private int restrictScore(int n)
-    {
-        switch(n) {
-            case Mech.LOC_RARM :
-            case Mech.LOC_LARM :
-                return 0;
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
-                return 1;
-            case Mech.LOC_CT :
-                return 2;
-            default :
-                return 3;
         }
     }
 }

@@ -2378,6 +2378,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Receives an entity movement packet, and if valid, executes it and ends
      * the current turn.
+     * 
      */
     private void receiveMovement(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
@@ -3598,8 +3599,10 @@ implements Runnable, ConnectionHandler {
     }
 
 
-    // Delivers a thunder-aug shot to the targetted hex area.
-    // Thunder-Augs are 7 hexes, though, so...
+    /**
+     * Delivers a thunder-aug shot to the targetted hex area.
+     * Thunder-Augs are 7 hexes, though, so...
+     */ 
     private void deliverThunderAugMinefield( Coords coords,
                                              int playerId, int damage ) {
         Coords mfCoord = null;
@@ -3658,7 +3661,12 @@ implements Runnable, ConnectionHandler {
 
     }
 
-    // Adds a Thunder minefield to the hex.
+    /** 
+     * Adds a Thunder minefield to the hex.
+     * @param coords
+     * @param playerId
+     * @param damage
+     */
     private void deliverThunderMinefield( Coords coords, int playerId,
                                           int damage ) {
         Minefield minefield = null;
@@ -3687,7 +3695,12 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    // Adds a Thunder Inferno minefield to the hex.
+    /**
+     * Adds a Thunder Inferno minefield to the hex.
+     * @param coords
+     * @param playerId
+     * @param damage
+     */
     private void deliverThunderInfernoMinefield(Coords coords, int playerId, int damage) {
         Minefield minefield = null;
         Enumeration minefields = game.getMinefields(coords).elements();
@@ -3715,7 +3728,9 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    // Adds a Thunder-Active minefield to the hex.
+    /**
+     * Adds a Thunder-Active minefield to the hex.
+     */
     private void deliverThunderActiveMinefield(Coords coords, int playerId, int damage) {
         Minefield minefield = null;
         Enumeration minefields = game.getMinefields(coords).elements();
@@ -3743,7 +3758,9 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    // Adds a Thunder-Vibrabomb minefield to the hex.
+    /** 
+     * Adds a Thunder-Vibrabomb minefield to the hex.
+     */
     private void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity) {
         Minefield minefield = null;
         Enumeration minefields = game.getMinefields(coords).elements();
@@ -3771,12 +3788,23 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-	// When an entity enters a conventional or Thunder minefield.
+	/** 
+     * When an entity enters a conventional or Thunder minefield.
+     */
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
 		enterMinefield(entity, mf, src, dest, resolvePSRNow, 0);
 	}
 
-	// When an entity enters a conventional or Thunder minefield.
+	/**
+	 * When an entity enters a conventional or Thunder minefield.
+	 * @param entity
+	 * 
+	 * @param mf
+	 * @param src
+	 * @param dest
+	 * @param resolvePSRNow
+	 * @param hitMod
+	 */
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
 		// Bug 954272: Mines shouldn't work underwater
 		if (!game.board.getHex(mf.getCoords()).contains(Terrain.WATER) || game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
@@ -3836,7 +3864,9 @@ implements Runnable, ConnectionHandler {
 		} else return;
 	}
 
-	// Checks to see if an entity sets off any vibrabombs.
+	/**
+	 * Checks to see if an entity sets off any vibrabombs.
+	 */ 
 	private void checkVibrabombs(Entity entity, Coords coords, boolean displaced) {
 		checkVibrabombs(entity, coords, displaced, null, null);
 	}
@@ -3885,7 +3915,9 @@ implements Runnable, ConnectionHandler {
 		}
 	}
 
-	// Removes the 	minefield from the game.
+	/**
+	 * Removes the	minefield from the game.
+	 */ 
 	private void removeMinefield(Minefield mf) {
 		if (game.containsVibrabomb(mf)) {
 			game.removeVibrabomb(mf);
@@ -3899,7 +3931,11 @@ implements Runnable, ConnectionHandler {
 		}
 	}
 
-	// Removes the minfield from a player.
+	/** 
+	 * Removes the minfield from a player.
+	 * @param player
+	 * @param mf
+	 */
 	private void removeMinefield(Player player, Minefield mf) {
 		if (player.containsMinefield(mf)) {
 			player.removeMinefield(mf);
@@ -3907,7 +3943,10 @@ implements Runnable, ConnectionHandler {
 		}
 	}
 
-	// Reveals a minefield for all players.
+	/**
+	 * Reveals a minefield for all players. 
+	 * @param mf
+	 */
 	private void revealMinefield(Minefield mf) {
 		Enumeration players = game.getPlayers();
 		while (players.hasMoreElements()) {
@@ -3916,7 +3955,12 @@ implements Runnable, ConnectionHandler {
 		}
 	}
 
-	// Reveals a minefield for a player.
+	/**
+	 * Reveals a minefield for a player.
+	 * @param player
+	 * @param mf
+	 * 
+	 */
 	private void revealMinefield(Player player, Minefield mf) {
 		if (!player.containsMinefield(mf)) {
 			player.addMinefield(mf);
@@ -3924,7 +3968,9 @@ implements Runnable, ConnectionHandler {
 		}
 	}
 
-	// Explodes a vibrabomb.
+	/**
+	 * Explodes a vibrabomb.
+	 */ 
 	private void explodeVibrabomb(Minefield mf) {
 		Enumeration targets = game.getEntities(mf.getCoords());
 
@@ -7946,11 +7992,13 @@ implements Runnable, ConnectionHandler {
         }
     }
     
-    // check to see if unarmored infantry is outside in extreme temperatures
-    // (crude fix because infantry shouldn't be able to be deployed
-    // outside of vehicles or buildings, but we can't do that because
-    // we don't know wether the map has buildings or not or wether the
-    // player has an apc    
+    /**
+     * check to see if unarmored infantry is outside in extreme temperatures
+     * (crude fix because infantry shouldn't be able to be deployed
+     * outside of vehicles or buildings, but we can't do that because
+     * we don't know wether the map has buildings or not or wether the
+     * player has an apc 
+     */   
     private void resolveExtremeTempInfantryDeath() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
@@ -8824,7 +8872,16 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Apply a single critcal hit.
+     * Apply a single critical hit.
+     * 
+     * The following private member of Server are accessed from this function,
+     * preventing it from being factored out of the Server class:
+     * destroyEntity()
+     * destroyLocation()
+     * checkEngineExplosion()
+     * damageCrew()
+     * explodeEquipment()
+     * game
      *
      * @param   en the <code>Entity</code> that is being damaged.
      *          This value may not be <code>null</code>.
@@ -8843,14 +8900,7 @@ implements Runnable, ConnectionHandler {
      *          normally <code>true</code>, but it will be <code>false</code>
      *          when the hit is being applied from a saved game or scenario.
      */
-    // The following private member of Server are accessed from this function,
-    // preventing it from being factored out of the Server class:
-    //    destroyEntity()
-    //    destroyLocation()
-    //    checkEngineExplosion()
-    //    damageCrew()
-    //    explodeEquipment()
-    //    game
+    
     public String applyCriticalHit( Entity en, int loc, CriticalSlot cs,
                                     boolean secondaryEffects ) {
         StringBuffer desc = new StringBuffer();
@@ -9372,7 +9422,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Marks all equipment in a location on an entity as destroyed.
      */
-    /* package */ void destroyLocation(Entity en, int loc) {
+    void destroyLocation(Entity en, int loc) {
         // if it's already marked as destroyed, don't bother
         if (en.getInternal(loc) < 0) {
             return;
@@ -9837,7 +9887,7 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /*
+    /**
      * This debug/profiling function will print the current time
      * (in milliseconds) to the log.  If the boolean is true, the
      * garbage collector will be called in an attempt to minimize
@@ -9859,7 +9909,8 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /** Make fires spread, smoke spread, and make sure that all fires
+    /** 
+     * Make fires spread, smoke spread, and make sure that all fires
      * started this turn are marked as "burning" for next turn.
      *
      * A "FIRE" terrain has one of two levels:
@@ -10130,12 +10181,12 @@ implements Runnable, ConnectionHandler {
      *          terrain.  If this value is <code>false</code> the hex will be
      *          lit only if it contains Woods or a Building.
      */
-    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain)  {
+    public boolean ignite(Hex hex, int roll, boolean bAnyTerrain) {
        return ignite(hex, roll, bAnyTerrain, false);
     }
 
-    // default signature, assuming only woods can burn
     public boolean ignite(Hex hex, int roll) {
+        // default signature, assuming only woods can burn
         return ignite(hex, roll, false);
     }
 
@@ -10153,7 +10204,9 @@ implements Runnable, ConnectionHandler {
         phaseReport.append("Fire at " ).append( fireCoords.getBoardNum() ).append( " goes out due to lack of fuel!\n");
     }
 
-    // called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex,
+    /**
+     * called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex
+     */ 
     public void addSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
         Hex nextHex = game.getBoard().getHex(smokeCoords);
@@ -10164,7 +10217,9 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    // Called under L3 fire rules. Called once.
+    /**
+     * Called under L3 fire rules. Called once.
+     */
     public void addL3Smoke(int x, int y) {
         Board board = game.getBoard();
         Coords smokeCoords = new Coords(x, y);
@@ -10316,7 +10371,7 @@ implements Runnable, ConnectionHandler {
         return nextCoords;
     }
 
-    /*
+    /**
      * This method does not currently support "smoke clouds" as specified
      * in MaxTech (revised ed.) under "Dissipation" on page 51.  The
      * added complexity was not worth it given that smoke-delivering

@@ -1748,46 +1748,52 @@ public class Server
         if (roll < toHit.getValue()) {
             // miss
             phaseReport.append("misses.\n");
-			if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-				ae.heatBuildup -= wtype.getHeat();
-				ammo.setShotsLeft(ammo.getShotsLeft() + 1);
-				phaseReport.append("    Streak fails to achieve lock on target.\n");
-			}
+            if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                ae.heatBuildup -= wtype.getHeat();
+                ammo.setShotsLeft(ammo.getShotsLeft() + 1);
+                phaseReport.append("    Streak fails to achieve lock on target.\n");
+            }
             return;
         }
         // are we attacks normal weapons or missiles?
         if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
-            // missiles; determine number of missiles hitting
-		 if (ammo != null) {
-            int hits = Compute.missilesHit(wtype.getRackSize());
-			if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-				hits = wtype.getRackSize();
-			}
-            phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
-            if (wtype.getAmmoType() == AmmoType.T_SRM || wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-                // for SRMs, do each missile seperately
-                for (int j = 0; j < hits; j++) {
-                    HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    phaseReport.append(damageEntity(te, hit, 2));
+            if (ammo != null) {
+                // missiles; determine number of missiles hitting
+                int hits;
+                if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                    hits = wtype.getRackSize();
+                } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
+                    // I'm going to assume these are MRMs
+                    hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
+                } else {
+                    hits = Compute.missilesHit(wtype.getRackSize());
                 }
-			} else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
-				// for LBX cluster ammo
-				for (int j = 0; j < hits; j++) {
-					HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    phaseReport.append(damageEntity(te, hit, 1));
-				}
-            } else if (wtype.getAmmoType() == AmmoType.T_LRM) {
-                // LRMs, do salvos of 5
-                while (hits > 0) {
-                    int salvo = Math.min(5, hits);
-                    HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                    phaseReport.append(damageEntity(te, hit, salvo));
-                    hits -= salvo;
+                phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
+                if (wtype.getAmmoType() == AmmoType.T_SRM || wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                    // for SRMs, do each missile seperately
+                    for (int j = 0; j < hits; j++) {
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        phaseReport.append(damageEntity(te, hit, 2));
+                    }
+                } else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
+                    // for LBX cluster ammo
+                    for (int j = 0; j < hits; j++) {
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        phaseReport.append(damageEntity(te, hit, 1));
+                    }
+                } else if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
+                    // LRMs, MRMs do salvos of 5
+                    while (hits > 0) {
+                        int salvo = Math.min(5, hits);
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        phaseReport.append(damageEntity(te, hit, salvo));
+                        hits -= salvo;
+                    }
                 }
             }
-		 }} else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
-             phaseReport.append("hits; target gains 2 more heat during heat phase.");
-             te.heatBuildup += 2;
+        } else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+            phaseReport.append("hits; target gains 2 more heat during heat phase.");
+            te.heatBuildup += 2;
         } else {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());

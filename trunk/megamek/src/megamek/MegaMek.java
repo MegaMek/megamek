@@ -289,7 +289,11 @@ public class MegaMek
         Settings.save();
         
         // okay, exit program
-        client.die();
+        if (client != null) {
+            client.die();
+        } else {
+            System.exit(0);
+        }
     }
     public void windowOpened(WindowEvent ev) {
     }

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.37 (CVS)
+
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin
 + Bug 838318: Stealth was still working when mech shutdown.

@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -875,37 +875,37 @@ public class PhysicalDisplay
     	}
     }
 	
-	public void setThrashEnabled(boolean enabled) {
-		butThrash.setEnabled(enabled);
+    public void setThrashEnabled(boolean enabled) {
+        butThrash.setEnabled(enabled);
         client.getMenuBar().setPhysicalThrashEnabled(enabled);
-	}
-	public void setPunchEnabled(boolean enabled) {
-		butPunch.setEnabled(enabled);
+    }
+    public void setPunchEnabled(boolean enabled) {
+        butPunch.setEnabled(enabled);
         client.getMenuBar().setPhysicalPunchEnabled(enabled);
-	}
-	public void setKickEnabled(boolean enabled) {
-		butKick.setEnabled(enabled);
+    }
+    public void setKickEnabled(boolean enabled) {
+        butKick.setEnabled(enabled);
         client.getMenuBar().setPhysicalKickEnabled(enabled);
-	}
-	public void setPushEnabled(boolean enabled) {
-		butPush.setEnabled(enabled);
+    }
+    public void setPushEnabled(boolean enabled) {
+        butPush.setEnabled(enabled);
         client.getMenuBar().setPhysicalPushEnabled(enabled);
-	}
-	public void setClubEnabled(boolean enabled) {
-		butClub.setEnabled(enabled);
+    }
+    public void setClubEnabled(boolean enabled) {
+        butClub.setEnabled(enabled);
         client.getMenuBar().setPhysicalClubEnabled(enabled);
-	}
-	public void setBrushOffEnabled(boolean enabled) {
-		butBrush.setEnabled(enabled);
+    }
+    public void setBrushOffEnabled(boolean enabled) {
+        butBrush.setEnabled(enabled);
         client.getMenuBar().setPhysicalBrushOffEnabled(enabled);
-	}
-	public void setDodgeEnabled(boolean enabled) {
-		butDodge.setEnabled(enabled);
+    }
+    public void setDodgeEnabled(boolean enabled) {
+        butDodge.setEnabled(enabled);
         client.getMenuBar().setPhysicalDodgeEnabled(enabled);
-	}
-	public void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
+    }
+    public void setNextEnabled(boolean enabled) {
+        butNext.setEnabled(enabled);
         client.getMenuBar().setPhysicalNextEnabled(enabled);
-	}
+    }
 
 }

@@ -133,7 +133,7 @@ public abstract class Entity
     /**
      * The components of this entity that can transport other entities.
      */
-    private List                transports = new ArrayList();
+    private List                transports = new Vector();
 
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -1565,11 +1565,37 @@ public abstract class Entity
     public boolean hasActiveECM() {
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_ECM)) {
+            EquipmentType type = m.getType();
+            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)) {
                 return !(m.isDestroyed() || m.isMissing());
             }
         }
         return false;
+    }
+
+    /**
+     * What's the range of the ECM equipment?  Infantry can have ECM that
+     * just covers their own hex.
+     *
+     * @return  the <code>int</code> range of this unit's ECM.  This value
+     *          will be <code>Entity.NONE</code> if no ECM is active.
+     */
+    public int getECMRange() {
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            EquipmentType type = m.getType();
+            if ( type instanceof MiscType && type.hasFlag(MiscType.F_ECM) &&
+                 !m.isDestroyed() && !m.isMissing() ) {
+                if ( BattleArmor.SINGLE_HEX_ECM
+                     .equals(type.getInternalName()) ) {
+                    return 0;
+                }
+                else {
+                    return 6;
+                }
+            }
+        }
+        return Entity.NONE;
     }
     
     public boolean hasTargComp() {

@@ -36,6 +36,7 @@ mechs:
 - allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
+- Mek Stealth Armor
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
@@ -63,7 +64,6 @@ falling:
 
 infantry:
 - implement the following special rules:
--- Stealth
 -- Infernos
 -- Fire Protection
 -- VTOL movement
@@ -83,7 +83,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.1 (01-11-03, 11:36am)
+v 0.28.1 (01-16-03, 4:06pm)
 + COMPATABILITY BREAKER: allow Charges and DFAs to target *any* enemy in hex.
 + Allow vehicles to transport infantry.
 + Update skidding to better match the BMRr.
@@ -91,6 +91,9 @@ v 0.28.1 (01-11-03, 11:36am)
 + Anti-Mek Leg Attacks (Swarm Mek is not implemented).
 + BattleArmor initial implementation (many special rules not implemented).
 + 638815: Allow players to rotate maps 180 degrees.
++ Fixed error in many IS MTF files (possible bug in Mek editor).
++ Added BattleArmor stealth, mimetic camoflage, and single-hex ECM.
++ 669169: Allow turns after first step while stacking with the enemy.
 
 v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks

@@ -233,9 +233,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
 
-// + HentaiZonga            
-        butCustom = new Button("View/Edit Mech...");
-// - HentaiZonga
+         butCustom = new Button("View/Edit Mech...");
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
             
@@ -362,14 +360,11 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
-// + HentaiZonga
         String TreeSet = "";
         String TreeView = "";
-// - HentaiZonga
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-// + HentaiZonga
             if(entity.hasC3i()) {
                TreeSet = "";
                if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
@@ -401,7 +396,6 @@ public class ChatLounge extends AbstractPhaseDisplay
                             + " (" + entity.getCrew().getGunnery() 
                             + "/" + entity.getCrew().getPiloting() + " pilot)"
                             + " BV=" + entity.calculateBattleValue() + TreeView);
-// - HentaiZonga
             entityCorrespondance[listIndex++] = entity.getId();
         }
   }
@@ -521,9 +515,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
         // display dialog
-// + HentaiZonga
         CustomMechDialog cmd = new CustomMechDialog(client, entity, editable);
-// - HentaiZonga
         cmd.show();
         if (editable && cmd.isOkay()) {
             // send changes

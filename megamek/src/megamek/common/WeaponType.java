@@ -52,7 +52,6 @@ public class WeaponType extends EquipmentType {
         return heat;
     }
     
-// + HentaiZonga
     public int getFireTN() {
         if(hasFlag(F_FLAMER))
           return 4;
@@ -63,7 +62,6 @@ public class WeaponType extends EquipmentType {
         else
           return 9;
     }
-// - HentaiZonga
  
     public int getDamage() {
         return damage;

@@ -37,13 +37,11 @@ public class MiscType extends EquipmentType {
     public static final int     F_CASE              = 0x0040;
     public static final int     F_MASC              = 0x0080;
     public static final int     F_TSM               = 0x0100;
-// + HentaiZonga
     public static final int     F_C3M               = 0x0200;
     public static final int     F_C3S               = 0x0400;
     public static final int     F_C3I               = 0x0800;
 
     public static final int     F_ECM               = 0x1000;
-// - HentaiZonga
     
     /** Creates new MiscType */
     public MiscType() {
@@ -138,8 +136,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createC3S());
         EquipmentType.addType(createC3M());
         EquipmentType.addType(createC3I());
-// + HentaiZonga
-// - HentaiZonga
     }
     
     public static MiscType createHeatSink() {
@@ -369,7 +365,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-// + HentaiZonga    
     public static MiscType createC3S() {
         MiscType misc = new MiscType();
         
@@ -454,5 +449,4 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-// - HentaiZonga
 }

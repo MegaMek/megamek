@@ -1340,9 +1340,7 @@ implements Runnable {
      */
     private boolean isEligibleForFiring(Entity entity, int phase) {
         // if you're charging, no shooting
-// + HentaiZonga
         if (entity.isUnjammingRAC()) return false;
-// - HentaiZonga
         if (entity.isCharging() || entity.isMakingDfa()) {
             return false;
         }
@@ -1365,9 +1363,7 @@ implements Runnable {
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
         
         // if you're charging or finding a club, it's already declared
-// + HentaiZonga
         if (entity.isUnjammingRAC()) return false;
-// - HentaiZonga
         if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
             return false;
         }
@@ -1529,14 +1525,12 @@ implements Runnable {
                 break;
             }
              
-// + HentaiZonga
             if (step.getType() == MovementData.STEP_UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
                 attacks.addElement(new UnjamAction(entity.getId()));
 
                 break;
             }
-// - HentaiZonga
 
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
@@ -2438,10 +2432,8 @@ implements Runnable {
                     // unlikely...
                 }
                 phaseReport.append("\n" + entity.getDisplayName() + " uproots a tree for use as a club.\n");
-// + HentaiZonga
             } else if (o instanceof UnjamAction) {
                 resolveUnjam(entity.getId());
-// - HentaiZonga
             } else {
                 // hmm, error
             }
@@ -2451,7 +2443,6 @@ implements Runnable {
         attacks.removeAllElements();
     }
     
-// + HentaiZonga
     /**
      * Resolve an Unjam Action object
      */
@@ -2478,7 +2469,6 @@ implements Runnable {
             }
         }
     }
-// - HentaiZonga
 
     /**
      * Resolve a single Weapon Attack object
@@ -2776,7 +2766,6 @@ implements Runnable {
         while (hits > 0) {
             int nDamage;
 
-// + HentaiZonga
             // if we're targeting a hex, then 
             if(te instanceof HexEntity) {
               nDamage = nDamPerHit * hits;
@@ -2825,7 +2814,6 @@ implements Runnable {
               }             
               return;
             }
-// - HentaiZonga
             // Flamers do heat, not damage.
             if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
                 nDamage = nDamPerHit * hits;

@@ -26,9 +26,7 @@ import megamek.common.actions.*;
 public abstract class Entity 
     implements Serializable 
 {
-// + HentaiZonga
     public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
-// - HentaiZonga
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?
       public static final int BIPED   = 1;
@@ -94,9 +92,7 @@ public abstract class Entity
     protected boolean           prone = false;
     protected boolean           findingClub = false;
     protected boolean           armsFlipped = false;
-// + HentaiZonga
     protected boolean           unjammingRAC = false;
-// - HentaiZonga
     
     protected DisplacementAttackAction displacementAttack = null;
     
@@ -112,10 +108,8 @@ public abstract class Entity
     private int[]               orig_internal;
     public int                  damageThisPhase;
 
-// + HentaiZonga
     protected String            C3NetIDString = null;
     protected int               C3Master = NONE;
-// - HentaiZonga
 
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
@@ -387,7 +381,6 @@ public abstract class Entity
         return null;
     }
 
-// + HentaiZonga
     public boolean isUnjammingRAC() {
         return unjammingRAC;
     }
@@ -395,7 +388,6 @@ public abstract class Entity
     public void setUnjammingRAC(boolean u) {
         unjammingRAC = u;
     }
-// - HentaiZonga
 
     public boolean isFindingClub() {
         return findingClub;
@@ -584,7 +576,6 @@ public abstract class Entity
      */
     public abstract int clipSecondaryFacing(int dir);
     
-// + HentaiZonga
     /**
      * Returns true if the entity has an RAC
      */
@@ -612,7 +603,6 @@ public abstract class Entity
           }  
           return false;
       }
-// - HentaiZonga
 
     /**
      * Returns true if the entity can flip its arms
@@ -1544,7 +1534,6 @@ public abstract class Entity
         return false;
     }
     
-// + HentaiZonga
     /**
      * Returns whether this 'mech is part of a C3 network.
      */
@@ -1710,7 +1699,6 @@ public abstract class Entity
       // got the easy part out of the way, now we need to verify that the network isn't down
       return (getC3Top().equals(e.getC3Top()));
     }
-// - HentaiZonga
 
     /**
      * Returns whether there is CASE protecting the location.
@@ -1766,9 +1754,7 @@ public abstract class Entity
         setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
-// + HentaiZonga
         setUnjammingRAC(false);
-// - HentaiZonga
         crew.setKoThisRound(false);
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {

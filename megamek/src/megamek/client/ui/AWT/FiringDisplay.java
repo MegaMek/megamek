@@ -666,10 +666,8 @@ public class FiringDisplay
                 torsoTwist(b.getCoords());
             } else if (client.game.getFirstEntity(b.getCoords()) != null) {
                 target(client.game.getFirstEntity(b.getCoords()).getId());
-// + HentaiZonga
             } else {
               target(client.game.CoordsToId(b.getCoords()));
-// - HentaiZonga
             }
         }
     }
@@ -790,11 +788,9 @@ public class FiringDisplay
                 torsoTwist(client.game.board.lastCursor);
             }
         }
-// + HentaiZonga - I got tired of having to click all the damn time
         if (ev.getKeyCode() == ev.VK_M) {
             changeMode(); 
         }
-// - HentaiZonga
     }
     public void keyReleased(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {

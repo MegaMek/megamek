@@ -76,10 +76,8 @@ public class BoardView1
     // vector of sprites for all firing lines
     private Vector attackSprites = new Vector();
     
-// + HentaiZonga
     // vector of sprites for C3 network lines
     private Vector C3Sprites = new Vector();
-// - HentaiZonga
     // tooltip stuff
     private Window tipWindow;
     private boolean isTipPossible = false;
@@ -167,10 +165,8 @@ public class BoardView1
         // draw highlight border
         drawSprite(highlightSprite);
         
-// + HentaiZonga
         // draw C3 links
         drawSprites(C3Sprites);
-// - HentaiZonga
 
         // draw onscreen entities
         drawSprites(entitySprites);
@@ -649,7 +645,6 @@ public class BoardView1
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-// + HentaiZonga
         for (java.util.Enumeration i = C3Sprites.elements(); i.hasMoreElements();) {
           final C3Sprite c3sprite = (C3Sprite)i.nextElement();
           if (c3sprite.entityId == entity.getId()) 
@@ -664,7 +659,6 @@ public class BoardView1
         }
         
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
-// - HentaiZonga
         repaint(100);
     }
     
@@ -675,9 +669,7 @@ public class BoardView1
         Vector newSprites = new Vector(game.getNoOfEntities());
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
         
-// + HentaiZonga
         clearC3Networks();      
-// - HentaiZonga
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if (entity.getPosition() == null) continue;
@@ -686,9 +678,7 @@ public class BoardView1
             newSprites.add(sprite);
             newSpriteIds.put(new Integer(entity.getId()), sprite);
 
-// + HentaiZonga
             if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
-// - HentaiZonga
         }
         
         entitySprites = newSprites;
@@ -769,7 +759,6 @@ public class BoardView1
         m_plDeployer = p;
     }
     
-// + HentaiZonga
     /**
      * Adds a c3 line to the sprite list.
      */
@@ -786,7 +775,6 @@ public class BoardView1
             C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
         }
     }
-// - HentaiZonga
 
     /**
      * Adds an attack to the sprite list.
@@ -816,11 +804,10 @@ public class BoardView1
         attackSprites.addElement(new AttackSprite(aa));
     }
     
-// + HentaiZonga
     public void clearC3Networks() {
         C3Sprites.removeAllElements();
     }
-// - HentaiZonga
+
     /**
      * Clears out all attacks that were being drawn
      */
@@ -1570,7 +1557,6 @@ public class BoardView1
         }
     }
     
-// + HentaiZonga
     /**
      * Sprite and info for a C3 network.  Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.
@@ -1645,7 +1631,6 @@ public class BoardView1
         }
 
     }
-// - HentaiZonga
 
     /**
      * Sprite and info for an attack.  Does not actually use the image buffer

@@ -244,11 +244,9 @@ public class Client extends Panel
         return count;
     }
     
-// + HentaiZonga
     public Entity getEntity(int enum) {
         return game.getEntity(enum);
     }
-// - HentaiZonga
 
     /**
      * Returns the individual player assigned the index

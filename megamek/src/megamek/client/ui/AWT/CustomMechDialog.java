@@ -22,9 +22,7 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-// + HentaiZonga
 import java.util.Enumeration;
-// - HentaiZonga
 
 import megamek.common.*;
 
@@ -46,11 +44,9 @@ extends Dialog implements ActionListener {
     private TextField fldGunnery = new TextField(3);
     private Label labPiloting = new Label("Piloting: ", Label.RIGHT);;
     private TextField fldPiloting = new TextField(3);
-// + HentaiZonga    
     private Label labC3 = new Label("C3 Network: ", Label.RIGHT);;
     private Choice choC3 = new Choice();
     private int[] entityCorrespondance;
-// - HentaiZonga    
 
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
@@ -58,7 +54,6 @@ extends Dialog implements ActionListener {
     
     private Entity entity;
     private boolean okay = false;
-// + HentaiZonga
     private Client client;
     /** Creates new CustomMechDialog */
     public CustomMechDialog(Client client, Entity entity, boolean editable) {
@@ -66,7 +61,6 @@ extends Dialog implements ActionListener {
         
         this.entity = entity;
         this.client = client;
-// - HentaiZonga
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -111,7 +105,6 @@ extends Dialog implements ActionListener {
         gridbag.setConstraints(fldPiloting, c);
         add(fldPiloting);
         
-// + HentaiZonga
         if(entity.hasC3() || entity.hasC3i())
         {        
           c.gridwidth = 1;
@@ -125,7 +118,6 @@ extends Dialog implements ActionListener {
           add(choC3);
           refreshC3();
         }
-// - HentaiZonga
 
         setupButtons();
         
@@ -142,9 +134,7 @@ extends Dialog implements ActionListener {
             fldName.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldPiloting.setEnabled(false);
-// + HentaiZonga
             choC3.setEnabled(false);
-// - HentaiZonga
         }
         
         addWindowListener(new WindowAdapter() {
@@ -153,10 +143,8 @@ extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-// + HentaiZonga
         setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
                     client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
-// - HentaiZonga
     }
     
     private void setupButtons() {
@@ -186,7 +174,6 @@ extends Dialog implements ActionListener {
         return okay;
     }
 
-// + HentaiZonga
     private void refreshC3() {
         choC3.removeAll();
         int listIndex = 0;
@@ -244,7 +231,6 @@ extends Dialog implements ActionListener {
         }
     }
 
-// - HentaiZonga
 
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOkay) {
@@ -256,23 +242,18 @@ extends Dialog implements ActionListener {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
-// + HentaiZonga
                 new AlertDialog(client.frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
-// - HentaiZonga
                 return;
             }
             
             // keep these reasonable, please
             if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
-// + HentaiZonga
                 new AlertDialog(client.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
-// - HentaiZonga
                 return;
             }
             
             // change entity
             entity.crew = new Pilot(name, gunnery, piloting);
-// + HentaiZonga
             if(entity.hasC3() ) {
                 entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
                 //new AlertDialog(client.frame, "Setting C3", "Set C3 Master to " + entity.getC3Master().getDisplayName()).show();

@@ -95,6 +95,8 @@ v next
 + numbers for starting position replaced by compass diresctions
 + teams selection added
 + mech loading code handles .mtf files from "hmpread" now
++ some changes to the mech display panels
++ -testdice command line option prints RNG test info
 
 v 0.24.6 (04-07-02, 1:18pm)
 + refined command interface.  type "/help" for a list.

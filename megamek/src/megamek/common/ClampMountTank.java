@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.*;
+import java.io.IOException;
 
 /**
  * Represtents the space on a vehicle used by Battle Armor squads

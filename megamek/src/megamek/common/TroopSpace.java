@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -15,30 +15,31 @@
 package megamek.common;
 
 import java.util.*;
+import java.io.IOException;
 
 /**
  * Represtents a volume of space set aside for carrying troops and their
  * equipment under battle conditions.  Typically, a component of an APC.
  */
 
-public final class TroopSpace implements Transporter {
+/* package */ final class TroopSpace implements Transporter {
 
     // Private attributes and helper functions.
 
     /**
      * The troops being carried.
      */
-    /* package */ Vector troops = new Vector();
+    Vector troops = new Vector();
 
     /**
      * The total amount of space available for troops.
      */
-    /* package */ int totalSpace;
+    int totalSpace;
 
     /**
      * The current amount of space available for troops.
      */
-    /* package */ int currentSpace;
+    int currentSpace;
 
     /* ### I don't think that I need this code ### *#/
     /**

@@ -27,7 +27,6 @@ import java.awt.MediaTracker;
 import java.io.*;
 
 import megamek.common.*;
-import megamek.common.util.StringUtil;
 
 /**
  * Matches each hex with an appropriate image.
@@ -126,43 +125,47 @@ public class HexTileset {
     // all but elevation & theme
     
     
-    public void loadFromFile(String filename) throws IOException {
-        // make inpustream for board
-        Reader r = new BufferedReader(new FileReader("data/hexes/" + filename));
-        // read board, looking for "size"
-        StreamTokenizer st = new StreamTokenizer(r);
-        st.eolIsSignificant(true);
-        st.commentChar('#');
-        st.quoteChar('"');
-        st.wordChars('_', '_');
-        while(st.nextToken() != StreamTokenizer.TT_EOF) {
-            int elevation = 0;
-            String terrain = null;
-            String theme = null;
-            String imageName = null;
-            if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) {
-                boolean base = st.sval.equals("base");
-
-                if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
-                    elevation = (int)st.nval;
-                } else {
-                    elevation = Terrain.WILDCARD;
-                }
-                st.nextToken();
-                terrain = st.sval;
-                st.nextToken();
-                theme = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                if (base) {
-                    bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
-                } else {
-                    supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
-                }
+    public void loadFromFile(String filename) {
+        try {
+            // make inpustream for board
+            Reader r = new BufferedReader(new FileReader("data/hexes/" + filename));
+            // read board, looking for "size"
+            StreamTokenizer st = new StreamTokenizer(r);
+            st.eolIsSignificant(true);
+            st.commentChar('#');
+            st.quoteChar('"');
+            st.wordChars('_', '_');
+            while(st.nextToken() != StreamTokenizer.TT_EOF) {
+                int elevation = 0;
+                String terrain = null;
+                String theme = null;
+                String imageName = null;
+                if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) {
+                    boolean base = st.sval.equals("base");
+                    
+                    if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
+                        elevation = (int)st.nval;
+                    } else {
+                        elevation = Terrain.WILDCARD;
+                    }
+                    st.nextToken();
+                    terrain = st.sval;
+                    st.nextToken();
+                    theme = st.sval;
+                    st.nextToken();
+                    imageName = st.sval;
+                    // add to list
+                    if (base) {
+                        bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+                    } else {
+                        supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+                    }
+                 }
             }
+            r.close();
+        } catch (IOException ex) {
+            ;
         }
-        r.close();
         
         System.out.println("hexTileset: loaded " + bases.size() + " base images");
         System.out.println("hexTileset: loaded " + supers.size() + " super images");
@@ -311,15 +314,10 @@ public class HexTileset {
         private Hex hex;
         private String imageFile;
         private Image image;
-        private java.util.Vector images;
-        private java.util.Vector filenames;
-    private java.util.Random r;
         
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;
             this.imageFile = imageFile;
-            r = new java.util.Random();
-            filenames = StringUtil.splitString(imageFile, ";");
         }
         
         public Hex getHex() {
@@ -335,29 +333,14 @@ public class HexTileset {
        }
         
         public Image getImage(Component comp) {
-            if (images == null) {
+            if (image == null) {
                 loadImage(comp);
             }
-      if (images.size() > 1) {
-        int rand = (int)(r.nextDouble() * (double)images.size());
-        return (Image) images.elementAt(rand);
-      } else {
-        return (Image) images.firstElement();
-      }
-/*      if (image == null) {
-        return image    loadImage(comp);
-      }
-      return image;
-*/
-    }
+            return image;
+        }
         
         public void loadImage(Component comp) {
-          images = new java.util.Vector();
-          for (int i = 0; i < filenames.size(); i++) {
-            String filename = (String) filenames.elementAt(i);
-            images.addElement(comp.getToolkit().getImage("data/hexes/" + filename));
-          }
-//      image = comp.getToolkit().getImage("data/hexes/" + imageFile);
+            image = comp.getToolkit().getImage("data/hexes/" + imageFile);
         }
     }
 }

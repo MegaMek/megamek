@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -39,8 +39,9 @@ public class EquipmentType {
     protected String    name = null;
 
     protected String    internalName = null;
-
-    private Vector      namesVector = new Vector();
+    protected String    mepName = null;
+    protected String    mtfName = null;
+    protected String    tdbName = null;
 
     protected float     tonnage = 0;
     protected int       criticals = 0;
@@ -64,7 +65,10 @@ public class EquipmentType {
     
     // static list of eq
     protected static Vector allTypes;
-    protected static Hashtable lookupHash;
+    protected static Hashtable internalNameHash;
+    protected static Hashtable mepNameHash;
+    protected static Hashtable mtfNameHash;
+    protected static Hashtable tdbNameHash;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -81,6 +85,18 @@ public class EquipmentType {
     
     public String getInternalName() {
         return internalName;
+    }
+    
+    public String getMepName() {
+        return mepName;
+    }
+    
+    public String getMtfName() {
+        return mtfName;
+    }
+    
+    public String getTdbName() {
+        return tdbName;
     }
     
     public float getTonnage(Entity entity) {
@@ -144,31 +160,8 @@ public class EquipmentType {
         return m_bInstantModeSwitch;
     }
 
-    public void setInternalName(String s) {
-        internalName = s;
-        addLookupName(s);
-    }
-
-    public void addLookupName(String s) {
-        EquipmentType.lookupHash.put(s, this); // static variable
-        namesVector.addElement(s); // member variable
-    }
-
-    public static EquipmentType get(String key) {
-        if ( null == EquipmentType.lookupHash ) {
-            EquipmentType.initializeTypes();
-        }
-        return (EquipmentType) EquipmentType.lookupHash.get(key);
-    }
-
-    public Enumeration getNames() {
-        return namesVector.elements();
-    }
-
     public static void initializeTypes() {
-        EquipmentType.allTypes = new Vector();
-        EquipmentType.lookupHash = new Hashtable();
-        
+        allTypes = new Vector();
         // will I need any others?
         WeaponType.initializeTypes();
         AmmoType.initializeTypes();
@@ -176,17 +169,107 @@ public class EquipmentType {
     }
     
     public static Enumeration getAllTypes() {
-        if ( null == EquipmentType.allTypes ) {
-            EquipmentType.initializeTypes();
-        }
-        return EquipmentType.allTypes.elements();
+        return allTypes.elements();
     }
     
     protected static void addType(EquipmentType type) {
-        if ( null == EquipmentType.allTypes ) {
-            EquipmentType.initializeTypes();
-        }
-        EquipmentType.allTypes.addElement(type);
+        allTypes.addElement(type);
     }
     
+    public static EquipmentType getByInternalName(String key) {
+        if (internalNameHash == null) {
+            initializeInternalNameHash();
+        }
+        
+        return (EquipmentType)internalNameHash.get(key);
+    }
+    
+    public static void initializeInternalNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        internalNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            internalNameHash.put(type.getInternalName(), type);
+        }
+    }
+    
+    public static EquipmentType getByMepName(String key) {
+        if (mepNameHash == null) {
+            initializeMepNameHash();
+        }
+        
+        return (EquipmentType)mepNameHash.get(key);
+    }
+    
+    public static void initializeMepNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        mepNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            mepNameHash.put(type.getMepName(), type);
+        }
+    }
+    
+    public static EquipmentType getByMtfName(String key) {
+        if (mtfNameHash == null) {
+            initializeMtfNameHash();
+        }
+        
+        return (EquipmentType)mtfNameHash.get(key);
+    }
+    
+    public static void initializeMtfNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        mtfNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            mtfNameHash.put(type.getMtfName(), type);
+        }
+    }
+
+    public static EquipmentType getByTdbName(String key, boolean isClan) {
+        if (tdbNameHash == null) {
+            initializeTdbNameHash();
+        }
+
+        EquipmentType equip = (EquipmentType)tdbNameHash.get(key);
+        if (equip == null) {
+            if (isClan)
+                key = "Clan " + key;
+            else
+                key = "IS " + key;
+            return (EquipmentType)tdbNameHash.get(key);
+        } else {
+            return equip;
+        }
+    }
+    
+    public static void initializeTdbNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        tdbNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            tdbNameHash.put(type.getTdbName(), type);
+        }
+    }
 }

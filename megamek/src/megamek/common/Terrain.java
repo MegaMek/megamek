@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.*;
+import java.awt.*;
 
 /**
  * Represents a single type of terrain or condition in a hex.  The type of a
@@ -47,13 +48,11 @@ implements Serializable {
     public static final int     BRIDGE_CF       = 15;
     public static final int     BRIDGE_ELEV     = 16;
     public static final int     FLUFF           = 17;
-    public static final int     ARMS            = 18; //blown off arms for use as clubs, level = number of arms in that hex
-    public static final int     LEGS            = 19; //blown off legs for use as clubs, level = number of legs in that hex
     
     private static final String[] names = {"none", "woods", "rough", "rubble",
     "water", "pavement", "road", "fire", "smoke", "swamp",
     "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
-    "bridge_elev", "fluff", "arms", "legs"};
+    "bridge_elev", "fluff"};
     
     public static final int     SIZE            = names.length;
     

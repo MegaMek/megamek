@@ -34,30 +34,16 @@ public class OptionGroup implements Serializable {
     private Vector options = new Vector();
     
     private String name;
-    private String key;
 
     /** Creates new OptionGroup */
-    public OptionGroup(String name, String key) {
-        this.name = name;
-        this.key = key;     
-    }
-    
     public OptionGroup(String name) {
-      this(name, "");
+        this.name = name;
     }
     
     public String getName() {
         return name;
     }
     
-    public void setKey(String key) {
-      this.key = key;
-    }
-    
-    public String getKey() {
-      return key;
-    }
-        
     public Enumeration options() {
         return options.elements();
     }

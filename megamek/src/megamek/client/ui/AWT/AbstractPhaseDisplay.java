@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -15,20 +15,23 @@
 package megamek.client;
 
 import java.awt.*;
+import java.awt.event.*;
 
 import megamek.common.*;
 
-public abstract class AbstractPhaseDisplay extends Panel implements BoardListener, GameListener {
-
+public abstract class AbstractPhaseDisplay
+  extends Panel
+  implements BoardListener, GameListener
+{
     //
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-        ;
+    ;
     }
     public void boardHexSelected(BoardEvent b) {
-        ;
-    }
+    ;
+  }
     public void boardHexCursor(BoardEvent b) {
         ;
     }
@@ -44,13 +47,8 @@ public abstract class AbstractPhaseDisplay extends Panel implements BoardListene
     public void boardNewBoard(BoardEvent b) {
         ;
     }
-    public void boardFirstLOSHex(BoardEvent b) {
-        ;
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
-        ;
-    }
 
+  //
     // GameListener
     //
     public void gamePlayerChat(GameEvent ev) {
@@ -60,41 +58,16 @@ public abstract class AbstractPhaseDisplay extends Panel implements BoardListene
         ;
     }
     public void gameTurnChange(GameEvent ev) {
-        ;
+    ;
     }
     public void gamePhaseChange(GameEvent ev) {
-        ;
+    ;
     }
     public void gameNewEntities(GameEvent ev) {
-        ;
+    ;
     }
     public void gameNewSettings(GameEvent ev) {
-        ;
+    ;
     }
-    public void gameDisconnected(GameEvent e) {
-        ;
-    }
-    public void gameBoardChanged(GameEvent e) {
-        ;
-    }
-    public void gameEnd(GameEvent e) {
-        ;
-    }
-
-    public void boardChangedEntity(BoardEvent b) {
-        ;
-    }
-
-    public void boardNewAttack(BoardEvent a) {
-        ;
-    }
-
-    public void gameReport(GameEvent e) {
-        ;
-    }
-
-    public void gameMapQuery(GameEvent e) {
-        ;
-    }
-
+    
 }

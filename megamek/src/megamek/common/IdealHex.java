@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.util.Hashtable;
 
 /**
  * Represents a hex, not in the game but in an ideal coordinate system.  Used 

@@ -1,52 +1,22 @@
-The bot was written by Steve Hawkins <hawkprime@users.sourceforge.net> building off of 
-the work of Michael Hanson <hanson@cs.stanford.edu>.
-  
-The bot works with most units: mechs, tanks and infantry.  There are a few bugs that will cause 
-it to stop responding.  When this happens, start again from the last saved game.  
+
+This is a guide to the bot that comes with MegaMek 0.28.  The bot was written
+by Steve Hawkins <hawk0166@umn.edu> building off of the work of Michael Hanson 
+<hanson@cs.stanford.edu> -- including this file.  
+It is a work in progress.
+
+The bot works with most units: mechs, tanks and infantry.  There are a few rare
+bugs in 0.28 that will cause it to stop responding.  When this happens,
+disconnect and reconnect it.  The bot does not have double-blind support, and 
+will disconnect any time it cannot see an opponent.
 
   Starting A Game Against The Bot
-    To play against the bot, host a game.
-    Go to the players list and click add bot.
-    Selecting that bot from the players list will allow you to change its team or remove it. 
-    Set the bot's starting position by selecting it from the starting 
-    position list, then click change start.
-    As you use the add unit dialog, just assign some mechs to the bot.
-    Hit done and have fun!
-	
-    The bot will also work in most Scenarios.
-    
-    Alternatively, you can still launch the bot in a separate client like before.
-        
-    TODO: camo change ability
-    TODO: have unit loading list work with bots
-    
-History:
-
-.3.x Current
-  A gui-less incarnation of the the .3 bot with support for random minefield placement.
-I'm sure that this new setup will cause people trouble at first, but it should be worth it.
-  
-.3
-  A refactoring of the bot that removed about 1/3 of the code and most of the original code.  
-It also supports double-blind although not very well...  
-
-.2.x 
-  Various bug fixes and tweaks by MegaMek developers.  Support for infantry, 
-vehicles and automatic deployment.
-
-.2 TestBot - Steve Hawkins
-  Spurred on by taking an AI class, the original bot was improved to have a more
-robust utility model and a polynomial movement exploration algorithm.  The movement
-algorithm was further enhanced to a hierarchical filtering process that included limited
-look ahead and planning.  Entities go through a characterization phase to have fast approximations
-available for the first stages of the filtering.  Also, firing determination and lance movement were 
-changed to use genetic algorithms.  
-
-.1 The Original - Michael Hanson
-  Semi-utility based with an exponential movement exploration algorithm. No movement
-planning or look ahead. Support for some physical attacks.
-
-Other Possibilities:
+    To play against the bot, host a game, and then start another copy of MegaMek
+    and press the "Connect as Bot..." button in the main menu.  Connect as 
+    though you were playing a hotseat game (see the readme for details.)  You
+    will need to pick mechs and a starting position for the bot and press ready
+    when you are ready to start the game.  Starting with the initiative screen,
+    the bot will begin to play.  You can play your side, but do not press any
+    buttons for the bot.
 
   Bot Support
     The bot will understand if you put it on a team (and friendly fire is turned
@@ -63,7 +33,7 @@ Other Possibilities:
     range fighting yourself.
 
   Bot Vs. Bot
-    Because the bot connects like a normal client, you can start two seperate
+    Because the bot connects like a normal client, you can connect two seperate
     bots and they will fight against each other.  If you do not want to play, 
     you can start a dedicated server (see the readme) and connect two bots to it.
     This is not recommended however, since for small forces (4 on 4) the bots 
@@ -79,24 +49,11 @@ Other Possibilities:
     to your playing style.
     Its thinking is mostly limited to a single turn, provided it does understand
     to move mechs to good ranges.
+    Unlike the last bot, it will move without los.
     The movement is not yet hierarcial, so with every new unit there is a 
     somewhat linear increase in the time the bot thinks. Unless you have 
-    patience, don't do something over 8 on 8. 
-    The bot will preform well with most units on average terrain maps.  A lot or
+    patience, don't do something over 8 on 8. In fact, the bot has been 
+    optimized for lance on lance action.
+    The bot will preform will with most units on average terrain maps.  A lot or
     too little terrain will hurt its performance. It also does no real path
     planning, so limited mobility mechs can get lost.
- 
-Tech Note:
-
-Be careful about the memory allocated to you JVM when playing against the bot.
-MegaMek by itself currently needs about 20MB + .5MB for each entity.  Some number of bots 
-need about 15MB + 2MB for each entity.  It is quite possible for a lance on lance battle
-to generate an OutOfMemory error after several rounds.  We are working on reducing
-this overhead, but until then make sure to give the JVM enough heap space. 
-
-Next Steps:
-
-Reuse the new pathing code.
-Intellegent deployment and mine placement.
-More strategy: have the bots concentrate on controlling specified locations.
-Attempt to be as good as an intermidiate player on a 4x4 map in an 16 on 16 battle.

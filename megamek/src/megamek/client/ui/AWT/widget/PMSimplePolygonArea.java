@@ -16,6 +16,7 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 
 public class PMSimplePolygonArea implements PMHotArea{

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,43 +16,36 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
-import megamek.common.util.Distractable;
-import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay 
-    extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener, DoneButtoned,
-               KeyListener, GameListener, BoardViewListener, Distractable
-{
-    // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
-
-    // Action command names
-    public static final String DEPLOY_TURN        = "deployTurn";
-    public static final String DEPLOY_NEXT        = "deployNext";
-    public static final String DEPLOY_LOAD        = "deployLoad";
-    public static final String DEPLOY_UNLOAD      = "deployUnload";
-
+    extends AbstractPhaseDisplay
+    implements BoardListener,  ActionListener,
+    KeyListener, GameListener
+{    
     // parent game
     public Client client;
-    private ClientGUI clientgui;
     
+    // displays
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
+
     // buttons
     private Panel             panButtons;
     
     private Button            butNext;
     private Button            butTurn;
-//     private Button            butSpace;
-//     private Button            butSpace2;
-//     private Button            butSpace3;
-    private Button            butLoad;
-    private Button            butUnload;
+    private Button            butSpace;
+    private Button              butLoad;
+    private Button              butUnload;
     private Button            butDone;
 
-    private int               cen = Entity.NONE;    // current entity number
+    private int                cen;    // current entity number
 
     // is the shift key held?
     private boolean            turnMode = false;
@@ -61,44 +54,33 @@ public class DeploymentDisplay
      * Creates and lays out a new deployment phase display 
      * for the specified client.
      */
-    public DeploymentDisplay(ClientGUI clientgui) {
-        this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+    public DeploymentDisplay(Client client) {
+        this.client = client;
         client.addGameListener(this);
 
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Deployment phase...");
+        setupStatusBar();
 
 
         butTurn = new Button("Turn");
         butTurn.addActionListener(this);
-        butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
                         
-//         butSpace = new Button(".");
-//         butSpace.setEnabled(false);
-
-//         butSpace2 = new Button(".");
-//         butSpace2.setEnabled(false);
-
-//         butSpace3 = new Button(".");
-//         butSpace3.setEnabled(false);
+        butSpace = new Button(".");
+        butSpace.setEnabled(false);
 
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
-        butLoad.setActionCommand(DEPLOY_LOAD);
         butLoad.setEnabled(false);
 
         butUnload = new Button("Unload");
         butUnload.addActionListener(this);
-        butUnload.setActionCommand(DEPLOY_UNLOAD);
         butUnload.setEnabled(false);
 
         butNext = new Button("Next Unit");
         butNext.addActionListener(this);
-        butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
 
         butDone = new Button("Deploy");
@@ -107,15 +89,13 @@ public class DeploymentDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(0, 8));
-        panButtons.add(butNext);
+        panButtons.setLayout(new GridLayout(2, 3));
         panButtons.add(butTurn);
         panButtons.add(butLoad);
+        panButtons.add(butNext);
+        panButtons.add(butSpace);
         panButtons.add(butUnload);
-//         panButtons.add(butSpace);
-//         panButtons.add(butSpace2);
-//         panButtons.add(butSpace3);
-//         panButtons.add(butDone);
+        panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -125,22 +105,21 @@ public class DeploymentDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(clientgui.bv, gridbag, c);
-
-//         c.weightx = 1.0;    c.weighty = 0;
-//         c.gridwidth = 1;
-//         addBag(client.cb.getComponent(), gridbag, c);
-
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        addBag(panButtons, gridbag, c);
+        addBag(client.bv, gridbag, c);
 
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        clientgui.bv.addKeyListener( this );
+        c.gridwidth = 1;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        addBag(client.cb.getComponent(), gridbag, c);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        addBag(panButtons, gridbag, c);
+
         addKeyListener(this);
 
     }
@@ -151,6 +130,40 @@ public class DeploymentDisplay
         comp.addKeyListener(this);
     }
         
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Deployment phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
     /**
      * Selects an entity for deployment
      */
@@ -163,40 +176,32 @@ public class DeploymentDisplay
         }
 
         // okay.
-        if (ce() != null) {
-            ce().setSelected(false);
-        }
         this.cen = en;
-        ce().setSelected(true);
 
-        setTurnEnabled(true);
+        butTurn.setEnabled(true);
         butDone.setEnabled(false);
-        setLoadEnabled(true);
-        setUnloadEnabled(true);
+        butLoad.setEnabled(true);
+        butUnload.setEnabled(true);
         
         client.game.board.select(null);
         client.game.board.cursor(null);
-        // RACE : if player clicks fast enough, ce() is null.
-        if ( null != ce() ) {
-            clientgui.mechD.displayEntity(ce());
-            clientgui.mechD.showPanel("movement");
-        
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity( ce() );
-        }
+        client.mechD.displayEntity(ce());
+        client.mechD.showPanel("movement");
     }
 
     /**
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        clientgui.setDisplayVisible(true);
-        selectEntity(client.getFirstDeployableEntityNum());
-        setNextEnabled(true);
+        client.setDisplayVisible(true);
+        selectEntity(client.getFirstEntityNum());
+        butNext.setEnabled(true);
         Player p = client.getLocalPlayer();
-        // mark deployment hexes
-        clientgui.bv.markDeploymentHexesFor(p);
-        clientgui.bv.repaint(100);
+        // mark deployment hexes if not 'All'
+        if (p.getStartingPos() != 0) {
+            client.bv.markDeploymentHexesFor(p);
+            client.bv.repaint(100);
+        }
     }
 
     /**
@@ -205,30 +210,24 @@ public class DeploymentDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
-        Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
-        if ( Game.PHASE_DEPLOYMENT == client.game.getPhase()
-             && null != next
-             && null != ce()
-             && next.getOwnerId() != ce().getOwnerId() ) {
-            clientgui.setDisplayVisible(false);
-        }
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        clientgui.bv.markDeploymentHexesFor(null);
-        clientgui.bv.repaint(100);
+        client.setDisplayVisible(false);
+        client.bv.markDeploymentHexesFor(null);
+        client.bv.repaint(100);
     }
 
     /**
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        setTurnEnabled(false);
-        setNextEnabled(false);
+        butTurn.setEnabled(false);
+        butNext.setEnabled(false);
         butDone.setEnabled(false);
-        setLoadEnabled(false);
-        setUnloadEnabled(false);
+        butLoad.setEnabled(false);
+        butUnload.setEnabled(false);
     }
 
     /**
@@ -236,10 +235,7 @@ public class DeploymentDisplay
      */
     private void deploy() {
         disableButtons();
-        
-        Entity en = ce();
-        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits());
-        en.setDeployed(true);
+        client.deploy(cen, ce().getPosition(), ce().getFacing(), ce().getLoadedUnits());
     }
 
     /**
@@ -253,23 +249,20 @@ public class DeploymentDisplay
         if (client.isMyTurn()) {
             endMyTurn();
         }
-        clientgui.bv.markDeploymentHexesFor(null);
+        client.bv.markDeploymentHexesFor(null);
         client.removeGameListener(this);
         client.game.board.removeBoardListener(this);
-        
+        client.bv.removeKeyListener(this);
+        client.cb.getComponent().removeKeyListener(this);
+
         this.removeAll();
     }
-    
+
     //
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
-
+        
         if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
             return;
         }
@@ -279,21 +272,17 @@ public class DeploymentDisplay
             return;
         }
 
-        // control pressed means a line of sight check.
-        // added ALT_MASK by kenn
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
-            return;
-        }
-
+        
         // check for shifty goodness
         boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
+        client.game.board.select(b.getCoords());
         Coords moveto = b.getCoords(); 
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
-            clientgui.bv.redrawEntity(ce());
+            client.bv.redrawEntity(ce());
             turnMode = false;
         }
         else if ( !client.game.board.isLegalDeployment
@@ -304,7 +293,7 @@ public class DeploymentDisplay
                 .append( " can not deploy into " )
                 .append( moveto.getBoardNum() )
                 .append( "." );
-            AlertDialog dlg = new AlertDialog( clientgui.frame,
+            AlertDialog dlg = new AlertDialog( client.frame,
                                                "Invalid deployment",
                                                buff.toString() );
             dlg.show();
@@ -315,11 +304,10 @@ public class DeploymentDisplay
         }
         else {    
             ce().setPosition(moveto);
-            clientgui.bv.redrawEntity(ce());
+            client.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
-        client.game.board.select( moveto );
-
+        
     }
 
     //
@@ -327,48 +315,34 @@ public class DeploymentDisplay
     //
     public void gameTurnChange(GameEvent ev) {
         
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
+        endMyTurn();
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText("It's your turn to deploy.");
+            labStatus.setText("It's your turn to deploy.");
         } else {
-            endMyTurn();
-            setStatusBarText("It's " + ev.getPlayer().getName() + 
+            labStatus.setText("It's " + ev.getPlayer().getName() + 
                     "'s turn to deploy.");
         }
     }
     
     public void gamePhaseChange(GameEvent ev) {
-
-        clientgui.bv.markDeploymentHexesFor(null);
-
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
-
-        if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
-            setStatusBarText("Waiting to begin Deployment phase...");
+        if (client.game.phase != Game.PHASE_DEPLOYMENT) {
+            die();
         }
     }
-    
+
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
         }
-
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -376,9 +350,9 @@ public class DeploymentDisplay
         
         if (ev.getSource() == butDone) {
             deploy();
-        } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) { 
+        } else if (ev.getSource() == butNext) { 
             ce().setPosition(null);
-            clientgui.bv.redrawEntity(ce());
+            client.bv.redrawEntity(ce());
             // Unload any loaded units.
             Enumeration iter =  ce().getLoadedUnits().elements();
             while ( iter.hasMoreElements() ) {
@@ -386,26 +360,35 @@ public class DeploymentDisplay
                 // Please note, the Server never got this unit's load orders.
                 ce().unload( other );
                 other.setTransportId( Entity.NONE );
-                other.newRound(client.game.getRoundCount());
+                other.newRound();
             }
-            
-            selectEntity(client.getNextDeployableEntityNum(cen));
-        } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {
+            selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getSource() == butTurn) {
             turnMode = true;
         } 
-        else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
+        else if ( ev.getSource() == butLoad ) {
 
             // What undeployed units can we load?
             Vector choices = new Vector();
-            Enumeration entities = client.game.getEntities();
-            Entity other;
-            while ( entities.hasMoreElements() ) {
-                other = (Entity) entities.nextElement();
-                if ( other.isSelectableThisTurn(client.game)
-                     && ce().canLoad(other) ) {
-                    choices.addElement( other );
-                }
-            }
+            int otherId = client.getNextEntityNum( cen );
+            Entity other = client.getEntity( otherId );
+            while ( otherId != cen ) {
+
+                // Is the other entity deployed?
+                if ( other.getPosition() == null ) {
+
+                    // Can the current entity load the other entity?
+                    if ( ce().canLoad( other ) ) {
+                        choices.addElement( other );
+                    }
+
+                } // End other not yet deployed.
+
+                // Check the next entity.
+                otherId = client.getNextEntityNum( otherId );
+                other = client.getEntity( otherId );
+
+            } // End have list of choices.
 
             // Do we have anyone to load?
             if ( choices.size() > 0 ) {
@@ -419,7 +402,7 @@ public class DeploymentDisplay
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
-                    new SingleChoiceDialog( clientgui.frame,
+                    new SingleChoiceDialog( client.frame,
                                             "Load Unit",
                                             question.toString(),
                                             names );
@@ -429,11 +412,11 @@ public class DeploymentDisplay
                     // Please note, the Server may never get this load order.
                     ce().load( other );
                     other.setTransportId( cen );
-                    clientgui.mechD.displayEntity(ce());
+                    client.mechD.displayEntity(ce());
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog( clientgui.frame,
+                AlertDialog alert = new AlertDialog( client.frame,
                                                      "Load Unit",
                                                      ce().getShortName() + " can not load any of the remaining units." );
                 alert.show();
@@ -441,7 +424,7 @@ public class DeploymentDisplay
 
         } // End load-unit
 
-        else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
+        else if ( ev.getSource() == butUnload ) {
 
             // Do we have anyone to unload?
             Vector choices = ce().getLoadedUnits();
@@ -457,7 +440,7 @@ public class DeploymentDisplay
                     names[loop] = ( (Entity)choices.elementAt(loop) ).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
-                    new SingleChoiceDialog( clientgui.frame,
+                    new SingleChoiceDialog( client.frame,
                                             "Unload Unit",
                                             question.toString(),
                                             names );
@@ -467,8 +450,8 @@ public class DeploymentDisplay
                     // Please note, the Server never got this load order.
                     if ( ce().unload( other ) ) {
                         other.setTransportId( Entity.NONE );
-                        other.newRound(client.game.getRoundCount());
-                        clientgui.mechD.displayEntity(ce());
+                        other.newRound();
+                        client.mechD.displayEntity(ce());
                     }
                     else {
                         System.out.println( "Could not unload " +
@@ -478,7 +461,7 @@ public class DeploymentDisplay
                 }
             } // End have-choices
             else {
-                AlertDialog alert = new AlertDialog( clientgui.frame,
+                AlertDialog alert = new AlertDialog( client.frame,
                                                      "Unload Unit",
                                                      ce().getShortName() + " is not transporting any units." );
                 alert.show();
@@ -499,109 +482,6 @@ public class DeploymentDisplay
     }
 
     public void keyTyped(KeyEvent ev) {
+        ;
     }
-
-	//
-	// BoardViewListener
-	//
-    public void finishedMovingUnits(BoardViewEvent b) {
-    }
-    
-    // Selected a unit in the unit overview.
-    public void selectUnit(BoardViewEvent b) {
-
-        // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
-            return;
-        }
-
-    	Entity e = client.game.getEntity(b.getEntityId());
-        if ( null == e ) {
-            return;
-        }
-    	if (client.isMyTurn()) {
-            if ( client.game.getTurn().isValidEntity(e,client.game) ) {
-            	if (ce() != null) {
-                    ce().setPosition(null);
-                    clientgui.bv.redrawEntity(ce());
-                    // Unload any loaded units.
-                    Enumeration iter =  ce().getLoadedUnits().elements();
-                    while ( iter.hasMoreElements() ) {
-                        Entity other = (Entity) iter.nextElement();
-                        // Please note, the Server never got this unit's load orders.
-                        ce().unload( other );
-                        other.setTransportId( Entity.NONE );
-                        other.newRound(client.game.getRoundCount());
-                    }
-                }
-	            
-                selectEntity(e.getId());
-                if ( null != e.getPosition() ) {
-                    clientgui.bv.centerOnHex(e.getPosition());
-                }
-            }
-    	} else {
-            clientgui.setDisplayVisible(true);
-            clientgui.mechD.displayEntity(e);
-            if (e.isDeployed()) {
-            	clientgui.bv.centerOnHex(e.getPosition());
-            }
-    	}
-    }
-
-    private void setNextEnabled(boolean enabled) {
-        butNext.setEnabled(enabled);
-        clientgui.getMenuBar().setDeployNextEnabled(enabled);
-    }
-    private void setTurnEnabled(boolean enabled) {
-        butTurn.setEnabled(enabled);
-        clientgui.getMenuBar().setDeployTurnEnabled(enabled);
-    }
-    private void setLoadEnabled(boolean enabled) {
-        butLoad.setEnabled(enabled);
-        clientgui.getMenuBar().setDeployLoadEnabled(enabled);
-    }
-    private void setUnloadEnabled(boolean enabled) {
-        butUnload.setEnabled(enabled);
-        clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
-    }
-
-    /**
-     * Determine if the listener is currently distracted.
-     *
-     * @return  <code>true</code> if the listener is ignoring events.
-     */
-    public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
-    }
-
-    /**
-     * Specify if the listener should be distracted.
-     *
-     * @param   distract <code>true</code> if the listener should ignore events
-     *          <code>false</code> if the listener should pay attention again.
-     *          Events that occured while the listener was distracted NOT
-     *          going to be processed.
-     */
-    public void setIgnoringEvents( boolean distracted ) {
-        this.distracted.setIgnoringEvents( distracted );
-    }
-
-    /**
-     * Retrieve the "Done" button of this object.
-     *
-     * @return  the <code>java.awt.Button</code> that activates this
-     *          object's "Done" action.
-     */
-    public Button getDoneButton() {
-        return butDone;
-    }
-    
-    /**
-     * Stop just ignoring events and actually stop listening to them.
-     */
-    public void removeAllListeners() {
-        die();
-    }
-
 }

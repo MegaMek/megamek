@@ -16,6 +16,7 @@ package megamek.client.util.widget;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 /**
  * Simple polygonal area for PicMap component. Is represented by a set of

@@ -266,15 +266,6 @@ public class Hex
     }
     
     /**
-     * @return true if there is pavement, a road or a bridge in the hex.
-     */
-    public boolean hasPavement() {
-        return contains(Terrain.PAVEMENT)
-            || contains(Terrain.ROAD)
-            || contains(Terrain.BRIDGE);
-    }
-    
-    /**
      * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
      *  terrain is not present in the hex
      */
@@ -301,16 +292,6 @@ public class Hex
         invalidateCache();
     }
     
-	/**
-	Removes all Terreains from the hex.
-	*/
-	public void removeAllTerrains() {
-		for (int i = 0; i < terrains.length; i++) {
-			terrains[i] = null;
-		}
-		invalidateCache();
-	}
- 
     /**
      * Returns the number of terrain attributes present
      */

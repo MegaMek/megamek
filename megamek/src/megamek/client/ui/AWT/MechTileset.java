@@ -42,7 +42,7 @@ public class MechTileset {
     private String QUAD_STRING = "default_quad";
     private String TANK_STRING = "default_tank";
     private String INF_STRING = "default_infantry";
-    private String PROTO_STRING = "default_proto";
+    
     
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -51,16 +51,13 @@ public class MechTileset {
     private MechEntry default_quad;
     private MechEntry default_tank;
     private MechEntry default_inf;
-    private MechEntry default_proto;
     
     private HashMap exact = new HashMap();
     private HashMap chassis = new HashMap();
     
-    private String dir;
-
     /** Creates new MechTileset */
-    public MechTileset(String dir) {
-		this.dir = dir;
+    public MechTileset() {
+        ;
     }
     
     public Image imageFor(Entity entity, Component comp) {
@@ -99,9 +96,6 @@ public class MechTileset {
         if (entity instanceof Infantry) {
             return default_inf;
         }
-        if (entity instanceof Protomech) {
-        	return default_proto;
-        }
         // mech, by weight
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
             return default_light;
@@ -117,35 +111,39 @@ public class MechTileset {
         throw new IndexOutOfBoundsException("can't find an image for that mech");
     }
     
-    public void loadFromFile(String filename) throws IOException {
-        // make inpustream for board
-        Reader r = new BufferedReader(new FileReader(dir + filename));
-        // read board, looking for "size"
-        StreamTokenizer st = new StreamTokenizer(r);
-        st.eolIsSignificant(true);
-        st.commentChar('#');
-        st.quoteChar('"');
-        st.wordChars('_', '_');
-        while(st.nextToken() != StreamTokenizer.TT_EOF) {
-            String name = null;
-            String imageName = null;
-            if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
-                st.nextToken();
-                name = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
-            } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
-                st.nextToken();
-                name = st.sval;
-                st.nextToken();
-                imageName = st.sval;
-                // add to list
-                exact.put(name.toUpperCase(), new MechEntry(name, imageName));
+    public void loadFromFile(String filename) {
+        try {
+            // make inpustream for board
+            Reader r = new BufferedReader(new FileReader("data/mex/" + filename));
+            // read board, looking for "size"
+            StreamTokenizer st = new StreamTokenizer(r);
+            st.eolIsSignificant(true);
+            st.commentChar('#');
+            st.quoteChar('"');
+            st.wordChars('_', '_');
+            while(st.nextToken() != StreamTokenizer.TT_EOF) {
+                String name = null;
+                String imageName = null;
+                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
+                    st.nextToken();
+                    name = st.sval;
+                    st.nextToken();
+                    imageName = st.sval;
+                    // add to list
+                    chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
+                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
+                    st.nextToken();
+                    name = st.sval;
+                    st.nextToken();
+                    imageName = st.sval;
+                    // add to list
+                    exact.put(name.toUpperCase(), new MechEntry(name, imageName));
+                }
             }
+            r.close();
+        } catch (IOException ex) {
+            ;
         }
-        r.close();
         
         default_light = (MechEntry)exact.get(LIGHT_STRING.toUpperCase());
         default_medium = (MechEntry)exact.get(MEDIUM_STRING.toUpperCase());
@@ -154,7 +152,6 @@ public class MechTileset {
         default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
         default_tank = (MechEntry)exact.get(TANK_STRING.toUpperCase());
         default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
-        default_proto = (MechEntry)exact.get(PROTO_STRING.toUpperCase());
     }
     
     /**
@@ -181,8 +178,7 @@ public class MechTileset {
         }
         
         public void loadImage(Component comp) {
-            //            System.out.println("loading mech image...");
-            image = comp.getToolkit().getImage(dir + imageFile);
+            image = comp.getToolkit().getImage("data/mex/" + imageFile);
         }
     }
 }

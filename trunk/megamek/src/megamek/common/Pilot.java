@@ -114,6 +114,11 @@ public class Pilot
             }
             s += ")";
         }
+        else if (isUnconcious()) {
+            s += " [ko]";
+        } else if (isDead()) {
+            s += " [dead]";
+        }
         return s;
     }
     

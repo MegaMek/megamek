@@ -552,9 +552,42 @@ public class Client extends Panel
     
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
     }
-    
-    public void deploy(int enum, Coords c, int nFacing) {
-        Object[] data = { new Integer(enum), c, new Integer(nFacing) };
+
+    /**
+     * Maintain backwards compatability.
+     *
+     * @param   enum - the <code>int</code> ID of the deployed entity
+     * @param   c - the <code>Coords</code> where the entity should be deployed
+     * @param   nFacing - the <code>int</code> direction the entity should face
+     */
+    public void deploy( int enum, Coords c, int nFacing ) {
+        this.deploy( enum, c, nFacing, new LinkedList() );
+    }
+
+    /**
+     * Deploy an entity at the given coordinates, with the given facing,
+     * and starting with the given units already loaded.
+     *
+     * @param   enum - the <code>int</code> ID of the deployed entity
+     * @param   c - the <code>Coords</code> where the entity should be deployed
+     * @param   nFacing - the <code>int</code> direction the entity should face
+     * @param   loadedUnits - a <code>List</code> of units that start the game
+     *          being transported byt the deployed entity.
+     */
+    public void deploy( int enum, Coords c, int nFacing,
+                        java.util.List loadedUnits ) {
+        int packetCount = 4 + loadedUnits.size();
+        int index = 0;
+        Object[] data = new Object[packetCount];
+        data[index++] = new Integer(enum);
+        data[index++] = c;
+        data[index++] = new Integer(nFacing);
+        data[index++] = new Integer( loadedUnits.size() );
+
+        Iterator iter = loadedUnits.iterator();
+        while ( iter.hasNext() ) {
+            data[index++] = new Integer( ((Entity) iter.next()).getId() );
+        }
         
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
     }

@@ -24,7 +24,7 @@ import megamek.common.actions.*;
  * terrain.
  */
 public abstract class Entity 
-    implements Serializable 
+    implements Serializable, Transporter
 {
     public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
     public interface MovementType {
@@ -55,7 +55,14 @@ public abstract class Entity
 
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
-    
+
+    /**
+     * Constants that represent range.
+     */
+    public static final char    RANGE_SHORT             = 'S';
+    public static final char    RANGE_MEDIUM            = 'M';
+    public static final char    RANGE_LONG              = 'L';
+
     protected transient Game    game;
 
     protected int               id;
@@ -122,8 +129,23 @@ public abstract class Entity
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
-    protected int                 movementType  = MovementType.NONE;
-    
+    protected int               movementType  = MovementType.NONE;
+
+    /**
+     * The components of this entity that can transport other entities.
+     */
+    private List                transports = new ArrayList();
+
+    /**
+     * The ID of the <code>Entity</code> that has loaded this unit.
+     */
+    private int                 conveyance = Entity.NONE;
+
+    /**
+     * Set to <code>true</code> if this unit was unloaded this turn.
+     */
+    private boolean             unloadedThisTurn = false;
+
     /**
      * Generates a new, blank, entity.
      */
@@ -132,7 +154,6 @@ public abstract class Entity
         this.internal = new int[locations()];
         this.orig_armor = new int[locations()];
         this.orig_internal = new int[locations()];
-
         this.crits = new CriticalSlot[locations()][];
         for (int i = 0; i < locations(); i++) {
             this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
@@ -302,18 +323,23 @@ public abstract class Entity
     }
     
     /**
-     * Is this entity not shut down, not destroyed and has an active
-     * crew?
+     * Determine if this entity participate in the current game phase.
+     *
+     * @return  <code>true</code> if this entity is not shut down, is
+     *          not destroyed, has an active crew, and was not unloaded
+     *          from a transport this turn.  <code>false</code> otherwise.
      */
     public boolean isActive() {
-        return !shutDown && !destroyed && getCrew().isActive();
+        return !shutDown && !destroyed &&
+            getCrew().isActive() && !this.unloadedThisTurn;
     }
   
     /**
-     * Returns true if this entity is selectable for action
+     * Returns true if this entity is selectable for action.  Transported
+     * entities can not be selected.
      */
     public boolean isSelectable() {
-        return ready && isActive();
+        return ready && isActive() && (conveyance == Entity.NONE) ;
     }
 
     /**
@@ -439,15 +465,15 @@ public abstract class Entity
      * Returns the elevation of this entity.
      */
     public int elevation() {
-	Coords	pos = getPosition();
-	if ( null == pos ) {
-	    throw new IllegalStateException
-		("Entity #" + this.getId() + "does not know its position.");
-	}
-	else if ( !game.board.contains(pos) ) {
-	    throw new IllegalStateException
-		("Board does not contain the Coords: " + pos + ".");
-	}
+        Coords  pos = getPosition();
+        if ( null == pos ) {
+            throw new IllegalStateException
+                ("Entity #" + this.getId() + "does not know its position.");
+        }
+        else if ( !game.board.contains(pos) ) {
+            throw new IllegalStateException
+                ("Board does not contain the Coords: " + pos + ".");
+        }
         return elevationOccupied(game.board.getHex(pos));
     }
     
@@ -480,10 +506,12 @@ public abstract class Entity
     
     /**
      * Generates the display name for this entity.
+     * <p/>
+     * Sub-classes are allowed to override this method.
      * 
      * The display name is in the format [Chassis] [Model] ([Player Name]).
      */
-    private void generateDisplayName() {
+    protected void generateDisplayName() {
         StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
@@ -510,8 +538,10 @@ public abstract class Entity
     
     /**
      * Generate the short name for a unit
+     * <p/>
+     * Sub-classes are allowed to override this method.
      */
-    private void generateShortName() {
+    protected void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
@@ -1774,6 +1804,8 @@ public abstract class Entity
     
     public void newRound()
     {
+        unloadedThisTurn = false;
+        ready = this.isActive();
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
@@ -1834,9 +1866,9 @@ public abstract class Entity
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
 
-	    if ( wtype.getAmmoType() != AmmoType.T_NA &&
-		 (wtype.getFlags() & WeaponType.F_INFANTRY) !=
-		 WeaponType.F_INFANTRY ) { 
+            if ( wtype.getAmmoType() != AmmoType.T_NA &&
+                 (wtype.getFlags() & WeaponType.F_INFANTRY) !=
+                 WeaponType.F_INFANTRY ) { 
                 if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
                     loadWeapon(mounted);
                 }
@@ -1965,6 +1997,270 @@ public abstract class Entity
      * The maximum elevation change the entity can cross
      */
     public abstract int getMaxElevationChange();
-    
-}
 
+    /**
+     * Add a transportation component to this Entity. Please note, this
+     * method should only be called during this entity's construction.
+     *
+     * @param	component - One of this new entity's <code>Transporter</code>s.
+     */
+    /* package */ void addTransporter( Transporter component ) {
+	transports.add( component );
+    }
+
+    /**
+     * Determines if this object can accept the given unit.  The unit may
+     * not be of the appropriate type or there may be no room for the unit.
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @return  <code>true</code> if the unit can be loaded,
+     *          <code>false</code> otherwise.
+     */
+    public boolean canLoad( Entity unit ) {
+	// Walk through this entity's transport components;
+	// if one of them can load the unit, we can.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    if ( next.canLoad( unit ) ) {
+		return true;
+	    }
+	}
+
+	// If we got here, none of our transports can carry the unit.
+	return false;
+    }
+
+    /**
+     * Load the given unit.  
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @exception - If the unit can't be loaded, an
+     *          <code>IllegalArgumentException</code> exception will be thrown.
+     */
+    public void load( Entity unit ) throws IllegalArgumentException {
+	// Walk through this entity's transport components;
+	// find the one that can load the unit.
+	// Stop looking after the first match.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    if ( next.canLoad( unit ) ) {
+		next.load( unit );
+		return;
+	    }
+	}
+
+	// If we got to this point, then we can't load the unit.
+	throw new IllegalArgumentException( this.getShortName() +
+					    " can not load " + 
+					    unit.getShortName() );
+    }
+
+    /**
+     * Get a <code>List</code> of the units currently loaded into this payload.
+     *
+     * @return  A <code>List</code> of loaded <code>Entity</code> units.
+     *          This list will never be <code>null</code>, but it may be empty.
+     *          The returned <code>List</code> is independant from the under-
+     *          lying data structure; modifying one does not affect the other.
+     *
+     */
+    public List getLoadedUnits() {
+	List result = new LinkedList();
+
+	// Walk through this entity's transport components;
+	// add all of their lists to ours.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    result.addAll( next.getLoadedUnits() );
+	}
+
+	// Return the list.
+	return result;
+    }
+
+    /**
+     * Unload the given unit.
+     *
+     * @param   unit - the <code>Entity</code> to be unloaded.
+     * @return  <code>true</code> if the unit was contained in this space,
+     *          <code>false</code> otherwise.
+     */
+    public boolean unload( Entity unit ) {
+	// Walk through this entity's transport components;
+	// try to remove the unit from each in turn.
+	// Stop after the first match.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    if ( next.unload( unit ) ) {
+		return true;
+	    }
+	}
+
+	// If we got here, none of our transports currently carry the unit.
+	return false;
+    }
+
+    /**
+     * Return a string that identifies the unused capacity of this transporter.
+     *
+     * @return A <code>String</code> meant for a human.
+     */
+    public String getUnusedString() {
+	StringBuffer result = new StringBuffer();
+
+	// Walk through this entity's transport components;
+	// add all of their string to ours.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    result.append( next.getUnusedString() );
+            // Add a newline character between strings.
+            if ( iter.hasNext() ) {
+                result.append( '\n' );
+            }
+	}
+
+	// Return the String.
+	return result.toString();
+    }
+
+    /**
+     * Determine if transported units prevent a weapon in the given location
+     * from firing.
+     *
+     * @param   loc - the <code>int</code> location attempting to fire.
+     * @param   isRear - a <code>boolean</code> value stating if the given
+     *          location is rear facing; if <code>false</code>, the location
+     *          is front facing.
+     * @return  <code>true</code> if a transported unit is in the way, 
+     *          <code>false</code> if the weapon can fire.
+     */
+    public boolean isWeaponBlockedAt( int loc, boolean isRear ) {
+	// Walk through this entity's transport components;
+	// check each for blockage in turn.
+	// Stop after the first match.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+	    if ( next.isWeaponBlockedAt( loc, isRear ) ) {
+		return true;
+	    }
+	}
+
+	// If we got here, none of our transports
+        // carry a blocking unit at that location.
+	return false;
+    }
+
+    /**
+     * If a unit is being transported on the outside of the transporter, it
+     * can suffer damage when the transporter is hit by an attack.  Currently,
+     * no more than one unit can be at any single location; that same unit
+     * can be "spread" over multiple locations.
+     *
+     * @param   loc - the <code>int</code> location hit by attack.
+     * @param   isRear - a <code>boolean</code> value stating if the given
+     *          location is rear facing; if <code>false</code>, the location
+     *          is front facing.
+     * @return  The <code>Entity</code> being transported on the outside
+     *          at that location.  This value will be <code>null</code>
+     *          if no unit is transported on the outside at that location.
+     */
+    public Entity getExteriorUnitAt( int loc, boolean isRear ) {
+	// Walk through this entity's transport components;
+	// check each for an exterior unit in turn.
+	// Stop after the first match.
+	Iterator iter = this.transports.iterator();
+	while ( iter.hasNext() ) {
+	    Transporter next = (Transporter)iter.next();
+            Entity exterior = next.getExteriorUnitAt( loc, isRear );
+	    if ( null != exterior ) {
+		return exterior;
+	    }
+	}
+
+	// If we got here, none of our transports
+        // carry an exterior unit at that location.
+	return null;
+    }
+
+    /**
+     * Record the ID of the <code>Entity</code> that has loaded this unit.
+     *
+     * @param   transportId - the <code>int</code> ID of our transport.
+     *          The ID is <b>not</b> validated.  This value should be
+     *          <code>Entity.NONE</code> if this unit has not been loaded.
+     */
+    public void setTransportId( int transportId ) {
+        this.conveyance = transportId;
+        // If we were unloaded, set the appropriate flags.
+        if ( transportId == Entity.NONE ) {
+            this.unloadedThisTurn = true;
+            this.ready = false;
+        }
+    }
+
+    /**
+     * Get the ID <code>Entity</code> that has loaded this one.
+     *
+     * @return  the <code>int</code> ID of our transport.
+     *          The ID may be invalid.  This value should be
+     *          <code>Entity.NONE</code> if this unit has not been loaded.
+     */
+    public int getTransportId() {
+        return this.conveyance;
+    }
+
+    /**
+     * Determine if this unit has an active stealth system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return  <code>true</code> if this unit has a stealth system that
+     *          is currently active, <code>false</code> if there is no
+     *          stealth system or if it is inactive.
+     */
+    public boolean isStealthActive() { return false; }
+
+    /**
+     * Determine the stealth modifier for firing at this unit from the
+     * given range.  If the value supplied for <code>range</code> is not
+     * one of the <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
+     * @return  a <code>TargetRoll</code> value that contains the stealth
+     *          modifier for the given range.
+     */
+    public TargetRoll getStealthModifier( char range ) {
+        TargetRoll result = null;
+
+        // Stealth must be active.
+        if ( !isStealthActive() ) {
+            result = new TargetRoll( 0, "stealth not active"  );
+        }
+
+        // Get the range modifier.
+        switch ( range ) {
+        case Entity.RANGE_SHORT:
+        case Entity.RANGE_MEDIUM:
+        case Entity.RANGE_LONG:
+            result = new TargetRoll( 0, "stealth not installed" );
+            break;
+        default:
+            throw new IllegalArgumentException
+                ( "Unknown range constant: " + range );
+        }
+
+        // Return the result.
+        return result;
+    }
+
+}

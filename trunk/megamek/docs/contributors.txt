@@ -19,6 +19,7 @@ Lot of people have contributed to the MegaMek project.
      Joshua Yockey <joshua@sublimity.net>
      John Rowat
      Hugh "TigerWraith" Peeples
+     James "Suvarov454" Damour
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

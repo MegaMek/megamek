@@ -30,6 +30,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    animateMove;
     private Checkbox    showWrecks;
     private Checkbox    soundMute;
+    private Checkbox    showMapHexPopup;
+    private TextField   tooltipDelay;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -68,6 +70,14 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         soundMute
             = new Checkbox( "Mute sound." );
         this.add( soundMute );
+        showMapHexPopup
+            = new Checkbox( "Show map hex popup." );
+        this.add( showMapHexPopup );
+        Label labelShowMapHexPopup = new Label("Tooltip popup delay:");
+        this.add( labelShowMapHexPopup );
+        tooltipDelay
+            = new TextField(4);
+        this.add( tooltipDelay );
 
         // Add the dialog controls.
         Panel buttons = new Panel();
@@ -111,6 +121,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         animateMove.setState( Settings.showMoveStep );
         showWrecks.setState( Settings.showWrecks );
         soundMute.setState( Settings.soundMute );
+        showMapHexPopup.setState( Settings.showMapHexPopup );
+        tooltipDelay.setText( Integer.toString(Settings.tooltipDelay ) );
         super.show();
     }
 
@@ -132,6 +144,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.showMoveStep =   animateMove.getState();
         Settings.showWrecks =     showWrecks.getState();
         Settings.soundMute =      soundMute.getState();
+        Settings.showMapHexPopup= showMapHexPopup.getState();
+        Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.save();
         this.setVisible( false );
     }

@@ -526,6 +526,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -549,6 +550,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -572,6 +574,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -595,6 +598,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1714,6 +1718,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1737,6 +1742,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1760,6 +1766,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1783,6 +1790,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
+		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -2450,6 +2458,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
+		weapon.setModes(new String[] {"", "Indirect"}); // ?
 
         return weapon;
     }

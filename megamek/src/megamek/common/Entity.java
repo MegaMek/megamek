@@ -121,6 +121,8 @@ public abstract class Entity
     public int                  engineHitsThisRound;
     public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
     public boolean              dodging;
+    
+    public boolean				spotting;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -2860,6 +2862,28 @@ public abstract class Entity
             this.removalCondition = removalCondition;
         }
     }
+
+	/**
+	 * @return whether this entity is spotting this round.
+	 */
+	public boolean isSpotting() {
+		return spotting;
+	}
+
+	/**
+	 * @param spotting
+	 */
+	public void setSpotting(boolean spotting) {
+		this.spotting = spotting;
+	}
+	
+	/**
+	 * Um, basically everything can spot for LRM indirect fire.
+	 * @return true, I would think.
+	 */
+	public boolean canSpot() {
+		return true;
+	}
 
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";

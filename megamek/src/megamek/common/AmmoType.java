@@ -54,7 +54,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_LRM_TORPEDO_COMBO = 27;
     public static final int     T_MINE              = 28;
     public static final int     T_ATM               = 29; // Clan ATM missile systems
-    public static final int     T_ROCKET_LAUNCHER   = 30; // Clan ATM missile systems
+    public static final int     T_ROCKET_LAUNCHER   = 30;
     public static final int     NUM_TYPES           = 31;
 
     // ammo flags
@@ -220,6 +220,20 @@ public class AmmoType extends EquipmentType {
         return shots;
     }
 
+    // Returns the first usable ammo type for the given oneshot launcher
+    public static AmmoType getOneshotAmmo(Mounted mounted) {
+        WeaponType wt = (WeaponType)mounted.getType();
+        Vector Vammo = AmmoType.getMunitionsFor(wt.getAmmoType());
+        AmmoType at = null;
+        for (int i = 0; i < Vammo.size(); i++) {
+            at = (AmmoType)Vammo.elementAt(i);
+            if (at.getRackSize() == wt.getRackSize()) {
+                return at;
+            }
+        }
+        return null; //couldn't find any ammo for this weapon type
+    }
+
     public static void initializeTypes() {
         // Save copies of the SRM and LRM ammos to use to create munitions.
         Vector srmAmmos = new Vector(9);
@@ -297,6 +311,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM20Ammo());
         EquipmentType.addType(createISMRM30Ammo());
         EquipmentType.addType(createISMRM40Ammo());
+        EquipmentType.addType(createISRL10Ammo());
+        EquipmentType.addType(createISRL15Ammo());
+        EquipmentType.addType(createISRL20Ammo());
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
@@ -1233,6 +1250,48 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 28;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISRL10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "RL 10 Ammo";
+        ammo.setInternalName("IS Ammo RL-10");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createISRL15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "RL 15 Ammo";
+        ammo.setInternalName("IS Ammo RL-15");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
+
+        return ammo;
+    }
+
+    public static AmmoType createISRL20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "RL 20 Ammo";
+        ammo.setInternalName("IS Ammo RL-20");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
 
         return ammo;
     }

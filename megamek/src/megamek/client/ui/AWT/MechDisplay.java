@@ -833,8 +833,14 @@ class WeaponPanel extends BufferedPanel
         m_chAmmo.removeAll();
         if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
             m_chAmmo.setEnabled(false);
-        }
-        else {
+        } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (mounted.getLinked().getShotsLeft() == 1) {
+                m_chAmmo.add( formatAmmo(mounted.getLinked()) );
+                m_chAmmo.setEnabled(true);
+            } else {
+                m_chAmmo.setEnabled(false);
+            }
+        } else {
             m_chAmmo.setEnabled(true);
             vAmmo = new Vector();
             int nCur = -1;
@@ -842,10 +848,10 @@ class WeaponPanel extends BufferedPanel
             for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
                 Mounted mountedAmmo = (Mounted)j.nextElement();
                 AmmoType atype = (AmmoType)mountedAmmo.getType();
-                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
-                    continue;
-                }
-                if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+                if (mountedAmmo.isAmmoUsable() &&
+                    atype.getAmmoType() == wtype.getAmmoType() &&
+                    atype.getRackSize() == wtype.getRackSize()) {
+
                     vAmmo.addElement(mountedAmmo);
                     m_chAmmo.add( formatAmmo(mountedAmmo) );
                     if (mounted.getLinked() == mountedAmmo) {
@@ -867,7 +873,10 @@ class WeaponPanel extends BufferedPanel
     {
         StringBuffer sb = new StringBuffer(64);
         int ammoIndex = m.getDesc().indexOf("Ammo");
-        sb.append("[").append(entity.getLocationAbbr(m.getLocation())).append("] ");
+        int loc = m.getLocation();
+        if (loc != Entity.LOC_NONE) {
+            sb.append("[").append(entity.getLocationAbbr(loc)).append("] ");
+        }
         if (ammoIndex == -1) {
             sb.append(m.getDesc());
         } else {

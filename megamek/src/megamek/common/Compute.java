@@ -400,11 +400,10 @@ public class Compute
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
+            !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
-        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
         boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
@@ -482,10 +481,6 @@ public class Compute
         // got ammo?
         if ( usesAmmo && (ammo == null || ammo.getShotsLeft() == 0) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
-        }
-        //Oneshot fired?
-        if(isOneShot && weapon.isFired()) {
-          return new ToHitData(ToHitData.IMPOSSIBLE, "One-shot weapon already fired.");
         }
 
         // Are we dumping that ammo?

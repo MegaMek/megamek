@@ -1496,7 +1496,12 @@ public abstract class Mech
             if (!etype.isExplosive()) {
                 continue;
             }
-            
+
+            // don't count oneshot ammo
+            if (loc == LOC_NONE) {
+                continue;
+            }
+
             if (isClan()) {
                 // clan mechs only count ammo in ct, legs or head
                 if (loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
@@ -1701,6 +1706,12 @@ public abstract class Mech
                 continue;
             }
             
+            // don't count oneshot ammo, it's considered part of the launcher.
+            if (mounted.getLocation() == Entity.LOC_NONE) {
+                // assumption: ammo without a location is for a oneshot weapon
+                continue;
+            }
+
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;

@@ -85,7 +85,13 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         this.type = at;
         this.typeName = at.getInternalName();
-        shotsLeft = at.getShots();
+        if (this.location == Entity.LOC_NONE) {
+            //Oneshot launcher
+            shotsLeft = 1;
+        } else {
+            //Regular launcher
+            shotsLeft = at.getShots();
+        }
     }
 
     /**
@@ -182,7 +188,9 @@ public class Mounted implements Serializable, RoundUpdated {
         if (rearMounted) {
             desc.append(" (R)");
         }
-        if (type instanceof AmmoType) {
+        if (type instanceof AmmoType &&
+            location != Entity.LOC_NONE) {
+
             desc.append(" (");
             desc.append(shotsLeft);
             desc.append(")");
@@ -388,16 +396,6 @@ public class Mounted implements Serializable, RoundUpdated {
             return false;
         }
     
-        // Oneshot fired?
-        EquipmentType equip = getType();
-        if( ( ( equip instanceof WeaponType &&
-                equip.hasFlag(WeaponType.F_ONESHOT) ) ||
-              ( equip instanceof MiscType &&
-                equip.hasFlag(MiscType.F_AP_POD) ) )
-            && isFired() ) {
-            return false;
-        }
-    
         // Is the entity even active?
         if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
             return false;
@@ -406,4 +404,20 @@ public class Mounted implements Serializable, RoundUpdated {
         // Otherwise, the equipment can be fired.
         return true;
     }
+
+    /*
+     * Returns false if this ammo should not be loaded.  Checks if the
+     *    ammo is already destroyed, is being dumped, has been breached, is
+     *   already used up, or is locationless (oneshot ammo).
+     */
+    public boolean isAmmoUsable() {
+        if (this.destroyed || this.m_bDumping ||
+            this.useless || this.shotsLeft <= 0 ||
+            this.location == Entity.LOC_NONE) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

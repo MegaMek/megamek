@@ -669,24 +669,15 @@ public class MovementDisplay
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
                             }    
-                        } else if (step.getMovementType() == Entity.MOVE_WALK) {
-                            // If the tank was just cruising, he got a flat +1 road bonus
-                            if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
-                                rollTarget = entity.checkMovedTooFast(step);
-                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                    nagReport.append(addNag(rollTarget));
-                                }
-                            }
-                        } else if (step.getMovementType() == Entity.MOVE_RUN) {
-                            // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
-                            // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
-                            // cruising speed, thus possibly gaining 2 flanking MPs
-                            int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
-                            if (step.getMpUsed() > entity.getRunMP(false) + k) {
-                                rollTarget = entity.checkMovedTooFast(step);
-                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                                    nagReport.append(addNag(rollTarget));
-                                }
+                        }
+                        // If the tank was moving on a road, he got a +1 bonus.
+                        // N.B. The Ask Precentor Martial forum said that a 4/6
+                        //      tank on a road can move 5/7, **not** 5/8.
+                        else if (step.getMpUsed() > entity.getRunMP(false) + 1)
+                        {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                nagReport.append(addNag(rollTarget));
                             }
                         }
                     }   

@@ -2630,9 +2630,6 @@ implements Runnable, ConnectionHandler {
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
                 break;
             }
-
-            /* TODO by Patio11 3/11/05 -- Almost certain the following code is causing our 
-             * prone units taking PSR bug problem */
             
             // check piloting skill for getting up
             rollTarget = entity.checkGetUp(step);

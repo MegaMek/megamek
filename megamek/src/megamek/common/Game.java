@@ -1057,13 +1057,6 @@ public class Game implements Serializable
     }
 
     /**
-     * @deprecated use getFirstEntity instead
-     */
-    public Entity getEntity(Coords c) {
-        return getFirstEntity(c);
-    }
-
-    /**
      * Returns the first entity at the given coordinate, if any.  Only returns
      * targetable (non-dead) entities.
      *

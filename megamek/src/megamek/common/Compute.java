@@ -1311,22 +1311,33 @@ public class Compute
         return roll;
     }
     
+    /**
+     * @deprecated no more prevattacks
+     */
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa, Vector prevAttacks) {
         return toHitWeapon(game, waa.getEntityId(), game.getTarget(waa.getTargetType(), waa.getTargetId()),
                            waa.getWeaponId(), prevAttacks);
+    }
+    public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
+        return toHitWeapon(game, waa.getEntityId(), 
+                           game.getTarget(waa.getTargetType(), waa.getTargetId()),
+                           waa.getWeaponId());
     }
     
     /**
      * To-hit number for attacker firing a weapon at the target.
      * 
-     * @param game          the game
-     * @param attackerId    the attacker id number
-     * @param targetId      the target id number
-     * @param weaponId      the weapon id number
+     * @deprecated no more prevattacks
      */
-    public static ToHitData toHitWeapon(Game game, int attackerId, 
-                                        Targetable target, int weaponId, 
-                                        Vector prevAttacks) {
+    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, Vector prevAttacks) {
+         // ignore prevAttacks
+         return toHitWeapon(game, attackerId, target, weaponId);
+    }
+    
+    /**
+     * To-hit number for attacker firing a weapon at the target.
+     */
+    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1388,7 +1399,7 @@ public class Compute
 
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
-            for ( Enumeration i = prevAttacks.elements();
+            for ( Enumeration i = game.getActions();
                   i.hasMoreElements(); ) {
                 Object o = i.nextElement();
                 if (!(o instanceof WeaponAttackAction)) {
@@ -1698,7 +1709,7 @@ public class Compute
         // secondary targets modifier...
         int primaryTarget = Entity.NONE;
         boolean curInFrontArc = isInArc(ae.getPosition(), ae.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
-        for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
@@ -1780,7 +1791,7 @@ public class Compute
                     if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
                         int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                         // check previous attacks for weapons fire from the other arm
-                        for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+                        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
                             Object o = i.nextElement();
                             if (!(o instanceof WeaponAttackAction)) {
                                 continue;
@@ -1812,7 +1823,7 @@ public class Compute
                 if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
                     int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                     // check previous attacks for weapons fire from the other arm
-                    for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+                    for (Enumeration i = game.getActions(); i.hasMoreElements();) {
                         Object o = i.nextElement();
                         if (!(o instanceof WeaponAttackAction)) {
                             continue;
@@ -3445,13 +3456,13 @@ public class Compute
     /**
      * Returns the weapon attack out of a list that has the highest expected damage
      */
-    public static WeaponAttackAction getHighestExpectedDamage(Game g, Vector vAttacks, Vector vOtherAttacks)
+    public static WeaponAttackAction getHighestExpectedDamage(Game g, Vector vAttacks)
     {
     float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
             WeaponAttackAction waa = (WeaponAttackAction)vAttacks.elementAt(x);
-            float fDanger = getExpectedDamage(g, waa, vOtherAttacks);
+            float fDanger = getExpectedDamage(g, waa);
             if (fDanger > fHighest) {
                 fHighest = fDanger;
                 waaHighest = waa;
@@ -3468,13 +3479,13 @@ public class Compute
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo sizes, etc.
      */
-    public static float getExpectedDamage(Game g, WeaponAttackAction waa, Vector vOtherAttacks)
+    public static float getExpectedDamage(Game g, WeaponAttackAction waa)
     {
         Entity attacker = g.getEntity(waa.getEntityId());
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         System.out.println("Computing expected damage for " + attacker.getShortName() + " " + 
                 weapon.getName());
-        ToHitData hitData = Compute.toHitWeapon(g, waa, vOtherAttacks);
+        ToHitData hitData = Compute.toHitWeapon(g, waa);
         if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
             return 0.0f;
         }

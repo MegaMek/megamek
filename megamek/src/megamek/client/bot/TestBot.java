@@ -1035,11 +1035,10 @@ public class TestBot extends BotClientWrapper {
     Enumeration ents = game.getValidTargets(en).elements();
     AttackOption a = null;
     AttackOption max = new AttackOption(null,null,0,null);
-    java.util.Vector v = new java.util.Vector();
     while (ents.hasMoreElements()) {
       Entity e = (Entity)ents.nextElement();
       CEntity enemy = enemies.get(e);
-      ToHitData th = Compute.toHitWeapon(game, from, e, weaponID, v);
+      ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);
       if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
 	  double expectedDmg;
 

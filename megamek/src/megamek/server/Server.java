@@ -48,23 +48,11 @@ implements Runnable {
     
     private Game                game = new Game();
     
+    private StringBuffer        roundReport = game.getRoundReport(); //HACK
+    private StringBuffer        phaseReport = game.getPhaseReport(); //HACK
+
     private MapSettings         mapSettings = new MapSettings();
-    
-    // list of turns and whose turn it is
-    private int                 roundCounter = 0;
-    private Vector              turns = new Vector();
-    private int                 turnIndex = 0;
-    
-    // stuff for the current turn
-    private Vector              attacks = new Vector();
-    private Vector              pendingCharges = new Vector();
-    private Vector              pilotRolls = new Vector();
-    
-    private StringBuffer        roundReport = new StringBuffer();
-    private StringBuffer        phaseReport = new StringBuffer();
-    
-    private boolean             forceVictory = false;
-    
+
     // commands
     private Hashtable           commandsHash = new Hashtable();
     
@@ -117,6 +105,7 @@ implements Runnable {
         registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
+        registerCommand(new SaveGameCommand(this));
         registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
@@ -145,7 +134,9 @@ implements Runnable {
             p.setGhost(true);
         }
         
-        changePhase(game.getPhase());
+        //HACK
+        roundReport = game.getRoundReport();
+        phaseReport = game.getPhaseReport();
     }
     
     /**
@@ -322,7 +313,7 @@ implements Runnable {
      */
     private void sendCurrentInfo(int connId) {
         transmitAllPlayerConnects(connId);
-        send(createGameSettingsPacket());
+        send(connId, createGameSettingsPacket());
         if (doBlind()) {
             send(connId, createFilteredEntitiesPacket(getPlayer(connId)));
         }
@@ -338,7 +329,7 @@ implements Runnable {
             case Game.PHASE_FIRING_REPORT :
             case Game.PHASE_END :
             case Game.PHASE_VICTORY :
-                send(createReportPacket());
+                send(connId, createReportPacket());
             default :
                 getPlayer(connId).setDone(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
                 send(connId, createBoardPacket());
@@ -346,7 +337,8 @@ implements Runnable {
         }
         send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
         if (game.phaseHasTurns(game.getPhase())) {
-            send(new Packet(Packet.COMMAND_TURN, game.getTurn()));
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket());
         }
     }
     
@@ -464,8 +456,6 @@ implements Runnable {
         resetPlayersDone();
         transmitAllPlayerDones();
         
-        pilotRolls.removeAllElements();
-        
         changePhase(Game.PHASE_LOUNGE);
     }
     
@@ -475,7 +465,10 @@ implements Runnable {
     }
     
     public void saveGame(String sFile) {
-        String sFinalFile = sFile + ".sav";
+        String sFinalFile = sFile;
+        if (!sFinalFile.endsWith(".sav")) {
+            sFinalFile = sFile + ".sav";
+        }
         try {
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(sFinalFile));
@@ -486,6 +479,7 @@ implements Runnable {
             System.err.println("Unable to save file: " + sFinalFile);
             e.printStackTrace();
         }
+
         sendChat("MegaMek", "Game saved to " + sFinalFile);
     }
     
@@ -572,20 +566,6 @@ implements Runnable {
     }
     
     /**
-     * Are we out of turns (done with the phase?)
-     */
-    private boolean areMoreTurns() {
-        return turnIndex < turns.size();
-    }
-    
-    /**
-     * Returns the next turn object or null if we're done with this phase
-     */
-    private GameTurn nextTurn() {
-        return (GameTurn)turns.elementAt(turnIndex++);
-    }
-    
-    /**
      * Called at the beginning of each game round to reset values on this entity
      * that are reset every round
      */
@@ -663,7 +643,8 @@ implements Runnable {
      * Writes the victory report
      */
     private void prepareVictoryReport() {
-        roundReport = new StringBuffer();
+        game.resetRoundReport();
+        roundReport = game.getRoundReport(); //HACK
         
         roundReport.append("\nVictory!\n-------------------\n\n");
 
@@ -773,7 +754,7 @@ implements Runnable {
      * Forces victory at then end of the turn.
      */
     public void forceVictory() {
-        forceVictory = true;
+        game.setForceVictory(true);
     }
     
     /**
@@ -806,6 +787,7 @@ implements Runnable {
      */
     private void endCurrentTurn(Entity entityUsed) {
         // enforce "inf_move_multi" option
+        boolean turnsChanged = false;
         if (game.getOptions().booleanOption("inf_move_multi")
         && entityUsed instanceof Infantry
         && !(game.getTurn() instanceof GameTurn.OnlyInfantryTurn)) {
@@ -814,8 +796,13 @@ implements Runnable {
             int moreInfTurns = Math.min(Game.INF_MOVE_MULTI - 1, remaining); 
             for (int i = 0; i < moreInfTurns; i++) {
                 GameTurn newTurn = new GameTurn.OnlyInfantryTurn(playerId);
-                turns.insertElementAt(newTurn, turnIndex);
+                game.insertTurn(newTurn);
+                turnsChanged = true;
             }
+        }
+        // brief everybody on the turn update, if they changed
+        if (turnsChanged) {
+            send(createTurnVectorPacket());
         }
         
         // move along
@@ -856,10 +843,10 @@ implements Runnable {
                 send(createMapSettingsPacket());
                 break;
             case Game.PHASE_INITIATIVE :
-                autoSave();
                 // remove the last traces of last round
-                attacks.removeAllElements();
-                roundReport = new StringBuffer();
+                game.resetActions();
+                game.resetRoundReport();
+                roundReport = game.getRoundReport(); //HACK
                 resetEntityRound();
                 resetEntityPhase();
                 checkForObservers();
@@ -870,6 +857,7 @@ implements Runnable {
                 determineTurnOrder();
                 writeInitiativeReport();
                 send(createReportPacket());
+                autoSave();
                 break;
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
@@ -882,10 +870,12 @@ implements Runnable {
                 resetActivePlayersDone();
                 //send(createEntitiesPacket());
                 entityAllUpdate();
-                phaseReport = new StringBuffer();
+                game.resetPhaseReport();
+                phaseReport = game.getPhaseReport(); //HACK
                 break;
             case Game.PHASE_END :
-                phaseReport = new StringBuffer();
+                game.resetPhaseReport();
+                phaseReport = game.getPhaseReport(); //HACK
                 resetEntityPhase();
                 checkForObservers();
                 resolveHeat();
@@ -921,7 +911,7 @@ implements Runnable {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
-                return areMoreTurns();
+                return game.hasMoreTurns();
             default :
                 return true;
         }
@@ -950,8 +940,6 @@ implements Runnable {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
-                // set turn
-                turnIndex = 0;
                 changeToNextTurn();
                 break;
         }
@@ -1040,7 +1028,6 @@ implements Runnable {
                 }
                 break;
             case Game.PHASE_VICTORY :
-                forceVictory = false;
                 resetGame();
                 break;
         }
@@ -1053,30 +1040,20 @@ implements Runnable {
      */
     private void changeToNextTurn() {
         // if there aren't any more turns, end the phase
-        if (!areMoreTurns()) {
+        if (!game.hasMoreTurns()) {
             endCurrentPhase();
             return;
         }
-        GameTurn nextTurn = nextTurn();
-        changeTurn(nextTurn);
+        
+        // okay, well next turn then!
+        GameTurn nextTurn = game.changeToNextTurn();
+        send(createTurnIndexPacket());
         
         if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
             sendGhostSkipMessage();
         }
     }
-    
-    /**
-     * Changes it to make it the specified player's turn.
-     */
-    private void changeTurn(GameTurn turn) {
-        final Player player = getPlayer(turn.getPlayerNum());
-        game.setTurn(turn);
-        if (player != null) {
-            player.setDone(false);
-        }
-        send(new Packet(Packet.COMMAND_TURN, turn));
-    }
-    
+
     /**
      * Sends out a notification message indicating that a ghost player may
      * be skipped.
@@ -1124,7 +1101,7 @@ implements Runnable {
      * are when there is only one player left with mechs or only one team.
      */
     public boolean victory() {
-        if (forceVictory) {
+        if (game.isForceVictory()) {
             return true;
         }
         
@@ -1242,7 +1219,7 @@ implements Runnable {
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
-        roundCounter++;
+        game.incrementRoundCount();
         
         // roll the dice for each player
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
@@ -1352,8 +1329,8 @@ implements Runnable {
         }
         
         // generate turn list
-        turns.setSize(noOfTurns + noOfInfTurns);
-        turnIndex = 0;
+        Vector turns = new Vector(noOfTurns + noOfInfTurns);
+        int turnIndex = 0;
 
 	// Handle all "mainline entities".  I.E. Meks, Vehicles, and
 	// (unless overrided by the "inf_move_last" option) Infantry.
@@ -1387,7 +1364,7 @@ implements Runnable {
                     } else {
                         turn = new GameTurn(order[i]);
                     }
-                    turns.setElementAt(turn, turnIndex);
+                    turns.addElement(new GameTurn(order[i]));
                     turnIndex++;
                     noe[order[i]]--;
                 }
@@ -1419,15 +1396,19 @@ implements Runnable {
                  */
                 int ntm = Math.max(1, (int)Math.floor(noi[order[i]] / lnoi));
                 for (int j = 0; j < ntm; j++) {
-                    turns.setElementAt(new GameTurn.OnlyInfantryTurn(order[i]), turnIndex);
+                    turns.addElement(new GameTurn.OnlyInfantryTurn(order[i]));
                     turnIndex++;
                     noi[order[i]]--;
                 }
             }
         } // Handle the next infantry platoon
-
-        // reset turn counters
-        turnIndex = 0;
+        
+        // set fields in game
+        game.setTurnVector(turns);
+        game.resetTurnIndex();
+        
+        // send turns to all players
+        send(createTurnVectorPacket());
     }
     
     /**
@@ -1436,7 +1417,7 @@ implements Runnable {
     private void writeInitiativeReport() {
         // write to report
         if (game.hasDeployed()) {
-            roundReport.append("\nInitiative Phase for Round #").append(roundCounter);
+            roundReport.append("\nInitiative Phase for Round #").append(game.getRoundCount());
         }
         else {
             roundReport.append("\nInitiative Phase for Deployment");
@@ -1455,16 +1436,13 @@ implements Runnable {
         }
         roundReport.append("\nThe turn order is:\n  ");
         boolean firstTurn = true;
-        for (Enumeration i = turns.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getTurns(); i.hasMoreElements();) {
             GameTurn turn = (GameTurn)i.nextElement();
             roundReport.append((firstTurn ? "" : ", ") ).append( getPlayer(turn.getPlayerNum()).getName());
             firstTurn = false;
         }
         roundReport.append("\n\n");
         roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
-        
-        // reset turn index
-        turnIndex = 0;
     }
     
     /**
@@ -1595,20 +1573,21 @@ implements Runnable {
         // Remove the loaded unit from the screen.
         unit.setPosition( null );
 
-        // Remove the *last* friendly turn (removing the *first* penalizes
-        // the opponent too much, and re-calculating moves is too hard).
-        for ( int index = this.turns.size() - 1;
-              index >= this.turnIndex; index-- ) {
-
-            // If the index-th turn is for the loaded unit's
-            // player, remove it and stop looking.
-            if ( unit.getOwnerId()  == 
-                 ( (GameTurn)turns.elementAt(index) ).getPlayerNum() ) {
-                this.turns.removeElementAt( index );
-                break;
-            }
-
-        } // Check the next turn
+        //CHECK: 
+//        // Remove the *last* friendly turn (removing the *first* penalizes
+//        // the opponent too much, and re-calculating moves is too hard).
+//        for ( int index = this.turns.size() - 1;
+//              index >= this.turnIndex; index-- ) {
+//
+//            // If the index-th turn is for the loaded unit's
+//            // player, remove it and stop looking.
+//            if ( unit.getOwnerId()  == 
+//                 ( (GameTurn)turns.elementAt(index) ).getPlayerNum() ) {
+//                this.turns.removeElementAt( index );
+//                break;
+//            }
+//
+//        } // Check the next turn
 
         // Load the unit.
         loader.load( unit );
@@ -1805,7 +1784,7 @@ implements Runnable {
              
             if (step.getType() == MovementData.STEP_UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
-                attacks.addElement(new UnjamAction(entity.getId()));
+                game.addAction(new UnjamAction(entity.getId()));
 
                 break;
             }
@@ -1820,7 +1799,7 @@ implements Runnable {
                 Entity target = step.getTarget( game );
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
-                pendingCharges.addElement(caa);
+                game.addCharge(caa);
                 break;
             }
             
@@ -1829,7 +1808,7 @@ implements Runnable {
                 Entity target = step.getTarget( game );
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
-                pendingCharges.addElement(daa);
+                game.addCharge(daa);
                 break;
             }
 
@@ -2021,24 +2000,25 @@ implements Runnable {
 			    // Has the target been destroyed?
 			    if ( target.isDoomed() ) {
 
-				// Has the target taken a turn?
-				if ( !target.isDone() ) {
-
-				    // Dead entities don't take turns.
-				    int targetOwnerId = target.getOwner().getId();
-				    for ( int loop = turnIndex + 1;
-					  loop < turns.size();
-					  loop++ ) {
-					// Is the loop-th turn for the 
-					// destroyed target's player?
-					if ( targetOwnerId == ( (GameTurn)turns.elementAt(loop) ).getPlayerNum() ) {
-					    // Yup. Remove the turn and stop looping.
-					    turns.removeElementAt( loop );
-					    break;
-					}
-				    } // Check the next turn
-
-				} // End target-still-to-move
+                                //CHECK: are we okay here with turns?
+//				// Has the target taken a turn?
+//				if ( !target.isDone() ) {
+//
+//				    // Dead entities don't take turns.
+//				    int targetOwnerId = target.getOwner().getId();
+//				    for ( int loop = turnIndex + 1;
+//					  loop < turns.size();
+//					  loop++ ) {
+//					// Is the loop-th turn for the 
+//					// destroyed target's player?
+//					if ( targetOwnerId == ( (GameTurn)turns.elementAt(loop) ).getPlayerNum() ) {
+//					    // Yup. Remove the turn and stop looping.
+//					    turns.removeElementAt( loop );
+//					    break;
+//					}
+//				    } // Check the next turn
+//
+//				} // End target-still-to-move
 
 				// Yup.  Clean out the entity.
 				target.setDestroyed(true);
@@ -2456,7 +2436,9 @@ implements Runnable {
             entity.applyDamage();
             entity.setDone(false);
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
-            turns.insertElementAt(newTurn, turnIndex);
+            game.insertTurn(newTurn);
+            // brief everybody on the turn update
+            send(createTurnVectorPacket());
         } else {
             entity.setDone(true);
         }
@@ -2687,7 +2669,7 @@ implements Runnable {
                 ).append( dest.getBoardNum() ).append( ".\n");
                 entity.setPosition(dest);
                 if (roll != null) {
-                    pilotRolls.addElement(roll);
+                    game.addPSR(roll);
                 }
 
 		// Update the entity's postion on the client.
@@ -2718,7 +2700,7 @@ implements Runnable {
             ).append( violation.getDisplayName() ).append( ".\n");
             entity.setPosition(dest);
             if (roll != null) {
-                pilotRolls.addElement(roll);
+                game.addPSR(roll);
             }
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
 	    // Update the violating entity's postion on the client.
@@ -2893,10 +2875,10 @@ implements Runnable {
                 // push attacks go the end of the displacement attacks
                 PushAttackAction paa = (PushAttackAction)ea;
                 entity.setDisplacementAttack(paa);
-                pendingCharges.addElement(paa);
+                game.addCharge(paa);
             } else {
                 // add to the normal attack list.
-                attacks.addElement(ea);
+                game.addAction(ea);
             }
         }
         // this entity is done for the round
@@ -2914,7 +2896,7 @@ implements Runnable {
         
         // sort all missile-based attacks by the target
         Hashtable htAttacks = new Hashtable();
-        for (Enumeration i = attacks.elements(); i.hasMoreElements(); ) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements(); ) {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
@@ -2942,7 +2924,7 @@ implements Runnable {
         for (Enumeration i = htAttacks.keys(); i.hasMoreElements(); ) {
             Entity e = (Entity)i.nextElement();
             Vector vAttacks = (Vector)htAttacks.get(e);
-            e.assignAMS(vAttacks, attacks);
+            e.assignAMS(vAttacks);
         }
     }
 
@@ -2954,10 +2936,10 @@ implements Runnable {
     private void resolveWeaponAttacks() {
         roundReport.append("\nWeapon Attack Phase\n-------------------\n");
         
-        Vector results = new Vector(attacks.size());
+        Vector results = new Vector(game.actionsSize());
         
         // loop thru received attack actions
-        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             Entity entity = game.getEntity(((EntityAction)o).getEntityId());
             if (o instanceof WeaponAttackAction) {
@@ -2995,7 +2977,7 @@ implements Runnable {
         }
         
         // and clear the attacks Vector
-        attacks.removeAllElements();
+        game.resetActions();
     }
     
     /**
@@ -3086,7 +3068,7 @@ implements Runnable {
         }
         
         // compute to-hit
-        wr.toHit = Compute.toHitWeapon(game, waa, attacks);
+        wr.toHit = Compute.toHitWeapon(game, waa);
         
         // roll dice
         wr.roll = Compute.d6(2);
@@ -3350,7 +3332,7 @@ implements Runnable {
             }
             PilotingRollData psr = new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced");
             psr.setCumulative(false); // about the only time we set this flag
-            pilotRolls.addElement(psr);
+            game.addPSR(psr);
         }
         
         // dice have been rolled, thanks
@@ -3870,16 +3852,16 @@ implements Runnable {
         int cen = Entity.NONE;
         
         // add any pending charges
-        for (Enumeration i = pendingCharges.elements(); i.hasMoreElements();) {
-            attacks.addElement(i.nextElement());
+        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
+            game.addAction((EntityAction)i.nextElement());
         }
-        pendingCharges.removeAllElements();
+        game.resetCharges();
         
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
         
         // loop thru received attack actions
-        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             
             // verify that the attacker is still active
@@ -4005,9 +3987,9 @@ implements Runnable {
      */
     private void removeDuplicateAttacks(int entityId) {
         boolean attacked = false;
-        Vector toKeep = new Vector(attacks.size());
+        Vector toKeep = new Vector(game.actionsSize());
         
-        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             EntityAction action = (EntityAction)i.nextElement();
             if (action.getEntityId() != entityId) {
                 toKeep.addElement(action);
@@ -4019,7 +4001,11 @@ implements Runnable {
             }
         }
         
-        attacks = toKeep;
+        // reset actions and re-add valid elements
+        game.resetActions();
+        for (Enumeration i = toKeep.elements(); i.hasMoreElements();) {
+            game.addAction((EntityAction)i.nextElement());
+        }
     }
     
     /**
@@ -4028,9 +4014,9 @@ implements Runnable {
      * kept even if the pilot is unconcious, so that he can fail.
      */
     private void removeDeadAttacks() {
-        Vector toKeep = new Vector(attacks.size());
+        Vector toKeep = new Vector(game.actionsSize());
         
-        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             EntityAction action = (EntityAction)i.nextElement();
             Entity entity = game.getEntity(action.getEntityId());
             if (entity != null && !entity.isDestroyed()
@@ -4039,7 +4025,11 @@ implements Runnable {
             }
         }
         
-        attacks = toKeep;
+        // reset actions and re-add valid elements
+        game.resetActions();
+        for (Enumeration i = toKeep.elements(); i.hasMoreElements();) {
+            game.addAction((EntityAction)i.nextElement());
+        }
     }
     
     /**
@@ -4113,7 +4103,7 @@ implements Runnable {
         ToHitData toHit = Compute.toHitKick(game, kaa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the kick is impossible (" ).append( toHit.getDesc() ).append( ")\n");
-            pilotRolls.addElement(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
         }
         phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
@@ -4126,7 +4116,7 @@ implements Runnable {
         if (roll < toHit.getValue()) {
             // miss
             phaseReport.append("misses.\n");
-            pilotRolls.addElement(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
         }
         
@@ -4137,7 +4127,7 @@ implements Runnable {
         phaseReport.append(damageEntity(te, hit, damage));
         
         if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
-            pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
+            game.addPSR(new PilotingRollData(te.getId(), 0, "was kicked"));
         }
         
         phaseReport.append("\n");
@@ -4415,7 +4405,7 @@ implements Runnable {
                 ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
-                pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
+                game.addPSR(new PilotingRollData(te.getId(), 0, "was pushed"));
             }
         }
         
@@ -4548,8 +4538,8 @@ implements Runnable {
                 doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
             } else {
                 // they stil have to roll
-                pilotRolls.addElement(new PilotingRollData(te.getId(), 2, "was charged"));
-		pilotRolls.addElement(chargePSR);
+                game.addPSR(new PilotingRollData(te.getId(), 2, "was charged"));
+		game.addPSR(chargePSR);
             }
         }
         
@@ -4815,7 +4805,7 @@ implements Runnable {
                     roundReport.append( entity.getDisplayName() )
                         .append( " automatically shuts down.\n" );
                     // add a piloting roll and resolve immediately
-                    pilotRolls.addElement(new PilotingRollData
+                    game.addPSR(new PilotingRollData
                         ( entity.getId(), 3, "reactor shutdown" ));
                     resolvePilotingRolls();
                     // okay, now mark shut down
@@ -4834,7 +4824,7 @@ implements Runnable {
                     } else {
                         roundReport.append("shuts down.\n");
                         // add a piloting roll and resolve immediately
-                        pilotRolls.addElement(new PilotingRollData
+                        game.addPSR(new PilotingRollData
                             ( entity.getId(), 3, "reactor shutdown" ));
                         resolvePilotingRolls();
                         // okay, now mark shut down
@@ -4928,7 +4918,7 @@ implements Runnable {
             entity.getMovementType() == Entity.MovementType.QUAD) {
                 // if this mech has 20+ damage, add another roll to the list.
                 if (entity.damageThisPhase >= 20) {
-                    pilotRolls.addElement(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+                    game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
                 }
             }
         }
@@ -4982,7 +4972,7 @@ implements Runnable {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             resolvePilotingRolls((Entity)i.nextElement());
         }
-        pilotRolls.removeAllElements();
+        game.resetPSRs();
     }
     
     /**
@@ -4998,7 +4988,7 @@ implements Runnable {
         Vector rolls = new Vector();
         StringBuffer reasons = new StringBuffer();
         PilotingRollData base = Compute.getBasePilotingRoll(game, entity.getId());
-        for (Enumeration i = pilotRolls.elements(); i.hasMoreElements();) {
+        for (Enumeration i = game.getPSRs(); i.hasMoreElements();) {
             final PilotingRollData modifier = (PilotingRollData)i.nextElement();
             if (modifier.getEntityId() != entity.getId()) {
                 continue;
@@ -5526,21 +5516,21 @@ implements Runnable {
                             case Mech.SYSTEM_GYRO :
                                 if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
                                     // gyro destroyed
-                                    pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
+                                    game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
                                 } else {
                                     // first gyro hit
-                                    pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
                                 }
                                 break;
                             case Mech.ACTUATOR_UPPER_LEG :
                             case Mech.ACTUATOR_LOWER_LEG :
                             case Mech.ACTUATOR_FOOT :
                                 // leg/foot actuator piloting roll
-                                pilotRolls.addElement(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                                game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
                                 break;
                             case Mech.ACTUATOR_HIP :
                                 // hip piloting roll
-                                pilotRolls.addElement(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+                                game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
                                 break;
                         }
                         break;
@@ -5606,7 +5596,7 @@ implements Runnable {
         }
         // if it's a leg, the entity falls
         if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
-            pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+            game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
         // dependent locations destroyed
         if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
@@ -6522,6 +6512,16 @@ implements Runnable {
         data[0] = new Integer(playerId);
         data[1] = new Boolean(getPlayer(playerId).isDone());
         return new Packet(Packet.COMMAND_PLAYER_READY, data);
+    }
+    
+    /** Creates a packet containing the current turn vector */
+    private Packet createTurnVectorPacket() {
+        return new Packet(Packet.COMMAND_SENDING_TURNS, game.getTurnVector());
+    }
+    
+    /** Creates a packet containing the current turn index */
+    private Packet createTurnIndexPacket() {
+        return new Packet(Packet.COMMAND_TURN, new Integer(game.getTurnIndex()));
     }
     
     /**

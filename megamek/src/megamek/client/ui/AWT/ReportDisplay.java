@@ -106,7 +106,12 @@ public class ReportDisplay
         client.sendDone(true);
     }
     
-
+    /**
+     * Refreshes the report
+     */
+    public void refresh() {
+        rta.setText(client.eotr);
+    }
     
     //
     // ActionListener

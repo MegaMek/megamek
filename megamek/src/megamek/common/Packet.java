@@ -49,10 +49,11 @@ implements Serializable {
     
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
-    
+
     public static final int        COMMAND_SENDING_BOARD        = 17;
     public static final int        COMMAND_SENDING_ENTITIES     = 18;
     public static final int        COMMAND_SENDING_PLAYERS      = 19;
+    public static final int        COMMAND_SENDING_TURNS        = 28;  // reorder me
     public static final int        COMMAND_SENDING_REPORT       = 20;
     public static final int        COMMAND_SENDING_GAME_SETTINGS= 21;
     public static final int        COMMAND_SENDING_MAP_SETTINGS = 22;

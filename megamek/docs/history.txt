@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.12-dev
 + Shows movement step by step, optional in MegaMek.cfg.
++ Bug fix for the above.
 
 v 0.29.11 (09-15-03, 3pm)
 + All movement resets result in the "walk" gear being selected

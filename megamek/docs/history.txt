@@ -12,6 +12,7 @@ v0.29.46 (CVS)
 + RFE 941455: New Game Option to save at every phase
 + Bug 1013144: Wrecks now showing after a re-connect
 + Bug 1013461: Stacking violation movement crash fixed.
++ Data 1009659: Added the scenarios and scenario-related boards.
 
 v0.29.45 (2004-08-16 8:00am)
 + Bug 1001685: all the scroll options are now individually configurable

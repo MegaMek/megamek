@@ -12478,8 +12478,17 @@ implements Runnable, ConnectionHandler {
             if (ea instanceof WeaponAttackAction) {
                 final WeaponAttackAction waa = (WeaponAttackAction) ea;
                 WeaponResult wr = preTreatWeaponAttack(waa);
-                // FIXME : only clear if shooting at a **new** hex
-                clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
+                boolean firingAtNewHex = false;
+                for (Enumeration j = game.getArtilleryAttacks(); j.hasMoreElements();) {
+                    ArtilleryAttackAction oaaa = (ArtilleryAttackAction) j.nextElement();
+                    if ( oaaa.getWR().waa.getEntityId() == wr.waa.getEntityId() &&
+                    	 !oaaa.getWR().waa.getTarget(game).getPosition().equals(wr.waa.getTarget(game).getPosition())) {
+                        firingAtNewHex = true;
+                    }
+                }
+                if (firingAtNewHex) {
+                	clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
+                }
                 Enumeration spotters = game.getSelectedEntities(new EntitySelector() {
                     public int player = firingEntity.getOwnerId();
                     public Targetable target = waa.getTarget(game);

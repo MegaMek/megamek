@@ -26,7 +26,14 @@ echo Microsoft JVM found.  Defaulting to Microsoft JVM from now on.
 :ms_jvm_prefer
 echo This file causes MegaMek to prefer the Microsoft JVM > jvm_ms.cfg
 :ms_jvm
-start wjview /vst /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek
+for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto ms_dedicated
+start wjview /vst /cp collections.jar;TinyXML.jar;PngEncoder.jar;TabPanel.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
+goto done
+:ms_dedicated
+echo Starting dedicated server.  Closing this window or pressing [ctrl]-[c] will
+echo quit the server.
+echo.
+jview /vst /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto done
 
 :only_found_sun
@@ -34,7 +41,14 @@ echo Microsoft JVM not found.  Defaulting to Sun JVM from now on.
 :sun_jvm_prefer
 echo This file causes MegaMek to prefer the Sun JVM > jvm_sun.cfg
 :sun_jvm
-start javaw -jar MegaMek.jar
+for %%A in (%1 %2 %3 %4 %5 %6 %7 %8 %9) do if X%%A==X-dedicated goto sun_dedicated
+start javaw -Xmx128m -jar MegaMek.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
+goto done
+:sun_dedicated
+echo Starting dedicated server.  Closing this window or pressing [ctrl]-[c] will
+echo quit the server.
+echo.
+java -jar MegaMek.jar %1 %2 %3 %4 %5 %6 %7 %8 %9
 goto done
 
 :sun_ok
@@ -49,17 +63,19 @@ echo that you have multiple ways of running MegaMek.  Here are some
 echo differences between the two:
 echo.
 echo Sun JVM: This is the "official" JVM.  It is more up to date,
-echo meaning it receives continuing bugfixes.
+echo meaning it receives continuing bugfixes.  Also, some advanced
+echo features (like transparency and zooming) require this JVM.
 echo.
 echo Microsoft JVM: This JVM integrates better with Windows, which
-echo results in MegaMek running faster and using less memory.
+echo results in MegaMek's interface running faster.
 :choose
-echo.
-echo Press [s] for the Sun JVM, [m] for the Microsoft JVM, or [q] to quit.
 echo.
 echo Note: This menu will not be displayed anymore once you have made
 echo your choice.  To choose again, delete any file that begins with
-echo jvm in your main MegaMek directory.
+echo "jvm" in your main MegaMek directory.
+echo.
+echo Press [s] for the Sun JVM, [m] for the Microsoft JVM, or [q] to quit.
+echo.
 if %os% == Windows_NT goto choice_nt
 choice /c:smq Please make your choice now: 
 if errorlevel 3 exit

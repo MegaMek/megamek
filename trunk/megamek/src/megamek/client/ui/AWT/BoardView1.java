@@ -1743,13 +1743,11 @@ public class BoardView1
                 scroll.x -= Settings.getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
                 scroll.y -= Settings.getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
                 checkScrollBounds();
-                if (mousePos != null) {
-                    oldMousePosition.setLocation(mousePos);
-                }
+                oldMousePosition.setLocation(mousePos);
                 s = !oldScroll.equals(scroll);
                 scrolled = scrolled || s;
-            };
-        };
+            }
+        }
 
         if (isScrolling && (Settings.clickEdgeScroll || Settings.autoEdgeScroll) ) {
             final int sf = Settings.getScrollSensitivity(); // scroll factor
@@ -2128,7 +2126,7 @@ public class BoardView1
 
     public void mouseReleased(MouseEvent me) {
         isTipPossible = true;
-        oldMousePosition = null;
+        oldMousePosition = mousePos;
 
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);

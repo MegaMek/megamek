@@ -15,6 +15,7 @@ v0.29.54 (CVS)
 + Bug 1052947: Special Arrow IV munitions doing damage
 + RFE 751400: Tracking Pilots after ejection. Ejection rules from page 79, BMRr 
    are now implemented, except for the picking up of ejected mechwarriors.
++ Bug 1025518: Loss of Heat Sink bug
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

@@ -1346,8 +1346,7 @@ public class Compute
         }        
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),
-                                            te.getFacing()));
+        toHit.setSideTable(targetSideTable(ae, te));
         
         // okay!
         return toHit;
@@ -1483,8 +1482,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),
-                                            te.getFacing()));
+        toHit.setSideTable(targetSideTable(ae, te));
 
         // done!
         return toHit;
@@ -1639,8 +1637,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),
-                                            te.getFacing()));
+        toHit.setSideTable(targetSideTable(ae, te));
 
         // done!
         return toHit;
@@ -1835,8 +1832,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae.getPosition(), te.getPosition(),
-                                            te.getFacing()));
+        toHit.setSideTable(targetSideTable(ae, te));
 
         // done!
         return toHit;
@@ -2139,7 +2135,7 @@ public class Compute
 
         // determine hit direction
         toHit.setSideTable(targetSideTable(src, te.getPosition(),
-                                            te.getFacing()));
+                                            te.getFacing(), te instanceof Tank));
                                             
         // elevation
         if (attackerHeight == targetHeight || te.isProne()) {
@@ -2296,7 +2292,7 @@ public class Compute
         }
         else {
             toHit.setSideTable(targetSideTable(src, te.getPosition(),
-                                            te.getFacing()));
+                                            te.getFacing(), te instanceof Tank));
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
@@ -2687,25 +2683,38 @@ public class Compute
         return ih;
     }
     
+    public static int targetSideTable(Entity attacker, Entity target) {
+        return targetSideTable(attacker.getPosition(), target.getPosition(), target.getFacing(), target instanceof Tank);
+    }
+    
     /**
      * Returns the side location table that you should be using
      */
-    public static int targetSideTable(Coords ac, Coords tc, int tf) {
+    public static int targetSideTable(Coords src, Coords dest, int targetFacing, boolean targetIsTank) {
         // calculate firing angle
-        int fa = tc.degree(ac) - tf * 60;
-        if (fa < 0) {
-            fa += 360;
+        int fa = (dest.degree(src) + (6 - targetFacing) * 60) % 360;
+
+        if (targetIsTank) {
+            if (fa > 30 && fa <= 150) {
+                return ToHitData.SIDE_RIGHT;
+            } else if (fa > 150 && fa < 210) {
+                return ToHitData.SIDE_REAR;
+            } else if (fa >= 210 && fa < 330) {
+                return ToHitData.SIDE_LEFT;
+            } else {
+                return ToHitData.SIDE_FRONT;
+            }
+        } else {
+            if (fa > 90 && fa <= 150) {
+                return ToHitData.SIDE_RIGHT;
+            } else if (fa > 150 && fa < 210) {
+                return ToHitData.SIDE_REAR;
+            } else if (fa >= 210 && fa < 270) {
+                return ToHitData.SIDE_LEFT;
+            } else {
+                return ToHitData.SIDE_FRONT;
+            }
         }
-        if (fa > 90 && fa <= 150) {
-            return ToHitData.SIDE_RIGHT;
-        }
-        if (fa > 150 && fa < 210) {
-            return ToHitData.SIDE_REAR;
-        }
-        if (fa >= 210 && fa < 270) {
-            return ToHitData.SIDE_LEFT;
-        }
-        return ToHitData.SIDE_FRONT;
     }
     
     /**

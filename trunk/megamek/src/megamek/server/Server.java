@@ -1714,15 +1714,19 @@ implements Runnable, ConnectionHandler {
         // Determine whether infantry and/or Protomechs move
         // and/or deploy last according to game options.
         boolean infMoveLast =
-            game.getOptions().booleanOption("inf_move_last") &&
-            ( game.getPhase() != Game.PHASE_DEPLOYMENT ||
-              game.getOptions().booleanOption("inf_deploy_last") );
+            ( game.getOptions().booleanOption("inf_move_last") &&
+              (game.getPhase() == Game.PHASE_INITIATIVE ||
+               game.getPhase() == Game.PHASE_MOVEMENT) ) ||
+            ( game.getOptions().booleanOption("inf_deploy_last") &&
+              game.getPhase() == Game.PHASE_DEPLOYMENT );
         boolean infMoveMulti =
             game.getOptions().booleanOption("inf_move_multi");
         boolean protosMoveLast =
-            game.getOptions().booleanOption("protos_move_last") &&
-            ( game.getPhase() != Game.PHASE_DEPLOYMENT ||
-              game.getOptions().booleanOption("protos_deploy_last") );
+            ( game.getOptions().booleanOption("protos_move_last") &&
+              (game.getPhase() == Game.PHASE_INITIATIVE ||
+               game.getPhase() == Game.PHASE_MOVEMENT) ) ||
+            ( game.getOptions().booleanOption("protos_deploy_last") &&
+              game.getPhase() == Game.PHASE_DEPLOYMENT );
         boolean protosMoveMulti =
             game.getOptions().booleanOption("protos_move_multi");
         boolean protosFireMulti = !protosMoveMulti &&

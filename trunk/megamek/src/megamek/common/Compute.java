@@ -3522,7 +3522,12 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
-        if (entity.getLocationStatus(club.getLocation()) == entity.LOC_WET) {
+        int clubLocation = club.getLocation();
+        // tree clubs don't have a location--use right arm (is this okay?)
+        if (clubLocation == Entity.LOC_NONE) {
+            clubLocation = Mech.LOC_RARM;
+        }
+        if (entity.getLocationStatus(clubLocation) == Entity.LOC_WET) {
             nDamage /= 2.0f;
         }
 

@@ -1640,17 +1640,17 @@ public class BoardView1
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
-            // draw the 'flip arms' arrow
-            if ( (entity.getFacing() != -1) && entity.getArmsFlipped() ) {
-              graph.setColor(Color.red);
-              int flipDir = entity.getFacing();
-
-              if ( flipDir < 3 )
-                flipDir = flipDir + 3;
-              else
-                flipDir = flipDir - 3;
-
-              graph.drawPolygon(facingPolys[flipDir]);
+            // determine secondary facing for non-mechs & flipped arms
+            int secFacing = entity.getFacing();
+            if (!(entity instanceof Mech)) {
+                secFacing = entity.getSecondaryFacing();
+            } else if (entity.getArmsFlipped()) {
+                secFacing = (entity.getFacing() + 3) % 6;
+            }
+            // draw red secondary facing arrow if necessary
+            if (secFacing != -1 && secFacing != entity.getFacing()) {
+                graph.setColor(Color.red);
+                graph.drawPolygon(facingPolys[secFacing]);
             }
 
             // draw condition strings

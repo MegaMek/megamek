@@ -107,12 +107,21 @@ public class MegaMek
 		quitB.setActionCommand("quit");
 		quitB.addActionListener(this);
 		
-		// initialize splash image panel
-		BufferedPanel panTitle = new BufferedPanel();
-		Image imgSplash = panTitle.getToolkit().getImage("data/images/megamek-splash.gif");
+		// initialize splash image
+		Image imgSplash = frame.getToolkit().getImage("data/images/megamek-splash.gif");
+        // wait for splash image to load completely
+        MediaTracker tracker = new MediaTracker(frame);
+        tracker.addImage(imgSplash, 0);
+        try {
+            tracker.waitForID(0);
+        } catch (InterruptedException e) {
+            ;
+        }
+        // make splash image panel
+        BufferedPanel panTitle = new BufferedPanel();
 		BackGroundDrawer bgdTitle = new BackGroundDrawer(imgSplash);
 		panTitle.addBgDrawer(bgdTitle);
-		panTitle.setPreferredSize(180, 250);
+		panTitle.setPreferredSize(imgSplash.getWidth(null), imgSplash.getHeight(null));
 		
 		// layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -152,15 +161,6 @@ public class MegaMek
 		addBag(editB, gridbag, c);
 		c.gridy++;
 		addBag(quitB, gridbag, c);
-
-		// wait for splash image to load completely before returning
-		MediaTracker tracker = new MediaTracker(frame);
-		tracker.addImage(imgSplash, 0);
-		try {
-			tracker.waitForID(0);
-		} catch (InterruptedException e) {
-			;
-		}
 		
 		frame.validate();
     }

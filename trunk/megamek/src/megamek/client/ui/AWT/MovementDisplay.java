@@ -898,6 +898,7 @@ public class MovementDisplay
             }
             cmd = new MovementData(md);
             client.bv.drawMovementData(ce(), cmd);
+            client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getSource() == butDown) {
             gear = Compute.GEAR_LAND;
@@ -906,6 +907,7 @@ public class MovementDisplay
             }
             cmd = new MovementData(md);
             client.bv.drawMovementData(ce(), cmd);
+            client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
             clearAllMoves();

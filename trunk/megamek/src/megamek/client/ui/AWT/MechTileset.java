@@ -73,13 +73,13 @@ public class MechTileset {
      */
     private MechEntry entryFor(Entity entity) {
         // first, check for exact matches
-        if (exact.containsKey(entity.getShortName())) {
-            return (MechEntry)exact.get(entity.getShortName());
+        if (exact.containsKey(entity.getShortName().toUpperCase())) {
+            return (MechEntry)exact.get(entity.getShortName().toUpperCase());
         }
         
         // next, chassis matches
-        if (chassis.containsKey(entity.getChassis())) {
-            return (MechEntry)chassis.get(entity.getChassis());
+        if (chassis.containsKey(entity.getChassis().toUpperCase())) {
+            return (MechEntry)chassis.get(entity.getChassis().toUpperCase());
         }
         
         // last, the generic model
@@ -130,14 +130,14 @@ public class MechTileset {
                     st.nextToken();
                     imageName = st.sval;
                     // add to list
-                    chassis.put(name, new MechEntry(name, imageName));
+                    chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
                 } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
                     st.nextToken();
                     name = st.sval;
                     st.nextToken();
                     imageName = st.sval;
                     // add to list
-                    exact.put(name, new MechEntry(name, imageName));
+                    exact.put(name.toUpperCase(), new MechEntry(name, imageName));
                 }
             }
             r.close();

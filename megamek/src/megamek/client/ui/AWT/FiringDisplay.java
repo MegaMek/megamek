@@ -374,6 +374,7 @@ public class FiringDisplay
                     " at end of turn.");
         }
 
+        this.updateTarget();
         client.mechD.wPan.displayMech(ce());
         client.mechD.wPan.selectWeapon(wn);
     }

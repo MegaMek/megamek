@@ -3466,8 +3466,8 @@ implements Runnable {
         // do we hit?
         if (wr.roll < toHit.getValue()) {
             // miss
-            phaseReport.append("misses.\n");
-            if (wr.amsShotDown > 0) {
+            phaseReport.append("misses.\n"); 
+           if (wr.amsShotDown > 0) {
                 phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
             }
             
@@ -3730,9 +3730,10 @@ implements Runnable {
             bSalvo = false;
         }
 
-        // Report the number of hits.
-        if (bSalvo) {
-            phaseReport.append(hits ).append( sSalvoType ).append( "hit" ).append( toHit.getTableDesc());
+        // Report the number of hits.  Infernos have their own reporting
+        if (bSalvo && !bInferno) {
+            phaseReport.append( hits ).append( sSalvoType ).append( "hit" )
+                .append( toHit.getTableDesc() ).append( "." );
             if (bECMAffected) {
                 phaseReport.append(" (ECM prevents bonus)");
             }
@@ -3775,12 +3776,23 @@ implements Runnable {
             // If the attack was with inferno rounds then
             // do heat and fire instead of damage.
             if ( bInferno ) {
+                // AMS can shoot down infernos, too.
+                if (wr.amsShotDown > 0) {
+                    int shotDown = Math.min(wr.amsShotDown, hits);
+                    phaseReport.append("\n\tAMS engages, firing ")
+                        .append(wr.amsShotDown).append(" shots, shooting down ")
+                        .append(shotDown).append(" missile(s).");
+                    hits -= wr.amsShotDown;
+                }
+
                 // TODO: remove this block and make infantry invalid
                 //       targets for Infernos in Compute#toHitWeapon()
                 // Infernos cannot attack infantry directly so instead
                 // they attack hits the hex and sets it on fire.
                 if (target instanceof Infantry) {
-                    phaseReport.append("hits!\n");
+                    if ( !bSalvo ) {
+                        phaseReport.append("hits!\n");
+                    }
                     tryIgniteHex(target.getPosition(), true, 0);
                     return;
                 }
@@ -3797,12 +3809,10 @@ implements Runnable {
                 // Targeting an entity
                 if (entityTarget != null ) {
                     entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
-                                     hits );
-                    if ( !bSalvo ) {
-                        phaseReport.append( "hits with " )
-                            .append( hits )
-                            .append( " inferno missles." );
-                    }
+                                               hits );
+                    phaseReport.append( "hits with " )
+                        .append( hits )
+                        .append( " inferno missles." );
                     phaseReport.append("\n        " )
                         .append( target.getDisplayName() )
                         .append( " now on fire for ")
@@ -3825,7 +3835,9 @@ implements Runnable {
 
             // targeting a hex for igniting
             if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
-                phaseReport.append("hits!\n");
+                if ( !bSalvo ) {
+                    phaseReport.append("hits!\n");
+                }
                 if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
                     tryIgniteHex(target.getPosition(), bInferno, wtype.getFireTN());
                 }
@@ -3834,8 +3846,11 @@ implements Runnable {
             
             // targeting a hex for clearing
             if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+
                 nDamage = nDamPerHit * hits;
-                phaseReport.append(" Hits!\n");
+                if ( !bSalvo ) {
+                    phaseReport.append("hits!\n");
+                }
                 if (ae instanceof Infantry) {
                     phaseReport.append("    But infantry cannot try to clear hexes!\n");
                     return;
@@ -3860,25 +3875,36 @@ implements Runnable {
             // gear automatically avoid flaming death.
             if ( wtype.hasFlag(WeaponType.F_FLAMER) && 
                  target instanceof BattleArmor ) {
+
                 for ( Enumeration iter = entityTarget.getMisc();
                       iter.hasMoreElements(); ) {
                     Mounted mount = (Mounted) iter.nextElement();
                     EquipmentType equip = mount.getType();
-                    if ( BattleArmor.ASSAULT_CLAW.equals
+                    if ( BattleArmor.FIRE_PROTECTION.equals
                          (equip.getInternalName()) ) {
-                        phaseReport.append( "hits, but " )
+                        if ( !bSalvo ) {
+                            phaseReport.append( "hits." );
+                        }
+                        phaseReport.append( "  However, " )
                             .append(target.getDisplayName() )
-                            .append( " is protected from the flamer by its gear.\n" );
+                            .append( " has fire protection gear so no damage is done.\n" );
                         return;
                     }
                 }
             } // End target-may-be-immune
 
-            // Flamers do heat instead damage if yadda, yadda, yadda....
-            else if (entityTarget != null && wtype.hasFlag(WeaponType.F_FLAMER) && !wtype.hasFlag(WeaponType.F_INFANTRY) 
-                     && game.getOptions().booleanOption("flamer_heat") && weapon.curMode().equals("Heat") 
-                     && (entityTarget instanceof Mech)) {
+            // Flamers do heat to mechs instead damage if the option is
+            // available and the mode is set.
+            if ( entityTarget != null &&
+                 (entityTarget instanceof Mech) &&
+                 wtype.hasFlag(WeaponType.F_FLAMER) &&
+                 game.getOptions().booleanOption("flamer_heat") &&
+                 wtype.hasModes() &&
+                 weapon.curMode().equals("Heat") ) {
                 nDamage = nDamPerHit * hits;
+                if ( !bSalvo ) {
+                    phaseReport.append( "hits." );
+                }
                 phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
                 entityTarget.heatBuildup += nDamage;
                 hits = 0;

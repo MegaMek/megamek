@@ -557,6 +557,13 @@ public class Infantry
     }
 
     /**
+     * Infantry build no heat.
+     */
+    public int getEngineCritHeat() {
+        return 0;
+    }
+
+    /**
      * Infantry have no critical slots.
      */
     protected int[] getNoOfSlots() { return NUM_OF_SLOTS; }

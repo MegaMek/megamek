@@ -492,6 +492,10 @@ public class Tank
         return getHeatCapacity();
     }
     
+    public int getEngineCritHeat() {
+        return 0;
+    }
+    
     public void autoSetInternal()
     {
         int nInternal = (int)Math.ceil(weight / 10.0);

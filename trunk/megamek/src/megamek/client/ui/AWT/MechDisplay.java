@@ -455,6 +455,7 @@ class WeaponPanel
         wMedL, wLongL;
     public Label wNameR, wHeatR, wDamR, wMinR, wShortR,
         wMedR, wLongR;
+    public Label currentHeatBuildupL, currentHeatBuildupR;
         
     public Label wTargetL, wRangeL, wToHitL;
     public Label wTargetR, wRangeR, wToHitR;
@@ -499,6 +500,25 @@ class WeaponPanel
         c.fill = GridBagConstraints.HORIZONTAL;
         ((GridBagLayout)ammoP.getLayout()).setConstraints(m_chAmmo, c);
         ammoP.add(m_chAmmo);
+            
+        currentHeatBuildupL = new Label("Heat Buildup");
+        currentHeatBuildupR = new Label("--");
+        Panel currentHeatP = new Panel(new GridBagLayout());
+        c = new GridBagConstraints();
+        c.insets = new Insets(1, 1, 1, 1);
+        c.gridwidth = 1;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        c.fill = GridBagConstraints.NONE;
+        ((GridBagLayout)currentHeatP.getLayout()).setConstraints(currentHeatBuildupL, c);
+        currentHeatP.add(currentHeatBuildupL);
+        
+        c.gridwidth = 3;
+        c.gridx = 1;
+        c.weightx = 1.0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        ((GridBagLayout)currentHeatP.getLayout()).setConstraints(currentHeatBuildupR, c);
+        currentHeatP.add(currentHeatBuildupR);
+
             
         // weapon display panel
         wNameL = new Label("Name", Label.LEFT);
@@ -605,6 +625,10 @@ class WeaponPanel
         add(ammoP);
         
         c.weightx = 1.0;    c.weighty = 0.0;
+        ((GridBagLayout)getLayout()).setConstraints(currentHeatP, c);
+        add(currentHeatP);
+
+        c.weightx = 1.0;    c.weighty = 0.0;
         ((GridBagLayout)getLayout()).setConstraints(displayP, c);
         add(displayP);
         
@@ -636,6 +660,16 @@ class WeaponPanel
         this.weapons = en.getWeaponList();
         this.entity = en;
             
+        int currentHeatBuildup = en.heat // heat from last round
+            + en.getEngineCritHeat() // heat engine crits will add
+            + en.heatBuildup; // heat we're building up this round
+        if ( en instanceof Mech && en.infernos.isStillBurning() ) { // hit with inferno ammo
+            currentHeatBuildup += en.infernos.getHeat();
+        }
+        if ( en instanceof Mech && en.isStealthActive() ) {
+            currentHeatBuildup += 10; // active stealth heat
+        }
+        
         // update weapon list
         weaponList.removeAll();
         m_chAmmo.removeAll();
@@ -663,9 +697,29 @@ class WeaponPanel
             if (wtype.hasModes()) {
                 wn += " " + mounted.curMode();
             }    
-
             weaponList.add(wn);
+            if (mounted.isUsedThisRound() && client.game.phase == Game.PHASE_FIRING) {
+                // add heat from weapons fire to heat tracker
+                currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
+            }
         }
+        
+        // This code block copied from the MovementPanel class,
+        //  bad coding practice (duplicate code).
+        int heatCap = en.getHeatCapacity();
+        int heatCapWater = en.getHeatCapacityWithWater();
+        String heatCapacityStr = Integer.toString(heatCap);
+        
+        if ( heatCap < heatCapWater ) {
+          heatCapacityStr = heatCap + " [" + heatCapWater + "]";
+        }
+        // end duplicate block
+
+        String heatText = Integer.toString(currentHeatBuildup);
+        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
+            heatText += "*"; // overheat indication
+        }
+        this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")");
     }
   
     /**

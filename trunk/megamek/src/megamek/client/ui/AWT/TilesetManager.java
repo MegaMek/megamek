@@ -50,7 +50,7 @@ public class TilesetManager {
         
         
         mechTileset.loadFromFile("mechset.txt");
-        hexTileset.loadFromFile("defaulthexset.txt");
+        hexTileset.loadFromFile(Settings.mapTileset);
 
     }
     

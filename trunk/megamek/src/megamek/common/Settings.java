@@ -38,6 +38,8 @@ public class Settings
     
     public static Color     mapTextColor            = Color.black;
     
+    public static String    mapTileset              = "defaulthexset.txt";
+    
     
     /**
      * Loads the settings from disk
@@ -103,6 +105,10 @@ scan:
                         int blue = (int)st.nval;
                         mapTextColor = new Color(red, green, blue);
                     }
+                    if(key.equals("maptileset")) {
+                        st.nextToken();
+                        mapTileset = st.sval;
+                    }
                     
                 }
             }
@@ -132,6 +138,7 @@ scan:
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
             cw.write("maptext " + mapTextColor.getRed() + " " + mapTextColor.getGreen() + " " + mapTextColor.getBlue() + " " + "\r\n");
+            cw.write("maptileset \"" + mapTileset + "\"\r\n");
             
             cw.close();
         } catch(Exception e) {

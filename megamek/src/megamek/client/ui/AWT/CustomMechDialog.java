@@ -300,11 +300,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
                 boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
+                                
                 // allow all levels of IS units to use level 1 ammo
                 if (!bTechMatch && !entity.isClan() &&
                     atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
                 }
+                
                 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
                 if (!clientgui.getClient().game.getOptions().booleanOption("is_eq_limits")
@@ -312,11 +314,20 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
                     bTechMatch = true;
                 }
+                
+		        //allow mixed Tech Mechs to use both IS and Clan Ammo
+                if (entity.getTechLevel() == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2) {
+                   bTechMatch = TechConstants.T_CLAN_LEVEL_2 > atCheck.getTechType();                       
+                }
+                
+                if (entity.getTechLevel() == TechConstants.T_MIXED_BASE_IS_LEVEL_2) {
+                   bTechMatch = TechConstants.T_IS_LEVEL_2 >= atCheck.getTechType();
+                }                
 
-		// If clan_ignore_eq_limits is unchecked,
+		        // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.
                 // N.B. play bit-shifting games to allow "incendiary"
-                //      to be combined to othter munition types.
+                //      to be combined to other munition types.
                 int muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY;
                 if ( !clientgui.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits")
@@ -325,10 +336,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||
                           muniType == AmmoType.M_THUNDER_VIBRABOMB ||
-                          muniType == AmmoType.M_THUNDER_ACTIVE)) {
+                          muniType == AmmoType.M_THUNDER_ACTIVE )) {
                     bTechMatch = false;
-		}
-
+		        }
+		        
                 if ( !clientgui.getClient().game.getOptions().booleanOption("minefields") &&
                 	AmmoType.canDeliverMinefield(atCheck) ) {
                     continue;

@@ -86,6 +86,8 @@ v next
 + 592466: impossible PSRs now say "impossible", not Integer.MAX_VALUE
 + 607206: fixed crash bug with vehicles charging a mech
 + 608627: spurious tank death messages removed
++ 608767: hovercraft no longer recieve fire mods for being in water
++ 608767: prevented several more ways for a turret to rotate while locked
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

@@ -26,6 +26,11 @@ public class DeployMinefieldDisplay
     implements BoardListener,  ActionListener,
     KeyListener, GameListener
 {    
+	// Action command names
+	public static final String DEPLOY_MINE_CONV        = "deployMineConv";
+	public static final String DEPLOY_MINE_COM         = "deployMineCom";
+	public static final String DEPLOY_MINE_VIBRA       = "deployMineVibra";
+
     // parent game
     public Client client;
     
@@ -63,9 +68,10 @@ public class DeployMinefieldDisplay
         setupStatusBar("Waiting to begin Deploy minefield phase...");
 
 		p = client.getLocalPlayer();
-
+		
         butM = new Button("Minefield(" + p.getNbrMFConventional() + ")");
         butM.addActionListener(this);
+        butM.setActionCommand(DEPLOY_MINE_CONV);
         butM.setEnabled(false);
                         
         butSpace = new Button(".");
@@ -73,6 +79,7 @@ public class DeployMinefieldDisplay
 
         butC = new Button("Command(" + p.getNbrMFCommand() + ")");
         butC.addActionListener(this);
+        butC.setActionCommand(DEPLOY_MINE_COM);
         butC.setEnabled(false);
 
         butUnload = new Button(".");
@@ -81,6 +88,7 @@ public class DeployMinefieldDisplay
 
         butV = new Button("Vibrabomb(" + p.getNbrMFVibra() + ")");
         butV.addActionListener(this);
+        butV.setActionCommand(DEPLOY_MINE_VIBRA);
         butV.setEnabled(false);
 
         butDone = new Button("Done");
@@ -145,6 +153,10 @@ public class DeployMinefieldDisplay
     	if (p.getNbrMFVibra() > 0) {
         	butV.setEnabled(true);
         }
+
+		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
+		                                           p.getNbrMFCommand(),
+		                                           p.getNbrMFVibra());
     }
 
     /**
@@ -156,6 +168,10 @@ public class DeployMinefieldDisplay
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
+
+		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
+		                                           p.getNbrMFCommand(),
+		                                           p.getNbrMFVibra());
     }
 
     /**
@@ -258,6 +274,10 @@ public class DeployMinefieldDisplay
     		deployV = false;
         	butV.setEnabled(false);
         }
+
+		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
+		                                           p.getNbrMFCommand(),
+		                                           p.getNbrMFVibra());
     }
 
 
@@ -326,17 +346,17 @@ public class DeployMinefieldDisplay
         	client.sendDeployMinefields(deployedMinefields);
 			client.sendPlayerInfo();
         }
-        if (ev.getSource().equals(butM)) {
+        if (ev.getActionCommand().equals(DEPLOY_MINE_CONV)) {
         	deployM = true;
         	deployC = false;
         	deployV = false;
         }
-        if (ev.getSource().equals(butC)) {
+        if (ev.getActionCommand().equals(DEPLOY_MINE_COM)) {
         	deployM = false;
         	deployC = true;
         	deployV = false;
         }
-        if (ev.getSource().equals(butV)) {
+        if (ev.getActionCommand().equals(DEPLOY_MINE_VIBRA)) {
         	deployM = false;
         	deployC = false;
         	deployV = true;

@@ -33,6 +33,21 @@ public class FiringDisplay
     public static final int    AIM_MODE_IMMOBILE = 1;
     public static final int    AIM_MODE_TARG_COMP = 2;
     
+    // Action command names
+	public static final String FIRE_AIM        = "fireAim";
+	public static final String FIRE_FIND_CLUB  = "fireFindClub";
+	public static final String FIRE_FIRE       = "fireFire";
+	public static final String FIRE_MODE       = "fireMode";
+	public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
+	public static final String FIRE_MORE       = "fireMore";
+	public static final String FIRE_NEXT       = "fireNext";
+	public static final String FIRE_NEXT_TARG  = "fireNextTarg";
+	public static final String FIRE_SKIP       = "fireSkip";
+	public static final String FIRE_SPOT       = "fireSpot";
+	public static final String FIRE_TWIST      = "fireTwist";
+	public static final String FIRE_CANCEL     = "fireCancel";
+	public static final String FIRE_REPORT     = "fireReport";
+
     // parent game
     public Client client;
     
@@ -94,39 +109,48 @@ public class FiringDisplay
         
         butFire = new Button("Fire");
         butFire.addActionListener(this);
+        butFire.setActionCommand(FIRE_FIRE);
         butFire.setEnabled(false);
         
         butSkip = new Button("Skip");
         butSkip.addActionListener(this);
+        butSkip.setActionCommand(FIRE_SKIP);
         butSkip.setEnabled(false);
         
         butTwist = new Button("Twist");
         butTwist.addActionListener(this);
+        butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
         
 
         butFindClub = new Button("Find Club");
         butFindClub.addActionListener(this);
+        butFindClub.setActionCommand(FIRE_FIND_CLUB);
         butFindClub.setEnabled(false);
         
         butAim = new Button("Aim");
         butAim.addActionListener(this);
+        butAim.setActionCommand(FIRE_AIM);
         butAim.setEnabled(false);
         
         butNextTarg = new Button("Next Target");
         butNextTarg.addActionListener(this);
+        butNextTarg.setActionCommand(FIRE_NEXT_TARG);
         butNextTarg.setEnabled(false);
         
-    butFlipArms = new Button("Flip Arms");
-    butFlipArms.addActionListener(this);
-    butFlipArms.setEnabled(false);
+        butFlipArms = new Button("Flip Arms");
+        butFlipArms.addActionListener(this);
+        butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
+        butFlipArms.setEnabled(false);
         
-    butSpot = new Button("Spot");
-    butSpot.addActionListener(this);
-    butSpot.setEnabled(false);
+        butSpot = new Button("Spot");
+        butSpot.addActionListener(this);
+        butSpot.setActionCommand(FIRE_SPOT);
+        butSpot.setEnabled(false);
         
         butReport = new Button("Report..");
         butReport.addActionListener(this);
+        butReport.setActionCommand(FIRE_REPORT);
         butReport.setEnabled(true);
         
         butSpace = new Button(".");
@@ -135,6 +159,7 @@ public class FiringDisplay
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
         butFireMode = new Button("Mode");
         butFireMode.addActionListener(this);
+        butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
 
         butDone = new Button("Done");
@@ -143,10 +168,12 @@ public class FiringDisplay
         
         butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
+        butNext.setActionCommand(FIRE_NEXT);
         butNext.setEnabled(false);
         
         butMore = new Button("More...");
         butMore.addActionListener(this);
+        butMore.setActionCommand(FIRE_MORE);
         butMore.setEnabled(false);
         
         // layout button grid
@@ -835,7 +862,7 @@ public class FiringDisplay
         
         if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
+        } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
             new MiniReportDisplay(client.frame, client.eotr).show();
             return;
         } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
@@ -846,30 +873,30 @@ public class FiringDisplay
             // Display the game options dialog.
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireFire")) {
+        } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
             fire();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireSkip")) {
+        } else if (ev.getActionCommand().equals(FIRE_SKIP)) {
             nextWeapon();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireTwist")) {
+        } else if (ev.getActionCommand().equals(FIRE_TWIST)) {
             twisting = true;
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireNext")) {
+        } else if (ev.getActionCommand().equals(FIRE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
-        } else if (ev.getSource() == butMore) {
+        } else if (ev.getActionCommand().equals(FIRE_MORE)) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireFindClub")) {
+        } else if (ev.getActionCommand().equals(FIRE_FIND_CLUB)) {
             findClub();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireSpot")) {
+        } else if (ev.getActionCommand().equals(FIRE_SPOT)) {
             doSpot();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireNextTarg")) {
+        } else if (ev.getActionCommand().equals(FIRE_NEXT_TARG)) {
             jumpToNextTarget();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireFlipArms")) {
+        } else if (ev.getActionCommand().equals(FIRE_FLIP_ARMS)) {
             updateFlipArms(!ce().getArmsFlipped());
         // Fire Mode - More Fire Mode button handling - Rasia
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireMode")) {
+        } else if (ev.getActionCommand().equals(FIRE_MODE)) {
             changeMode();
-        } else if (ev.getActionCommand().equalsIgnoreCase("fireCancel")) {
+        } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
             clearAttacks();
             client.game.board.select(null);
             client.game.board.cursor(null);

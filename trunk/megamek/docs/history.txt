@@ -131,6 +131,8 @@ v 0.28.14-dev
 + Allow a player to configure a log to track Mek Hit Location rolls.
 + clients are now aware of who wins or loses in the victory phase
 + 711573: charges always hit full/kick table for mech/vehicle attackers
++ added eject movement action (not full ejection rules yet)
++ moved a few movement buttons around
 
 v 0.28.13 (04-12-03, 5:30pm)
 + Players aren't allowed to target infantry with Inferno rounds.

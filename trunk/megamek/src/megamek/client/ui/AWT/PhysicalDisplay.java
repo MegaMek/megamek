@@ -693,7 +693,7 @@ public class PhysicalDisplay
         // Is there a building in the hex?
         Building bldg = client.game.board.getBuildingAt( pos );
         if ( bldg != null ) {
-            targets.add( new BuildingTarget(pos, client.game.board, false) );
+            targets.addElement( new BuildingTarget(pos, client.game.board, false) );
         }
 
         // Do we have a single choice?

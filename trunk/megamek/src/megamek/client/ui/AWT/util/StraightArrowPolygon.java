@@ -129,7 +129,7 @@ public class StraightArrowPolygon extends Polygon{
    }
 
    public boolean contains(double x, double y){
-   	   return hotArea.contains(x, y);
+   	   return hotArea.contains((int)Math.round(x), (int)Math.round(y));
    }
 
    public void translate(int deltaX, int deltaY){

@@ -33,7 +33,7 @@
   <target depends="compile" description="Creates application exe file" name="exe">
         <!-- jexegen /out:MegaMek.exe /base:classes /main:megamek.MegaMek /r  *.class -->
      <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe">
-        <arg line="/out:${exefile} /base:${build} /main:megamek.MegaMek /r *.class"/>
+        <arg line="/out:${exefile} /base:${build} /main:megamek.MegaMek /r /w *.class"/>
      </exec>
   </target>
   

@@ -2801,7 +2801,7 @@ implements Runnable {
               phaseReport.append("rolls " + roll + " : ");
               if(roll >= TN) {
                  phaseReport.append(" Fire started!\n");
-                 h.addTerrain(new Terrain(Terrain.FIRE, 2));
+                 h.addTerrain(new Terrain(Terrain.FIRE, 1));
                  sendChangedHex(c);
               }
               else {

@@ -11108,7 +11108,7 @@ implements Runnable, ConnectionHandler {
         Vector boards = new Vector();
 
         File boardDir = new File("data/boards");
-
+        boards.addElement(MapSettings.BOARD_GENERATED);
         // just a check...
         if (!boardDir.isDirectory()) {
             return boards;
@@ -11131,13 +11131,10 @@ implements Runnable, ConnectionHandler {
         if (tempList.size() > 0) {
             boards.addElement( MapSettings.BOARD_RANDOM );
             boards.addElement( MapSettings.BOARD_SURPRISE );
-			boards.addElement(MapSettings.BOARD_GENERATED);
             com.sun.java.util.collections.Collections.sort(tempList, sortComp);
             for ( int loop = 0; loop < tempList.size(); loop++ ) {
                 boards.addElement( tempList.elementAt(loop) );
             }
-        } else {
-			boards.addElement(MapSettings.BOARD_GENERATED);
         }
 
         //TODO: alphabetize files?

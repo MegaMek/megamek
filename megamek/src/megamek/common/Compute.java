@@ -847,7 +847,7 @@ public class Compute
         }
         
         // if there's an entity in the way, can they be displaced in that direction?
-        Entity inTheWay = game.getEntity(dest);
+        Entity inTheWay = stackingViolation(game, entityId, dest);
         if (inTheWay != null) {
             return isValidDisplacement(game, inTheWay.getId(), inTheWay.getPosition(), direction);
         }

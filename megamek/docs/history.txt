@@ -132,6 +132,8 @@ v 0.28.16 CVS
 + Feature 729851: Updated code for MW : DA squads.
 + Bug 731720: fixed data/mex/mechset.txt for Atlas AS7-S.
 + Data 729975, Feature 723876: added hopalong's Clan platoons.
++ 717973: Pilot death is delayed until end of phase
++ 695374: Vehic weapon jams should work correctly now
 
 v 0.28.15 (04-27-03, 7:30pm)
 + Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.

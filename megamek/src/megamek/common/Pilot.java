@@ -25,6 +25,7 @@ public class Pilot
     private int         hits; // hits taken
       
     private boolean     unconcious;
+    private boolean     doomed;  // scheduled to die at end of phase
     private boolean     dead;
     
     // these are only used on the server:
@@ -81,6 +82,14 @@ public class Pilot
     
     public void setDead(boolean dead) {
         this.dead = dead;
+    }
+    
+    public boolean isDoomed() { 
+        return doomed;
+    }
+    
+    public void setDoomed(boolean b) {
+        doomed = b;
     }
     
     public boolean isActive() {

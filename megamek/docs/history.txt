@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.19 (CVS)
+v 0.29.19 (2003-12-16, 10:55pm)
 + Bug 849222: Need to check for clubbing in Server#canPhysicalTarget.
 + Fix the FiringDisplay NPE that McWizard mentioned in bug # 849441.
 + Incorporated the Ostermiller utility library (need Base64 for PacketEncoder).

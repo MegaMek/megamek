@@ -21,12 +21,17 @@ import java.util.*;
 import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class FiringDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener, GameListener, ActionListener,
-    KeyListener, ItemListener, BoardViewListener
+    implements BoardListener, GameListener, ActionListener, DoneButtoned,
+               KeyListener, ItemListener, BoardViewListener, Distractable
 {
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
     private static final int    NUM_BUTTON_LAYOUTS = 2;
 
     public static final int    AIM_MODE_NONE = 0;
@@ -34,19 +39,19 @@ public class FiringDisplay
     public static final int    AIM_MODE_TARG_COMP = 2;
     
     // Action command names
-	public static final String FIRE_AIM        = "fireAim";
-	public static final String FIRE_FIND_CLUB  = "fireFindClub";
-	public static final String FIRE_FIRE       = "fireFire";
-	public static final String FIRE_MODE       = "fireMode";
-	public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
-	public static final String FIRE_MORE       = "fireMore";
-	public static final String FIRE_NEXT       = "fireNext";
-	public static final String FIRE_NEXT_TARG  = "fireNextTarg";
-	public static final String FIRE_SKIP       = "fireSkip";
-	public static final String FIRE_SPOT       = "fireSpot";
-	public static final String FIRE_TWIST      = "fireTwist";
-	public static final String FIRE_CANCEL     = "fireCancel";
-	public static final String FIRE_REPORT     = "fireReport";
+    public static final String FIRE_AIM        = "fireAim";
+    public static final String FIRE_FIND_CLUB  = "fireFindClub";
+    public static final String FIRE_FIRE       = "fireFire";
+    public static final String FIRE_MODE       = "fireMode";
+    public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
+    public static final String FIRE_MORE       = "fireMore";
+    public static final String FIRE_NEXT       = "fireNext";
+    public static final String FIRE_NEXT_TARG  = "fireNextTarg";
+    public static final String FIRE_SKIP       = "fireSkip";
+    public static final String FIRE_SPOT       = "fireSpot";
+    public static final String FIRE_TWIST      = "fireTwist";
+    public static final String FIRE_CANCEL     = "fireCancel";
+    public static final String FIRE_REPORT     = "fireReport";
 
     // parent game
     public Client client;
@@ -178,21 +183,22 @@ public class FiringDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(client.bv, gridbag, c);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(client.bv, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
-        c.weightx = 1.0;    c.weighty = 0;
-        c.gridwidth = 1;
-        addBag(client.cb.getComponent(), gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
+
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
         
+        client.bv.addKeyListener( this );
         addKeyListener(this);
         
         // mech display.
@@ -211,7 +217,7 @@ public class FiringDisplay
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(0, 8));
         
         switch (buttonLayout) {
         case 0 :
@@ -222,7 +228,7 @@ public class FiringDisplay
             panButtons.add(butTwist);
             panButtons.add(butFireMode);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butNext);
@@ -232,7 +238,7 @@ public class FiringDisplay
             panButtons.add(butSpot);
             panButtons.add(butSpace);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         }
         
@@ -339,7 +345,6 @@ public class FiringDisplay
             butMore.setEnabled(true);
             setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
             client.game.board.select(null);
-            client.game.board.highlight(null);
         }
     }
     
@@ -348,9 +353,11 @@ public class FiringDisplay
      */
     private void endMyTurn() {
         // end my turn, then.
+        Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
         if ( Game.PHASE_FIRING == client.game.getPhase()
-           && Entity.NONE!=cen
-           && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+             && null != next
+             && null != ce()
+             && next.getOwnerId() != ce().getOwnerId() ) {
             client.setDisplayVisible(false);
         };
         cen = Entity.NONE;
@@ -404,10 +411,10 @@ public class FiringDisplay
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {
-            client.cb.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+            client.systemMessage("Switched " + m.getName() + " to " + m.curMode());
         }
         else {
-            client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
+            client.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
                     " at end of turn.");
         }
 
@@ -820,6 +827,12 @@ public class FiringDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         // ignore buttons other than 1
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
@@ -847,6 +860,12 @@ public class FiringDisplay
     }
     
     public void boardHexSelected(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
             if (shiftheld) {
@@ -864,6 +883,12 @@ public class FiringDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if(client.game.getPhase() == Game.PHASE_FIRING) {
             endMyTurn();
             
@@ -876,18 +901,18 @@ public class FiringDisplay
         }
     }
     public void gamePhaseChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if(client.isMyTurn() && client.game.getPhase() != Game.PHASE_FIRING) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if(client.game.getPhase() !=  Game.PHASE_FIRING) {
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
-            client.mechD.wPan.weaponList.removeItemListener(this);
-            client.mechD.wPan.weaponList.removeKeyListener(this);
-            client.bv.removeKeyListener(this);
-            client.cb.getComponent().removeKeyListener(this);
-
+        if(client.game.getPhase() ==  Game.PHASE_FIRING) {
+            setStatusBarText("Waiting to begin Firing phase...");
         }
     }
 
@@ -895,6 +920,12 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if ( statusBarActionPerformed(ev, client) )
           return;
           
@@ -1003,6 +1034,12 @@ public class FiringDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAttacks();
             client.game.board.select(null);
@@ -1026,18 +1063,29 @@ public class FiringDisplay
         }
 */  }
     public void keyReleased(KeyEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;
         }
     }
     public void keyTyped(KeyEvent ev) {
-        ;
     }
     
     //
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if(ev.getItemSelectable() == client.mechD.wPan.weaponList) {
             // update target data in weapon display
             updateTarget();
@@ -1045,28 +1093,37 @@ public class FiringDisplay
     }
     
     // board view listener 
-	public void finishedMovingUnits(BoardViewEvent b) {
-		if (client.isMyTurn() && ce() != null) {
-	        client.setDisplayVisible(true);
-			client.bv.centerOnHex(ce().getPosition());
-		}
-	}
+    public void finishedMovingUnits(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        if (client.isMyTurn() && ce() != null) {
+            client.setDisplayVisible(true);
+            client.bv.centerOnHex(ce().getPosition());
+        }
+    }
+
     public void selectUnit(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
     	Entity e = client.game.getEntity(b.getEntityId());
     	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
-	            selectEntity(e.getId());
-    		}
+            if ( client.game.getTurn().isValidEntity(e,client.game) ) {
+                selectEntity(e.getId());
+            }
     	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
+            client.setDisplayVisible(true);
+            client.mechD.displayEntity(e);
+            if (e.isDeployed()) {
             	client.bv.centerOnHex(e.getPosition());
-    		}
+            }
     	}
     }
 
@@ -1313,7 +1370,7 @@ public class FiringDisplay
 
     // ActionListener, listens to the button in the dialog.
     public void actionPerformed(ActionEvent ev) {
-      closeDialog();
+        closeDialog();
     }
 
     // ItemListener, listens to the radiobuttons in the dialog.
@@ -1323,4 +1380,45 @@ public class FiringDisplay
       updateTarget();
     }
   }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+        client.mechD.wPan.weaponList.removeItemListener(this);
+    }
+
 }

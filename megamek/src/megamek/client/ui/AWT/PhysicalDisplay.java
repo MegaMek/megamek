@@ -20,20 +20,26 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class PhysicalDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener, GameListener, ActionListener,
-    KeyListener, BoardViewListener
+    implements BoardListener, GameListener, ActionListener, DoneButtoned,
+               KeyListener, BoardViewListener, Distractable
 {
-	public static final String PHYSICAL_PUNCH = "punch";
-	public static final String PHYSICAL_KICK = "kick";
-	public static final String PHYSICAL_CLUB = "club";
-	public static final String PHYSICAL_BRUSH_OFF = "brushOff";
-	public static final String PHYSICAL_THRASH = "thrash";
-	public static final String PHYSICAL_DODGE = "dodge";
-	public static final String PHYSICAL_PUSH = "push";
-	public static final String PHYSICAL_NEXT = "next";
+
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
+    public static final String PHYSICAL_PUNCH = "punch";
+    public static final String PHYSICAL_KICK = "kick";
+    public static final String PHYSICAL_CLUB = "club";
+    public static final String PHYSICAL_BRUSH_OFF = "brushOff";
+    public static final String PHYSICAL_THRASH = "thrash";
+    public static final String PHYSICAL_DODGE = "dodge";
+    public static final String PHYSICAL_PUSH = "push";
+    public static final String PHYSICAL_NEXT = "next";
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
@@ -151,21 +157,22 @@ public class PhysicalDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(client.bv, gridbag, c);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(client.bv, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
-        c.weightx = 1.0;    c.weighty = 0;
-        c.gridwidth = 1;
-        addBag(client.cb.getComponent(), gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
+
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
         
+        client.bv.addKeyListener( this );
         addKeyListener(this);
         
     }
@@ -178,7 +185,7 @@ public class PhysicalDisplay
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(0, 8));
         
         switch (buttonLayout) {
         case 0 :
@@ -189,7 +196,7 @@ public class PhysicalDisplay
             panButtons.add(butClub);
             panButtons.add(butSpace);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butBrush);
@@ -199,7 +206,7 @@ public class PhysicalDisplay
             panButtons.add(butSpace2);
             panButtons.add(butSpace3);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         }
         
@@ -267,9 +274,11 @@ public class PhysicalDisplay
      */
     private void endMyTurn() {
         // end my turn, then.
+        Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
         if ( Game.PHASE_PHYSICAL == client.game.getPhase()
-            && Entity.NONE!=cen
-            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+             && null != next
+             && null != ce()
+             && next.getOwnerId() != ce().getOwnerId() ) {
             client.setDisplayVisible(false);
         };
         cen = Entity.NONE;
@@ -679,6 +688,12 @@ public class PhysicalDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         // control pressed means a line of sight check.
         if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
             return;
@@ -695,6 +710,12 @@ public class PhysicalDisplay
         }
     }
     public void boardHexSelected(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.isMyTurn() && b.getCoords() != null && ce() != null) {
             final Targetable target = this.chooseTarget( b.getCoords() );
             if ( target != null ) {
@@ -774,6 +795,12 @@ public class PhysicalDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.game.getPhase() == Game.PHASE_PHYSICAL) {
             endMyTurn();
 
@@ -788,15 +815,18 @@ public class PhysicalDisplay
         }
     }
     public void gamePhaseChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_PHYSICAL) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (client.game.getPhase() !=  Game.PHASE_PHYSICAL) {
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
-            client.bv.removeKeyListener(this);
-            client.cb.getComponent().removeKeyListener(this);
+        if (client.game.getPhase() ==  Game.PHASE_PHYSICAL) {
+            setStatusBarText("Waiting to begin Physical Attack phase...");
         }
     }
 
@@ -804,6 +834,12 @@ public class PhysicalDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if ( statusBarActionPerformed(ev, client) )
           return;
           
@@ -844,6 +880,12 @@ public class PhysicalDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearattacks();
         } else if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
@@ -852,11 +894,11 @@ public class PhysicalDisplay
             }
         }
     }
+
     public void keyReleased(KeyEvent ev) {
-        ;
     }
+
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
 	//
@@ -866,21 +908,23 @@ public class PhysicalDisplay
     }
     
     public void selectUnit(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
     	Entity e = client.game.getEntity(b.getEntityId());
     	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
-	            selectEntity(e.getId());
-    		}
+            if ( client.game.getTurn().isValidEntity(e,client.game) ) {
+                selectEntity(e.getId());
+            }
     	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
+            client.setDisplayVisible(true);
+            client.mechD.displayEntity(e);
+            if (e.isDeployed()) {
             	client.bv.centerOnHex(e.getPosition());
-    		}
+            }
     	}
     }
 	
@@ -915,6 +959,45 @@ public class PhysicalDisplay
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);
         client.getMenuBar().setPhysicalNextEnabled(enabled);
+    }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
     }
 
 }

@@ -935,8 +935,6 @@ class ScenarioDialog extends Dialog implements ActionListener
     private Player[] m_players;
     private Label[] m_labels;
     private Choice[] m_typeChoices;
-    private Choice[] m_colorChoices;//killme
-    private Choice[] m_camoChoices;//killme
     private ImageButton[] m_camoButtons;
     private Frame m_frame;
 

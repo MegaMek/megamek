@@ -138,6 +138,9 @@ public class Settings
     public static String   mekHitLocLogName         = null;
     public static PrintWriter mekHitLocLog          = null;
 
+    /** The starting character for unit designations. */
+    public static char      unitStartChar            = 'A'; // == '\u0041'
+
     /**
      * Loads the settings from disk
      */
@@ -330,6 +333,10 @@ scan:
                         st.nextToken();
                         tooltipDelay = (int)st.nval;
                     }
+                    else if(key.equals("unitstartchar")) {
+                        st.nextToken();
+                        unitStartChar = (char)st.nval;
+                    }
                 }
             }
             
@@ -416,6 +423,7 @@ scan:
             }
             cw.write("showmaphexpopup " + showMapHexPopup + "\r\n");
             cw.write("tooltipdelay " + tooltipDelay + "\r\n");
+            cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());

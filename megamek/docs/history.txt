@@ -39,7 +39,8 @@ v 0.29.27 (CVS)
 + Tabs on Mech Display window made more sensitive to mouse clicking.
 + Bug 781250: MASC bug rises from the grave to attack quad mechs, buried again.
 + Made NARC missile beacon indidcation more obvious in extras tab.
-+ Bug 905261: missing minimapcolours no longer NPEs. Also, better exception handling in Client#initializeDialogs()
++ Bug 905261: missing minimapcolours no longer NPEs. Also, better exception
+        handling in Client#initializeDialogs()
 + New "SINKHOLE" MiniMap colour/setting
 + Patch 870086: mechW now stays open when the same player moves several units
 + Bug 908952: MiniMap no longer NPEs when the target is a non-Entity (woods etc)
@@ -49,6 +50,14 @@ v 0.29.27 (CVS)
 + Data 897783: New/additional images for Cerberus, Hauptmann, and Sagittaire.
 + Bug 909049: Fixed a bug with charging (Could not reach target with movement)
 + Bug 911587: My "Better NPE handling" messed up BoardEditor :(
++ Separate "Inf Move Last" and "Protos Move Last" into separate options.
++ Bug 849132: shouldn't be able to dump ammo during Deployment Phase
++ Protomechs now declare fire in Points (configured in Chat Lounge).
++ Bug 875913: "stranded" infantry can dismount at the beginning of movement
++ Bug 781660: corrected team initiative problem
++ Bug 804786, 875101: stop deallocating panels; switch between them instead
++ Use a single button row, not a panel to the left of the chat lounge.
++ Various updates to the chat lounge to make it more obvious to a new player.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

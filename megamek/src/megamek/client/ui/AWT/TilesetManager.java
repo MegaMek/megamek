@@ -193,7 +193,7 @@ public class TilesetManager {
         }
         
         // load minefield sign
-		minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
+        minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
 
         started = true;
     }

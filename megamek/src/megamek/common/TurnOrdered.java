@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -14,32 +14,66 @@
 
 package megamek.common;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public abstract class TurnOrdered implements Serializable 
 {
 
-    protected InitiativeRoll  initiative = new InitiativeRoll();    
+    private InitiativeRoll      initiative      = new InitiativeRoll();    
 
-    protected int turns_mech   = 0;
-    protected int turns_tank   = 0;
-    protected int turns_infantry_and_protomechs  = 0;
+    private transient int       turns_other     = 0;
+    private transient int       turns_last      = 0;
+    private transient int       turns_multi     = 0;
 
-    public int getMechCount() {  
-	return turns_mech;     
+    public int getOtherTurns() {  
+	return turns_other;     
     }                          
 
-    public int getTankCount() {   
-	return turns_tank;       
-    }                          
+    public int getLastTurns() {   
+	return turns_last;       
+    }
 
-    public int getInfantryAndProtomechCount() {   
-	return turns_infantry_and_protomechs;      
-    }                             
+    public int getMultiTurns() {
+        return (int) Math.ceil( ((double)turns_multi) /
+                                ((double)Game.INF_AND_PROTOS_MOVE_MULTI) );
+    }
+
+    public void incrementOtherTurns() {
+        turns_other++;
+    }
+
+    public void incrementLastTurns() {
+        turns_last++;
+    }
+
+    public void incrementMultiTurns() {
+        turns_multi++;
+    }
+
+    public void resetOtherTurns() {
+        turns_other = 0;
+    }
+
+    public void resetLastTurns() {
+        turns_last = 0;
+    }
+
+    public void resetMultiTurns() {
+        turns_multi = 0;
+    }
 
     public InitiativeRoll getInitiative() {
         return initiative;
+    }
+
+    /**
+     * Clear the initiative of this object.
+     */
+    public void clearInitiative() {
+        this.getInitiative().clear();
     }
 
     public static void rollInitiative(Vector v)
@@ -47,7 +81,7 @@ public abstract class TurnOrdered implements Serializable
         // Clear all rolls
 	for (Enumeration i = v.elements(); i.hasMoreElements();) {
 	    final TurnOrdered item = (TurnOrdered)i.nextElement();
-	    item.getInitiative().clear();
+	    item.clearInitiative();
 	}
 
 	rollInitAndResolveTies(v, null);
@@ -124,17 +158,19 @@ public abstract class TurnOrdered implements Serializable
 
 
 
-    // This takes a vector of TurnOrdered, and generates a new vector. 
-    public static TurnVectors generateTurnOrder(Vector v, boolean infAndProtosLast)
+    /**
+     * This takes a Vector of TurnOrdered and generates a TurnVector. 
+     */
+    public static TurnVectors generateTurnOrder( Vector v )
     {
-	int[] num_inf_and_proto_turns = new int[v.size()];
-	int[] num_oth_turns = new int[v.size()];
+	int[] num_last_turns = new int[v.size()];
+	int[] num_normal_turns = new int[v.size()];
        
-	int total_inf_and_proto_turns = 0;
-	int total_oth_turns = 0;
-	int idx;
+	int total_last_turns = 0;
+	int total_normal_turns = 0;
+	int index;
         TurnOrdered[] order = new TurnOrdered[v.size()];
-        int oi = 0;
+        int orderedItems = 0;
 
         com.sun.java.util.collections.ArrayList plist = 
 	    new com.sun.java.util.collections.ArrayList(v.size());
@@ -150,95 +186,94 @@ public abstract class TurnOrdered implements Serializable
             }
         });
 
-        for (com.sun.java.util.collections.Iterator i = plist.iterator(); i.hasNext();) {
+        // Walk through the ordered items.
+        for ( com.sun.java.util.collections.Iterator i = plist.iterator();
+              i.hasNext(); orderedItems++ ) {
             final TurnOrdered item = (TurnOrdered)i.next();
-            order[oi] = item;
+            order[orderedItems] = item;
 	    
-	    // If infantry/protos are last, separate them.
-            // Otherwise, place all 'turns' in one pile 
-	    if (infAndProtosLast) {
-		num_inf_and_proto_turns[oi] = item.getInfantryAndProtomechCount();
-		num_oth_turns[oi] = item.getTankCount() + item.getMechCount();
-	    } else {
-		num_inf_and_proto_turns[oi] = 0;
-		num_oth_turns[oi] = item.getTankCount() + 
-		    item.getMechCount() + item.getInfantryAndProtomechCount();
-	    }
+	    // The sum of multi-move and other turns is the "normal" turns.
+            // Track last turns separately
+            num_normal_turns[orderedItems] =
+                item.getMultiTurns() + item.getOtherTurns();
+            num_last_turns[orderedItems] = item.getLastTurns();
 
-	    total_inf_and_proto_turns += num_inf_and_proto_turns[oi];
-	    total_oth_turns += num_oth_turns[oi];
-	    oi++;
+            // Keep a running total.
+	    total_last_turns += num_last_turns[orderedItems];
+	    total_normal_turns += num_normal_turns[orderedItems];
         }	
 
 	int min;
 	int turns_left;
-	TurnVectors turns = new TurnVectors(total_oth_turns, total_inf_and_proto_turns);
-	// We will do the 'other' units first (mechs and vehicles, and
-        // if infAndProtosLast is false, infantry and protomechs)
+	TurnVectors turns =
+            new TurnVectors(total_normal_turns, total_last_turns);
 
+	// We will do the 'normal' turns first, and then the 'last' turns.
 	min = Integer.MAX_VALUE;
-	for(idx = 0; idx < oi ; idx++) {
-	    if ( num_oth_turns[idx] != 0 && num_oth_turns[idx] < min)
-		min = num_oth_turns[idx];
+	for(index = 0; index < orderedItems ; index++) {
+	    if ( num_normal_turns[index] != 0 && num_normal_turns[index] < min)
+		min = num_normal_turns[index];
 	}
 
-	turns_left = total_oth_turns;
-
-	while(turns_left > 0) {
-	    for(idx = 0; idx < oi; idx++) {
+        // Allocate the normal turns.
+	turns_left = total_normal_turns;
+	while (turns_left > 0) {
+	    for (index = 0; index < orderedItems; index++) {
 		// If you have no turns here, skip
-		if (num_oth_turns[idx] == 0)
+		if (num_normal_turns[index] == 0)
 		    continue;
 
-		/* If you have less than twice the lowest, move 1.  Otherwise, move more. */
-		int ntm = (int)Math.floor( ((double)num_oth_turns[idx]) / ((double)min) );
+		// If you have less than twice the lowest,
+                // move 1.  Otherwise, move more.
+		int ntm = num_normal_turns[index] / min;
 		for (int j = 0; j < ntm; j++) {
-		    turns.non_infantry_non_protomechs.addElement(order[idx]);
-		    num_oth_turns[idx]--;
+		    turns.addNormal(order[index]);
+		    num_normal_turns[index]--;
 		    turns_left--;
 		}
 		    
 	    }
 	    // Since the smallest unit count had to place 1, reduce min)
 	    min--;
-	}
 
-	// Now, we do the 'infantry/protomech' turns.
-	if (infAndProtosLast) {
+	} // Handle the next 'normal' turn.
+
+	// Now, we allocate the 'last' turns, if there are any.
+	if ( total_last_turns > 0 ) {
 	    
 	    min = Integer.MAX_VALUE;
-	    for(idx = 0; idx < oi ; idx++) {
-		if ( num_inf_and_proto_turns[idx] != 0 && num_inf_and_proto_turns[idx] < min)
-		    min = num_inf_and_proto_turns[idx];
+	    for (index = 0; index < orderedItems ; index++) {
+		if ( num_last_turns[index] != 0 && num_last_turns[index] < min)
+		    min = num_last_turns[index];
 	    }
 	    
-	    turns_left = total_inf_and_proto_turns;
-	    
-	    while(turns_left > 0) {
-		for(idx = 0; idx < oi; idx++) {
+	    turns_left = total_last_turns;
+	    while (turns_left > 0) {
+		for (index = 0; index < orderedItems; index++) {
 		    // If you have no turns here, skip
-		    if (num_inf_and_proto_turns[idx] == 0)
+		    if (num_last_turns[index] == 0)
 			continue;
 		    
-		    /* If you have less than twice the lowest, move 1.  Otherwise, move more. */
-		    int ntm = (int)Math.floor( ((double)num_inf_and_proto_turns[idx]) / ((double)min) );
-		    for (int j = 0; j < ntm; j++) {
-			turns.infantry_and_protomechs.addElement(order[idx]);
-			num_inf_and_proto_turns[idx]--;
-			turns_left--;
-		    }
+                    // If you have less than twice the lowest,
+                    // move 1.  Otherwise, move more.
+		    int ntm = num_last_turns[index] / min;
+                    for (int j = 0; j < ntm; j++) {
+                        turns.addLast(order[index]);
+                        num_last_turns[index]--;
+                        turns_left--;
+                    }
 		    
-		}
-		// Since the smallest unit count had to place 1, reduce min)
-		min--;
-	    }
-	}
+                }
+                // Since the smallest unit count had to place 1, reduce min)
+                min--;
+
+            }  // Handle the next 'last' turn
+
+	} // End have-'last'-turns
 
 	return turns;
 
     }
-    
-    public abstract void updateTurnCount();
 
 }
 

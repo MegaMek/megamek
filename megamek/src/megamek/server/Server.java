@@ -513,7 +513,7 @@ implements Runnable, ConnectionHandler {
 
         // make sure the game advances
         if ( game.phaseHasTurns(game.getPhase()) && null != game.getTurn() ) {
-            if (game.getTurn().getPlayerNum() == player.getId()) {
+            if ( game.getTurn().isValid( player.getId(), game ) ) {
                 sendGhostSkipMessage( player );
             }
         } else {
@@ -995,23 +995,110 @@ implements Runnable, ConnectionHandler {
     /**
      * Called when the current player has done his current turn and the turn
      * counter needs to be advanced.
-     * Also enforces the "inf_and_protos_move_multi" option.  If the
-     * player has just moved infantry/protos with a "normal" turn, adds
-     * up to Game.INF_AND_PROTOS_MOVE_MULTI - 1 more
+     * Also enforces the "protos_move_multi" and the "protos_move_multi"
+     * option.  If the player has just moved infantry/protos with a "normal"
+     * turn, adds up to Game.INF_AND_PROTOS_MOVE_MULTI - 1 more
      * infantry/proto-specific turns after the current turn.
      */
     private void endCurrentTurn(Entity entityUsed) {
-        // enforce "inf_and_protos_move_multi" option
-        boolean turnsChanged = false;
-        if (game.getOptions().booleanOption("inf_and_protos_move_multi") &&
-            (entityUsed instanceof Infantry || entityUsed instanceof Protomech)
-            && !(game.getTurn() instanceof GameTurn.OnlyInfantryAndProtomechTurn)) {
-            int playerId = game.getTurn().getPlayerNum();
-            int remaining = game.infantryAndProtomechsLeft(playerId);
-            int moreInfAndProtoTurns = Math.min(Game.INF_AND_PROTOS_MOVE_MULTI - 1, remaining);
-            for (int i = 0; i < moreInfAndProtoTurns; i++) {
 
-                GameTurn newTurn = new GameTurn.OnlyInfantryAndProtomechTurn(playerId);
+        // Enforce "inf_move_multi" and "protos_move_multi" options.
+        // The "isNormalTurn" flag is checking to see if any non-Infantry
+        // or non-Protomech units can move during the current turn.
+        boolean turnsChanged = false;
+        GameTurn turn = game.getTurn();
+        final int playerId = (null == entityUsed) ?
+            Player.PLAYER_NONE : entityUsed.getOwnerId();
+        boolean infMoved = entityUsed instanceof Infantry;
+        boolean infMoveMulti =
+            game.getOptions().booleanOption("inf_move_multi");
+        boolean protosMoved = entityUsed instanceof Protomech;
+        boolean protosMoveMulti =
+            game.getOptions().booleanOption("protos_move_multi");
+
+        // If infantry or protos move multi see if any
+        // other unit types can move in the current turn.
+        int multiMask = 0;
+        if ( infMoveMulti ) {
+            multiMask += GameTurn.CLASS_INFANTRY;
+        }
+        if ( protosMoveMulti ) {
+            multiMask += GameTurn.CLASS_PROTOMECH;
+        }
+
+        // If a proto declared fire and protos don't move
+        // multi, ignore whether infantry move or not.
+        else if ( protosMoved && game.getPhase() == Game.PHASE_FIRING ) {
+            multiMask = 0;
+        }
+
+        // Is this a general move turn?
+        boolean isGeneralMoveTurn = 
+            ( !(turn instanceof GameTurn.SpecificEntityTurn) &&
+              !(turn instanceof GameTurn.UnitNumberTurn) &&
+              !(turn instanceof GameTurn.UnloadStrandedTurn) &&
+              ( !(turn instanceof GameTurn.EntityClassTurn) ||
+                ( (turn instanceof GameTurn.EntityClassTurn) &&
+                  ( (GameTurn.EntityClassTurn) turn ).isValidClass(~multiMask)
+                  )
+                )
+              );
+
+        // Unless overridden by the "protos_move_multi" option, all Protomechs
+        // in a unit declare fire, and they don't mix with infantry.
+        if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn &&
+             game.getPhase() == Game.PHASE_FIRING ) {
+
+            // What's the unit number and ID of the entity used?
+            final char movingUnit = entityUsed.getUnitNumber();
+            final int movingId = entityUsed.getId();
+
+            // How many other Protomechs are in the unit that can fire?
+            int protoTurns = game.getSelectedEntityCount
+                ( new EntitySelector() {
+                        private final int ownerId = playerId;
+                        private final int entityId = movingId;
+                        private final char unitNum = movingUnit;
+                        public boolean accept( Entity entity ) {
+                            if ( entity instanceof Protomech &&
+                                 entity.isSelectableThisTurn(Server.this.game) &&
+                                 ownerId == entity.getOwnerId() &&
+                                 entityId != entity.getId() &&
+                                 unitNum == entity.getUnitNumber() )
+                                return true;
+                            return false;
+                        }
+                    } );
+
+            // Add the correct number of turns for the Protomech unit number.
+            for (int i = 0; i < protoTurns; i++) {
+                GameTurn newTurn = new GameTurn.UnitNumberTurn
+                    ( playerId, movingUnit );
+                game.insertNextTurn(newTurn);
+                turnsChanged = true;
+            }
+        }
+
+        // Otherwise, we may need to add turns for the "*_move_multi" options.
+        else if ( ( (infMoved && infMoveMulti) ||
+                    (protosMoved && protosMoveMulti) ) &&
+                  isGeneralMoveTurn ) {
+            int remaining = 0;
+
+            // Calculate the number of EntityClassTurns need to be added.
+            if ( infMoveMulti ) {
+                remaining += game.getInfantryLeft(playerId);
+            }
+            if ( protosMoveMulti ) {
+                remaining += game.getProtomechsLeft(playerId);
+            }
+            int moreInfAndProtoTurns =
+                Math.min(Game.INF_AND_PROTOS_MOVE_MULTI - 1, remaining);
+
+            // Add the correct number of turns for the right unit classes.
+            for (int i = 0; i < moreInfAndProtoTurns; i++) {
+                GameTurn newTurn = 
+                    new GameTurn.EntityClassTurn( playerId, multiMask );
                 game.insertNextTurn(newTurn);
                 turnsChanged = true;
             }
@@ -1617,88 +1704,144 @@ implements Runnable, ConnectionHandler {
 
     private void determineTurnOrder(int phase) {
 
-        // Reset all of the turn counts
+        // Determine whether infantry and/or Protomechs move
+        // and/or deploy last according to game options.
+        boolean infMoveLast =
+            game.getOptions().booleanOption("inf_move_last") &&
+            ( game.getPhase() != Game.PHASE_DEPLOYMENT ||
+              game.getOptions().booleanOption("inf_deploy_last") );
+        boolean infMoveMulti =
+            game.getOptions().booleanOption("inf_move_multi");
+        boolean protosMoveLast =
+            game.getOptions().booleanOption("protos_move_last") &&
+            ( game.getPhase() != Game.PHASE_DEPLOYMENT ||
+              game.getOptions().booleanOption("protos_deploy_last") );
+        boolean protosMoveMulti =
+            game.getOptions().booleanOption("protos_move_multi");
+        boolean protosFireMulti = !protosMoveMulti &&
+            game.getPhase() == Game.PHASE_FIRING;
+        int lastMask = 0;
+        if ( infMoveLast ) lastMask += GameTurn.CLASS_INFANTRY;
+        if ( protosMoveLast ) lastMask += GameTurn.CLASS_PROTOMECH;
 
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            player.resetTankCount();
-            player.resetInfantryAndProtomechCount();
-            player.resetMechCount();
-        }
+        // Reset all of the Players' turn category counts
+        for (Enumeration loop = game.getPlayers(); loop.hasMoreElements();) {
+            final Player player = (Player) loop.nextElement();
+            player.resetLastTurns();
+            player.resetMultiTurns();
+            player.resetOtherTurns();
 
-        // Go through all entities, and update the player objects
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            final Entity entity = (Entity)e.nextElement();
+            // Add turns for protomechs weapons declaration.
+            if ( protosFireMulti ) {
+
+                // How many Protomechs does the player have?
+                int numPlayerProtos = game.getSelectedEntityCount
+                    ( new EntitySelector() {
+                            private final int ownerId = player.getId();
+                            public boolean accept( Entity entity ) {
+                                if ( entity instanceof Protomech &&
+                                     ownerId == entity.getOwnerId() )
+                                    return true;
+                                return false;
+                            }
+                        } );
+                int numProtoUnits =
+                    (int) Math.ceil( ((double) numPlayerProtos) / 5.0 );
+                for ( int unit = 0; unit < numProtoUnits; unit++ ) {
+                    if ( protosMoveLast ) player.incrementLastTurns();
+                    else player.incrementOtherTurns();
+                }
+
+            } // End handle-proto-firing-turns
+
+        } // Handle the next player
+
+        // Go through all entities, and update the turn categories of the
+        // entity's player.  The teams get their totals from their players.
+        // N.B. protomechs declare weapons fire based on their point.
+        for (Enumeration loop = game.getEntities(); loop.hasMoreElements();) {
+            final Entity entity = (Entity)loop.nextElement();
             if (entity.isSelectableThisTurn(game)) {
                 final Player player = entity.getOwner();
-                if ( entity instanceof Infantry ||
-                     entity instanceof Protomech)
-                    player.incrementInfantryAndProtomechCount();
-                else if (entity instanceof Tank )
-                    player.incrementTankCount();
+                final Team team = game.getTeamForPlayer( player );
+                if ( entity instanceof Infantry ) {
+                    if ( infMoveLast ) player.incrementLastTurns();
+                    else if ( infMoveMulti ) player.incrementMultiTurns();
+                    else player.incrementOtherTurns();
+                }
+                else if ( entity instanceof Protomech ) {
+                    if ( !protosFireMulti ) {
+                        if ( protosMoveLast ) player.incrementLastTurns();
+                        else if ( protosMoveMulti ) player.incrementMultiTurns();
+                        else player.incrementOtherTurns();
+                    }
+                }
                 else
-                    player.incrementMechCount();
+                    player.incrementOtherTurns();
             }
         }
 
-        // Go through each team, update the turn count,
-        // and then generate the team order on each team.
-
-        //  This boolean determines whether infantry/protos move and/or
-        //   deploy last according to game options.
-        boolean infAndProtosLast = game.getOptions().booleanOption("inf_and_protos_move_last") && (game.getPhase() != Game.PHASE_DEPLOYMENT || game.getOptions().booleanOption("inf_and_protos_deploy_last"));
-
-        TurnVectors team_order;
-        for (Enumeration t = game.getTeams(); t.hasMoreElements(); ) {
-            final Team team = (Team)t.nextElement();
-            team.updateTurnCount();
-            team.determineTeamOrder(infAndProtosLast);
+        // Generate the turn order for the Players *within*
+        // each Team.  Map the teams to their turn orders.
+        Hashtable allTeamTurns = new Hashtable( game.getTeamsVector().size() );
+        for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
+            final Team team = (Team) loop.nextElement();
+            allTeamTurns.put( team, team.determineTeamOrder() );
         }
 
-        // Now, generate the order that the teams go in
-        team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(),
-                                                   infAndProtosLast);
+        // Now, generate the global order of all teams' turns.
+        TurnVectors team_order = TurnOrdered.generateTurnOrder
+            ( game.getTeamsVector() );
 
-        // Now, we have the order that the teams
-        // go in, and the order team goes in.
-        Vector turns = new Vector(team_order.infantry_and_protomechs.size() +
-                                  team_order.non_infantry_non_protomechs.size() );
+        // See if there are any loaded units stranded on immobile transports.
+        Enumeration strandedUnits = game.getSelectedEntities
+            ( new EntitySelector() {
+                    public boolean accept( Entity entity ) {
+                        if ( Server.this.game.isEntityStranded(entity) )
+                            return true;
+                        return false;
+                    }
+                } );
 
-        // First, the non infantry/protomechs.  We will do this by looking at
-        // first element on the team_order vector, then looking at
-        // the first element on THAT team's order list.  We will create
-        // a new turn, then remove the entry from the team's order list and
-        // the uber-turn-order list here.
-        while ( !team_order.non_infantry_non_protomechs.isEmpty() ) {
+        // Now, we collect everything into a single vector.
+        Vector turns;
+        if ( strandedUnits.hasMoreElements() ) {
+            // Add a game turn to unload stranded units.
+            turns = new Vector( team_order.getNormalTurns() +
+                                team_order.getLastTurns() + 1);
+            turns.addElement( new GameTurn.UnloadStrandedTurn(strandedUnits) );
+        } else {
+            // No stranded units.
+            turns = new Vector( team_order.getNormalTurns() +
+                                team_order.getLastTurns() );
+        }
+
+        // Walk through the global order, assigning turns
+        // for individual players to the single vector.
+        // Keep track of how many turns we've added to the vector.
+        for ( int numTurn = 0; team_order.hasMoreElements(); numTurn++ ) {
+            Team team = (Team) team_order.nextElement();
+            TurnVectors withinTeamTurns = (TurnVectors) allTeamTurns.get(team);
+            Player player = (Player) withinTeamTurns.nextElement();
+
+            // If we've added all "normal" turns, allocate turns
+            // for the infantry and/or protomechs moving last.
             GameTurn turn = null;
-            Team t = (Team)team_order.non_infantry_non_protomechs.firstElement();
-            Player p = (Player)t.getTurnOrder().non_infantry_non_protomechs.firstElement();
+            if ( numTurn >= team_order.getNormalTurns() ) {
+                turn = new GameTurn.EntityClassTurn(player.getId(), lastMask);
+            }
 
-            if (infAndProtosLast) {
-                turn = new GameTurn.NotInfantryOrProtomechTurn(p.getId());
-            } else {
-                turn = new GameTurn(p.getId());
+            // If either Infantry or Protomechs move last, only allow
+            // the other classes to move during the "normal" turn.
+            else if ( infMoveLast || protosMoveLast ) {
+                turn = new GameTurn.EntityClassTurn(player.getId(), ~lastMask);
+            }
+
+            // Otherwise, let *anybody* move.
+            else {
+                turn = new GameTurn( player.getId() );
             }
             turns.addElement(turn);
-
-            // Now, remove the entry
-            t.getTurnOrder().non_infantry_non_protomechs.removeElement(p);
-            team_order.non_infantry_non_protomechs.removeElement(t);
-        }
-
-        // Now, repeat for the infantry and protomechs
-        while ( !team_order.infantry_and_protomechs.isEmpty() ) {
-            GameTurn turn = null;
-            Team t = (Team)team_order.infantry_and_protomechs.firstElement();
-            Player p = (Player)t.getTurnOrder().infantry_and_protomechs.firstElement();
-
-            turn = new GameTurn.OnlyInfantryAndProtomechTurn(p.getId());
-            turns.addElement(turn);
-
-            // Now, remove the entry
-            t.getTurnOrder().infantry_and_protomechs.removeElement(p);
-            team_order.infantry_and_protomechs.removeElement(t);
-
         }
 
         // set fields in game
@@ -4040,8 +4183,8 @@ implements Runnable, ConnectionHandler {
         }
 
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity, game)
-        || !game.board.isLegalDeployment(coords, entity.getOwner())) {
+        if ( !game.getTurn().isValid(connId, entity, game)
+             || !game.board.isLegalDeployment(coords, entity.getOwner()) ) {
             System.err.println("error: server got invalid deployment packet");
             return;
         }
@@ -9500,7 +9643,29 @@ implements Runnable, ConnectionHandler {
      * Checks if an entity added by the client is valid and if so, adds it to the list
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
-        Entity entity = (Entity)c.getObject(0);
+        final Entity entity = (Entity)c.getObject(0);
+
+        // If we're adding a Protomech, calculate it's unit number.
+        if ( entity instanceof Protomech ) {
+
+            // How many Protomechs does the player already have?
+            int numPlayerProtos = game.getSelectedEntityCount
+                ( new EntitySelector() {
+                        private final int ownerId = entity.getOwnerId();
+                        public boolean accept( Entity entity ) {
+                            if ( entity instanceof Protomech &&
+                                 ownerId == entity.getOwnerId() )
+                                return true;
+                            return false;
+                        }
+                    } );
+
+            // According to page XXX of the BMRr, Protomechs must be
+            // deployed in full Points of five, unless "losses" have
+            // reduced the number to less that that.
+            entity.setUnitNumber( (char) (numPlayerProtos / 5) );
+
+        } // End added-Protomech
 
         // Only assign an entity ID when the client hasn't.
         if ( Entity.NONE == entity.getId() ) {
@@ -9631,12 +9796,62 @@ implements Runnable, ConnectionHandler {
      */
     private void receiveEntityDelete(Packet c, int connIndex) {
         int entityId = c.getIntValue(0);
-        Entity entity = game.getEntity(entityId);
-        if (entity != null && entity.getOwner() == getPlayer(connIndex)) {
+        final Entity entity = game.getEntity(entityId);
+
+        // Only allow players to delete their *own* entities.
+        if ( entity != null && entity.getOwner() == getPlayer(connIndex) ) {
+
+            // If we're deleting a Protomech, recalculate unit numbers.
+            if ( entity instanceof Protomech ) {
+
+                // How many Protomechs does the player have (include this one)?
+                int numPlayerProtos = game.getSelectedEntityCount
+                    ( new EntitySelector() {
+                            private final int ownerId = entity.getOwnerId();
+                            public boolean accept( Entity entity ) {
+                                if ( entity instanceof Protomech &&
+                                     ownerId == entity.getOwnerId() )
+                                    return true;
+                                return false;
+                            }
+                        } );
+
+                // According to page 54 of the BMRr, Protomechs must be
+                // deployed in full Points of five, unless "losses" have
+                // reduced the number to less that that.
+                final char oldMax =
+                    (char)(Math.ceil( ((double)numPlayerProtos) / 5.0 )-1);
+                char newMax =
+                    (char)(Math.ceil( ((double) (numPlayerProtos-1))/ 5.0 )-1);
+                char deletedUnitNum = entity.getUnitNumber();
+
+                // Do we have to update a Protomech from the last unit?
+                if ( oldMax != deletedUnitNum && oldMax != newMax ) {
+
+                    // Yup.  Find a Protomech from the last unit, and
+                    // set it's unit number to the deleted entity.
+                    Enumeration lastUnit = game.getSelectedEntities
+                        ( new EntitySelector() {
+                            private final int ownerId = entity.getOwnerId();
+                            private final char lastUnitNum = oldMax;
+                            public boolean accept( Entity entity ) {
+                                if ( entity instanceof Protomech &&
+                                     ownerId == entity.getOwnerId() &&
+                                     lastUnitNum == entity.getUnitNumber() )
+                                    return true;
+                                return false;
+                            }
+                        } );
+                    Entity lastUnitMember = (Entity) lastUnit.nextElement();
+                    lastUnitMember.setUnitNumber( deletedUnitNum );
+                    this.entityUpdate( lastUnitMember.getId() );
+
+                } // End update-unit-numbetr
+
+            } // End added-Protomech
+
             game.removeEntity(entityId, Entity.REMOVE_NEVER_JOINED);
             send(createRemoveEntityPacket(entityId, Entity.REMOVE_NEVER_JOINED));
-        } else {
-            // hey! that's not your entity
         }
     }
 
@@ -9653,6 +9868,19 @@ implements Runnable, ConnectionHandler {
 
     private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
         Player player = getPlayer(connIndex);
+        if ( Game.PHASE_INITIATIVE != game.getPhase() ) {
+            StringBuffer message = new StringBuffer();
+            if ( null == player ) {
+                message.append( "Player #" )
+                    .append( connIndex );
+            } else {
+                message.append( player.getName() );
+            }
+            message.append( " is not allowed to ask for a reroll at this time." );
+            System.err.println( message.toString() );
+            sendServerChat( message.toString() );
+            return;
+        }
         if (game.hasTacticalGenius(player)) {
             game.addInitiativeRerollRequest(game.getTeamForPlayer(player));
         }
@@ -10177,6 +10405,9 @@ implements Runnable, ConnectionHandler {
                 temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 temp.removeUnavailable();
                 send(connId, createMapQueryPacket(temp));
+                break;
+            case Packet.COMMAND_UNLOAD_STRANDED :
+                receiveUnloadStranded(packet, connId);
                 break;
         }
     }
@@ -10824,6 +11055,155 @@ implements Runnable, ConnectionHandler {
 
         }
         return buffer.toString();
+    }
+
+    /**
+     * Receives an packet to unload entityis stranded on immobile transports,
+     * and queue all valid requests for execution.  If all players that have
+     * stranded entities have answered, executes the pending requests and end
+     * the current turn.
+     */
+    private void receiveUnloadStranded( Packet packet, int connId ) {
+        GameTurn.UnloadStrandedTurn turn = null;
+        final Player player = game.getPlayer( connId );
+        int[] entityIds = (int[]) packet.getObject(0);
+        Vector declared = null;
+        Player other = null;
+        Enumeration pending = null;
+        UnloadStrandedAction action = null;
+        Entity entity = null;
+
+        // Is this the right phase?
+        if (game.getPhase() != Game.PHASE_MOVEMENT) {
+            System.err.println
+                ("error: server got unload stranded packet in wrong phase");
+            return;
+        }
+
+        // Are we in an "unload stranded entities" turn?
+        if ( game.getTurn() instanceof GameTurn.UnloadStrandedTurn ) {
+            turn = (GameTurn.UnloadStrandedTurn) game.getTurn();
+        } else {
+            System.err.println
+                ("error: server got unload stranded packet out of sequence");
+            StringBuffer message = new StringBuffer();
+            message.append( player.getName() )
+                .append( " should not be sending 'unload stranded entity' packets at this time." );
+            sendServerChat( message.toString() );
+            return;
+        }
+
+        // Can this player act right now?
+        if (!turn.isValid(connId, game)) {
+            System.err.println
+                ("error: server got unload stranded packet from invalid player");
+            StringBuffer message = new StringBuffer();
+            message.append( player.getName() )
+                .append( " should not be sending 'unload stranded entity' packets." );
+            sendServerChat( message.toString() );
+            return;
+        }
+
+        // Did the player already send an 'unload' request?
+        // N.B. we're also building the list of players who
+        //      have declared their "unload stranded" actions.
+        declared = new Vector();
+        pending = game.getActions();
+        while ( pending.hasMoreElements() ) {
+            action = (UnloadStrandedAction) pending.nextElement();
+            if ( action.getPlayerId() == connId ) {
+                System.err.println("error: server got multiple unload stranded packets from player");
+                StringBuffer message = new StringBuffer();
+                message.append( player.getName() )
+                    .append( " should not send multiple 'unload stranded entity' packets." );
+                sendServerChat( message.toString() );
+                return;
+            } else {
+                // This player is not from the current connection.
+                // Record this player to determine if this turn is done.
+                other = game.getPlayer( action.getPlayerId() );
+                if ( !declared.contains( other ) ) {
+                    declared.addElement( other );
+                }
+            }
+        } // Handle the next "unload stranded" action.
+
+        // Make sure the player selected at least *one* valid entity ID.
+        boolean foundValid = false;
+        for ( int index = 0; null != entityIds && index < entityIds.length;
+              index++ ) {
+            entity = game.getEntity( entityIds[index] );
+            if (!game.getTurn().isValid(connId, entity, game)) {
+                System.err.println("error: server got unload stranded packet for invalid entity");
+                StringBuffer message = new StringBuffer();
+                message.append( player.getName() )
+                    .append( " can not unload stranded entity " );
+                if ( null == entity ) {
+                    message.append( "#" )
+                        .append( entityIds[index] );
+                } else {
+                    message.append( entity.getDisplayName() );
+                }
+                message.append( " at this time." );
+                sendServerChat( message.toString() );
+            } else {
+                foundValid = true;
+                game.addAction( new UnloadStrandedAction( connId, 
+                                                          entityIds[index] ) );
+            }
+        }
+
+        // Did the player choose not to unload any valid stranded entity?
+        if ( !foundValid ) {
+            game.addAction( new UnloadStrandedAction( connId, Entity.NONE ) );
+        }
+
+        // Either way, the connection's player has now declared.
+        declared.addElement( player );
+
+        // Are all players who are unloading entities done? Walk
+        // through the turn's stranded entities, and look to see
+        // if their player has finished their turn.
+        entityIds = turn.getEntityIds();
+        for ( int index = 0; index < entityIds.length; index++ ) {
+            entity = game.getEntity( entityIds[index] );
+            other = entity.getOwner();
+            if ( !declared.contains( other ) ) {
+                // At least one player still needs to declare.
+                return;
+            }
+        }
+
+        // All players have declared whether they're unloading stranded units.
+        // Walk the list of pending actions and unload the entities.
+        pending = game.getActions();
+        while ( pending.hasMoreElements() ) {
+            action = (UnloadStrandedAction) pending.nextElement();
+
+            // Some players don't want to unload any stranded units.
+            if ( Entity.NONE != action.getEntityId() ) {
+                entity = game.getEntity( action.getEntityId() );
+                if ( null == entity ) {
+                    // After all this, we couldn't find the entity!!!
+                    System.err.print
+                        ("error: server could not find stranded entity #");
+                    System.err.print( action.getEntityId() );
+                    System.err.println( " to unload!!!");
+                } else {
+                    // Unload the entity.  Get the unit's transporter.
+                    Entity transporter =
+                        game.getEntity( entity.getTransportId() );
+                    this.unloadUnit( transporter, entity,
+                                     transporter.getPosition(), 
+                                     transporter.getFacing() );
+                }
+            }
+
+        } // Handle the next pending unload action
+
+        // Clear the list of pending units and move to the next turn.
+        game.resetActions();
+        changeToNextTurn();
     }
 
 }

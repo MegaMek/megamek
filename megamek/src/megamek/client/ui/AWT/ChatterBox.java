@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -35,7 +35,8 @@ implements GameListener, KeyListener {
     public Panel chatPanel;
     private TextArea            chatArea;
     private List                playerList;
-    private TextField        inputField;
+    private TextField           inputField;
+    private Button              butDone;
     
     public ChatterBox(Client client) {
         this.client = client;
@@ -46,12 +47,17 @@ implements GameListener, KeyListener {
         playerList = new List();
         inputField = new TextField();
         inputField.addKeyListener(this);
-        
+        butDone = new Button( "I'm Done" );
+        butDone.setEnabled( false );
+
         chatPanel = new Panel(new BorderLayout());
-        
-        chatPanel.add(chatArea, BorderLayout.CENTER);
-        chatPanel.add(playerList, BorderLayout.WEST);
-        chatPanel.add(inputField, BorderLayout.SOUTH);
+
+        Panel subPanel = new Panel( new BorderLayout() );        
+        subPanel.add(chatArea, BorderLayout.CENTER);
+        subPanel.add(playerList, BorderLayout.WEST);
+        subPanel.add(inputField, BorderLayout.SOUTH);
+        chatPanel.add(subPanel, BorderLayout.CENTER);
+        chatPanel.add(butDone, BorderLayout.EAST );
         
     }
     
@@ -92,9 +98,25 @@ implements GameListener, KeyListener {
     public Component getComponent() {
         return chatPanel;
     }
-    
-    public void systemMessage(String s) {
-        chatArea.append("\nMegaMek: " + s);
+
+    /**
+     * Display a system message in the chat box.
+     *
+     * @param   message the <code>String</code> message to be shown.
+     */
+    public void systemMessage( String message ) {
+        chatArea.append("\nMegaMek: " + message);
+    }
+
+    /**
+     * Replace the "Done" button in the chat box.
+     *
+     * @param   button the <code>Button</code> that should be used for "Done".
+     */
+    public void setDoneButton( Button button ) {
+        chatPanel.remove( butDone );
+        butDone = button;
+        chatPanel.add( butDone, BorderLayout.EAST );
     }
     
     //

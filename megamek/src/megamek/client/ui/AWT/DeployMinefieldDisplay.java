@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -20,16 +20,21 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class DeployMinefieldDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener,
-    KeyListener, GameListener
-{    
-	// Action command names
-	public static final String DEPLOY_MINE_CONV        = "deployMineConv";
-	public static final String DEPLOY_MINE_COM         = "deployMineCom";
-	public static final String DEPLOY_MINE_VIBRA       = "deployMineVibra";
+    implements BoardListener,  ActionListener, DoneButtoned,
+               KeyListener, GameListener, Distractable
+{
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
+    // Action command names
+    public static final String DEPLOY_MINE_CONV        = "deployMineConv";
+    public static final String DEPLOY_MINE_COM         = "deployMineCom";
+    public static final String DEPLOY_MINE_VIBRA       = "deployMineVibra";
 
     // parent game
     public Client client;
@@ -39,10 +44,10 @@ public class DeployMinefieldDisplay
     
     private Button            butC;
     private Button            butM;
-    private Button            butSpace;
-    private Button            butSpace1;
-    private Button            butSpace2;
-    private Button            butSpace3;
+//     private Button            butSpace;
+//     private Button            butSpace1;
+//     private Button            butSpace2;
+//     private Button            butSpace3;
     private Button            butV;
     private Button            butUnload;
     private Button            butDone;
@@ -76,15 +81,15 @@ public class DeployMinefieldDisplay
         butM.addActionListener(this);
         butM.setActionCommand(DEPLOY_MINE_CONV);
         butM.setEnabled(false);
-                        
-        butSpace = new Button(".");
-        butSpace.setEnabled(false);
-        butSpace1 = new Button(".");
-        butSpace1.setEnabled(false);
-        butSpace2 = new Button(".");
-        butSpace2.setEnabled(false);
-        butSpace3 = new Button(".");
-        butSpace3.setEnabled(false);
+
+//         butSpace = new Button(".");
+//         butSpace.setEnabled(false);
+//         butSpace1 = new Button(".");
+//         butSpace1.setEnabled(false);
+//         butSpace2 = new Button(".");
+//         butSpace2.setEnabled(false);
+//         butSpace3 = new Button(".");
+//         butSpace3.setEnabled(false);
 
         butC = new Button("Command(" + p.getNbrMFCommand() + ")");
         butC.addActionListener(this);
@@ -106,15 +111,15 @@ public class DeployMinefieldDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(0, 8));
         panButtons.add(butM);
         panButtons.add(butC);
         panButtons.add(butV);
-        panButtons.add(butSpace);
-        panButtons.add(butSpace1);
-        panButtons.add(butSpace2);
-        panButtons.add(butSpace3);
-        panButtons.add(butDone);
+//         panButtons.add(butSpace);
+//         panButtons.add(butSpace1);
+//         panButtons.add(butSpace2);
+//         panButtons.add(butSpace3);
+//         panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -124,21 +129,22 @@ public class DeployMinefieldDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(client.bv, gridbag, c);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(client.bv, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
-        c.weightx = 1.0;    c.weighty = 0;
-        c.gridwidth = 1;
-        addBag(client.cb.getComponent(), gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
 
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
+
+        client.bv.addKeyListener( this );
         addKeyListener(this);
     }
     
@@ -265,6 +271,12 @@ public class DeployMinefieldDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
             return;
         }
@@ -286,6 +298,12 @@ public class DeployMinefieldDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         endMyTurn();
 
         if (client.isMyTurn()) {
@@ -298,14 +316,18 @@ public class DeployMinefieldDisplay
     }
 
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
-            if (client.isMyTurn()) {
-                endMyTurn();
-            }
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
-            client.bv.removeKeyListener(this);
-            client.cb.getComponent().removeKeyListener(this);
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        if ( client.isMyTurn() &&
+             client.game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS ) {
+            endMyTurn();
+        }
+        if (client.game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {
+            setStatusBarText("Waiting to begin Deployment phase...");
         }
     }
 
@@ -313,6 +335,12 @@ public class DeployMinefieldDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if ( statusBarActionPerformed(ev, client) )
           return;
           
@@ -354,22 +382,61 @@ public class DeployMinefieldDisplay
     }
 
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
-	private void setConventionalEnabled(int nbr) {
+    private void setConventionalEnabled(int nbr) {
         butM.setLabel("Minefield(" + nbr + ")");
        	butM.setEnabled(nbr > 0);
         client.getMenuBar().setDeployConventionalEnabled(nbr);
-	}
-	private void setCommandEnabled(int nbr) {
+    }
+    private void setCommandEnabled(int nbr) {
         butC.setLabel("Command(" + nbr + ")");
        	butC.setEnabled(nbr > 0);
         client.getMenuBar().setDeployCommandEnabled(nbr);
-	}
-	private void setVibrabombEnabled(int nbr) {
+    }
+    private void setVibrabombEnabled(int nbr) {
         butV.setLabel("Vibrabomb(" + nbr + ")");
        	butV.setEnabled(nbr > 0);
         client.getMenuBar().setDeployVibrabombEnabled(nbr);
-	}
+    }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+    }
+
 }

@@ -73,6 +73,7 @@ public class Mech
     
     // rear armor
     private int[] rearArmor;
+    private int[] orig_rearArmor;
     
     /**
      * Construct a new, blank, mech.
@@ -81,10 +82,11 @@ public class Mech
         super();
         
         rearArmor = new int[locations()];
+        orig_rearArmor = new int[locations()];
         
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
-                setArmor(ARMOR_NA, i, true);
+              initializeRearArmor(ARMOR_NA, i);
             }
         }
 
@@ -355,6 +357,18 @@ public class Mech
     }
 
     /**
+     * Returns the original amount of armor in the location specified.  Mech version,
+     * handles rear armor.
+     */
+    public int getOArmor(int loc, boolean rear) {
+        if (rear && hasRearArmor(loc)) {
+            return orig_rearArmor[loc];
+        } else {
+            return super.getOArmor(loc, rear);
+        }
+    }
+
+    /**
      * Sets the amount of armor in the location specified.  Mech version, handles
      * rear armor.
      */
@@ -366,6 +380,15 @@ public class Mech
         }
     }
 
+    /**
+     * Initializes the rear armor on the mech. Sets the original and starting point
+     * of the armor to the same number.
+     */
+      public void initializeRearArmor(int val, int loc) {
+        orig_rearArmor[loc] = val;
+        setArmor(val, loc, true);
+      }
+      
     /**
      * Returns the name of the location specified.
      */
@@ -688,32 +711,6 @@ public class Mech
     }
     
     /**
-     * Sets the armor for the mech.
-     * 
-     * @param head head
-     * @param ct center torso
-     * @param ctr center torso rear
-     * @param t right/left torso
-     * @param tr right/left torso rear
-     * @param arm right/left arm
-     * @param leg right/left leg
-     */
-    public void setArmor(int head, int ct, int ctr, int t, 
-                         int tr, int arm, int leg) {
-        armor[LOC_HEAD] = head;
-        armor[LOC_CT] = ct;
-        rearArmor[LOC_CT] = ctr;
-        armor[LOC_RT] = t;
-        armor[LOC_LT] = t;
-        rearArmor[LOC_RT] = tr;
-        rearArmor[LOC_LT] = tr;
-        armor[LOC_RARM] = arm;
-        armor[LOC_LARM] = arm;
-        armor[LOC_RLEG] = leg;
-        armor[LOC_LLEG] = leg;
-    }
-    
-    /**
      * Sets the internal structure for the mech.
      * 
      * @param head head
@@ -723,14 +720,14 @@ public class Mech
      * @param leg right/left leg
      */
     public void setInternal(int head, int ct, int t, int arm, int leg) {
-        internal[LOC_HEAD] = head;
-        internal[LOC_CT] = ct;
-        internal[LOC_RT] = t;
-        internal[LOC_LT] = t;
-        internal[LOC_RARM] = arm;
-        internal[LOC_LARM] = arm;
-        internal[LOC_RLEG] = leg;
-        internal[LOC_LLEG] = leg;
+      initializeInternal(head, LOC_HEAD);
+      initializeInternal(ct, LOC_CT);
+      initializeInternal(t, LOC_RT);
+      initializeInternal(t, LOC_LT);
+      initializeInternal(arm, LOC_RARM);
+      initializeInternal(arm, LOC_LARM);
+      initializeInternal(leg, LOC_RLEG);
+      initializeInternal(leg, LOC_LLEG);
     }
     
     /**

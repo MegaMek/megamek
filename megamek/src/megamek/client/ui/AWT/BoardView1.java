@@ -1189,6 +1189,13 @@ public class BoardView1
                             strings[stringsIndex] = "Vibrabomb minefield" + owner;
                         }
                         break;
+                    case (Minefield.TYPE_THUNDER_ACTIVE) :
+                    	strings[stringsIndex] = "Thunder-Active minefield(" + mf.getDamage() + ")" + owner;
+                    	break;
+					case (Minefield.TYPE_THUNDER_INFERNO) :
+						strings[stringsIndex] = "Thunder-Inferno minefield(" + mf.getDamage() + ")" + owner;
+						break;
+                    	
                     }
                     stringsIndex++;
                 }

@@ -59,7 +59,7 @@ public final class Team extends TurnOrdered implements Serializable
     {
         turns_mech = 0;
         turns_tank = 0;
-        turns_infantry = 0;
+        turns_infantry_and_protomechs = 0;
 
         for (Enumeration i = players.elements(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
@@ -68,14 +68,14 @@ public final class Team extends TurnOrdered implements Serializable
 
             turns_mech += player.getMechCount();
             turns_tank += player.getTankCount();
-            turns_infantry += player.getInfantryCount();
+            turns_infantry_and_protomechs += player.getInfantryAndProtomechCount();
         }
     }
 
-    public void determineTeamOrder(boolean infLast)
+    public void determineTeamOrder(boolean infAndProtosLast)
     {
         TurnOrdered.rollInitiative(players);
-        team_order = TurnOrdered.generateTurnOrder(players, infLast);
+        team_order = TurnOrdered.generateTurnOrder(players, infAndProtosLast);
     }
 
     public void resetTurnOrder()

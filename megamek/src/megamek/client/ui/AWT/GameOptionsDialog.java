@@ -222,16 +222,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         panOptions.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
 
-        if (option.getShortName().equals("inf_deploy_last")) {
-            if (!(options.getOption("inf_move_last")).booleanValue() || !editable) {
+        if (option.getShortName().equals("inf_and_protos_deploy_last")) {
+            if (!(options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("inf_move_multi")) {
-            if ((options.getOption("inf_move_last")).booleanValue() || !editable) {
+        } else if (option.getShortName().equals("inf_and_protos_move_multi")) {
+            if ((options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("inf_move_last")) {
-            if ((options.getOption("inf_move_multi")).booleanValue() || !editable) {
+        } else if (option.getShortName().equals("inf_and_protos_move_last")) {
+            if ((options.getOption("inf_and_protos_move_multi")).booleanValue() || !editable) {
                 optionComp.setEditable(false);
             }
         } else {
@@ -249,22 +249,22 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     //  Arguments are the GameOption object and the true/false
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state) {
-        if (option.getShortName().equals("inf_move_last")) {
+        if (option.getShortName().equals("inf_and_protos_move_last")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_deploy_last")) {
+                if (comp_i.option.getShortName().equals("inf_and_protos_deploy_last")) {
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
-                if (comp_i.option.getShortName().equals("inf_move_multi")) {
+                if (comp_i.option.getShortName().equals("inf_and_protos_move_multi")) {
                     comp_i.setEditable(!state);
                 }
             }
         }
-        if (option.getShortName().equals("inf_move_multi")) {
+        if (option.getShortName().equals("inf_and_protos_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_move_last")) {
+                if (comp_i.option.getShortName().equals("inf_and_protos_move_last")) {
                     comp_i.setEditable(!state);
                 }
             }

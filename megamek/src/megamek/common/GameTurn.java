@@ -93,34 +93,34 @@ public class GameTurn implements Serializable {
     }
     
     /**
-     * A type of game turn that allows only infantry to move
+     * A type of game turn that allows only infantry and protomechs to move
      */
-    public static class OnlyInfantryTurn extends GameTurn {
-        public OnlyInfantryTurn(int playerId) {
+    public static class OnlyInfantryAndProtomechTurn extends GameTurn {
+        public OnlyInfantryAndProtomechTurn(int playerId) {
             super(playerId);
         }
         
         /**
-         * Returns true if the entity is normally valid and it is infantry.
+         * Returns true if the entity is normally valid and it is infantry or protomech.
          */
         public boolean isValidEntity(Entity entity, Game game) {
-            return super.isValidEntity(entity, game) && entity instanceof Infantry;
+            return super.isValidEntity(entity, game) && (entity instanceof Infantry || entity instanceof Protomech);
         }
     }
     
     /**
      * A type of game turn that allows anything except infantry to move
      */
-    public static class NotInfantryTurn extends GameTurn {
-        public NotInfantryTurn(int playerId) {
+    public static class NotInfantryOrProtomechTurn extends GameTurn {
+        public NotInfantryOrProtomechTurn(int playerId) {
             super(playerId);
         }
         
         /**
-         * Returns true if the entity is normally valid and it is not infantry.
+         * Returns true if the entity is normally valid and it is not infantry or protomech.
          */
         public boolean isValidEntity(Entity entity, Game game) {
-            return super.isValidEntity(entity, game) && !(entity instanceof Infantry);
+            return super.isValidEntity(entity, game) && !(entity instanceof Infantry || entity instanceof Protomech);
         }
     }
 }

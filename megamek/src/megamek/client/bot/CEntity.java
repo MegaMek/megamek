@@ -7,7 +7,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
-import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Tank;
@@ -47,6 +46,28 @@ public class CEntity {
             return (CEntity) get(new Integer(id));
         }
     }
+
+    final static double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 }, {
+            0, 0, 0, 0, 1.0 }, {
+            0, 0, 0, 1.0, 0 }, {
+            0, 0, 1.0, 0, 0 }
+    };
+    final static double TANK_WT_ARMOR[][] = { { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 }, {
+            0, 0, 0, 0, 31.0 / 36, 5.0 / 36 }, {
+            0, 0, 0, 31.0 / 36, 0, 5.0 / 36 }, {
+            0, 0, 31.0 / 36, 0, 0, 5.0 / 36 }
+    };
+    final static double INFANTRY_ARMOR[][] = { { 1.0 }, {
+            1.0 }, {
+            1.0 }, {
+            1.0 }
+    };
+    final static double mech_armor[][] =
+        { { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
+            1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
+            1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36 }, {
+            1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36, 2.0 / 36 }
+    };
 
     //some helpful constants
     public static final int MAX_RANGE = 24;
@@ -125,8 +146,8 @@ public class CEntity {
     boolean engaged = false; //am i fighting
     boolean moved = false;
     boolean justMoved = false;
-    
-	int[] minRangeMods = new int[7];
+
+    int[] minRangeMods = new int[7];
 
     public CEntity(Entity en, TestBot tb) {
         this.entity = en;
@@ -253,137 +274,26 @@ public class CEntity {
         }
         //only worries about external armor
         double max = 1;
-        for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
-            int total = 0;
-            int points = 0;
-            int temp[] = null;
-            boolean rear = false;
-            if (this.entity instanceof Tank) {
-                switch (arc) {
-                    case ToHitData.SIDE_FRONT :
-                        temp = this.getArmorValues(Tank.LOC_FRONT, false);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        break;
-                    case ToHitData.SIDE_REAR :
-                        temp = this.getArmorValues(Tank.LOC_REAR, false);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        break;
-                    case ToHitData.SIDE_RIGHT :
-                        temp = this.getArmorValues(Tank.LOC_RIGHT, false);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        break;
-                    case ToHitData.SIDE_LEFT :
-                        temp = this.getArmorValues(Tank.LOC_LEFT, false);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        break;
-                }
-            } else if (this.entity instanceof Infantry) {
-                for (int i = 0; i < this.entity.locations(); i++) {
-                    temp = this.getArmorValues(i, false);
-                    total += 2 * temp[0];
-                    points += 2 * temp[1];
-                }
+        double armor[][] = mech_armor;
+        if (this.entity instanceof Tank) {
+            if (((Tank) entity).hasNoTurret()) {
+                armor = TANK_ARMOR;
             } else {
-                switch (arc) {
-                    case ToHitData.SIDE_REAR :
-                        rear = true;
-                    case ToHitData.SIDE_FRONT :
-                        temp = this.getArmorValues(Mech.LOC_CT, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RARM, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RLEG, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LLEG, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LARM, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_HEAD, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        break;
-                    case ToHitData.SIDE_LEFT :
-                        temp = this.getArmorValues(Mech.LOC_CT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RARM, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RLEG, rear);
-                        this.leg_health[RIGHT_LEG] = temp[0] / entity.getOArmor(Mech.LOC_RLEG);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LT, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LLEG, rear);
-                        this.leg_health[LEFT_LEG] = temp[0] / entity.getOArmor(Mech.LOC_LLEG);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LARM, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_HEAD, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        break;
-                    case ToHitData.SIDE_RIGHT :
-                        temp = this.getArmorValues(Mech.LOC_CT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RARM, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RLEG, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_RT, rear);
-                        total += 2 * temp[0];
-                        points += 2 * temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LT, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LLEG, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_LARM, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        temp = this.getArmorValues(Mech.LOC_HEAD, rear);
-                        total += temp[0];
-                        points += temp[1];
-                        break;
-                }
+                armor = TANK_WT_ARMOR;
             }
-            int max_points = 22*11;
-            if (entity instanceof Infantry) {
-                max_points = 4;
-            } else if (entity instanceof Tank) {
-                max_points = 4;
+        } else if (this.entity instanceof Infantry) {
+            armor = INFANTRY_ARMOR;
+        }
+        for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
+            double total = 0;
+            for (int i = 0; i < armor[arc].length; i++) {
+                total += armor[arc][i] * getArmorValue(i, arc == SIDE_REAR);
             }
-            this.armor_health[arc] = ((double) total * points) / max_points;
+            this.armor_health[arc] = total;
             max = Math.max(armor_health[arc], max);
         }
-		this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
-		this.avg_iarmor = this.entity.getTotalInternal() / 5;
+        this.avg_armor = (armor_health[0] + armor_health[1] + armor_health[2] + armor_health[3]) / 4;
+        this.avg_iarmor = this.entity.getTotalInternal() / 5;
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
             this.armor_percent[arc] = this.armor_health[arc] / max;
         }
@@ -437,19 +347,13 @@ public class CEntity {
         }
     }
 
-    /**
-     * Helper method to return point and actual values for armor
-     */
-    protected int[] getArmorValues(int loc, boolean rear) {
-        int[] result = new int[2];
-        result[0] = this.entity.getArmor(loc, rear);
-		double percent = result[0] / this.entity.getOArmor(loc, rear);
+    protected double getArmorValue(int loc, boolean rear) {
+        double result = entity.getArmor(loc, rear);
+        double percent = result / entity.getOArmor(loc, rear);
         if (percent < .25) {
-            result[1] = 0;
+            result *= .5;
         } else if (percent < .60) {
-            result[1] = 1;
-        } else {
-            result[1] = 2;
+            result *= .8;
         }
         return result;
     }
@@ -512,7 +416,7 @@ public class CEntity {
         MoveOption.Table discovered = new MoveOption.Table();
 
         if (entity.getJumpMPWithTerrain() > 0) {
-            possible.add(((MovePath)base.clone()).addStep(MovePath.STEP_START_JUMP));
+            possible.add(((MovePath) base.clone()).addStep(MovePath.STEP_START_JUMP));
         }
 
         possible.add(base);
@@ -683,7 +587,7 @@ public class CEntity {
         }
         return 0;
     }
-    
+
     public boolean equals(Object obj) {
         if (obj instanceof Entity || obj instanceof CEntity) {
             return obj.hashCode() == hashCode();

@@ -44,7 +44,8 @@ import megamek.client.FiringDisplay;
  */
 public abstract class Weapon extends WeaponType {
 	public AttackHandler fire(WeaponAttackAction waa, Game g) {
-		return new WeaponHandler();
+		ToHitData toHit=this.toHit(waa,g);
+		
 	}
 	public ToHitData toHit(WeaponAttackAction waa, Game game) {
 		Targetable target = waa.getTarget(game);

@@ -11270,14 +11270,24 @@ implements Runnable, ConnectionHandler {
      */
     private void send(int connId, Packet packet) {
         packet.zipData();
-        getClient(connId).send(packet);
+        if (getClient(connId) != null) {
+            getClient(connId).send(packet);
+        } else {
+            //What should we do if we've lost this client?
+            // For now, nothing.
+        }
     }
 
     /**
      * Send a packet to a pending connection
      */
     private void sendToPending(int connId, Packet packet) {
-        getPendingConnection(connId).send(packet);
+        if (getPendingConnection(connId) != null) {
+            getPendingConnection(connId).send(packet);
+        } else {
+            //What should we do if we've lost this client?
+            // For now, nothing.
+        }
     }
 
     /**

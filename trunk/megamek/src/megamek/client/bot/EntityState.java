@@ -249,7 +249,11 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId,
                                                 lastPos, curPos,
                                                 moveType, isTurning,
+                                                overallMoveType, 
+                                                lastStepOnPavement)
+            /* Bug 754610: Revert fix for bug 702735.
                                                 overallMoveType)
+            */
                   || step_type == MovementData.STEP_GET_UP);
 
       // Record if we're turning *after* check for danger,

@@ -54,6 +54,8 @@ public class Client extends Panel
     // some info about us and the server
     private boolean             connected = false;
     public int                  local_pn = -1;
+    private int                 connFailures = 0;
+    private static final int    MAX_CONN_FAILURES = 100;
 
     // the game state object
     public Game                 game = new Game();
@@ -488,6 +490,11 @@ public class Client extends Panel
      * Shuts down threads and sockets
      */
     public void die() {
+
+        // If we're still connected, tell the server that we're going down.
+        if ( connected ) {
+            send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+        }
         connected = false;
         pump = null;
 
@@ -554,11 +561,14 @@ public class Client extends Panel
      * The client has become disconnected from the server
      */
     protected void disconnected() {
-        AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
-        alert.show();
-
-        frame.setVisible(false);
-        die();
+        if ( connected ) {
+            connected = false;
+            AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
+            alert.show();
+            
+            frame.setVisible(false);
+            die();
+        }
     }
 
     /**
@@ -1636,10 +1646,18 @@ public class Client extends Panel
             }
             Packet packet = (Packet)in.readObject();
 //            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
+
+            // All went well.  Reset the failure count.
+            this.connFailures = 0;
             return packet;
         } catch (SocketException ex) {
         	// assume client is shutting down
-            System.err.println("client: Socket error (client closed?)");
+            System.err.println("client: Socket error (server closed?)");
+            if ( this.connFailures > MAX_CONN_FAILURES ) {
+                disconnected();
+            } else {
+                this.connFailures++;
+            }
             return null;
         } catch (IOException ex) {
             System.err.println("client: IO error reading command:");
@@ -1647,7 +1665,7 @@ public class Client extends Panel
             return null;
         } catch (ClassNotFoundException ex) {
             System.err.println("client: class not found error reading command:");
-			ex.printStackTrace();
+            ex.printStackTrace();
             disconnected();
             return null;
         }
@@ -1686,6 +1704,9 @@ public class Client extends Panel
             }
             // obey command
             switch(c.getCommand()) {
+            case Packet.COMMAND_CLOSE_CONNECTION :
+                disconnected();
+                break;
             case Packet.COMMAND_SERVER_GREETING :
                 connected = true;
                 send(new Packet(Packet.COMMAND_CLIENT_NAME, name));

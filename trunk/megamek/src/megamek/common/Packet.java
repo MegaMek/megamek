@@ -25,6 +25,7 @@ import java.util.zip.*;
  */
 public class Packet
 implements Serializable {
+    public static final int        COMMAND_CLOSE_CONNECTION     = 0;
     public static final int        COMMAND_SERVER_GREETING      = 1;
     public static final int        COMMAND_CLIENT_NAME          = 2;
     public static final int        COMMAND_LOCAL_PN             = 3;

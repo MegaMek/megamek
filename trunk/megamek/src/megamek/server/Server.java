@@ -215,6 +215,13 @@ implements Runnable, ConnectionHandler {
         }
         connectionsPending.removeAllElements();
 
+        // Send "kill" commands to all connections
+        // N.B. I may be starting a race here.
+        for (Enumeration i = connections.elements(); i.hasMoreElements();) {
+            final Connection conn = (Connection)i.nextElement();
+            send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+        }
+
         // kill active connnections
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
@@ -10319,6 +10326,10 @@ implements Runnable, ConnectionHandler {
         }
         // act on it
         switch(packet.getCommand()) {
+            case Packet.COMMAND_CLOSE_CONNECTION :
+                // We have a client going down!
+                this.disconnected( this.getConnection(connId) );
+                break;
             case Packet.COMMAND_CLIENT_NAME :
                 receivePlayerName(packet, connId);
                 break;

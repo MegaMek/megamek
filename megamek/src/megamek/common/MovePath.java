@@ -184,6 +184,10 @@ public class MovePath implements Serializable {
         }
     }
 
+    public void clear() {
+        steps.removeAllElements();
+    }
+
     public Enumeration getSteps() {
         return steps.elements();
     }

@@ -2485,7 +2485,7 @@ implements Runnable, ConnectionHandler {
         if (entity instanceof Mech) {
             if (((Mech)entity).checkForMASCFailure(phaseReport,md)) {
                 // no movement after that
-                return;
+                md.clear();
             }
         }
 

@@ -602,16 +602,20 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Change local player color.
      */
     public void changeColor(int nc) {
-        client.getLocalPlayer().setColorIndex(nc);
-        client.sendPlayerInfo();
+        if (client.getLocalPlayer().getColorIndex() != nc) {
+            client.getLocalPlayer().setColorIndex(nc);
+            client.sendPlayerInfo();
+        }
     }
   
     /**
      * Change local player team.
      */
     public void changeTeam(int team) {
-        client.getLocalPlayer().setTeam(team);
-        client.sendPlayerInfo();
+        if (client.getLocalPlayer().getTeam() != team) {
+            client.getLocalPlayer().setTeam(team);
+            client.sendPlayerInfo();
+        }
     }
     
     /**

@@ -585,7 +585,7 @@ public class ClientGUI
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (Settings.getFocus) curPanel.requestFocus();
+        if (Settings.getFocus && !(curPanel instanceof ReportDisplay)) curPanel.requestFocus();
     }
 
     private Component initializePanel(int phase) {

@@ -91,8 +91,8 @@ public class MovementDisplay
 
         setupStatusBar("Waiting to begin Movement phase...");
 
-		butClear = new Button("Clear mines");
-		butClear.addActionListener(this);
+        butClear = new Button("Clear mines");
+        butClear.addActionListener(this);
         butClear.setEnabled(false);
 
         butWalk = new Button("Walk");
@@ -1054,17 +1054,38 @@ public class MovementDisplay
             }
             gear = Compute.GEAR_BACKUP;
         } else if (ev.getSource() == butClear) {       	
-			clearAllMoves();
-			if (!client.game.containsMinefield(ce().getPosition())) {
-				client.doAlertDialog("Can't clear minefield", "No minefield in hex!");
-				return;
-			}
-			if (client.doYesNoDialog("Clear the minefield?", "The unit successfully clears the\nminefield on " +
-				Minefield.CLEAR_NUMBER_INFANTRY + "+. The minefield\nwill explode on " + Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT +
-				" or less.")) {
-				md.addStep(MovePath.STEP_CLEAR_MINEFIELD);
-				moveTo(md);
-			}
+	    clearAllMoves();
+	    if (!client.game.containsMinefield(ce().getPosition())) {
+                client.doAlertDialog( "Can't clear minefield",
+                                      "No minefield in hex!" );
+                return;
+            }
+
+            // Does the entity has a minesweeper?
+            int clear = Minefield.CLEAR_NUMBER_INFANTRY;
+            int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
+            Enumeration equip = ce().getMisc();
+            while ( equip.hasMoreElements() ) {
+                Mounted mounted = (Mounted) equip.nextElement();
+                if ( mounted.getType()
+                     .hasFlag(MiscType.F_MINESWEEPER) ) {
+                    clear = Minefield.CLEAR_NUMBER_SWEEPER;
+                    boom = Minefield.CLEAR_NUMBER_SWEEPER_ACCIDENT;
+                    break;
+                }
+            }
+
+            StringBuffer buff = new StringBuffer();
+            buff.append( "The unit successfully clears the\nminefield on " )
+                .append( clear )
+                .append( "+. The minefield\nwill explode on " )
+                .append( boom )
+                .append( " or less." );
+            if ( client.doYesNoDialog( "Clear the minefield?",
+                                       buff.toString() ) ) {
+                md.addStep(MovePath.STEP_CLEAR_MINEFIELD);
+                moveTo(md);
+                        }
         } else if (ev.getSource() == butCharge) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();

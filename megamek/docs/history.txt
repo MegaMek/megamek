@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.38 (CVS)
+
 v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl
 + some more bugfixing in high/low gravity rules

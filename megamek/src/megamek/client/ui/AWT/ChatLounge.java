@@ -110,7 +110,7 @@ public class ChatLounge
         super();
         this.client = clientgui.getClient();
         this.clientgui = clientgui;
-
+        
         // Create a new camo selection dialog.
         camoDialog = new CamoChoiceDialog(clientgui.getFrame());
 
@@ -173,7 +173,6 @@ public class ChatLounge
         //          c.weightx = 0.0;    c.weighty = 0.0;
         //          c.ipady = 10;
         //          addBag(butDone, gridbag, c);
-
         validate();
     }
 
@@ -513,6 +512,12 @@ public class ChatLounge
         butSaveList.setEnabled(false);
 
         butLoad = new Button("Add A Unit...");
+        MechSummaryCache.addListener(new MechSummaryCache.Listener() {
+            public void doneLoading() {
+                butLoad.setEnabled(true);
+            }
+        });
+        butLoad.setEnabled(MechSummaryCache.isInitialized());
         Font font = new Font("sanserif", Font.BOLD, 18);
         if (null == font) {
             System.err.println("Couldn't find the new font for the 'Add a Unit' button.");
@@ -1088,7 +1093,6 @@ public class ChatLounge
      * Pop up the dialog to load a mech
      */
     public void loadMech() {
-        MechSummaryCache.block(); // wait till it's ready
         clientgui.getMechSelectorDialog().show();
     }
 

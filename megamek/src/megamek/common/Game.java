@@ -1450,15 +1450,15 @@ public class Game implements Serializable
 
         // first, find all the rolls belonging to the target entity
         for (i=0; i < pilotRolls.size(); i++) {
-            roll = (PilotingRollData)pilotRolls.get(i);
+            roll = (PilotingRollData)pilotRolls.elementAt(i);
             if ( roll.getEntityId()==entity.getId() ) {
-               rollsToRemove.add(new Integer(i));
+               rollsToRemove.addElement(new Integer(i));
             };
         };
 
         // now, clear them out
         for (i=rollsToRemove.size()-1; i > -1; i--) {
-            pilotRolls.removeElementAt( ((Integer)rollsToRemove.get(i)).intValue() );
+            pilotRolls.removeElementAt( ((Integer)rollsToRemove.elementAt(i)).intValue() );
         };
     }
 

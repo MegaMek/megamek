@@ -2349,6 +2349,18 @@ public abstract class Entity
      * Calculates the battle value of this entity
      */
     public abstract int calculateBattleValue();
+
+    /**
+     * Calculates the battle value of this mech.
+     *  If the parameter is true, then the battle value for
+     *  c3 will be added whether the mech is currently part of
+     *  a network or not.
+     * 
+     * This should be overwritten if necessary
+     */
+    public int calculateBattleValue(boolean assumeLinkedC3){
+    	return calculateBattleValue();
+    }
     
     /**
      * Generates a string containing a report on all useful information about

@@ -114,11 +114,11 @@ public class IdealHex
      * cached yet, creates it.  If the cache is too small, does not resize it.
      */
     public static IdealHex get(Coords coords) {
-        if (cache == null || coords.x > cacheWidth || coords.y > cacheHeight) {
+        int index = (coords.y * cacheWidth) + coords.x;
+        if (cache == null || coords.x > cacheWidth || index < 0 || index >= cache.length) {
             return new IdealHex(coords);
         }
         // okay, check cache
-        int index = (coords.y * cacheWidth) + coords.x;
         IdealHex hex = cache[index];
         if (hex != null) {
             return hex;

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,34 +16,33 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
 
 public class DeploymentDisplay 
-    extends StatusBarPhaseDisplay
+    extends AbstractPhaseDisplay
     implements BoardListener,  ActionListener,
-    KeyListener, GameListener, BoardViewListener
+    KeyListener, GameListener
 {    
-	// Action command names
-	public static final String DEPLOY_TURN        = "deployTurn";
-	public static final String DEPLOY_NEXT        = "deployNext";
-	public static final String DEPLOY_LOAD        = "deployLoad";
-	public static final String DEPLOY_UNLOAD      = "deployUnload";
-
     // parent game
     public Client client;
     
+    // displays
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
+
     // buttons
     private Panel             panButtons;
     
     private Button            butNext;
     private Button            butTurn;
     private Button            butSpace;
-    private Button            butSpace2;
-    private Button            butSpace3;
-    private Button            butLoad;
-    private Button            butUnload;
+    private Button              butLoad;
+    private Button              butUnload;
     private Button            butDone;
 
     private int                cen;    // current entity number
@@ -62,36 +61,26 @@ public class DeploymentDisplay
 
         client.game.board.addBoardListener(this);
 
-        setupStatusBar("Waiting to begin Deployment phase...");
+        setupStatusBar();
 
 
         butTurn = new Button("Turn");
         butTurn.addActionListener(this);
-        butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
                         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
 
-        butSpace2 = new Button(".");
-        butSpace2.setEnabled(false);
-
-        butSpace3 = new Button(".");
-        butSpace3.setEnabled(false);
-
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
-        butLoad.setActionCommand(DEPLOY_LOAD);
         butLoad.setEnabled(false);
 
         butUnload = new Button("Unload");
         butUnload.addActionListener(this);
-        butUnload.setActionCommand(DEPLOY_UNLOAD);
         butUnload.setEnabled(false);
 
         butNext = new Button("Next Unit");
         butNext.addActionListener(this);
-        butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
 
         butDone = new Button("Deploy");
@@ -100,14 +89,12 @@ public class DeploymentDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 4));
-        panButtons.add(butNext);
+        panButtons.setLayout(new GridLayout(2, 3));
         panButtons.add(butTurn);
         panButtons.add(butLoad);
-        panButtons.add(butUnload);
+        panButtons.add(butNext);
         panButtons.add(butSpace);
-        panButtons.add(butSpace2);
-        panButtons.add(butSpace3);
+        panButtons.add(butUnload);
         panButtons.add(butDone);
 
         // layout screen
@@ -125,8 +112,8 @@ public class DeploymentDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0;
         c.gridwidth = 1;
+        c.weightx = 1.0;    c.weighty = 0.0;
         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -144,6 +131,40 @@ public class DeploymentDisplay
     }
         
     /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Deployment phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
+    /**
      * Selects an entity for deployment
      */
     public void selectEntity(int en) {
@@ -155,24 +176,17 @@ public class DeploymentDisplay
         }
 
         // okay.
-        if (ce() != null) {
-        	ce().setSelected(false);
-        }
         this.cen = en;
-        ce().setSelected(true);
 
-        setTurnEnabled(true);
+        butTurn.setEnabled(true);
         butDone.setEnabled(false);
-        setLoadEnabled(true);
-        setUnloadEnabled(true);
+        butLoad.setEnabled(true);
+        butUnload.setEnabled(true);
         
         client.game.board.select(null);
         client.game.board.cursor(null);
         client.mechD.displayEntity(ce());
         client.mechD.showPanel("movement");
-
-        // Update the menu bar.
-        client.getMenuBar().setEntity( ce() );
     }
 
     /**
@@ -180,8 +194,8 @@ public class DeploymentDisplay
      */
     private void beginMyTurn() {
         client.setDisplayVisible(true);
-        selectEntity(client.getFirstDeployableEntityNum());
-        setNextEnabled(true);
+        selectEntity(client.getFirstEntityNum());
+        butNext.setEnabled(true);
         Player p = client.getLocalPlayer();
         // mark deployment hexes if not 'All'
         if (p.getStartingPos() != 0) {
@@ -209,11 +223,11 @@ public class DeploymentDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        setTurnEnabled(false);
-        setNextEnabled(false);
+        butTurn.setEnabled(false);
+        butNext.setEnabled(false);
         butDone.setEnabled(false);
-        setLoadEnabled(false);
-        setUnloadEnabled(false);
+        butLoad.setEnabled(false);
+        butUnload.setEnabled(false);
     }
 
     /**
@@ -221,10 +235,7 @@ public class DeploymentDisplay
      */
     private void deploy() {
         disableButtons();
-        
-        Entity en = ce();
-        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits());
-        en.setDeployed(true);
+        client.deploy(cen, ce().getPosition(), ce().getFacing(), ce().getLoadedUnits());
     }
 
     /**
@@ -243,10 +254,10 @@ public class DeploymentDisplay
         client.game.board.removeBoardListener(this);
         client.bv.removeKeyListener(this);
         client.cb.getComponent().removeKeyListener(this);
-        
+
         this.removeAll();
     }
-    
+
     //
     // BoardListener
     //
@@ -261,16 +272,12 @@ public class DeploymentDisplay
             return;
         }
 
-        // control pressed means a line of sight check.
-        // added ALT_MASK by kenn
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
-            return;
-        }
-
+        
         // check for shifty goodness
         boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
+        client.game.board.select(b.getCoords());
         Coords moveto = b.getCoords(); 
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
@@ -300,8 +307,7 @@ public class DeploymentDisplay
             client.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
-        client.game.board.select( moveto );
-
+        
     }
 
     //
@@ -313,26 +319,30 @@ public class DeploymentDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText("It's your turn to deploy.");
+            labStatus.setText("It's your turn to deploy.");
         } else {
-            setStatusBarText("It's " + ev.getPlayer().getName() + 
+            labStatus.setText("It's " + ev.getPlayer().getName() + 
                     "'s turn to deploy.");
         }
     }
     
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.getPhase() != Game.PHASE_DEPLOYMENT) {
+        if (client.game.phase != Game.PHASE_DEPLOYMENT) {
             die();
         }
     }
-    
+
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -340,7 +350,7 @@ public class DeploymentDisplay
         
         if (ev.getSource() == butDone) {
             deploy();
-        } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) { 
+        } else if (ev.getSource() == butNext) { 
             ce().setPosition(null);
             client.bv.redrawEntity(ce());
             // Unload any loaded units.
@@ -350,20 +360,19 @@ public class DeploymentDisplay
                 // Please note, the Server never got this unit's load orders.
                 ce().unload( other );
                 other.setTransportId( Entity.NONE );
-                other.newRound(client.game.getRoundCount());
+                other.newRound();
             }
-            
-            selectEntity(client.getNextDeployableEntityNum(cen));
-        } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {
+            selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getSource() == butTurn) {
             turnMode = true;
         } 
-        else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
+        else if ( ev.getSource() == butLoad ) {
 
             // What undeployed units can we load?
             Vector choices = new Vector();
-            int otherId = client.getNextDeployableEntityNum( cen );
+            int otherId = client.getNextEntityNum( cen );
             Entity other = client.getEntity( otherId );
-            while ( (otherId != cen) && (otherId != -1) ) {
+            while ( otherId != cen ) {
 
                 // Is the other entity deployed?
                 if ( other.getPosition() == null ) {
@@ -376,7 +385,7 @@ public class DeploymentDisplay
                 } // End other not yet deployed.
 
                 // Check the next entity.
-                otherId = client.getNextDeployableEntityNum( otherId );
+                otherId = client.getNextEntityNum( otherId );
                 other = client.getEntity( otherId );
 
             } // End have list of choices.
@@ -415,7 +424,7 @@ public class DeploymentDisplay
 
         } // End load-unit
 
-        else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
+        else if ( ev.getSource() == butUnload ) {
 
             // Do we have anyone to unload?
             Vector choices = ce().getLoadedUnits();
@@ -441,7 +450,7 @@ public class DeploymentDisplay
                     // Please note, the Server never got this load order.
                     if ( ce().unload( other ) ) {
                         other.setTransportId( Entity.NONE );
-                        other.newRound(client.game.getRoundCount());
+                        other.newRound();
                         client.mechD.displayEntity(ce());
                     }
                     else {
@@ -475,61 +484,4 @@ public class DeploymentDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
-
-	//
-	// BoardViewListener
-	//
-    public void finishedMovingUnits(BoardViewEvent b) {
-    }
-    
-    // Selected a unit in the unit overview.
-    public void selectUnit(BoardViewEvent b) {
-    	Entity e = client.game.getEntity(b.getEntityId());
-    	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
-            	if (ce() != null) {
-		            ce().setPosition(null);
-		            client.bv.redrawEntity(ce());
-		            // Unload any loaded units.
-		            Enumeration iter =  ce().getLoadedUnits().elements();
-		            while ( iter.hasMoreElements() ) {
-		                Entity other = (Entity) iter.nextElement();
-		                // Please note, the Server never got this unit's load orders.
-		                ce().unload( other );
-		                other.setTransportId( Entity.NONE );
-		                other.newRound(client.game.getRoundCount());
-		            }
-				}
-	            
-	            selectEntity(e.getId());
-    		}
-    	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
-            	client.bv.centerOnHex(e.getPosition());
-    		}
-    	}
-    }
-
-	private void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
-        client.getMenuBar().setDeployNextEnabled(enabled);
-	}
-	private void setTurnEnabled(boolean enabled) {
-		butTurn.setEnabled(enabled);
-        client.getMenuBar().setDeployTurnEnabled(enabled);
-	}
-	private void setLoadEnabled(boolean enabled) {
-		butLoad.setEnabled(enabled);
-        client.getMenuBar().setDeployLoadEnabled(enabled);
-	}
-	private void setUnloadEnabled(boolean enabled) {
-		butUnload.setEnabled(enabled);
-        client.getMenuBar().setDeployUnloadEnabled(enabled);
-	}
 }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
-import megamek.common.equip.AmmoState;
-import megamek.common.equip.EquipmentState;
-import megamek.common.equip.UsesAmmoType;
 
 public class AmmoType extends EquipmentType {
     // ammo types
@@ -84,7 +82,6 @@ public class AmmoType extends EquipmentType {
     public static final int     M_ECM               = 20;
     public static final int     M_HAYWIRE           = 21;
     public static final int     M_NEMESIS           = 22;
-    public static final int     M_NARC_EX           = 23;
     
     /*public static final String[] MUNITION_NAMES = { "Standard", 
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision", 
@@ -99,11 +96,11 @@ public class AmmoType extends EquipmentType {
         return m_vaMunitions[nAmmoType];
     }
 
-    protected int damagePerShot;
-    protected int rackSize;
+    private int damagePerShot;
+    private int rackSize;
     private int ammoType;
     private int munitionType;
-    protected int shots;
+    private int shots;
 
     public AmmoType() {
         criticals = 1;
@@ -117,71 +114,6 @@ public class AmmoType extends EquipmentType {
     
     public int getMunitionType() {
         return munitionType;
-    }
-
-    // 2003-07-13 Suvarov454 : Added xylaan's weapon refactoring
-
-    protected int heat;
-    protected RangeType range;
-    protected int tech;
-
-        //override removed, most != all.  Not sure what the intent is...--LDE 2003-09-02
-    // Most ammo is explosive
-//    public boolean isExplosive() {
-//	return true;
-//    }
-
-    public int getHeat() {
-	return heat;
-    }
-    public int getShotDamage(Entity en, Targetable targ) {
-	return damagePerShot;
-    }
-
-    public RangeType getRange() {
-	return range;
-    }
-
-    // By default, all ballistic type weapons are 9.  If some are impossible 
-    // (i.e. Gauss Rifle or SRM-2, they will override)
-    public int getFireTN() {
-	return 9;
-    }
-    
-    // By default, adds no new modifiers (these are for ammo based modifiers)
-    public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
-	return new TargetRoll();
-    }
-    
-    // Note, we don't do any pre-stuff here, as that's done by the weapon
-/* TODO: uncomment me delete the empty method.
-    public abstract void resolveAttack(Game game, 
-				       WeaponResult wr, 
-				       UsesAmmoType weap, 
-				       EquipmentState weap_state);
-*/
-    public void resolveAttack(Game game, 
-				       WeaponResult wr, 
-				       UsesAmmoType weap, 
-        EquipmentState weap_state) {}
-
-    // Created using the base type, using the default number of shots
-    public EquipmentState getNewState(Mounted location) {
-	return new AmmoState(location, this, shots);
-    }
-    
-    // Be default, all ammo explodes, with shots remaining * damagePerShot
-    public void doCriticalDamage(EquipmentState state) {
-	if (isExplosive()) {
-	    AmmoState as = (AmmoState)state;
-	    // Get the amount of damage.
-	    int damage = this.getDamagePerShot() * as.shotsLeft();
-/* TODO : implement me
-	    super.doCriticalDamage(state); // Set it as destroyed
-*/
-	    // Do weapon explosion damage 
-// ########### 
-	}
     }
 
     public int getDamagePerShot() {
@@ -247,11 +179,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM40Ammo());
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
-        EquipmentType.addType(createISNarcExplosiveAmmo());
-        EquipmentType.addType(createISThunderLRM5Ammo());
-        EquipmentType.addType(createISThunderLRM10Ammo());
-        EquipmentType.addType(createISThunderLRM15Ammo());
-        EquipmentType.addType(createISThunderLRM20Ammo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -288,7 +215,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM6Ammo());
         EquipmentType.addType(createCLAMSAmmo());
         EquipmentType.addType(createCLNarcAmmo());
-        EquipmentType.addType(createCLNarcExplosiveAmmo());
         EquipmentType.addType(createCLATM3Ammo());
         EquipmentType.addType(createCLATM3ERAmmo());
         EquipmentType.addType(createCLATM3HEAmmo());
@@ -301,10 +227,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
-        EquipmentType.addType(createCLThunderLRM5Ammo());
-        EquipmentType.addType(createCLThunderLRM10Ammo());
-        EquipmentType.addType(createCLThunderLRM15Ammo());
-        EquipmentType.addType(createCLThunderLRM20Ammo());
 
         // Start of BattleArmor ammo
         EquipmentType.addType( createBASRM2Ammo() );
@@ -472,25 +394,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createISThunderLRM5Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 5 Ammo";
-        ammo.internalName = "IS Ammo Thunder LRM-5";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 24;
-        ammo.bv = 6;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
-        return ammo;
-    }
-
     public static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -504,25 +407,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
-        
-        return ammo;
-    }
-    
-    public static AmmoType createISThunderLRM10Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 10 Ammo";
-        ammo.internalName = "IS Ammo Thunder LRM-10";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 12;
-        ammo.bv = 11;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
     }
@@ -544,25 +428,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createISThunderLRM15Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 15 Ammo";
-        ammo.internalName = "IS Ammo Thunder LRM-15";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 8;
-        ammo.bv = 17;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
-        return ammo;
-    }
-    
     public static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -580,25 +445,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createISThunderLRM20Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 20 Ammo";
-        ammo.internalName = "IS Ammo Thunder LRM-20";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 6;
-        ammo.bv = 23;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
-        return ammo;
-    }
-
     public static AmmoType createISSRM2Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1004,7 +850,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 10;
-        ammo.bv = 9;
+        ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
@@ -1023,7 +869,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 5;
-        ammo.bv = 15;
+        ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
@@ -1042,7 +888,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 2;
-        ammo.bv = 20;
+        ammo.bv = 5;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
@@ -1256,24 +1102,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
-        ammo.shots = 6;
-        ammo.bv = 0;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-        
-        return ammo;
-    }
-    
-    public static AmmoType createISNarcExplosiveAmmo() {
-        AmmoType ammo = new AmmoType();
-        ammo.name = "Narc Explosive Pods";
-        ammo.internalName = "ISNarc ExpolsivePods";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 4;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_NARC;
-        ammo.munitionType = M_NARC_EX;
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
@@ -1679,25 +1507,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createCLThunderLRM5Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 5 Ammo";
-        ammo.internalName = "Clan Ammo Thunder LRM-5";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 24;
-        ammo.bv = 7;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
-        return ammo;
-    }
-    
     public static AmmoType createCLLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1709,25 +1518,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.shots = 12;
-        ammo.bv = 14;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
-        return ammo;
-    }
-    
-    public static AmmoType createCLThunderLRM10Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 10 Ammo";
-        ammo.internalName = "Clan Ammo Thunder LRM-10";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
@@ -1753,25 +1543,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createCLThunderLRM15Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 15 Ammo";
-        ammo.internalName = "Clan Ammo Thunder LRM-15";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 8;
-        ammo.bv = 21;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
-        return ammo;
-    }
-    
     public static AmmoType createCLLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1790,25 +1561,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createCLThunderLRM20Ammo() {
-        AmmoType ammo = new AmmoType();
-        
-        ammo.name = "Thunder LRM 20 Ammo";
-        ammo.internalName = "Clan Ammo Thunder LRM-20";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.munitionType = AmmoType.M_THUNDER;
-        ammo.shots = 6;
-        ammo.bv = 27;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-        
-        return ammo;
-    }
-
     public static AmmoType createCLSRM2Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -2009,24 +1761,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
  
-    public static AmmoType createCLNarcExplosiveAmmo() {
-        AmmoType ammo = new AmmoType();
-        ammo.name = "Narc Explosive Pods";
-        ammo.internalName = "CLNarc Explosive Pods";
-        ammo.mepName = "N/A";
-        ammo.mtfName = "N/A";
-        ammo.tdbName = "N/A";
-        ammo.damagePerShot = 4;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_NARC;
-        ammo.munitionType = AmmoType.M_NARC_EX;
-        ammo.shots = 6;
-        ammo.bv = 0;
-        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
-
-        return ammo;
-    }
-
     public static AmmoType createCLATM3Ammo() {
         AmmoType ammo = new AmmoType();
          
@@ -2436,29 +2170,4 @@ public class AmmoType extends EquipmentType {
     public String toString() {
         return "Ammo: " + name;
     }
-
-	public static boolean canClearMinefield(AmmoType at) {
-	
-		if (at != null &&
-			(at.getAmmoType() == T_LRM ||
-			at.getAmmoType() == T_MRM) &&
-			at.getRackSize() >= 20 &&
-			at.getMunitionType() == M_STANDARD) {
-			return true;
-		}
-		
-		return false;
-	}
-
-	public static boolean canDeliverMinefield(AmmoType at) {
-	
-		if (at != null &&
-			at.getAmmoType() == T_LRM &&
-			at.getMunitionType() == M_THUNDER) {
-			return true;
-		}
-		
-		return false;
-	}
-
 }

@@ -106,7 +106,7 @@ public class CEntity  {
   }
   
   public boolean canMove() {
-    return (entity.isSelectableThisTurn(game) && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
+    return (entity.isSelectable() && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
   }
   
   public void reset() {
@@ -131,7 +131,7 @@ public class CEntity  {
   
   public void refresh() {
     this.entity = game.getEntity(this.entity.getId()); //fresh entity object ensured
-    if (this.refresh && !this.entity.isSelectableThisTurn(game)) {
+    if (this.refresh && !this.entity.isSelectable()) {
       //clear it out just in case
       for (int a = this.FIRST_ARC; a <= this.LAST_ARC; a++) {
         for (int r = 1; r <= this.MAX_RANGE; r++) {
@@ -163,7 +163,7 @@ public class CEntity  {
     this.runMP = entity.getRunMP();
     this.jumpMP = entity.getJumpMP();
     this.overall_armor_percent = entity.getArmorRemainingPercent();
-    this.base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll().getValue())/100;
+    this.base_psr_odds = Compute.oddsAbove(Compute.getBasePilotingRoll(game,entity.getId()).getValue())/100;
     //begin weapons characterization
     double heat_mod = .9; //these estimates are consistently too high
     if (entity.heat > 7) heat_mod = .8; //reduce effectiveness
@@ -495,7 +495,7 @@ public class CEntity  {
       EntityState next = new EntityState((EntityState)j_array[j]);
       if (next.isPhysical) continue;
       for(int f = 0; f < 6; f++) {
-        next.addStep(MovePath.STEP_TURN_RIGHT);
+        next.addStep(MovementData.STEP_TURN_RIGHT);
         jumps.add(next);
         next = new EntityState(next);
       }
@@ -535,23 +535,23 @@ public class CEntity  {
     //if prone get up;
     if (en.isProne()) {
       next = new EntityState(current);
-      next.addStep(MovePath.STEP_TURN_LEFT);
+      next.addStep(MovementData.STEP_TURN_LEFT);
       discovered.put(next);
       next = new EntityState(current);
-      next.addStep(MovePath.STEP_TURN_RIGHT);
+      next.addStep(MovementData.STEP_TURN_RIGHT);
       discovered.put(next);  
       if (this.base_psr_odds < .25) { //change facing if that helps
         possible.clear();
       } else {
         next = new EntityState(current);
-        next.addStep(MovePath.STEP_GET_UP);
+        next.addStep(MovementData.STEP_GET_UP);
         //if legal to stand, add all facings
         if (next.isStepLegal()) {
           possible.put(next);
           discovered.put(next);
           for (int i = 0; i < 5; i++) {
             next = new EntityState(next);
-            next.addStep(MovePath.STEP_TURN_RIGHT);
+            next.addStep(MovementData.STEP_TURN_RIGHT);
             discovered.put(next);
             possible.put(next);
           }
@@ -562,28 +562,28 @@ public class CEntity  {
       EntityState min = possible.extractMin();
       Vector adjacent = new Vector();
       //forward
-      if (min.firstStep || min.getLastStep().getType() != MovePath.STEP_BACKWARDS) {
+      if (min.firstStep || min.getLastStep().getType() != MovementData.STEP_BACKWARDS) {
         next = new EntityState(min);
-        next.addStep(MovePath.STEP_FORWARDS);
+        next.addStep(MovementData.STEP_FORWARDS);
         adjacent.add(next);
       }
       //turn left
-      if (min.firstStep || min.getLastStep().getType() != MovePath.STEP_TURN_RIGHT) {
+      if (min.firstStep || min.getLastStep().getType() != MovementData.STEP_TURN_RIGHT) {
         next = new EntityState(min);
-        next.addStep(MovePath.STEP_TURN_LEFT);
+        next.addStep(MovementData.STEP_TURN_LEFT);
         adjacent.add(next);
       }
       //turn right
-      if (min.firstStep || min.getLastStep().getType() != MovePath.STEP_TURN_LEFT) {
+      if (min.firstStep || min.getLastStep().getType() != MovementData.STEP_TURN_LEFT) {
         next = new EntityState(min);
-        next.addStep(MovePath.STEP_TURN_RIGHT);
+        next.addStep(MovementData.STEP_TURN_RIGHT);
         adjacent.add(next);
       }
       //move backward
-      if (min.firstStep || min.getLastStep().getType() != MovePath.STEP_FORWARDS
+      if (min.firstStep || min.getLastStep().getType() != MovementData.STEP_FORWARDS
       && min.overallMoveType != Entity.MOVE_RUN) {
         next = new EntityState(min);
-        next.addStep(MovePath.STEP_BACKWARDS);
+        next.addStep(MovementData.STEP_BACKWARDS);
         adjacent.add(next);
       }
       for (int i = 0; i < adjacent.size(); i++) {
@@ -646,7 +646,7 @@ public class CEntity  {
     EntityState current = new EntityState(this);
     EntityState next = null;
     
-    current.addStep(MovePath.STEP_START_JUMP);
+    current.addStep(MovementData.STEP_START_JUMP);
     if (!current.isStepLegal()) return result;
     
     possible.put(current);
@@ -674,13 +674,13 @@ public class CEntity  {
         adjacent.add(new EntityState(min));
         for (int i = 0; i < 5; i++) {
           next = new EntityState((EntityState)adjacent.elementAt(i));
-          next.addStep(MovePath.STEP_TURN_RIGHT);
+          next.addStep(MovementData.STEP_TURN_RIGHT);
           adjacent.add(next);
         }
         //visit neighbors
         for (int i = 0; i < 6; i++) {
           next = (EntityState)adjacent.elementAt(i);
-          next.addStep(MovePath.STEP_FORWARDS);
+          next.addStep(MovementData.STEP_FORWARDS);
           if (next.changeToPhysical()) {
             discovered.put(next);
           } else if (next.isStepLegal()) {
@@ -759,7 +759,7 @@ public class CEntity  {
           self.engaged = true;
           int mod = modifiers[EntityState.DEFENCE_MOD];
           double max = option.getMaxModifiedDamage(enemy.old, this.tb.enemies.get(en), mod, modifiers[EntityState.DEFENCE_PC]);
-          if (en.isSelectableThisTurn(game)) { // let him turn a little
+          if (en.isSelectable()) { // let him turn a little
             enemy.old.curFacing = (enemy.old.curFacing+1)%6;
             max = Math.max(option.getMaxModifiedDamage(enemy.old, this.tb.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
             enemy.old.curFacing = (enemy.old.curFacing+4)%6;
@@ -803,7 +803,7 @@ public class CEntity  {
                   self_threat += option.centity.getThreatUtility(.1*self.entity.getWeight(), CEntity.SIDE_REAR)*(1 - self.base_psr_odds);
                 } else {
                   self.old.setState();
-                  MovePath md = option.getMovementData();
+                  MovementData md = option.getMovementData();
                   toHit = Compute.toHitCharge(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = Compute.getChargeDamageFor(option.entity, md.getHexesMoved());
                   self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(1-Compute.oddsAbove(toHit.getValue())/100);

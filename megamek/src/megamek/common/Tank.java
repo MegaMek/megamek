@@ -16,8 +16,7 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.util.Vector;
-import megamek.common.util.StringUtil;
+
 /**
  * You know what tanks are, silly.
  */
@@ -164,9 +163,9 @@ public class Tank
         m_bImmobile |= m_bImmobileHit;
     }
     
-    public void newRound(int roundNumber)
+    public void newRound()
     {
-        super.newRound(roundNumber);
+        super.newRound();
         
         // check for crew stun
         if (m_nStunnedTurns > 0) {
@@ -302,10 +301,6 @@ public class Tank
     /**
      * Rolls up a hit location
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
-    }     
-    
     public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
@@ -515,8 +510,7 @@ public class Tank
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
         double xbv = 0.0;
-        if ((hasC3MM() && calculateFreeC3MNodes() < 2) ||
-            (hasC3M() && calculateFreeC3Nodes() < 3) ||
+        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
@@ -589,39 +583,4 @@ public class Tank
     {
         return 1;
     }
-
-    /**
-     * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     Entity#isSalvage()
-     */
-    public boolean isRepairable() {
-        // A tank is repairable if it is salvageable,
-        // and none of its body internals are gone.
-        boolean retval = this.isSalvage();
-        int loc = Tank.LOC_FRONT;
-        while ( retval && loc < Tank.LOC_TURRET ) {
-            int loc_is = this.getInternal( loc );
-            loc++;
-            retval = (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
-        }
-        return retval;
-    }
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getShortName();
-		
-        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            Vector v = StringUtil.splitString(iconName, " ");
-            iconName = (String) v.elementAt(0);
-        }
-		
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
-
 }

@@ -16,8 +16,6 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import megamek.common.util.StringUtil;
-import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
@@ -309,10 +307,6 @@ public class BattleArmor
     /**
      * Battle Armor units can only get hit in undestroyed troopers.
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
-    }     
-     
     public HitData rollHitLocation( int table, int side ) {
 
         // If this squad was killed, target trooper 1 (just because).
@@ -498,10 +492,10 @@ public class BattleArmor
     /**
      * Prepare the entity for a new round of action.
      */    
-    public void newRound(int roundNumber)
+    public void newRound()
     {
         // Perform all base-class behavior.
-        super.newRound(roundNumber);
+        super.newRound();
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
@@ -604,12 +598,12 @@ public class BattleArmor
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( char range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -638,15 +632,15 @@ public class BattleArmor
         // Stealthy units alreay have their to-hit mods defined.
         else if ( isStealthy ) {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case Entity.RANGE_SHORT:
                 result = new TargetRoll( this.shortStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case Entity.RANGE_MEDIUM:
                 result = new TargetRoll( this.mediumStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_LONG:
+            case Entity.RANGE_LONG:
                 result = new TargetRoll( this.longStealthMod,
                                          this.stealthName );
                 break;
@@ -660,22 +654,6 @@ public class BattleArmor
         return result;
 
     } // End public TargetRoll getStealthModifier( char )
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getShortName();
-		
-        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            Vector v = StringUtil.splitString(iconName, " ");
-            iconName = (String) v.elementAt(0);
-            if (iconName.equals("Clan")) {
-                iconName = (String) v.elementAt(1);
-            }
-        }
-		
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
 
 } // End public class BattleArmor extends Infantry implements Serializable
 

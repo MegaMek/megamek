@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import megamek.client.UnitOverview;
 
 /**
  * This class represents the lowest of the low, the ground pounders, 
@@ -332,10 +331,6 @@ public class Infantry
     /**
      * Infantry only have one hit location.
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
-    	return rollHitLocation(table, side);
-    }     
-     
     public HitData rollHitLocation( int table, int side ) {
         return new HitData( 0 );
     }
@@ -804,13 +799,5 @@ public class Infantry
      * Get the number of men in the platoon (before damage is applied).
      */
     public int getShootingStrength() { return menShooting; }
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getModel();
-		
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
 
 } // End class Infantry

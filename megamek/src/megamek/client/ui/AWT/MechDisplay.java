@@ -124,16 +124,16 @@ public class MechDisplay extends BufferedPanel
     public void showPanel(String s) {
         ((CardLayout)displayP.getLayout()).show(displayP, s);
         if (s == "movement") {
-         tabStrip.setTab(0);
-      } else if (s == "armor") {
-        tabStrip.setTab(1);
-      } else if (s == "weapons"){
-        tabStrip.setTab(3);
-      } else if (s == "systems") {
-        tabStrip.setTab(2);
-      } else if (s == "extras") {
-        tabStrip.setTab(4);
-      }
+	       tabStrip.setTab(0);
+	    } else if (s == "armor") {
+	    	tabStrip.setTab(1);
+	    } else if (s == "weapons"){
+	    	tabStrip.setTab(3);
+	    } else if (s == "systems") {
+	    	tabStrip.setTab(2);
+	    } else if (s == "extras") {
+	    	tabStrip.setTab(4);
+	    }
     }
     
 }
@@ -158,19 +158,19 @@ class MovementPanel extends PicMap{
         Vector v = gi.getBackgroundDrawers();
         Enumeration enum = v.elements();
         while(enum.hasMoreElements()){
-          addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();
     }
     
     public void onResize(){
-      int w = getSize().width;
-      Rectangle r = getContentBounds();
-      int dx = (int) Math.round((w - r.width)/2);
-      if (dx < minLeftMargin) dx = minLeftMargin;
-      int dy = minTopMargin;
-        if( r != null) setContentMargins(dx, dy, dx, dy);
+    	int w = getSize().width;
+    	Rectangle r = getContentBounds();
+    	int dx = (int) Math.round((w - r.width)/2);
+    	if (dx < minLeftMargin) dx = minLeftMargin;
+    	int dy = minTopMargin;
+      	if( r != null) setContentMargins(dx, dy, dx, dy);
     }
         
     /**
@@ -219,54 +219,54 @@ class ArmorPanel  extends PicMap
     }
     
     public void onResize(){
-      Rectangle r = getContentBounds();
-      if( r == null) return;
-      int w = (int) Math.round((getSize().width - r.width)/2);
-      int h = (int) Math.round((getSize().height - r.height)/2);
-      int dx = (w < minLeftMargin) ? minLeftMargin : w;
-      int dy = (h < minTopMargin) ? minTopMargin : h;
-        setContentMargins(dx, dy, minRightMargin, minBottomMargin);
+    	Rectangle r = getContentBounds();
+    	if( r == null) return;
+    	int w = (int) Math.round((getSize().width - r.width)/2);
+    	int h = (int) Math.round((getSize().height - r.height)/2);
+    	int dx = (w < minLeftMargin) ? minLeftMargin : w;
+    	int dy = (h < minTopMargin) ? minTopMargin : h;
+      	setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
         
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-      DisplayMapSet ams = (DisplayMapSet) mech;
-      removeAll();
+    	DisplayMapSet ams = (DisplayMapSet) mech;
+    	removeAll();
         if(en instanceof Mech){
-          ams = (DisplayMapSet) mech;
-          minLeftMargin = minMechLeftMargin;
-          minTopMargin = minMechTopMargin;
+        	ams = (DisplayMapSet) mech;
+         	minLeftMargin = minMechLeftMargin;
+        	minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
         } else if (en instanceof Tank){
-          ams = (DisplayMapSet) tank;
-          minLeftMargin = minTankLeftMargin;
-          minTopMargin = minTankTopMargin;
-          minBottomMargin = minTankTopMargin;
+        	ams = (DisplayMapSet) tank;
+        	minLeftMargin = minTankLeftMargin;
+        	minTopMargin = minTankTopMargin;
+        	minBottomMargin = minTankTopMargin;
             minRightMargin = minTankLeftMargin;
-        } else if ( en instanceof BattleArmor){
-          ams = (DisplayMapSet) battleArmor;
+        } else if (	en instanceof BattleArmor){
+        	ams = (DisplayMapSet) battleArmor;
             minLeftMargin = minInfLeftMargin;
-          minTopMargin = minInfTopMargin;
-          minBottomMargin = minInfTopMargin;
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-                  
+        	       	
         } else if (en instanceof Infantry){
-          ams = (DisplayMapSet)infantry;
+        	ams = (DisplayMapSet)infantry;
             minLeftMargin = minInfLeftMargin;
-          minTopMargin = minInfTopMargin;
-          minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;          
-                    
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;        	
+        	         	
         }
         ams.setEntity(en); 
         this.addElement(ams.getContentGroup());
         Vector v = ams.getBackgroundDrawers();
         Enumeration enum = v.elements();
         while(enum.hasMoreElements()){
-          addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();
@@ -630,7 +630,7 @@ class WeaponPanel extends BufferedPanel
                 wn += " " + mounted.curMode();
             }    
             weaponList.add(wn);
-            if (mounted.isUsedThisRound() && client.game.getPhase() == Game.PHASE_FIRING) {
+            if (mounted.isUsedThisRound() && client.game.phase == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }
@@ -712,28 +712,25 @@ class WeaponPanel extends BufferedPanel
         }
             
         // update range
-        int shortR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange(); 
-        int mediumR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange(); 
-        int longR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange(); 
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
             wMinR.setText("---");
         }
-        if(shortR > 1) {
-            wShortR.setText("1 - " + shortR);
+        if(wtype.getShortRange() > 1) {
+            wShortR.setText("1 - " + wtype.getShortRange());
         } else {
-            wShortR.setText("" + shortR);
+            wShortR.setText("" + wtype.getShortRange());
         }
-        if(mediumR - shortR > 1) {
-            wMedR.setText((shortR + 1) + " - " + mediumR);
+        if(wtype.getMediumRange() - wtype.getShortRange() > 1) {
+            wMedR.setText((wtype.getShortRange() + 1) + " - " + wtype.getMediumRange());
         } else {
-            wMedR.setText("" + mediumR);
+            wMedR.setText("" + wtype.getMediumRange());
         }
-        if(longR - mediumR > 1) {
-            wLongR.setText((mediumR + 1) + " - " + longR);
+        if(wtype.getLongRange() - wtype.getMediumRange() > 1) {
+            wLongR.setText((wtype.getMediumRange() + 1) + " - " + wtype.getLongRange());
         } else {
-            wLongR.setText("" + longR);
+            wLongR.setText("" + wtype.getLongRange());
         }
 
         // Update the range display to account for the weapon's loaded ammo.
@@ -1023,12 +1020,12 @@ class SystemPanel
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(Mech.systemNames[cs.getIndex()]);
+                    sb.append(cs.isDestroyed() ? "*" : "").append(Mech.systemNames[cs.getIndex()]);
                     vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
                     Mounted m = en.getEquipment(cs.getIndex());
-                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(m.getDesc());
                     if (m.getType().hasModes()) {
                         sb.append(" (").append(m.curMode()).append(")");
                     }
@@ -1054,12 +1051,12 @@ class SystemPanel
             Mounted m = getSelectedEquipment();
           
             boolean bOwner = (client.getLocalPlayer() == en.getOwner());
-            if (m != null && bOwner && m.getType() instanceof AmmoType
-                && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
+            if (m != null && bOwner && m.getType() instanceof AmmoType 
+                    && m.getShotsLeft() > 0 && !m.isDumping()) {
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && bOwner && m.getType().hasModes()) {
-                if (!m.isDestroyed() && en.isActive()) {
+                if (!m.isDestroyed()) {
                     m_chMode.setEnabled(true);
                 }
                 modeLabel.setEnabled(true);
@@ -1105,31 +1102,17 @@ class SystemPanel
             }
             
             boolean bDumping;
-            boolean bConfirmed = false;
             
             if (m.isPendingDump()) {
                 bDumping = false;
-                String title = "Cancel Dumping Ammo?";
-                String body = "Do you want to cancel dumping " + m.getName() + "?";
-                bConfirmed = client.doYesNoDialog(title, body);
+                client.cb.systemMessage(m.getName() + " WON'T be dumped next turn.");
             }
             else {
                 bDumping = true;
-                String title = "Dump Ammo?";
-                String body = "Do you want to dump " + m.getName() + "?\n\n"
-                    + "Ammo dumping will start at the beginning of the next game turn.\n"
-                    + "You will not be able to use the ammo while it is being dumped,\n"
-                    + "but it can still be critically hit or explode from heat buildup.\n"
-                    + "It will also explode as the result of any rear torso hit that\n"
-                    + "turn.  Additionally, you will not be able to run or jump while\n"
-                    + "you are dumping ammo.";
-                bConfirmed = client.doYesNoDialog(title, body);
+                client.cb.systemMessage(m.getName() + " will be dumped next turn.");
             }
-            
-            if (bConfirmed) {
-                m.setPendingDump(bDumping);
-                client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
-            }
+            m.setPendingDump(bDumping);
+            client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
         }
     }
     
@@ -1218,20 +1201,17 @@ class ExtraPanel
         
         FontMetrics fm = getFontMetrics(FONT_VALUE);
         
-        narcLabel = new TransparentLabel
-            ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
+        narcLabel = new TransparentLabel("NARCed By:", fm, Color.white,TransparentLabel.CENTER);
         
         narcList = new List(3, false);
 
         // transport stuff
         //unusedL = new Label( "Unused Space:", Label.CENTER );
                 
-        unusedL = new TransparentLabel
-            ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
+        unusedL = new TransparentLabel("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
-        carrysL = new TransparentLabel
-            ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
+        carrysL = new TransparentLabel( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
 
@@ -1351,62 +1331,18 @@ class ExtraPanel
      */
     public void displayMech(Entity en) {
 
-        // Clear the "Affected By" list.
-        narcList.removeAll();
-
         // Walk through the list of teams.  There
         // can't be more teams than players.
-        StringBuffer buff = null;
         Enumeration loop = client.game.getPlayers();
         while ( loop.hasMoreElements() ) {
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
             if ( !player.equals(client.getLocalPlayer()) &&
                  en.isNarcedBy( team ) ) {
-                buff = new StringBuffer( player.getName() );
+                StringBuffer buff = new StringBuffer( player.getName() );
                 buff.append( " [" )
                     .append( Player.teamNames[team] )
                     .append( "]" );
-                narcList.add( buff.toString() );
-            }
-        }
-
-        // Show inferno track.
-        if ( en.infernos.isStillBurning() ) {
-            buff = new StringBuffer( "Inferno burn remaining: " );
-            buff.append( en.infernos.getTurnsLeftToBurn() );
-            narcList.add( buff.toString() );
-        }
-
-        // Show ECM affect.
-        Coords pos = en.getPosition();
-        if ( Compute.isAffectedByECM( en, pos, pos ) ) {
-            narcList.add( "In enemy ECM field." );
-        }
-
-        // Show Turret Locked.
-        if ( en instanceof Tank &&
-             !( (Tank) en ).hasNoTurret() &&
-             !en.canChangeSecondaryFacing() ) {
-            narcList.add( "Turret locked" );
-        }
-
-        // Show jammed weapons.
-        Enumeration weaps = en.getWeapons();
-        while ( weaps.hasMoreElements() ) {
-            Mounted weapon = (Mounted) weaps.nextElement();
-            if ( weapon.isJammed() ) {
-                buff = new StringBuffer( weapon.getName() );
-                buff.append( " is Jammed" );
-                narcList.add( buff.toString() );
-            }
-        }
-
-        // Show breached locations.
-        for ( int loc = 0; loc < en.locations(); loc++ ) {
-            if ( Entity.LOC_BREACHED == en.getLocationStatus(loc) ) {
-                buff = new StringBuffer( en.getLocationName(loc) );
-                buff.append( " Breached" );
                 narcList.add( buff.toString() );
             }
         }
@@ -1417,22 +1353,11 @@ class ExtraPanel
         this.unusedR.setText( unused );
         Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
-        boolean hasText = false;
         while ( iter.hasMoreElements() ) {
             carrysR.append( ((Entity)iter.nextElement()).getShortName() );
-            hasText = true;
             if ( iter.hasMoreElements() ) {
                 carrysR.append( "\n" );
             }
-        }
-
-        // Show club.
-        Mounted club = Compute.clubMechHas( en );
-        if ( null != club ) {
-            if ( hasText ) {
-                carrysR.append( "\n" );
-            }
-            carrysR.append( club.getName() );
         }
 
     } // End public void displayMech( Entity )

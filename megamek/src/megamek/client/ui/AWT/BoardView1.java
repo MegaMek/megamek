@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -39,8 +39,6 @@ public class BoardView1
 
     private static final Font       FONT_HEXNUM = new Font("SansSerif", Font.PLAIN, 10);
     private static final Font       FONT_ELEV = new Font("SansSerif", Font.PLAIN, 9);
-    private static final Font       FONT_MINEFIELD = new Font("SansSerif", Font.PLAIN, 12);
-    private static final Font       FONT_MINEFIELD_SMALL = new Font("SansSerif", Font.PLAIN, 9);
 
     private Game game;
     private Frame frame;
@@ -73,8 +71,6 @@ public class BoardView1
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
     private CursorSprite selectedSprite;
-    private CursorSprite firstLOSSprite;
-    private CursorSprite secondLOSSprite;
 
     // sprite for current movement
     private Vector pathSprites = new Vector();
@@ -99,30 +95,6 @@ public class BoardView1
 
     // should we mark deployment hexes for a player?
     private Player               m_plDeployer = null;
-    
-    // should be able to turn it off(board editor)
-    private boolean              useLOSTool = true;
-
-    // Displayables (Chat box, etc.)
-    private Vector               displayables = new Vector();
-
-	// Move units step by step
-	private Vector				 movingUnits = new Vector();
-	private long				 moveWait = 0;
-
-    // moving entity sprites
-    private Vector movingEntitySprites = new Vector();
-    private Hashtable movingEntitySpriteIds = new Hashtable();
-    private Vector ghostEntitySprites = new Vector();
-    protected transient Vector boardViewListeners = new Vector();
-
-    // wreck sprites
-    private Vector wreckSprites = new Vector();
-
-    private Coords rulerStart; // added by kenn
-    private Coords rulerEnd; // added by kenn
-    private Color rulerStartColor; // added by kenn
-    private Color rulerEndColor; // added by kenn
 
     /**
      * Construct a new board view for the specified game
@@ -147,57 +119,6 @@ public class BoardView1
         cursorSprite = new CursorSprite(Color.cyan);
         highlightSprite = new CursorSprite(Color.white);
         selectedSprite = new CursorSprite(Color.blue);
-        firstLOSSprite = new CursorSprite(Color.red);
-        secondLOSSprite = new CursorSprite(Color.red);
-    }
-
-    public void addBoardViewListener(BoardViewListener l) {
-        boardViewListeners.addElement(l);
-    }
-    
-    public void removeBoardViewListener(BoardViewListener l) {
-        boardViewListeners.removeElement(l);
-    }
-    
-    public void processBoardViewEvent(BoardViewEvent be) {
-        if (boardViewListeners == null) {
-            return;
-        }
-        for(Enumeration e = boardViewListeners.elements(); e.hasMoreElements();) {
-            BoardViewListener l = (BoardViewListener)e.nextElement();
-            switch(be.getType()) {
-            case BoardViewEvent.FINISHED_MOVING_UNITS :
-                l.finishedMovingUnits(be);
-                break;
-            case BoardViewEvent.SELECT_UNIT :
-                l.selectUnit(be);
-                break;
-            }
-        }
-    }
-
-    public void addMovingUnit(Entity entity, java.util.Vector movePath) {
-    	Object[] o = new Object[2];
-    	o[0] = entity;
-    	o[1] = movePath;
-    	movingUnits.addElement(o);
-    	
-        GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
-        ghostEntitySprites.addElement(ghostSprite);
-
-    	// Center on the starting hex of the moving unit.
-		int j = ((Integer) movePath.elementAt(0)).intValue();
-		int y = j & 255;
-		int x = (j >> 8) & 255;
-    	centerOnHex(new Coords(x, y));
-    }
-
-	public void addDisplayable(Displayable disp) {
-		displayables.addElement(disp);
-    }
-
-	public void removeDisplayable(Displayable disp) {
-		displayables.removeElement(disp);
     }
 
     public void paint(Graphics g) {
@@ -217,7 +138,7 @@ public class BoardView1
         offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
-			g.drawString("loading images...", 20, 50);
+            g.drawString("loading images...", 20, 50);
             if (!tileManager.isStarted()) {
                 System.out.println("boardview1: load all images called");
                 tileManager.loadNeededImages(game);
@@ -245,14 +166,6 @@ public class BoardView1
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
 
-		// draw wrecks
-		if (Settings.showWrecks) {
-			drawSprites(wreckSprites);
-		}
-
-		// Minefield signs all over the place!
-        drawMinefields();
-
         // draw highlight border
         drawSprite(highlightSprite);
 
@@ -261,12 +174,6 @@ public class BoardView1
 
         // draw onscreen entities
         drawSprites(entitySprites);
-
-        // draw moving onscreen entities
-        drawSprites(movingEntitySprites);
-
-        // draw ghost onscreen entities
-        drawSprites(ghostEntitySprites);
 
         // draw onscreen attacks
         drawSprites(attackSprites);
@@ -277,36 +184,11 @@ public class BoardView1
         // draw cursors
         drawSprite(cursorSprite);
         drawSprite(selectedSprite);
-        drawSprite(firstLOSSprite);
-        drawSprite(secondLOSSprite);
 
         // draw deployment indicators
         if (m_plDeployer != null) {
             drawDeployment();
         }
-
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			disp.draw(backGraph, backSize);
-		}
-		
-        // added by kenn
-        // draw the ruler line
-        if (rulerStart != null) {
-            Point start =  getCentreHexLocation(rulerStart);
-            if (rulerEnd != null) {
-               Point end = getCentreHexLocation(rulerEnd);
-               backGraph.setColor(Color.yellow);
-               backGraph.drawLine(start.x - boardRect.x, start.y - boardRect.y, end.x - boardRect.x, end.y - boardRect.y);
-
-               backGraph.setColor(rulerEndColor);
-               backGraph.fillRect(end.x - boardRect.x - 1, end.y - boardRect.y - 1, 2, 2);
-            }
-
-            backGraph.setColor(rulerStartColor);
-            backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y - 1, 2, 2);
-        }
-        // end kenn
 
         // draw the back buffer onto the screen
         g.drawImage(backImage, offset.x, offset.y, this);
@@ -315,7 +197,7 @@ public class BoardView1
 //        final long finish = System.currentTimeMillis();
 //        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
     }
-    
+
     /**
      * Updates the boardSize variable with the proper values for this board.
      */
@@ -407,60 +289,6 @@ public class BoardView1
                             p.y + 71, p.y + 36, p.y + 35 };
                     backGraph.drawPolygon(xcoords, ycoords, 8);
                 }
-            }
-        }
-    }
-
-    /**
-     * Writes "MINEFIELD" in minefield hexes...
-     */
-    private void drawMinefields() {
-        // only update visible hexes
-        int drawX = view.x / 63 - 1;
-        int drawY = view.y / 72 - 1;
-
-        int drawWidth = view.width / 63 + 3;
-        int drawHeight = view.height / 72 + 3;
-
-        // loop through the hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                Coords c = new Coords(j + drawX, i + drawY);
-                Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
-                if (game.board.contains(c)) {
-			        if (game.containsMinefield(c)) {
-				        Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
-				        backGraph.drawImage(tileManager.getMinefieldSign(), p.x + 13, p.y + 13, this);
-				        backGraph.setFont(FONT_MINEFIELD_SMALL);
-				        int nbrMfs = game.getNbrMinefields(c);
-			        	if (nbrMfs > 1) {
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Multiple", p.x + 20, p.y + 51);
-			        	} else if (nbrMfs == 1) {				        		
-				    		switch (mf.getType()) {
-				    			case (Minefield.TYPE_CONVENTIONAL) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Conventional", p.x + 15, p.y + 51);
-				    			break;
-				    			case (Minefield.TYPE_THUNDER) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Thunder (" + mf.getDamage() + ")", p.x + 15, p.y + 51);
-				    			break;
-				    			case (Minefield.TYPE_COMMAND_DETONATED) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Command-", p.x + 20, p.y + 51);
-						        backGraph.drawString("detonated", p.x + 22, p.y + 60);
-				    			break;
-				    			case (Minefield.TYPE_VIBRABOMB) :
-						        backGraph.setColor(Color.black);
-						        backGraph.drawString("Vibrabomb", p.x + 22, p.y + 51);
-						        backGraph.drawString("(" + mf.getSetting() + ")", p.x + 37, p.y + 60);
-				    			break;
-				    		}
-				    	}
-			        }
-			    }
             }
         }
     }
@@ -656,22 +484,6 @@ public class BoardView1
         return getHexLocation(c.x, c.y);
     }
 
-    // added by kenn
-    /**
-     * Returns the absolute position of the centre
-     * of the hex graphic
-     */
-    private Point getCentreHexLocation(int x, int y) {
-        Point p = getHexLocation(x, y);
-        p.x += 42;
-        p.y += 36;
-        return p;
-    }
-    private Point getCentreHexLocation(Coords c) {
-        return getCentreHexLocation(c.x, c.y);
-    }
-    // end kenn
-
     /**
      * Returns the coords at the specified point
      */
@@ -754,15 +566,13 @@ public class BoardView1
             }
         }
 
- 		// If the hex contains a building or rubble, make more space.
- 		if ( mhex != null &&
- 	     	(mhex.contains(Terrain.RUBBLE) ||
- 	    	  mhex.contains(Terrain.BUILDING)) ) {
-    	        stringsSize += 1;
-	 	}
+ 	// If the hex contains a building or rubble, make more space.
+ 	if ( mhex != null &&
+ 	     (mhex.contains(Terrain.RUBBLE) ||
+ 	      mhex.contains(Terrain.BUILDING)) ) {
+            stringsSize += 1;
+ 	}
         
-       	stringsSize += game.getNbrMinefields(mcoords);
-
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
             return null;
@@ -780,9 +590,9 @@ public class BoardView1
 
 	    // Do we have rubble?
 	    if ( mhex.contains(Terrain.RUBBLE) ) {
-			strings[stringsIndex] = "Rubble";
-			stringsIndex += 1;
-        }
+		strings[stringsIndex] = "Rubble";
+		stringsIndex += 1;
+            }
 
             // Do we have a building?
             else if ( mhex.contains(Terrain.BUILDING) ) {
@@ -798,31 +608,8 @@ public class BoardView1
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }
-
-	        if (game.containsMinefield(mcoords)) {
-	        	java.util.Vector minefields = game.getMinefields(mcoords);
-	        	for (int i = 0; i < minefields.size(); i++){
-	        		Minefield mf = (Minefield) minefields.elementAt(i);
-	        		String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-	        		
-	        		switch (mf.getType()) {
-	        			case (Minefield.TYPE_CONVENTIONAL) :
-		                strings[stringsIndex] = "Conventional minefield " + owner;
-	        			break;
-	        			case (Minefield.TYPE_THUNDER) :
-		                strings[stringsIndex] = "Thunder minefield(" + mf.getDamage() + ")" + owner;
-	        			break;
-	        			case (Minefield.TYPE_COMMAND_DETONATED) :
-		                strings[stringsIndex] = "Command-detonated minefield " + owner;
-	        			break;
-	        			case (Minefield.TYPE_VIBRABOMB) :
-		                strings[stringsIndex] = "Vibrabomb minefield(" + mf.getSetting() + ") " + owner;
-	        			break;
-	        		}
-	                stringsIndex++;
-	        	}
-	        }
         }
+
         // check if it's on any entities
         for (Iterator i = entitySprites.iterator(); i.hasNext();) {
             final EntitySprite eSprite = (EntitySprite)i.next();
@@ -874,44 +661,6 @@ public class BoardView1
         }
     }
 
-    public void redrawMovingEntity(Entity entity, Coords position, int facing) {
-        EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
-        Vector newSprites;
-        Hashtable newSpriteIds;
-
-        if (sprite != null) {
-	        newSprites = new Vector(entitySprites);
-    	    newSpriteIds = new Hashtable(entitySpriteIds);
-
-            newSprites.removeElement(sprite);
-
-	        entitySprites = newSprites;
-	        entitySpriteIds = newSpriteIds;
-        }
-
-        MovingEntitySprite mSprite = (MovingEntitySprite)movingEntitySpriteIds.get(new Integer(entity.getId()));
-        newSprites = new Vector(movingEntitySprites);
-        newSpriteIds = new Hashtable(movingEntitySpriteIds);
-
-
-        if (mSprite != null) {
-            newSprites.removeElement(mSprite);
-        }
-
-        if (entity.getPosition() != null) {
-            mSprite = new MovingEntitySprite(entity, position, facing);
-            newSprites.addElement(mSprite);
-            newSpriteIds.put(new Integer(entity.getId()), mSprite);
-        }
-
-        movingEntitySprites = newSprites;
-        movingEntitySpriteIds = newSpriteIds;
-    }
-    
-    public boolean isMovingUnits() {
-    	return movingUnits.size() > 0;
-    }
-
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
      * the old sprite with the new!
@@ -961,16 +710,6 @@ public class BoardView1
     private void redrawAllEntities() {
         Vector newSprites = new Vector(game.getNoOfEntities());
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
-        Vector newWrecks = new Vector();
-        
-        Enumeration e = game.getWreckedEntities();
-        while (e.hasMoreElements()) {
-        	Entity entity = (Entity) e.nextElement();
-        	if (!(entity instanceof Infantry)) {
-	        	WreckSprite ws = new WreckSprite(entity);
-	        	newWrecks.addElement(ws);
-        	}
-	    }
 
         clearC3Networks();
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -986,7 +725,6 @@ public class BoardView1
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
-        wreckSprites = newWrecks;
 
         repaint(100);
     }
@@ -1021,7 +759,7 @@ public class BoardView1
      * expensive to check for and reuse old step sprites than to make a whole
      * new one, we do that.
      */
-    public void drawMovementData(Entity entity, MovePath md) {
+    public void drawMovementData(Entity entity, MovementData md) {
         Vector temp = pathSprites;
 
         clearMovementData();
@@ -1030,7 +768,7 @@ public class BoardView1
         Compute.compile(game, entity.getId(), md);
 
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
             for (Iterator j = temp.iterator(); j.hasNext();) {
@@ -1194,88 +932,25 @@ public class BoardView1
 
 
 
+
+
+
+
+
     public void boardHexMoused(BoardEvent b) {
+        ;
     }
     public void boardHexCursor(BoardEvent b) {
         moveCursor(cursorSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
     }
     public void boardHexSelected(BoardEvent b) {
         moveCursor(selectedSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
     }
     public void boardHexHighlighted(BoardEvent b) {
         moveCursor(highlightSprite, b.getCoords());
-        moveCursor(firstLOSSprite, null);
-        moveCursor(secondLOSSprite, null);
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-		if (useLOSTool) {
-	        moveCursor(secondLOSSprite, null);
-    	    moveCursor(firstLOSSprite, b.getCoords());
-    	}
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c1) {
-		if (useLOSTool) {
-	        Coords c2 = b.getCoords();
-    	    moveCursor(firstLOSSprite, c1);
-	        moveCursor(secondLOSSprite, c2);
-	        
-	        LosEffects le = Compute.calculateLos(game, c1, c2, 
-	        						game.getMechInFirst(), 
-	        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
-	        int blocking = le.getHeavyWoods() * 2 +
-	            le.getLightWoods() +
-	            le.getSmoke() * 2;
-	        message.append( "Attacker(")
-	         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
-	         	.append(") hex is " )
-	            .append( c1.getBoardNum() )
-	            .append( ".\n" );
-	        message.append( "Target(")
-	         	.append(game.getMechInSecond() ? "Mech" : "non Mech")
-	         	.append(") hex is " )
-	            .append( c2.getBoardNum() )
-	            .append( ".\n" );
-	        if (le.isBlocked() || blocking > 2) {
-	            message.append( "Line of sight is blocked.\n" );
-	            message.append( "Range is " )
-	                .append( c1.distance(c2) )
-	                .append( " hex(es).\n");
-	        } else {
-	            message.append( "Line of sight is not blocked.\n" );
-	            message.append( "Range is " )
-	                .append( c1.distance(c2) )
-	                .append( " hex(es).\n");
-	            if (le.getHeavyWoods() > 0) {
-	                message.append( le.getHeavyWoods() )
-	                    .append( " heavy wood hex(es) in line of sight.\n" );
-	            }
-	            if (le.getLightWoods() > 0) {
-	                message.append( le.getLightWoods() )
-	                    .append( " light wood hex(es) in line of sight.\n" );
-	            }
-	            if (le.getSmoke() > 0) {
-	                message.append( le.getSmoke() )
-	                    .append( " smoke hex(es) in line of sight.\n" );
-	            }
-	            if (le.isTargetCover()) {
-	                message.append("Target has partial cover.\n");
-	            }
-	            if (le.isAttackerCover()) {
-	                message.append("Attacker has partial cover.\n");
-	            }
-	        }
-	        AlertDialog alert = new AlertDialog(frame,
-	                                            "Range / Line of Sight",
-	                                            message.toString(), false);
-	        alert.show();
-	     }
     }
     public void boardChangedHex(BoardEvent b) {
-        tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
+        tileManager.waitForHex( game.getBoard().getHex(b.getCoords()) );
         if (boardGraph != null) {
             boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
             redrawAround(b.getCoords());
@@ -1304,9 +979,9 @@ public class BoardView1
      * If the mouse is at the edges of the screen, this
      * scrolls the board image on the canvas.
      */
-    public boolean doScroll() {
+    public void doScroll() {
         if (!isScrolling) {
-            return false;
+            return;
         }
         final Point oldScroll = new Point(scroll);
         final int sf = 3; // scroll factor
@@ -1325,10 +1000,8 @@ public class BoardView1
         }
         checkScrollBounds();
         if (!oldScroll.equals(scroll)) {
-//            repaint();
-			return true;
+            repaint();
         }
-        return false;
     }
 
     /**
@@ -1348,9 +1021,6 @@ public class BoardView1
         }
     }
 
-	protected void stopScrolling() {
-		isScrolling = false;
-	}
 
     /**
      * Initializes the various overlay polygons with their
@@ -1460,8 +1130,6 @@ public class BoardView1
     //
     public void run() {
         final Thread currentThread = Thread.currentThread();
-        long lastTime = System.currentTimeMillis();
-        long currentTime = System.currentTimeMillis();
         while (scroller == currentThread) {
             try {
                 Thread.sleep(20);
@@ -1469,83 +1137,16 @@ public class BoardView1
                 // duh?
             }
             if (!isShowing()) {
-		        currentTime = System.currentTimeMillis();
-	            lastTime = currentTime;
                 continue;
             }
-	        currentTime = System.currentTimeMillis();
-			boolean redraw = false;
-			for (int i = 0; i < displayables.size(); i++) {
-				Displayable disp = (Displayable) displayables.elementAt(i);
-				if (!disp.isSliding()) {
-					disp.setIdleTime(currentTime - lastTime, true);
-				} else {
-					redraw = redraw || disp.slide();
-				}
-			}
             if (backSize != null) {
-                redraw = redraw || doMoveUnits(currentTime - lastTime);
-                redraw = redraw || doScroll();
+                doScroll();
                 checkTooltip();
             } else {
                 repaint(100);
             }
-            if (redraw) {
-				repaint();
-            }
-            lastTime = currentTime;
         }
     }
-
-    
-    private synchronized boolean doMoveUnits(long idleTime) {
-    	boolean movingSomething = false;
-
-		if (movingUnits.size() > 0) {
-	
-	    	moveWait += idleTime;
-	
-	    	if (moveWait > Settings.moveStepDelay) {
-
-		    	java.util.Vector spent = new java.util.Vector();
-	
-	    		for (int i = 0; i < movingUnits.size(); i++) {
-	    			Object[] move = (Object[]) movingUnits.elementAt(i);
-	    			Entity e = (Entity) move[0];
-	    			java.util.Vector movePath = (java.util.Vector) move[1];
-	    			movingSomething = true;
-	
-	    			if (movePath.size() > 0) { 
-	    				int j = ((Integer) movePath.elementAt(0)).intValue();
-	    				int y = j & 255;
-	    				int x = (j >> 8) & 255;
-	    				int facing = (j >> 16) & 255;
-	    				
-	    				redrawMovingEntity(e, new Coords(x, y), facing);
-	    				movePath.removeElementAt(0);
-	    			} else {
-	    				redrawEntity(game.getEntity(e.getId()));
-	    				spent.addElement(move);
-	    			}
-	    			
-	    		}
-	    		
-	    		for (int i = 0; i < spent.size(); i++) {
-	    			Object[] move = (Object[]) spent.elementAt(i);
-	    			movingUnits.removeElement(move);
-	    		}
-	    		moveWait = 0;
-	    		
-	    		if (movingUnits.size() == 0) {
-	    			movingEntitySpriteIds.clear();
-	    			movingEntitySprites.removeAllElements();
-	    			ghostEntitySprites.removeAllElements();
-	    			processBoardViewEvent(new BoardViewEvent(this, BoardViewEvent.FINISHED_MOVING_UNITS));
-	    		}
-        	}
-    	}
-    	return movingSomething;
-	}
 
     //
     // KeyListener
@@ -1583,28 +1184,16 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
-        isTipPossible = false;
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			if (disp.isHit(me.getPoint(), backSize)) {
-				return;
-			}
-		}
         isScrolling = true;
+        isTipPossible = false;
         if (isTipShowing()) {
             hideTooltip();
         }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseReleased(MouseEvent me) {
-        isTipPossible = true;
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			if (disp.isReleased()) {
-				return;
-			}
-		}
         isScrolling = false;
+        isTipPossible = true;
         if (me.getClickCount() == 1) {
             game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers());
         } else {
@@ -1625,34 +1214,15 @@ public class BoardView1
     // MouseMotionListener
     //
     public void mouseDragged(MouseEvent me) {
-        isTipPossible = false;
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			if (disp.isDragged(me.getPoint(), backSize)) {
-				repaint();
-				return;
-			}
-		}
         mousePos = me.getPoint();
+        isTipPossible = false;
         isScrolling = true;
         if (backSize != null) {
-            if (doScroll()) {
-				repaint();
-			}
+            doScroll();
         }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseMoved(MouseEvent me) {
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			if (disp.isBeingDragged()) {
-		        isTipPossible = false;
-				return;
-			}
-			if (backSize != null) {
-	    		disp.isMouseOver(me.getPoint(), backSize);
-			}
-		}
         mousePos = me.getPoint();
         if (isTipShowing()) {
             hideTooltip();
@@ -1827,207 +1397,6 @@ public class BoardView1
         }
     }
 
-	private class GhostEntitySprite extends Sprite {
-        private Entity entity;
-        private Rectangle entityRect;
-
-		public GhostEntitySprite(Entity entity) {
-			this.entity = entity;
-
-            String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                 getFontMetrics(font).stringWidth(shortName) + 1,
-                                 getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
-
-            this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
-            this.image = null;
-		}
-
-        /**
-         * Creates the sprite for this entity.  It is an extra pain to
-         * create transparent images in AWT.
-         */
-        public void prepare() {
-            // create image for buffer
-            Image tempImage;
-            Graphics graph;
-            try {
-                tempImage = createImage(bounds.width, bounds.height);
-                graph = tempImage.getGraphics();
-            } catch (NullPointerException ex) {
-                // argh!  but I want it!
-                return;
-            }
-
-            // fill with key color
-            graph.setColor(new Color(TRANSPARENT));
-            graph.fillRect(0, 0, bounds.width, bounds.height);
-
-            // draw entity image
-            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
-
-            // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
-        }
-        
-        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            if (isReady()) {
-            	try {
-	            	Graphics2D g2 = (Graphics2D) g;
-	            	g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-	                g2.drawImage(image, x, y, observer);
-	            	g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-	            } catch (Throwable e) {
-	                g.drawImage(image, x, y, observer);
-	            }
-            } else {
-                // grrr... well be ready next time!
-                prepare();
-            }
-        }
-
-
-	}
-	
-	private class MovingEntitySprite extends Sprite {
-		private int facing;
-        private Entity entity;
-        private Rectangle entityRect;
-
-		public MovingEntitySprite(Entity entity, Coords position, int facing) {
-			this.entity = entity;
-            this.facing = facing;
-
-            String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                 getFontMetrics(font).stringWidth(shortName) + 1,
-                                 getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
-            tempBounds.setLocation(getHexLocation(position));
-
-            this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
-            this.image = null;
-		}
-
-        /**
-         * Creates the sprite for this entity.  It is an extra pain to
-         * create transparent images in AWT.
-         */
-        public void prepare() {
-            // create image for buffer
-            Image tempImage;
-            Graphics graph;
-            try {
-                tempImage = createImage(bounds.width, bounds.height);
-                graph = tempImage.getGraphics();
-            } catch (NullPointerException ex) {
-                // argh!  but I want it!
-                return;
-            }
-
-            // fill with key color
-            graph.setColor(new Color(TRANSPARENT));
-            graph.fillRect(0, 0, bounds.width, bounds.height);
-
-            // draw entity image
-            graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
-
-            // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
-        }
-	}
-
-
-    /**
-     * Sprite for an wreck.  Consists
-     * of an image, drawn from the Tile Manager and an identification label.
-     */
-    private class WreckSprite extends Sprite
-    {
-        private Entity entity;
-        private Rectangle entityRect;
-
-        public WreckSprite(Entity entity) {
-            this.entity = entity;
-
-            String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                 getFontMetrics(font).stringWidth(shortName) + 1,
-                                 getFontMetrics(font).getAscent());
-            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
-            tempBounds.setLocation(getHexLocation(entity.getPosition()));
-
-            this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
-            this.image = null;
-        }
-
-        /**
-         * Creates the sprite for this entity.  It is an extra pain to
-         * create transparent images in AWT.
-         */
-        public void prepare() {
-            // figure out size
-            String shortName = entity.getShortName();
-            Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                 getFontMetrics(font).stringWidth(shortName) + 1,
-                                 getFontMetrics(font).getAscent());
-
-            // create image for buffer
-            Image tempImage;
-            Graphics graph;
-            try {
-                tempImage = createImage(bounds.width, bounds.height);
-                graph = tempImage.getGraphics();
-            } catch (NullPointerException ex) {
-                // argh!  but I want it!
-                return;
-            }
-
-            // fill with key color
-            graph.setColor(new Color(TRANSPARENT));
-            graph.fillRect(0, 0, bounds.width, bounds.height);
-
-            // draw entity image
-            graph.drawImage(tileManager.wreckMarkerFor(entity), 0, 0, this);
-
-            // draw box with shortName
-            Color text = Color.lightGray;
-            Color bkgd = Color.darkGray;
-            Color bord = Color.black;
-
-            graph.setFont(font);
-            graph.setColor(bord);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            modelRect.translate(-1, -1);
-            graph.setColor(bkgd);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            graph.setColor(text);
-            graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
-
-            // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
-        }
-
-        /**
-         * Overrides to provide for a smaller sensitive area.
-         */
-        public boolean isInside(Point point) {
-            return false;
-        }
-
-    }
     /**
      * Sprite for an entity.  Changes whenever the entity changes.  Consists
      * of an image, drawn from the Tile Manager; facing and possibly secondary
@@ -2085,27 +1454,25 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // draw box with shortName
-            Color text, bkgd, bord;
-            if (entity.isDone()) {
-                text = Color.lightGray;
-                bkgd = Color.darkGray;
-                bord = Color.black;
-            } else if (entity.isImmobile()) {
-                text = Color.darkGray;
-                bkgd = Color.black;
-                bord = Color.lightGray;
+            Color col;
+            Color bcol;
+            if (entity.isImmobile()) {
+                col = Color.black;
+                bcol = Color.lightGray;
+            } else if (entity.isDone()) {
+                col = Color.darkGray;
+                bcol = Color.black;
             } else {
-                text = Color.black;
-                bkgd = Color.lightGray;
-                bord = Color.darkGray;
+                col = Color.lightGray;
+                bcol = Color.darkGray;
             }
             graph.setFont(font);
-            graph.setColor(bord);
+            graph.setColor(bcol);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             modelRect.translate(-1, -1);
-            graph.setColor(bkgd);
+            graph.setColor(col);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            graph.setColor(text);
+            graph.setColor(entity.isDone() ? Color.lightGray : Color.black);
             graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
 
             // draw facing
@@ -2127,16 +1494,8 @@ public class BoardView1
                 graph.drawPolygon(facingPolys[secFacing]);
             }
 
-            // Determine if the entity is a tank with a locked turret.
-            boolean turretLocked = false;
-            if ( entity instanceof Tank &&
-                 !( (Tank) entity ).hasNoTurret() &&
-                 !entity.canChangeSecondaryFacing() ) {
-                turretLocked = true;
-            }
-
             // draw condition strings
-            if ( entity.isImmobile() && !entity.isProne() && !turretLocked ) {
+            if (entity.isImmobile() && !entity.isProne()) {
                 // draw "IMMOBILE"
                 graph.setColor(Color.darkGray);
                 graph.drawString("IMMOBILE", 18, 39);
@@ -2148,12 +1507,6 @@ public class BoardView1
                 graph.drawString("PRONE", 26, 39);
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 38);
-            } else if ( !entity.isImmobile() && turretLocked ) {
-                // draw "LOCKED"
-                graph.setColor(Color.darkGray);
-                graph.drawString("LOCKED", 22, 39);
-                graph.setColor(Color.yellow);
-                graph.drawString("LOCKED", 21, 38);
             } else if (entity.isImmobile() && entity.isProne()) {
                 // draw "IMMOBILE" and "PRONE"
                 graph.setColor(Color.darkGray);
@@ -2163,15 +1516,6 @@ public class BoardView1
                 graph.drawString("IMMOBILE", 17, 34);
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 47);
-            } else if ( entity.isImmobile() && turretLocked ) {
-                // draw "IMMOBILE" and "LOCKED"
-                graph.setColor(Color.darkGray);
-                graph.drawString("IMMOBILE", 18, 35);
-                graph.drawString("LOCKED", 22, 48);
-                graph.setColor(Color.red);
-                graph.drawString("IMMOBILE", 17, 34);
-                graph.setColor(Color.yellow);
-                graph.drawString("LOCKED", 21, 47);
             }
 
             // If this unit is being swarmed or is swarming another, say so.
@@ -2249,10 +1593,10 @@ public class BoardView1
      */
     private class StepSprite extends Sprite
     {
-        private MoveStep step;
+        private MovementData.Step step;
 
-        public StepSprite(MoveStep step) {
-            this.step = (MoveStep)step.clone();
+        public StepSprite(MovementData.Step step) {
+            this.step = (MovementData.Step)step.clone();
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
@@ -2297,14 +1641,14 @@ public class BoardView1
 
             // draw arrows and cost for the step
             switch (step.getType()) {
-            case MovePath.STEP_FORWARDS :
-            case MovePath.STEP_BACKWARDS :
-            case MovePath.STEP_CHARGE :
-            case MovePath.STEP_DFA :
-            case MovePath.STEP_LATERAL_LEFT :
-            case MovePath.STEP_LATERAL_RIGHT :
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
+            case MovementData.STEP_FORWARDS :
+            case MovementData.STEP_BACKWARDS :
+            case MovementData.STEP_CHARGE :
+            case MovementData.STEP_DFA :
+            case MovementData.STEP_LATERAL_LEFT :
+            case MovementData.STEP_LATERAL_RIGHT :
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
                 // draw arrows showing them entering the next
                 myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
                                      movePoly.npoints);
@@ -2317,7 +1661,7 @@ public class BoardView1
                 // draw movement cost
                 drawMovementCost(step, stepPos, graph, col, true);
                 break;
-            case MovePath.STEP_GO_PRONE:
+            case MovementData.STEP_GO_PRONE:
                 // draw arrow indicating dropping prone
                 Polygon downPoly = movementPolys[7];
                 myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
@@ -2330,7 +1674,7 @@ public class BoardView1
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
-            case MovePath.STEP_GET_UP:
+            case MovementData.STEP_GET_UP:
                 // draw arrow indicating standing up
                 Polygon upPoly = movementPolys[6];
                 myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
@@ -2343,8 +1687,8 @@ public class BoardView1
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
-            case MovePath.STEP_TURN_LEFT:
-            case MovePath.STEP_TURN_RIGHT:
+            case MovementData.STEP_TURN_LEFT:
+            case MovementData.STEP_TURN_RIGHT:
                 // draw arrows showing the facing
                 myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints,
                                      facingPoly.npoints);
@@ -2355,7 +1699,7 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 break;
-            case MovePath.STEP_LOAD:
+            case MovementData.STEP_LOAD:
                 // Announce load.
                 String load = "Load";
                 if (step.isPastDanger()) {
@@ -2368,7 +1712,7 @@ public class BoardView1
                 graph.setColor(col);
                 graph.drawString(load, loadX - 1, stepPos.y + 38);
                 break;
-            case MovePath.STEP_UNLOAD:
+            case MovementData.STEP_UNLOAD:
                 // Announce unload.
                 String unload = "Unload";
                 if (step.isPastDanger()) {
@@ -2392,17 +1736,17 @@ public class BoardView1
                     new KeyAlphaFilter(TRANSPARENT)));
         }
 
-        public MoveStep getStep() {
+        public MovementData.Step getStep() {
             return step;
         }
 
-        private void drawMovementCost(MoveStep step, Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+        private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append( step.getMpUsed() );
 
             // If the step is using a road bonus, mark it.
-            if ( step.isPavementStep() ) {
+            if ( step.isOnPavement() ) {
                 costStringBuf.append( "+" );
             }
 
@@ -2419,7 +1763,7 @@ public class BoardView1
 
             if (step.isUsingMASC()) {
                 costStringBuf.append("[");
-                costStringBuf.append(step.getTargetNumberMASC());
+                costStringBuf.append(step.getMASCNumber());
                 costStringBuf.append("+]");
             }
 
@@ -2767,24 +2111,5 @@ public class BoardView1
     public boolean isTileImagesLoaded() {
         return this.tileManager.isLoaded();
     }
-    
-    public void setUseLOSTool(boolean use) {
-    	useLOSTool = use;
-    }
-    
-	public TilesetManager getTilesetManager() {
-    	return tileManager;
-    }
-    
-    // added by kenn
-    public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
-      rulerStart = s;
-      rulerEnd = e;
-      rulerStartColor = sc;
-      rulerEndColor = ec;
-
-      repaint();
-    }
-    // end kenn
 
 }

@@ -14,6 +14,7 @@
 
 package megamek.client;
 
+// Defines Iterator class for JDK v1.1
 import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,18 +24,13 @@ import megamek.common.*;
 
 public class BoardEditor extends Container
     implements BoardListener, ItemListener, ActionListener, TextListener,
-    KeyListener, WindowListener {
-
-    private Frame               frame = new Frame();
+    KeyListener
+{
+    private Frame               frame;
     
-    private Game        game = new Game();
-    private Board               board = game.getBoard();
-    private BoardView1          bv = new BoardView1(game, frame);
-    private CommonMenuBar       menuBar = new CommonMenuBar();
-    private CommonAboutDialog   about  = null;
-    private CommonHelpDialog    help   = null;
-    private CommonSettingsDialog        setdlg = null;
-
+    private Board               board;
+    private BoardView1          bv;
+    
     private Hex                 curHex = new Hex();
 
     private String              curpath, curfile;
@@ -77,69 +73,25 @@ public class BoardEditor extends Container
     private Panel               panButtons;
     private Button              butBoardNew, butBoardLoad;
     private Button              butBoardSave, butBoardSaveAs;
-    private Button              butMiniMap;
-    
-    private Dialog               minimapW;
-    private MiniMap              minimap;
     
     /**
-     * Creates and lays out a new Board Editor frame.
+     * Contruct a new board editor panel.
+     * 
+     * @param frame            parent frame, for dialogs & such.
+     * @param board            the board to edit.
      */
-    public BoardEditor() {
-        Settings.load();
-
-        this.addKeyListener(bv);
-        this.addKeyListener(this);
-        bv.addKeyListener(this);
+    public BoardEditor(Frame frame, Board board, BoardView1 bv) {
+        this.frame = frame;
+        this.board = board;
+        this.bv = bv;
+        
+        board.newData(0, 0, new Hex[0]);
+        
+        frame.setTitle("MegaMek Editor : Unnamed");
+        
+        addKeyListener(this);
         board.addBoardListener(this);
-
-        bv.setUseLOSTool(false);
-
-        setupEditorPanel();
-        setupFrame();
-
-        frame.show();
-
-        new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
-    }
-    
-    /**
-     * Sets up the frame that will display the editor.
-     */
-    private void setupFrame() {
-        frame.setTitle("MegaMek Board Editor : Unnamed");
-        frame.setLayout(new BorderLayout());
-        frame.add(bv, BorderLayout.CENTER);
-        frame.add(this, BorderLayout.EAST);
-
-        menuBar.addActionListener( this );
-        frame.setMenuBar( menuBar );
-      
-        frame.setBackground(SystemColor.menu);
-        frame.setForeground(SystemColor.menuText);
-    
-        // maybe we should have our own settings, instead of using the client's
-        if (Settings.windowSizeHeight != 0) {
-            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
-        } else {
-            frame.setSize(800, 600);
-        }
-
-        // when frame is closing, just hide it
-        frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    frame.setVisible(false);
-                    setMapVisible(false);
-                }
-            });
-    }
-
-    /**
-     * Sets up the editor panel, which goes on the right of the map and has
-     * controls for editing the current square.
-     */
-    private void setupEditorPanel() {
+        
         canHex = new HexCanvas();
         labElev = new Label("Elev:", Label.RIGHT);
         texElev = new TextField("0", 1);
@@ -168,10 +120,6 @@ public class BoardEditor extends Container
         butAddTerrain = new Button("Add/Set Terrain");
         butAddTerrain.addActionListener(this);
         
-        butMiniMap = new Button("Toggle MiniMap");
-        butMiniMap.setActionCommand( "viewMiniMap" );
-        butMiniMap.addActionListener(this);
-        
         panTerrainType = new Panel(new BorderLayout());
         panTerrainType.add(choTerrainType, BorderLayout.WEST);
         panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
@@ -197,19 +145,16 @@ public class BoardEditor extends Container
 
         labBoard = new Label("Board:", Label.LEFT);
         butBoardNew = new Button("New...");
-        butBoardNew.setActionCommand( "fileBoardNew" );
         butBoardNew.addActionListener(this);
 
         butBoardLoad = new Button("Load...");
-        butBoardLoad.setActionCommand( "fileBoardOpen" );
         butBoardLoad.addActionListener(this);
+        butBoardLoad.setEnabled( false );
 
         butBoardSave = new Button("Save");
-        butBoardSave.setActionCommand( "fileBoardSave" );
         butBoardSave.addActionListener(this);
 
         butBoardSaveAs = new Button("Save As...");
-        butBoardSaveAs.setActionCommand( "fileBoardSaveAs" );
         butBoardSaveAs.addActionListener(this);
         
         panButtons = new Panel(new GridLayout(2, 2, 2, 2));
@@ -246,7 +191,6 @@ public class BoardEditor extends Container
         addBag(labTheme, gridbag, c);
         addBag(texTheme, gridbag, c);
         addBag(butAddTerrain, gridbag, c);
-        addBag(butMiniMap, gridbag, c);
     
         c.weightx = 1.0;    c.weighty = 1.0;
         addBag(blankL, gridbag, c);
@@ -255,14 +199,6 @@ public class BoardEditor extends Container
         addBag(labBoard, gridbag, c);
         addBag(panButtons, gridbag, c);
 
-        minimapW = new Dialog(frame, "MiniMap", false);
-        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-        minimap = new MiniMap(minimapW, game, bv);
-        minimapW.addWindowListener(this);
-        minimapW.add(minimap);
-
-        setMapVisible(true);
     }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -373,8 +309,7 @@ public class BoardEditor extends Container
             board.newData(bnd.getX(), bnd.getY(), newHexes); 
             curpath = null;
             curfile = null;
-            frame.setTitle("MegaMek Board Editor : Unnamed");
-            menuBar.setBoard( true );
+            frame.setTitle("MegaMek Editor : Unnamed");
         }
     }
     
@@ -397,13 +332,12 @@ public class BoardEditor extends Container
             board.load(is);
             // okay, done!
             is.close();
-            menuBar.setBoard( true );
         } catch(IOException ex) {
             System.err.println("error opening file to save!");
             System.err.println(ex);
         }
         
-        frame.setTitle("MegaMek Board Editor : " + curfile);
+        frame.setTitle("MegaMek Editor : " + curfile);
 
         cheRoadsAutoExit.setState( board.getRoadsAutoExit() );
 
@@ -455,7 +389,7 @@ public class BoardEditor extends Container
             curfile += ".board";
         }
         
-        frame.setTitle("MegaMek Board Editor : " + curfile);
+        frame.setTitle("MegaMek Editor : " + curfile);
         
         boardSave();
     }
@@ -498,12 +432,6 @@ public class BoardEditor extends Container
         ;
     }
     public void boardNewBoard(BoardEvent b) {
-        ;
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-        ;
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
         ;
     }
     
@@ -571,58 +499,18 @@ public class BoardEditor extends Container
     public void keyTyped(KeyEvent ke) {
         ;
     }
-
-    /**
-     * Called when the user selects the "Help->About" menu item.
-     */
-    private void showAbout() {
-        // Do we need to create the "about" dialog?
-        if ( this.about == null ) {
-            this.about = new CommonAboutDialog( this.frame );
-        }
-
-        // Show the about dialog.
-        this.about.show();
-    }
-
-    /**
-     * Called when the user selects the "Help->Contents" menu item.
-     */
-    private void showHelp() {
-        // Do we need to create the "help" dialog?
-        if ( this.help == null ) {
-            File helpfile = new File( "editor-readme.txt" );
-            this.help = new CommonHelpDialog( this.frame, helpfile );
-        }
-
-        // Show the help dialog.
-        this.help.show();
-    }
-
-    /**
-     * Called when the user selects the "View->Client Settings" menu item.
-     */
-    private void showSettings() {
-        // Do we need to create the "settings" dialog?
-        if ( this.setdlg == null ) {
-            this.setdlg = new CommonSettingsDialog( this.frame );
-        }
-
-        // Show the settings dialog.
-        this.setdlg.show();
-    }
-
+    
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
+        if (ae.getSource() == butBoardNew) {
             boardNew();
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
-            boardLoad();                                            
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSave")) {
-            boardSave();                                            
-        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) {
+        } else if (ae.getSource() == butBoardLoad) {
+            boardLoad();
+        } else if (ae.getSource() == butBoardSave) {
+            boardSave();
+        } else if (ae.getSource() == butBoardSaveAs) {
             boardSaveAs();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedItem());
@@ -646,14 +534,6 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) {
-            toggleMap();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) {
-            showAbout();
-        } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) {
-            showHelp();
-        } else if (ae.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
-            showSettings();
         }
     }
 
@@ -674,6 +554,9 @@ public class BoardEditor extends Container
         }
         
         public void update(Graphics g) {
+            if ( bv.isTileImagesLoaded() ) {
+                butBoardLoad.setEnabled( true );
+            }
             if(curHex != null) {
                 g.drawImage(bv.baseFor(curHex), 0, 0, this);
                 if (bv.supersFor(curHex) != null) {
@@ -688,41 +571,6 @@ public class BoardEditor extends Container
                 g.clearRect(0, 0, 72, 72);
             }
         }
-    }
-    /**
-     * @return the frame this is displayed in
-     */
-    public Frame getFrame() {
-        return frame;
-    }
-
-    /** Toggles the minimap window
-         Also, toggles the minimap enabled setting
-     */
-    public void toggleMap() {
-        setMapVisible(!minimapW.isVisible());
-    }    
-
-    public void setMapVisible(boolean visible) {
-        minimapW.setVisible(visible);
-    }
-    
-    //
-    // WindowListener
-    //
-    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
-    }    
-    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
 }
 
@@ -896,4 +744,5 @@ class ExitsDialog extends Dialog implements ActionListener
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         setVisible(false);
     }    
+    
 }

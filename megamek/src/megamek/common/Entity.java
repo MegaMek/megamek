@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.*;
-import java.awt.*;
 
 import megamek.common.actions.*;
 
@@ -25,7 +24,7 @@ import megamek.common.actions.*;
  * terrain.
  */
 public abstract class Entity 
-    implements Serializable, Transporter, Targetable, RoundUpdated
+    implements Serializable, Transporter, Targetable
 {
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?
@@ -38,9 +37,7 @@ public abstract class Entity
     
     public static final int REMOVE_UNKNOWN        = 0x0000;
     public static final int REMOVE_IN_RETREAT     = 0x0100;
-    public static final int REMOVE_PUSHED         = 0x0110;
     public static final int REMOVE_SALVAGEABLE    = 0x0200;
-    public static final int REMOVE_EJECTED        = 0x0210;
     public static final int REMOVE_DEVASTATED     = 0x0400;
     public static final int REMOVE_NEVER_JOINED   = 0x0800;
     
@@ -66,15 +63,12 @@ public abstract class Entity
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
 
-    public static final int        LOC_BREACHED        = -1;
-    public static final int        LOC_NORMAL          = 0;
-    public static final int        LOC_VACUUM          = 1;
-    public static final int        LOC_WET             = 2;
-
-    public static final int        MAX_C3_NODES        = 12;
-
-    // The maximum length of the icon name.
-    public static final int        ICON_NAME_MAX_LENGTH = 52;
+    /**
+     * Constants that represent range.
+     */
+    public static final char    RANGE_SHORT             = 'S';
+    public static final char    RANGE_MEDIUM            = 'M';
+    public static final char    RANGE_LONG              = 'L';
 
     protected transient Game    game;
 
@@ -88,11 +82,10 @@ public abstract class Entity
     protected String            chassis;
     protected String            model;
     protected int               year;
-    protected int   techLevel;
+    protected int		techLevel;
     
     protected String            displayName = null;
     protected String            shortName = null;
-    protected String            iconName = null;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -126,19 +119,11 @@ public abstract class Entity
     public int                  mpUsed = 0;
     public int                  moved = MOVE_NONE;
 
-    private int[]               exposure;
     private int[]               armor;
     private int[]               internal;
     private int[]               orig_armor;
     private int[]               orig_internal;
     public int                  damageThisPhase;
-    public int                  engineHitsThisRound;
-    public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
-    public boolean              dodging;
-    
-    public boolean        spotting;
-    private boolean				clearingMinefield = false;
-    private boolean 			selected = false;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -147,7 +132,6 @@ public abstract class Entity
 
     protected String            C3NetIdString = null;
     protected int               C3Master = NONE;
-    protected int               C3CompanyMasterIndex = LOC_DESTROYED;
 
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
@@ -200,16 +184,6 @@ public abstract class Entity
     private int removalCondition = REMOVE_UNKNOWN;
 
     /**
-     * The round this unit will be deployed
-     */
-    private int deployRound = 0;
-
-    /**
-     * Marks an entity as having been deployed
-     */
-    private boolean deployed = false;
-    
-    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -218,7 +192,6 @@ public abstract class Entity
         this.orig_armor = new int[locations()];
         this.orig_internal = new int[locations()];
         this.crits = new CriticalSlot[locations()][];
-        this.exposure = new int[locations()];
         for (int i = 0; i < locations(); i++) {
             this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
@@ -430,36 +403,23 @@ public abstract class Entity
      *          from a transport this turn.  <code>false</code> otherwise.
      */
     public boolean isActive() {
-      return this.isActive(-1);
-    }
-    
-    public boolean isActive(int turn) {
-      boolean isActive = !shutDown && !destroyed && getCrew().isActive() && !this.unloadedThisTurn;
-      
-      if ( (turn > -1) && isActive ) {
-        isActive = !deployed && shouldDeploy(turn);
-      } else {
-        isActive = isActive && deployed;
-      }
-      
-      return isActive;
+        return !shutDown && !destroyed &&
+            getCrew().isActive() && !this.unloadedThisTurn;
     }
     
     /**
      * Returns true if this entity is selectable for action.  Transported
      * entities can not be selected.
      */
-    public boolean isSelectableThisTurn(Game game) {
-        return !done && (conveyance == Entity.NONE) &&
-            !this.unloadedThisTurn && !isClearingMinefield();
-        //&& isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) 
+    public boolean isSelectable() {
+        return !done && isActive() && (conveyance == Entity.NONE) ;
     }
 
     /**
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && !crew.isDead() && deployed;
+        return !destroyed && !doomed && !crew.isDead();
     }
     
     public boolean isProne() {
@@ -670,17 +630,6 @@ public abstract class Entity
         this.shortName = nbuf.toString();
     }
     
-    // TODO : I really REALLY hate having an AWT class in the megamek.common 
-    //        package, but I'm not smart enough to figure out how to remove it
-    public String getIconName(FontMetrics fm) {
-        if (iconName == null) {
-            generateIconName(fm);
-        }
-        return iconName;
-    }
-    
-    public abstract void generateIconName(FontMetrics fm);
-    
     /**
      * Returns the primary facing, or -1 if n/a
      */
@@ -800,13 +749,6 @@ public abstract class Entity
     public abstract int getRunMPwithoutMASC();
 
     /**
-     * Returns this entity's running/flank mp as a string.
-     */
-    public String getRunMPasString() {
-        return Integer.toString(getRunMP());
-    }
-
-    /**
      * Returns this entity's original jumping mp.
      */
     protected int getOriginalJumpMP() {
@@ -923,14 +865,12 @@ public abstract class Entity
                 return i;
             }
         }
-      return Entity.LOC_NONE;
+      return this.LOC_NONE;
     }
 
     /**
      * Rolls the to-hit number 
      */
-    public abstract HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode);
-
     public abstract HitData rollHitLocation(int table, int side);
 
     /**
@@ -1168,18 +1108,6 @@ public abstract class Entity
     public boolean isLocationDestroyed(int loc) {
         return getInternal(loc) == ARMOR_DESTROYED;
     }
-
-    //returns exposure or breached flag for location
-    public int getLocationStatus(int loc) {
-        return exposure[loc];
-    }
-
-    //sets location exposure
-    public void setLocationStatus(int loc, int status) {
-        if (exposure[loc] > LOC_BREACHED) { //can't change BREACHED status
-            exposure[loc] = status;
-        }
-    }
     
     /**
      * Returns true is the location is a leg
@@ -1199,27 +1127,26 @@ public abstract class Entity
      * Returns a string representing the armor in the location
      */
     public String getArmorString(int loc, boolean rear) {
-        return armorStringFor(getArmor(loc, rear));
+        if (getArmor(loc, rear) == ARMOR_NA) {
+            return "N/A";
+        } else if (getArmor(loc, rear) == ARMOR_DOOMED ||
+                   getArmor(loc, rear) == ARMOR_DESTROYED) {
+            return "***";
+        } else {
+            return Integer.toString(getArmor(loc, rear));
+        }
     }
     
     /**
      * Returns a string representing the internal structure in the location
      */
     public String getInternalString(int loc) {
-        return armorStringFor(getInternal(loc));
-    }
-    
-    /**
-     * Parses the game's internal armor representation into a human-readable 
-     * string.
-     */
-    public static String armorStringFor(int value) {
-        if (value == ARMOR_NA) {
+        if (getInternal(loc) == ARMOR_NA) {
             return "N/A";
-        } else if (value == ARMOR_DOOMED || value == ARMOR_DESTROYED) {
+        } else if (getInternal(loc) == ARMOR_DESTROYED) {
             return "***";
         } else {
-            return Integer.toString(value);
+            return Integer.toString(getInternal(loc));
         }
     }
     
@@ -1397,7 +1324,7 @@ public abstract class Entity
         for (Enumeration i = getAmmo(); i.hasMoreElements();) {
             Mounted mountedAmmo = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mountedAmmo.getType();
-            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
+            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
                 continue;
             }
             if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
@@ -1412,7 +1339,7 @@ public abstract class Entity
      */
     public void loadWeapon(Mounted mounted, Mounted mountedAmmo)
     {
-        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
+        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
             return;
         }
         
@@ -1594,7 +1521,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
-                if (ccs.isDestroyed() || ccs.isBreached()) {
+                if (ccs.isDestroyed()) {
                     hits++;
                 }
             }
@@ -1614,7 +1541,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
-                if (ccs.isDamaged() || ccs.isBreached()) {
+                if (ccs.isDamaged()) {
                     hits++;
                 }
             }
@@ -1694,7 +1621,7 @@ public abstract class Entity
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
-            && ccs.getIndex() == system && !ccs.isDestroyed() && !ccs.isBreached()) {
+            && ccs.getIndex() == system && !ccs.isDestroyed()) {
                 return true;
             }
         }
@@ -1724,7 +1651,7 @@ public abstract class Entity
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+                return !(m.isDestroyed() || m.isMissing());
             }
         }
         return false;
@@ -1759,21 +1686,12 @@ public abstract class Entity
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
+                return !(m.isDestroyed() || m.isMissing());
             }
         }
         return false;
     }
     
-    public boolean hasAimModeTargComp() {
-        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP) && m.curMode().equals("Aimed shot")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
-            }
-        }
-        return false;
-    }
     /**
      * Returns whether this 'mech is part of a C3 network.
      */
@@ -1783,7 +1701,7 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S) 
-                    && !m.isDestroyed() && !m.isBreached()) {
+                    && !m.isDestroyed()) {
                 return true;
             }
         }
@@ -1795,64 +1713,15 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M) 
-                    && !m.isDestroyed() && !m.isBreached()) {
-                // If this unit is configured as a company commander,
-                // and if this computer is the company master, then
-                // this unit does not have a lance master computer.
-                if ( this.C3MasterIs(this) &&
-                     this.C3CompanyMasterIndex == getEquipmentNum( m ) ) {
-                    return false;
-                }
+                    && !m.isDestroyed()) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean hasC3MM() {
-        if (isShutDown()) return false;
-
-        // Have we already determined that there's no company command master?
-        if ( C3CompanyMasterIndex == LOC_NONE ) return false;
-
-        // Do we need to determine that there's no company command master?
-        if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
-            Enumeration e = getEquipment();
-            while ( C3CompanyMasterIndex == LOC_DESTROYED &&
-                    e.hasMoreElements() ) {
-                Mounted m = (Mounted)e.nextElement();
-                if ( m.getType() instanceof MiscType &&
-                     m.getType().hasFlag(MiscType.F_C3M) &&
-                     !m.isDestroyed() && !m.isBreached() ) {
-                    // Now look for the company command master.
-                    while ( C3CompanyMasterIndex == LOC_DESTROYED &&
-                            e.hasMoreElements() ) {
-                        m = (Mounted)e.nextElement();
-                        if ( m.getType() instanceof MiscType && 
-                             m.getType().hasFlag(MiscType.F_C3M) &&
-                             !m.isDestroyed() && !m.isBreached() ) {
-                            // Found the comany command master
-                            this.C3CompanyMasterIndex = getEquipmentNum( m );
-                        }
-                    }
-                }
-            }
-            // If we haven't found the company command master, there is none.
-            if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
-                this.C3CompanyMasterIndex = LOC_NONE;
-                return false;
-            }
-        }
-
-        Mounted m = getEquipment( this.C3CompanyMasterIndex );
-        if ( !m.isDestroyed() && !m.isBreached() ) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean hasC3() {
-      return hasC3S() | hasC3M() | hasC3MM();
+      return hasC3S() | hasC3M();
     }
 
     public boolean hasC3i() {
@@ -1860,7 +1729,7 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I) 
-                    && !m.isDestroyed() && !m.isBreached() ) {
+                    && !m.isDestroyed()) {
                 return true;
             }
         }
@@ -1868,14 +1737,7 @@ public abstract class Entity
     }
 
     public String getC3NetId() {
-        if (C3NetIdString == null) {
-            if ( hasC3() ) {
-                C3NetIdString = "C3." + getId();
-            }
-            else if ( hasC3i() ) {
-                C3NetIdString = "C3i." + getId();
-            }
-        }
+        if(C3NetIdString == null) C3NetIdString = "C3." + getId() + "." + Compute.randomInt(1000);
         return C3NetIdString;
     }
 
@@ -1884,55 +1746,6 @@ public abstract class Entity
         C3NetIdString = e.C3NetIdString;
     }
 
-    /**
-     * Determine the remaining number of other C3 Master computers that
-     * can connect to this <code>Entity</code>.
-     *<p>Please note, if this <code>Entity</code> does not have two C3
-     * Master computers, then it must first be identified as a company
-     * commander; otherwise the number of free nodes will be zero.
-     *
-     * @return  a non-negative <code>int</code> value.
-     */
-    public int calculateFreeC3MNodes() {
-        int nodes = 0;
-        if ( hasC3MM() ) {
-            nodes = 2;
-            if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
-                    if (e.hasC3M() && e != this ) {
-                        final Entity m = e.getC3Master();
-                        if (equals(m)) nodes--;
-                        if(nodes <= 0) return 0;
-                    }
-                }
-            }
-        }
-        else if ( hasC3M() && this.C3MasterIs(this) )  {
-            nodes = 3;
-            if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
-                    if (e.hasC3() && e != this ) {
-                        final Entity m = e.getC3Master();
-                        if (equals(m)) nodes--;
-                        if(nodes <= 0) return 0;
-                    }
-                }
-            }
-        }
-        return nodes;
-    }
-
-    /**
-     * Determine the remaining number of other C3 computers that can
-     * connect to this <code>Entity</code>.
-     *<p>Please note, if this <code>Entity</code> has two C3 Master
-     * computers, then this function only returns the remaining number
-     * of <b>C3 Slave</b> computers that can connect.
-     *
-     * @return  a non-negative <code>int</code> value.
-     */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
         if (hasC3i())  {
@@ -1946,27 +1759,23 @@ public abstract class Entity
                     }
                 }
             }
+            return nodes;
         }
-        else if (hasC3M())  {
+        if (hasC3M())  {
             nodes = 3;
             if (game != null) {
                 for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     final Entity e = (Entity)i.nextElement();
-                    if (e.hasC3() && !equals(e) ) {
+                    if (e.hasC3() && e != this ) {
                         final Entity m = e.getC3Master();
-                        if (equals(m)) {
-                            // If this unit is a company commander, and has two
-                            // C3 Master computers, only count C3 Slaves here.
-                            if ( !this.C3MasterIs(this) ||
-                                 !this.hasC3MM() || e.hasC3S() )
-                                nodes--;
-                        }
+                        if (equals(m)) nodes--;
                         if(nodes <= 0) return 0;
                     }
                 }
             }
+            return nodes;
         }
-        return nodes;
+        return 0;
     }
     
     public Entity getC3Top() {
@@ -1983,49 +1792,15 @@ public abstract class Entity
       if(hasC3S() && C3Master > NONE) { 
           // since we can't seem to get the check working in setC3Master(), I'll just do it here, every time. This sucks.
           Entity eMaster = game.getEntity(C3Master);
-          // Have we lost our C3Master?
-          if (eMaster == null ) {
-              C3Master = NONE;
-          }
-          // If our master is shut down, don't clear this slave's setting.
-          else if ( eMaster.isShutDown() ) {
-              return null;
-          }
-          // Slave computers can't connect to single-computer company masters.
-          else if ( eMaster.C3MasterIs(eMaster) && !eMaster.hasC3MM() ) {
-              C3Master = NONE;
-          }
-          // Has our lance master lost its computer?
-          else if ( !eMaster.hasC3M() ) {
+          if (eMaster == null || eMaster.C3MasterIs(eMaster)) {
               C3Master = NONE;
           }
       }
       else if(hasC3M() && C3Master > NONE) {
           Entity eMaster = game.getEntity(C3Master);
-          // Have we lost our C3Master?
-          if (eMaster == null ) {
+          if (eMaster == null || !eMaster.C3MasterIs(eMaster)) {
               C3Master = NONE;
           }
-          // If our master is shut down, don't clear this slave's setting.
-          else if ( eMaster.isShutDown() ) {
-              return null;
-          }
-          // Lance commanders can't connect to non-company commanders.
-          else if (!eMaster.C3MasterIs(eMaster)) {
-              C3Master = NONE;
-          }
-          // Has our company commander lost his company command computer?
-          else if ( ( eMaster.C3CompanyMasterIndex > LOC_NONE &&
-                      !eMaster.hasC3MM() ) ||
-                    ( eMaster.C3CompanyMasterIndex <= LOC_NONE &&
-                      !eMaster.hasC3M() ) ) {
-              C3Master = NONE;
-          }
-      }
-      // If we aren't shut down, and if we don't have a company master
-      // computer, but have a C3Master, then we must have lost our network.
-      else if ( !isShutDown() && !hasC3MM() && C3Master > NONE ) {
-          C3Master = NONE;
       }
       if (C3Master == NONE) {
           return null;
@@ -2034,20 +1809,6 @@ public abstract class Entity
       }
     }
 
-    /**
-     * Determines if the passed <code>Entity</code> is the C3 Master of this
-     * unit.
-     * <p>Please note, that when an <code>Entity</code> is it's own C3 Master,
-     * then it is a company commander.
-     * <p>Also note that when <code>null</code> is the master for this
-     * <code>Entity</code>, then it is an independant master.
-     *
-     * @param   e - the <code>Entity</code> that may be this unit's C3 Master.
-     * @return  a <code>boolean</code> that is <code>true</code> when the
-     *          passed <code>Entity</code> is this unit's commander.  If
-     *          the passed unit isn't this unit's commander, this routine
-     *          returns <code>false</code>.
-     */
     public boolean C3MasterIs(Entity e)
     {
         if(e == null && C3Master == NONE) return true;
@@ -2072,29 +1833,26 @@ public abstract class Entity
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity e = (Entity)i.nextElement();                
                 if(e.C3MasterIs(this) && !equals(e)) {
-                   e.setC3Master(NONE);
+                   e.setC3Master(NONE); // this doesn't work - I have no idea why.
                 }
             }
         }
         if(hasC3()) C3Master = entityId;
         if(hasC3() && entityId == NONE) {
-            C3NetIdString = "C3." + id;
-
+            C3NetIdString = "C3." + id + "." +  Compute.randomInt(1000);
         }
-        else if(hasC3i() && entityId == NONE) {
-            C3NetIdString = "C3i." + id;
+        else if(hasC3i() && entityId == NONE) 
+        {
+            C3NetIdString = "C3i." + id + "." +  Compute.randomInt(1000);
         }
-        else if ( hasC3() || hasC3i() ) {
+        else if((hasC3() || hasC3i())) 
             C3NetIdString = game.getEntity(entityId).getC3NetId();
-        }
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            if ( e.C3MasterIs(this) && !equals(e) ) {
-                e.C3NetIdString = C3NetIdString;
-            }
-
+            if(e.C3MasterIs(this) && !equals(e)) e.C3NetIdString = C3NetIdString;
         }
+
 
     }
 
@@ -2166,10 +1924,10 @@ public abstract class Entity
         }
     }
     
-    public void newRound(int roundNumber)
+    public void newRound()
     {
         unloadedThisTurn = false;
-        done = false;
+        done = !this.isActive();
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
@@ -2177,18 +1935,16 @@ public abstract class Entity
         setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
-        setSpotting(false);
-        setClearingMinefield(false);
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
-            ((Mounted)i.nextElement()).newRound(roundNumber);
+            ((Mounted)i.nextElement()).newRound();
         }
 
         // Update the inferno tracker.
-        this.infernos.newRound(roundNumber);
+        this.infernos.newRound();
     }
     
     /**
@@ -2378,7 +2134,7 @@ public abstract class Entity
       public boolean needsRollToStand() {
         return true;
       }
-    
+
     /**
      * Returns an entity's base piloting skill roll needed
      */
@@ -2386,10 +2142,9 @@ public abstract class Entity
         final int entityId = getId();
         
         PilotingRollData roll;
-        
+
         // Pilot dead?
-        if ( getCrew().isDead() || getCrew().isDoomed()
-             || getCrew().getHits() >= 6 ) {
+        if ( getCrew().isDead() || getCrew().isDoomed() ) {
             return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
         }
         // pilot awake?
@@ -2429,181 +2184,6 @@ public abstract class Entity
       public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
 
     /**
-     * Checks if the entity is getting up.  If so, returns the
-     *  target roll for the piloting skill check.
-     */
-    public PilotingRollData checkGetUp(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        if (step.getType() != MovePath.STEP_GET_UP) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-            return roll;
-        }
-
-        if (!needsRollToStand() && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
-            roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,"\n" + getDisplayName() + " does not need to make a piloting skill check to stand up because it has all four of its legs.");
-            return roll;
-        }
-        
-        // append the reason modifier
-        roll.append(new PilotingRollData(getId(), 0, "getting up"));
-        
-        return roll;
-    }
-
-    /**
-     * Checks if the entity is attempting to run with damage that would
-     *  force a PSR.  If so, returns the target roll for the piloting
-     *  skill check.
-     */
-    public PilotingRollData checkRunningWithDamage(int overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        if (overallMoveType == Entity.MOVE_RUN
-            && !isProne()
-            && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
-                                             Mech.SYSTEM_GYRO,
-                                             Mech.LOC_CT) > 0
-                || hasHipCrit())
-            ) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "running with damaged hip actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Checks if the entity is landing (from a jump) with damage that would
-     *  force a PSR.  If so, returns the target roll for the piloting
-     *  skill check.
-     */
-    public PilotingRollData checkLandingWithDamage() {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                                  Mech.LOC_CT) > 0
-            || hasLegActuatorCrit()) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Checks if the entity might skid on pavement.  If so, returns
-     *  the target roll for the piloting skill check.
-     */
-    public PilotingRollData checkSkid(int moveType, Hex prevHex,
-                                      int overallMoveType, MoveStep prevStep,
-                                      int prevFacing, int curFacing,
-                                      Coords lastPos, Coords curPos,
-                                      boolean isInfantry, int distance) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        // TODO: add check for elevation of pavement, road,
-        //       or bridge matches entity elevation.
-        if (moveType != Entity.MOVE_JUMP
-            && prevHex != null
-            /* Bug 754610: Revert fix for bug 702735.
-               && ( prevHex.contains(Terrain.PAVEMENT) ||
-               prevHex.contains(Terrain.ROAD) ||
-               prevHex.contains(Terrain.BRIDGE) )
-            */
-            && prevStep.isPavementStep()
-            && overallMoveType == Entity.MOVE_RUN
-            && prevFacing != curFacing
-            && !lastPos.equals(curPos)
-            && !isInfantry) {
-            // append the reason modifier
-            if ( this instanceof Mech ) {
-                roll.append(new PilotingRollData(getId(),
-                                      getMovementBeforeSkidPSRModifier(distance),
-                                      "running & turning on pavement"));
-            } else {
-                roll.append(new PilotingRollData(getId(),
-                                      getMovementBeforeSkidPSRModifier(distance),
-                                      "reckless driving on pavement"));
-            }
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Checks if the entity is moving into rubble.  If so, returns
-     *  the target roll for the piloting skill check.
-     */
-    public PilotingRollData checkRubbleMove(MoveStep step, Hex curHex,
-                                            Coords lastPos, Coords curPos) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && curHex.levelOf(Terrain.RUBBLE) > 0
-            && this instanceof Mech) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "entering Rubble"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Checks if the entity is moving into depth 1+ water.  If so,
-     *  returns the target roll for the piloting skill check.
-     */
-    public PilotingRollData checkWaterMove(MoveStep step, Hex curHex,
-                                           Coords lastPos, Coords curPos,
-                                           boolean isPavementStep) {
-        if (curHex.levelOf(Terrain.WATER) > 0
-            && !lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && getMovementType() != Entity.MovementType.HOVER
-            && !isPavementStep) {
-            return checkWaterMove(curHex.levelOf(Terrain.WATER));
-        } else {
-            return checkWaterMove(0);
-        }
-    }
-
-    /**
-     * Checks if the entity is moving into depth 1+ water.  If so,
-     *  returns the target roll for the piloting skill check.
-     */
-    public PilotingRollData checkWaterMove(int waterLevel) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        int mod;
-        if (waterLevel == 1) {
-            mod = -1;
-        } else if (waterLevel == 2) {
-            mod = 0;
-        } else {
-            mod = 1;
-        }
-
-        if (waterLevel > 0) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Depth "
-                                             + waterLevel + " Water"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-        }
-
-        return roll;
-    }
-
-    /**
      * Checks if the entity is being swarmed.  If so, returns the
      *  target roll for the piloting skill check to dislodge them.
      */
@@ -2622,102 +2202,6 @@ public abstract class Entity
     }
 
     /**
-     * Checks to see if an entity is moving through buildings.
-     *  Note: this method returns true/false, unlike the other
-     *  checkStuff() methods above.
-     */
-    public boolean checkMovementInBuilding(Coords lastPos, Coords curPos,
-                                           MoveStep step, Hex curHex,
-                                           Hex prevHex) {
-        
-        if ( !lastPos.equals(curPos) &&
-             step.getMovementType() != Entity.MOVE_JUMP &&
-             ( curHex.contains(Terrain.BUILDING) ||
-               (prevHex != null && prevHex.contains(Terrain.BUILDING)) ) &&
-             !(this instanceof Infantry) ) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Calculates and returns the roll for an entity moving in buildings.
-     */
-    public PilotingRollData rollMovementInBuilding(Building bldg,
-                                                  int distance, String why) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        int mod = 0;
-        String desc;
-        
-        if (why == "") {
-            desc = "moving through ";
-        } else {
-            desc = why + " ";
-        }
-
-        switch ( bldg.getType() ) {
-        case Building.LIGHT:
-            desc = "Light";
-            break;
-        case Building.MEDIUM:
-            mod = 1;
-            desc = "Medium";
-            break;
-        case Building.HEAVY:
-            mod = 2;
-            desc = "Heavy";
-            break;
-        case Building.HARDENED:
-            mod = 5;
-            desc = "Hardened";
-            break;
-        }
-        
-        // append the reason modifier
-        roll.append(new PilotingRollData(getId(), mod, "moving through "
-                                         + desc + " " + bldg.getName()));
-
-        // Modify the roll by the distance moved so far.      
-        if (distance >= 3 && distance <= 4) {
-            roll.addModifier(1, "moved 3-4 hexes");
-        } else if (distance >= 5 && distance <= 6) {
-            roll.addModifier(2, "moved 5-6 hexes");
-        } else if (distance >= 7 && distance <= 9) {
-            roll.addModifier(3, "moved 7-9 hexes");
-        } else if (distance >= 10) {
-            roll.addModifier(4, "moved 10+ hexes");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Calculate the piloting skill roll modifier, based upon the number
-     * of hexes moved this phase.  Used for skidding.
-     */
-    public int getMovementBeforeSkidPSRModifier( int distance ) {
-        int mod = -1;
-        
-        if ( distance > 10 ) // 11+ hexes
-            mod = 4;
-        else if ( distance > 7 ) // 8-10 hexes
-            mod = 2;
-        else if ( distance > 4 ) // 5-7 hexes
-            mod = 1;
-        else if ( distance > 2 ) // 3-4 hexes
-            mod = 0;
-        else // 0-2 hexes
-            mod = -1;
-        
-        if ( getCrew().getOptions().booleanOption("maneuvering_ace") )
-          mod--;
-          
-        return mod; 
-    }
-      
-    /**
      * The maximum elevation change the entity can cross
      */
     public abstract int getMaxElevationChange();
@@ -2726,10 +2210,10 @@ public abstract class Entity
      * Add a transportation component to this Entity. Please note, this
      * method should only be called during this entity's construction.
      *
-     * @param component - One of this new entity's <code>Transporter</code>s.
+     * @param	component - One of this new entity's <code>Transporter</code>s.
      */
     /* package */ void addTransporter( Transporter component ) {
-        transports.addElement( component );
+	transports.addElement( component );
     }
 
     /**
@@ -2741,18 +2225,18 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean canLoad( Entity unit ) {
-        // Walk through this entity's transport components;
-        // if one of them can load the unit, we can.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// if one of them can load the unit, we can.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            if ( next.canLoad( unit ) ) {
-                return true;
-            }
-        }
+	    if ( next.canLoad( unit ) ) {
+		return true;
+	    }
+	}
 
-        // If we got here, none of our transports can carry the unit.
-        return false;
+	// If we got here, none of our transports can carry the unit.
+	return false;
     }
 
     /**
@@ -2763,22 +2247,22 @@ public abstract class Entity
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
     public void load( Entity unit ) throws IllegalArgumentException {
-        // Walk through this entity's transport components;
-        // find the one that can load the unit.
-        // Stop looking after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// find the one that can load the unit.
+	// Stop looking after the first match.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            if ( next.canLoad( unit ) ) {
-                next.load( unit );
-                return;
-            }
-        }
+	    if ( next.canLoad( unit ) ) {
+		next.load( unit );
+		return;
+	    }
+	}
 
-        // If we got to this point, then we can't load the unit.
-        throw new IllegalArgumentException( this.getShortName() +
-                                            " can not load " + 
-                                            unit.getShortName() );
+	// If we got to this point, then we can't load the unit.
+	throw new IllegalArgumentException( this.getShortName() +
+					    " can not load " + 
+					    unit.getShortName() );
     }
 
     /**
@@ -2791,20 +2275,20 @@ public abstract class Entity
      *
      */
     public Vector getLoadedUnits() {
-        Vector result = new Vector();
+	Vector result = new Vector();
 
-        // Walk through this entity's transport components;
-        // add all of their lists to ours.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// add all of their lists to ours.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             for (Enumeration i = next.getLoadedUnits().elements(); i.hasMoreElements();) {
                 result.addElement(i.nextElement());
             }
-        }
+	}
 
-        // Return the list.
-        return result;
+	// Return the list.
+	return result;
     }
 
     /**
@@ -2815,19 +2299,19 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-        // Walk through this entity's transport components;
-        // try to remove the unit from each in turn.
-        // Stop after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// try to remove the unit from each in turn.
+	// Stop after the first match.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            if ( next.unload( unit ) ) {
-                return true;
-            }
-        }
+	    if ( next.unload( unit ) ) {
+		return true;
+	    }
+	}
 
-        // If we got here, none of our transports currently carry the unit.
-        return false;
+	// If we got here, none of our transports currently carry the unit.
+	return false;
     }
 
     /**
@@ -2836,22 +2320,22 @@ public abstract class Entity
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-        StringBuffer result = new StringBuffer();
+	StringBuffer result = new StringBuffer();
 
-        // Walk through this entity's transport components;
-        // add all of their string to ours.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// add all of their string to ours.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            result.append( next.getUnusedString() );
+	    result.append( next.getUnusedString() );
             // Add a newline character between strings.
             if ( iter.hasMoreElements() ) {
                 result.append( '\n' );
             }
-        }
+	}
 
-        // Return the String.
-        return result.toString();
+	// Return the String.
+	return result.toString();
     }
 
     /**
@@ -2866,20 +2350,20 @@ public abstract class Entity
      *          <code>false</code> if the weapon can fire.
      */
     public boolean isWeaponBlockedAt( int loc, boolean isRear ) {
-        // Walk through this entity's transport components;
-        // check each for blockage in turn.
-        // Stop after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// check each for blockage in turn.
+	// Stop after the first match.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-            if ( next.isWeaponBlockedAt( loc, isRear ) ) {
-                return true;
-            }
-        }
+	    if ( next.isWeaponBlockedAt( loc, isRear ) ) {
+		return true;
+	    }
+	}
 
-        // If we got here, none of our transports
+	// If we got here, none of our transports
         // carry a blocking unit at that location.
-        return false;
+	return false;
     }
 
     /**
@@ -2897,21 +2381,21 @@ public abstract class Entity
      *          if no unit is transported on the outside at that location.
      */
     public Entity getExteriorUnitAt( int loc, boolean isRear ) {
-        // Walk through this entity's transport components;
-        // check each for an exterior unit in turn.
-        // Stop after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
+	// Walk through this entity's transport components;
+	// check each for an exterior unit in turn.
+	// Stop after the first match.
+	Enumeration iter = this.transports.elements();
+	while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             Entity exterior = next.getExteriorUnitAt( loc, isRear );
-            if ( null != exterior ) {
-                return exterior;
-            }
-        }
+	    if ( null != exterior ) {
+		return exterior;
+	    }
+	}
 
-        // If we got here, none of our transports
+	// If we got here, none of our transports
         // carry an exterior unit at that location.
-        return null;
+	return null;
     }
 
     /**
@@ -2962,12 +2446,12 @@ public abstract class Entity
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( char range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -2977,9 +2461,9 @@ public abstract class Entity
 
         // Get the range modifier.
         switch ( range ) {
-        case Compute.RANGE_SHORT:
-        case Compute.RANGE_MEDIUM:
-        case Compute.RANGE_LONG:
+        case Entity.RANGE_SHORT:
+        case Entity.RANGE_MEDIUM:
+        case Entity.RANGE_LONG:
             result = new TargetRoll( 0, "stealth not installed" );
             break;
         default:
@@ -3088,26 +2572,13 @@ public abstract class Entity
      * destroyed.
      *
      * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          has salvageable components; if this value is <code>false</code>
-     *          the unit is utterly destroyed.
-     * @see     #isRepairable()
+     *          can be repaired (given enough time and parts); if this value
+     *          is <code>false</code>, the unit is utterly destroyed.
      */
     public boolean isSalvage() {
         return this.salvageable;
     }
-
-    /**
-     * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     #isSalvage()
-     */
-    public boolean isRepairable() {
-        return isSalvage();
-    }
-
+    
     /** Getter for property removalCondition.
      * @return Value of property removalCondition.
      */
@@ -3125,94 +2596,9 @@ public abstract class Entity
         }
     }
 
-    /**
-     * @return whether this entity is clearing a minefield.
-     */
-    public boolean isClearingMinefield() {
-        return clearingMinefield;
-    }
-
-    /**
-     * @param clearingMinefield
-     */
-    public void setClearingMinefield(boolean clearingMinefield) {
-        this.clearingMinefield = clearingMinefield;
-    }
-
-    /**
-     * @return whether this entity is spotting this round.
-     */
-    public boolean isSpotting() {
-        return spotting;
-    }
-
-    /**
-     * @param spotting
-     */
-    public void setSpotting(boolean spotting) {
-        this.spotting = spotting;
-    }
-  
-    /**
-     * Um, basically everything can spot for LRM indirect fire.
-     * @return true, if the entity is active
-     */
-    public boolean canSpot() {
-        return isActive();
-    }
-
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";
     }
 
-    /**
-     * The round the unit will be deployed. We will deploy at the end of a
-     * round. So if depoyRound is set to 5, we will deploy when round 5 is
-     * over.  Any value of zero or less is automatically set to 1
-     *
-     * @param    deployRound         an int
-     *
-     */
-    public void setDeployRound(int deployRound) {
-        this.deployRound = deployRound;
-    }
-  
-    /**
-     * The round the unit will be deployed
-     * 
-     * @return   an int
-     * 
-     */
-    public int getDeployRound() {
-        return deployRound;
-    }
-
-    /**
-     * Toggles if an entity has been deployed
-     */
-    public void setDeployed(boolean deployed) {
-        this.deployed = deployed;
-    }
-
-    /**
-     * Checks to see if an entity has been deployed
-     */ 
-    public boolean isDeployed() {
-        return deployed;
-    }
-  
-    /**
-     * Returns true if the entity should be deployed
-     */
-    public boolean shouldDeploy(int round) {
-        return ( !deployed && (getDeployRound() <= round) );
-    }
     
-    public void setSelected(boolean selected) {
-    	this.selected = selected;
-    }
-    
-    public boolean isSelected() {
-    	return selected;
-    }
 }

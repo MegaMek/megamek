@@ -19,6 +19,7 @@
 
 package megamek.client.bot;
 
+import java.awt.Frame;
 import com.sun.java.util.collections.*;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -97,10 +98,10 @@ public class TestBot extends BotClientWrapper {
         this.heat = w.getHeat();
         this.expected = this.odds*this.value;
         this.primary_expected = this.primary_odds*this.value;
-  final boolean isInfantryWeapon = 
-      ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
+	final boolean isInfantryWeapon = 
+	    ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
         final boolean usesAmmo = 
-      (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
+	    (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
           this.value = 0; //should have already been caught...
@@ -117,6 +118,12 @@ public class TestBot extends BotClientWrapper {
   
   public static java.util.Properties BotProperties = new java.util.Properties();
   public static int Ignore = 10;
+  
+  /** Creates a new instance of TestBot */
+  public TestBot(Frame frame, String name) {
+    super(frame, name);
+    setup();
+  }
   
   public TestBot(String name) {
     super(name);
@@ -223,10 +230,6 @@ public class TestBot extends BotClientWrapper {
           int number = 0;
           while (e.hasMoreElements()) {
             Entity enemy = (Entity)e.nextElement();
-            
-            if ( null == enemy.getPosition() )
-              continue;
-              
             if (!enemy.isProne() && enemy.getPosition().distance(en.getPosition()) < 3) {
               if (enemy.isEnemyOf(en)) {
                 number++;
@@ -328,7 +331,7 @@ public class TestBot extends BotClientWrapper {
     //first check and make sure that someone else has moved so that we don't replan
     Object[] enemy_array = this.getEnemyEntities().toArray();
     for (int j = 0; j < enemy_array.length; j++) {
-      if (!((Entity)enemy_array[j]).isSelectableThisTurn(game)) {
+      if (!((Entity)enemy_array[j]).isSelectable()) {
         initiative++;
       }
     }
@@ -353,7 +356,7 @@ public class TestBot extends BotClientWrapper {
         CEntity cen = this.enemies.get(entity);
         
         // if we can't move this entity right now, ignore it
-        if (!game.getTurn().isValidEntity(entity, game)) {
+        if (!game.getTurn().isValidEntity(entity)) {
             continue;
         }
         
@@ -366,11 +369,11 @@ public class TestBot extends BotClientWrapper {
           e.printStackTrace();
         }
 
-  // If this entity can still move, add its
-  // move result to the list of possible moves.
-  if ( !cen.moved ) {
-      possible.add(mt.result);
-  }
+	// If this entity can still move, add its
+	// move result to the list of possible moves.
+	if ( !cen.moved ) {
+	    possible.add(mt.result);
+	}
 
         if (cen.entity.isImmobile() && !cen.moved) {
           cen.moved = true;
@@ -455,7 +458,7 @@ public class TestBot extends BotClientWrapper {
     CEntity self = this.enemies.get(entity);
     EntityState current = self.old;
     Object[] move_array;
-    if (entity.isSelectableThisTurn(game) && !self.moved) {
+    if (entity.isSelectable() && !self.moved) {
       move_array = self.getAllMoves().toArray();
     } else {
       move_array = new Object[] {current};
@@ -486,7 +489,7 @@ public class TestBot extends BotClientWrapper {
 
       // 2002-10-28 Suvarov454 : Discard impossible locations.
       if ( !game.getBoard().contains(option.entity.getPosition()) ) {
-    continue;
+	  continue;
       }
 
       if (option.damages == null) option.damages = new double[enemy_array.length];
@@ -504,7 +507,7 @@ public class TestBot extends BotClientWrapper {
           self.engaged = true;
           int mod = modifiers[EntityState.DEFENCE_MOD];
           double max = option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod, modifiers[EntityState.DEFENCE_PC]);
-          if (en.isSelectableThisTurn(game)) { // let him turn a little
+          if (en.isSelectable()) { // let him turn a little
             enemy.old.curFacing = (enemy.old.curFacing+1)%6;
             max = Math.max(option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
             enemy.old.curFacing = (enemy.old.curFacing+4)%6;
@@ -541,7 +544,7 @@ public class TestBot extends BotClientWrapper {
                 double damage = 0;
                 if (option.isJumping) {
                   self.old.setState();
-                  MovePath md = option.getMovementData();
+                  MovementData md = option.getMovementData();
                   toHit = Compute.toHitDfa(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = 2*Compute.getDfaDamageFor(option.entity);
                   self_threat = option.centity.getThreatUtility(Compute.getDfaDamageTakenBy(option.entity), CEntity.SIDE_REAR)*Compute.oddsAbove(toHit.getValue())/100;
@@ -549,7 +552,7 @@ public class TestBot extends BotClientWrapper {
                   self_threat *= 100/option.centity.entity.getWeight(); //small mechs shouldn't do this...
                 } else {
                   self.old.setState();
-                  MovePath md = option.getMovementData();
+                  MovementData md = option.getMovementData();
                   toHit = Compute.toHitCharge(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = Compute.getChargeDamageFor(option.entity, md.getHexesMoved());
                   self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(Compute.oddsAbove(toHit.getValue())/100);
@@ -1056,29 +1059,29 @@ public class TestBot extends BotClientWrapper {
       CEntity enemy = enemies.get(e);
       ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);
       if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
-    double expectedDmg;
+	  double expectedDmg;
 
-    // Are we an Infantry platoon?
-    if ( en instanceof Infantry ) {
-        // Get the expected damage, given our current 
-        // manpower level.
-        Infantry inf = (Infantry) en;
-        expectedDmg = 
-      inf.getDamage(inf.getShootingStrength());
-    } else {
-        // Get the expected damage of the weapon.
-        expectedDmg = 
-      Compute.getExpectedDamage((WeaponType)mw.getType());
-    }
+	  // Are we an Infantry platoon?
+	  if ( en instanceof Infantry ) {
+	      // Get the expected damage, given our current 
+	      // manpower level.
+	      Infantry inf = (Infantry) en;
+	      expectedDmg = 
+		  inf.getDamage(inf.getShootingStrength());
+	  } else {
+	      // Get the expected damage of the weapon.
+	      expectedDmg = 
+		  Compute.getExpectedDamage((WeaponType)mw.getType());
+	  }
 
-    // Infantry in the open suffer double damage.
-    if ( e instanceof Infantry ) {
-        Hex e_hex = game.getBoard().getHex( e.getPosition() );
-        if ( !e_hex.contains(Terrain.WOODS) &&
-       !e_hex.contains(Terrain.BUILDING) ) {
-      expectedDmg *= 2;
-        }
-    }
+	  // Infantry in the open suffer double damage.
+	  if ( e instanceof Infantry ) {
+	      Hex e_hex = game.getBoard().getHex( e.getPosition() );
+	      if ( !e_hex.contains(Terrain.WOODS) &&
+		   !e_hex.contains(Terrain.BUILDING) ) {
+		  expectedDmg *= 2;
+	      }
+	  }
 
         a = new AttackOption(enemy, mw, expectedDmg, th);
         if (a.value > max.value) {
@@ -1577,12 +1580,14 @@ public class TestBot extends BotClientWrapper {
         super.setVisible(false);
       }
     };*/
+    Frame frame1 = new Frame();
+    Frame frame2 = new Frame();
     int total1 = 0;
     int total2 = 0;
     for (int run = 1; run <= 5; run++) {
       megamek.server.Server s = new megamek.server.Server("hello", 2348);
-      ConnectionThread c1 = new ConnectionThread("Player 1", BotFactory.TEST, 0);
-      ConnectionThread c2 = new ConnectionThread("Player 2", BotFactory.HUMAN, 1);
+      ConnectionThread c1 = new ConnectionThread("Player 1", BotFactory.TEST, 0, frame1);
+      ConnectionThread c2 = new ConnectionThread("Player 2", BotFactory.HUMAN, 1, frame2);
       System.gc();
       c1.start();
       c2.start();
@@ -1604,9 +1609,11 @@ public class TestBot extends BotClientWrapper {
 
 class PlayBot {
   public static void main(String[] args) {
+    Frame frame1 = new Frame();
+    Frame frame2 = new Frame();
     megamek.server.Server s = new megamek.server.Server("hello", 2348);
-    ConnectionThread c1 = new ConnectionThread("Player 0", BotFactory.TEST, 0);
-    ConnectionThread c2 = new ConnectionThread("Player 1", BotFactory.HUMAN, 2);
+    ConnectionThread c1 = new ConnectionThread("Player 0", BotFactory.TEST, 0, frame1);
+    ConnectionThread c2 = new ConnectionThread("Player 1", BotFactory.HUMAN, 2, frame2);
     c1.start();
     c2.start();
   }
@@ -1617,16 +1624,18 @@ class ConnectionThread extends Thread {
   int type;
   int location;
   MegaMek result;
-  public ConnectionThread(String name,int type,int location) {
+  Frame frame;
+  public ConnectionThread(String name,int type,int location, Frame frame) {
     this.name = name;
     this.type = type;
     this.location = location;
+    this.frame = frame;
   }
   public void run() {
     boolean die = false;
     try {
-      MegaMek mm = new MegaMek();
-      mm.client = BotFactory.getBot(type, name);
+      MegaMek mm = new MegaMek(frame);
+      mm.client = BotFactory.getBot(type,frame, name);
       if(!mm.client.connect("localhost", 2348)) {
         return;
       }

@@ -961,10 +961,10 @@ public class FiringDisplay
                 torsoTwist(client.game.board.lastCursor);
             }
         }
-        if (ev.getKeyCode() == KeyEvent.VK_M) {
+/*        if (ev.getKeyCode() == KeyEvent.VK_M) {
             changeMode(); 
         }
-    }
+*/  }
     public void keyReleased(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;

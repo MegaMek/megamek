@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 v 0.29.17 (CVS)
 + Patch 832885: use alternate LOS tool.
++ Marked data/sounds/call.wav as a binary file.
++ Bug 833851 -PARTIAL FIX-
+  Catch all Throwables when trying to get the "bing" sound.
 
 v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.

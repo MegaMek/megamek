@@ -126,6 +126,8 @@ v 0.28.17 CVS
 + Bug 729877: save games load without error again
 + Bug 729795: fixed bug with split weapons not counting for physical attacks
 + Mech selector, mech display, minimap windows close normally (X in corner)
++ Bug 693885: Ignite choice not displayed if fire option turned off
++ Bug 724533: Displaced DFA'd units can't displace their own attacker
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

@@ -524,14 +524,18 @@ public class Client extends Panel
                     curPanel instanceof FiringDisplay ) {
                     popup.add(new TargetMenuItem(new HexTarget
                         (coords, game.board, false) ) );
-                    popup.add(new TargetMenuItem(new HexTarget
-                        (coords, game.board, true) ) );
+                    if (game.getOptions().booleanOption("fire")) {
+                        popup.add(new TargetMenuItem(new HexTarget
+                            (coords, game.board, true) ) );
+                    }
                 }
                 else if ( h != null && h.contains( Terrain.BUILDING ) ) {
                     popup.add( new TargetMenuItem( new BuildingTarget
                         ( coords, game.board, false ) ) );
-                    popup.add( new TargetMenuItem( new BuildingTarget
-                        ( coords, game.board, true ) ) );
+                    if (game.getOptions().booleanOption("fire")) {
+                        popup.add( new TargetMenuItem( new BuildingTarget
+                            ( coords, game.board, true ) ) );
+                    }
                 }
             }
         }

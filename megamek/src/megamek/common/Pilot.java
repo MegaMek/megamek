@@ -176,10 +176,8 @@ public class Pilot
     public String getAdvantageList(String sep) {
       StringBuffer adv = new StringBuffer();
       
-      if ( (null == sep) || (sep.trim().length() == 0) ) {
+      if (null == sep) {
         sep = "";
-      } else {
-        sep = sep + " ";
       }
       
       for (Enumeration i = options.groups(); i.hasMoreElements();) {

@@ -55,7 +55,9 @@ Inner Sphere Level 1 Tech:
   Foot Actuator
   Heat Sink
 
-Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS  Weapons:                   Level 2 play and won't be posted again by    ISERSmallLaser            me, here on the IS Level 2 list.]
+Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS
+ Weapons:                   Level 2 play and won't be posted again by
+  ISERSmallLaser            me, here on the IS Level 2 list.]
   ISERMediumLaser
   ISERLargeLaser
   ISSmallPulseLaser

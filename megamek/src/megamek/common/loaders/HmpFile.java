@@ -1093,6 +1093,8 @@ public class HmpFile
     clanCriticals.put(new Long(0xFF), "CLATM12");
 
 
+    clanCriticals.put(new Long(0x0121), "ISRotaryAC2");
+    clanCriticals.put(new Long(0x0122), "ISRotaryAC5");
 
     //    clanCriticals.put(new Long(0x01ce), "CLAC2 Ammo");
     clanCriticals.put(new Long(0x01d0), "CLAMS Ammo");
@@ -1137,6 +1139,8 @@ public class HmpFile
     clanCriticals.put(new Long(0x01ff), "CLSRTorpedo4 Ammo");
     clanCriticals.put(new Long(0x0200), "CLSRTorpedo6 Ammo");
 
+    clanCriticals.put(new Long(0x02B1), "ISRotaryAC2 Ammo");
+    clanCriticals.put(new Long(0x02B2), "ISRotaryAC5 Ammo");
     clanCriticals.put(new Long(0x021E), "ISAC2 Ammo");
     clanCriticals.put(new Long(0x021F), "ISAC5 Ammo");
     clanCriticals.put(new Long(0x0220), "ISAC10 Ammo");
@@ -1775,3 +1779,4 @@ class WeaponLocation
   }
 
 }
+

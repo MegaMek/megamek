@@ -1441,7 +1441,6 @@ public class Game implements Serializable
     }
 
     /** Resets the PSR list for a given entity. */
-//DEBUG    public void resetPSRs(Entity entity, megamek.server.Server server) {
     public void resetPSRs(Entity entity) {
         PilotingRollData roll;
         Vector rollsToRemove = new Vector();
@@ -1450,7 +1449,6 @@ public class Game implements Serializable
         // first, find all the rolls belonging to the target entity
         for (i=0; i < pilotRolls.size(); i++) {
             roll = (PilotingRollData)pilotRolls.get(i);
-//DEBUG            server.sendServerChat("Looking at PSR #"+i+" for Entity #"+roll.getEntityId()+"("+roll.getDesc()+")");
             if ( roll.getEntityId()==entity.getId() ) {
                rollsToRemove.add(new Integer(i));
             };
@@ -1459,8 +1457,6 @@ public class Game implements Serializable
         // now, clear them out
         for (i=rollsToRemove.size()-1; i > -1; i--) {
             pilotRolls.removeElementAt( ((Integer)rollsToRemove.get(i)).intValue() );
-//DEBUG            roll = (PilotingRollData)pilotRolls.get( ((Integer)rollsToRemove.get(i)).intValue() );
-//DEBUG            server.sendServerChat("Removing PSR #"+((Integer)rollsToRemove.get(i)).intValue()+" for Entity #"+roll.getEntityId()+"("+roll.getDesc()+")");
         };
     }
 

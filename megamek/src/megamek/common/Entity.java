@@ -2439,5 +2439,9 @@ public abstract class Entity
     public boolean isSalvage() {
         return this.salvageable;
     }
+    
+    public String toString() {
+        return "Entity [" + getDisplayName() + ", " + getId() + "]";
+    }
 
 }

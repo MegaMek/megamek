@@ -168,7 +168,7 @@ public class BotClient extends Client
      
      private void calculateDeployment() {
         // Use the old clumping algorithm until someone puts AI in here
-        int entNum = game.getFirstEntityNum(getLocalPlayer());
+        int entNum = game.getFirstEntityNum();
         Coords cStart = getStartingCoords(getLocalPlayer().getStartingPos());
         Coords cDeploy = getCoordsAround(cStart);
         
@@ -295,7 +295,7 @@ public class BotClient extends Client
     //-----------------------------------------------------------------
      public void calculatePhysicalTurn()
      {
-        int entNum = game.getFirstEntityNum(getLocalPlayer());
+        int entNum = game.getFirstEntityNum();
         int first = entNum;
          do {
              // take the first entity that can do an attack
@@ -308,7 +308,7 @@ public class BotClient extends Client
                 sendAttackData(entNum, v);
                 return;    
             }
-            entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+            entNum = game.getNextEntityNum(entNum);
          } while (entNum != -1 && entNum != first);
      }
      
@@ -421,7 +421,7 @@ public class BotClient extends Client
          
          // then take the move with the lowest absolute value
          // and do it first.
-         int entNum = game.getFirstEntityNum(getLocalPlayer());
+         int entNum = game.getFirstEntityNum();
          int first = entNum;
 	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
 	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
@@ -438,7 +438,7 @@ public class BotClient extends Client
 		 if ( game.hasInfantry(this.local_pn) ) {
 
 		     // Yup.  Ignore this entity and check the next one.
-		     entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+		     entNum = game.getNextEntityNum(entNum);
 		     continue;
 
 		 }
@@ -455,9 +455,9 @@ public class BotClient extends Client
 		       (game.getEntity(entNum) instanceof Infantry) ) {
 
 		 // Walk through the list of entities for this player.
-		 for ( int nextId = game.getNextEntityNum(getLocalPlayer(), entNum);
+		 for ( int nextId = game.getNextEntityNum(entNum);
 		       nextId != entNum;
-		       nextId = game.getNextEntityNum(getLocalPlayer(), nextId) ) {
+		       nextId = game.getNextEntityNum(nextId) ) {
 
 		     // If we find a non-Infantry entity,
 		     // move it instead, and stop looping.
@@ -481,7 +481,7 @@ public class BotClient extends Client
                 theEnt = entNum;
             }
 
-            entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+            entNum = game.getNextEntityNum(entNum);
          } while (entNum != -1 && entNum != first);
 
          // If we're moving an infantry unit, increment the counter.
@@ -709,7 +709,7 @@ public class BotClient extends Client
     public void calculateFiringTurn()
     {
         // just take the first unit that hasn't fired yet and do it
-        int entNum = game.getFirstEntityNum(getLocalPlayer());
+        int entNum = game.getFirstEntityNum();
         Entity en = game.getEntity(entNum);
 	boolean infMoveLast = game.getOptions().booleanOption("inf_move_last");
 	boolean infMoveMulti = game.getOptions().booleanOption("inf_move_multi");
@@ -724,7 +724,7 @@ public class BotClient extends Client
 
 		// Yup.  Find an Infantry entity.
 		while ( !(en instanceof Infantry ) ) {
-		    entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+		    entNum = game.getNextEntityNum(entNum);
 		    en = game.getEntity(entNum);
 		}
 

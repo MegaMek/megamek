@@ -34,6 +34,8 @@ public class MovementData
     public static final int        STEP_CHARGE          = 8;
     public static final int        STEP_DFA             = 9;
     public static final int        STEP_FLEE            = 10;
+    public static final int        STEP_LATERAL_LEFT    = 11;
+    public static final int        STEP_LATERAL_RIGHT   = 12;
     
     private Vector steps = new Vector();
     
@@ -170,6 +172,10 @@ public class MovementData
             case STEP_BACKWARDS :
                 curPos = curPos.translated((curFacing + 3) % 6);
                 break;
+            case STEP_LATERAL_LEFT :
+                curPos = curPos.translated((curFacing + 5) % 6);
+            case STEP_LATERAL_RIGHT :
+                curPos = curPos.translated((curFacing + 1) % 6);
             }
         }
         return curPos;
@@ -206,6 +212,84 @@ public class MovementData
             }
         }
         steps = goodSteps;
+    }
+    
+    /**
+     * Changes all turn-forwards-opposite-turn sequences into quad lateral 
+     * shifts.
+     *
+     * Finds the sequence of three steps that can be transformed,
+     * then removes all three and replaces them with the lateral shift step.
+     */
+    public void transformLateralShifts() {
+        int index;
+        while ((index = firstLateralShift()) != -1) {
+            int stepType = getStep(index).getType();
+            steps.remove(index);
+            steps.remove(index);
+            steps.remove(index);
+            steps.insertElementAt(new Step(lateralShiftForTurn(stepType)), index);
+        }
+    }
+    
+    /**
+     * Returns the index of the first step which starts movement that can be
+     * converted into a quad lateral shift, or -1 if none are found.
+     */
+    private int firstLateralShift() {
+        for (int i = 0; i < length() - 2; i++) {
+            int step1 = getStep(i).getType();
+            int step2 = getStep(i + 1).getType();
+            int step3 = getStep(i + 2).getType();
+            
+            if (oppositeTurn(step1, step3) && step2 == MovementData.STEP_FORWARDS) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    /**
+     * Returns whether the two step types contain opposite turns
+     */
+    private static boolean oppositeTurn(int turn1, int turn2) {
+        switch (turn1) {
+            case MovementData.STEP_TURN_LEFT :
+                return turn2 == MovementData.STEP_TURN_RIGHT;
+            case MovementData.STEP_TURN_RIGHT :
+                return turn2 == MovementData.STEP_TURN_LEFT;
+            default :
+                return false;
+        }
+    }
+    
+    /**
+     * Returns the lateral shift that corresponds to the turn direction
+     */
+    public static int lateralShiftForTurn(int turn) {
+        switch (turn) {
+            case MovementData.STEP_TURN_LEFT :
+                return MovementData.STEP_LATERAL_LEFT;
+            case MovementData.STEP_TURN_RIGHT :
+                return MovementData.STEP_LATERAL_RIGHT;
+            default :
+                return turn;
+        }
+    }
+    
+    /**
+     * Returns the turn direction that corresponds to the lateral shift 
+     */
+    public static int turnForLateralShift(int shift) {
+        switch (shift) {
+            case MovementData.STEP_LATERAL_LEFT :
+                return MovementData.STEP_TURN_LEFT;
+            case MovementData.STEP_LATERAL_RIGHT :
+                return MovementData.STEP_TURN_RIGHT;
+            default :
+                return shift;
+        }
     }
     
     /**
@@ -252,7 +336,9 @@ public class MovementData
             final Step step = (Step)i.nextElement();
             if ( (step.getType() == STEP_FORWARDS)
             || (step.getType() == STEP_BACKWARDS)
-            || (step.getType() == STEP_CHARGE) ) {
+            || (step.getType() == STEP_CHARGE)
+            || (step.getType() == STEP_LATERAL_RIGHT)
+            || (step.getType() == STEP_LATERAL_LEFT) ) {
                 hexes++;
             };
         };

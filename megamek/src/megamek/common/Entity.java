@@ -356,6 +356,10 @@ public abstract class Entity
     }
   
     public void setDoomed(boolean doomed) {
+        // Doomed entities aren't in retreat.
+        if ( doomed ) {
+            this.setRemovalCondition( Entity.REMOVE_SALVAGEABLE );
+        }
         this.doomed = doomed;
     }
     
@@ -2492,6 +2496,10 @@ public abstract class Entity
      *          value is <code>false</code>, the unit is utterly destroyed.
      */
     public void setSalvage( boolean canSalvage ) {
+        // Unsalvageable entities aren't in retreat or salvageable.
+        if ( !canSalvage ) {
+            this.setRemovalCondition( Entity.REMOVE_DEVASTATED );
+        }
         this.salvageable = canSalvage;
     }
 
@@ -2518,7 +2526,10 @@ public abstract class Entity
      * @param removalCondition New value of property removalCondition.
      */
     public void setRemovalCondition(int removalCondition) {
-        this.removalCondition = removalCondition;
+        // Don't replace a removal condition with a lesser condition.
+        if ( this.removalCondition < removalCondition ) {
+            this.removalCondition = removalCondition;
+        }
     }
 
     public String toString() {

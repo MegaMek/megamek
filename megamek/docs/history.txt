@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.23-dev (CVS)
+v 0.29 release candidate 1 (06-16-03, 1am)
 + Bug 748959: fixed bug with moved units not updating
 + chat box may scroll to bottom properly on Linux (thanks Bluebird)
 + Only the xml file needed now to use The Drawing Board mechs.

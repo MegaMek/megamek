@@ -196,8 +196,8 @@ public class Coords
      * @param d the destination coordinate.
      */
     public double radian(Coords d) {
-        final IdealHex src = new IdealHex(this);
-        final IdealHex dst = new IdealHex(d);
+        final IdealHex src = IdealHex.get(this);
+        final IdealHex dst = IdealHex.get(d);
         
         double r = Math.atan((double)(dst.cx - src.cx) / (double)(src.cy - dst.cy));
         // flip if we're upside down

@@ -91,6 +91,7 @@ v 0.28.7 (CVS)
 + Turrets no longer displayed on turretless tanks.--LDE
 + Implemented road bonuses to movement.  Includes moving through terrain.
 + Skids now use BMRr rules (and not CityTech) for hex that starts the skid.
++ cache IdealHexes for Compute.intervening()
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

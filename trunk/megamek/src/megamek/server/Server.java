@@ -1140,6 +1140,7 @@ public class Server
      */
     private boolean isEligibleForPhysical(Entity entity, int phase) {
         boolean canHit = false;
+        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
         
         // if you're charging or finding a club, it's already declared
         if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
@@ -1153,17 +1154,13 @@ public class Server
 
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity target = (Entity)e.nextElement();
-
-            // don't hit yourself, please
-            if (target.equals(entity)) {
+                   
+            // don't shoot at friendlies unless you are into that sort of thing
+            // and do not shoot yourself even then
+            if (!(entity.isEnemyOf(target) || (friendlyFire && entity.getId() != target.getId() ))) {
                 continue;
             }
 
-            // don't shoot at friendlies
-            if (!target.getOwner().isEnemyOf(entity.getOwner())) {
-                continue;
-            }
-            
             canHit |= Compute.toHitPunch(game, entity.getId(), target.getId(),
                                          PunchAttackAction.LEFT).getValue()
                       != ToHitData.IMPOSSIBLE;
@@ -1357,12 +1354,12 @@ public class Server
     /**
      * Do a piloting skill check while standing still (during the movement phase).
      * We have a special case for getting up because quads need not roll to stand
-     * if they have no damaged legs.
+     * if they have no damaged legs.  If a quad is short a gyro, however....
      */
     private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {
-        if ( gettingUp && !entity.needsRollToStand() ) {
+        if (gettingUp && !entity.needsRollToStand() && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
             phaseReport.append("\n" + entity.getDisplayName() + " does not need to make "
-            + " a piloting skill check to stand up because it has all four of its legs.");
+            + "a piloting skill check to stand up because it has all four of its legs.");
             return;
         }
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
@@ -2534,6 +2531,12 @@ public class Server
             // let's resolve some damage!
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
 
+            // was the section destroyed earlier this phase?
+            if (te.getInternal(hit) == Entity.ARMOR_DOOMED) {
+                // cannot transfer a through armor crit if so
+                crits = 0;
+            }
+
             // is there armor in the location hit?
             if (!internalOnly && te.getArmor(hit) > 0) {
                 if (te.getArmor(hit) > damage) {
@@ -2567,21 +2570,15 @@ public class Server
                     } else {
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
-                        te.setInternal(0, hit);
+                        destroyLocation(te, hit.getLocation());
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
                         desc += " <<<SECTION DESTROYED>>>,";
                     }
-                }
-
-                // is the internal structure gone?
+                } 
+                
+                // is the internal structure gone?  what are the transfer potentials?
                 if (te.getInternal(hit) <= 0) {
-                    destroyLocation(te, hit.getLocation());
-
-                    if (te.locationIsLeg(hit.getLocation())) {
-                        pilotRolls.addElement(new PilotingRollData(te.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
-                    }
-
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
@@ -2591,7 +2588,7 @@ public class Server
                         // no need for further damage
                         damage = 0;
                         crits = 0;
-                    } else {
+                    } else if (damage > 0) {
                         // remaining damage transfers
                          desc += " " + damage + " damage transfers to "
                             + te.getLocationAbbr(nextHit) + ".";
@@ -2611,7 +2608,6 @@ public class Server
             // loop to next location
             hit = nextHit;
         }
-
 
         return desc;
     }
@@ -2640,7 +2636,6 @@ public class Server
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
                 if (en.getInternal(loc) > 0) {
                     destroyLocation(en, loc);
-                    pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
                 }
                 return desc;
             } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
@@ -2664,6 +2659,13 @@ public class Server
                 && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
             loc = en.getTransferLocation(new HitData(loc)).getLocation();
             desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
+
+            // may need to transfer crits twice--if you are shooting a CDA-3C Cicada and get lucky on the left arm two turns in a row
+            if (hits > 0 && !en.hasHitableCriticals(loc)
+                    && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
+                loc = en.getTransferLocation(new HitData(loc)).getLocation();
+                desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
+            }
         }
         // roll criticals
         while (hits > 0) {

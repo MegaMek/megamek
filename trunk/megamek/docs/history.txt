@@ -89,6 +89,10 @@ VERSION HISTORY:
 ----------------
 v next
 + 554568: fixed false secondary target modifier on first shot
++ improved recently introduced oddities with friendly fire impacting movement and bots--LDE
++ minor fixess to unlikely crit transfers--LDE
++ Extra PSRs for leg destruction corrected--LDE
++ Fixed bug allowing gyro'd quads to stand--LDE
 
 v 0.25.5 (05-10-02, 10:20am)
 + minor changes to the client & server for Helge

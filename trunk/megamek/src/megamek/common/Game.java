@@ -133,21 +133,24 @@ public class Game
     }
   
     /**
-     * Get a vector of entity objects that are enemies of this entity
+     * Get a vector of entity objects that are "acceptable" to attack with this entity
      */
-      public Vector getEnemyEntities(Entity entity) {
+    public Vector getValidTargets(Entity entity) {
         Vector ents = new Vector();
+
+        boolean friendlyFire = getOptions().booleanOption("friendly_fire");
         
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-          Entity otherEntity = (Entity)i.nextElement();
-            
-          if (entity.isEnemyOf(otherEntity)) {
-            ents.addElement( otherEntity );
-          }
+            Entity otherEntity = (Entity)i.nextElement();
+
+            //if friendly fire is acceptable, do not shoot yourself            
+            if (entity.isEnemyOf(otherEntity) || (friendlyFire && entity.getId() != otherEntity.getId() )) {
+                ents.addElement( otherEntity );
+            }
         }
         
         return ents;
-      }
+    }
     
     /**
      * Returns the player number whose turn it is

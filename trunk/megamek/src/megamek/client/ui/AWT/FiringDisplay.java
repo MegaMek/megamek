@@ -297,7 +297,7 @@ public class FiringDisplay
       private void cacheVisibleTargets() {
         clearVisibleTargets();
         
-        Vector vec = client.game.getEnemyEntities( ce() );
+        Vector vec = client.game.getValidTargets( ce() );
         Coords myPos = ce().getPosition();
         com.sun.java.util.collections.Comparator sortComp = new com.sun.java.util.collections.Comparator() {
           public int compare(java.lang.Object x, java.lang.Object y) {

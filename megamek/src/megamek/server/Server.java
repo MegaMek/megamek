@@ -629,7 +629,7 @@ implements Runnable {
      * any entity parameters that need to be reset.
      */
     private void resetEntityPhase() {
-        // first, mark doomed entities as destroyed and move them to the graveyard
+        // first, mark doomed entities as destroyed and flag them
         Vector toRemove = new Vector(0, 10);
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
@@ -644,7 +644,7 @@ implements Runnable {
             }
             
             if (entity.isDestroyed() || entity.getCrew().isDead()) {
-                toRemove.add(entity);
+                toRemove.addElement(entity);
             }
         }
         

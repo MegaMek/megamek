@@ -866,12 +866,15 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
-        int ael = ae.getElevation(game.board) + 1;
-        int tel = te.getElevation(game.board) + 1;
+        int attHeight = ae.isProne() ? 0 : 1;
+        int targHeight = te.isProne() ? 0 : 1;
+        
+        int attEl = ae.getElevation(game.board) + attHeight;
+        int targEl = te.getElevation(game.board) + targHeight;
         
         // count elevation funny for DFA
         if (ae.isMakingDfa()) {
-            ael = Math.max(ael, tel) + 1;
+            attEl = Math.max(attEl, targEl) + 1;
         }
         
         int ilw = 0;  // intervening light woods
@@ -885,33 +888,33 @@ public class Compute
             }
             
             final Hex h = game.board.getHex(in[i]);
-            final int hel = h.getElevation();
+            final int hexEl = h.getElevation();
             
             // check for block by terrain
-            if ((hel > ael && hel > tel) 
-                    || (hel > ael && ae.getPosition().distance(in[i]) <= 1)
-                    || (hel > tel && te.getPosition().distance(in[i]) <= 1)) {
+            if ((hexEl > attEl && hexEl > targEl) 
+                    || (hexEl > attEl && ae.getPosition().distance(in[i]) <= 1)
+                    || (hexEl > targEl && te.getPosition().distance(in[i]) <= 1)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
             }
             
             // determine number of woods hexes in the way
             if (h.getTerrainType() == Terrain.FOREST_LITE 
                     || h.getTerrainType() == Terrain.FOREST_HVY) {
-                if ((hel + 2 > ael && hel + 2 > tel) 
-                        || (hel + 2 > ael && ae.getPosition().distance(in[i]) <= 1) 
-                        || (hel + 2 > tel && te.getPosition().distance(in[i]) <= 1)) {
+                if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
+                        || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1) 
+                        || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
                     ilw += (h.getTerrainType() == Terrain.FOREST_LITE ? 1 : 0);
                     ihw += (h.getTerrainType() == Terrain.FOREST_HVY ? 1 : 0);
                 }
             }
             
             // check for partial cover
-            if (te.getPosition().distance(in[i]) <= 1 && hel == tel && ael <= tel) {
+            if (te.getPosition().distance(in[i]) <= 1 && hexEl == targEl && attEl <= targEl && targHeight > 0) {
                 pc = true;
             }
             
             // check for attacker partial cover
-            if (ae.getPosition().distance(in[i]) <= 1 && hel == ael && ael >= tel) {
+            if (ae.getPosition().distance(in[i]) <= 1 && hexEl == attEl && attEl >= targEl && attHeight > 0) {
                 apc = true;
             }
         }

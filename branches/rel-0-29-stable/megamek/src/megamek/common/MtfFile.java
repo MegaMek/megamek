@@ -225,8 +225,9 @@ public class MtfFile implements MechLoader {
             mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
 
             // oog, crits.
-            // we do these in reverse order to get the outermost locations first,
-            // which is necessary for split crits to work
+            compactCriticals(mech);
+            // we do these in reverse order to get the outermost
+            //  locations first, which is necessary for split crits to work
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }
@@ -338,10 +339,64 @@ public class MtfFile implements MechLoader {
                     else {
                         mech.addEquipment(etype, loc, rearMounted);
                     }
+                } else {
+                    if (!critName.equals("-Empty-")) {
+                        //Can't load this piece of equipment!
+                        // Add it to the list so we can show the user.
+                        System.out.print ("MtfFile: unknown critical ");
+                        System.out.println (critName);
+                        // Make the failed equipment an empty slot
+                        critData[loc][i] = "-Empty-";
+                        // Compact criticals again
+                        compactCriticals(mech, loc);
+                        // Re-parse the same slot, since the compacting
+                        //  could have moved new equipment to this slot
+                        i--;
+                    }
+
                 }
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
     }
+
+    /**
+     * This function moves all "empty" slots to the end of a location's
+     * critical list.
+     *
+     * MegaMek adds equipment to the first empty slot available in a
+     * location.  This means that any "holes" (empty slots not at the
+     * end of a location), will cause the file crits and MegaMek's crits
+     * to become out of sync.
+     */
+    private void compactCriticals(Mech mech) {
+        for (int loc = 0; loc < mech.locations(); loc++) {
+            compactCriticals(mech, loc);
+        }
+    }
+
+    private void compactCriticals(Mech mech, int loc) {
+        if (loc == Mech.LOC_HEAD) {
+            //This location has an empty slot inbetween systems crits
+            // which will mess up parsing if compacted.
+            return;
+        }
+        int firstEmpty = -1;
+        for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
+            if (critData[loc][slot].equals("-Empty-")) {
+                firstEmpty = slot;
+            }
+            if (firstEmpty != -1 && !critData[loc][slot].equals("-Empty-")) {
+                //move this to the first empty slot
+                critData[loc][firstEmpty] = critData[loc][slot];
+                //mark the old slot empty
+                critData[loc][slot] = "-Empty-";
+                //restart just after the moved slot's new location
+                slot = firstEmpty;
+                firstEmpty = -1;
+            }
+        }
+    }
+
 }

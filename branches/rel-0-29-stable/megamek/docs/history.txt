@@ -113,7 +113,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-10 (CVS)
+v 0.29-stable-10 (2004-09-12 8:30 EDT)
++ Bug 1026537 (954921): MegaMek now reads machine gun ammo from HMP files
++ (Bug 797345): HMP parser reads stealth armor correctly now.
++ (Bug 906536): Empty slots in middle of location no longer confuses parsers.
 
 v 0.29-stable-9 (2004-07-11 6:25 EDT)
 + Bug 931003: spelling fix in TestBot.java

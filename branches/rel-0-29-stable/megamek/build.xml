@@ -13,7 +13,7 @@
   <property name="apidocdir" value="apidocs"/>
   <property name="docdir" value="docs"/>
   <property name="cvsdir" value="cvsrel"/>
-  <property name="cvstag" value="rel-0-29-stable-9" />
+  <property name="cvstag" value="rel-0-29-stable-10" />
 
   <!-- same as maindir but under cvs -->
   <property name="cvsmaindir" value="${cvsdir}/${maindir}"/>

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -396,12 +396,19 @@ public class HmpFile
     removeArmActuators(mech, laCriticals, Mech.LOC_LARM);
     removeArmActuators(mech, raCriticals, Mech.LOC_RARM);
 
+    compactCriticals(rlCriticals);
     setupCriticals(mech, rlCriticals, Mech.LOC_RLEG);
+    compactCriticals(llCriticals);
     setupCriticals(mech, llCriticals, Mech.LOC_LLEG);
+    compactCriticals(raCriticals);
     setupCriticals(mech, raCriticals, Mech.LOC_RARM);
+    compactCriticals(laCriticals);
     setupCriticals(mech, laCriticals, Mech.LOC_LARM);
+    compactCriticals(rtCriticals);
     setupCriticals(mech, rtCriticals, Mech.LOC_RT);
+    compactCriticals(ltCriticals);
     setupCriticals(mech, ltCriticals, Mech.LOC_LT);
+    compactCriticals(ctCriticals);
     setupCriticals(mech, ctCriticals, Mech.LOC_CT);
     setupCriticals(mech, headCriticals, Mech.LOC_HEAD);
   }
@@ -478,6 +485,20 @@ public class HmpFile
               else {
                 mech.addEquipment(equipment, location, rearMounted);
               }
+            } else {
+                if (!criticalName.equals("-Empty-")) {
+                    //Can't load this piece of equipment!
+                    // Add it to the list so we can show the user.
+                    System.out.print ("HmpFile: unknown critical ");
+                    System.out.println (criticalName);
+                    // Make the failed equipment an empty slot
+                    criticals[i] = 0;
+                    // Compact criticals again
+                    compactCriticals(criticals);
+                    // Re-parse the same slot, since the compacting
+                    //  could have moved new equipment to this slot
+                    i--;
+                }
             }
           } catch (LocationFullException ex) {
               System.err.print( "Location was full when adding " );
@@ -578,6 +599,7 @@ public class HmpFile
     isCriticals.put(new Long(0x17), "ISMASC");
     isCriticals.put(new Long(0x18), "ISArtemisIV");
     isCriticals.put(new Long(0x19), "ISCASE");
+    isCriticals.put(new Long(0x23), "Stealth Armor");
     isCriticals.put(new Long(0x33), "ISERLargeLaser");
     isCriticals.put(new Long(0x34), "ISERPPC");
     isCriticals.put(new Long(0x35), "ISFlamer");
@@ -866,34 +888,67 @@ public class HmpFile
 
     private String getCriticalName(Long critical, TechType techType)  {
 
+        short thirdByte = 0;
         if (critical.longValue() > Short.MAX_VALUE) {
+            thirdByte = (short)(critical.longValue() >> 16);
             critical = new Long(critical.longValue() & 0xFFFF);
         }
         final long value = critical.longValue();
 
-        String name = (String) criticals.get(critical);
-        if (name == null) {
+        String critName = (String) criticals.get(critical);
+        if (critName == null) {
             Hashtable techCriticals = (Hashtable) criticals.get(techType);
             if (techCriticals != null) {
-                name = (String) techCriticals.get(critical);
+                critName = (String) techCriticals.get(critical);
             }
         }
 
-        // Report unexpected parsing failures.
-        if ( name == null &&
+        // Lame kludge for MG ammo (which can come in half ton increments)
+        if (critName != null && critName.endsWith("MG Ammo")) {
+            critName += " (" + thirdByte + ")";
+        }
+
+        // Unexpected parsing failures should be passed on so that
+        //  they can be dealt with properly.
+        if ( critName == null &&
              value != 0  &&     // 0x00 Empty
              value != 7  &&     // 0x07 Lower Leg Actuator (on a quad)
              value != 8  &&     // 0x08 Foot Actuator (on a quad)
              value != 15 ) {    // 0x0F Fusion Engine
-            System.out.print( "unknown critical: 0x" );
-            System.out.print( Integer.toHexString(critical.intValue())
-                              .toUpperCase() );
-            System.out.print( " (" );
-            System.out.print( techType );
-            System.out.println( ")" );
+            critName = "UnknownCritical(0x" + Integer.toHexString(critical.intValue()) + ")";
         }
 
-        return name;
+        if ( critName == null && value == 0)
+            return "-Empty-";
+
+        return critName;
+    }
+
+    /**
+     * This function moves all "empty" slots to the end of a location's
+     * critical list.
+     *
+     * MegaMek adds equipment to the first empty slot available in a
+     * location.  This means that any "holes" (empty slots not at the
+     * end of a location), will cause the file crits and MegaMek's crits
+     * to become out of sync.
+     */
+    private void compactCriticals(long[] criticals) {
+        int firstEmpty = -1;
+        for (int slot = 0; slot < criticals.length; slot++) {
+            if (criticals[slot] == 0) {
+                firstEmpty = slot;
+            }
+            if (firstEmpty != -1 && criticals[slot] != 0) {
+                //move this to the first empty slot
+                criticals[firstEmpty] = criticals[slot];
+                //mark the old slot empty
+                criticals[slot] = 0;
+                //restart just after the moved slot's new location
+                slot = firstEmpty;
+                firstEmpty = -1;
+            }
+        }
     }
 
   public static void main(String[] args)
@@ -1187,4 +1242,5 @@ class WeaponLocation
   {
     return (WeaponLocation) types.get(new Integer(i));
   }
+
 }

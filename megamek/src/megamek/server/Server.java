@@ -4251,7 +4251,7 @@ implements Runnable, ConnectionHandler {
             return false;
         } else {
             phaseReport.append("succeeds.\n");
-            doEntityFallsInto(entity, curPos, curPos, roll);
+            doEntityFallsInto(entity, curPos, curPos, roll, false);
             return true;
         }
     }

@@ -21,6 +21,7 @@ v0.29.32 (CVS)
 + RFE 867650: More obvious help for a newbie
 + Indirect Artillery Fire.  INCOMPLETE and EXPERIMENTAL.  Working, but USE AT YOUR OWN RISK.
 + Removed extraneous bug-testing System.out prints.  Woops.
++ RFE 923247: Bot and Map Editor now have "stop nagging me" options
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

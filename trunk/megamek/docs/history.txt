@@ -22,7 +22,7 @@ v0.29.48 (2004-09-06 2:45pm)
 + Vacuum hull integrity rules implemented, see page 85 BMRr
 + Bug 1018791: Hover charge against mech in depth 1 water, wrong hit table
 + Add undocumented "feature": megamek.client.ClientGUI.hideScrollBars setting.
-+ Fixed Settings#get(String, String) where defaults weren't appling correctly.
++ Fixed Settings#get(String, String) where defaults weren't applying correctly.
 + RFE 1022891, Patch 1023125: Altered Energy Weapons Damage, MaxTech revised page 22.
 + RFE 999917, Patch 1019888: Drastic Blind Drop option added
 

@@ -691,6 +691,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         MechView mechView = new MechView(entity);
         TextArea ta = new TextArea();
 	ta.setEditable(false);
+	ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
 	ta.setText(mechView.getMechReadout());
         final Dialog dialog = new Dialog(client.frame, "Mech Quick View", false);
         Button btn = new Button("Ok");

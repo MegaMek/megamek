@@ -56,7 +56,7 @@ public class MechSelectorDialog
     private Button m_bPick = new Button("Select Mech");
     private Button m_bCancel = new Button("Cancel");
     private Panel m_pButtons = new Panel();
-    private TextArea m_mechViewLeft = new TextArea(18,24);
+    private TextArea m_mechViewLeft = new TextArea("",18,24,TextArea.SCROLLBARS_HORIZONTAL_ONLY);
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
     
@@ -82,15 +82,17 @@ public class MechSelectorDialog
         
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pParams, BorderLayout.NORTH);
-        m_mechList.setFont(new Font("Courier", Font.PLAIN, 12));
+        m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12));
         m_mechList.addKeyListener(this);
         m_pLeft.add(m_mechList, BorderLayout.CENTER);
         m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
-        setLayout(new FlowLayout(FlowLayout.CENTER));
-        add(m_pLeft);
-        add(m_mechViewLeft);
-        add(m_mechViewRight);
+        setLayout(new BorderLayout());
+        add(m_pLeft, BorderLayout.WEST);
+        m_mechViewLeft.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        add(m_mechViewLeft, BorderLayout.CENTER);
+        m_mechViewRight.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        add(m_mechViewRight, BorderLayout.EAST);
         
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
@@ -98,7 +100,7 @@ public class MechSelectorDialog
         m_mechList.addItemListener(this);
         m_bPick.addActionListener(this);
         m_bCancel.addActionListener(this);
-        setSize(720, 320);
+        setSize(760, 320);
         setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
                     m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
         populateChoices(MechSummaryCache.getInstance().getAllMechs());

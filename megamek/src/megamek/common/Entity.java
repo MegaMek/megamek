@@ -37,6 +37,12 @@ public abstract class Entity
       public static final int HOVER   = 5;
     }
 
+    // Off-Board Directions
+    public static final int NORTH                 = 0;
+    public static final int SOUTH                 = 1;
+    public static final int EAST                  = 2;
+    public static final int WEST                  = 3;
+
     public static final int REMOVE_UNKNOWN        = 0x0000;
     public static final int REMOVE_IN_RETREAT     = 0x0100;
     public static final int REMOVE_PUSHED         = 0x0110;
@@ -141,7 +147,6 @@ public abstract class Entity
     private boolean             clearingMinefield = false;
     private boolean             selected = false;
     private int                 killerId = Entity.NONE;
-    private boolean             isOffBoard = false;
     private int                 offBoardDistance = 0;
     private int                 offBoardDirection = -1;
 
@@ -516,7 +521,7 @@ public abstract class Entity
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && !crew.isDead() && deployed && !isOffBoard;
+        return !destroyed && !doomed && !crew.isDead() && deployed && !isOffBoard();
     }
 
     public boolean isProne() {
@@ -3496,7 +3501,7 @@ public abstract class Entity
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {
-        return ( !deployed && (getDeployRound() <= round) && !isOffBoard );
+        return ( !deployed && (getDeployRound() <= round) && !isOffBoard() );
     }
 
     public void setSelected(boolean selected) {
@@ -3717,16 +3722,13 @@ public abstract class Entity
      * @return Returns wether the unit is offboard.
      */
     public boolean isOffBoard() {
-        return isOffBoard;
+        return offBoardDistance > 0;
     }
-    /**
-     * @param isOffBoard The isOffBoard to set.
-     */
-    public void setOffBoard(boolean isOffBoard) {
-        this.isOffBoard = isOffBoard;
-    }
-    
     public void setOffBoardDistance(int distance) {
+        if (distance < 0) {
+            throw new IllegalArgumentException
+                ( "negative number given for distance offboard" );
+        }
         offBoardDistance = distance;
     }
     
@@ -3735,26 +3737,31 @@ public abstract class Entity
     }
     
     public void setOffBoardDirection(int direction) {
+        if (direction < Entity.NONE ||
+            direction > Entity.WEST) {
+            throw new IllegalArgumentException
+                ( "bad direction" );
+        }
         offBoardDirection = direction;
     }
     
     public void checkPlaceOffBoard() {
         switch (offBoardDirection) {
-        case -1: //no direction selected
+        case Entity.NONE:
             break;
-        case 0: //north
+        case Entity.NORTH:
             setPosition(new Coords (game.board.width/2, -getOffBoardDistance() ));
             setFacing(3);
             break;
-        case 1: //south
+        case Entity.SOUTH:
             setPosition(new Coords (game.board.width/2, game.board.height + getOffBoardDistance() ));
             setFacing(0);
             break;
-        case 2: //east
+        case Entity.EAST:
             setPosition(new Coords (game.board.width + getOffBoardDistance(), game.board.height/2 ));
             setFacing(5);
             break;
-        case 3: //west
+        case Entity.WEST:
             setPosition(new Coords ( -getOffBoardDistance(), game.board.height/2 ));
             setFacing(1);
             break;

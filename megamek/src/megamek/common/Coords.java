@@ -57,9 +57,11 @@ public class Coords
 
     /**
      * The maximum width of a board in number of hexes.
+     *
+     * Also need to make room for the sign bits.
      */
     public static final int MAX_BOARD_WIDTH =
-        ( Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT ) >> Coords.SHIFT;
+        ( Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT ) >> (Coords.SHIFT + 2);
 
     /**
      * Constructs a new coordinate pair at (0, 0).
@@ -225,8 +227,8 @@ public class Coords
     public final String getBoardNum() {
         StringBuffer num = new StringBuffer();
         
-        num.append((x < 9 ? "0" : "") + (x + 1));
-        num.append((y < 9 ? "0" : "") + (y + 1));
+        num.append((x > -1 && x < 9 ? "0" : "") + (x + 1));
+        num.append((y > -1 && y < 9 ? "0" : "") + (y + 1));
 
         return num.toString(); 
     }
@@ -250,7 +252,21 @@ public class Coords
      * @return  The <code>int</code> hash code for these coords.
      */
     public int hashCode() {
-        return (x << Coords.SHIFT) ^ y;
+        // Record the signs of X and Y separately from their values.
+        boolean negy = ( y < 0 );
+        boolean negx = ( x < 0 );
+        int signbits = 0;
+        int absx = x;
+        int absy = y;
+        if (negy) {
+            signbits += 0x1;
+            absy = -y;
+        }
+        if (negx) {
+            signbits += 0x2;
+            absx = -x;
+        }
+        return (((absx << Coords.SHIFT) ^ absy) << 2) + signbits;
     }
 
     /**
@@ -260,8 +276,14 @@ public class Coords
      * @return  the <code>Coords</code> that match the hash code.
      */
     public static Coords getFromHashCode( int hash ) {
-        int hashy = ( hash & Coords.MASK );
-        int hashx = ( hash ^ hashy ) >>> Coords.SHIFT;
+        // The signs of X and Y are recorded separately from their values.
+        boolean negy = ( hash & 0x1 ) > 0;
+        boolean negx = ( hash & 0x2 ) > 0;
+        int signless = hash >>> 2;
+        int hashy = ( signless & Coords.MASK );
+        int hashx = ( signless ^ hashy ) >>> Coords.SHIFT;
+        if (negx) hashx = -hashx;
+        if (negy) hashy = -hashy;
         return new Coords (hashx, hashy);
     }
 

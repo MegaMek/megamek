@@ -5400,7 +5400,7 @@ implements Runnable, ConnectionHandler {
       }
       // Resolve roll for disengaged field inhibitors on PPCs, if needed
       if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
-          && weapon.getName().equals("Particle Cannon")
+          && wtype.hasModes()
           && weapon.curMode().equals("Field Inhibitor OFF") ) {
           int rollTarget = 0;
           int dieRoll = Compute.d6(2);

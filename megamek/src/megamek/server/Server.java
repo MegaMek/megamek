@@ -1579,8 +1579,13 @@ public class Server
             phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");
         }
 
-        phaseReport.append("    " + wtype.getName() + " at "
-                   + te.getDisplayName());
+        phaseReport.append("    " + wtype.getName() + " at " + te.getDisplayName());
+        
+        // has this weapon fired already?
+        if (mounted.isUsedThisRound()) {
+            phaseReport.append(" but the weapon has already fired this round!\n");
+            return;
+        }
 
         // check ammo
         if (mounted.getLinked() != null) {
@@ -1589,7 +1594,7 @@ public class Server
                 ae.loadWeapon(mounted);
             }
             if (mounted.getLinked().getShotsLeft() == 0) {
-                phaseReport.append(" but the weapon is out of ammo");
+                phaseReport.append(" but the weapon is out of ammo.\n");
                 return;
             }
             // use ammo
@@ -3098,6 +3103,7 @@ public class Server
      * Send a packet to all connected clients.
      */
     private void send(Packet packet) {
+        packet.zipData();
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
             conn.send(packet);
@@ -3108,6 +3114,7 @@ public class Server
      * Send a packet to a specific connection.
      */
     private void send(int connId, Packet packet) {
+        packet.zipData();
         getClient(connId).send(packet);
     }
 

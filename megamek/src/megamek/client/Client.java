@@ -588,6 +588,7 @@ public class Client extends Panel
      * send the message to the server
      */
     protected void send(Packet packet) {
+        packet.zipData();
         try {
             if (out == null) {
                 out = new ObjectOutputStream(socket.getOutputStream());

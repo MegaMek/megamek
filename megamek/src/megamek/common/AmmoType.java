@@ -85,11 +85,14 @@ public class AmmoType extends EquipmentType {
     public static final int     M_THUNDER_INFERNO   = 1 << 15;
     public static final int     M_THUNDER_VIBRABOMB = 1 << 16;
     public static final int     M_THUNDER_ACTIVE    = 1 << 17;
+    // iNarc
     public static final int     M_EXPLOSIVE         = 1 << 18;
     public static final int     M_ECM               = 1 << 19;
     public static final int     M_HAYWIRE           = 1 << 20;
     public static final int     M_NEMESIS           = 1 << 21;
+    // Narc
     public static final int     M_NARC_EX           = 1 << 22;
+    // Arrow IV
     public static final int     M_HOMING            = 1 << 23;
     public static final int     M_FASCAM            = 1 << 24;
     public static final int     M_INFERNO_IV        = 1 << 25;
@@ -318,8 +321,11 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
-        EquipmentType.addType(createISiNarcPods());
-        EquipmentType.addType(createISiNarcPods());
+        EquipmentType.addType(createISiNarcAmmo());
+        EquipmentType.addType(createISiNarcECMAmmo());
+        EquipmentType.addType(createISiNarcExplosiveAmmo());
+        EquipmentType.addType(createISiNarcHaywireAmmo());
+        EquipmentType.addType(createISiNarcNemesisAmmo());
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -1347,7 +1353,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    public static AmmoType createISiNarcPods() {
+    public static AmmoType createISiNarcAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "iNarc Pods";
         ammo.setInternalName("ISiNarc Pods");
@@ -1356,6 +1362,66 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
+        ammo.shots = 4;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISiNarcExplosiveAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "iNarc Explosive Pods";
+        ammo.setInternalName("ISiNarc Explosive Pods");
+        ammo.damagePerShot = 6; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_INARC;
+        ammo.munitionType = AmmoType.M_EXPLOSIVE;
+        ammo.shots = 4;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISiNarcECMAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "iNarc ECM Pods";
+        ammo.setInternalName("ISiNarc ECM Pods");
+        ammo.damagePerShot = 3; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_INARC;
+        ammo.munitionType = AmmoType.M_ECM;
+        ammo.shots = 4;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISiNarcHaywireAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "iNarc Haywire Pods";
+        ammo.setInternalName("ISiNarc Haywire Pods");
+        ammo.damagePerShot = 3; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_INARC;
+        ammo.munitionType = AmmoType.M_HAYWIRE;
+        ammo.shots = 4;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISiNarcNemesisAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "iNarc Nemesis Pods";
+        ammo.setInternalName("ISiNarc Nemesis Pods");
+        ammo.damagePerShot = 3; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_INARC;
+        ammo.munitionType = AmmoType.M_NEMESIS;
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.techType = TechConstants.T_IS_LEVEL_2;

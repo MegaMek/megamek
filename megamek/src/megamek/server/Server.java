@@ -1293,6 +1293,7 @@ implements Runnable, ConnectionHandler {
                 resolveCrewDamage();
                 resolveCrewWakeUp();
                 resolveMechWarriorPickUp();
+                resolveVeeINarcPodRemoval();
                 checkForObservers();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -5992,6 +5993,44 @@ implements Runnable, ConnectionHandler {
             }
             return;
         }
+        
+        // special case iNARC hits.  No damage, but a beacon is appended
+        if (!bMissed &&
+            wtype.getAmmoType() == AmmoType.T_INARC &&
+            atype.getMunitionType() != AmmoType.M_EXPLOSIVE) {
+
+            if (wr.amsShotDownTotal > 0) {
+                phaseReport.append("would hit, but...");
+                for (int i=0; i < wr.amsShotDown.length; i++) {
+                    phaseReport.append("\n\tAMS engages, firing ")
+                        .append(wr.amsShotDown[i]).append(" shots");
+                }
+                phaseReport.append("\nThe pod is destroyed by AMS fire.\n");
+            } else if (entityTarget == null) {
+                phaseReport.append("hits, but doesn't do anything.\n");
+            } else {
+                INarcPod pod = new INarcPod(ae.getOwner().getTeam());
+                switch (atype.getMunitionType()) {
+                case AmmoType.M_ECM:
+                    pod.setType(INarcPod.ECM);
+                    phaseReport.append("hits.  ECM Pod attached.\n");
+                    break;
+                case AmmoType.M_HAYWIRE:
+                    pod.setType(INarcPod.HAYWIRE);
+                    phaseReport.append("hits.  Haywire Pod attached.\n");
+                    break;
+                case AmmoType.M_NEMESIS:
+                    pod.setType(INarcPod.NEMESIS);
+                    phaseReport.append("hits.  Nemesis Pod attached.\n");
+                    break;
+                default:
+                    pod.setType(INarcPod.HOMING);
+                    phaseReport.append("hits.  Homing Pod attached.\n");
+                }
+                entityTarget.attachINarcPod(pod);
+            }
+            return;
+        }
 
         // attempt to clear minefield by LRM/MRM fire.
         if (!bMissed && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
@@ -6172,7 +6211,9 @@ implements Runnable, ConnectionHandler {
                             || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
                         nSalvoBonus += 2;
                     }
-                } else if (entityTarget != null && entityTarget.isNarcedBy(ae.getOwner().getTeam())) {
+                } else if (entityTarget != null && 
+                        (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
+                         entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
                     // check ECM interference
                     if (!bCheckedECM) {
                         // Attacking Meks using stealth suffer ECM effects.
@@ -12757,7 +12798,8 @@ implements Runnable, ConnectionHandler {
                                          !( LosEffects.calculateLos
                                             (game, entity.getId(), targ)
                                             ).isBlocked() &&
-                                         entity.isActive() ) {
+                                         entity.isActive() &&
+                                         !entity.isHaywireINarced()) {
                                         return true;
                                     }
                                     return false;
@@ -13446,6 +13488,43 @@ implements Runnable, ConnectionHandler {
             } else {
                 roundReport.append("succeeds.\n");
                 entity.setStuck(false);
+            }
+        }
+    }
+    
+    /**
+     * Remove all iNarc pods from all vehicles that did not
+     * move and shoot this round
+     * NOTE: this is not quite what the rules say, the player
+     * should be able to choose wether or not to remove all iNarc Pods
+     * that are attached.
+     */
+    private void resolveVeeINarcPodRemoval() {
+        Enumeration vees =
+            game.getSelectedEntities( new EntitySelector() {
+            public boolean accept(Entity entity) {
+                if (entity instanceof Tank &&
+                    entity.mpUsed == 0) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        boolean canSwipePods;
+        while (vees.hasMoreElements()) {
+            canSwipePods = true;
+            Entity entity = (Entity)vees.nextElement();
+            for (int i=0;i<=5;i++) {
+                if ( entity.weaponFiredFrom(i) ) {
+                    canSwipePods = false;
+                }
+            }
+            if (canSwipePods && entity.hasINarcPodsAttached() &&
+                entity.getCrew().isActive()) {
+                entity.removeAllINarcPods();
+                phaseReport.append("The crew of ")
+                     .append(entity.getDisplayName())
+                     .append(" has removed all attached iNarc Pods.\n");
             }
         }
     }

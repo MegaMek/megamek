@@ -1533,8 +1533,7 @@ class ExtraPanel
         while ( loop.hasMoreElements() ) {
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
-            if ( !player.equals(clientgui.getClient().getLocalPlayer()) &&
-                 en.isNarcedBy( team ) &&
+            if ( en.isNarcedBy( team ) &&
                  !player.isObserver()) {
                 buff = new StringBuffer( "NARCed by " );
                 buff.append( player.getName() );
@@ -1543,6 +1542,43 @@ class ExtraPanel
                     .append( "]" );
                 narcList.add( buff.toString() );
             }
+            if ( en.isINarcedBy( team ) &&
+                    !player.isObserver()) {
+                   buff = new StringBuffer( "iNarc Homing Pod from " );
+                   buff.append( player.getName() );
+                   buff.append( " [" )
+                       .append( Player.teamNames[team] )
+                       .append( "] attached." );
+                   narcList.add( buff.toString() );
+            }
+            if ( en.isECMINarced() &&
+                    !player.isObserver()) {
+                   buff = new StringBuffer( "iNarc ECM Pod from " );
+                   buff.append( player.getName() );
+                   buff.append( " [" )
+                       .append( Player.teamNames[team] )
+                       .append( "] attached." );
+                   narcList.add( buff.toString() );
+            }
+            if ( en.isHaywireINarced() &&
+                    !player.isObserver()) {
+                   buff = new StringBuffer( "iNarc Haywire Pod from " );
+                   buff.append( player.getName() );
+                   buff.append( " [" )
+                       .append( Player.teamNames[team] )
+                       .append( "] attached." );
+                   narcList.add( buff.toString() );
+           }
+           if ( en.isNemesisINarced() &&
+                    !player.isObserver()) {
+                   buff = new StringBuffer( "iNarc Nemesis Pod from " );
+                   buff.append( player.getName() );
+                   buff.append( " [" )
+                       .append( Player.teamNames[team] )
+                       .append( "] attached." );
+                   narcList.add( buff.toString() );
+           }
+            
         }
 
         // Show inferno track.

@@ -1422,6 +1422,10 @@ public class Compute
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
 
         if (a == null || b == null) return false;
+        
+        if (ae.isECMINarced()) {
+            return true;
+        }
 
         // Only grab enemies with active ECM
         Vector vEnemyCoords = new Vector(16);

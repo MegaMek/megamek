@@ -161,6 +161,17 @@ public class WeaponAttackAction
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
         boolean isPPCwithoutInhibitor = wtype.getInternalName()==("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
+        boolean isHaywireINarced = ae.isHaywireINarced();
+        boolean isINarcGuided = false;
+        if (te != null) {
+            if (te.isINarcedBy(ae.getOwner().getTeam()) &&
+                atype.getMunitionType() == AmmoType.M_STANDARD &&
+                (wtype.getAmmoType() == AmmoType.T_LRM ||
+                 wtype.getAmmoType() == AmmoType.T_SRM ||
+                 wtype.getAmmoType() == AmmoType.T_ATM )) {
+                isINarcGuided = true;
+            }
+        }
         final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         
         ToHitData toHit = null;
@@ -170,7 +181,7 @@ public class WeaponAttackAction
         	!AmmoType.canDeliverMinefield(atype)) {
     		return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
-        if((game.getPhase() == Game.PHASE_TARGETING) && !isArtilleryIndirect) {
+        if ((game.getPhase() == Game.PHASE_TARGETING) && !isArtilleryIndirect) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Only indirect artillery can be fired in the targeting phase");
         }
     
@@ -676,6 +687,15 @@ public class WeaponAttackAction
         // ammo to-hit modifier
         if (usesAmmo && atype.getToHitModifier() != 0) {
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
+        }
+        
+        // add iNarc bonus
+        if (isINarcGuided) {
+            toHit.addModifier(-1, "iNarc homing pod");
+        }
+        
+        if (isHaywireINarced) {
+            toHit.addModifier(1, "iNarc Haywire pod");
         }
     
         // add targeting computer (except with LBX cluster ammo)

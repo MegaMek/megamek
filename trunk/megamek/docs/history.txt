@@ -74,6 +74,7 @@ VERSION HISTORY:
 ----------------
 v CVS
 + Added Kai's fire patch (only working for missed shots, presently)
++ 633352: fixed NullPointerException when deploying during double blind
 
 v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.
@@ -85,7 +86,6 @@ v 0.27.5 (11-01-02, 10:30pm)
 + 630921: Can't manipulate someone else's unit
 + MASC turns itself off every round
 + 629707: HGR PSR modifier based on attacker, not target, weight
-
 
 v 0.27.4 (10-27-02, 12:12pm)
 + 625838: only infantry shoot in the same hex

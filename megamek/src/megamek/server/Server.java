@@ -1453,6 +1453,7 @@ implements Runnable, ConnectionHandler {
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
+                resolveSinkVees();
                 applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
@@ -12967,6 +12968,27 @@ implements Runnable, ConnectionHandler {
                 // Update the loaded unit.
                 this.entityUpdate( e.getId() );
             }
+        }
+    }
+    /**
+     * destroy all wheeled and tracked Tanks that got displaced into water 
+     */
+    private void resolveSinkVees() {
+        Enumeration sinkableTanks = 
+            game.getSelectedEntities( new EntitySelector() {
+            public boolean accept(Entity entity) {
+                if (entity instanceof Tank && 
+                    (entity.getMovementType() == Entity.MovementType.TRACKED ||
+                     entity.getMovementType() == Entity.MovementType.WHEELED ) &&
+                    game.board.getHex(entity.getPosition()).contains(Terrain.WATER)) {                        
+                        return true;
+                }
+                return false;            
+            }
+        });
+        while (sinkableTanks.hasMoreElements()) {
+            Entity e = (Entity)sinkableTanks.nextElement();
+            phaseReport.append(destroyEntity(e, "a watery grave", false));
         }
     }
 }

@@ -69,4 +69,23 @@ public class StringUtil {
             };
     }
 
+    /**
+     * Determine the <code>boolean</code> value of the given
+     * <code>String</code>.  Treat all <code>null</code> values
+     * as <code>false</code>.  The default is <code>false</code>.
+     *
+     * @param   input - the <code>String</code> to be evaluated.
+     *          This value may be <code>null</code>.
+     * @return  The <code>boolean</code> equivalent of the input.
+     */
+    public static boolean parseBoolean( String input ) {
+        if ( null == input ) {
+            return false;
+        }
+        else if ( input.equalsIgnoreCase("true") ) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -347,7 +347,7 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
                 /*
                 ** Save the board here.
                 */
-                Board board = (Board) packet.getObject(1);
+                Board board = (Board) packet.getObject(0);
                 try {
                     board.save( new FileOutputStream("xmit.board") );
                 } catch ( IOException ioErr ) {

@@ -1575,7 +1575,7 @@ implements Runnable {
 
         // Go through each team, update the turn count,
         // and then generate the team order on each team.
-        boolean infLast = game.getOptions().booleanOption("inf_move_last");
+        boolean infLast = game.getOptions().booleanOption("inf_move_last") && game.getPhase() != Game.PHASE_DEPLOYMENT;
         TurnVectors team_order;
         for (Enumeration t = game.getTeams(); t.hasMoreElements(); ) {
             final Team team = (Team)t.nextElement();

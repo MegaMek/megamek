@@ -103,6 +103,7 @@ v CVS
 + Only woods hexes can be targeted
 + 663535: Targeted smoky hexes don't get their own smoke bonus
 + Dedicated servers load password/port settings from .cfg file correctly
++ updated mech files, thanks Hopalong
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

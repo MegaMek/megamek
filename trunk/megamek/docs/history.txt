@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.71 (CVS)
+v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.
 + Patch 1168935: Extract AIM_MODE_* constants to interface.
 + LRM one-shot weapons should be able to fire indirectly

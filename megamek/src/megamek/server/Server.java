@@ -2149,7 +2149,7 @@ public boolean isPassworded() {
           if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
             game.moveToGraveyard(te.getId());
             send(createRemoveEntityPacket(te.getId()));
-            phaseReport.append("*** " + te.getDisplayName() + " has been forced from the field. ***\n");
+            phaseReport.append("\n*** " + te.getDisplayName() + " has been forced from the field. ***\n");
             // if push actually moved the target, attacker follows thru
             if (game.getEntity(src) == null) {
                 ae.setPosition(src);
@@ -2262,7 +2262,7 @@ public boolean isPassworded() {
           if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
             game.moveToGraveyard(te.getId());
             send(createRemoveEntityPacket(te.getId()));
-            phaseReport.append("*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
+            phaseReport.append("\n*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
             doEntityDisplacement(ae, ae.getPosition(), src, new PilotingRollData(ae.getId(), 2, "charging"));
           } else {
                 // they stil have to roll
@@ -2377,7 +2377,7 @@ public boolean isPassworded() {
         if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
           game.moveToGraveyard(te.getId());
           send(createRemoveEntityPacket(te.getId()));
-          phaseReport.append("*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
+          phaseReport.append("\n*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
         } else {
           if (targetDest != null) {
               doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));

@@ -21,6 +21,8 @@
 package megamek.common;
 
 import java.io.*;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  *
@@ -65,6 +67,9 @@ public class MtfFile implements MechLoader {
     String[] weaponData;
     
     String[][] critData;
+    
+    Hashtable hSharedEquip = new Hashtable();
+    Vector vSplitWeapons = new Vector();
     
     
     /** Creates new MtfFile */
@@ -220,7 +225,9 @@ public class MtfFile implements MechLoader {
             mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
 
             // oog, crits.
-            for (int i = 0; i < mech.locations(); i++) {
+            // we do these in reverse order to get the outermost locations first,
+            // which is necessary for split crits to work
+            for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }
 
@@ -261,26 +268,123 @@ public class MtfFile implements MechLoader {
             // parse out and add the critical
             String critName = critData[loc][i];
             boolean rearMounted = false;
+            boolean split = false;
             
             if (critName.equalsIgnoreCase("Fusion Engine")) {
                 mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
+                continue;
             }
             if (critName.endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();
             }
             if (critName.endsWith("(Split)")) {
-                throw new EntityLoadingException("Split weapons not supported (yet)");
+                split = true;
+                critName = critName.substring(0, critName.length() - 7).trim();
             }
             
-            EquipmentType etype = EquipmentType.getByMtfName(critName);
-            if (etype != null) {
-                try {
-                    mech.addEquipment(etype, loc, rearMounted);
-                } catch (LocationFullException ex) {
-                    throw new EntityLoadingException(ex.getMessage());
+            try {
+                EquipmentType etype = EquipmentType.getByMtfName(critName);
+                if (etype != null) {
+                    if (etype.isSpreadable()) {
+                        // do we already have one of these?  Key on Type
+                        Mounted m = (Mounted)hSharedEquip.get(etype);
+                        if (m != null) {
+                            // use the existing one
+                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, 
+                                    mech.getEquipmentNum(m), etype.isHittable()));
+                            continue;
+                        }
+                        else {
+                            m = mech.addEquipment(etype, loc, rearMounted);
+                            hSharedEquip.put(etype, m);
+                        }
+                    }
+                    else if (split) {
+                        // do we already have this one in this or an outer location?
+                        Mounted m = null;
+                        boolean bFound = false;
+                        for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
+                            m = (Mounted)vSplitWeapons.elementAt(x);
+                            int nLoc = m.getLocation();
+                            if ((nLoc == loc || loc == getInnerLocation(nLoc)) 
+                                        && m.getType() == etype) {
+                                bFound = true;
+                                break;
+                            }
+                        }
+                        if (bFound) {
+                            m.setFoundCrits(m.getFoundCrits() + 1);
+                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                                vSplitWeapons.removeElement(m);
+                            }
+                            // give the most restrictive location for arcs
+                            m.setLocation(mostRestrictiveLoc(loc, m.getLocation()));
+                        }
+                        else {
+                            // make a new one
+                            m = new Mounted(mech, etype);
+                            m.setSplit(true);
+                            m.setFoundCrits(1);
+                            mech.addEquipment(m, loc, rearMounted);
+                            vSplitWeapons.addElement(m);
+                        }
+                        mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
+                                mech.getEquipmentNum(m), etype.isHittable()));
+                    }
+                    else {
+                        mech.addEquipment(etype, loc, rearMounted);
+                    }
                 }
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
             }
+        }
+    }
+    
+    private int getInnerLocation(int n)
+    {
+        switch(n) {
+            case Mech.LOC_RT :
+            case Mech.LOC_LT :
+                return Mech.LOC_CT;
+            case Mech.LOC_LLEG :
+            case Mech.LOC_LARM :
+                return Mech.LOC_LT;
+            case Mech.LOC_RLEG :
+            case Mech.LOC_RARM :
+                return Mech.LOC_RT;
+            default:
+                return n;
+        }
+    }
+    
+    private int mostRestrictiveLoc(int n1, int n2)
+    {
+        if (n1 == n2) {
+            return n1;
+        }
+        else if (restrictScore(n1) >= restrictScore(n2)) {
+            return n1;
+        }
+        else {
+            return n2;
+        }
+    }
+    
+    private int restrictScore(int n)
+    {
+        switch(n) {
+            case Mech.LOC_RARM :
+            case Mech.LOC_LARM :
+                return 0;
+            case Mech.LOC_RT :
+            case Mech.LOC_LT :
+                return 1;
+            case Mech.LOC_CT :
+                return 2;
+            default :
+                return 3;
         }
     }
 }

@@ -1684,6 +1684,9 @@ public class Compute
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             damage = 0;
         }
+        if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
+            multiplier *= 2.0f;
+        }
         return (int)Math.floor(damage * multiplier);
     }
     
@@ -1854,6 +1857,10 @@ public class Compute
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
+        if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
+            multiplier *= 2.0f;
+        }
+
         return (int)Math.floor(damage * multiplier);
     }
     
@@ -2031,7 +2038,13 @@ public class Compute
      * Damage that the specified mech does with a club attack
      */
     public static int getClubDamageFor(Entity entity, Mounted club) {
-        return (int)Math.floor(entity.getWeight() / 5.0);
+        
+        int nDamage = (int)Math.floor(entity.getWeight() / 5.0);
+        if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
+            nDamage *= 2;
+        }
+
+        return nDamage;
     }
     
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {

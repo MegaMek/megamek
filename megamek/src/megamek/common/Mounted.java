@@ -49,6 +49,10 @@ public class Mounted implements Serializable{
     private transient EquipmentType type;
     private String typeName;
     
+    // handle split weapons
+    private boolean bSplit = false;
+    private int nFoundCrits = 0;
+    
 
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
@@ -225,6 +229,22 @@ public class Mounted implements Serializable{
 
     public void setLinked(Mounted linked) {
         this.linked = linked;
+    }
+    
+    public int getFoundCrits() {
+        return nFoundCrits;
+    }
+    
+    public void setFoundCrits(int n) {
+        nFoundCrits = n;
+    }
+    
+    public boolean isSplit() {
+        return bSplit;
+    }
+    
+    public void setSplit(boolean b) {
+        bSplit = b;
     }
     
     public int getExplosionDamage() {

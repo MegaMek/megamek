@@ -76,7 +76,7 @@ public class FiringDisplay
     private int                 lastTargetID    = -1;
 
     /**
-     * Creates and lays out a new movement phase display 
+     * Creates and lays out a new firing phase display 
      * for the specified client.
      */
     public FiringDisplay(Client client) {
@@ -194,7 +194,7 @@ public class FiringDisplay
     private void setupStatusBar() {
         panStatus = new Panel();
 
-        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        labStatus = new Label("Waiting to begin Firing phase...", Label.CENTER);
         
         butDisplay = new Button("D");
         butDisplay.addActionListener(this);
@@ -535,6 +535,9 @@ public class FiringDisplay
      * Removes all current fire
      */
     private void clearAttacks() {
+        if (ce() == null) {
+            return;
+        }
         if (attacks.size() > 0) {
             for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
                 Object o = i.nextElement();
@@ -553,6 +556,9 @@ public class FiringDisplay
      * Refeshes all displays.
      */
     private void refreshAll() {
+        if (ce() == null) {
+            return;
+        }
         client.bv.redrawEntity(ce());
         client.mechD.displayEntity(ce());
         client.mechD.showPanel("weapons");

@@ -137,7 +137,7 @@ public class DeploymentDisplay
     private void setupStatusBar() {
         panStatus = new Panel();
 
-        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        labStatus = new Label("Waiting to begin Deployment phase...", Label.CENTER);
         
         butDisplay = new Button("D");
         butDisplay.addActionListener(this);
@@ -205,7 +205,7 @@ public class DeploymentDisplay
     }
 
     /**
-     * Clears out old movement data and disables relevant buttons.
+     * Clears out old deployment data and disables relevant buttons.
      */
     private void endMyTurn() {
         // end my turn, then.

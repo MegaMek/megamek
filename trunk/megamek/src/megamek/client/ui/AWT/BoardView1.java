@@ -1183,7 +1183,11 @@ public class BoardView1
                         strings[stringsIndex] = "Command-detonated minefield " + owner;
                         break;
                     case (Minefield.TYPE_VIBRABOMB) :
-                        strings[stringsIndex] = "Vibrabomb minefield(" + mf.getSetting() + ") " + owner;
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            strings[stringsIndex] = "Vibrabomb minefield(" + mf.getSetting() + ") " + owner;
+                        } else {
+                            strings[stringsIndex] = "Vibrabomb minefield" + owner;
+                        }
                         break;
                     }
                     stringsIndex++;

@@ -4277,6 +4277,7 @@ implements Runnable {
             }
         }
         
+        // determine and deal damage
         int damage = mounted.getExplosionDamage();
         
         if (damage <= 0) {
@@ -4321,16 +4322,20 @@ implements Runnable {
                 if (!atype.isExplosive()) {
                     continue;
                 }
-                if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
-                || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
+                if (!mounted.isHit() 
+                && (rack < atype.getDamagePerShot() * atype.getRackSize()
+                || damage < mounted.getExplosionDamage())) {
                     rack = atype.getDamagePerShot() * atype.getRackSize();
-                    damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
+                    damage = mounted.getExplosionDamage();
                     boomloc = j;
                     boomslot = k;
                 }
             }
         }
         if (boomloc != -1 && boomslot != -1) {
+            CriticalSlot slot = entity.getCritical(boomloc, boomslot);
+            slot.setHit(true);
+            entity.getEquipment(slot.getIndex()).setHit(true);
             return explodeEquipment(entity, boomloc, boomslot);
         } else {
             return "  Luckily, there is no ammo to explode.\n";

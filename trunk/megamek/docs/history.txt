@@ -74,6 +74,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ ammo exploding from heat can't explode twice
+
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.
 + 657119: streak SRMs fire again

@@ -85,7 +85,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.11-dev
+v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"
 + winning player or team tracked during normal or force victories
 + Added vehicle flamers--LDE

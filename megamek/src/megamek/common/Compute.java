@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -65,14 +65,14 @@ public class Compute
      * will be rolled on 2d6.
      */
     public static double oddsAbove(int n) {
-        if (n < 2) {
+        if (n <= 2) {
             return 100.0;
         } else if (n > 12) {
             return 0;
         }
-        double[] odds = {100.0, 100.0,
-                         100.0, 97.2, 91.6, 83.3, 72.2, 58.3, 
-                         41.6, 27.7, 16.6, 8.3, 5.56, 2.78, 0};
+        final double[] odds = {100.0, 100.0,
+                100.0, 97.2, 91.6, 83.3, 72.2, 58.3, 
+                41.6, 27.7, 16.6, 8.3, 2.78, 0};
         return odds[n];
     }
     

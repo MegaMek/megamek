@@ -8,7 +8,7 @@ v 0.29.21 (CVS)
 + Bug 865498, Patch 866472: infantry first-step amnesty corrected
 + Bug 869818: IS Frag missles are level 2 technology.
 + Bug 869815: Reverse the "Clan ammo limits" boolean value.
-+ Made OK button have focus when the LOS dialog opens
++ Made OK button have focus when the LOS dialog opens (a different way)
 
 v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.

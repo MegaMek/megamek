@@ -33,14 +33,21 @@ public class LOSDialog
     private Checkbox[] checkboxes2 = null;
 
     public LOSDialog(Frame parent, boolean mechInFirst, boolean mechInSecond) {
-        super(parent, "LOS tool settings", true);
+        super(parent, "LOS tool settings", false);
         super.setResizable(false);
+
+        // closing the window is the same as hitting butOK
+        addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    actionPerformed(new ActionEvent(butOK,ActionEvent.ACTION_PERFORMED,butOK.getLabel()));
+                };
+        });
 
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
 
         GridBagConstraints c = new GridBagConstraints();
-        
+
         Label labMessage = new Label("In first hex:", Label.LEFT);
         c.weightx = 1.0;    c.weighty = 1.0;
         c.gridwidth = 0;
@@ -85,19 +92,18 @@ public class LOSDialog
 		gridbag.setConstraints(checkboxes2[1], c);
 		add(checkboxes2[1]);
 
-		butOK.addActionListener(this);
-		c.gridwidth = GridBagConstraints.REMAINDER;
+        butOK.addActionListener(this);
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(5, 0, 5, 0);
-		c.anchor = GridBagConstraints.CENTER;
-		gridbag.setConstraints(butOK, c);
-		add(butOK);
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(butOK, c);
+        add(butOK);
 
-  		pack();
-
-                butOK.requestFocus();
+        pack();
 
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -110,5 +116,18 @@ public class LOSDialog
 
     public boolean getMechInSecond() {
 		return this.checkboxes2[0].getState() == true;
+    }
+
+    /** Shows the dialog, and allows focus to be set on the OK button, even though we're modal
+    */
+    public void show() {
+        // quickly show the dialog non-modal, set the focus, and hide
+        super.show();
+        butOK.requestFocus();
+        hide();
+
+        // make the dialog modal and re-show (focus will still be set)
+        setModal(true);
+        super.show();
     }
 } 

@@ -113,7 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-2 (CVS)
+v 0.29-stable-3 (CVS)
+
+v 0.29-stable-2 (07-28-03, 12:32 am)
 + Bug 763169: Dropping prone now has chance to dislodge swarmers.
 + Bug 756126 (possible): Only needed hex images loaded during board load
 + Bug 769106: Fixed bug that was messing up "go prone to dislodge swarmers."

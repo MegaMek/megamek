@@ -4577,6 +4577,7 @@ implements Runnable, ConnectionHandler {
         // any AMS attacks by the target?
         Vector vCounters = waa.getCounterEquipment();
         if (vCounters == null) {
+            wr.amsShotDown = new int[0];
             return wr;
         } 
         
@@ -4877,7 +4878,7 @@ implements Runnable, ConnectionHandler {
             // Report any AMS action.
             for (int i=0; i < wr.amsShotDown.length; i++) {
                 if (wr.amsShotDown[i] > 0) {
-                        phaseReport.append( "\tAMS activates, firing " )
+                    phaseReport.append( "\tAMS activates, firing " )
                         .append( wr.amsShotDown[i] )
                         .append( " shot(s).\n" );
                 }

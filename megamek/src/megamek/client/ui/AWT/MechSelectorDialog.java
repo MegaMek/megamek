@@ -183,7 +183,7 @@ public class MechSelectorDialog
         }
         int nType = m_chType.getSelectedIndex();
         String sUnitType = m_chUnitType.getSelectedItem();
-        MechSummary[] mechs = MechSummaryCache.getInstance(unitLoadingDialog).getAllMechs();
+        MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         if ( mechs == null ) {
             System.err.println( "No units to filter!" );
             return;

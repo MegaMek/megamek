@@ -9,9 +9,9 @@ import java.util.Hashtable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import megamek.client.UnitLoadingDialog;
 import megamek.common.loaders.EntityLoadingException;
 
+import com.sun.java.util.collections.*;
 import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Map;
@@ -24,17 +24,18 @@ import com.sun.java.util.collections.Vector;
  */
 
 public class MechSummaryCache {
+    
+    public static interface Listener {        
+        void doneLoading();
+    }
+    
     private static final MechSummaryCache m_instance = new MechSummaryCache();
             
     private static boolean initialized = false;
     private static boolean initializing = false;
-
-    public static MechSummaryCache getInstance() {
-        return getInstance(null);
-    }
+    private static ArrayList listeners = new ArrayList();
     
-    public static synchronized MechSummaryCache getInstance(UnitLoadingDialog uld) {
-        m_instance.setUnitLoadingDialog(uld);
+    public static synchronized MechSummaryCache getInstance() {
         if (!initialized && !initializing) {
             initializing = true;
             Thread t = new Thread(new Runnable() {
@@ -52,21 +53,31 @@ public class MechSummaryCache {
         return initialized;
     }
     
+    public static void addListener(Listener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+    
+    public static void removeListener(Listener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+    
     private MechSummary[] m_data;
     private Map m_nameMap;
     private Hashtable hFailedFiles;
+	private int cacheCount;
+	private int fileCount;
+	private int zipCount;
+
     private static final char SEPARATOR = '|';
     private static final File ROOT = new File(Settings.mechDirectory);
     private static final File CACHE = new File(ROOT, "units.cache");
 
-    private UnitLoadingDialog unitLoadingDialog;
-
     private MechSummaryCache() {
         m_nameMap = new HashMap();
-    }
-
-    private void setUnitLoadingDialog(UnitLoadingDialog uld) {
-        this.unitLoadingDialog = uld;
     }
 
     public MechSummary[] getAllMechs() {
@@ -74,7 +85,7 @@ public class MechSummaryCache {
         return m_data;
     }
     
-    public static void block() {
+    private static void block() {
         if (!initialized) {
             synchronized (m_instance) {
                 try {
@@ -153,9 +164,7 @@ public class MechSummaryCache {
                     if (fSource.exists() && fSource.lastModified() < lLastCheck) {
                         vMechs.addElement(ms);
                         sKnownFiles.add(ms.getSourceFile().toString());
-                        if (unitLoadingDialog != null) {
-                            unitLoadingDialog.incrementCacheCount();
-                        }
+                        cacheCount++;
                     }
                 }
             }
@@ -197,10 +206,17 @@ public class MechSummaryCache {
         }
 
         System.out.println("");
-        initialized = true;
-        synchronized (m_instance) {
-            m_instance.notifyAll();
-        }
+        done();
+    }
+    
+    private void done() {
+		initialized = true;
+		synchronized (m_instance) {
+			m_instance.notifyAll();
+		}
+		for (Iterator i = listeners.iterator(); i.hasNext();) {
+		    ((Listener)i.next()).doneLoading();
+		}
     }
 
     private void saveCache() throws Exception {
@@ -289,9 +305,7 @@ public class MechSummaryCache {
                 vMechs.addElement(ms);
                 sKnownFiles.add(f.toString());
                 bNeedsUpdate = true;
-                if (unitLoadingDialog != null) {
-                    unitLoadingDialog.incrementFileCount();
-                }
+                fileCount++;
             } catch (EntityLoadingException ex) {
                 System.err.println("Unable to load file " + f.getName() + " : " + ex.getMessage());
                 hFailedFiles.put(f.toString(), ex.getMessage());
@@ -349,9 +363,7 @@ public class MechSummaryCache {
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
-                if (unitLoadingDialog != null) {
-                    unitLoadingDialog.incrementZipCount();
-                }
+                zipCount++;
             } catch (Exception ex) {
                 System.err.println("Unable to load file " + zEntry.getName() + " : " + ex.getMessage());
                 hFailedFiles.put(zEntry.getName(), ex.getMessage());
@@ -367,4 +379,17 @@ public class MechSummaryCache {
 
         return bNeedsUpdate;
     }
+    
+    public int getCacheCount() {
+        return cacheCount;
+    }
+
+    public int getFileCount() {
+        return fileCount;
+    }
+
+    public int getZipCount() {
+        return zipCount;
+    }
+
 }

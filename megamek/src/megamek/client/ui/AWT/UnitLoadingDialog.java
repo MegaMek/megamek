@@ -21,6 +21,8 @@ package megamek.client;
 
 import java.awt.*;
 
+import megamek.common.MechSummaryCache;
+
 public class UnitLoadingDialog extends Dialog {
 
     private Label lLoading = new Label("Loading units...");
@@ -32,20 +34,12 @@ public class UnitLoadingDialog extends Dialog {
     private Label lZipText = new Label("  ...from zips: ");
     private Label lZipCount = new Label();
 
-    private int cacheCount;
-    private int fileCount;
-    private int zipCount;
-
     // Determines how often to update the loading dialog.
     // Setting this too low causes noticeable loading delays.
-    private static final int UPDATE_FREQUENCY = 32;
+    private static final int UPDATE_FREQUENCY = 50;
 
     public UnitLoadingDialog(Frame frame) {
         super(frame,"Please wait...");
-
-        cacheCount = 0;
-        fileCount = 0;
-        zipCount = 0;        
 
         setLayout(new GridLayout(4,2));
         add(lLoading);
@@ -66,23 +60,25 @@ public class UnitLoadingDialog extends Dialog {
         setLocation(
             screenSize.width / 2 - getSize().width / 2,
             screenSize.height / 2 - getSize().height / 2);
+        
+        Thread t = new Thread() {
+            public void run() {
+                while (!MechSummaryCache.isInitialized()) {
+                    updateCounts();
+                    try {
+                        sleep(UPDATE_FREQUENCY);
+                    } catch (Exception e) {
+                        ;
+                    }
+                }
+            }
+        };
+        t.start();
     }
     
-    public void incrementCacheCount() {
-        cacheCount++;
-        if ( (cacheCount % UPDATE_FREQUENCY) == 0)
-            lCacheCount.setText(String.valueOf(cacheCount));
-    }
-
-    public void incrementFileCount() {
-        fileCount++;
-        if ( (fileCount % UPDATE_FREQUENCY) == 0)
-            lFileCount.setText(String.valueOf(fileCount));
-    }
-
-    public void incrementZipCount() {
-        zipCount++;
-        if ( (zipCount % UPDATE_FREQUENCY) == 0)
-            lZipCount.setText(String.valueOf(zipCount));
-    }
+    private void updateCounts() {
+		lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
+		lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
+		lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
+    }    
 }

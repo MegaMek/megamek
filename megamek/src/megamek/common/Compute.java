@@ -1263,6 +1263,11 @@ public class Compute
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
 
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+        
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -1421,6 +1426,11 @@ public class Compute
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+        
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -1571,9 +1581,9 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
         }
         
-        // can't club a prone mech one level lower
-        if (te.isProne() && attackerElevation == (targetElevation + 1)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone and lower");
+        // can't club a prone mech unless one level higher
+        if (te.isProne() && attackerElevation != (targetElevation - 1)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
         }
         
         // okay, modifiers...
@@ -1614,6 +1624,11 @@ public class Compute
             }
         }
 
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+        
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -1890,6 +1905,11 @@ public class Compute
             toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
         }
 
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+        
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -2020,6 +2040,11 @@ public class Compute
             toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
         }
 
+        // target prone
+        if (te.isProne()) {
+            toHit.addModifier(-2, "target prone and adjacent");
+        }
+        
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");

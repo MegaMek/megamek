@@ -19,7 +19,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.ServerSocket;
-import java.util.*;
 
 import megamek.common.Board;
 import megamek.common.Packet;

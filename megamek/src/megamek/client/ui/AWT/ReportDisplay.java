@@ -16,9 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-
 import megamek.common.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;

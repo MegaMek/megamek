@@ -375,7 +375,7 @@ with certain restrictions.  Only ".mtf", ".xml", and ".blk" files may
 contain mixed tech units.  In addition, some equipment cannot differ
 in technology type from the base chassis.  Units with an Inner Sphere
 chassis must mount Inner Sphere engines, internal structure, armor,
-heat sinks, and CASE.  The same goes for Clan units.
+and CASE.  Clan units have the same restricted equipment list.
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------

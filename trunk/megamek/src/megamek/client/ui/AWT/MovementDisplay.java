@@ -27,6 +27,22 @@ public class MovementDisplay
 {
     private static final int    NUM_BUTTON_LAYOUTS = 3;
 
+    public static final String    MOVE_WALK = "moveWalk";
+    public static final String    MOVE_NEXT = "moveNext";
+    public static final String    MOVE_JUMP = "moveJump";
+    public static final String    MOVE_BACK_UP = "moveBackUp";
+    public static final String    MOVE_TURN = "moveTurn";
+    public static final String    MOVE_GET_UP = "moveGetUp";
+    public static final String    MOVE_CHARGE = "moveCharge";
+    public static final String    MOVE_DFA = "moveDFA";
+    public static final String    MOVE_GO_PRONE = "moveGoProne";
+    public static final String    MOVE_FLEE = "moveFlee";
+    public static final String    MOVE_EJECT = "moveEject";
+    public static final String    MOVE_LOAD = "moveLoad";
+    public static final String    MOVE_UNLOAD = "moveUnload";
+    public static final String    MOVE_UNJAM = "moveUnjam";
+    public static final String    MOVE_CLEAR = "moveClear";
+
     // parent game
     public Client client;
 
@@ -94,51 +110,63 @@ public class MovementDisplay
         butClear = new Button("Clear mines");
         butClear.addActionListener(this);
         butClear.setEnabled(false);
+        butClear.setActionCommand(MOVE_CLEAR);
 
         butWalk = new Button("Walk");
         butWalk.addActionListener(this);
         butWalk.setEnabled(false);
+        butWalk.setActionCommand(MOVE_WALK);
 
         butJump = new Button("Jump");
         butJump.addActionListener(this);
         butJump.setEnabled(false);
+        butJump.setActionCommand(MOVE_JUMP);
 
         butBackup = new Button("Back Up");
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
+        butBackup.setActionCommand(MOVE_BACK_UP);
 
         butTurn = new Button("Turn");
         butTurn.addActionListener(this);
         butTurn.setEnabled(false);
+        butTurn.setActionCommand(MOVE_TURN);
 
 
         butUp = new Button("Get Up");
         butUp.addActionListener(this);
         butUp.setEnabled(false);
+        butUp.setActionCommand(MOVE_GET_UP);
 
         butDown = new Button("Go Prone");
         butDown.addActionListener(this);
         butDown.setEnabled(false);
+        butDown.setActionCommand(MOVE_GO_PRONE);
 
         butCharge = new Button("Charge");
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
+        butCharge.setActionCommand(MOVE_CHARGE);
 
         butDfa = new Button("D.F.A.");
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
+        butDfa.setActionCommand(MOVE_DFA);
 
         butFlee = new Button("Flee");
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
+        butFlee.setActionCommand(MOVE_FLEE);
 
         butEject = new Button("Eject");
         butEject.addActionListener(this);
         butEject.setEnabled(false);
+        butEject.setActionCommand(MOVE_EJECT);
 
         butRAC = new Button("Unjam RAC");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
+        butRAC.setActionCommand(MOVE_UNJAM);
 
         butMore = new Button("More...");
         butMore.addActionListener(this);
@@ -147,6 +175,7 @@ public class MovementDisplay
         butNext = new Button("Next Unit");
         butNext.addActionListener(this);
         butNext.setEnabled(false);
+        butNext.setActionCommand(MOVE_NEXT);
 
         butDone = new Button("Move");
         butDone.addActionListener(this);
@@ -155,10 +184,12 @@ public class MovementDisplay
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
         butLoad.setEnabled(false);
+        butLoad.setActionCommand(MOVE_LOAD);
 
         butUnload = new Button("Unload");
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
+        butUnload.setActionCommand(MOVE_UNLOAD);
         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
@@ -254,7 +285,9 @@ public class MovementDisplay
         this.cen = en;
         ce().setSelected(true);
         clearAllMoves();
-        updateButtons();
+	    updateButtons();
+        // Update the menu bar.
+        client.getMenuBar().setEntity( ce() );
         
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
@@ -273,41 +306,41 @@ public class MovementDisplay
         boolean isMech = (ce() instanceof Mech);
         boolean isInfantry = (ce() instanceof Infantry);
         
-        butWalk.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
-        butJump.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
-        butBackup.setEnabled(butWalk.isEnabled());
+        setWalkEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
+        setJumpEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
+        setBackUpEnabled(butWalk.isEnabled());
         
         // Infantry can't charge or DFA.
         if ( isInfantry ) {
-            butCharge.setEnabled(false);
-            butDfa.setEnabled(false);
+            setChargeEnabled(false);
+            setDFAEnabled(false);
             if(client.game.containsMinefield(ce().getPosition())) {
-            	butClear.setEnabled(true);
+            	setClearEnabled(true);
         	} else {
-            	butClear.setEnabled(false);
+            	setClearEnabled(false);
         	}
         } else {
-            butCharge.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
-            butDfa.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
-            butClear.setEnabled(false);
+            setChargeEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
+            setDFAEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
+            setClearEnabled(false);
         }
         
-        butTurn.setEnabled(!ce().isImmobile() && (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
+        setTurnEnabled(!ce().isImmobile() && (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
 
         if (ce().isProne()) {
-            butUp.setEnabled(!ce().isImmobile());
-            butDown.setEnabled(false);
+            setGetUpEnabled(!ce().isImmobile());
+            setGoProneEnabled(false);
         } else {
-            butUp.setEnabled(false);
-            butDown.setEnabled(!ce().isImmobile() && isMech);
+            setGetUpEnabled(false);
+            setGoProneEnabled(!ce().isImmobile() && isMech);
         }
 
         updateProneButtons();
         updateRACButton();
         updateLoadButtons();
 
-        butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
-        butEject.setEnabled(isMech && ce().isActive());
+        setFleeEnabled(Compute.canEntityFlee(client.game, cen));
+        setEjectEnabled(isMech && ce().isActive());
         
     }
 
@@ -317,7 +350,7 @@ public class MovementDisplay
     private void beginMyTurn() {
         butDone.setLabel("Done");
         butDone.setEnabled(true);
-        butNext.setEnabled(true);
+        setNextEnabled(true);
         butMore.setEnabled(true);
         if (!client.bv.isMovingUnits()) {
 	        client.setDisplayVisible(true);
@@ -343,22 +376,23 @@ public class MovementDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        butWalk.setEnabled(false);
-        butJump.setEnabled(false);
-        butBackup.setEnabled(false);
-        butTurn.setEnabled(false);
-        butFlee.setEnabled(false);
-        butEject.setEnabled(false);
-        butRAC.setEnabled(false);
-        butUp.setEnabled(false);
-        butDown.setEnabled(false);
-        butCharge.setEnabled(false);
-        butDfa.setEnabled(false);
-        butNext.setEnabled(false);
+        setWalkEnabled(false);
+        setJumpEnabled(false);
+        setBackUpEnabled(false);
+        setTurnEnabled(false);
+        setFleeEnabled(false);
+        setEjectEnabled(false);
+        setUnjamEnabled(false);
+        setGetUpEnabled(false);
+        setGoProneEnabled(false);
+        setChargeEnabled(false);
+        setDFAEnabled(false);
+        setNextEnabled(false);
         butMore.setEnabled(false);
         butDone.setEnabled(false);
-        butLoad.setEnabled(false);
-        butUnload.setEnabled(false);
+        setLoadEnabled(false);
+        setUnloadEnabled(false);
+        setClearEnabled(false);
     }
     /**
      * Clears out the curently selected movement data and
@@ -792,11 +826,11 @@ public class MovementDisplay
 
     private void updateProneButtons() {
         if (ce() != null && md != null && !ce().isImmobile()) {
-            butUp.setEnabled(md.getFinalProne(ce().isProne()));
-            butDown.setEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
+            setGetUpEnabled(md.getFinalProne(ce().isProne()));
+            setGoProneEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {
-            butUp.setEnabled(false);
-            butDown.setEnabled(false);
+            setGetUpEnabled(false);
+            setGoProneEnabled(false);
         }
     }
     
@@ -804,7 +838,7 @@ public class MovementDisplay
         if ( null == ce() || null == md ) {
             return;
         }
-        butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
+        setUnjamEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
     }
 
     private void updateLoadButtons() {
@@ -816,16 +850,16 @@ public class MovementDisplay
                gear != Compute.GEAR_BACKUP ) ||
              loadedUnits.size() == 0 
              || cen == Entity.NONE) {
-            butUnload.setEnabled( false );
+            setUnloadEnabled( false );
         }
         else {
-            butUnload.setEnabled( true );
+            setUnloadEnabled( true );
         }
 
         // If the current entity has moved, disable "Load" button.
         if ( md.length() > 0 || cen == Entity.NONE ) {
 
-            butLoad.setEnabled( false );
+            setLoadEnabled( false );
 
         } else {
 
@@ -846,7 +880,7 @@ public class MovementDisplay
                     if ( ce().getWalkMP() > 0 &&
                          ce().canLoad(other) &&
                          other.isSelectableThisTurn(client.game) ) {
-                        butLoad.setEnabled( true );
+                        setLoadEnabled( true );
                     }
 
                     // We can stop looking.
@@ -1017,28 +1051,28 @@ public class MovementDisplay
 
         if (ev.getSource() == butDone) {
             moveTo(md);
-        } else if (ev.getSource() == butNext) {
+        } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-        } else if (ev.getSource() == butRAC) {
+        } else if (ev.getActionCommand().equals(MOVE_UNJAM)) {
             if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
                 //clearAllMoves();
                 //gear = Compute.GEAR_LAND;
-                butRAC.setEnabled(false);
+                setUnjamEnabled(false);
             }
             else {
               md.addStep(MovePath.STEP_UNJAM_RAC);
               moveTo(md);
             }
-        } else if (ev.getSource() == butWalk) {
+        } else if (ev.getActionCommand().equals(MOVE_WALK)) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_LAND;
-        } else if (ev.getSource() == butJump) {
+        } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
@@ -1046,14 +1080,14 @@ public class MovementDisplay
                 md.addStep(MovePath.STEP_START_JUMP);
             }
             gear = Compute.GEAR_JUMP;
-        } else if (ev.getSource() == butTurn) {
+        } else if (ev.getActionCommand().equals(MOVE_TURN)) {
             gear = Compute.GEAR_TURN;
-        } else if (ev.getSource() == butBackup) {
+        } else if (ev.getActionCommand().equals(MOVE_BACK_UP)) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;
-        } else if (ev.getSource() == butClear) {       	
+        } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {       	
 	    clearAllMoves();
 	    if (!client.game.containsMinefield(ce().getPosition())) {
                 client.doAlertDialog( "Can't clear minefield",
@@ -1086,12 +1120,12 @@ public class MovementDisplay
                 md.addStep(MovePath.STEP_CLEAR_MINEFIELD);
                 moveTo(md);
                         }
-        } else if (ev.getSource() == butCharge) {
+        } else if (ev.getActionCommand().equals(MOVE_CHARGE)) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_CHARGE;
-        } else if (ev.getSource() == butDfa) {
+        } else if (ev.getActionCommand().equals(MOVE_DFA)) {
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
@@ -1099,7 +1133,7 @@ public class MovementDisplay
             if (!md.contains(MovePath.STEP_START_JUMP)) {
                 md.addStep(MovePath.STEP_START_JUMP);
             }
-        } else if (ev.getSource() == butUp) {
+        } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             clearAllMoves();
             if (md.getFinalProne(ce().isProne())) {
                 md.addStep(MovePath.STEP_GET_UP);
@@ -1108,7 +1142,7 @@ public class MovementDisplay
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
-        } else if (ev.getSource() == butDown) {
+        } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
             gear = Compute.GEAR_LAND;
             if (!md.getFinalProne(ce().isProne())) {
                 md.addStep(MovePath.STEP_GO_PRONE);
@@ -1117,16 +1151,16 @@ public class MovementDisplay
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
-        } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
+        } else if (ev.getActionCommand().equals(MOVE_FLEE) && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
             clearAllMoves();
             md.addStep(MovePath.STEP_FLEE);
             moveTo(md);
-        } else if (ev.getSource() == butEject && client.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
+        } else if (ev.getActionCommand().equals(MOVE_EJECT) && client.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
             clearAllMoves();
             md.addStep(MovePath.STEP_EJECT);
             moveTo(md);
         }
-        else if ( ev.getSource() == butLoad ) {
+        else if ( ev.getActionCommand().equals(MOVE_LOAD) ) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
             Entity other = null;
@@ -1149,7 +1183,7 @@ public class MovementDisplay
                 gear = Compute.GEAR_LAND;
             }
         }
-        else if ( ev.getSource() == butUnload ) {
+        else if ( ev.getActionCommand().equals(MOVE_UNLOAD) ) {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
 
@@ -1250,4 +1284,64 @@ public class MovementDisplay
     		}
     	}
     }
+	private void setWalkEnabled(boolean enabled) {
+		butWalk.setEnabled(enabled);
+        client.getMenuBar().setMoveWalkEnabled(enabled);
+	}
+	private void setTurnEnabled(boolean enabled) {
+		butTurn.setEnabled(enabled);
+        client.getMenuBar().setMoveTurnEnabled(enabled);
+	}
+	private void setNextEnabled(boolean enabled) {
+		butNext.setEnabled(enabled);
+        client.getMenuBar().setMoveNextEnabled(enabled);
+	}
+	private void setLoadEnabled(boolean enabled) {
+		butLoad.setEnabled(enabled);
+        client.getMenuBar().setMoveLoadEnabled(enabled);
+	}
+	private void setUnloadEnabled(boolean enabled) {
+		butUnload.setEnabled(enabled);
+        client.getMenuBar().setMoveUnloadEnabled(enabled);
+	}
+	private void setJumpEnabled(boolean enabled) {
+		butJump.setEnabled(enabled);
+        client.getMenuBar().setMoveJumpEnabled(enabled);
+	}
+	private void setBackUpEnabled(boolean enabled) {
+		butBackup.setEnabled(enabled);
+        client.getMenuBar().setMoveBackUpEnabled(enabled);
+	}
+	private void setChargeEnabled(boolean enabled) {
+		butCharge.setEnabled(enabled);
+        client.getMenuBar().setMoveChargeEnabled(enabled);
+	}
+	private void setDFAEnabled(boolean enabled) {
+		butDfa.setEnabled(enabled);
+        client.getMenuBar().setMoveDFAEnabled(enabled);
+	}
+	private void setGoProneEnabled(boolean enabled) {
+		butDown.setEnabled(enabled);
+        client.getMenuBar().setMoveGoProneEnabled(enabled);
+	}
+	private void setFleeEnabled(boolean enabled) {
+		butFlee.setEnabled(enabled);
+        client.getMenuBar().setMoveFleeEnabled(enabled);
+	}
+	private void setEjectEnabled(boolean enabled) {
+		butEject.setEnabled(enabled);
+        client.getMenuBar().setMoveEjectEnabled(enabled);
+	}
+	private void setUnjamEnabled(boolean enabled) {
+		butRAC.setEnabled(enabled);
+        client.getMenuBar().setMoveUnjamEnabled(enabled);
+	}
+	private void setClearEnabled(boolean enabled) {
+		butClear.setEnabled(enabled);
+        client.getMenuBar().setMoveClearEnabled(enabled);
+	}
+	private void setGetUpEnabled(boolean enabled) {
+		butUp.setEnabled(enabled);
+        client.getMenuBar().setMoveGetUpEnabled(enabled);
+	}
 }

@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.15 (CVS)
 + Fa Shih units have superior mine-clearing capabilities.
++ Added movement menu.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

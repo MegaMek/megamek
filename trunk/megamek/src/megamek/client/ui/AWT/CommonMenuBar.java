@@ -82,10 +82,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem viewClientSettings = null;
     private MenuItem viewPlayerList = null;
 
-	private int nbrConv = 0;
-	private int nbrCommand = 0;
-	private int nbrVibra = 0;	
-
     private MenuItem deployMinesConventional = null;
     private MenuItem deployMinesCommand = null;
     private MenuItem deployMinesVibrabomb = null;
@@ -99,6 +95,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem moveTurn = null;
     private MenuItem moveLoad = null;
     private MenuItem moveUnload = null;
+    private MenuItem moveJump = null;
+    private MenuItem moveBackUp = null;
+    private MenuItem moveCharge = null;
+    private MenuItem moveDFA = null;
+    private MenuItem moveGoProne = null;
+    private MenuItem moveFlee = null;
+    private MenuItem moveEject = null;
+    private MenuItem moveUnjam = null;
+    private MenuItem moveClear = null;
+    private MenuItem moveGetUp = null;
 
     /**
      * When we have selected a weapon that can fire, set this to <code>true</code>.
@@ -307,32 +313,76 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         menu = new Menu( "Move" );
         this.add( menu );
 
-        moveNext = new MenuItem( "Next" );
-        moveNext.addActionListener( this );
-        moveNext.setActionCommand( "moveNext" );
-        menu.add( moveNext );
         moveWalk = new MenuItem( "Walk" );
         moveWalk.addActionListener( this );
-        moveWalk.setActionCommand( "moveWalk" );
+        moveWalk.setActionCommand(MovementDisplay.MOVE_WALK);
         menu.add( moveWalk );
+        moveJump = new MenuItem( "Jump" );
+        moveJump.addActionListener( this );
+        moveJump.setActionCommand(MovementDisplay.MOVE_JUMP);
+        menu.add( moveJump );
+        moveBackUp = new MenuItem( "Back Up" );
+        moveBackUp.addActionListener( this );
+        moveBackUp.setActionCommand(MovementDisplay.MOVE_BACK_UP);
+        menu.add( moveBackUp );
+        moveGetUp = new MenuItem( "Get Up" );
+        moveGetUp.addActionListener( this );
+        moveGetUp.setActionCommand(MovementDisplay.MOVE_GET_UP);
+        menu.add( moveGetUp );
+        moveGoProne = new MenuItem( "Go Prone" );
+        moveGoProne.addActionListener( this );
+        moveGoProne.setActionCommand(MovementDisplay.MOVE_GO_PRONE);
+        menu.add( moveGoProne );
         moveTurn = new MenuItem( "Turn" );
         moveTurn.addActionListener( this );
-        moveTurn.setActionCommand( "moveTurn" );
+        moveTurn.setActionCommand(MovementDisplay.MOVE_TURN);
         menu.add( moveTurn );
+        moveNext = new MenuItem( "Next" );
+        moveNext.addActionListener( this );
+        moveNext.setActionCommand(MovementDisplay.MOVE_NEXT);
+        menu.add( moveNext );
+
+        // Create the Special sub-menu.
+        submenu = new Menu( "Special" );
+
         moveLoad = new MenuItem( "Load" );
         moveLoad.addActionListener( this );
-        moveLoad.setActionCommand( "moveLoad" );
-        menu.add( moveLoad );
+        moveLoad.setActionCommand(MovementDisplay.MOVE_LOAD);
+        submenu.add( moveLoad );
         moveUnload = new MenuItem( "Unload" );
         moveUnload.addActionListener( this );
-        moveUnload.setActionCommand( "moveUnload" );
-        menu.add( moveUnload );
-
-        /* begin killme
-        ** Remove this block when implementing the MovementDisplay.
-        */
-        menu.setEnabled( false );
-        /* end killme */
+        moveUnload.setActionCommand(MovementDisplay.MOVE_UNLOAD);
+        submenu.add( moveUnload );
+        submenu.addSeparator();
+        moveCharge = new MenuItem( "Charge" );
+        moveCharge.addActionListener( this );
+        moveCharge.setActionCommand(MovementDisplay.MOVE_CHARGE);
+        submenu.add( moveCharge );
+        moveDFA= new MenuItem( "Death from Above" );
+        moveDFA.addActionListener( this );
+        moveDFA.setActionCommand(MovementDisplay.MOVE_DFA);
+        submenu.add( moveDFA );
+        submenu.addSeparator();
+        moveFlee = new MenuItem( "Flee" );
+        moveFlee.addActionListener( this );
+        moveFlee.setActionCommand(MovementDisplay.MOVE_FLEE);
+        submenu.add( moveFlee );
+        moveEject = new MenuItem( "Eject" );
+        moveEject.addActionListener( this );
+        moveEject.setActionCommand(MovementDisplay.MOVE_EJECT);
+        submenu.add( moveEject );
+        submenu.addSeparator();
+        moveUnjam = new MenuItem( "Unjam RAC" );
+        moveUnjam.addActionListener( this );
+        moveUnjam.setActionCommand(MovementDisplay.MOVE_UNJAM);
+        submenu.add( moveUnjam );
+        moveClear = new MenuItem( "Clear Minefield" );
+        moveClear.addActionListener( this );
+        moveClear.setActionCommand(MovementDisplay.MOVE_CLEAR);
+        submenu.add( moveClear );
+        
+        menu.addSeparator();
+        menu.add( submenu );
 
         // *** Create the fire menu.
         menu = new Menu( "Fire" );
@@ -572,24 +622,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener
             deployMinesConventional.setEnabled( false );
             deployMinesCommand.setEnabled( false );
             deployMinesVibrabomb.setEnabled( false );
-        } else {
-	        deployMinesConventional.setLabel("Minefield(" + nbrConv + ")");
-	        deployMinesCommand.setLabel("Command(" + nbrCommand + ")");
-	        deployMinesVibrabomb.setLabel("Vibrabomb(" + nbrVibra + ")");
-	
-	        deployMinesConventional.setEnabled(nbrConv > 0);
-	        deployMinesCommand.setEnabled(nbrCommand > 0);
-	        deployMinesVibrabomb.setEnabled(nbrVibra > 0);
         }
 
         // We can only deploy units in the deployment phase.
         // Some actions require an Entity to be selected.
-        if ( this.phase == Game.PHASE_DEPLOYMENT ) {
-            deployNext.setEnabled( true );
-            deployTurn.setEnabled( this.entity != null );
-            deployLoad.setEnabled( this.entity != null );
-            deployUnload.setEnabled( this.entity != null );
-        } else {
+        if ( this.phase != Game.PHASE_DEPLOYMENT ) {
             deployNext.setEnabled( false );
             deployTurn.setEnabled( false );
             deployLoad.setEnabled( false );
@@ -598,18 +635,22 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         // We can only move units in the movement phase.
         // Some actions require an Entity to be selected.
-        if ( this.phase == Game.PHASE_MOVEMENT ) {
-            moveNext.setEnabled( true );
-            moveWalk.setEnabled( this.entity != null );
-            moveTurn.setEnabled( this.entity != null );
-            moveLoad.setEnabled( this.entity != null );
-            moveUnload.setEnabled( this.entity != null );
-        } else { 
-            moveNext.setEnabled( false );
-            moveWalk.setEnabled( false );
-            moveTurn.setEnabled( false );
-            moveLoad.setEnabled( false );
-            moveUnload.setEnabled( false );
+        if ( this.phase != Game.PHASE_MOVEMENT ) {
+			moveWalk.setEnabled( false );
+			moveNext.setEnabled( false );
+			moveTurn.setEnabled( false );
+			moveLoad.setEnabled( false );
+			moveUnload.setEnabled( false );
+			moveJump.setEnabled( false );
+			moveBackUp.setEnabled( false );
+			moveCharge.setEnabled( false );
+			moveDFA.setEnabled( false );
+			moveGoProne.setEnabled( false );
+			moveFlee.setEnabled( false );
+			moveEject.setEnabled( false );
+			moveUnjam.setEnabled( false );
+			moveClear.setEnabled( false );
+			moveGetUp.setEnabled( false );
         }
 
         // We can only fire selected units in the firing phase.
@@ -733,13 +774,80 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         manageMenu();
     }
 
-	public synchronized void setNbrMinefields(int conv, 
-													int command, 
-													int vibra) {
-		nbrConv = conv;
-		nbrCommand = command;
-		nbrVibra = vibra;
-		manageMenu();
+	// Manages the movement menu items...
+	public synchronized void setMoveWalkEnabled(boolean enabled) {
+    	moveWalk.setEnabled(enabled);
+	}
+	public synchronized void setMoveTurnEnabled(boolean enabled) {
+    	moveTurn.setEnabled(enabled);
+	}
+	public synchronized void setMoveNextEnabled(boolean enabled) {
+    	moveNext.setEnabled(enabled);
+	}
+	public synchronized void setMoveLoadEnabled(boolean enabled) {
+    	moveLoad.setEnabled(enabled);
+	}
+	public synchronized void setMoveUnloadEnabled(boolean enabled) {
+    	moveUnload.setEnabled(enabled);
+	}
+	public synchronized void setMoveJumpEnabled(boolean enabled) {
+    	moveJump.setEnabled(enabled);
+	}
+	public synchronized void setMoveBackUpEnabled(boolean enabled) {
+    	moveBackUp.setEnabled(enabled);
+	}
+	public synchronized void setMoveChargeEnabled(boolean enabled) {
+    	moveCharge.setEnabled(enabled);
+	}
+	public synchronized void setMoveDFAEnabled(boolean enabled) {
+    	moveDFA.setEnabled(enabled);
+	}
+	public synchronized void setMoveGoProneEnabled(boolean enabled) {
+    	moveGoProne.setEnabled(enabled);
+	}
+	public synchronized void setMoveFleeEnabled(boolean enabled) {
+    	moveFlee.setEnabled(enabled);
+	}
+	public synchronized void setMoveEjectEnabled(boolean enabled) {
+    	moveEject.setEnabled(enabled);
+	}
+	public synchronized void setMoveUnjamEnabled(boolean enabled) {
+    	moveUnjam.setEnabled(enabled);
+	}
+	public synchronized void setMoveClearEnabled(boolean enabled) {
+    	moveClear.setEnabled(enabled);
+	}
+	public synchronized void setMoveGetUpEnabled(boolean enabled) {
+    	moveGetUp.setEnabled(enabled);
+	}
+
+	// Manages deploy menu items...
+	public synchronized void setDeployNextEnabled(boolean enabled) {
+    	deployNext.setEnabled(enabled);
+	}
+	public synchronized void setDeployTurnEnabled(boolean enabled) {
+    	deployTurn.setEnabled(enabled);
+	}
+	public synchronized void setDeployLoadEnabled(boolean enabled) {
+    	deployLoad.setEnabled(enabled);
+	}
+	public synchronized void setDeployUnloadEnabled(boolean enabled) {
+    	deployUnload.setEnabled(enabled);
+	}
+
+	// Manages deploy minefield items...
+	public synchronized void setDeployConventionalEnabled(int nbr) {
+        deployMinesConventional.setLabel("Minefield(" + nbr + ")");
+        deployMinesConventional.setEnabled(nbr > 0);
+	}
+	public synchronized void setDeployCommandEnabled(int nbr) {
+        deployMinesCommand.setLabel("Command(" + nbr + ")");
+        // Cannot ever deploy command mines...
+        deployMinesCommand.setEnabled(false);
+	}
+	public synchronized void setDeployVibrabombEnabled(int nbr) {
+        deployMinesVibrabomb.setLabel("Vibrabomb(" + nbr + ")");
+        deployMinesVibrabomb.setEnabled(nbr > 0);
 	}
 
 }

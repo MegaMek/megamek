@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,28 +26,29 @@ import java.io.*;
  * This describes equipment mounted on a mech.
  *
  * @author  Ben
- * @version 
+ * @version
  */
 public class Mounted implements Serializable, RoundUpdated {
-    
+
     private boolean usedThisRound = false;
     private boolean destroyed = false;
     private boolean hit = false;
     private boolean missing = false;
     private boolean jammed = false;
     private boolean useless = false;
-    
+    private boolean fired = false; //Only true for used OS stuff.
+
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
-    
+
     private int location;
     private boolean rearMounted;
-    
+
     private Mounted linked = null; // for ammo, or artemis
     private Mounted linkedBy = null; // reverse link for convenience
-    
+
     private Entity entity; // what I'm mounted on
-    
+
     private transient EquipmentType type;
     private String typeName;
 
@@ -55,28 +56,28 @@ public class Mounted implements Serializable, RoundUpdated {
     private int shotsLeft;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
-    
+
     // handle split weapons
     private boolean bSplit = false;
     private int nFoundCrits = 0;
-    
+
 
     /** Creates new Mounted */
     public Mounted(Entity entity, EquipmentType type) {
         this.entity = entity;
         this.type = type;
         this.typeName = type.getInternalName();
-        
+
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
         }
     }
-    
+
     /**
      * Changing ammo loadouts allows updating AmmoTypes of existing bins.
      * This is the only circumstance under which this should happen.
      */
-    
+
     public void changeAmmoType(AmmoType at) {
         if ( !(type instanceof AmmoType)) {
             System.out.println("Attempted to change ammo type of non-ammo");
@@ -92,27 +93,27 @@ public class Mounted implements Serializable, RoundUpdated {
      */
     public void restore() {
         this.type = EquipmentType.getByInternalName(typeName);
-        
+
         if (this.type == null) {
             System.err.println("Mounted.restore: could not restore equipment type \"" + typeName + "\"");
         }
     }
-    
+
     public EquipmentType getType() {
         return type;
     }
-    
+
     public String curMode() {
         return type.getModes()[mode];
     }
-    
+
     public String pendingMode() {
         if (pendingMode == -1) {
             return "None";
         }
         return type.getModes()[pendingMode];
     }
-    
+
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
@@ -127,7 +128,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return -1;
     }
-    
+
     public int setMode(String s) {
         for (int x = 0; x < type.getModes().length; x++) {
             if (type.getModes()[x].equals(s)) {
@@ -137,7 +138,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return -1;
     }
-    
+
     public void setMode(int n) {
         if (type.hasModes()) {
             if (type.hasInstantModeSwitch()) {
@@ -148,7 +149,7 @@ public class Mounted implements Serializable, RoundUpdated {
             }
         }
     }
-    
+
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
         if (type.hasModes() && pendingMode != -1) {
@@ -156,15 +157,15 @@ public class Mounted implements Serializable, RoundUpdated {
             pendingMode = -1;
         }
     }
-    
-    
+
+
     /**
      * Shortcut to type.getName()
      */
     public String getName() {
         return type.getName();
     }
-    
+
     public String getDesc() {
         StringBuffer desc = new StringBuffer(type.getDesc());
         if (destroyed) {
@@ -186,19 +187,19 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return desc.toString();
     }
-    
+
     public boolean isReady() {
         return !usedThisRound && !destroyed && !jammed && !useless;
     }
-    
+
     public boolean isUsedThisRound() {
         return usedThisRound;
     }
-    
+
     public void setUsedThisRound(boolean usedThisRound) {
         this.usedThisRound = usedThisRound;
     }
-    
+
     public boolean isBreached() {
         return useless;
     }
@@ -210,43 +211,43 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isDestroyed() {
         return destroyed;
     }
-    
+
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }
-    
+
     public boolean isHit() {
         return hit;
     }
-    
+
     public void setHit(boolean hit) {
         this.hit = hit;
     }
-    
+
     public boolean isMissing() {
         return missing;
     }
-    
+
     public void setMissing(boolean missing) {
         this.missing = missing;
     }
-    
+
     public boolean isJammed() {
         return jammed;
     }
-    
+
     public void setJammed(boolean j) {
         jammed = j;
     }
-    
+
     public int getShotsLeft() {
         return shotsLeft;
     }
-    
+
     public void setShotsLeft(int shotsLeft) {
         this.shotsLeft = shotsLeft;
     }
-    
+
     /**
      * Returns how many shots the weapon is using
      */
@@ -269,45 +270,45 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return nShots;
     }
-    
+
     public boolean isPendingDump() {
         return m_bPendingDump;
     }
-    
+
     public void setPendingDump(boolean b) {
         m_bPendingDump = b;
     }
-    
+
     public boolean isDumping() {
         return m_bDumping;
     }
-    
+
     public void setDumping(boolean b) {
         m_bDumping = b;
     }
-    
-    
+
+
     public int getLocation() {
         return location;
     }
-    
+
     public boolean isRearMounted() {
         return rearMounted;
     }
-    
+
     public void setLocation(int location) {
         setLocation(location, false);
     }
-    
+
     public void setLocation(int location, boolean rearMounted) {
         this.location = location;
         this.rearMounted = rearMounted;
     }
-    
+
     public Mounted getLinked() {
         return linked;
     }
-    
+
     public Mounted getLinkedBy() {
         return linkedBy;
     }
@@ -316,7 +317,7 @@ public class Mounted implements Serializable, RoundUpdated {
         this.linked = linked;
         linked.setLinkedBy(this);
     }
-    
+
     // should only be called by setLinked()
     // in the case of a many-to-one relationship (like ammo) this is meaningless
     protected void setLinkedBy(Mounted linker) {
@@ -326,23 +327,23 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         linkedBy = linker;
     }
-    
+
     public int getFoundCrits() {
         return nFoundCrits;
     }
-    
+
     public void setFoundCrits(int n) {
         nFoundCrits = n;
     }
-    
+
     public boolean isSplit() {
         return bSplit;
     }
-    
+
     public void setSplit(boolean b) {
         bSplit = b;
     }
-    
+
     public int getExplosionDamage() {
         if (type instanceof AmmoType) {
             AmmoType atype = (AmmoType)type;
@@ -364,5 +365,11 @@ public class Mounted implements Serializable, RoundUpdated {
         System.err.println("mounted: unable to determine explosion damage for "
                             + getName());
         return 0;
+    }
+    public boolean isFired() { //has a oneshot weapon been fired?
+      return fired;
+    }
+    public void setFired(boolean val) {
+      fired=val;
     }
 }

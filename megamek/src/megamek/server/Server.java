@@ -53,8 +53,8 @@ public class Server
     
     // list of turns and whose turn it is
     private int                 roundCounter = 0;
-    private int[]               turns;
-    private int                 ti;
+    private Vector              turns = new Vector();
+    private int                 turnIndex = 0;
 
     // stuff for the current turn
     private Vector              attacks = new Vector();
@@ -490,19 +490,14 @@ public boolean isPassworded() {
      * Are we out of turns (done with the phase?)
      */
     private boolean areMoreTurns() {
-        return ti < turns.length;
+        return turnIndex < turns.size();
     }
 
     /**
-     * Returns the player number of who gets the next turn,
-     * or -1 if we're done.
+     * Returns the next turn object or null if we're done with this phase
      */
-    private int nextTurn() {
-        if (ti < turns.length) {
-            return turns[ti++];
-        } else {
-            return -1;
-        }
+    private GameTurn nextTurn() {
+        return (GameTurn)turns.elementAt(turnIndex++);
     }
 
     /**
@@ -710,7 +705,7 @@ public boolean isPassworded() {
         case Game.PHASE_MOVEMENT :
         case Game.PHASE_FIRING :
         case Game.PHASE_PHYSICAL :
-            if(getPlayer(game.getTurn()).isReady()) {
+            if(getPlayer(game.getTurn().getPlayerNum()).isReady()) {
                 changeToNextTurn();
             }
             break;
@@ -847,7 +842,7 @@ public boolean isPassworded() {
         case Game.PHASE_FIRING :
         case Game.PHASE_PHYSICAL :
             // set turn
-            ti = 0;
+            turnIndex = 0;
             changeToNextTurn();
             break;
         }
@@ -937,8 +932,8 @@ public boolean isPassworded() {
             endCurrentPhase();
             return;
         }
-        int nextTurn = nextTurn();
-        if (getPlayer(nextTurn).isGhost()) {
+        GameTurn nextTurn = nextTurn();
+        if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
             changeToNextTurn();
             return;
         }
@@ -948,11 +943,13 @@ public boolean isPassworded() {
     /**
      * Changes it to make it the specified player's turn.
      */
-    private void changeTurn(int turn) {
-        final Player player = getPlayer(game.getTurn());
+    private void changeTurn(GameTurn turn) {
+        final Player player = getPlayer(turn.getPlayerNum());
         game.setTurn(turn);
-        if (player != null) player.setReady(false);
-        send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
+        if (player != null) {
+            player.setReady(false);
+        }
+        send(new Packet(Packet.COMMAND_TURN, turn));
     }
     
     /**
@@ -1138,19 +1135,19 @@ public boolean isPassworded() {
         }
 
         // generate turn list
-        turns = new int[noOfTurns];
-        ti = 0;
-        while (ti < turns.length){
+        turns.setSize(noOfTurns);
+        turnIndex = 0;
+        while (turnIndex < turns.size()){
             // get lowest number of entities, minimum 1.
             int hnoe = 1;
             int lnoe = Integer.MAX_VALUE;
             for (int i = 0; i < MAX_PLAYERS; i++) {
-                    if (noe[i] > 0 && noe[i] < lnoe) {
-                            lnoe = noe[i];
-                    }
-                    if (noe[i] > hnoe) {
-                            hnoe = noe[i];
-                    }
+                if (noe[i] > 0 && noe[i] < lnoe) {
+                    lnoe = noe[i];
+                }
+                if (noe[i] > hnoe) {
+                    hnoe = noe[i];
+                }
             }
             // cycle through order list
             for (int i = 0; i < order.length; i++) {
@@ -1164,13 +1161,14 @@ public boolean isPassworded() {
                  */
                 int ntm = Math.max(1, (int)Math.floor(noe[order[i]] / lnoe));
                 for (int j = 0; j < ntm; j++) {
-                    turns[ti++] = order[i];
+                    turns.setElementAt(new GameTurn(order[i]), turnIndex);
+                    turnIndex++;
                     noe[order[i]]--;
                 }
             }
         }
         // reset turn counter
-        ti = 0;
+        turnIndex = 0;
     }
 
     /**
@@ -1179,7 +1177,7 @@ public boolean isPassworded() {
     private void writeInitiativeReport() {
         // write to report
         roundReport.append("\nInitiative Phase for Round #" + roundCounter
-                           + "\n------------------------------\n");
+                         + "\n------------------------------\n");
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             roundReport.append(player.getName() + " rolls a ");
@@ -1192,13 +1190,16 @@ public boolean isPassworded() {
             roundReport.append(".\n");
         }
         roundReport.append("\nThe turn order is:\n  ");
-        for (int i = 0; i < turns.length; i++) {
-            roundReport.append((i == 0 ? "" : ", ") + getPlayer(turns[i]).getName());
+        boolean firstTurn = true;
+        for (Enumeration i = turns.elements(); i.hasMoreElements();) {
+            GameTurn turn = (GameTurn)i.nextElement();
+            roundReport.append((firstTurn ? "" : ", ") + getPlayer(turn.getPlayerNum()).getName());
+            firstTurn = false;
         }
         roundReport.append("\n");
 
         // reset turn index
-        ti = 0;
+        turnIndex = 0;
     }
 
     /**
@@ -1330,10 +1331,12 @@ public boolean isPassworded() {
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int distance = 0;
+        int mpUsed = 0;
         int moveType = Entity.MOVE_NONE;
         int overallMoveType = Entity.MOVE_NONE;
         boolean firstStep;
         boolean wasProne;
+        boolean fellDuringMovement;
 
         Compute.compile(game, entity.getId(), md);
 
@@ -1349,6 +1352,7 @@ public boolean isPassworded() {
 
         // iterate through steps
         firstStep = true;
+        fellDuringMovement = false;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             wasProne = entity.isProne();
@@ -1379,6 +1383,7 @@ public boolean isPassworded() {
                 moveType = step.getMovementType();
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
+                fellDuringMovement = true;
                 break;
             }
             
@@ -1411,6 +1416,7 @@ public boolean isPassworded() {
             curPos = step.getPosition();
             curFacing = step.getFacing();
             distance = step.getDistance();
+            mpUsed = step.getMpUsed();
 
             final Hex curHex = game.board.getHex(curPos);
 
@@ -1439,6 +1445,7 @@ public boolean isPassworded() {
             if (!wasProne && entity.isProne()) {
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
+                fellDuringMovement = true;
                 break;
             }
 
@@ -1452,6 +1459,7 @@ public boolean isPassworded() {
         entity.setSecondaryFacing(curFacing);
         entity.delta_distance = distance;
         entity.moved = moveType;
+        entity.mpUsed = mpUsed;
 
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
@@ -1479,7 +1487,12 @@ public boolean isPassworded() {
             entity.heatBuildup += Math.max(3, distance);
         }
 
-        entity.ready = false;
+        if (fellDuringMovement && entity.mpUsed < entity.getRunMP()) {
+            entity.ready = true;
+            turns.insertElementAt(new GameTurn(entity.getOwner().getId(), entity.getId()), turnIndex);
+        } else {
+            entity.ready = false;
+        }
 
         // duhh.. send an outgoing packet to everybody
         //send(createEntityPacket(entity.getId()));
@@ -3488,7 +3501,7 @@ public boolean isPassworded() {
     private void receiveEntityReady(Packet pkt, int connIndex) {
         Entity entity = game.getEntity(pkt.getIntValue(0));
         if (entity != null && entity.getOwner() == getPlayer(connIndex)
-            && game.getTurn() == connIndex) {
+            && game.getTurn().getPlayerNum() == connIndex) {
             entity.ready = false;
         } else {
             System.out.println("server.receiveEntityReady: got an invalid ready message");

@@ -256,7 +256,7 @@ public class MovementDisplay
         moveMechDisplay();
         client.mechW.setVisible(true);
         moveMechDisplay();
-        selectEntity(client.game.getFirstEntityNum(client.getLocalPlayer()));
+        selectEntity(client.getFirstEntityNum());
     }
 
     /**
@@ -504,7 +504,7 @@ public class MovementDisplay
             moveTo(md);
         } else if (ev.getSource() == butNext) {
             clearAllMoves();
-            selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
+            selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;

@@ -1157,13 +1157,16 @@ public class BoardView1
             Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
             
             // create image for buffer
-            Image tempImage = createImage(bounds.width, bounds.height);
-            if (tempImage == null) {
+            Image tempImage;
+            Graphics graph;
+            try {
+                tempImage = createImage(bounds.width, bounds.height);
+                graph = tempImage.getGraphics();
+            } catch (NullPointerException ex) {
                 // argh!  but I want it!
                 System.err.println("BoardView.EntitySprite: could not acquire image");
                 return;
             }
-            Graphics graph = tempImage.getGraphics();
             
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));

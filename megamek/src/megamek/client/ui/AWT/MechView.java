@@ -103,7 +103,7 @@ public class MechView {
             // Skip empty sections.
             if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
                  (!isMech && !isInf && (( loc == Tank.LOC_TURRET &&
-                                          !((Tank)mech).hasTurret() ) ||
+                                          ((Tank)mech).hasNoTurret() ) ||
                                         (loc == Tank.LOC_BODY))) ) {
                 continue;
             }

@@ -1372,7 +1372,7 @@ public class BoardView1
         localPlayer = p;
     }
 
-    private Player getLocalPlayer() {
+    public Player getLocalPlayer() {
         return localPlayer;
     }
 

@@ -232,7 +232,6 @@ public class ClientGUI
 
         try {
             bv = new BoardView1(client.game, frame);
-            bv.setLocalPlayer(client.getLocalPlayer());
         } catch (IOException e) {
             doAlertDialog("Fatal Error", "Could not initialise:\n" + e);
             die();
@@ -1257,6 +1256,12 @@ public class ClientGUI
 
         boolean showRerollButton = false;
         bv.hideTooltip();
+        //This is a really lame place for this, but I couldn't find a
+        //better one without making massive changes (which didn't seem
+        //worth it for one little feature).
+        if (bv.getLocalPlayer() == null) {
+            bv.setLocalPlayer(client.getLocalPlayer());
+        }
 
         // Swap to this phase's panel.
         switchPanel(client.game.getPhase());

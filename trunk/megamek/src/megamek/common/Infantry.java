@@ -247,8 +247,8 @@ public class Infantry
      * Infantry have no piloting skill (set to 5 for BV purposes)
      */
     public void setCrew(Pilot p) {
-        super.setCrew(p);
-        this.getCrew().setPiloting(5);
+        super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
+        this.getCrew().setHits(p.getHits());
     }
 
     /**

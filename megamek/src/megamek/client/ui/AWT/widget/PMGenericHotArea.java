@@ -48,13 +48,10 @@ import java.awt.event.*;
        int modifiers = e.getModifiers();
        String command = "";
        
-       switch (e.getButton()) {
-	   	case MouseEvent.BUTTON1:
-	   	             command = PMHotArea.MOUSE_CLICK_LEFT;
-	   	             break;
-	   	case MouseEvent.BUTTON2:
-	   	             command = PMHotArea.MOUSE_CLICK_RIGHT;
-	   	             break;
+       if( 0 != (modifiers & InputEvent.BUTTON1_MASK)) {
+	   	   command = PMHotArea.MOUSE_CLICK_LEFT;
+	   } else if ( 0 != (modifiers & InputEvent.BUTTON2_MASK)){
+	   	   command = PMHotArea.MOUSE_CLICK_RIGHT;
 	   }
 	   
 	   if( e.getClickCount() > 1) command = PMHotArea.MOUSE_DOUBLE_CLICK;

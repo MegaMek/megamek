@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.47 (CVS)
++ Bug 1015776: Display bug with the jump MP of burdened Battle Armor.
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

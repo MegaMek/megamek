@@ -3309,11 +3309,9 @@ public class Compute
         
         ToHitData toHit = new ToHitData();
         
-        // non-entities only get the smoke bonus
+        // only entities get terrain bonuses 
+        // TODO: this should be changed for buildings, I expect
         if (entityTarget == null) {
-            if (hex.contains(Terrain.SMOKE)) {
-                toHit.addModifier(2, "target in smoke");
-            }
             return toHit;
         }
 

@@ -397,6 +397,7 @@ public class MegaMek
                 return;
             }
             if (args[i].equals("-dedicated")) {
+                Settings.load();
                 new Server(Settings.lastServerPass, Settings.lastServerPort);
                 return;
             }

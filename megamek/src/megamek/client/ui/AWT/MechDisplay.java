@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -198,6 +198,7 @@ class ArmorPanel  extends PicMap
     private MechMapSet mech;
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
+    private ProtomechMapSet proto;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
@@ -218,6 +219,7 @@ class ArmorPanel  extends PicMap
         mech = new MechMapSet(this);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
+        proto = new ProtomechMapSet(this);
     }
 
     public void onResize(){
@@ -266,6 +268,12 @@ class ArmorPanel  extends PicMap
             minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
 
+        } else if (en instanceof Protomech) {
+            ams = (DisplayMapSet) proto;
+            minLeftMargin = minTankLeftMargin;
+            minTopMargin = minTankTopMargin;
+            minBottomMargin = minTankTopMargin;
+            minRightMargin = minTankLeftMargin;
         }
         if (null == ams) {
             System.err.println("The armor panel is null.");
@@ -1033,7 +1041,14 @@ class SystemPanel
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(Mech.systemNames[cs.getIndex()]);
+                    sb.append(cs.isDestroyed() ? "*" : "")
+                        .append(cs.isBreached() ? "x" : "");
+                    // Protomechs have different systme names.
+                    if ( en instanceof Protomech ) {
+                        sb.append(Protomech.systemNames[cs.getIndex()]);
+                    } else {
+                        sb.append(Mech.systemNames[cs.getIndex()]);
+                    }
                     vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :

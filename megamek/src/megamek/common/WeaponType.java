@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -239,36 +239,34 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLPROLRM2() );
         EquipmentType.addType(createCLPROLRM3() );
         EquipmentType.addType(createCLPROLRM4() );
-        EquipmentType.addType(createCLPROLRM5() );
+        //EquipmentType.addType(createCLPROLRM5() );
         EquipmentType.addType(createCLPROLRM6() );
         EquipmentType.addType(createCLPROLRM7() );
         EquipmentType.addType(createCLPROLRM8() );
         EquipmentType.addType(createCLPROLRM9() );
-        EquipmentType.addType(createCLPROLRM10() );
+        //EquipmentType.addType(createCLPROLRM10() );
         EquipmentType.addType(createCLPROLRM11() );
         EquipmentType.addType(createCLPROLRM12() );
         EquipmentType.addType(createCLPROLRM13() );
         EquipmentType.addType(createCLPROLRM14() );
-        EquipmentType.addType(createCLPROLRM15() );
+        //EquipmentType.addType(createCLPROLRM15() );
         EquipmentType.addType(createCLPROLRM16() );
         EquipmentType.addType(createCLPROLRM17() );
         EquipmentType.addType(createCLPROLRM18() );
         EquipmentType.addType(createCLPROLRM19() );
-        EquipmentType.addType(createCLPROLRM20() );
+        //EquipmentType.addType(createCLPROLRM20() );
         EquipmentType.addType(createCLPROSRM1() );
         EquipmentType.addType(createCLPROStreakSRM1() );
-        EquipmentType.addType(createCLPROSRM2() );
-        EquipmentType.addType(createCLPROStreakSRM2() );
+        //EquipmentType.addType(createCLPROSRM2() );
+        //EquipmentType.addType(createCLPROStreakSRM2() );
         EquipmentType.addType(createCLPROSRM3() );
         EquipmentType.addType(createCLPROStreakSRM3() );
-        EquipmentType.addType(createCLPROSRM4() );
-        EquipmentType.addType(createCLPROStreakSRM4() );
+        //EquipmentType.addType(createCLPROSRM4() );
+        //EquipmentType.addType(createCLPROStreakSRM4() );
         EquipmentType.addType(createCLPROSRM5() );
         EquipmentType.addType(createCLPROStreakSRM5() );
-        EquipmentType.addType(createCLPROSRM6() );
-        EquipmentType.addType(createCLPROStreakSRM6() );
-
-
+        //EquipmentType.addType(createCLPROSRM6() );
+        //EquipmentType.addType(createCLPROStreakSRM6() );
 
         // Anti-Mek attacks are weapon-like in nature.
         EquipmentType.addType( createLegAttack() );
@@ -3325,10 +3323,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM1() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 1";
-        weapon.internalName = "CLPRMLRM1";
-        weapon.mtfName = "CLPRMLRM1";
-        weapon.mepName = "CLPRMLRM1";
-        weapon.tdbName = "CLPRMLRM1";
+        weapon.internalName = "CLLRM1";
+        weapon.mtfName = "CLLRM1";
+        weapon.mepName = "CLLRM1";
+        weapon.tdbName = "CLLRM1";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=1;
@@ -3349,10 +3347,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM2() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 2";
-        weapon.internalName = "CLPRMLRM2";
-        weapon.mtfName = "CLPRMLRM2";
-        weapon.mepName = "CLPRMLRM2";
-        weapon.tdbName = "CLPRMLRM2";
+        weapon.internalName = "CLLRM2";
+        weapon.mtfName = "CLLRM2";
+        weapon.mepName = "CLLRM2";
+        weapon.tdbName = "CLLRM2";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=2;
@@ -3373,10 +3371,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM3() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 3";
-        weapon.internalName = "CLPRMLRM3";
-        weapon.mtfName = "CLPRMLRM3";
-        weapon.mepName = "CLPRMLRM3";
-        weapon.tdbName = "CLPRMLRM3";
+        weapon.internalName = "CLLRM3";
+        weapon.mtfName = "CLLRM3";
+        weapon.mepName = "CLLRM3";
+        weapon.tdbName = "CLLRM3";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=3;
@@ -3397,10 +3395,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM4() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 4";
-        weapon.internalName = "CLPRMLRM4";
-        weapon.mtfName = "CLPRMLRM4";
-        weapon.mepName = "CLPRMLRM4";
-        weapon.tdbName = "CLPRMLRM4";
+        weapon.internalName = "CLLRM4";
+        weapon.mtfName = "CLLRM4";
+        weapon.mepName = "CLLRM4";
+        weapon.tdbName = "CLLRM4";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=4;
@@ -3421,10 +3419,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM5() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 5";
-        weapon.internalName = "CLPRMLRM5";
-        weapon.mtfName = "CLPRMLRM5";
-        weapon.mepName = "CLPRMLRM5";
-        weapon.tdbName = "CLPRMLRM5";
+        weapon.internalName = "CLLRM5";
+        weapon.mtfName = "CLLRM5";
+        weapon.mepName = "CLLRM5";
+        weapon.tdbName = "CLLRM5";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=5;
@@ -3445,10 +3443,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM6() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 6";
-        weapon.internalName = "CLPRMLRM6";
-        weapon.mtfName = "CLPRMLRM6";
-        weapon.mepName = "CLPRMLRM6";
-        weapon.tdbName = "CLPRMLRM6";
+        weapon.internalName = "CLLRM6";
+        weapon.mtfName = "CLLRM6";
+        weapon.mepName = "CLLRM6";
+        weapon.tdbName = "CLLRM6";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=6;
@@ -3469,10 +3467,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM7() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 7";
-        weapon.internalName = "CLPRMLRM7";
-        weapon.mtfName = "CLPRMLRM7";
-        weapon.mepName = "CLPRMLRM7";
-        weapon.tdbName = "CLPRMLRM7";
+        weapon.internalName = "CLLRM7";
+        weapon.mtfName = "CLLRM7";
+        weapon.mepName = "CLLRM7";
+        weapon.tdbName = "CLLRM7";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=7;
@@ -3493,10 +3491,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM8() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 8";
-        weapon.internalName = "CLPRMLRM8";
-        weapon.mtfName = "CLPRMLRM8";
-        weapon.mepName = "CLPRMLRM8";
-        weapon.tdbName = "CLPRMLRM8";
+        weapon.internalName = "CLLRM8";
+        weapon.mtfName = "CLLRM8";
+        weapon.mepName = "CLLRM8";
+        weapon.tdbName = "CLLRM8";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=8;
@@ -3517,10 +3515,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM9() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 9";
-        weapon.internalName = "CLPRMLRM9";
-        weapon.mtfName = "CLPRMLRM9";
-        weapon.mepName = "CLPRMLRM9";
-        weapon.tdbName = "CLPRMLRM9";
+        weapon.internalName = "CLLRM9";
+        weapon.mtfName = "CLLRM9";
+        weapon.mepName = "CLLRM9";
+        weapon.tdbName = "CLLRM9";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=9;
@@ -3541,10 +3539,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM10() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 10";
-        weapon.internalName = "CLPRMLRM10";
-        weapon.mtfName = "CLPRMLRM10";
-        weapon.mepName = "CLPRMLRM10";
-        weapon.tdbName = "CLPRMLRM10";
+        weapon.internalName = "CLLRM10";
+        weapon.mtfName = "CLLRM10";
+        weapon.mepName = "CLLRM10";
+        weapon.tdbName = "CLLRM10";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=10;
@@ -3565,10 +3563,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM11() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 11";
-        weapon.internalName = "CLPRMLRM11";
-        weapon.mtfName = "CLPRMLRM11";
-        weapon.mepName = "CLPRMLRM11";
-        weapon.tdbName = "CLPRMLRM11";
+        weapon.internalName = "CLLRM11";
+        weapon.mtfName = "CLLRM11";
+        weapon.mepName = "CLLRM11";
+        weapon.tdbName = "CLLRM11";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=11;
@@ -3589,10 +3587,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM12() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 12";
-        weapon.internalName = "CLPRMLRM12";
-        weapon.mtfName = "CLPRMLRM12";
-        weapon.mepName = "CLPRMLRM12";
-        weapon.tdbName = "CLPRMLRM12";
+        weapon.internalName = "CLLRM12";
+        weapon.mtfName = "CLLRM12";
+        weapon.mepName = "CLLRM12";
+        weapon.tdbName = "CLLRM12";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=12;
@@ -3613,10 +3611,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM13() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 13";
-        weapon.internalName = "CLPRMLRM13";
-        weapon.mtfName = "CLPRMLRM13";
-        weapon.mepName = "CLPRMLRM13";
-        weapon.tdbName = "CLPRMLRM13";
+        weapon.internalName = "CLLRM13";
+        weapon.mtfName = "CLLRM13";
+        weapon.mepName = "CLLRM13";
+        weapon.tdbName = "CLLRM13";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=13;
@@ -3637,10 +3635,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM14() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 14";
-        weapon.internalName = "CLPRMLRM14";
-        weapon.mtfName = "CLPRMLRM14";
-        weapon.mepName = "CLPRMLRM14";
-        weapon.tdbName = "CLPRMLRM14";
+        weapon.internalName = "CLLRM14";
+        weapon.mtfName = "CLLRM14";
+        weapon.mepName = "CLLRM14";
+        weapon.tdbName = "CLLRM14";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=14;
@@ -3661,10 +3659,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM15() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 15";
-        weapon.internalName = "CLPRMLRM15";
-        weapon.mtfName = "CLPRMLRM15";
-        weapon.mepName = "CLPRMLRM15";
-        weapon.tdbName = "CLPRMLRM15";
+        weapon.internalName = "CLLRM15";
+        weapon.mtfName = "CLLRM15";
+        weapon.mepName = "CLLRM15";
+        weapon.tdbName = "CLLRM15";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=15;
@@ -3685,10 +3683,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM16() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 16";
-        weapon.internalName = "CLPRMLRM16";
-        weapon.mtfName = "CLPRMLRM16";
-        weapon.mepName = "CLPRMLRM16";
-        weapon.tdbName = "CLPRMLRM16";
+        weapon.internalName = "CLLRM16";
+        weapon.mtfName = "CLLRM16";
+        weapon.mepName = "CLLRM16";
+        weapon.tdbName = "CLLRM16";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=16;
@@ -3709,10 +3707,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM17() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 17";
-        weapon.internalName = "CLPRMLRM17";
-        weapon.mtfName = "CLPRMLRM17";
-        weapon.mepName = "CLPRMLRM17";
-        weapon.tdbName = "CLPRMLRM17";
+        weapon.internalName = "CLLRM17";
+        weapon.mtfName = "CLLRM17";
+        weapon.mepName = "CLLRM17";
+        weapon.tdbName = "CLLRM17";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=17;
@@ -3733,10 +3731,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM18() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 18";
-        weapon.internalName = "CLPRMLRM18";
-        weapon.mtfName = "CLPRMLRM18";
-        weapon.mepName = "CLPRMLRM18";
-        weapon.tdbName = "CLPRMLRM18";
+        weapon.internalName = "CLLRM18";
+        weapon.mtfName = "CLLRM18";
+        weapon.mepName = "CLLRM18";
+        weapon.tdbName = "CLLRM18";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=18;
@@ -3757,10 +3755,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM19() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 19";
-        weapon.internalName = "CLPRMLRM19";
-        weapon.mtfName = "CLPRMLRM19";
-        weapon.mepName = "CLPRMLRM19";
-        weapon.tdbName = "CLPRMLRM19";
+        weapon.internalName = "CLLRM19";
+        weapon.mtfName = "CLLRM19";
+        weapon.mepName = "CLLRM19";
+        weapon.tdbName = "CLLRM19";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=19;
@@ -3781,10 +3779,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROLRM20() {
         WeaponType weapon = new WeaponType();
         weapon.name = "LRM 20";
-        weapon.internalName = "CLPRMLRM20";
-        weapon.mtfName = "CLPRMLRM20";
-        weapon.mepName = "CLPRMLRM20";
-        weapon.tdbName = "CLPRMLRM20";
+        weapon.internalName = "CLLRM20";
+        weapon.mtfName = "CLLRM20";
+        weapon.mepName = "CLLRM20";
+        weapon.tdbName = "CLLRM20";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=20;
@@ -3804,10 +3802,10 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLPROSRM1() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 1";
-        weapon.internalName = "CLPRMSRM1";
-        weapon.mtfName = "CLPRMSRM1";
-        weapon.mepName = "CLPRMSRM1";
-        weapon.tdbName = "CLPRMSRM1";
+        weapon.internalName = "CLSRM1";
+        weapon.mtfName = "CLSRM1";
+        weapon.mepName = "CLSRM1";
+        weapon.tdbName = "CLSRM1";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
@@ -3819,17 +3817,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 0;
         weapon.bv = 15;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROSRM2() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 2";
-        weapon.internalName = "CLPRMSRM2";
-        weapon.mtfName = "CLPRMSRM2";
-        weapon.mepName = "CLPRMSRM2";
-        weapon.tdbName = "CLPRMSRM2";
+        weapon.internalName = "CLSRM2";
+        weapon.mtfName = "CLSRM2";
+        weapon.mepName = "CLSRM2";
+        weapon.tdbName = "CLSRM2";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3841,17 +3838,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 21;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROSRM3() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 3";
-        weapon.internalName = "CLPRMSRM3";
-        weapon.mtfName = "CLPRMSRM3";
-        weapon.mepName = "CLPRMSRM3";
-        weapon.tdbName = "CLPRMSRM3";
+        weapon.internalName = "CLSRM3";
+        weapon.mtfName = "CLSRM3";
+        weapon.mepName = "CLSRM3";
+        weapon.tdbName = "CLSRM3";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
@@ -3863,17 +3859,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.75f;
         weapon.criticals = 0;
         weapon.bv = 30;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROSRM4() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 4";
-        weapon.internalName = "CLPRMSRM4";
-        weapon.mtfName = "CLPRMSRM4";
-        weapon.mepName = "CLPRMSRM4";
-        weapon.tdbName = "CLPRMSRM4";
+        weapon.internalName = "CLSRM4";
+        weapon.mtfName = "CLSRM4";
+        weapon.mepName = "CLSRM4";
+        weapon.tdbName = "CLSRM4";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -3885,17 +3880,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 39;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROSRM5() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 5";
-        weapon.internalName = "CLPRMSRM5";
-        weapon.mtfName = "CLPRMSRM5";
-        weapon.mepName = "CLPRMSRM5";
-        weapon.tdbName = "CLPRMSRM5";
+        weapon.internalName = "CLSRM5";
+        weapon.mtfName = "CLSRM5";
+        weapon.mepName = "CLSRM5";
+        weapon.tdbName = "CLSRM5";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -3907,17 +3901,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.25f;
         weapon.criticals = 0;
         weapon.bv = 47;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROSRM6() {
         WeaponType weapon = new WeaponType();
         weapon.name = "SRM 6";
-        weapon.internalName = "CLPRMSRM6";
-        weapon.mtfName = "CLPRMSRM6";
-        weapon.mepName = "CLPRMSRM6";
-        weapon.tdbName = "CLPRMSRM6";
+        weapon.internalName = "CLSRM6";
+        weapon.mtfName = "CLSRM6";
+        weapon.mepName = "CLSRM6";
+        weapon.tdbName = "CLSRM6";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -3929,17 +3922,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM1() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 1";
-        weapon.internalName = "CLPRMStreakSRM1";
-        weapon.mtfName = "CLPRMStreakSRM1";
-        weapon.mepName = "CLPRMStreakSRM1";
-        weapon.tdbName = "CLPRMStreakSRM1";
+        weapon.internalName = "CLStreakSRM1";
+        weapon.mtfName = "CLStreakSRM1";
+        weapon.mepName = "CLStreakSRM1";
+        weapon.tdbName = "CLStreakSRM1";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
@@ -3951,17 +3943,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 20;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM2() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 2";
-        weapon.internalName = "CLPRMStreakSRM2";
-        weapon.mtfName = "CLPRMStreakSRM2";
-        weapon.mepName = "CLPRMStreakSRM2";
-        weapon.tdbName = "CLPRMStreakSRM2";
+        weapon.internalName = "CLStreakSRM2";
+        weapon.mtfName = "CLStreakSRM2";
+        weapon.mepName = "CLStreakSRM2";
+        weapon.tdbName = "CLStreakSRM2";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3973,17 +3964,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 40;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM3() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 3";
-        weapon.internalName = "CLPRMStreakSRM3";
-        weapon.mtfName = "CLPRMStreakSRM3";
-        weapon.mepName = "CLPRMStreakSRM3";
-        weapon.tdbName = "CLPRMStreakSRM3";
+        weapon.internalName = "CLStreakSRM3";
+        weapon.mtfName = "CLStreakSRM3";
+        weapon.mepName = "CLStreakSRM3";
+        weapon.tdbName = "CLStreakSRM3";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
@@ -3995,17 +3985,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM4() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 4";
-        weapon.internalName = "CLPRMStreakSRM4";
-        weapon.mtfName = "CLPRMStreakSRM4";
-        weapon.mepName = "CLPRMStreakSRM4";
-        weapon.tdbName = "CLPRMStreakSRM4";
+        weapon.internalName = "CLStreakSRM4";
+        weapon.mtfName = "CLStreakSRM4";
+        weapon.mepName = "CLStreakSRM4";
+        weapon.tdbName = "CLStreakSRM4";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -4017,17 +4006,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2f;
         weapon.criticals = 0;
         weapon.bv = 79;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM5() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 5";
-        weapon.internalName = "CLPRMStreakSRM5";
-        weapon.mtfName = "CLPRMStreakSRM5";
-        weapon.mepName = "CLPRMStreakSRM5";
-        weapon.tdbName = "CLPRMStreakSRM5";
+        weapon.internalName = "CLStreakSRM5";
+        weapon.mtfName = "CLStreakSRM5";
+        weapon.mepName = "CLStreakSRM5";
+        weapon.tdbName = "CLStreakSRM5";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -4039,17 +4027,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 0;
         weapon.bv = 99;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
     public static WeaponType createCLPROStreakSRM6() {
         WeaponType weapon = new WeaponType();
         weapon.name = "Streak SRM 6";
-        weapon.internalName = "CLPRMStreakSRM6";
-        weapon.mtfName = "CLPRMStreakSRM6";
-        weapon.mepName = "CLPRMStreakSRM6";
-        weapon.tdbName = "CLPRMStreakSRM6";
+        weapon.internalName = "CLStreakSRM6";
+        weapon.mtfName = "CLStreakSRM6";
+        weapon.mepName = "CLStreakSRM6";
+        weapon.tdbName = "CLStreakSRM6";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -4061,7 +4048,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3f;
         weapon.criticals = 0;
         weapon.bv = 119;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 

@@ -1,5 +1,5 @@
 /*
- * MechSummary.java - Copyright (C) 2002 Josh Yockey
+ * MechSummary.java - Copyright (C) 2002,2003,2004 Josh Yockey
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -47,6 +47,8 @@
                   return "Tank";
              } else if (e instanceof Mech) {
                   return "Mek";
+             } else if (e instanceof Protomech) {
+                  return "ProtoMek";
              } else {
                   //Hmm...this is not a good case, should throw excep. instead?
                   return "Unknown";

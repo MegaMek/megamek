@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -729,9 +729,10 @@ public class XMLStreamParser implements XMLResponder {
                     if ( index.equals( NA ) ) {
                         indexVal = Entity.ARMOR_NA;
 
-                        // Tanks don't have slots, so we have
-                        // to handle the ammo specially.
-                        if ( entity instanceof Tank ) {
+                        // Tanks don't have slots, and Protomechs only have
+                        // system slots, so we have to handle the ammo specially.
+                        if ( entity instanceof Tank ||
+                             entity instanceof Protomech ) {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = 

@@ -147,10 +147,7 @@ public class Client extends Panel
             minimapW.add(minimap);
         }
         
-        // load at init time because it's heavy
-        mechSelectorDialog = new MechSelectorDialog(this, 
-        		new File(Settings.mechDirectory));
-        mechSelectorDialog.loadMechs();
+        mechSelectorDialog = new MechSelectorDialog(this);
             
         changePhase(Game.PHASE_UNKNOWN);
                 

@@ -1,12 +1,13 @@
 
-This is a guide to the bot that comes with MegaMek 0.27.  The bot was written
+This is a guide to the bot that comes with MegaMek 0.28.  The bot was written
 by Steve Hawkins <hawk0166@umn.edu> building off of the work of Michael Hanson 
 <hanson@cs.stanford.edu> -- including this file.  
 It is a work in progress.
 
-The bot does not work in games with units other than mechs, such as tanks or
-infantry.  The bot does not have double-blind support, and will disconnect any 
-time it cannot see an opponent.
+The bot works with most units: mechs, tanks and infantry.  There are a few rare
+bugs in 0.28 that will cause it to stop responding.  When this happens,
+disconnect and reconnect it.  The bot does not have double-blind support, and 
+will disconnect any time it cannot see an opponent.
 
   Starting A Game Against The Bot
     To play against the bot, host a game, and then start another copy of MegaMek

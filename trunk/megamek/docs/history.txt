@@ -67,7 +67,7 @@ infantry:
 -- Underwater movement
 -- Torpedos
 -- Minefields
--- Mindsweepers
+-- Minesweepers
 - implement BattleArmor units as their special rules are implemented
         (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
 
@@ -80,6 +80,11 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.6-dev (CVS)
++ Allow tanks and infantry in the preview pane.
++ 683267: correctly allocate spaces for Endo Steel and Ferro-Fibrous.
++ Allow scenarios to define a rotated board.
+
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable
 + invalid turns rejected at server (may fix turn skipping)

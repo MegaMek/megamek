@@ -1781,22 +1781,22 @@ public class Compute
         return spotter;
     }
   
-  private static ToHitData getImmobileMod(Targetable target) {
-    return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-  }
+	private static ToHitData getImmobileMod(Targetable target) {
+		return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+	}
 
-  private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-    if (target.isImmobile()) {
-      if ((aimingAt == Mech.LOC_HEAD) && 
-        (aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
-              return new ToHitData(3, "aiming at head");
-      } else {
-            return new ToHitData(-4, "target immobile");
-            }
-        } else {
-      return null;
-        }
-  }
+	private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
+		if (target.isImmobile()) {
+			if ((aimingAt == Mech.LOC_HEAD) && 
+				(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+				return new ToHitData(3, "aiming at head");
+			} else {
+				return new ToHitData(-4, "target immobile");
+			}
+		} else {
+			return null;
+		}
+	}
 
     /**
      * Determines the to-hit modifier due to range for an attack with the 
@@ -2265,11 +2265,49 @@ public class Compute
             return los;
         }
         
+        Hex attHex = game.board.getHex(ae.getPosition());
+        Hex targetHex = game.board.getHex(target.getPosition());
+        
+        int attEl = ae.absHeight();
+        int targEl;
+        if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
+             target.getTargetType() == Targetable.TYPE_BUILDING ||
+             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
+            targEl = target.absHeight();
+        } else {
+            targEl = game.board.getHex(target.getPosition()).floor();
+        }
+        
+        boolean attUnderWater = attHex.contains(Terrain.WATER) && 
+        						attHex.depth() > 0 && 
+        						attEl < attHex.surface();
+        boolean attInWater = attHex.contains(Terrain.WATER) &&
+        						attHex.depth() > 0 && 
+        						attEl == attHex.surface();
+        boolean attOnLand = !(attUnderWater || attInWater);
+        
+        boolean targetUnderWater = targetHex.contains(Terrain.WATER) && 
+        						targetHex.depth() > 0 && 
+        						targEl < targetHex.surface();
+        boolean targetInWater = targetHex.contains(Terrain.WATER) &&
+        						targetHex.depth() > 0 && 
+        						targEl == targetHex.surface();
+        boolean targetOnLand = !(targetUnderWater || targetInWater);
+        
+        if (attOnLand && targetUnderWater ||
+        	attUnderWater && targetOnLand) {
+            LosEffects los = new LosEffects();
+            los.blocked = true;
+            return los;        	
+        }
+        
+        boolean underWaterCombat = targetUnderWater || attUnderWater;
+        
         double degree = ae.getPosition().degree(target.getPosition());
         if (degree % 60 == 30) {
-            return losDivided(game, attackerId, target);
+            return losDivided(game, attackerId, target, underWaterCombat);
         } else {
-            return losStraight(game, attackerId, target);
+            return losStraight(game, attackerId, target, underWaterCombat);
         }
     }
     
@@ -2278,7 +2316,8 @@ public class Compute
      * hexes.  Since intervening() returns all the coordinates, we just
      * add the effects of all those hexes.
      */
-    public static LosEffects losStraight(Game game, int attackerId, Targetable target) {
+    public static LosEffects losStraight(Game game, int attackerId, Targetable target,
+    									boolean underWaterCombat) {
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
         LosEffects los = new LosEffects();
@@ -2295,7 +2334,7 @@ public class Compute
 
         for (int i = 0; i < in.length; i++) {
             los.add( losForCoords(game, attackerId, target,
-                                  in[i], los.getThruBldg()) );
+                                  in[i], los.getThruBldg(), underWaterCombat) );
         }
 
         // Infantry inside a building can only be
@@ -2344,7 +2383,8 @@ public class Compute
      * leg weapons, as we want to return the same sequence regardless of
      * what weapon is attacking.
      */
-    public static LosEffects losDivided(Game game, int attackerId, Targetable target) {
+    public static LosEffects losDivided(Game game, int attackerId, Targetable target,
+    									boolean underWaterCombat) {
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
         LosEffects los = new LosEffects();
@@ -2364,7 +2404,7 @@ public class Compute
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
             los.add( losForCoords(game, attackerId, target,
-                                  in[i], los.getThruBldg()) );
+                                  in[i], los.getThruBldg(), underWaterCombat) );
         }
         
         // if blocked already, return that
@@ -2376,9 +2416,9 @@ public class Compute
         for (int i = 1; i < in.length - 2; i += 3) {
             // get effects of each side
             LosEffects left = losForCoords( game, attackerId, target, 
-                                            in[i], los.getThruBldg() );
+                                            in[i], los.getThruBldg(), underWaterCombat);
             LosEffects right = losForCoords( game, attackerId, target,
-                                             in[i+1], los.getThruBldg() );
+                                             in[i+1], los.getThruBldg(), underWaterCombat);
 
             // If a target Entity is at a different elevation as its
             // attacker, and if the attack is through a building, the
@@ -2427,7 +2467,7 @@ public class Compute
      */
     private static LosEffects losForCoords(Game game, int attackerId,
                                            Targetable target, Coords coords,
-                                           Building thruBldg) {
+                                           Building thruBldg, boolean underWaterCombat) {
         LosEffects los = new LosEffects();        
         // ignore hexes not on board
         if (!game.board.contains(coords)) {
@@ -2460,7 +2500,7 @@ public class Compute
             targEl = game.board.getHex(target.getPosition()).floor();
         }
         Hex hex = game.board.getHex(coords);
-        int hexEl = hex.surface() - hex.depth(); //depth accomodates water and basements
+        int hexEl = underWaterCombat ? hex.floor() : hex.surface();
 
         // Handle building elevation.
         // Attacks thru a building are not blocked by that building.
@@ -2481,19 +2521,21 @@ public class Compute
             los.blocked = true;
         }
 
-        // check for woods or smoke
-        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
-        || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
-        || (hexEl + 2 > targEl && target.getPosition().distance(coords) == 1)) {
-            // smoke overrides any woods in the hex
-            if (hex.contains(Terrain.SMOKE)) {
-                los.smoke++;
-            } else if (hex.levelOf(Terrain.WOODS) == 1) {
-                los.lightWoods++;
-            } else if (hex.levelOf(Terrain.WOODS) > 1) {
-                los.heavyWoods++;
-            }
-        }
+        // check for woods or smoke only if not under water
+        if (!underWaterCombat) {
+	        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
+	        || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
+	        || (hexEl + 2 > targEl && target.getPosition().distance(coords) == 1)) {
+	            // smoke overrides any woods in the hex
+	            if (hex.contains(Terrain.SMOKE)) {
+	                los.smoke++;
+	            } else if (hex.levelOf(Terrain.WOODS) == 1) {
+	                los.lightWoods++;
+	            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+	                los.heavyWoods++;
+	            }
+	        }
+	    }
         
         // check for target partial cover
         if ( target.getPosition().distance(coords) == 1 &&

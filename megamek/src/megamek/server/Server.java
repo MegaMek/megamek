@@ -1443,6 +1443,10 @@ public class Server
         }
         // compute to-hit
         ToHitData toHit = Compute.toHitWeapon(game, waa, attacks);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
+            return;
+        }
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll
@@ -1559,6 +1563,10 @@ public class Server
         }
         // compute to-hit
         ToHitData toHit = Compute.toHitPunch(game, paa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the punch is impossible (" + toHit.getDesc() + ")\n");
+            return;
+        }
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll
@@ -1602,6 +1610,11 @@ public class Server
         }
         // compute to-hit
         ToHitData toHit = Compute.toHitKick(game, kaa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the kick is impossible (" + toHit.getDesc() + ")\n");
+            pilotRolls.addElement(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            return;
+        }
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll
@@ -1648,6 +1661,10 @@ public class Server
 
         // compute to-hit
         ToHitData toHit = Compute.toHitPush(game, paa);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            phaseReport.append(", but the push is impossible (" + toHit.getDesc() + ")\n");
+            return;
+        }
         phaseReport.append("; needs " + toHit.getValue() + ", ");
 
         // roll
@@ -1722,11 +1739,14 @@ public class Server
         // compute to-hit
         ToHitData toHit = Compute.toHitCharge(game, caa);
 
-        // hack: if the attacker's prone, fudge the roll
+        // if the attacker's prone, fudge the roll
         int roll;
         if (ae.isProne()) {
             roll = -12;
-            phaseReport.append("; but the attaker is prone : ");
+            phaseReport.append("; but the attacker is prone : ");
+        } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            roll = -12;
+            phaseReport.append(", but the charge is impossible (" + toHit.getDesc() + ") : ");
         } else {
             // roll
             roll = Compute.d6(2);
@@ -1823,6 +1843,9 @@ public class Server
         if (ae.isProne()) {
             roll = -12;
             phaseReport.append("; but the attacker is prone : ");
+        } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            roll = -12;
+            phaseReport.append(", but the attack is impossible (" + toHit.getDesc() + ") : ");
         } else {
             // roll
             roll = Compute.d6(2);

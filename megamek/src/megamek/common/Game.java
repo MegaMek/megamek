@@ -98,6 +98,8 @@ public class Game implements Serializable
     private StringBuffer phaseReport = new StringBuffer();
     
     private boolean forceVictory = false;
+    private int victoryPlayerId = Player.PLAYER_NONE;
+    private int victoryTeam = Player.TEAM_NONE;
 	
     /**
      * Constructor
@@ -459,6 +461,8 @@ public class Game implements Serializable
         resetPSRs();
         
         forceVictory = false;
+        victoryPlayerId = Player.PLAYER_NONE;
+        victoryTeam = Player.TEAM_NONE;
     }
     
     /**
@@ -931,4 +935,47 @@ public class Game implements Serializable
         this.phaseReport = new StringBuffer();
     }
     
+    /** Getter for property victoryPlayerId.
+     * @return Value of property victoryPlayerId.
+     */
+    public int getVictoryPlayerId() {
+        return victoryPlayerId;
+    }
+    
+    /** Setter for property victoryPlayerId.
+     * @param victoryPlayerId New value of property victoryPlayerId.
+     */
+    public void setVictoryPlayerId(int victoryPlayerId) {
+        this.victoryPlayerId = victoryPlayerId;
+    }
+    
+    /** Getter for property victoryTeam.
+     * @return Value of property victoryTeam.
+     */
+    public int getVictoryTeam() {
+        return victoryTeam;
+    }
+    
+    /** Setter for property victoryTeam.
+     * @param victoryTeam New value of property victoryTeam.
+     */
+    public void setVictoryTeam(int victoryTeam) {
+        this.victoryTeam = victoryTeam;
+    }
+    
+    /**
+     * Returns true if the specified player is either the victor, or is on the
+     * winning team.  Best to call during PHASE_VICTORY.
+     */
+    public boolean isPlayerVictor(Player player) {
+        if (player.getTeam() == Player.TEAM_NONE) {
+            return player.getId() == victoryPlayerId;
+        } else {
+            return player.getTeam() == victoryTeam;
+        }
+    }
+    /** Shortcut to isPlayerVictor(Player player) */
+    public boolean isPlayerVictor(int playerId) {
+        return isPlayerVictor(getPlayer(playerId));
+    }
 }

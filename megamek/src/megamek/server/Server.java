@@ -139,6 +139,11 @@ implements Runnable {
         phaseReport = game.getPhaseReport();
     }
     
+    /** Returns the current game object */
+    public Game getGame() {
+        return game;
+    }
+    
     /**
      * Make a default message o' the day containing the version string, and
      * if it was found, the build timestamp
@@ -674,6 +679,15 @@ implements Runnable {
         roundReport = game.getRoundReport(); //HACK
         
         roundReport.append("\nVictory!\n-------------------\n\n");
+        
+        roundReport.append("Winner is: ");
+        if (game.getVictoryTeam() == Player.TEAM_NONE) {
+            roundReport.append(getPlayer(game.getVictoryPlayerId()).getName());
+            roundReport.append("\n\n");
+        } else {
+            roundReport.append("TEAM #").append(game.getVictoryTeam());
+            roundReport.append("\n\n");
+        }
 
         Enumeration survivors = game.getEntities();
         if ( survivors.hasMoreElements() ) {
@@ -778,10 +792,25 @@ implements Runnable {
     }
     
     /**
-     * Forces victory at then end of the turn.
+     * Forces victory for the specified player, or his/her team at the end of
+     * the round.
      */
-    public void forceVictory() {
+    public void forceVictory(Player victor) {
         game.setForceVictory(true);
+        if (victor.getTeam() == Player.TEAM_NONE) {
+            game.setVictoryPlayerId(victor.getId());
+            game.setVictoryTeam(Player.TEAM_NONE);
+        } else {
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(victor.getTeam());
+        }
+    }
+    
+    /** Cancels the force victory */
+    public void cancelVictory() {
+        game.setForceVictory(false);
+        game.setVictoryPlayerId(Player.PLAYER_NONE);
+        game.setVictoryTeam(Player.TEAM_NONE);
     }
     
     /**
@@ -1136,26 +1165,54 @@ implements Runnable {
             return false;
         }
         
-        // is there only one player left with mechs?
+        // check all players/teams for aliveness
         int playersAlive = 0;
-        int teamsAlive = 0;
-        boolean teamKnownAlive[] = new boolean[Player.MAX_TEAMS];
+        Player lastPlayer = null;
+        boolean oneTeamAlive = false;
+        int lastTeam = Player.TEAM_NONE;
         boolean unteamedAlive = false;
         for (Enumeration e = game.getPlayers(); e.hasMoreElements();) {
             Player player = (Player)e.nextElement();
             int team = player.getTeam();
-            if (game.getLiveEntitiesOwnedBy(player) > 0) {
-                playersAlive++;
-                if (team == Player.TEAM_NONE) {
-                    unteamedAlive = true;
-                } else if (!teamKnownAlive[team]) {
-                    teamsAlive++;
-                    teamKnownAlive[team] = true;
-                }
+            if (game.getLiveEntitiesOwnedBy(player) <= 0) {
+                continue;
+            }
+            // we found a live one!
+            playersAlive++;
+            lastPlayer = player;
+            // check team
+            if (team == Player.TEAM_NONE) {
+                unteamedAlive = true;
+            } else if (lastTeam == Player.TEAM_NONE) {
+                // possibly only one team alive
+                oneTeamAlive = true;
+                lastTeam = team;
+            } else if (team != lastTeam) {
+                // more than one team alive
+                oneTeamAlive = false;
+                lastTeam = team;
             }
         }
         
-        return playersAlive <= 1 || (teamsAlive == 1 && !unteamedAlive);
+        // check if there's one player alive
+        if (playersAlive <= 1) {
+            if (lastPlayer.getTeam() == Player.TEAM_NONE) {
+                // individual victory
+                game.setVictoryPlayerId(lastPlayer.getId());
+                game.setVictoryTeam(Player.TEAM_NONE);
+                return true;
+            }
+        }
+        
+        // did we only find one live team?
+        if (oneTeamAlive && !unteamedAlive) {
+            // team victory
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(lastTeam);
+            return true;
+        }
+        
+        return false;
     }
     
     /**

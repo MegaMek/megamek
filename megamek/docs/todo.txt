@@ -1,7 +1,7 @@
 
 CODE IDEAS:
 -----------
-- seperate client and gui, allowing for other guis/gui-less bots, etc.
+- seperate client and gui further, allowing for other guis, etc.
 ? javax.swing gui
 
 - improve code readibility, *commenting*; break up 80+ character lines, etc.

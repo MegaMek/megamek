@@ -45,6 +45,7 @@ public abstract class Weapon extends WeaponType {
 		
 	}
 	public AttackHandler fire(WeaponAttackAction waa, Game game) {
+		System.out.println("called weapon#fire");
 		ToHitData toHit=this.toHit(waa,game);
 		Entity ae = game.getEntity(waa.getEntityId());
 		Mounted weapon=ae.getEquipment(waa.getWeaponId());

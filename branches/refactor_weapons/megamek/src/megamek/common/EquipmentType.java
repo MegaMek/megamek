@@ -159,15 +159,7 @@ public class EquipmentType {
             EquipmentType.initializeTypes();
         }
         EquipmentType equip=(EquipmentType) EquipmentType.lookupHash.get(key);
-        if(equip instanceof Weapon) {
-        	try {
-				return (EquipmentType) equip.getClass().newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-        } 
+        
         return equip;
         
     }

@@ -460,7 +460,6 @@ public class Client implements Runnable {
         data[1] = attacks;
 
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
-        System.out.println("Sent attacks just fine");
     }
 
     /**
@@ -736,7 +735,6 @@ public class Client implements Runnable {
      * Reads a complete net command from the given input stream
      */
     private Packet readPacket() {
-    	//System.out.println("Read attempt");
         try {
             if (in == null) {
                 in = new ObjectInputStream(socket.getInputStream());
@@ -746,7 +744,6 @@ public class Client implements Runnable {
 
             // All went well.  Reset the failure count.
             this.connFailures = 0;
-           // System.out.println("Read attempted successfully");
             return packet;
         } catch (SocketException ex) {
             // assume client is shutting down

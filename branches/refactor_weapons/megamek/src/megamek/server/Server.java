@@ -4625,12 +4625,15 @@ implements Runnable, ConnectionHandler {
                 Weapon w=(Weapon)m.getType();
                 AttackHandler ah=w.fire(waa,game);
                 if(ah!=null) {
+                	System.out.println("adding attack");
                 	ah.setServer(this);
                 	game.addAttack(ah);
                 }
                 
             }
         }
+        System.out.print("there are #");
+        System.out.println(game.getAttacksVector().size());
 
         
         game.resetActions();
@@ -11807,10 +11810,14 @@ implements Runnable, ConnectionHandler {
      * TODO: Refactor the new entity annoucement out of here.
      */
     private void handleAttacks() {
+    	System.out.print("Server#handle attacks:  there are #");
+        System.out.println(game.getAttacksVector().size());
     	int lastAttackerId=0;
     	for(Enumeration i=game.getAttacks();i.hasMoreElements();) {
     		AttackHandler ah = (AttackHandler)i.nextElement();
+    		System.out.println("handling an attack");
     		if(ah.cares(game.getPhase())) {
+    			System.out.println("it cares");
     			int aId=ah.getAttackerId();
     			if(aId!=lastAttackerId) {
     				phaseReport.append("\nWeapons fire for ").append(game.getEntity(aId).getDisplayName()).

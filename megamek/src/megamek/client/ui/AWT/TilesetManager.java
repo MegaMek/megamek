@@ -103,7 +103,7 @@ public class TilesetManager {
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
-                return;
+                return null;
             }            
         }
         return entityImage.getWreckFacing(entity.getFacing());

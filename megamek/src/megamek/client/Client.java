@@ -410,7 +410,6 @@ public class Client extends Panel
         // minimap
         minimapW = new Dialog(frame, "MiniMap", false);
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
@@ -459,8 +458,7 @@ public class Client extends Panel
             && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
             Settings.minimapPosX = minimapW.getLocation().x;
             Settings.minimapPosY = minimapW.getLocation().y;
-            Settings.minimapSizeWidth = minimapW.getSize().width;
-            Settings.minimapSizeHeight = minimapW.getSize().height;
+            Settings.minimapZoom = minimap.getZoom();
         }
 
         // also mech display

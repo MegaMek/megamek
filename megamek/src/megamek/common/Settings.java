@@ -30,8 +30,7 @@ public class Settings
     public static boolean   minimapEnabled          = true;
     public static int       minimapPosX             = 0;
     public static int       minimapPosY             = 0;
-    public static int       minimapSizeWidth        = 168;
-    public static int       minimapSizeHeight       = 204;
+    public static int       minimapZoom             = 0;
     
     public static int       displayPosX             = 0;
     public static int       displayPosY             = 0;
@@ -192,11 +191,9 @@ scan:
                         st.nextToken();
                         minimapPosY = (int)st.nval;
                     }
-                    else if(key.equals("minimapsize")) {
+                    else if(key.equals("minimapzoom")) {
                         st.nextToken();
-                        minimapSizeWidth = (int)st.nval;
-                        st.nextToken();
-                        minimapSizeHeight = (int)st.nval;
+                        minimapZoom = (int)st.nval;
                     }
                     else if(key.equals("displaypos")) {
                         st.nextToken();
@@ -394,7 +391,7 @@ scan:
             cw.write("windowsize " + windowSizeWidth + " " + windowSizeHeight + "\r\n");
             cw.write("minimapenabled " + minimapEnabled + "\r\n");
             cw.write("minimappos " + minimapPosX + " " + minimapPosY + "\r\n");
-            cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
+            cw.write("minimapzoom " + minimapZoom + "\r\n");
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("rulerpos " + rulerPosX + " " + rulerPosY + "\r\n");

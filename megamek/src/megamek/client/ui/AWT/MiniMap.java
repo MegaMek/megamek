@@ -24,8 +24,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 
 /**
- * Displays the info for a mech.  This is also a sort
- * of interface for special movement and firing actions.
+ * Displays all the mapsheets in a scaled-down size.
  */
 public class MiniMap extends Canvas
 implements BoardListener, MouseListener, ComponentListener, GameListener {
@@ -54,7 +53,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private int          heightBufer;
     private int          unitSize = 6;//variable which define size of triangle for unit representation
     private Vector       roadHexIndexes = new Vector();
-    private int          zoom = 0;
+    private int          zoom = Settings.minimapZoom;
     private int[]        hexSide = {3,5,6,8,10,12};
     private int[]        hexSideByCos30 = {3,4,5,7,9,10};
     private int[]        hexSideBySin30 = {2,2,3,4,5,6};
@@ -199,6 +198,14 @@ scan:
     }
 
     private void initializeMap() {
+
+        // sanity check (cfg file could be hosed)
+        if (zoom < 0) {
+            zoom = 0;
+        } else if (zoom > (hexSide.length - 1)) {
+            zoom = (hexSide.length - 1);
+        }
+
     int requiredWidth, requiredHeight;
     int currentHexSide = hexSide[zoom];
     int currentHexSideByCos30 = hexSideByCos30[zoom];
@@ -825,6 +832,10 @@ scan:
                 }
             }
        }
+    }
+
+    public int getZoom() {
+        return zoom;
     }
 
     // begin GameListener implementation

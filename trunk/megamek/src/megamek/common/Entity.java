@@ -1933,6 +1933,7 @@ public abstract class Entity
         setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
+        setSpotting(false);
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;

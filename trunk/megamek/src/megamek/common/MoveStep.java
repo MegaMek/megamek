@@ -758,8 +758,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // mechs with 1 MP are allowed to get up
-        if (stepType == MovePath.STEP_GET_UP && entity.getRunMP() == 1) {
+        // mechs with 1 MP are allowed to get up, except if they've used that 1MP up already
+        if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP() && entity.mpUsed<1) {
             movementType = Entity.MOVE_RUN;
         }
 

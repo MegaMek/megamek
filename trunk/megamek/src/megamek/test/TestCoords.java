@@ -37,29 +37,29 @@ public class TestCoords {
         System.out.println( "The hash of " + coords + " is: " +
                             coords.hashCode() );
 
-        System.out.println( "The coords for a hash of 1032 is: " +
-                            Coords.getFromHashCode(1032) );
+        System.out.println( "The coords for a hash of 2056 is: " +
+                            Coords.getFromHashCode(2056) );
 
         Coords neg_coords = new Coords( -11, -22 );
         System.out.println( "The hash of " + neg_coords + " is: " +
                             neg_coords.hashCode() );
 
-        System.out.println( "The coords for a hash of 11355 is: " +
-                            Coords.getFromHashCode(11355) );
+        System.out.println( "The coords for a hash of 22619 is: " +
+                            Coords.getFromHashCode(22619) );
 
         neg_coords = new Coords( 42, -68 );
         System.out.println( "The hash of " + neg_coords + " is: " +
                             neg_coords.hashCode() );
 
-        System.out.println( "The coords for a hash of 43281 is: " +
-                            Coords.getFromHashCode(43281) );
+        System.out.println( "The coords for a hash of 86289 is: " +
+                            Coords.getFromHashCode(86289) );
 
         neg_coords = new Coords( -668, 42 );
         System.out.println( "The hash of " + neg_coords + " is: " +
                             neg_coords.hashCode() );
 
-        System.out.println( "The coords for a hash of 684202 is: " +
-                            Coords.getFromHashCode(684202) );
+        System.out.println( "The coords for a hash of 1368234 is: " +
+                            Coords.getFromHashCode(1368234) );
     }
 
 }

@@ -357,9 +357,9 @@ public class BoardView
 		if (e.isImmobile() && !e.isProne()) {
 			// draw "IMMOBILE"
 			b.g.setColor(Color.darkGray);
-			b.g.drawString("IMMOBILE", p.x + 11, p.y + 39);
+			b.g.drawString("IMMOBILE", p.x + 18, p.y + 39);
 			b.g.setColor(Color.red);
-			b.g.drawString("IMMOBILE", p.x + 10, p.y + 38);
+			b.g.drawString("IMMOBILE", p.x + 17, p.y + 38);
 		} else if (!e.isImmobile() && e.isProne()) {
 			// draw "PRONE"
 			b.g.setColor(Color.darkGray);
@@ -369,9 +369,9 @@ public class BoardView
 		} else if (e.isImmobile() && e.isProne()) {
 			// draw "IMMOBILE" and "PRONE"
 			b.g.setColor(Color.darkGray);
-			b.g.drawString("IMMOBILE", p.x + 11, p.y + 35);
+			b.g.drawString("IMMOBILE", p.x + 18, p.y + 35);
 			b.g.setColor(Color.red);
-			b.g.drawString("IMMOBILE", p.x + 10, p.y + 34);
+			b.g.drawString("IMMOBILE", p.x + 17, p.y + 34);
 			b.g.setColor(Color.darkGray);
 			b.g.drawString("PRONE", p.x + 26, p.y + 48);
 			b.g.setColor(Color.yellow);
@@ -420,9 +420,8 @@ public class BoardView
 					bb[cb].g.setColor(col);
 					drawPolygon(bb[cb].g, facingPolys[step.getFacing()], p.x, p.y);
 				}
-			}
-			if (step.getType() == MovementData.STEP_FORWARDS 
-                || step.getType() == MovementData.STEP_BACKWARDS) {
+			} else if (step.getType() == MovementData.STEP_FORWARDS 
+                       || step.getType() == MovementData.STEP_BACKWARDS) {
 				// do entering...
 				p = getHexLocation(step.getPosition());
 				if (onscreen(step.getPosition())) {
@@ -430,11 +429,9 @@ public class BoardView
 					Color col = Color.green;
 					if (step.getMovementType() == Entity.MOVE_RUN) {
 						col = Color.yellow;
-					}
-					if (step.getMovementType() == Entity.MOVE_JUMP) {
+					} else if (step.getMovementType() == Entity.MOVE_JUMP) {
 						col = Color.cyan;
-					}
-					if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+					} else if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
 						col = Color.red;
 					}
 					// draw arrows showing them entering the next

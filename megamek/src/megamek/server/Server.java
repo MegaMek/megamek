@@ -3560,7 +3560,7 @@ implements Runnable {
             phaseReport.append(".");
             
             if (wr.amsShotDown > 0) {
-                int shotDown = Math.max(wr.amsShotDown, hits);
+                int shotDown = Math.min(wr.amsShotDown, hits);
                 phaseReport.append("\n\tAMS engages, firing ")
                     .append(wr.amsShotDown).append(" shots, shooting down ")
                     .append(shotDown).append(" missile(s).");

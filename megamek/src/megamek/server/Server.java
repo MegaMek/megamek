@@ -457,15 +457,15 @@ implements Runnable {
         if (game.getEntitiesOwnedBy(player) > 0) {
             player.setGhost(true);
             player.setDone(true);
-            send(createPlayerUpdatePacket(player.getId()));
+            send(createPlayerUpdatePacket(connId));
         } else {
-            game.removePlayer(player.getId());
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
+            game.removePlayer(connId);
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(connId)));
         }
         
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase())) {
-            if (game.getTurn().getPlayerNum() == player.getId()) {
+            if (game.getTurn().getPlayerNum() == connId) {
                 sendGhostSkipMessage();
             }
         } else {
@@ -473,7 +473,11 @@ implements Runnable {
         }
         
         System.out.println("s: player " + connId + " disconnected");
-        sendServerChat(player.getName() + " disconnected.");
+        if (player != null) {
+            sendServerChat(player.getName() + " disconnected.");
+        } else {
+            sendServerChat("Player #" + connId + " disconnected.");
+        }
     }
     
     /**

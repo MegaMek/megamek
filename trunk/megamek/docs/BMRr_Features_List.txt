@@ -211,7 +211,7 @@ Clan Battle Armor Variants
 Innersphere Battle Armor Variants
 
 - Achileus			Yes		None
-- Fa Shih			Partial		Cannot lay or clear minefields
+- Fa Shih			Partial		Cannot lay minefields
 - Fenrir			Yes		None
 - Gray Death Light		Yes		None
 - Infiltrator			Yes		None
@@ -282,7 +282,7 @@ Special Case Rules (Hostile Environments)
 - Extreme Temperatures		Yes		Infantry can deploy in extreme temperatures, but dies at end of turn if not sheltered
 - Ice				Partial		Skiding on Ice has been simulated with pavement (*not* the same rules!!)
 - High /Low Gravity		Yes		None
-- Swamp				Partial		Swamp Hex tileset implemented.
+- Swamp				Yes		Units stuck in swamp can not choose not to try to break free.
 - Vacuum			Partial		Vehicle restrictions not implemented
 
 Special Case Rules (Minefields)

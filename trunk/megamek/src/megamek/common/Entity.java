@@ -128,6 +128,7 @@ public abstract class Entity
     protected boolean           hasSpotlight = false;
     protected boolean           isIlluminated = false;
     protected boolean           spotlightIsActive = false;
+    protected boolean           stuckInSwamp = false;
     
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -2784,6 +2785,35 @@ public abstract class Entity
 
         return roll;
     }
+    
+    /** 
+     * Checks if the entity is moving into a swamp. If so, returns
+     *  the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkSwampMove(MoveStep step, Hex curHex,
+            Coords lastPos, Coords curPos) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if (!lastPos.equals(curPos)
+            && step.getMovementType() != Entity.MOVE_JUMP
+            && curHex.contains(Terrain.SWAMP)) {
+            // infantry get +5 to the PSR
+            if (this instanceof Infantry) {
+                // append the reason modifier
+                roll.append(new PilotingRollData(getId(), 5, "entering Swamp"));
+            // non-hovers need a simple PSR
+            } else if (this.getMovementType() != MovementType.HOVER) {
+                // append the reason modifier
+                roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
+            // hovers don't care about swamp    
+            } else {
+                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");                
+            }
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+        return roll;
+    }
 
     /**
      * Checks if the entity is moving into depth 1+ water.  If so,
@@ -3562,7 +3592,7 @@ public abstract class Entity
 	 */
 	public boolean canFlee() {
 		Coords pos = getPosition();
-		return pos != null && getWalkMP() > 0 && !isProne()
+		return pos != null && getWalkMP() > 0 && !isProne() && !isStuck()
 			&& !isShutDown() && !getCrew().isUnconscious()
 			&& (pos.x == 0 || pos.x == game.board.width - 1
 				|| pos.y == 0 || pos.y == game.board.height - 1);
@@ -3596,12 +3626,12 @@ public abstract class Entity
 
     /** Whether this type of unit can perform charges */
     public boolean canCharge() {
-        return !isImmobile() && getWalkMP() > 0;
+        return !isImmobile() && getWalkMP() > 0 && !isStuck();
     };
 
     /** Whether this type of unit can perform DFA attacks */
     public boolean canDFA() {
-        return !isImmobile() && getJumpMP() > 0;
+        return !isImmobile() && getJumpMP() > 0 && !isStuck();
     };
     
     boolean isUsingManAce() {
@@ -3922,5 +3952,18 @@ public abstract class Entity
             this.isIlluminated = true;
             //TODO: Illuminate targets along LOS to target
         }
+    }
+     /**
+      * Is the Entity stuck in a swamp?
+      */
+    public boolean isStuck() {
+        return stuckInSwamp;
+    }
+    /**
+     * Set wether this Enity is stuck in a swamp or not
+     * @param arg the <code>boolean</code> value to assign
+     */
+    public void setStuck(boolean arg) {
+        stuckInSwamp = arg;
     }
 }

@@ -1187,6 +1187,7 @@ implements Runnable, ConnectionHandler {
                 //setIneligible(phase);
                 determineTurnOrder(phase);
                 writeInitiativeReport(false);
+                doTryUnstuck();
                 send(createReportPacket());
                 autoSave();
                 System.out.println("Round " + game.getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
@@ -3097,6 +3098,18 @@ implements Runnable, ConnectionHandler {
                 doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          true);
             }
+            
+            // check if we've moved into a swamp
+            rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                if (!doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
+                                         false)){
+                    entity.setStuck(true);
+                    phaseReport.append("\n" ).append( entity.getDisplayName()
+                    ).append( " gets stuck in the swamp.\n");
+                    break;
+                }
+            }
 
             // check to see if we are a mech and we've moved OUT of fire
             if (entity instanceof Mech) {
@@ -3389,6 +3402,23 @@ implements Runnable, ConnectionHandler {
             if (waterLevel > 1) {
                 // Any swarming infantry will be destroyed.
                 drownSwarmer(entity, curPos);
+            }
+            
+            // jumped into swamp? maybe stuck!
+            if (game.board.getHex(curPos).contains(Terrain.SWAMP)) {
+                if (entity instanceof Mech) {
+                    entity.setStuck(true);
+                    phaseReport.append("\n" ).append( entity.getDisplayName()
+                    ).append( " jumps into the swamp and gets stuck.\n");
+                } else if (entity instanceof Infantry) {
+                    PilotingRollData roll = entity.getBasePilotingRoll();
+                    roll.addModifier(5, "infantry jumping into swamp");
+                    if (!doSkillCheckWhileMoving(entity, curPos, curPos, roll, false)) {
+                        entity.setStuck(true);
+                        phaseReport.append("\n" ).append( entity.getDisplayName()
+                        ).append( " gets stuck in the swamp.\n");
+                    }
+                }
             }
 
             // If the entity is being swarmed, jumping may dislodge the fleas.
@@ -8589,6 +8619,7 @@ implements Runnable, ConnectionHandler {
                  !te_hex.contains( Terrain.WOODS ) &&
                  !te_hex.contains( Terrain.ROUGH ) &&
                  !te_hex.contains( Terrain.RUBBLE ) &&
+                 !te_hex.contains( Terrain.SWAMP ) &&
                  !te_hex.contains( Terrain.BUILDING ) ) {
                 // PBI.  Damage is doubled.
                 damage = damage * 2;
@@ -13183,6 +13214,38 @@ implements Runnable, ConnectionHandler {
         while (sinkableTanks.hasMoreElements()) {
             Entity e = (Entity)sinkableTanks.nextElement();
             phaseReport.append(destroyEntity(e, "a watery grave", false));
+        }
+    }
+    
+    private void doTryUnstuck() {
+        Enumeration stuckEntities = 
+            game.getSelectedEntities( new EntitySelector() {
+            public boolean accept(Entity entity) {
+                if (entity.isStuck()) {                        
+                    return true;
+                } else return false;            
+            }
+        });
+        PilotingRollData rollTarget;
+        while (stuckEntities.hasMoreElements()) {
+            Entity entity = (Entity)stuckEntities.nextElement();
+            rollTarget = entity.getBasePilotingRoll();
+            // okay, print the info
+            roundReport.append("\n")
+                .append( entity.getDisplayName() )
+                .append( " tries to break free of the swamp.\n" );
+
+            // roll
+            final int diceRoll = Compute.d6(2);
+            roundReport.append("Needs " ).append( rollTarget.getValueAsString()
+                               ).append( " [" ).append( rollTarget.getDesc() ).append( "]"
+                               ).append( ", rolls " ).append( diceRoll ).append( " : ");
+            if (diceRoll < rollTarget.getValue()) {
+                roundReport.append("fails.\n");
+            } else {
+                roundReport.append("succeeds.\n");
+                entity.setStuck(false);
+            }
         }
     }
 }

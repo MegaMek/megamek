@@ -75,6 +75,15 @@ public class TilesetManager {
      * Return the image for the entity
      */
     public Image imageFor(Entity entity) {
+        // mechs look like they're facing their secondary facing
+        if (entity instanceof Mech) {
+	    	return imageFor(entity, entity.getSecondaryFacing());
+        } else {
+	    	return imageFor(entity, entity.getFacing());
+	    }
+    }
+
+    public Image imageFor(Entity entity, int facing) {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
@@ -85,12 +94,6 @@ public class TilesetManager {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
             }            
-        }
-        // determine facing
-        int facing = entity.getFacing();
-        // mechs look like they're facing their secondary facing
-        if (entity instanceof Mech) {
-            facing = entity.getSecondaryFacing();
         }
         // get image rotated for facing
         return entityImage.getFacing(facing);
@@ -272,28 +275,17 @@ public class TilesetManager {
         }
 
         public void loadFacings() {
-          if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
-            for (int i = 0; i < 6; i++) {
-                ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-                facings[i] = comp.createImage(new FilteredImageSource(rotSource, new TintFilter(tint)));
-            }
-          } else {
             applyColor();
             
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = comp.createImage(rotSource);
             }
-          }
         }
         
         public Image loadPreviewImage() {
-			if ( (null == camo) || Player.NO_CAMO.equals(camo) ) {
-                return comp.createImage(new FilteredImageSource(base.getSource(), new TintFilter(tint)));
-			} else {
-				applyColor();
-                return base;
-			}
+			applyColor();
+            return base;
         }
 
         public Image getFacing(int facing) {
@@ -306,6 +298,7 @@ public class TilesetManager {
         
         private void applyColor() {
           Image iMech, iCamo;
+          boolean useCamo = (camo != null) && (!Player.NO_CAMO.equals(camo));
           
           iMech = base;
     
@@ -324,25 +317,27 @@ public class TilesetManager {
               return;
           }
           
-          iCamo = comp.getToolkit().getImage("data/camo/" + camo + ".jpg");
-          PixelGrabber pgCamo = new PixelGrabber(iCamo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
-          try {
-              pgCamo.grabPixels();
-          } catch (InterruptedException e) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
-              return;
-          }
-          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
-              return;
-          }
-          
+          if (useCamo) {
+	          iCamo = comp.getToolkit().getImage("data/camo/" + camo + ".jpg");
+	          PixelGrabber pgCamo = new PixelGrabber(iCamo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
+	          try {
+	              pgCamo.grabPixels();
+	          } catch (InterruptedException e) {
+	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
+	              return;
+	          }
+	          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
+	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
+	              return;
+	          }
+	      }
+	      
           for (int i = 0; i < IMG_SIZE; i++) {
             int pixel = pMech[i];
             int alpha = (pixel >> 24) & 0xff;
           
             if (alpha != 0) {
-              int pixel1 = pCamo[i];
+              int pixel1 = useCamo ? pCamo[i] : tint;
               float red1   = ((float) ((pixel1 >> 16) & 0xff)) / 255;
               float green1 = ((float) ((pixel1 >>  8) & 0xff)) / 255;
               float blue1  = ((float) ((pixel1      ) & 0xff)) / 255;

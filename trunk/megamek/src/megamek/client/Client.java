@@ -395,6 +395,12 @@ public class Client extends Panel
      * along with it.
      */
     protected void changePhase(int phase) {
+
+    	if (game.getPhase() == Game.PHASE_MOVEMENT ||  
+    		game.getPhase() == Game.PHASE_FIRING ) {
+    		bv.removeBoardViewListener((BoardViewListener) curPanel);
+    	}
+    	
         this.game.setPhase(phase);
         
         bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
@@ -430,12 +436,14 @@ public class Client extends Panel
             break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));
+            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
             break;
         case Game.PHASE_FIRING :
             switchPanel(new FiringDisplay(this));
+            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
@@ -927,6 +935,7 @@ public class Client extends Panel
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity)c.getObject(1);
+        Vector movePath = (Vector) c.getObject(2);
         Coords oc = entity.getPosition();
         if (game.getEntity(eindex) != null) {
           oc = game.getEntity(eindex).getPosition();
@@ -937,7 +946,11 @@ public class Client extends Panel
         
         game.setEntity(eindex, entity);
         //XXX Hack alert!
-        bv.boardChangedEntity(new BoardEvent(game.board, oc, entity, 0, 0)); //XXX
+        if (movePath.size() > 0 && Settings.showMoveStep) {
+        	bv.addMovingUnit(entity, movePath);
+        } else {
+	        bv.boardChangedEntity(new BoardEvent(game.board, oc, entity, 0, 0)); //XXX
+	    }
         //XXX
     }
     

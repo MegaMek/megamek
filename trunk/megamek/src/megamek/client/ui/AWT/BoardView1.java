@@ -103,6 +103,16 @@ public class BoardView1
     // should be able to turn it off(board editor)
     private boolean              useLOSTool = true;
 
+	// Move units step by step
+	private Vector				 movingUnits = new Vector();
+	private long					 moveWait = 0;
+
+    // moving entity sprites
+    private Vector movingEntitySprites = new Vector();
+    private Hashtable movingEntitySpriteIds = new Hashtable();
+    private Vector ghostEntitySprites = new Vector();
+    protected transient Vector boardViewListeners = new Vector();
+
     /**
      * Construct a new board view for the specified game
      */
@@ -128,6 +138,44 @@ public class BoardView1
         selectedSprite = new CursorSprite(Color.blue);
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
+    }
+
+    public void addBoardViewListener(BoardViewListener l) {
+        boardViewListeners.addElement(l);
+    }
+    
+    public void removeBoardViewListener(BoardViewListener l) {
+        boardViewListeners.removeElement(l);
+    }
+    
+    public void processBoardViewEvent(BoardViewEvent be) {
+        if (boardViewListeners == null) {
+            return;
+        }
+        for(Enumeration e = boardViewListeners.elements(); e.hasMoreElements();) {
+            BoardViewListener l = (BoardViewListener)e.nextElement();
+            switch(be.getType()) {
+            case BoardViewEvent.FINISHED_MOVING_UNITS :
+                l.finishedMovingUnits(be);
+                break;
+            }
+        }
+    }
+
+    public void addMovingUnit(Entity entity, java.util.Vector movePath) {
+    	Object[] o = new Object[2];
+    	o[0] = entity;
+    	o[1] = movePath;
+    	movingUnits.addElement(o);
+    	
+        GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
+        ghostEntitySprites.addElement(ghostSprite);
+
+    	// Center on the starting hex of the moving unit.
+		int j = ((Integer) movePath.elementAt(0)).intValue();
+		int y = j & 255;
+		int x = (j >> 8) & 255;
+    	centerOnHex(new Coords(x, y));
     }
 
     public void paint(Graphics g) {
@@ -186,6 +234,12 @@ public class BoardView1
 
         // draw onscreen entities
         drawSprites(entitySprites);
+
+        // draw moving onscreen entities
+        drawSprites(movingEntitySprites);
+
+        // draw ghost onscreen entities
+        drawSprites(ghostEntitySprites);
 
         // draw onscreen attacks
         drawSprites(attackSprites);
@@ -754,6 +808,44 @@ public class BoardView1
         }
     }
 
+    public void redrawMovingEntity(Entity entity, Coords position, int facing) {
+        EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
+        Vector newSprites;
+        Hashtable newSpriteIds;
+
+        if (sprite != null) {
+	        newSprites = new Vector(entitySprites);
+    	    newSpriteIds = new Hashtable(entitySpriteIds);
+
+            newSprites.removeElement(sprite);
+
+	        entitySprites = newSprites;
+	        entitySpriteIds = newSpriteIds;
+        }
+
+        MovingEntitySprite mSprite = (MovingEntitySprite)movingEntitySpriteIds.get(new Integer(entity.getId()));
+        newSprites = new Vector(movingEntitySprites);
+        newSpriteIds = new Hashtable(movingEntitySpriteIds);
+
+
+        if (mSprite != null) {
+            newSprites.removeElement(mSprite);
+        }
+
+        if (entity.getPosition() != null) {
+            mSprite = new MovingEntitySprite(entity, position, facing);
+            newSprites.addElement(mSprite);
+            newSpriteIds.put(new Integer(entity.getId()), mSprite);
+        }
+
+        movingEntitySprites = newSprites;
+        movingEntitySpriteIds = newSpriteIds;
+    }
+    
+    public boolean isMovingUnits() {
+    	return movingUnits.size() > 0;
+    }
+
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
      * the old sprite with the new!
@@ -1135,9 +1227,9 @@ public class BoardView1
      * If the mouse is at the edges of the screen, this
      * scrolls the board image on the canvas.
      */
-    public void doScroll() {
+    public boolean doScroll() {
         if (!isScrolling) {
-            return;
+            return true;
         }
         final Point oldScroll = new Point(scroll);
         final int sf = 3; // scroll factor
@@ -1156,8 +1248,10 @@ public class BoardView1
         }
         checkScrollBounds();
         if (!oldScroll.equals(scroll)) {
-            repaint();
+//            repaint();
+			return true;
         }
+        return false;
     }
 
     /**
@@ -1289,6 +1383,8 @@ public class BoardView1
     //
     public void run() {
         final Thread currentThread = Thread.currentThread();
+        long lastTime = System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
         while (scroller == currentThread) {
             try {
                 Thread.sleep(20);
@@ -1296,16 +1392,75 @@ public class BoardView1
                 // duh?
             }
             if (!isShowing()) {
+		        currentTime = System.currentTimeMillis();
+	            lastTime = currentTime;
                 continue;
             }
+	        currentTime = System.currentTimeMillis();
+			boolean redraw = false;
             if (backSize != null) {
-                doScroll();
+                redraw = redraw || doMoveUnits(currentTime - lastTime);
+                redraw = redraw || doScroll();
                 checkTooltip();
             } else {
                 repaint(100);
             }
+            if (redraw) {
+				repaint();
+            }
+            lastTime = currentTime;
         }
     }
+
+    
+    private boolean doMoveUnits(long idleTime) {
+    	boolean movingSomething = false;
+
+		if (movingUnits.size() > 0) {
+	
+	    	moveWait += idleTime;
+	
+	    	if (moveWait > Settings.moveStepDelay) {
+
+		    	java.util.Vector spent = new java.util.Vector();
+	
+	    		for (int i = 0; i < movingUnits.size(); i++) {
+	    			Object[] move = (Object[]) movingUnits.elementAt(i);
+	    			Entity e = (Entity) move[0];
+	    			java.util.Vector movePath = (java.util.Vector) move[1];
+	    			movingSomething = true;
+	
+	    			if (movePath.size() > 0) { 
+	    				int j = ((Integer) movePath.elementAt(0)).intValue();
+	    				int y = j & 255;
+	    				int x = (j >> 8) & 255;
+	    				int facing = (j >> 16) & 255;
+	    				
+	    				redrawMovingEntity(e, new Coords(x, y), facing);
+	    				movePath.removeElementAt(0);
+	    			} else {
+	    				redrawEntity(e);
+	    				spent.addElement(move);
+	    			}
+	    			
+	    		}
+	    		
+	    		for (int i = 0; i < spent.size(); i++) {
+	    			Object[] move = (Object[]) spent.elementAt(i);
+	    			movingUnits.removeElement(move);
+	    		}
+	    		moveWait = 0;
+	    		
+	    		if (movingUnits.size() == 0) {
+	    			movingEntitySpriteIds.clear();
+	    			movingEntitySprites.removeAllElements();
+	    			ghostEntitySprites.removeAllElements();
+	    			processBoardViewEvent(new BoardViewEvent(this, BoardViewEvent.FINISHED_MOVING_UNITS));
+	    		}
+        	}
+    	}
+    	return movingSomething;
+	}
 
     //
     // KeyListener
@@ -1377,7 +1532,9 @@ public class BoardView1
         isTipPossible = false;
         isScrolling = true;
         if (backSize != null) {
-            doScroll();
+            if (doScroll()) {
+				repaint();
+			}
         }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
@@ -1555,6 +1712,124 @@ public class BoardView1
             bounds.setLocation(point);
         }
     }
+
+	private class GhostEntitySprite extends Sprite {
+        private Entity entity;
+        private Rectangle entityRect;
+
+		public GhostEntitySprite(Entity entity) {
+			this.entity = entity;
+
+            String shortName = entity.getShortName();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
+                                 getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+
+            this.bounds = tempBounds;
+            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.image = null;
+		}
+
+        /**
+         * Creates the sprite for this entity.  It is an extra pain to
+         * create transparent images in AWT.
+         */
+        public void prepare() {
+            // create image for buffer
+            Image tempImage;
+            Graphics graph;
+            try {
+                tempImage = createImage(bounds.width, bounds.height);
+                graph = tempImage.getGraphics();
+            } catch (NullPointerException ex) {
+                // argh!  but I want it!
+                return;
+            }
+
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+
+            // draw entity image
+            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+
+            // create final image
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
+        }
+        
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            if (isReady()) {
+            	try {
+	            	Graphics2D g2 = (Graphics2D) g;
+	            	g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+	                g2.drawImage(image, x, y, observer);
+	            	g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+	            } catch (Throwable e) {
+	                g.drawImage(image, x, y, observer);
+	            }
+            } else {
+                // grrr... well be ready next time!
+                prepare();
+            }
+        }
+
+
+	}
+	
+	private class MovingEntitySprite extends Sprite {
+		private int facing;
+        private Entity entity;
+        private Rectangle entityRect;
+
+		public MovingEntitySprite(Entity entity, Coords position, int facing) {
+			this.entity = entity;
+            this.facing = facing;
+
+            String shortName = entity.getShortName();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
+                                 getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            tempBounds.setLocation(getHexLocation(position));
+
+            this.bounds = tempBounds;
+            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.image = null;
+		}
+
+        /**
+         * Creates the sprite for this entity.  It is an extra pain to
+         * create transparent images in AWT.
+         */
+        public void prepare() {
+            // create image for buffer
+            Image tempImage;
+            Graphics graph;
+            try {
+                tempImage = createImage(bounds.width, bounds.height);
+                graph = tempImage.getGraphics();
+            } catch (NullPointerException ex) {
+                // argh!  but I want it!
+                return;
+            }
+
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+
+            // draw entity image
+            graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
+
+            // create final image
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
+        }
+	}
 
     /**
      * Sprite for an entity.  Changes whenever the entity changes.  Consists

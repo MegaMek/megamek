@@ -27,8 +27,6 @@ public class WeaponType extends EquipmentType {
     public static final int     F_FLAMER        = 0x0002;
     public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
     public static final int     F_PPC           = 0x0008; //              "
-    public static final int     F_LBX           = 0x0010;
-    public static final int     F_ULTRA         = 0x0020;
     
     private int     heat;
     private int     damage;
@@ -705,21 +703,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISLBXAC2() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 2-X Auto Cannon";
+        weapon.name = "LB 2-X AC";
         weapon.internalName = "ISLBXAC2";
         weapon.mepName = "IS LB 2-X AC";
         weapon.mtfName = "ISLBXAC2";
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 4;
         weapon.shortRange = 9;
         weapon.mediumRange = 18;
         weapon.longRange = 27;
         weapon.tonnage = 6.0f;
         weapon.criticals = 4;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 42;
         
         return weapon;
@@ -728,21 +726,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISLBXAC5() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 5-X Auto Cannon";
+        weapon.name = "LB 5-X AC";
         weapon.internalName = "ISLBXAC5";
         weapon.mepName = "IS LB 5-X AC";
         weapon.mtfName = "ISLBXAC5";
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 3;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
         weapon.tonnage = 8.0f;
         weapon.criticals = 5;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 83;
         
         return weapon;
@@ -751,21 +749,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISLBXAC10() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 10-X Auto Cannon";
+        weapon.name = "LB 10-X AC";
         weapon.internalName = "ISLBXAC10";
         weapon.mepName = "IS LB 10-X AC";
         weapon.mtfName = "ISLBXAC10";
         weapon.heat = 2;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 0;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
         weapon.tonnage = 11.0f;
         weapon.criticals = 6;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 148;
         
         return weapon;
@@ -774,21 +772,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISLBXAC20() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 20-X Auto Cannon";
+        weapon.name = "LB 20-X AC";
         weapon.internalName = "ISLBXAC20";
         weapon.mepName = "IS LB 20-X AC";
         weapon.mtfName = "ISLBXAC20";
         weapon.heat = 6;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 0;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
         weapon.tonnage = 14.0f;
         weapon.criticals = 11;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 237;
         
         return weapon;
@@ -811,6 +809,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 15.0f;
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE;
+        weapon.explosive = true;
         weapon.bv = 321;
         
         return weapon;
@@ -848,14 +847,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 3;
         weapon.shortRange = 8;
         weapon.mediumRange = 17;
         weapon.longRange = 25;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 56;
         
         return weapon;
@@ -871,14 +870,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 2;
         weapon.shortRange = 6;
         weapon.mediumRange = 13;
         weapon.longRange = 20;
         weapon.tonnage = 9.0f;
         weapon.criticals = 5;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 113;
         
         return weapon;
@@ -894,14 +893,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 4;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 0;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
         weapon.tonnage = 13.0f;
         weapon.criticals = 7;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 253;
         
         return weapon;
@@ -917,14 +916,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 8;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 7;
         weapon.longRange = 10;
         weapon.tonnage = 15.0f;
         weapon.criticals = 10;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 282;
         
         return weapon;
@@ -947,7 +946,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
-        weapon.bv = 30;
+        weapon.bv = 21;
         
         return weapon;
     }
@@ -969,7 +968,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 3.0f;
         weapon.criticals = 1;
-        weapon.bv = 59;
+        weapon.bv = 39;
         
         return weapon;
     }
@@ -991,7 +990,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 4.5f;
         weapon.criticals = 2;
-        weapon.bv = 89;
+        weapon.bv = 59;
         
         return weapon;
     }
@@ -1613,21 +1612,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLLBXAC2() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 2-X Auto Cannon";
+        weapon.name = "LB 2-X AC";
         weapon.internalName = "CLLBXAC2";
         weapon.mepName = "Clan LB 2-X AC";
         weapon.mtfName = "CLLBXAC2";
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 4;
         weapon.shortRange = 10;
         weapon.mediumRange = 20;
         weapon.longRange = 30;
         weapon.tonnage = 5.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 47;
         
         return weapon;
@@ -1636,21 +1635,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLLBXAC5() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 5-X Auto Cannon";
+        weapon.name = "LB 5-X AC";
         weapon.internalName = "CLLBXAC5";
         weapon.mepName = "Clan LB 5-X AC";
         weapon.mtfName = "CLLBXAC5";
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 3;
         weapon.shortRange = 8;
         weapon.mediumRange = 15;
         weapon.longRange = 24;
         weapon.tonnage = 7.0f;
         weapon.criticals = 4;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 93;
         
         return weapon;
@@ -1659,21 +1658,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLLBXAC10() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 10-X Auto Cannon";
+        weapon.name = "LB 10-X AC";
         weapon.internalName = "CLLBXAC10";
         weapon.mepName = "Clan LB 10-X AC";
         weapon.mtfName = "CLLBXAC10";
         weapon.heat = 2;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 0;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 148;
         
         return weapon;
@@ -1682,21 +1681,21 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLLBXAC20() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "LB 20-X Auto Cannon";
+        weapon.name = "LB 20-X AC";
         weapon.internalName = "CLLBXAC20";
         weapon.mepName = "Clan LB 20-X AC";
         weapon.mtfName = "CLLBXAC20";
         weapon.heat = 6;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_LBX;
         weapon.minimumRange = 0;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
         weapon.tonnage = 12.0f;
         weapon.criticals = 9;
-        weapon.flags |= F_LBX | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 237;
         
         return weapon;
@@ -1734,14 +1733,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 2;
         weapon.shortRange = 9;
         weapon.mediumRange = 18;
         weapon.longRange = 27;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 62;
         
         return weapon;
@@ -1757,14 +1756,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 0;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 123;
         
         return weapon;
@@ -1780,14 +1779,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 0;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
         weapon.tonnage = 10.0f;
         weapon.criticals = 4;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 211;
         
         return weapon;
@@ -1803,14 +1802,14 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.T_AC;
+        weapon.ammoType = AmmoType.T_AC_ULTRA;
         weapon.minimumRange = 0;
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
         weapon.tonnage = 12.0f;
         weapon.criticals = 8;
-        weapon.flags |= F_ULTRA | F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 337;
         
         return weapon;

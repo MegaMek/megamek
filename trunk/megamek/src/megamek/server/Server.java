@@ -13017,151 +13017,131 @@ implements Runnable, ConnectionHandler {
     private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
         HitData hit;
         PilotingRollData rollTarget;
-        if (entity instanceof Mech) {
-            if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-            if (step.getMpUsed() > entity.getRunMP(false)) {
-                    // We moved too fast, let's make PSR to see if we get damage
-                    rollTarget = entity.checkMovedTooFast(step);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                            int j=step.getMpUsed();
-                            int damage = 0;
-                            while (j > entity.getRunMP(false)) {
-                                j--;
-                                damage++;
-                            }
-                            // Wee, direct internal damage
-                            if (entity instanceof BipedMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            } else if (entity instanceof QuadMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_LARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            }
-                        }
-                    }
-                }
-            } else if (step.getMovementType() == Entity.MOVE_JUMP) {
-                if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
-                    // We jumped too fast, let's make PSR to see if we get damage
-                    rollTarget = entity.checkMovedTooFast(step);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                            int j=step.getMpUsed();
-                            int damage = 0;
-                            while (j > entity.getOriginalJumpMP()) {
-                                j--;
-                                damage++;
-                            }
-                            // Wee, direct internal damage
-                            if (entity instanceof BipedMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            } else if (entity instanceof QuadMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_LARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            }
-                        }
-                    }
-                } else if (game.getOptions().floatOption("gravity") > 1) {
-                    rollTarget = entity.getBasePilotingRoll();
-                    rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                            int damage = entity.getWalkMP(false) - entity.getWalkMP();
-                            // Wee, direct internal damage
-                            if (entity instanceof BipedMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            } else if (entity instanceof QuadMech) {
-                                hit = new HitData (Mech.LOC_LLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RLEG);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_LARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                                hit = new HitData (Mech.LOC_RARM);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                            }
-                        }
-                    }
-                }
-              }
-        } else if (entity instanceof Tank) {
-            if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                // For Tanks, we need to check if the tank had more MPs because it was moving along a road
-                if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
-                    rollTarget = entity.checkMovedTooFast(step);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                            int j=step.getMpUsed();
-                            int damage = 0;
-                            while (j > entity.getRunMP(false)) {
-                                j--;
-                                damage++;
-                            }
-                            hit = new HitData (Tank.LOC_FRONT);
-                            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
-                        }
-                    }    
-                } else if (step.getMovementType() == Entity.MOVE_WALK) {
-                    // If the tank was just cruising, he got a flat +1 road bonus
-                    if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
+        if (game.getOptions().floatOption("gravity") != 1) {
+            if (entity instanceof Mech) {
+                if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                    if (step.getMpUsed() > entity.getRunMP(false)) {
+                        // We moved too fast, let's make PSR to see if we get damage
                         rollTarget = entity.checkMovedTooFast(step);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                             if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
                                 int j=step.getMpUsed();
                                 int damage = 0;
-                                while (j > entity.getRunMP(false) + 1) {
+                                while (j > entity.getRunMP(false)) {
                                     j--;
                                     damage++;
                                 }
-                                hit = new HitData (Tank.LOC_FRONT);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                // Wee, direct internal damage
+                                doExtremeGravityDamage(entity, damage);
                             }
                         }
                     }
-                } else if (step.getMovementType() == Entity.MOVE_RUN) {
-                    // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
-                    // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
-                    // cruising speed, thus possibly gaining 2 flanking MPs
-                    int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
-                    if (step.getMpUsed() > entity.getRunMP(false) + k) {
+                } else if (step.getMovementType() == Entity.MOVE_JUMP) {
+                    if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+                        // We jumped too far, let's make PSR to see if we get damage
                         rollTarget = entity.checkMovedTooFast(step);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                             if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
                                 int j=step.getMpUsed();
                                 int damage = 0;
-                                while (j > entity.getRunMP(false) + k) {
+                                while (j > entity.getOriginalJumpMP()) {
                                     j--;
                                     damage++;
                                 }
-                                hit = new HitData (Tank.LOC_FRONT);
-                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                // Wee, direct internal damage
+                                doExtremeGravityDamage(entity, damage);
+                            }
+                        }
+                    } else if (game.getOptions().floatOption("gravity") > 1) {
+                        rollTarget = entity.getBasePilotingRoll();
+                        rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                int damage = entity.getWalkMP(false) - entity.getWalkMP();
+                                // Wee, direct internal damage
+                                doExtremeGravityDamage(entity, damage);
                             }
                         }
                     }
                 }
-            }   
+            } else if (entity instanceof Tank) {
+                if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                    // For Tanks, we need to check if the tank had more MPs because it was moving along a road
+                    if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
+                        rollTarget = entity.checkMovedTooFast(step);
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                int j=step.getMpUsed();
+                                int damage = 0;
+                                while (j > entity.getRunMP(false)) {
+                                    j--;
+                                    damage++;
+                                }
+                                doExtremeGravityDamage(entity, damage);
+                            }
+                        }    
+                    } else if (step.getMovementType() == Entity.MOVE_WALK) {
+                        // If the tank was just cruising, he got a flat +1 road bonus
+                        if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                    int j=step.getMpUsed();
+                                    int damage = 0;
+                                    while (j > entity.getRunMP(false) + 1) {
+                                        j--;
+                                        damage++;
+                                    }
+                                    doExtremeGravityDamage(entity, damage);
+                                }
+                            }
+                        }
+                    } else if (step.getMovementType() == Entity.MOVE_RUN) {
+                        // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
+                        // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
+                        // cruising speed, thus possibly gaining 2 flanking MPs
+                        int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
+                        if (step.getMpUsed() > entity.getRunMP(false) + k) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                    int j=step.getMpUsed();
+                                    int damage = 0;
+                                    while (j > entity.getRunMP(false) + k) {
+                                        j--;
+                                        damage++;
+                                    }
+                                    doExtremeGravityDamage(entity, damage);
+                                }
+                            }
+                        }
+                    }
+                }   
+            }
         }
+    }
+    
+    private void doExtremeGravityDamage(Entity entity, int damage) {
+        HitData hit;
+        if (entity instanceof BipedMech) {
+            hit = new HitData (Mech.LOC_LLEG);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            hit = new HitData (Mech.LOC_RLEG);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+        } else if (entity instanceof QuadMech) {
+            hit = new HitData (Mech.LOC_LLEG);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            hit = new HitData (Mech.LOC_RLEG);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            hit = new HitData (Mech.LOC_LARM);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+            hit = new HitData (Mech.LOC_RARM);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+        } else if (entity instanceof Tank) {
+            hit = new HitData (Tank.LOC_FRONT);
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));            
+        }
+        
     }
     public String ejectEntity(Entity entity, boolean autoEject) {
         

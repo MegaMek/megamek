@@ -102,6 +102,7 @@ v 0.28.7 (CVS)
 + 693011: need to replace "chassis" matches with "exact" for vehicles.
 + Applied latest version of oscarmm's Mech Viewer patch.
 + 692963: on DFA misses, the defender moves to the highest valid hex
++ RFE 694587: right-click menu allows you to select a unit for use
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

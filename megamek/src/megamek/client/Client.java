@@ -409,13 +409,32 @@ public class Client extends Panel
                               || curPanel instanceof PhysicalDisplay);
     }
     
+    private boolean canSelectEntities() {
+        return isMyTurn() && (curPanel instanceof FiringDisplay 
+                              || curPanel instanceof PhysicalDisplay
+                              || curPanel instanceof MovementDisplay);
+    }
+    
     protected void fillPopup(Coords coords) {
         popup.removeAll();
+        
+        // add select options
+        if (canSelectEntities()) {
+            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                if (entity.getOwnerId() == local_pn) {
+                    popup.add(new SelectMenuItem(entity));
+                }
+            }
+        }
+        
+        // add view options
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
         
+        // add target options
         if (canTargetEntities()) {
             if (popup.getItemCount() > 0) {
                 popup.addSeparator();
@@ -1137,6 +1156,31 @@ public class Client extends Panel
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             mechD.displayEntity(entity);
+        }        
+    }
+    
+    /**
+     * A menu item that would really like to select an entity.  You can use
+     * this during movement, firing & physical phases.  (Deployment would
+     * just be silly.)
+     */
+    private class SelectMenuItem extends MenuItem implements ActionListener {
+        Entity entity;
+        
+        public SelectMenuItem(Entity entity) {
+            super("Select " + entity.getDisplayName());
+            this.entity = entity;
+            addActionListener(this);
+        }
+        
+        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+            if (curPanel instanceof MovementDisplay) {
+                ((MovementDisplay)curPanel).selectEntity(entity.getId());
+            } else if (curPanel instanceof FiringDisplay) {
+                ((FiringDisplay)curPanel).selectEntity(entity.getId());
+            } else if (curPanel instanceof PhysicalDisplay) {
+                ((PhysicalDisplay)curPanel).selectEntity(entity.getId());
+            }
         }        
     }
     

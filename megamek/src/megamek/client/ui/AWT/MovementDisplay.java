@@ -600,6 +600,13 @@ public class MovementDisplay
                 }
             }
 
+            if (step.getType() == MovementData.STEP_GO_PRONE) {
+                rollTarget = entity.checkDislodgeSwarmers();
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport = addNag(nagReport, rollTarget);
+                }
+            }
+
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             prevStep = step;

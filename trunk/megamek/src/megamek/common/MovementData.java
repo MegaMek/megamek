@@ -193,30 +193,18 @@ public class MovementData
      * STEP_TURN_RIGHT) that the destination facing lies in.
      */
     public static int getDirection(int facing, int destFacing) {
-        int rotate = destFacing - facing;
-        if (rotate < 0) {
-          rotate += 6;
-        }
-        if (rotate >= 3) {
-            return STEP_TURN_LEFT;
-        } else {
-            return STEP_TURN_RIGHT;
-        }
+        final int rotate = (destFacing + (6 - facing)) % 6;
+        return rotate >= 3 ? STEP_TURN_LEFT : STEP_TURN_RIGHT;
     }
     
     /**
      * Returns the adjusted facing, given the start facing.
      */
     public static int getAdjustedFacing(int facing, int movement) {
-        if(movement == STEP_TURN_RIGHT) {
+        if (movement == STEP_TURN_RIGHT) {
             return (facing + 1) % 6;
-        }
-        if(movement == STEP_TURN_LEFT) {
-            if (facing == 0 ) {
-                return 5;
-            } else {
-                return facing - 1;
-            }
+        } else if(movement == STEP_TURN_LEFT) {
+            return (facing + 5) % 6;
         }
         return facing;
     }

@@ -1429,6 +1429,11 @@ public abstract class Mech
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             EquipmentType etype = mounted.getType();
+
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+
             //TODO: antipersonal pods
             if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
@@ -1582,6 +1587,10 @@ public abstract class Mech
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
             
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+
             // don't count AMS, it's defensive
             if (wtype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
@@ -1620,7 +1629,11 @@ public abstract class Mech
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             MiscType mtype = (MiscType)mounted.getType();
-            
+ 
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+           
             if ( mtype.hasFlag(MiscType.F_HATCHET) ||
                  mtype.hasFlag(MiscType.F_SWORD) ||
                  mtype.hasFlag(MiscType.F_BAP) ||
@@ -1636,6 +1649,10 @@ public abstract class Mech
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();
+
+            // don't count depleted ammo
+            if (mounted.getShotsLeft() == 0)
+                continue;
             
             // don't count AMS, it's defensive
             if (atype.getAmmoType() == AmmoType.T_AMS) {

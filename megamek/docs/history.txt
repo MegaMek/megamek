@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.29.45 (CVS)
 + Bug 1001685: all the scroll options are now individually configurable
 + Patch 1007651: Speed up loading.  Thanks weaselflink!
++ Patch 1001719 and some more coding: Vibrabomb-IV, FASCAM and Inferno-IV
+    Arrow IV submunitions now implemented.
 
 v0.29.44 (2004-08-08 9:30pm)
 + Bug 1003021: Could not clear burning woods.

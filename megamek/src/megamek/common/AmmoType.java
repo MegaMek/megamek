@@ -91,8 +91,8 @@ public class AmmoType extends EquipmentType {
     public static final int     M_NARC_EX           = 1 << 22;
     public static final int     M_HOMING            = 1 << 23;
     public static final int     M_FASCAM            = 1 << 24;
-    public static final int     M_FASCAM_INFERNO    = 1 << 25;
-    public static final int     M_FASCAM_VIBRABOMB  = 1 << 26;
+    public static final int     M_INFERNO_IV        = 1 << 25;
+    public static final int     M_VIBRABOMB_IV      = 1 << 26;
     public static final int     M_SMOKE             = 1 << 27;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
@@ -225,7 +225,7 @@ public class AmmoType extends EquipmentType {
         Vector srmAmmos = new Vector(9);
         Vector lrmAmmos = new Vector(24);
         Vector acAmmos  = new Vector(4);
-        Vector arrowAmmos = new Vector(2);
+        Vector arrowAmmos = new Vector(4);
         Vector artyAmmos = new Vector(6);
         Vector munitions = new Vector();
 
@@ -535,11 +535,10 @@ public class AmmoType extends EquipmentType {
                                                    1, M_HOMING ) );
         munitions.addElement( new MunitionMutator( "FASCAM",
                                                    1, M_FASCAM ) );
-// TODO : implement me!!!
-//         munitions.addElement( new MunitionMutator( "Inferno-IV",
-//                                                    1, M_FASCAM_INFERNO ) );
-//         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
-//                                                    1, M_FASCAM_VIBRABOMB ) );
+        munitions.addElement( new MunitionMutator( "Inferno-IV",
+                                                   1, M_INFERNO_IV ) );
+        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+                                                   1, M_VIBRABOMB_IV ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

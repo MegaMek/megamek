@@ -571,8 +571,10 @@ public class FiringDisplay
              ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
             Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if ( ((AmmoType)(ammoMount.getType())).getMunitionType() ==
-                 AmmoType.M_THUNDER_VIBRABOMB )
+            if ( (((AmmoType)(ammoMount.getType())).getMunitionType() ==
+                 AmmoType.M_THUNDER_VIBRABOMB) ||
+                 (((AmmoType)(ammoMount.getType())).getMunitionType() ==
+                 AmmoType.M_VIBRABOMB_IV))
             {
                 VibrabombSettingDialog vsd  =
                     new VibrabombSettingDialog( clientgui.frame );

@@ -445,15 +445,30 @@ public class Compute
 			!AmmoType.canClearMinefield(atype)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
 		}
+		
         // Arty shots have to be with arty, non arty shots with non arty.
-               if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && !wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-               return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
-               }
-               if (!(target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) && wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-               return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
-               }
-
-
+        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && !wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
+        }
+        
+        // Arrow IV submunition TargetTypes must use appropriate ammo
+        if (!((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) ||
+              (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) ||
+              (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) ||
+              (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV)) && 
+              wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM && !(atype.getMunitionType() == AmmoType.M_FASCAM)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV && !(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV && !(atype.getMunitionType() == AmmoType.M_INFERNO_IV)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Must use appropriate ammo to make this attack.");
+        }
+        
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");

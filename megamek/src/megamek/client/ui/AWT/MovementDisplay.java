@@ -78,8 +78,8 @@ public class MovementDisplay
     private int               buttonLayout;
 
     // let's keep track of what we're moving, too
-    private int                cen;    // current entity number
-    private MovePath    cmd;    // considering movement data
+    private int                cen = Entity.NONE;    // current entity number
+    private MovePath           cmd;    // considering movement data
 
     // what "gear" is our mech in?
     private int                gear;
@@ -383,11 +383,15 @@ public class MovementDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
+        if ( Game.PHASE_MOVEMENT == client.game.getPhase()
+            && Entity.NONE!=cen
+            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+            client.setDisplayVisible(false);
+        };
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.setDisplayVisible(false);
         client.bv.clearMovementData();
     }
 

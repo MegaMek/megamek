@@ -86,6 +86,7 @@ VERSION HISTORY:
 ----------------
 v next
 + fixed a bug where the server thought everybody was on the same team
++ .mtf reader now handles removed arm actuators properly
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

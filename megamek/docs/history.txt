@@ -82,11 +82,16 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+CVS Current
++ Allow clients to define unique entity IDs.
++ Track and report the difference between units that have Fled, still 
+  salvageable, and utterly Devestated.
+
 v 0.28.2 (01-22-03, 3pm)
 + added patch 658064: Unit status report generator update
 + battle armor & infantry also displayed in report
 + Implemented "Swarm Mek" attacks.
-+ Implemented "Stop Swarm" 'attacks' (i.e. 'action taken during firing phase').
++ Implemented "Stop Swarm" attacks (i.e. 'actions taken during firing phase').
 + Implemented "Brush Off" physical attacks.
 + Implemented "Thrash" physical attacks (Mek attacking Inf while Prone).
 + Allowed Prone Meks to Punch Tanks in their hex (if both arms available).

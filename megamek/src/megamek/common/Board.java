@@ -779,8 +779,6 @@ implements Serializable {
             // Nope.  Make one.
             tracker = new InfernoTracker();
             this.infernos.put( coords, tracker );
-            System.err.print( "Adding an inferno tracker for " ); //killme
-            System.err.println( coords.getBoardNum() );//killme
         }
 
         // Update the tracker.

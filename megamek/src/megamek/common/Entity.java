@@ -369,6 +369,9 @@ public abstract class Entity
      * never be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
+        if ( null == owner ) {
+            return ( id != other.getId() && ownerId != other.ownerId );
+        }
         return id != other.getId() && owner.isEnemyOf(other.getOwner());
     }
   

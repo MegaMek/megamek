@@ -35,15 +35,15 @@ If none of the above options work for you, see the "INSTALLING OR UPDATING
 YOUR JAVA RUNTIME" section, below.
 
 If you have a VM, but it does not support .jar files, then use your favorite
-extraction program to decompress the MegaMek.jar and TinyXML.jar files into
-a new "classes" folder (create the folder if you don't already have it in
-your main megamek folder).  Then decompress the collections.jar file into
+extraction program to decompress the "MegaMek.jar" and "TinyXML.jar" files
+into a new "classes" folder (create the "classes" folder in your main
+"megamek" folder).  Then decompress the "collections.jar" file into
 the main megamek folder.  Once these steps have been done (you only need to
 do the above steps once), you will need to set the classpath to the classes
-folder and the com folder and run MegaMek.class.  For example, using
+folder and the current folder and run "MegaMek.class".  For example, using
 Sun Java, run:
 
-java -cp com;classes megamek/MegaMek
+java -cp .;classes megamek/MegaMek
 
 
 

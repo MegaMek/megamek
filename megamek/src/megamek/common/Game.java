@@ -683,7 +683,8 @@ public class Game implements Serializable
         
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE) {
+            if ( entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE ||
+                 entity.getRemovalCondition() == Entity.REMOVE_EJECTED ) {
                 graveyard.addElement(entity);
             }
         }
@@ -699,7 +700,8 @@ public class Game implements Serializable
         
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getRemovalCondition() == Entity.REMOVE_IN_RETREAT) {
+            if ( entity.getRemovalCondition() == Entity.REMOVE_IN_RETREAT ||
+                 entity.getRemovalCondition() == Entity.REMOVE_PUSHED ) {
                 sanctuary.addElement(entity);
             }
         }

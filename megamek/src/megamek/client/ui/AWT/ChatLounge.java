@@ -1184,7 +1184,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.getBoardSelectionDialog().update(client.getMapSettings(), true);
             client.getBoardSelectionDialog().show();
         } else if (ev.getSource() == butOptions) {
-            // game options
+            // Make sure the game options dialog is editable.
+            if ( !client.getGameOptionsDialog().isEditable() ) {
+                client.getGameOptionsDialog().setEditable( true );
+            }
+            // Display the game options dialog.
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {

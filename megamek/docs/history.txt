@@ -17,6 +17,7 @@ v0.29.48 (CVS)
 + Add undocumented "feature": megamek.client.ClientGUI.hideScrollBars setting.
 + Fixed Settings#get(String, String) where defaults weren't appling correctly.
 + RFE 1022891, Patch 1023125: Altered Energy Weapons Damage, MaxTech revised page 22.
++ RFE 999917, Patch 1019888: Drastic Blind Drop option added
 
 
 v0.29.47 (2004-08-29 7:45pm)

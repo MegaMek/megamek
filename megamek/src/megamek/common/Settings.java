@@ -179,6 +179,12 @@ public class Settings
     /** The singleton <code>Settings</code> object. */
     private static final Settings instance = new Settings();
 
+    /** Character used to delinieate strings in config file. */
+    private static char quoteChar = '"';
+
+    /** Character used for comments in config file. */
+    private static char commentChar = '#';
+
     /**
      * Create and initialize the singleton instance.
      */
@@ -223,8 +229,8 @@ public class Settings
             StreamTokenizer st = new StreamTokenizer(cr);
 
             st.lowerCaseMode(true);
-            st.quoteChar('"');
-            st.commentChar('#');
+            st.quoteChar(quoteChar);
+            st.commentChar(commentChar);
 
 scan:
             while(true) {
@@ -488,8 +494,8 @@ scan:
             File cfgfile = new File(cfgFileName);
             Writer cw = new FileWriter(cfgfile);
             
-            cw.write("# MegaMek config file" + "\r\n");
-            cw.write("# Edit at your own risk" + "\r\n");
+            cw.write(commentChar+" MegaMek config file" + "\r\n");
+            cw.write(commentChar+" Edit at your own risk" + "\r\n");
             cw.write("\r\n");
             cw.write("windowpos " + windowPosX + " " + windowPosY + "\r\n");
             cw.write("windowsize " + windowSizeWidth + " " + windowSizeHeight + "\r\n");
@@ -508,7 +514,7 @@ scan:
             cw.write("nagforreadme " + nagForReadme + "\r\n");
             cw.write("nagforbotreadme " + nagForBotReadme + "\r\n");
             cw.write("nagformapedreadme " + nagForMapEdReadme + "\r\n");
-            cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
+            cw.write("playername " + "\"" + escapeTokeniserChars(lastPlayerName) + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
             cw.write("maptext " + writeColor(mapTextColor) + "\r\n");
@@ -661,5 +667,16 @@ scan:
         // Update the value to be saved for the named setting.
         Settings.saved.put( name, value );
     }
+
+    protected static String escapeTokeniserChars(String string) {
+        String escapedString = new String();
+        for (int i=0; i < string.length(); i++) {
+            if (string.charAt(i) == quoteChar) {
+                escapedString = escapedString.concat(""+'\\');
+            };
+            escapedString = escapedString.concat(""+string.charAt(i));
+        };
+        return escapedString;
+    };
 
 }

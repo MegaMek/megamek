@@ -151,7 +151,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/2 Ammo";
         ammo.internalName = "IS Ammo AC/2";
         ammo.mepName = "IS Ammo AC/2";
-        ammo.mtfName = "AC/2 Ammo";
+        ammo.mtfName = "ISAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC;
@@ -167,7 +167,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/5 Ammo";
         ammo.internalName = "IS Ammo AC/5";
         ammo.mepName = "IS Ammo AC/5";
-        ammo.mtfName = "AC/5 Ammo";
+        ammo.mtfName = "ISAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC;
@@ -183,7 +183,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/10 Ammo";
         ammo.internalName = "IS Ammo AC/10";
         ammo.mepName = "IS Ammo AC/10";
-        ammo.mtfName = "AC/10 Ammo";
+        ammo.mtfName = "ISAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC;
@@ -199,7 +199,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AC/20 Ammo";
         ammo.internalName = "IS Ammo AC/20";
         ammo.mepName = "IS Ammo AC/20";
-        ammo.mtfName = "AC/20 Ammo";
+        ammo.mtfName = "ISAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC;
@@ -215,7 +215,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = "IS Ammo MG - Full";
         ammo.mepName = "IS Ammo MG - Full";
-        ammo.mtfName = "MG Ammo (200)";
+        ammo.mtfName = "ISMG Ammo (200)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -231,7 +231,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Half Machine Gun Ammo";
         ammo.internalName = "IS Machine Gun Ammo - Half";
         ammo.mepName = "IS Ammo MG - Half";
-        ammo.mtfName = "MG Ammo (100)";
+        ammo.mtfName = "ISMG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -248,7 +248,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = "IS Ammo LRM-5";
         ammo.mepName = "IS Ammo LRM-5";
-        ammo.mtfName = "LRM 5 Ammo";
+        ammo.mtfName = "ISLRM5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
@@ -264,7 +264,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 10 Ammo";
         ammo.internalName = "IS Ammo LRM-10";
         ammo.mepName = "IS Ammo LRM-10";
-        ammo.mtfName = "LRM 10 Ammo";
+        ammo.mtfName = "ISLRM10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
@@ -280,7 +280,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 15 Ammo";
         ammo.internalName = "IS Ammo LRM-15";
         ammo.mepName = "IS Ammo LRM-15";
-        ammo.mtfName = "LRM 15 Ammo";
+        ammo.mtfName = "ISLRM15 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM;
@@ -296,7 +296,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 20 Ammo";
         ammo.internalName = "IS Ammo LRM-20";
         ammo.mepName = "IS Ammo LRM-20";
-        ammo.mtfName = "LRM 20 Ammo";
+        ammo.mtfName = "ISLRM20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM;
@@ -312,7 +312,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "IS Ammo SRM-2";
         ammo.mepName = "IS Ammo SRM-2";
-        ammo.mtfName = "SRM 2 Ammo";
+        ammo.mtfName = "ISSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
@@ -328,7 +328,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "IS Ammo SRM-4";
         ammo.mepName = "IS Ammo SRM-4";
-        ammo.mtfName = "SRM 4 Ammo";
+        ammo.mtfName = "ISSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
@@ -344,7 +344,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = "IS Ammo SRM-6";
         ammo.mepName = "IS Ammo SRM-6";
-        ammo.mtfName = "SRM 6 Ammo";
+        ammo.mtfName = "ISSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
@@ -362,7 +362,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 2-X AC Ammo";
         ammo.internalName = "IS LB 2-X AC Ammo";
         ammo.mepName = "IS Ammo 2-X";
-        ammo.mtfName = "LBX AC/2 Ammo";
+        ammo.mtfName = "ISLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC;
@@ -378,7 +378,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 5-X AC Ammo";
         ammo.internalName = "IS LB 5-X AC Ammo";
         ammo.mepName = "IS Ammo 5-X";
-        ammo.mtfName = "LBX AC/5 Ammo";
+        ammo.mtfName = "ISLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC;
@@ -394,7 +394,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X AC Ammo";
         ammo.internalName = "IS LB 10-X AC Ammo";
         ammo.mepName = "IS Ammo 10-X";
-        ammo.mtfName = "LBX AC/10 Ammo";
+        ammo.mtfName = "ISLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC;
@@ -410,7 +410,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 20-X AC Ammo";
         ammo.internalName = "IS LB 20-X AC Ammo";
         ammo.mepName = "IS Ammo 20-X";
-        ammo.mtfName = "LBX AC/20 Ammo";
+        ammo.mtfName = "ISLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC;
@@ -426,7 +426,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.internalName = "IS LB 2-X Cluster Ammo";
         ammo.mepName = "IS Ammo 2-X (CL)";
-        ammo.mtfName = "LBX AC/2 Ammo";
+        ammo.mtfName = "ISLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
@@ -444,7 +444,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.internalName = "IS LB 5-X Cluster Ammo";
         ammo.mepName = "IS Ammo 5-X (CL)";
-        ammo.mtfName = "LBX AC/5 Ammo";
+        ammo.mtfName = "ISLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
@@ -462,7 +462,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.internalName = "IS LB 10-X Cluster Ammo";
         ammo.mepName = "IS Ammo 10-X (CL)";
-        ammo.mtfName = "LBX AC/10 Ammo";
+        ammo.mtfName = "ISLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 10;
@@ -480,7 +480,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.internalName = "IS LB 20-X Cluster Ammo";
         ammo.mepName = "IS Ammo 20-X (CL)";
-        ammo.mtfName = "LBX AC/20 Ammo";
+        ammo.mtfName = "ISLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;
@@ -498,7 +498,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/2 Ammo";
         ammo.internalName = "IS Ultra AC/2 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/2";
-        ammo.mtfName = "Ultra AC/2 Ammo";
+        ammo.mtfName = "ISUltraAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -514,7 +514,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/5 Ammo";
         ammo.internalName = "IS Ultra AC/5 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/5";
-        ammo.mtfName = "Ultra AC/5 Ammo";
+        ammo.mtfName = "ISUltraAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -530,7 +530,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/10 Ammo";
         ammo.internalName = "IS Ultra AC/10 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/10";
-        ammo.mtfName = "Ultra AC/10 Ammo";
+        ammo.mtfName = "ISUltraAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -546,7 +546,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/20 Ammo";
         ammo.internalName = "IS Ultra AC/20 Ammo";
         ammo.mepName = "IS Ammo Ultra AC/20";
-        ammo.mtfName = "Ultra AC/20 Ammo";
+        ammo.mtfName = "ISUltraAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -562,7 +562,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Gauss Ammo";
         ammo.internalName = "IS Gauss Ammo";
         ammo.mepName = "IS Ammo Gauss";
-        ammo.mtfName = "Gauss Ammo";
+        ammo.mtfName = "ISGauss Ammo";
         ammo.damagePerShot = 15;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS;
@@ -578,7 +578,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Light Gauss Ammo";
         ammo.internalName = "IS Light Gauss Ammo";
         ammo.mepName = "N/A";
-        ammo.mtfName = "Light Gauss Ammo";
+        ammo.mtfName = "ISLightGauss Ammo";
         ammo.damagePerShot = 8;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS;
@@ -594,7 +594,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 2 Ammo";
         ammo.internalName = "IS Streak SRM 2 Ammo";
         ammo.mepName = "IS Ammo Streak-2";
-        ammo.mtfName = "StreakSRM2Ammo";
+        ammo.mtfName = "ISStreakSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -610,7 +610,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 4 Ammo";
         ammo.internalName = "IS Streak SRM 4 Ammo";
         ammo.mepName = "IS Ammo Streak-4";
-        ammo.mtfName = "StreakSRM4Ammo";
+        ammo.mtfName = "ISStreakSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -626,7 +626,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 6 Ammo";
         ammo.internalName = "IS Streak SRM 6 Ammo";
         ammo.mepName = "IS Ammo Streak-6";
-        ammo.mtfName = "StreakSRM6Ammo";
+        ammo.mtfName = "ISStreakSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -642,7 +642,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "MRM 10 Ammo";
         ammo.internalName = "IS MRM 10 Ammo";
         ammo.mepName = "N/A";
-        ammo.mtfName = "MRM 10 Ammo";
+        ammo.mtfName = "ISMRM10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_MRM;
@@ -658,7 +658,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "MRM 20 Ammo";
         ammo.internalName = "IS MRM 20 Ammo";
         ammo.mepName = "N/A";
-        ammo.mtfName = "MRM 20 Ammo";
+        ammo.mtfName = "ISMRM20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_MRM;
@@ -674,7 +674,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "MRM 30 Ammo";
         ammo.internalName = "IS MRM 30 Ammo";
         ammo.mepName = "N/A";
-        ammo.mtfName = "MRM 30 Ammo";
+        ammo.mtfName = "ISMRM30 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 30;
         ammo.ammoType = AmmoType.T_MRM;
@@ -690,7 +690,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "MRM 40 Ammo";
         ammo.internalName = "IS MRM 40 Ammo";
         ammo.mepName = "N/A";
-        ammo.mtfName = "MRM 40 Ammo";
+        ammo.mtfName = "ISMRM40 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 40;
         ammo.ammoType = AmmoType.T_MRM;
@@ -706,7 +706,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Gauss Ammo";
         ammo.internalName = "Clan Gauss Ammo";
         ammo.mepName = "Clan Ammo Gauss";
-        ammo.mtfName = "Gauss Ammo";
+        ammo.mtfName = "CLGauss Ammo";
         ammo.damagePerShot = 15;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS;
@@ -722,7 +722,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 2-X AC Ammo";
         ammo.internalName = "Clan LB 2-X AC Ammo";
         ammo.mepName = "Clan Ammo 2-X";
-        ammo.mtfName = "LBX AC/2 Ammo";
+        ammo.mtfName = "CLLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC;
@@ -738,7 +738,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 5-X AC Ammo";
         ammo.internalName = "Clan LB 5-X AC Ammo";
         ammo.mepName = "Clan Ammo 5-X";
-        ammo.mtfName = "LBX AC/5 Ammo";
+        ammo.mtfName = "CLLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC;
@@ -754,7 +754,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X AC Ammo";
         ammo.internalName = "Clan LB 10-X AC Ammo";
         ammo.mepName = "Clan Ammo 10-X";
-        ammo.mtfName = "LBX AC/10 Ammo";
+        ammo.mtfName = "CLLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC;
@@ -770,7 +770,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 20-X AC Ammo";
         ammo.internalName = "Clan LB 20-X AC Ammo";
         ammo.mepName = "Clan Ammo 20-X";
-        ammo.mtfName = "LBX AC/20 Ammo";
+        ammo.mtfName = "CLLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC;
@@ -786,7 +786,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.internalName = "Clan LB 2-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 2-X (CL)";
-        ammo.mtfName = "LBX AC/2 Ammo";
+        ammo.mtfName = "CLLBXAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
@@ -804,7 +804,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.internalName = "Clan LB 5-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 5-X (CL)";
-        ammo.mtfName = "LBX AC/5 Ammo";
+        ammo.mtfName = "CLLBXAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
@@ -822,7 +822,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.internalName = "Clan LB 10-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 10-X (CL)";
-        ammo.mtfName = "LBX AC/10 Ammo";
+        ammo.mtfName = "CLLBXAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 10;
@@ -840,7 +840,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.internalName = "Clan LB 20-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 20-X (CL)";
-        ammo.mtfName = "LBX AC/20 Ammo";
+        ammo.mtfName = "CLLBXAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;
@@ -852,14 +852,13 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    
     public static AmmoType createCHeavyMGAmmo() {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "Heavy Machine Gun Ammo";
         ammo.internalName = "Clan Heavy Machine Gun Ammo - Full";
         ammo.mepName = "N/A";
-        ammo.mtfName = "Heavy MG Ammo (100)";
+        ammo.mtfName = "CLHeavyMG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
@@ -875,7 +874,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = "Clan Machine Gun Ammo - Full";
         ammo.mepName = "Clan Ammo MG - Full";
-        ammo.mtfName = "MG Ammo (200)";
+        ammo.mtfName = "CLMG Ammo (200)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -891,7 +890,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Half Machine Gun Ammo";
         ammo.internalName = "Clan Machine Gun Ammo - Half";
         ammo.mepName = "Clan Ammo MG - Half";
-        ammo.mtfName = "MG Ammo (100)";
+        ammo.mtfName = "CLMG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
@@ -908,7 +907,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Light Machine Gun Ammo";
         ammo.internalName = "Clan Light Machine Gun Ammo - Full";
         ammo.mepName = "N/A";
-        ammo.mtfName = "Light MG Ammo (200)";
+        ammo.mtfName = "CLLightMG Ammo (200)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
@@ -924,7 +923,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/2 Ammo";
         ammo.internalName = "Clan Ultra AC/2 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/2";
-        ammo.mtfName = "Ultra AC/2 Ammo";
+        ammo.mtfName = "CLUltraAC2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -940,7 +939,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/5 Ammo";
         ammo.internalName = "Clan Ultra AC/5 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/5";
-        ammo.mtfName = "Ultra AC/5 Ammo";
+        ammo.mtfName = "CLUltraAC5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -956,7 +955,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/10 Ammo";
         ammo.internalName = "Clan Ultra AC/10 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/10";
-        ammo.mtfName = "Ultra AC/10 Ammo";
+        ammo.mtfName = "CLUltraAC10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -972,7 +971,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Ultra AC/20 Ammo";
         ammo.internalName = "Clan Ultra AC/20 Ammo";
         ammo.mepName = "Clan Ammo Ultra AC/20";
-        ammo.mtfName = "Ultra AC/20 Ammo";
+        ammo.mtfName = "CLUltraAC20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
@@ -988,7 +987,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 5 Ammo";
         ammo.internalName = "Clan Ammo LRM-5";
         ammo.mepName = "Clan Ammo LRM-5";
-        ammo.mtfName = "LRM 5 Ammo";
+        ammo.mtfName = "CLLRM5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
@@ -1004,7 +1003,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 10 Ammo";
         ammo.internalName = "Clan Ammo LRM-10";
         ammo.mepName = "Clan Ammo LRM-10";
-        ammo.mtfName = "LRM 10 Ammo";
+        ammo.mtfName = "CLLRM10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
@@ -1020,7 +1019,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 15 Ammo";
         ammo.internalName = "Clan Ammo LRM-15";
         ammo.mepName = "Clan Ammo LRM-15";
-        ammo.mtfName = "LRM 15 Ammo";
+        ammo.mtfName = "CLLRM15 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM;
@@ -1036,7 +1035,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 20 Ammo";
         ammo.internalName = "Clan Ammo LRM-20";
         ammo.mepName = "Clan Ammo LRM-20";
-        ammo.mtfName = "LRM 20 Ammo";
+        ammo.mtfName = "CLLRM20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM;
@@ -1052,7 +1051,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "Clan Ammo SRM-2";
         ammo.mepName = "Clan Ammo SRM-2";
-        ammo.mtfName = "SRM 2 Ammo";
+        ammo.mtfName = "CLSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
@@ -1068,7 +1067,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "Clan Ammo SRM-4";
         ammo.mepName = "Clan Ammo SRM-4";
-        ammo.mtfName = "SRM 4 Ammo";
+        ammo.mtfName = "CLSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
@@ -1084,7 +1083,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = "Clan Ammo SRM-6";
         ammo.mepName = "Clan Ammo SRM-6";
-        ammo.mtfName = "SRM 6 Ammo";
+        ammo.mtfName = "CLSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
@@ -1094,14 +1093,13 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    
     public static AmmoType createCLStreakSRM2Ammo() {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "Streak SRM 2 Ammo";
         ammo.internalName = "Clan Streak SRM 2 Ammo";
         ammo.mepName = "Clan Ammo Streak-2";
-        ammo.mtfName = "StreakSRM2Ammo";
+        ammo.mtfName = "CLStreakSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -1117,7 +1115,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 4 Ammo";
         ammo.internalName = "Clan Streak SRM 4 Ammo";
         ammo.mepName = "Clan Ammo Streak-4";
-        ammo.mtfName = "StreakSRM4Ammo";
+        ammo.mtfName = "CLStreakSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -1133,7 +1131,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 6 Ammo";
         ammo.internalName = "Clan Streak SRM 6 Ammo";
         ammo.mepName = "Clan Ammo Streak-6";
-        ammo.mtfName = "StreakSRM6Ammo";
+        ammo.mtfName = "CLStreakSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_STREAK;

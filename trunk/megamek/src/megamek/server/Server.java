@@ -243,7 +243,6 @@ implements Runnable {
             }
         }
         
-        
         // right, switch the connection into the "active" bin
         connectionsPending.removeElement(conn);
         connections.addElement(conn);
@@ -253,6 +252,12 @@ implements Runnable {
         if (!returning) {
             game.addPlayer(connId, new Player(connId, name));
             validatePlayerInfo(connId);
+        }
+        
+        // if it is not the lounge phase, this player becomes an observer
+        if (game.phase != Game.PHASE_LOUNGE
+        && game.getEntitiesOwnedBy(getPlayer(connId)) < 1) {
+            getPlayer(connId).setObserver(true);
         }
         
         // send the player the motd
@@ -385,6 +390,18 @@ implements Runnable {
         
         System.out.println("s: player " + connId + " disconnected");
         sendServerChat(player.getName() + " disconnected.");
+    }
+    
+    /**
+     * Checks each player to see if he has no entities, and if true, sets the
+     * observer flag for that player.  An exception is that there are no
+     * observers during the lounge phase.
+     */
+    public void checkForObservers() {
+        for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player p = (Player)e.nextElement();
+            p.setObserver(game.getEntitiesOwnedBy(p) < 1 && game.phase != Game.PHASE_LOUNGE);
+        }
     }
     
     /**
@@ -758,11 +775,13 @@ implements Runnable {
         // check if all active players are done
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (!player.isGhost() && !player.isDone()) {
+            if (!player.isGhost() && !player.isObserver() && !player.isDone()) {
                 allAboard = false;
             }
         }
-        if (allAboard && !game.phaseHasTurns(game.phase)) {
+        // need at least one entity in the game for the lounge phase to end
+        if (allAboard && !game.phaseHasTurns(game.phase)
+        && (game.phase != Game.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
     }
@@ -807,41 +826,13 @@ implements Runnable {
                 mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 break;
-            case Game.PHASE_EXCHANGE :
-                resetPlayersDone();
-                // apply board layout settings to produce a mega-board
-                mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-                mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-                Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-                for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
-                    sheetBoards[i] = new Board();
-                    String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
-                    boolean isRotated = false;
-                    if ( name.startsWith( Board.BOARD_REQUEST_ROTATION ) ) {
-                        isRotated = true;
-                        name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
-                    }
-                    sheetBoards[i].load( name + ".board");
-                    sheetBoards[i].flip( isRotated, isRotated );
-                }
-                game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
-                // deploy all entities
-                /*Coords center = new Coords(game.board.width / 2, game.board.height / 2);
-                for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    Entity entity = (Entity)i.nextElement();
-                    deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center, 10);
-                }
-                */
-                game.setHasDeployed(false);
-                game.determineWindDirection();
-                break;
             case Game.PHASE_INITIATIVE :
                 // remove the last traces of last round
                 attacks.removeAllElements();
                 roundReport = new StringBuffer();
                 resetEntityRound();
                 resetEntityPhase();
+                checkForObservers();
                 // roll 'em
                 resetActivePlayersDone();
                 rollInitiative();
@@ -855,6 +846,7 @@ implements Runnable {
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
                 resetEntityPhase();
+                checkForObservers();
                 setIneligible(phase);
                 determineTurnOrder();
                 resetActivePlayersDone();
@@ -865,6 +857,7 @@ implements Runnable {
             case Game.PHASE_END :
                 phaseReport = new StringBuffer();
                 resetEntityPhase();
+                checkForObservers();
                 resolveHeat();
                 checkForSuffocation();
                 resolveCrewDamage();
@@ -912,6 +905,10 @@ implements Runnable {
     private void executePhase(int phase) {
         switch (phase) {
             case Game.PHASE_EXCHANGE :
+                resetPlayersDone();
+                applyBoardSettings();
+                game.setHasDeployed(false);
+                game.determineWindDirection();
                 // If we add transporters for any Magnetic Clamp
                 // equiped squads, then update the clients' entities.
                 if ( game.checkForMagneticClamp() ) {
@@ -1084,6 +1081,29 @@ implements Runnable {
         }
         
         return playersAlive <= 1 || (teamsAlive == 1 && !unteamedAlive);
+    }
+    
+    /**
+     * Applies board settings.  This loads and combines all the boards that
+     * were specified into one mega-board and sets that board as current.
+     */
+    public void applyBoardSettings() {
+        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
+            sheetBoards[i] = new Board();
+            String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
+            boolean isRotated = false;
+            if ( name.startsWith( Board.BOARD_REQUEST_ROTATION ) ) {
+                isRotated = true;
+                name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
+            }
+            sheetBoards[i].load( name + ".board");
+            sheetBoards[i].flip( isRotated, isRotated );
+        }
+        game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+        mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
     }
     
     /**
@@ -6312,11 +6332,6 @@ implements Runnable {
      */
     private void receivePlayerDone(Packet pkt, int connIndex) {
         boolean ready = pkt.getBooleanValue(0);
-        // don't let them enter the game with no entities
-        if (ready && game.phase == Game.PHASE_LOUNGE
-        && game.getEntitiesOwnedBy(getPlayer(connIndex)) < 1) {
-            ready = false;
-        }
         getPlayer(connIndex).setDone(ready);
     }
     

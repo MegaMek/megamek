@@ -5265,7 +5265,7 @@ implements Runnable, ConnectionHandler {
             return wr;
         }
         // is the weapon functional?
-        if (weapon.isUsedThisRound()) {
+        if (weapon.isDestroyed()) {
             wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
             return wr;
         }
@@ -5282,13 +5282,18 @@ implements Runnable, ConnectionHandler {
 
         // compute to-hit
         wr.toHit = waa.toHit(game);
-
+        
+        if (waa.isNemesisConfused()) {
+            wr.toHit.addModifier(1, "iNarc Nemesis pod");
+        }
         // roll dice
         wr.roll = Compute.d6(2);
 
-        // if the shot is possible and not a streak miss, add heat and use ammo
+        // if the shot is possible and not a streak miss
+        // and not a nemesis-confused shot, add heat and use ammo
         streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK && wr.roll < wr.toHit.getValue());
-        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss) {
+        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss &&
+            !waa.isNemesisConfused()) {
             wr = addHeatUseAmmoFor(waa, wr);
         }
 
@@ -5483,11 +5488,21 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-
+    private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
+        resolveWeaponAttack(wr, lastEntityId, false);
+    }
+    
     /**
      * Resolve a single Weapon Attack object
+     * @param wr The <code>WeaponResult</code> to resolve
+     * @param lastEntityId The <code>int</code> ID of the last
+     *        resolved weaponattack's attacking entity
+     * @param isNemesisConfused The <code>boolean</code> value of wether
+     *        this attack is one caused by homing in on a iNarc Nemesis pod
+     *        and so should not be further diverted
+     * @return wether we hit or not, only needed for nnemesis pod stuff
      */
-    private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
+    private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused) {
       // If it's an artillery shot, the shooting entity
       // might have died in the meantime
       Entity ae = game.getEntity( wr.waa.getEntityId() );
@@ -5536,19 +5551,41 @@ implements Runnable, ConnectionHandler {
 
       // Which building takes the damage?
       Building bldg = game.board.getBuildingAt(target.getPosition());
+      
+      // Are we iNarc Nemesis Confusable?
+      boolean isNemesisConfusable = false;
+      Mounted mLinker = weapon.getLinkedBy();
+      if ( wtype.getAmmoType() == AmmoType.T_ATM ||
+           ( mLinker != null &&
+             mLinker.getType() instanceof MiscType &&
+             !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
+             mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
+          if ((!weapon.getType().hasModes()
+               || !weapon.curMode().equals("Indirect")) &&
+              (atype.getMunitionType() == AmmoType.M_STANDARD ||
+               atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
+               atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
+              isNemesisConfusable = true;
+          }
+      } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
+                 wtype.getAmmoType() == AmmoType.T_SRM) {
+          if (atype.getMunitionType() == AmmoType.M_STANDARD) {
+              isNemesisConfusable = true;
+          }
+      }
 
       if (lastEntityId != ae.getId()) {
           phaseReport.append("\nWeapons fire for ").append(ae.getDisplayName()).
               append("\n");
       }
-
+      
       // Swarming infantry can stop during any weapons phase after start.
       if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
           // ... but only as their *only* attack action.
           if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
               phaseReport.append("Swarm attack can not be ended (" +
                    toHit.getDesc()).append(")\n");
-              return;
+              return true;
           } else {
               phaseReport.append("Swarm attack ended.\n");
               // Only apply the "stop swarm 'attack'" to the swarmed Mek.
@@ -5559,17 +5596,38 @@ implements Runnable, ConnectionHandler {
                   entityTarget.setSwarmAttackerId(Entity.NONE);
               }
               ae.setSwarmTargetId(Entity.NONE);
-              return;
+              return true;
           }
       }
 
       // Report weapon attack and its to-hit value.
       phaseReport.append("    ").append(wtype.getName()).append(" at ").append(
           target.getDisplayName());
+      
+      boolean shotAtNemesisTarget = false;
+      // check for nemesis
+      if (isNemesisConfusable && !isNemesisConfused) {
+          // loop through nemesis targets
+          for (Enumeration e = game.getNemesisTargets(ae, target.getPosition());e.hasMoreElements();) {
+              Entity entity = (Entity)e.nextElement();
+              phaseReport.append(", but a friendly unit with an attached iNarc Nemesis Pod is standing in the way!\n");
+              weapon.setUsedThisRound(false);
+              WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
+                  entity.getTargetId(), wr.waa.getWeaponId());
+              newWaa.setNemesisConfused(true);
+              WeaponResult newWr = preTreatWeaponAttack(newWaa);
+              // attack the new target, and if we hit it, return;
+              if (resolveWeaponAttack(newWr, ae.getId(), true)) return true;
+              shotAtNemesisTarget = true;
+          }
+      }
+      if (shotAtNemesisTarget) {
+          phaseReport.append("\n    Now targeting original Target again");
+      }
       if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
           phaseReport.append(", but the shot is impossible (").append(toHit.getDesc()).
               append(")\n");
-          return;
+          return false;
       } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
           phaseReport.append(", the shot is an automatic miss (").append(toHit.
               getDesc()).append("), ");
@@ -5626,7 +5684,7 @@ implements Runnable, ConnectionHandler {
               if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                   weapon.setHit(true);
               }
-              return;
+              return true;
           }
       }
 
@@ -5714,7 +5772,7 @@ implements Runnable, ConnectionHandler {
           }
           else {
             phaseReport.append("misses and scatters off the board\n");
-            return;
+            return !bMissed;
           }
         }
 
@@ -5741,7 +5799,7 @@ implements Runnable, ConnectionHandler {
           //{
           //...This is an error, but I'll just ignore it for now.
           //}
-        return;
+        return !bMissed;
       }
       // FASCAM Artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) {
@@ -5760,13 +5818,13 @@ implements Runnable, ConnectionHandler {
               }
               else {
                   phaseReport.append("misses and scatters off the board\n");
-                  return;
+                  return !bMissed;
               }
           }
           if (game.board.contains(coords)) {
               deliverFASCAMMinefield(coords, ae.getOwner().getId());
           }
-          return;
+          return !bMissed;
       }
       // Vibrabomb-IV Artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) {
@@ -5791,7 +5849,7 @@ implements Runnable, ConnectionHandler {
               deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
                                            wr.waa.getOtherAttackInfo());
           }
-          return;
+          return !bMissed;
       }
       // Inferno IV artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) {
@@ -5810,7 +5868,7 @@ implements Runnable, ConnectionHandler {
               }
               else {
                   phaseReport.append("misses and scatters off the board\n");
-                  return;
+                  return !bMissed;
               }
           }
           Hex h = game.getBoard().getHex(coords);
@@ -5858,7 +5916,7 @@ implements Runnable, ConnectionHandler {
                       .append(" turns.\n");
               }
           }
-          return;
+          return !bMissed;
       }
       //special case artillery
       if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
@@ -5877,7 +5935,7 @@ implements Runnable, ConnectionHandler {
           }
           else {
             phaseReport.append("misses and scatters off the board\n");
-            return;
+            return !bMissed;
           }
         }
 
@@ -5933,7 +5991,7 @@ implements Runnable, ConnectionHandler {
 
         }
 
-        return;
+        return !bMissed;
       } // End artillery
 
       if (bMissed) {
@@ -5974,7 +6032,7 @@ implements Runnable, ConnectionHandler {
             if ( (usesAmmo && wr.amsShotDownTotal >= maxMissiles) ||
                  toHit.getValue() == TargetRoll.AUTOMATIC_FAIL ||
                  wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
-                return;
+                return !bMissed;
             }
 
             // Shots that miss an entity can set fires.
@@ -5991,7 +6049,7 @@ implements Runnable, ConnectionHandler {
             // BMRr, pg. 51: "All shots that were aimed at a target inside
             // a building and miss do full damage to the building instead."
             if ( !targetInBuilding ) {
-                return;
+                return !bMissed;
             }
         }
 
@@ -6013,7 +6071,7 @@ implements Runnable, ConnectionHandler {
                 entityTarget.setNarcedBy(ae.getOwner().getTeam());
                 phaseReport.append("hits.  Pod attached.\n");
             }
-            return;
+            return !bMissed;
         }
         
         // special case iNARC hits.  No damage, but a beacon is appended
@@ -6055,7 +6113,7 @@ implements Runnable, ConnectionHandler {
                 }
                 entityTarget.attachINarcPod(pod);
             }
-            return;
+            return !bMissed;
         }
 
         // attempt to clear minefield by LRM/MRM fire.
@@ -6075,7 +6133,7 @@ implements Runnable, ConnectionHandler {
             } else {
                 phaseReport.append("\n\thits, but fails to clear it.\n");
             }
-            return;
+            return !bMissed;
         }
 
         // yeech.  handle damage. . different weapons do this in very different ways
@@ -6130,7 +6188,7 @@ implements Runnable, ConnectionHandler {
                 ae.setSwarmTargetId( wr.waa.getTargetId() );
                 entityTarget.setSwarmAttackerId( wr.waa.getEntityId() );
             }
-            return;
+            return !bMissed;
         }
 
         // Magnetic Mine Launchers roll number of hits on battle armor
@@ -6212,7 +6270,7 @@ implements Runnable, ConnectionHandler {
                  wtype.getAmmoType() == AmmoType.T_ATM ) {
 
                 // check for artemis, else check for narc
-                Mounted mLinker = weapon.getLinkedBy();
+                mLinker = weapon.getLinkedBy();
                 if ( wtype.getAmmoType() == AmmoType.T_ATM ||
                      ( mLinker != null &&
                        mLinker.getType() instanceof MiscType &&
@@ -6425,7 +6483,7 @@ implements Runnable, ConnectionHandler {
                 } // End rounds-hit
 
             } // End missed-target-in-building
-            return;
+            return !bMissed;
 
         } // End missed-target
 
@@ -6458,7 +6516,7 @@ implements Runnable, ConnectionHandler {
                                Math.min( toBldg, bldgAbsorbs ),
                                " absorbs the shots, taking " ) )
                     .append( "\n" );
-                return;
+                return !bMissed;
             }
             nDamPerHit = Compute.d6(hits);
             phaseReport.append( "riddles the target with " ).append(
@@ -6491,7 +6549,7 @@ implements Runnable, ConnectionHandler {
                                Math.min( toBldg, bldgAbsorbs ),
                                " absorbs the shots, taking " ) )
                     .append( "\n" );
-                return;
+                return !bMissed;
             }
 
             // If a building absorbs partial damage, reduce the dice of damage.
@@ -6621,7 +6679,7 @@ implements Runnable, ConnectionHandler {
                         ( c, InfernoTracker.STANDARD_ROUND, hits );
                     sendChangedHex(c);
 
-                    return;
+                    return !bMissed;
                 }
 
                 // Targeting an entity
@@ -6652,7 +6710,7 @@ implements Runnable, ConnectionHandler {
                         ( c, InfernoTracker.STANDARD_ROUND, 1 );
                     sendChangedHex(c);
 
-                    return;
+                    return !bMissed;
                 }
 
             } // End is-inferno
@@ -6672,7 +6730,7 @@ implements Runnable, ConnectionHandler {
                     phaseReport.append( "\n" );
                     tryIgniteHex( target.getPosition(), bInferno, tn, true );
                 }
-                return;
+                return !bMissed;
             }
 
             // targeting a hex for clearing
@@ -6684,7 +6742,7 @@ implements Runnable, ConnectionHandler {
                 }
                 if (ae instanceof Infantry) {
                     phaseReport.append("\n    But infantry cannot try to clear hexes!\n");
-                    return;
+                    return !bMissed;
                 }
 
 
@@ -6696,13 +6754,13 @@ implements Runnable, ConnectionHandler {
                 if ( bldg == null) {
                     boolean alreadyIgnited = game.board.getHex(target.getPosition()).contains(Terrain.FIRE);
                     boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
-                    if (!alreadyIgnited && ignited) return;
+                    if (!alreadyIgnited && ignited) return !bMissed;
                 }
 
                 int tn = 14 - nDamage;
                 tryClearHex(target.getPosition(), tn);
 
-                return;
+                return !bMissed;
             }
 
             // Targeting a building.
@@ -6721,7 +6779,7 @@ implements Runnable, ConnectionHandler {
                 this.damageInfantryIn( bldg, nDamage );
 
                 // And we're done!
-                return;
+                return !bMissed;
             }
 
             // Battle Armor squads equipped with fire protection
@@ -6751,7 +6809,7 @@ implements Runnable, ConnectionHandler {
                                 .append( "\n" );
                         }
 
-                     return;
+                     return !bMissed;
                     }
                 }
             } // End target-may-be-immune
@@ -6876,6 +6934,7 @@ implements Runnable, ConnectionHandler {
         } // Handle the next cluster.
 
         phaseReport.append("\n");
+        return !bMissed;
     }
 
     /**

@@ -2033,4 +2033,30 @@ public class Game implements Serializable
         }
         return false;
     }
+    
+    /**
+     * Get Entities that have have a iNarc Nemesis pod attached and are situated
+     * between two Coords
+     *  
+     * @param attacker The attacking <code>Entity</code>.
+     * @param target The <code>Coords</code> of the original target.
+     * @return a <code>Enumeration</code> of entities that have nemesis pods
+     *         attached and are located between attacker and target and are
+     *         friendly with the attacker.
+     */
+    public Enumeration getNemesisTargets(Entity attacker, Coords target) {
+        final Coords attackerPos = attacker.getPosition();
+        final Coords[] in = Coords.intervening(attackerPos, target);
+        Vector nemesisTargets = new Vector();
+        for (int i = 0; i < in.length; i++) {
+            for (Enumeration e = getEntities(in[i]);e.hasMoreElements();) {
+                Entity entity = (Entity)e.nextElement();
+                if (entity.isINarcedWith(INarcPod.NEMESIS) &&
+                     !entity.isEnemyOf(attacker)) {
+                    nemesisTargets.addElement(entity);
+                }
+            }
+        }
+        return nemesisTargets.elements();
+    }
 }

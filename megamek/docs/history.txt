@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.53 (CVS)
+v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except
    for rear mounted weapons)
 + Bug 1043230: Tooltip doesn't show T-Active or T-Inferno info

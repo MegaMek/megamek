@@ -1145,6 +1145,19 @@ public class BoardView1
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
             
+            // draw the 'flip arms' arrow
+            if ( (entity.getFacing() != -1) && entity.getArmsFlipped() ) {
+              graph.setColor(Color.red);
+              int flipDir = entity.getFacing();
+              
+              if ( flipDir < 3 )
+                flipDir = flipDir + 3;
+              else
+                flipDir = flipDir - 3;
+                
+              graph.drawPolygon(facingPolys[flipDir]);
+            }
+                        
             // draw condition strings
             if (entity.isImmobile() && !entity.isProne()) {
                 // draw "IMMOBILE"

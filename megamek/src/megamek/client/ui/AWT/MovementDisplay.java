@@ -230,6 +230,7 @@ public class MovementDisplay
         butCharge.setEnabled(ce().getWalkMP() > 0);
         butDfa.setEnabled(ce().getJumpMP() > 0);
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
+        
         if (ce().isProne()) {
             butUp.setEnabled(true);
         } else {
@@ -239,7 +240,7 @@ public class MovementDisplay
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
         client.game.board.cursor(null);
-        client.mechD.displayMech(ce());
+        client.mechD.displayMech(client.game, ce());
         client.mechD.showPanel("movement");
         client.bv.centerOnHex(ce().getPosition());
     }

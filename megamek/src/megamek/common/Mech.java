@@ -20,10 +20,12 @@ import java.util.Enumeration;
 /**
  * You know what mechs are, silly.
  */
-public class Mech
+public abstract class Mech
     extends Entity
     implements Serializable
 {
+    private static final int      NUM_MECH_LOCATIONS = 8;
+    
     // weight class limits
     public static final int        WEIGHT_LIGHT        = 35;
     public static final int        WEIGHT_MEDIUM        = 55;
@@ -61,16 +63,6 @@ public class Mech
     public static final int        LOC_RLEG             = 6;
     public static final int        LOC_LLEG             = 7;
     
-    public static final String[] locationNames = {"Head",
-        "Center Torso", "Right Torso", "Left Torso", 
-        "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
-    
-    public static final String[] locationAbbrs = {"HD", "CT", "RT",
-        "LT", "RA", "LA", "RL", "LL"};
-    
-    // critical hit slots
-    public static final int[] noOfSlots = {6, 12, 12, 12, 12, 12, 6, 6};
-    
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
@@ -107,16 +99,6 @@ public class Mech
         setCritical(LOC_CT, 8, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         setCritical(LOC_CT, 9, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         
-        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-        setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-        setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
-
-        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-        setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-        setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
-        
         setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
         setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
         setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
@@ -133,81 +115,58 @@ public class Mech
      * Returns the number of locations in the entity
      */
     public int locations() {
-        return 8;
+      return NUM_MECH_LOCATIONS;
     }
                                     
     /**
-     * Returns this entity's walking/cruising mp, factored
-     * for heat and leg damage.
+     * Count the number of destroyed legs on the mech
      */
-    public int getWalkMP() {
-        int wmp = getOriginalWalkMP();
-        int legsDestroyed = 0;
-        int hipHits = 0;
-        int actuatorHits = 0;
-        // count leg damage, right leg
-        if(getInternal(Mech.LOC_RLEG) > 0) {
-            // hip hit reduces mp by half and ignores other hits
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) == 0) {
-                hipHits++;
-            } else {
-                // check for other leg actuators
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) == 0) {
-                    actuatorHits++;
+      public int countDestroyedLegs() {
+        int destroyed = 0;
+        
+        for ( int i = 0; i < locations(); i++ ) {    
+          destroyed += (locationIsLeg(i) && isLocationDestroyed(i)) ? 1 : 0;
                 }
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) == 0) {
-                    actuatorHits++;
+        
+        return destroyed;
                 }
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_RLEG) == 0) {
-                    actuatorHits++;
-                }
-            }
-        } else {
-            legsDestroyed++;
-        }
-        // left leg
-        if(getInternal(Mech.LOC_LLEG) > 0) {
-            // hip hit reduces mp by half and ignores other hits
-            if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) == 0) {
-                hipHits++;
-            } else {
-                // check for other leg actuators
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) == 0) {
-                    actuatorHits++;
-                }
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) == 0) {
-                    actuatorHits++;
-                }
-                if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) == 0) {
-                    actuatorHits++;
-                }
-            }
-        } else {
-            legsDestroyed++;
-        }
-        // leg damage effects
-        if(legsDestroyed > 0) {
-            wmp = (legsDestroyed == 1) ? 1 : 0;
-        } else {
-            if(hipHits > 0) {
-                wmp = (hipHits == 1) ? (int)Math.ceil((double)wmp / 2.0) : 0;
-            } else {
-                wmp -= actuatorHits;
-            }
-        }
-        // and we still need to factor in heat!
-        return Math.max(wmp - (int)(heat / 5), 0);
-    }
 
     /**
-     * Returns this mech's running/flank mp modified for leg loss & stuff.
+     * Return true is the location is a leg and has a hip crit
+     */   
+      public boolean legHasHipCrit(int loc) {
+        if ( isLocationDestroyed(loc) )
+          return false;
+          
+        if ( locationIsLeg(loc) ) {
+          return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) == 0);
+                }
+        
+        return false;
+            }
+    
+    /**
+     * Count non-hip leg actuator crits
      */
-    public int getRunMP() {
-        if(getInternal(Mech.LOC_RLEG) > 0 && getInternal(Mech.LOC_LLEG) > 0) {
-            return (int)Math.ceil(getWalkMP() * 1.5);
-        } else {
-            return getWalkMP();
+      public int countLegActuatorCrits(int loc) {
+        if ( isLocationDestroyed(loc) )
+          return 0;
+          
+        int crits = 0;
+        
+        if ( locationIsLeg(loc) ) {
+          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
+              crits++;
         }
+          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
+              crits++;
+            }
+          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) == 0) {
+              crits++;
+        }
+    }
+
+        return crits;
     }
     
     /**
@@ -256,13 +215,16 @@ public class Mech
             || curHex.getElevation() >= 0) {
             return capacity;
         } else if (curHex.getElevation() == -1) {
+          if ( isProne() ) {
+            sinksUnderwater = getHeatCapacity();
+          } else {
             for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
                 Mounted mounted = (Mounted)i.nextElement();
-                if (mounted.getType() == MiscType.HEAT_SINK && !mounted.isDestroyed()
-                && (mounted.getLocation() == Mech.LOC_RLEG || mounted.getLocation() == Mech.LOC_LLEG)) {
+                if (mounted.getType() == MiscType.HEAT_SINK && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
                     sinksUnderwater++;
                 }
             }
+          }
         } else if (curHex.getElevation() <= -2) {
             sinksUnderwater = getHeatCapacity();
         }
@@ -390,46 +352,6 @@ public class Mech
       }
       
     /**
-     * Returns the name of the location specified.
-     */
-    public String getLocationName(HitData hit) {
-        return locationNames[hit.getLocation()];
-    }
-    
-    /**
-     * Returns the abbreviated name of the location specified.
-     */
-    public String getLocationAbbr(HitData hit) {
-        return locationAbbrs[hit.getLocation()] + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
-    }
-  
-    /**
-     * Returns the name of the location specified.
-     */
-    public String getLocationName(int loc) {
-        return locationNames[loc];
-    }
-    
-    /**
-     * Returns the abbreviated name of the location specified.
-     */
-    public String getLocationAbbr(int loc) {
-        return locationAbbrs[loc];
-    }
-  
-    /**
-     * Returns the location that the specified abbreviation indicates
-     */
-    public int getLocationFromAbbr(String abbr) {
-        for (int i = 0; i < locationAbbrs.length; i++) {
-            if (getLocationAbbr(i).equalsIgnoreCase(abbr)) {
-                return i;
-            }
-        }
-      return this.LOC_NONE;
-    }
-    
-    /**
      * Returns the Compute.ARC that the weapon fires into.
      */
     public int getWeaponArc(int wn) {
@@ -448,9 +370,9 @@ public class Mech
         case LOC_LLEG :
             return Compute.ARC_FORWARD;
         case LOC_RARM :
-            return Compute.ARC_RIGHTARM;
+            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
         case LOC_LARM :
-            return Compute.ARC_LEFTARM;
+            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
         default :
             return Compute.ARC_360;
         }
@@ -719,16 +641,7 @@ public class Mech
      * @param arm right/left arm
      * @param leg right/left leg
      */
-    public void setInternal(int head, int ct, int t, int arm, int leg) {
-      initializeInternal(head, LOC_HEAD);
-      initializeInternal(ct, LOC_CT);
-      initializeInternal(t, LOC_RT);
-      initializeInternal(t, LOC_LT);
-      initializeInternal(arm, LOC_RARM);
-      initializeInternal(arm, LOC_LARM);
-      initializeInternal(leg, LOC_RLEG);
-      initializeInternal(leg, LOC_LLEG);
-    }
+    public abstract void setInternal(int head, int ct, int t, int arm, int leg);
     
     /**
      * Set the internal structure to the appropriate value for the mech's
@@ -755,17 +668,6 @@ public class Mech
             case 90  : setInternal(3, 29, 19, 15, 19); break;
             case 95  : setInternal(3, 30, 20, 16, 20); break;
             case 100 : setInternal(3, 31, 21, 17, 21); break;
-        }
-    }
-    
-    /**
-     * Returns the number of total critical slots in a location
-     */
-    public int getNumberOfCriticals(int loc) {
-        if (loc < 0 || loc >= noOfSlots.length) {
-            return 0;
-        } else {
-            return noOfSlots[loc];
         }
     }
     
@@ -908,4 +810,15 @@ public class Mech
         return (int)Math.round((dbv + obv) * pilotFactor);
     }
   
+    /**
+     * Add in any piloting skill mods
+     */
+      public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        // gyro hit?
+          if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
+            roll.addModifier(3, "Gyro damaged");
+          }
+        
+        return roll;
+      }
 }

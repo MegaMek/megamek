@@ -63,20 +63,15 @@ public class Settings
     public static int       moveStepDelay           = 500;
     public static boolean   showWrecks              = true;
 
-    public static int       shiftScrollSensitivity  = 3;
-    
     public static boolean   getFocus                = false;
-    
-    /**
-     * Controls whether the main window scrolls whenever we approach its edge (implicit)
-     * or only when we use the Right Mouse button (explicit)
-     * 
-     * @see     megamek.client.BoardView1#doScroll()
-     */    
-    public static boolean   explicitScrollOnly      = false;
-    
-    public static boolean   alwaysScrollOnRightClick = false;
 
+    // scrolling settings
+    public static boolean   rightDragScroll         = true;
+    public static boolean   tabScroll               = false;
+    public static boolean   clickEdgeScroll         = false;
+    public static boolean   autoEdgeScroll          = false;
+    public static int       scrollSensitivity       = 3;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
     public static String    lastPlayerCamoName      = null;
@@ -435,21 +430,29 @@ scan:
                         st.nextToken();
                         unitStartChar = (char)st.nval;
                     }
-                    else if(key.equals("shiftscrollsensitivity")) {
-                        st.nextToken();
-                        shiftScrollSensitivity = (int)st.nval;
-                    }
                     else if(key.equals("maxpathfindertime")) {
                         st.nextToken();
                         maxPathfinderTime = (int)st.nval;
                     }
-                    else if(key.equals("explicitscrollonly")) {
+                    else if(key.equals("rightdragscroll")) {
                         st.nextToken();
-                        explicitScrollOnly = Boolean.valueOf(st.sval).booleanValue();
+                        rightDragScroll = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if(key.equals("alwaysscrollonrightclick")) {
-                    	st.nextToken();
-                    	alwaysScrollOnRightClick = Boolean.valueOf(st.sval).booleanValue();
+                    else if(key.equals("tabscroll")) {
+                        st.nextToken();
+                        tabScroll = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("clickedgescroll")) {
+                        st.nextToken();
+                        clickEdgeScroll = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("autoedgescroll")) {
+                        st.nextToken();
+                        autoEdgeScroll = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("scrollsensitivity")) {
+                        st.nextToken();
+                        scrollSensitivity = (int)st.nval;
                     }
                     else if (key.equals("getfocus")) {
                         st.nextToken();
@@ -579,10 +582,14 @@ scan:
             cw.write("showmaphexpopup " + showMapHexPopup + "\r\n");
             cw.write("tooltipdelay " + tooltipDelay + "\r\n");
             cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
-            cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
-            cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
-            cw.write("alwaysscrollonrightclick " + alwaysScrollOnRightClick + "\r\n");
+
+            cw.write("rightdragscroll " + rightDragScroll + "\r\n");
+            cw.write("tabscroll " + tabScroll + "\r\n");
+            cw.write("clickedgescroll " + clickEdgeScroll + "\r\n");
+            cw.write("autoedgescroll " + autoEdgeScroll + "\r\n");
+            cw.write("scrollsensitivity " + scrollSensitivity + "\r\n");
+
             cw.write("getfocus " + getFocus + "\r\n");
             cw.write("mechdisplaysmallfontsize " + mechDisplaySmallFontSize + "\r\n");
             cw.write("mechdisplaymediumfontsize " + mechDisplayMediumFontSize + "\r\n");

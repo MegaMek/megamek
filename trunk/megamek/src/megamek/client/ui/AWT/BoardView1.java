@@ -1647,43 +1647,44 @@ public class BoardView1
      * scrolls the board image on the canvas.
      */
     public boolean doScroll() {
-    	if (Settings.explicitScrollOnly) {
-    	   Point oldScroll = new Point(scroll);
-           if (oldMousePosition == null || mousePos.equals(oldMousePosition)) {
-           	   return false;
-           }
-           scroll.x -= mousePos.x - oldMousePosition.x;
-           scroll.y -= mousePos.y - oldMousePosition.y;
-           checkScrollBounds();
-	       oldMousePosition.setLocation(mousePos);
-	       boolean s = !oldScroll.equals(scroll);
-	       scrolled = scrolled || s;
-	       return s;
-        }
-        if (!isScrolling)
-            return false;
         final Point oldScroll = new Point(scroll);
-        final int sf = 3; // scroll factor
-        // adjust x scroll
-        // scroll when the mouse is at the edges
-        if (mousePos.x < 100) {
-            scroll.x -= (100 - mousePos.x) / sf;
-        } else if (mousePos.x > (backSize.width - 100)) {
-            scroll.x -= ((backSize.width - 100) - mousePos.x) / sf;
+        boolean s = false;
+
+        if (Settings.rightDragScroll) {
+            if (! (oldMousePosition == null || mousePos.equals(oldMousePosition)) ) {
+                scroll.x -= Settings.scrollSensitivity * (mousePos.x - oldMousePosition.x);
+                scroll.y -= Settings.scrollSensitivity * (mousePos.y - oldMousePosition.y);
+                checkScrollBounds();
+                oldMousePosition.setLocation(mousePos);
+                s = !oldScroll.equals(scroll);
+                scrolled = scrolled || s;
+            };
+        };
+        
+        if (isScrolling && (Settings.clickEdgeScroll || Settings.autoEdgeScroll) ) {
+            final int sf = Settings.scrollSensitivity; // scroll factor
+            // adjust x scroll
+            // scroll when the mouse is at the edges
+            if (mousePos.x < 100) {
+                scroll.x -= (100 - mousePos.x) / sf;
+            } else if (mousePos.x > (backSize.width - 100)) {
+                scroll.x -= ((backSize.width - 100) - mousePos.x) / sf;
+            }
+            // scroll when the mouse is at the edges
+            if (mousePos.y < 100) {
+                scroll.y -= (100 - mousePos.y) / sf;
+            } else if (mousePos.y > (backSize.height - 100)) {
+                scroll.y -= ((backSize.height - 100) - mousePos.y) / sf;
+            }
+            checkScrollBounds();
+            if (!oldScroll.equals(scroll)) {
+                //            repaint();
+                s = true;
+                scrolled = s;
+            }
         }
-        // scroll when the mouse is at the edges
-        if (mousePos.y < 100) {
-            scroll.y -= (100 - mousePos.y) / sf;
-        } else if (mousePos.y > (backSize.height - 100)) {
-            scroll.y -= ((backSize.height - 100) - mousePos.y) / sf;
-        }
-        checkScrollBounds();
-        if (!oldScroll.equals(scroll)) {
-            //            repaint();
-            scrolled = true;
-            return true;
-        }
-        return false;
+
+        return s;
     }
 
     /**
@@ -1906,26 +1907,25 @@ public class BoardView1
     // KeyListener
     //
     public void keyPressed(KeyEvent ke) {
-    	if (!Settings.explicitScrollOnly) {
-	        switch(ke.getKeyCode()) {
-	        case KeyEvent.VK_UP :
-	            scroll.y -= 36;
-	            break;
-	        case KeyEvent.VK_DOWN :
-	            scroll.y += 36;
-	            break;
-	        case KeyEvent.VK_LEFT :
-	            scroll.x -= 36;
-	            break;
-	        case KeyEvent.VK_RIGHT :
-	            scroll.x += 36;
-	            break;
-	        case KeyEvent.VK_SHIFT :
-	            shiftKeyHeld = true;
-	            initShiftScroll = true;
-	            break;
-	        }
-    	}
+        switch(ke.getKeyCode()) {
+        case KeyEvent.VK_UP :
+            scroll.y -= 36;
+            break;
+        case KeyEvent.VK_DOWN :
+            scroll.y += 36;
+            break;
+        case KeyEvent.VK_LEFT :
+            scroll.x -= 36;
+            break;
+        case KeyEvent.VK_RIGHT :
+            scroll.x += 36;
+            break;
+        case KeyEvent.VK_SHIFT :
+            shiftKeyHeld = true;
+            initShiftScroll = true;
+            break;
+        }
+
         if (isTipShowing()) {
             hideTooltip();
         }
@@ -1933,6 +1933,7 @@ public class BoardView1
         checkScrollBounds();
         repaint();
     }
+
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
             shiftKeyHeld = false;
@@ -1946,7 +1947,7 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
-    	scrolled = false; // not scrolled yet    	
+        scrolled = false; // not scrolled yet
         if ( null == me.getPoint() ) {
             return;
         }
@@ -1963,14 +1964,24 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if ( !Settings.alwaysScrollOnRightClick &&
-        		game.getPhase() == Game.PHASE_FIRING ) {
-        		// In the firing phase, also disable scrolling if
-        		// the right or middle buttons are clicked, since
-        		// this means the user wants to activate the
-        		// popup menu or ruler tool.
-        		mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
+        if ( !Settings.rightDragScroll &&
+            game.getPhase() == Game.PHASE_FIRING ) {
+            // In the firing phase, also disable scrolling if
+            // the right or middle buttons are clicked, since
+            // this means the user wants to activate the
+            // popup menu or ruler tool.
+            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
         }
+
+        // disable auto--edge-scrolling if no option set
+        if ( !Settings.autoEdgeScroll ) {
+            mask |= InputEvent.BUTTON1_MASK;
+        };
+        // disable edge-scrolling if no option set
+        if ( !Settings.clickEdgeScroll ) {
+            mask |= InputEvent.BUTTON3_MASK;
+        };
+        
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         }
@@ -1978,8 +1989,10 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
+
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
+
     public void mouseReleased(MouseEvent me) {
         isTipPossible = true;
         oldMousePosition = null;
@@ -1990,6 +2003,7 @@ public class BoardView1
             }
         }
         isScrolling = false;
+
         // no click action triggered if click was for scrolling the map. Real clicks are without scrolling.
         if (scrolled)
             return;
@@ -1999,9 +2013,11 @@ public class BoardView1
             game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers());
         }
     }
+
     public void mouseEntered(MouseEvent me) {
         ;
     }
+
     public void mouseExited(MouseEvent me) {
         isTipPossible = false;
     }
@@ -2026,25 +2042,31 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-        if ( !Settings.alwaysScrollOnRightClick &&
-        		game.getPhase() == Game.PHASE_FIRING) {
-        		// In the firing phase, also disable scrolling if
-        		//  the right or middle buttons are clicked, since
-        		//  this means the user wants to activate the
-        		//  popup menu or ruler tool.
-        		mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        }
+        if ( !Settings.rightDragScroll &&
+            game.getPhase() == Game.PHASE_FIRING) {
+            // In the firing phase, also disable scrolling if
+            //  the right or middle buttons are clicked, since
+            //  this means the user wants to activate the
+            //  popup menu or ruler tool.
+            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
+        };
+
+        // disable auto--edge-scrolling if no option set
+        if ( !Settings.autoEdgeScroll ) {
+            mask |= InputEvent.BUTTON1_MASK;
+        };
+        // disable edge-scrolling if no option set
+        if ( !Settings.clickEdgeScroll ) {
+            mask |= InputEvent.BUTTON3_MASK;
+        };
+        
         if ( (me.getModifiers() & mask ) == 0 ) {
             isScrolling = true; //activate scrolling
         }
 
-        if (backSize != null) {
-            if (doScroll()) {
-                repaint();
-            }
-        }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
+
     public void mouseMoved(MouseEvent me) {
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
@@ -2060,14 +2082,14 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
-        if (shiftKeyHeld && !Settings.explicitScrollOnly) {
+        if (shiftKeyHeld && Settings.tabScroll) {
             if (initShiftScroll) {
                 previousMouseX = me.getX();
                 previousMouseY = me.getY();
                 initShiftScroll = false;
             }
-            scroll.x += Settings.shiftScrollSensitivity * (me.getX() - previousMouseX);
-            scroll.y += Settings.shiftScrollSensitivity * (me.getY() - previousMouseY);
+            scroll.x += Settings.scrollSensitivity * (me.getX() - previousMouseX);
+            scroll.y += Settings.scrollSensitivity * (me.getY() - previousMouseY);
             previousMouseX = me.getX();
             previousMouseY = me.getY();
             checkScrollBounds();

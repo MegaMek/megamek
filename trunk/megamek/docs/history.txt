@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.45 (CVS)
++ Bug 1001685: all the scroll options are now individually configurable
 
 v0.29.44 (2004-08-08 9:30pm)
 + Bug 1003021: Could not clear burning woods.

@@ -33,12 +33,15 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    soundMute;
     private Checkbox    showMapHexPopup;
     private TextField   tooltipDelay;
-    private TextField   shiftScrollSensitivity;
     private Choice      unitStartChar;
     private TextField   maxPathfinderTime;
-    private Checkbox    explicitScrollOnly;
-    private Checkbox    alwaysScrollOnRightClick;
     private Checkbox    getFocus;
+    
+    private Checkbox    rightDragScroll;
+    private Checkbox    tabScroll;
+    private Checkbox    clickEdgeScroll;
+    private Checkbox    autoEdgeScroll;
+    private TextField   scrollSensitivity;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -114,20 +117,33 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         panSetting.add( new Label("ProtoMech unit codes.") );
         tempPanel.add( panSetting );
 
-        panSetting = new Panel();
-        shiftScrollSensitivity
-            = new TextField(4);
-        panSetting.add( shiftScrollSensitivity );
-        panSetting.add( new Label("Shift-Scroll sensitivity.") );
-        tempPanel.add( panSetting );
+// scrolling options
+        tempPanel.add( new Label("Clicking on the MiniMap and using the cursor keys always scrolls the main display.") );
+        tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
 
-        explicitScrollOnly
-            = new Checkbox( "Use only Right-Click-Drag-and-Drop and the MiniMap to scroll." );
-        tempPanel.add( explicitScrollOnly );
+        rightDragScroll
+            = new Checkbox( "By right-clicking on the map and dragging." );
+        tempPanel.add( rightDragScroll );
         
-        alwaysScrollOnRightClick
-		    = new Checkbox( "Right click always scrolls the map. (No effect when Right-Click-Drag-and-Drop scrolling used)" );
-		    tempPanel.add( alwaysScrollOnRightClick );
+        tabScroll
+            = new Checkbox( "By holding down TAB and dragging." );
+            tempPanel.add( tabScroll );
+
+        clickEdgeScroll
+            = new Checkbox( "By right-clicking near the edge of the map." );
+            tempPanel.add( clickEdgeScroll );
+
+        autoEdgeScroll
+            = new Checkbox( "Whenever you target near the edge of the map." );
+            tempPanel.add( autoEdgeScroll );
+
+        scrollSensitivity
+            = new TextField(4);
+        panSetting.add( scrollSensitivity );
+        panSetting.add( new Label("Scroll sensitivity.") );
+        tempPanel.add( panSetting );
+// scrolling options
+
 
         panSetting = new Panel();
         maxPathfinderTime
@@ -215,13 +231,14 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
             }
         }
 
-        shiftScrollSensitivity.setText( Integer.toString(Settings.shiftScrollSensitivity ) );
-
-        explicitScrollOnly.setState( Settings.explicitScrollOnly );
-        
-        alwaysScrollOnRightClick.setState( Settings.alwaysScrollOnRightClick );
-
         maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
+
+        rightDragScroll.setState( Settings.rightDragScroll );
+        tabScroll.setState( Settings.tabScroll );
+        clickEdgeScroll.setState( Settings.clickEdgeScroll );
+        autoEdgeScroll.setState( Settings.autoEdgeScroll );
+        scrollSensitivity.setText( Integer.toString(Settings.scrollSensitivity ) );
+
 
         getFocus.setState( Settings.getFocus );
         super.show();
@@ -249,9 +266,12 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.showMapHexPopup= showMapHexPopup.getState();
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
-        Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
-        Settings.explicitScrollOnly= explicitScrollOnly.getState();
-        Settings.alwaysScrollOnRightClick = alwaysScrollOnRightClick.getState();
+
+        Settings.rightDragScroll   = rightDragScroll.getState();
+        Settings.tabScroll         = tabScroll.getState();
+        Settings.clickEdgeScroll   = clickEdgeScroll.getState();
+        Settings.autoEdgeScroll    = autoEdgeScroll.getState();
+        Settings.scrollSensitivity = Integer.parseInt(scrollSensitivity.getText());
 
 
         Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());

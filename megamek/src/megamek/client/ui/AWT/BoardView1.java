@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -29,7 +29,7 @@ import megamek.common.actions.*;
 public class BoardView1
     extends Canvas
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
-    Runnable
+    ComponentListener, Runnable
 {
     private static final int        PIC_MAX             = 4;
     private static final int        PIC_MECH_LIGHT      = 0;
@@ -95,7 +95,7 @@ public class BoardView1
     private Image[][][]          tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
     
     // polygons for a few things
-    private Polygon                hexPoly;
+    private Polygon              hexPoly;
     private Polygon[]            facingPolys;
     private Polygon[]            movementPolys;
     
@@ -112,6 +112,7 @@ public class BoardView1
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
+        addComponentListener(this);
         
         // tooltip
         tipWindow = new Window(frame);
@@ -976,8 +977,6 @@ public class BoardView1
         lastIdle = System.currentTimeMillis();
         isTipPossible = true;
     }
-    
-    
     
     /**
      * Displays a bit of text in a box.

@@ -876,11 +876,6 @@ public class Compute
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
         
-        // weapon fired already?
-        if (mounted.isUsedThisRound()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon already fired this round.");
-        }
-        
         // sensors operational?
         final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if (sensorHits > 1) {

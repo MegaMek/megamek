@@ -361,7 +361,7 @@ public class FiringDisplay
      */
     private void refreshAll() {
         client.bv.redrawEntity(ce());
-        client.mechD.wPan.displayMech(ce());
+        client.mechD.displayMech(ce());
         client.mechD.showPanel("weapons");
         selectedWeapon = ce().getFirstWeapon();
         client.mechD.wPan.selectWeapon(selectedWeapon);

@@ -162,6 +162,9 @@ public class DeployMinefieldDisplay
 		setConventionalEnabled(p.getNbrMFConventional());
 		setCommandEnabled(p.getNbrMFCommand());
 		setVibrabombEnabled(p.getNbrMFVibra());
+		if (!p.hasMinefields()) {
+		    butDone.setEnabled(true);
+		}
     }
 
     /**

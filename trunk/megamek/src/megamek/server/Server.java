@@ -4113,7 +4113,7 @@ implements Runnable {
                 int temp = wtype.getRackSize() * platoon.getShootingStrength();
 
                 // Do all shots hit?
-                if ( !bAllShotsHit ) {
+                if ( bAllShotsHit ) {
                     hits = temp;
                 } else {
                     // Account for more than 20 missles hitting.

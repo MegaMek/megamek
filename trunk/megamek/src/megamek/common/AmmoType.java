@@ -238,6 +238,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createFenrirSRM4Ammo() );
         EquipmentType.addType( createBACompactNarcAmmo() );
         EquipmentType.addType( createBAMineLauncherAmmo() );
+        EquipmentType.addType( createBALRM5Ammo() );
         
         // cache types that share a launcher for loadout purposes
         for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
@@ -2143,6 +2144,23 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MINE;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
+        ammo.bv = 0;
+        
+        return ammo;
+    }
+
+    public static AmmoType createBALRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 5 Ammo";
+        ammo.internalName = "BA Ammo LRM-5";
+        ammo.mepName = "BA Ammo LRM-5";
+        ammo.mtfName = "BALRM5 Ammo";
+        ammo.tdbName = "BA LRM 5 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 6;
         ammo.bv = 0;
         
         return ammo;

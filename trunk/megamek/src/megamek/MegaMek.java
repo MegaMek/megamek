@@ -260,6 +260,9 @@ public class MegaMek
         // start server
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
+        
+        // apply any scenario damage
+        sl.applyDamage(server);
 
         if (sd.localName != "") {
             // initialize game

@@ -11,6 +11,7 @@ v0.29.72 (CVS)
     can optionally spot automatically.
 + RFE 933288: Allow Backspace to "unfire" the last fired weapon in the Firing
     Display.
++ Bug 1121134: leg lost due to building collapse didn't cause immediate PSR.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

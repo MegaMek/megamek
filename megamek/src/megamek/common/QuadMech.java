@@ -256,5 +256,18 @@ public class QuadMech extends Mech
       return LOCATION_ABBRS;
     }
     
+    public static int restrictScore(int location)
+    {
+        switch(location) {
+            case Mech.LOC_RT :
+            case Mech.LOC_LT :
+                return 1;
+            case Mech.LOC_CT :
+                return 2;
+            default :
+                return 3;
+        }
+    }
+    
 }
 

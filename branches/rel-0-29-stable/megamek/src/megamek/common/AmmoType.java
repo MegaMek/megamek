@@ -1098,7 +1098,7 @@ public class AmmoType extends EquipmentType {
         ammo.internalName = "ISNarc Pods";
         ammo.mepName = "IS Ammo Narc";
         ammo.mtfName = ammo.internalName;
-        ammo.tdbName = "IS Narc Missle Beacon Ammo";
+        ammo.tdbName = "IS Narc Missile Beacon Ammo";
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
@@ -1750,7 +1750,7 @@ public class AmmoType extends EquipmentType {
         ammo.internalName = "CLNarc Pods";
         ammo.mepName = "Clan Ammo Narc";
         ammo.mtfName = ammo.internalName;
-        ammo.tdbName = "Clan Narc Missle Beacon Ammo";
+        ammo.tdbName = "Clan Narc Missile Beacon Ammo";
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;

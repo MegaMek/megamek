@@ -86,8 +86,8 @@
   </target>
 
   <target depends="cvsrel-init" name="cvsrel-package">
-    <delete dir="${cvsdir}/megamek/classes"/>
-    <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
+    <delete dir="${basedir}/classes"/>
+    <zip basedir="${basedir}" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
   </target>
   
   <target name="cvsrel-clean">
@@ -95,5 +95,6 @@
   </target>
 
   <target depends="cvsrel-init, cvsrel-get, cvsrel-build, cvsrel-package, cvsrel-clean" name="cvsrel"/>
+
 
 </project>

@@ -265,6 +265,7 @@ public abstract class Mech
             if (m.isPendingDump()) {
                 m.setPendingDump(false);
                 m.setDumping(true);
+                reloadEmptyWeapons();
             }
             else if (m.isDumping()) {
                 m.setDumping(false);

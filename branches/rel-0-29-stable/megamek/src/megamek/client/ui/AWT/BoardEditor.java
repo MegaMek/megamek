@@ -90,8 +90,7 @@ public class BoardEditor extends Container
         frame.setTitle("MegaMek Editor : Unnamed");
         
         addKeyListener(this);
-        
-        bv.setLoadAllHexes(true);
+        board.addBoardListener(this);
         
         canHex = new HexCanvas();
         labElev = new Label("Elev:", Label.RIGHT);

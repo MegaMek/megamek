@@ -482,6 +482,7 @@ public class Compute
         /* Bug 754610: Revert fix for bug 702735. */
         boolean prevStepOnPavement = false;
         boolean isProne = entity.isProne();
+        boolean isUnjammingRAC = entity.isUnjammingRAC();
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -578,6 +579,13 @@ public class Compute
                     moveType = Entity.MOVE_ILLEGAL;
                 }
 
+            }
+
+            // Can't run or jump if unjamming a RAC.
+            if ( isUnjammingRAC && 
+                 ( overallMoveType == Entity.MOVE_RUN ||
+                   overallMoveType == Entity.MOVE_JUMP ) ) {
+                moveType = Entity.MOVE_ILLEGAL;
             }
 
             // only standing mechs may go prone

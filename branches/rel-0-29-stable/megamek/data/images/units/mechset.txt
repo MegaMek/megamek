@@ -356,7 +356,7 @@ chassis "Hellcat" "hellcat.gif"
 exact "Cauldron-Born H" "cauldronborn2.gif"
 chassis "Epona Pursuit Tank" "epona.gif"
 chassis "Hetzer Wheeled Assault Gun" "hetzer.gif"
-#wrongsize#chassis "Donar" "donar.gif"
+chassis "Donar" "donar.gif"
 chassis "Ishtar Heavy Fire Support Tank" "ishtar.gif"
 chassis "Challenger X MBT" "challenger.png"
 chassis "Hachiman Fire Support Tank" "hachiman.gif"
@@ -395,3 +395,11 @@ exact   "Zeus ZEU-9S" "zeus_b.gif"
 # BH
 chassis "Black Hawk-KU" "Blackhawk.gif"
 chassis "Nova" "Blackhawk.gif"
+
+# starcaptaintorc
+chassis "Pack Hunter" "packhunter.gif"
+chassis "Schiltron" "schiltron.gif"
+# made by starcaptaintorc, resized by BH-21
+chassis "Viking" "viking.gif"
+chassis "Fafnir" "fafnir.gif"
+chassis "Hauptmann" "hauptman.gif"

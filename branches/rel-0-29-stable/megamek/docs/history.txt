@@ -113,8 +113,17 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-3 (CVS)
+v 0.29-stable-3 (08-27-03, 2:17 pm)
 + Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
++ Bug 762509: Can't run or jump when unjamming a RAC.
++ Bug 793574: TDB uses the "Missile" spelling, not "Missle".
++ Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
++ Bug 775122: fixed NPE which broke map editor load button
++ Bug 775472: wait for new hex images (like smoke) to load before drawing
++ Data 779006: Added BH-21's resized mech images
++ Vehicles now use red secondary arrow to indicate turret direction
++ Fixed bug where locked turrets wouldn't show a direction
++ Bug 760256: mechs dumping ammo try to reload weapons using that ammo
 
 v 0.29-stable-2 (07-28-03, 12:32 am)
 + Bug 763169: Dropping prone now has chance to dislodge swarmers.

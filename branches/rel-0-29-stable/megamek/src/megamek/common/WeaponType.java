@@ -1364,7 +1364,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "ISNarcBeacon";
         weapon.mepName = "IS Narc Beacon";
         weapon.mtfName = weapon.internalName;
-        weapon.tdbName = "IS Narc Missle Beacon";
+        weapon.tdbName = "IS Narc Missile Beacon";
         weapon.heat = 0;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
@@ -2528,7 +2528,7 @@ public class WeaponType extends EquipmentType {
         weapon.internalName = "CLNarcBeacon";
         weapon.mepName = "Clan Narc Beacon";
         weapon.mtfName = weapon.internalName;
-        weapon.tdbName = "Clan Narc Missle Beacon";
+        weapon.tdbName = "Clan Narc Missile Beacon";
         weapon.heat = 0;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;

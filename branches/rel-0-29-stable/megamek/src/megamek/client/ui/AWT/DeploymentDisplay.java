@@ -245,6 +245,19 @@ public class DeploymentDisplay
         return client.game.getEntity(cen);
     }
 
+    public void die() {
+        if (client.isMyTurn()) {
+            endMyTurn();
+        }
+        client.bv.markDeploymentHexesFor(null);
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+        client.bv.removeKeyListener(this);
+        client.cb.getComponent().removeKeyListener(this);
+
+        this.removeAll();
+    }
+
     //
     // BoardListener
     //
@@ -315,14 +328,7 @@ public class DeploymentDisplay
     
     public void gamePhaseChange(GameEvent ev) {
         if (client.game.phase != Game.PHASE_DEPLOYMENT) {
-            if (client.isMyTurn()) {
-                endMyTurn();
-            }
-            client.bv.markDeploymentHexesFor(null);
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
-            client.bv.removeKeyListener(this);
-            client.cb.getComponent().removeKeyListener(this);
+            die();
         }
     }
 

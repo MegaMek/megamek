@@ -1119,7 +1119,8 @@ public abstract class Entity
     public String getArmorString(int loc, boolean rear) {
         if (getArmor(loc, rear) == ARMOR_NA) {
             return "N/A";
-        } else if (getArmor(loc, rear) == ARMOR_DESTROYED) {
+        } else if (getArmor(loc, rear) == ARMOR_DOOMED ||
+                   getArmor(loc, rear) == ARMOR_DESTROYED) {
             return "***";
         } else {
             return Integer.toString(getArmor(loc, rear));
@@ -1977,13 +1978,15 @@ public abstract class Entity
     public void reloadEmptyWeapons() {
         // try to reload weapons
         for (Enumeration i = getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            WeaponType wtype = (WeaponType)mounted.getType();
+            Mounted mounted = (Mounted) i.nextElement();
+            WeaponType wtype = (WeaponType) mounted.getType();
 
-            if ( wtype.getAmmoType() != AmmoType.T_NA &&
-                 (wtype.getFlags() & WeaponType.F_INFANTRY) !=
-                 WeaponType.F_INFANTRY ) { 
-                if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
+            if (wtype.getAmmoType() != AmmoType.T_NA
+                && (wtype.getFlags() & WeaponType.F_INFANTRY)
+                    != WeaponType.F_INFANTRY) {
+                if (mounted.getLinked() == null
+                    || mounted.getLinked().getShotsLeft() <= 0
+                    || mounted.getLinked().isDumping()) {
                     loadWeapon(mounted);
                 }
             }

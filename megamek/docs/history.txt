@@ -120,7 +120,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.13-dev
+v 0.28.13 (04-12-03, 5:30pm)
 + Players aren't allowed to target infantry with Inferno rounds.
 + Physical attacks can now use Targetable interface.
 + Initial implementation of buildings.  You can't burn them or climb on them,

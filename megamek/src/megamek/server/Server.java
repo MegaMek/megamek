@@ -743,7 +743,7 @@ public class Server
 		int[] noe = new int[MAX_PLAYERS];
 		int noOfTurns = 0;
 		for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-			Entity entity = (Entity)e.nextElement();
+			final Entity entity = (Entity)e.nextElement();
 			if (entity.isSelectable()) {
 				noe[entity.getOwner().getId()]++;
 				noOfTurns++;
@@ -922,7 +922,7 @@ public class Server
             // check piloting skill for getting up
             if (step.getType() == MovementData.STEP_GET_UP) {
 				entity.setProne(false);
-				pilotRolls.addElement(new PilotingRollData(entity.getId(), 0, "getting up"));
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"));
 				entity.heatBuildup += 1;
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
@@ -930,15 +930,15 @@ public class Server
                     && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
                         || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0
                         || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0)) {
-				    pilotRolls.addElement(new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
+                    doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"));
                 }
                 firstStep = false;
             }
             
-            // resolve any pre-step piloting skill rolls
-            resolvePilotingRolls();
+            // did the entity just fall?
             if (entity.isProne()) {
                 curFacing = entity.getFacing();
+                curPos = entity.getPosition();
                 break;
             }
             
@@ -950,11 +950,11 @@ public class Server
 
             final Hex curHex = game.board.getHex(curPos);
             
-            // check if we've moved into rubble terrain
+            // check if we've moved into rubble
             if (!lastPos.equals(curPos)
                 && step.getMovementType() != Entity.MOVE_JUMP
                 && (curHex.getTerrainType() == Terrain.RUBBLE)) {
-				pilotRolls.addElement(new PilotingRollData(entity.getId(), 0, "entering Rubble"));
+                doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Rubble"));
             }
 
             // check if we've moved into water
@@ -963,18 +963,18 @@ public class Server
                 && curHex.getTerrainType() == Terrain.WATER
                 && curHex.getElevation() < 0) {
                 if (curHex.getElevation() == -1) {
-				    pilotRolls.addElement(new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
+                    doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
                 } else if (curHex.getElevation() == -2) {
-				    pilotRolls.addElement(new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"));
+                    doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"));
                 } else {
-				    pilotRolls.addElement(new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"));
+                    doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"));
                 }
             }
             
-            // resolve any post-step piloting skill rolls
-            resolvePilotingRolls();
+            // did the entity just fall?
             if (entity.isProne()) {
                 curFacing = entity.getFacing();
+                curPos = entity.getPosition();
                 break;
             }
             
@@ -1000,9 +1000,8 @@ public class Server
                 || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0
                 || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0
                 || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0)) {
-		    pilotRolls.addElement(new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"));
+            doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"));
         }
-        resolvePilotingRolls();
                 
         // build up heat from movement
 		if (moveType == Entity.MOVE_WALK) {
@@ -1018,6 +1017,75 @@ public class Server
 		// duhh.. send an outgoing packet to everybody
 		send(createEntityPacket(entity.getId()));
 	}
+    
+    /**
+     * Do a piloting skill check while standing still (during the movement phase)
+     */
+    private void doSkillCheckInPlace(Entity entity, PilotingRollData reason) {
+        final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
+        
+        // append the reason modifier
+        roll.addModifier(reason.getValue(), reason.getDesc());
+        
+        // okay, print the info
+		phaseReport.append("\n" + entity.getDisplayName() 
+                           + " must make a piloting skill check (" + reason.getDesc() + ")" 
+                           + ".\n");
+        // roll
+		final int diceRoll = Compute.d6(2);
+		phaseReport.append("Needs " + roll.getValue() 
+                           + " (" + roll.getDesc() + ")"
+                           + ", rolls " + diceRoll + " : "); 
+		if (diceRoll < roll.getValue()) {
+            phaseReport.append("falls.\n");
+            doEntityFall(entity, roll.getValue());
+        } else {
+            phaseReport.append("succeeds.\n");
+        }
+    }
+        
+    /**
+     * Do a piloting skill check while moving
+     */
+    private void doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest, 
+                                         PilotingRollData reason) {
+        final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
+        final Hex srcHex = game.board.getHex(src);
+        final Hex destHex = game.board.getHex(dest);
+        boolean fallsInPlace;
+        int fallElevation;
+        
+        // append the reason modifier
+        roll.addModifier(reason.getValue(), reason.getDesc());
+        
+        // will the entity fall in the source or destination hex?
+        if (src.equals(dest) || srcHex.getElevation() < destHex.getElevation()) {
+            fallsInPlace = true;
+        } else {
+            fallsInPlace = false;
+        }
+        
+        // how far down did it fall?
+        fallElevation = Math.abs(destHex.getElevation() - srcHex.getElevation());
+        
+        // okay, print the info
+		phaseReport.append("\n" + entity.getDisplayName() 
+                           + " must make a piloting skill check" 
+                           + " while moving from hex " + src.getBoardNum() 
+                           + " to hex " + dest.getBoardNum() 
+                           + " (" + reason.getDesc() + ")" + ".\n");
+        // roll
+		final int diceRoll = Compute.d6(2);
+		phaseReport.append("Needs " + roll.getValue() 
+                           + " (" + roll.getDesc() + ")"
+                           + ", rolls " + diceRoll + " : "); 
+		if (diceRoll < roll.getValue()) {
+            phaseReport.append("falls in  hex " + (fallsInPlace ? src.getBoardNum() : dest.getBoardNum()) + ".\n");
+            doEntityFall(entity, (fallsInPlace ? src : dest), fallElevation, roll.getValue());
+        } else {
+            phaseReport.append("succeeds.\n");
+        }
+    }
     
     /**
      * Displace a unit in the direction specified.  Please check if such
@@ -1520,7 +1588,8 @@ public class Server
 	}
 	
 	/**
-	 * Resolves all built up piloting skill rolls.
+	 * Resolves all built up piloting skill rolls. 
+	 * (used at end of weapons, physical phases)
 	 */
 	private void resolvePilotingRolls() {
 		for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -1548,7 +1617,7 @@ public class Server
             }
 			if (roll.getValue() == PilotingRollData.AUTOMATIC_FALL) {
 				phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) and automatically fails (" + roll.getDesc() + ").\n");
-				doEntityFall(entity, entity.getPosition(), roll.getValue());
+				doEntityFall(entity, roll.getValue());
 			} else {
 				phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
 				phaseReport.append("The target is " + roll.getValue() + " [" + roll.getDesc() + "].\n");
@@ -1557,7 +1626,7 @@ public class Server
 					phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValue() + ", rolls " + diceRoll + " : "); 
                     phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
 					if (diceRoll < roll.getValue()) {
-						doEntityFall(entity, entity.getPosition(), roll.getValue());
+						doEntityFall(entity, roll.getValue());
 						// break rolling loop
 						break;
 					}
@@ -1946,9 +2015,9 @@ public class Server
     }
     
     /**
-     * The mech falls with a lot of stuff specified
+     * Makes a mech fall.
      */
-    private void doEntityFall(Entity entity, Coords dest, int height, int facing, int roll) {
+    private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, int roll) {
         // facing after fall
 		String side;
 		int table;
@@ -1975,7 +2044,7 @@ public class Server
 		
 		// calculate damage
 		//TODO: account for water
-		int damage = (int)Math.round(entity.getWeight() / 10);// * height;
+		int damage = (int)Math.round(entity.getWeight() / 10) * (height + 1);
 		
 		// report falling
 		phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");
@@ -2004,15 +2073,23 @@ public class Server
 		}
 
 		entity.setProne(true);
+        entity.setPosition(fallPos);
 		entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
 		entity.setSecondaryFacing(entity.getFacing());
     }
 	
 	/**
+	 * The mech falls into an unoccupied hex from the given height above
+	 */
+	private void doEntityFall(Entity entity, Coords fallPos, int height, int roll) {
+        doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll);
+	}
+	
+	/**
 	 * The mech falls down in place
 	 */
-	private void doEntityFall(Entity entity, Coords dest, int roll) {
-        doEntityFall(entity, dest, 0, Compute.d6(1) - 1, roll);
+	private void doEntityFall(Entity entity, int roll) {
+        doEntityFall(entity, entity.getPosition(), 0, roll);
 	}
 	
     /**
@@ -2217,7 +2294,7 @@ public class Server
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
             
-            conn.send(packet);
+            conn.connSend(packet);
 		}
 	}
 	
@@ -2225,14 +2302,14 @@ public class Server
 	 * Send a packet to a specific connection.
 	 */
 	private void send(int connId, Packet packet) {
-        getClient(connId).send(packet);
+        getClient(connId).connSend(packet);
 	}
 	
 	/**
 	 * Send a packet to a pending connection
 	 */
 	private void sendToPending(int connId, Packet packet) {
-        getPendingConnection(connId).send(packet);
+        getPendingConnection(connId).connSend(packet);
 	}
 	
 	/**
@@ -2324,7 +2401,7 @@ public class Server
          * 
          * synchronized seems to keep this from getting munged.
          */
-        public synchronized void send(Packet packet) {
+        public synchronized void connSend(Packet packet) {
 	        try {
 	        	ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 oos.flush();

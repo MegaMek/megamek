@@ -69,7 +69,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.27.12 (12-20-02, 4:30pm)
 + 652106: possible fix for linux flickering in lobby
 + 652105: board pop-up menu appears on linux (and mac too, maybe)
 + added dialog about where to find help with the board editor

@@ -177,6 +177,8 @@ public class Mounted implements Serializable{
             //HACK: gauss rifle damage hardcoding
             if (wtype.getAmmoType() == AmmoType.T_GAUSS) {
                 return 20;
+            } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_LIGHT) {
+                return 16;
             }
         }
         // um, otherwise, I'm not sure

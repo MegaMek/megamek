@@ -13,6 +13,7 @@ v 0.29.27 (CVS)
         include Protomechs as well.
 + Made above fix for bug 760628 Java 1.1 compatible.
 + RFE 898795: MiniMap now shows whether units have acted already or not
++ Bug 895352: Entitystatus.txt more complete now.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

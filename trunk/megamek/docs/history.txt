@@ -28,6 +28,9 @@ v0.29.43 (CVS)
 + Included updates to boards from Endreffy Janos.
 + Bug 1001237: Accidental Ignition of woods when trying to clear woods did not
     work correctly.
++ Bug 1000932: synchronize MovementDisplay#updateProneButtons()
++ RFE 1001439: use the board name for the default name of the image file.
++ Moved the player selection dropdown in the "Select Mech" dialog.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

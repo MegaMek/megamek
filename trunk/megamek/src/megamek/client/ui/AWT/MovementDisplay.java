@@ -918,7 +918,7 @@ public class MovementDisplay
         }
     }
 
-    private void updateProneButtons() {
+    private synchronized void updateProneButtons() {
         if (ce() != null && !ce().isImmobile()) {
             setGetUpEnabled(cmd.getFinalProne());
             setGoProneEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);

@@ -165,9 +165,6 @@ public class BoardView1
     // Position of the mouse before right mouse button was pressed. Used to have an anchor for scrolling 
     private Point oldMousePosition = null;
     
-    // Remembers which mouse button are pressed.
-    private int oldMouseButtonPressed = 0;
-
     // Indicate that a scrolling took place, so no popup should be drawn on right mouse button release
     private boolean scrolled = false;
     
@@ -1954,7 +1951,7 @@ public class BoardView1
             return;
         }
         oldMousePosition = me.getPoint();
-        oldMouseButtonPressed = me.getButton();
+
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);

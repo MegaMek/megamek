@@ -46,6 +46,7 @@ v 0.29.27 (CVS)
 + Oops... Above fix meant return fire on the MiniMap was only in one colour
 + Customize Mech dialog no longer enables ammo choices that aren't yours.
 + Bug 900531: Customize Mech had problems with Clan Mek and Proto MG ammo.
++ Data 897783: New/additional images for Cerberus, Hauptmann, and Sagittaire.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

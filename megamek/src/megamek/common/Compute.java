@@ -993,7 +993,7 @@ public class Compute
 
         // Mek targets that have the dodge maneuver but didn't get a physical
         // turn (unless they're charging or DFAing) get the dodge bonus.
-        if ( target instanceof Mech &&
+        if ( target != null && target instanceof Mech &&
              target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
              ( target.dodging ||
                ( !target.hasDisplacementAttack() &&

@@ -185,8 +185,9 @@ public class Infantry
     /**
      * The internal names of the anti-Mek attacks.
      */
-    public static final String  SWARM_MEK       = "SwarmMek";
     public static final String  LEG_ATTACK      = "LegAttack";
+    public static final String  SWARM_MEK       = "SwarmMek";
+    public static final String  STOP_SWARM      = "StopSwarm";
 
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
@@ -481,7 +482,8 @@ public class Infantry
         }
         // N.B. Clan Undine BattleArmor can leg attack, but aren't
         //          classified as "anti-mek" in the BMRr, pg. 155).
-        else if ( Infantry.LEG_ATTACK.equals( equip.getInternalName() ) ) {
+        else if ( Infantry.LEG_ATTACK.equals( equip.getInternalName() ) ||
+                  Infantry.STOP_SWARM.equals( equip.getInternalName() ) ) {
             // Do nothing.
         }
         // Handle infantry weapons.

@@ -14,6 +14,7 @@
 
 package megamek.client;
 
+// Defines Iterator class for JDK v1.1
 import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -1429,7 +1430,16 @@ public class BoardView1
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 47);
             }    
-            
+
+            // If this unit is being swarmed or is swarming another, say so.
+            if ( Entity.NONE != entity.getSwarmAttackerId() ) {
+                // draw "SWARMED"
+                graph.setColor(Color.darkGray);
+                graph.drawString("SWARMED", 17, 22);
+                graph.setColor(Color.red);
+                graph.drawString("SWARMED", 16, 21);
+            }
+
             //Lets draw our armor and internal status bars
               int baseBarLength = 23;
               int barLength = 0;

@@ -144,6 +144,22 @@ not using the path you want for your attack, you may plot a path near the
 target using the appropriate type of movement and then use the charge or dfa
 button to complete the attack.
 
+If a vehicle or Mek that has sufficient empty space starts a turn in the same
+hex as a friendly infantry unit, it can Load the unit as its first move of the
+turn.  A vehicle or Mek that is already carrying an infantry unit can unload
+the unit as its last movement of the turn.
+
+If an Anti-Mek infantry platoon or Battle Armor squad has succeeded in mounting
+a Mek with a Swarm attack, the Mek can attempt to dislodge the squad during the
+movement phase in one of three ways: 1) jumping (requires a Pilot Skill Roll,
+with a +4 modifier), 2) walking into (and perhaps through) a Level 2 or deeper
+water hex, or 3) ending its turn in a hex that is on fire (this will not work
+against Battle Armor squads).  Swarming infantry automatically die if they are
+dislodged into a Level 1 or deeper water hex.  Infantry dislodged in the
+Movement Phase can not move or fire for the rest of the turn.  Swarming units
+can not move off of their target Mek until they use the Stop Swarm action in
+the Weapons Fire Phase.
+
 The Esc key clears all current movement.
 
 
@@ -181,6 +197,24 @@ switch to another unit, first cancel all current fire by hitting the Esc key.
 When you hit the fire button for your last available weapon, all declared 
 fire will be committed.
 
+An Anti-Mek trained infantry platoon or Battle Armor squad that is in the same
+hex as a Mek can conduct a Leg Attack or a Swarm Mek attack.  The base to-hit
+number varies with the number of men in the unit.  A Swarm Mek attack against
+a Mek that is prone and/or immoble gains a -4 modifier to its to-hit roll.  A
+successful Leg Attack may cause critical damage to one of the Meks legs; if no
+critical is rolled, the leg will take 4 points of damage (which may damage the
+leg's internal structure, and cause another critical roll).  A successfull
+Swarm Mek attack does no damage in the turn it hits, but it means that the unit
+has attached itself to the Mek, and can begin to cause significant damage on
+subsequent turns.  Starting the turn after the unit starts a Swarming a Mek,
+all attacks by that unit automatically hit, use a location chart that is more
+dangerous than normaly, and automatically roll for a Thru-Armor Critical.  A
+unit that is Swarming a Mek can also choose to Stop Swarming in any weapons
+phase.  The Leg Attack, Swarm Mek, and Stop Swarm actions are all "solo"
+actions: the unit can take no other action in the Weapons Fire Phase.  Attempts
+to do so will cancel the "solo" action.  Swarming infantry can not be targeted
+by any attacks other than a "Brush Off" attack (see Physical Attacks Phase).
+
 
 Weapons Fire Report:
 
@@ -199,6 +233,17 @@ Units ineligible to make physical attacks due to being out of range, having
 made weapons attacks, or for any other reason, will be skipped.  If all units 
 are ineligible, the entire phase will be skipped.
 
+Prone Meks that are in the same hex as a vehicle can punch the vehicle, if
+they have both arms.  Prone Meks that are in a Clear or Pavement hex as an
+infantry platoon or Battle Armor squad can "thrash" at the unit if they have
+at least one arm or leg.  Be warned, that "thrashing" causes a Pilot Skill Roll
+that, if failed, causes the Mek to suffer damage as if it has fallen 1 level.
+
+Meks that are not prone that have been Swarmed by an infantry platoon or Battle
+Armor squad can attempt to "Brush Off" the squad with either or both arms.  Any
+"Brush Off" attack that fails to hit the infantry will inflict punch damage on
+the Mek.  Any successful "Brush Off" attack ends a Swarm Mek attack.
+
 
 End of Turn Report:
 
@@ -216,14 +261,9 @@ some cases, due to technical or design limitations, this is not possible.
 These differences are not considered "bugs."  If you spot any more 
 discrepancies, please contact the author (see "CONTACT" below.)
 
-- You can jump in any path, not just the shortest one.
-
-- You can only get up at the beginning of your turn.  If you fall during
-    movement, you're down for the round.
-    
 - If the line of fire lies along the edge of two hexes, in the board game,
-    the defender chooses which hex to use.  Currenty, MegaMek arbitrarily picks
-    a hex.  In the future, this will be modified to favor the defender.
+    the defender chooses which hex to use.  Instead, MegaMek chooses the
+    hex that most favors the defender.
     
 - When punching, you automatically punch with both arms, if possible.  This
     means you can not punch two different targets in the same round.
@@ -251,7 +291,9 @@ Java programs run in their own enviroment, called a Virtual Machine or VM
 for short.  These Java VMs are available on most systems from a variety of 
 sources.  Most modern systems have one installed by default.
 
-Windows users: To start MegaMek, run the MegaMek.exe file.
+Windows users: To start MegaMek, run the MegaMek.exe file.  Beware of a known
+bug: running using the MegaMek.exe file prevents infantry from being loaded
+into a transport vehicle or Mek.
 
 Other graphical OSes: Many other graphical OSes, such as MacOS and OSX, will
 allow you to double-click the .jar file to run it.  If this does not work,

@@ -544,9 +544,13 @@ public class Compute
 
             // Is the entity unloading passeners?
             if ( stepType == MovementData.STEP_UNLOAD ) {
-                // Prone Meks are able to unload.
-                if ( entity.isProne() && moveType == Entity.MOVE_ILLEGAL ) {
-                    moveType = Entity.MOVE_WALK;
+                // Prone Meks are able to unload, if they have the MP.
+                if ( step.getMpUsed() <= entity.getRunMP() &&
+                     entity.isProne() && moveType == Entity.MOVE_ILLEGAL ) {
+                    moveType = Entity.MOVE_RUN;
+                    if ( step.getMpUsed() <= entity.getWalkMP() ) {
+                        moveType = Entity.MOVE_WALK;
+                    }
                 }
 
                 // Can't unload units into prohibited terrain
@@ -832,6 +836,11 @@ public class Compute
         }
         // another easy check
         if (!game.board.contains(dest)) {
+            return false;
+        }
+
+        // Swarming entities can't move.
+        if ( Entity.NONE != entity.getSwarmTargetId() ) {
             return false;
         }
 
@@ -1292,6 +1301,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
         }
 
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
             for ( Enumeration i = prevAttacks.elements();
@@ -1305,7 +1319,8 @@ public class Compute
 
                     // If the attacker fires another weapon, this attack fails.
                     if ( weaponId != prevAttack.getWeaponId() ) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Other weapon attacks declared.");
+                        return new ToHitData(ToHitData.IMPOSSIBLE,
+                                             "Other weapon attacks declared.");
                     }
                 }
             }
@@ -1331,7 +1346,8 @@ public class Compute
 
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons.");
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Nearby terrain blocks leg weapons.");
         }
 
         // Leg attacks, Swarm attacks, and
@@ -1341,8 +1357,16 @@ public class Compute
         }
         else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
-            // TODO : implement SwarmMek
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Not implemented yet.");
+        }
+        else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
+            // Can't stop if we're not swarming, otherwise automatic.
+            if ( Entity.NONE == ae.getSwarmTargetId() ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE,
+                                      "Not swarming a Mek." );
+            } else {
+                return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+                                      "End swarm attack." );
+            }
         }
         else if ( BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName()) ) {
             // Mine launchers can not hit infantry.
@@ -1353,10 +1377,28 @@ public class Compute
                 toHit = new ToHitData(8, "magnetic mine attack");
             }
         }
+        // Swarming infantry always hit their target, but
+        // they can only target the Mek they're swarming.
+        else if ( ae.getSwarmTargetId() == targetId ) {
+            // Only certain weapons can be used in a swarm attack.
+            if ( wtype.getDamage() == 0 ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE,
+                                      "Weapon causes no damage." );
+            } else {
+                return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+                                      "Attack during swarm.",
+                                      ToHitData.HIT_SWARM,
+                                      ToHitData.SIDE_FRONT );
+            }
+        }
+        else if ( Entity.NONE != ae.getSwarmTargetId() ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Must target the Mek being swarmed." );
+        }
         else {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
-        
+
         // determine range
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
@@ -1597,7 +1639,9 @@ public class Compute
         }
         
         // target immobile
+        boolean targetImmoble = false;
         if (te.isImmobile()) {
+            targetImmoble = true;
             toHit.addModifier(-4, "target immobile");
         }
         
@@ -1677,10 +1721,20 @@ public class Compute
         if (te.isProne()) {
             // easier when point-blank
             if (range <= 1) {
-                toHit.addModifier(-2, "target prone and adjacent");
+                // BMRr, pg. 72: Swarm Mek attacks get "an additional -4
+                // if the BattleMech is prone or immoble."  I interpret
+                // this to mean that the bonus gets applied *ONCE*.
+                if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+                    // If the target is immoble, don't give a bonus for prone.
+                    if ( !targetImmoble ) {
+                        toHit.addModifier(-4, "swarm prone target");
+                    }
+                } else {
+                    toHit.addModifier(-2, "target prone and adjacent");
+                }
             }
             // harder at range
-            if (range > 1) {
+            else {
                 toHit.addModifier(1, "target prone and at range");
             }
         }
@@ -1966,6 +2020,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
         //Quads can't punch
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
@@ -2005,21 +2064,30 @@ public class Compute
         if (te.isMakingDfa()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
-
-        // check facing
-        if (!isInArc(ae.getPosition(), ae.getSecondaryFacing(), 
-                     te.getPosition(), armArc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
-        }
-        
-        // can't punch while prone (except vehicles, but they're not in the game yet)
-        if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
         
         // okay, modifiers...
         toHit = new ToHitData(4, "base");
 
+        // Prone Meks can only punch vehicles in the same hex.
+        if (ae.isProne()) {
+            // The Mek must have both arms, the target must
+            // be a tank, and both must be in the same hex.
+            if ( !ae.isLocationDestroyed(Mech.LOC_RARM) &&
+                 !ae.isLocationDestroyed(Mech.LOC_LARM) &&
+                 te instanceof Tank &&
+                 ae.getPosition().distance( te.getPosition() ) == 0 ) {
+                toHit.addModifier( 2, "attacker is prone" );
+            } else {
+                return new ToHitData(ToHitData.IMPOSSIBLE,"Attacker is prone");
+            }
+        }
+
+        // Check facing if the Mek is not prone.
+        else if ( !isInArc(ae.getPosition(), ae.getSecondaryFacing(), 
+                           te.getPosition(), armArc) ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+        }
+        
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
@@ -2151,6 +2219,11 @@ public class Compute
         // Can't target a transported entity.
         if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
         
         // check if both legs are present
@@ -2346,6 +2419,11 @@ public class Compute
         // Can't target a transported entity.
         if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         if (bothArms) {
@@ -2553,6 +2631,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
         // check if both arms are present
         if (ae.isLocationDestroyed(Mech.LOC_RARM)
             || ae.isLocationDestroyed(Mech.LOC_LARM)) {
@@ -2704,6 +2787,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
+
         // determine last valid step
         compile(game, attackerId, md);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
@@ -2765,6 +2853,11 @@ public class Compute
         // Can't target a transported entity.
         if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
@@ -2909,6 +3002,11 @@ public class Compute
         if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+        }
         
         // determine last valid step
         compile(game, attackerId, md);
@@ -2965,6 +3063,11 @@ public class Compute
         // Can't target a transported entity.
         if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
@@ -3824,8 +3927,18 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != defender.getTransportId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        else if ( Entity.NONE != defender.getTransportId() ) {
+            reason.append( "Target is a passenger." );
+        }
+
+        // Can't target a entity conducting a swarm attack.
+        else if ( Entity.NONE != defender.getSwarmTargetId() ) {
+            reason.append("Target is swarming a Mek.");
+        }
+
+        // Attacker can't be swarming.
+        else if ( Entity.NONE != attacker.getSwarmTargetId() ) {
+            reason.append( "Attacker is swarming." );
         }
 
         // Handle BattleArmor attackers.
@@ -3889,8 +4002,23 @@ public class Compute
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != defender.getTransportId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        else if ( Entity.NONE != defender.getTransportId() ) {
+            reason.append("Target is a passenger.");
+        }
+
+        // Attacker can't be swarming.
+        else if ( Entity.NONE != attacker.getSwarmTargetId() ) {
+            reason.append( "Attacker is swarming." );
+        }
+
+        // Can't target a entity invloved in a swarm attack.
+        else if ( Entity.NONE != defender.getSwarmAttackerId() ) {
+            reason.append("Target is already being swarmed.");
+        } 
+
+        // Can't target a entity conducting a swarm attack.
+        else if ( Entity.NONE != defender.getSwarmTargetId() ) {
+            reason.append("Target is swarming a Mek.");
         }
 
         // Handle BattleArmor attackers.
@@ -4024,6 +4152,242 @@ public class Compute
         }
 
         return 0;
+    }
+
+    /**
+     * To-hit number for thrashing attack.  This attack can only be made
+     * by a prone Mek in a clear or pavement terrain hex that contains
+     * infantry.  This attack will force a PSR check for the prone Mek;
+     * if the PSR is missed, the Mek takes normal falling damage.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   act - the <code>ThrashAttackAction</code> for the attack.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitThrash(Game game, ThrashAttackAction act){
+        return toHitThrash( game, act.getEntityId(), act.getTargetId() );
+    }
+
+    /**
+     * To-hit number for thrashing attack.  This attack can only be made
+     * by a prone Mek in a clear or pavement terrain hex that contains
+     * infantry.  This attack will force a PSR check for the prone Mek;
+     * if the PSR is missed, the Mek takes normal falling damage.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   attackerId - the <code>int</code> ID of the attacking unit.
+     * @param   targetId - the <code>int</code> ID of the attack's target.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitThrash( Game game, int attackerId, 
+                                         int targetId ) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        ToHitData toHit;
+
+        // arguments legal?
+        if (ae == null || te == null) {
+            throw new IllegalArgumentException
+                ("Attacker or target id not valid");
+        }
+        
+        // Non-mechs can't thrash.
+        if (!(ae instanceof Mech)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Only mechs can thrash at infantry");
+        }
+
+        // Mech must be prone.
+        if ( !ae.isProne() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Only prone mechs can thrash at infantry");
+        }
+        
+        // Can't thrash against non-infantry
+        if (!(te instanceof Infantry)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Can only thrash at infantry");
+        }
+
+        // Can't thrash against swarming infantry.
+        else if ( Entity.NONE != te.getSwarmTargetId() ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Can't thrash at swarming infantry" );
+        }
+
+        // Check range.
+        if (ae.getPosition().distance(te.getPosition()) > 0 ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Target not in same hex");
+        }
+
+        // Check terrain.
+        Hex hex = game.board.getHex( ae.getPosition() );
+        if ( hex.contains( Terrain.WOODS ) ||
+ 	     hex.contains( Terrain.ROUGH ) ||
+ 	     hex.contains( Terrain.RUBBLE ) ||
+ 	     hex.contains( Terrain.BUILDING ) ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Not a clear or pavement hex." );
+        }
+
+        // The Mech can't have fired a weapon this round.
+        for ( int loop = 0; loop < ae.locations(); loop++ ) {
+            if ( ae.weaponFiredFrom(loop) ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE,
+                                      "Weapons fired from " + 
+                                      ae.getLocationName(loop) +
+                                      " this turn" );
+            }
+        }
+
+        // Mech must have at least one arm or leg.
+        if ( ae.isLocationDestroyed(Mech.LOC_RARM) &&
+             ae.isLocationDestroyed(Mech.LOC_LARM) &&
+             ae.isLocationDestroyed(Mech.LOC_RLEG) &&
+             ae.isLocationDestroyed(Mech.LOC_LLEG) ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Mech has no arms or legs to thrash" );
+        }
+
+        // If the attack isn't impossible, it's automatically successful.
+        return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+                              "thrash attacks always hit" );
+    }
+
+    /**
+     * Damage caused by a successfull thrashing attack.
+     *
+     * @param   entity - the <code>Entity</code> conducting the thrash attack.
+     * @return  The <code>int</code> amount of damage caused by this attack.
+     */
+    public static int getThrashDamageFor( Entity entity ) {
+        int nDamage = Math.round( entity.getWeight() / 3.0f );
+        return nDamage;
+    }
+
+    /**
+     * To-hit number for the specified arm to brush off swarming infantry.
+     * If this attack misses, the Mek will suffer punch damage.  This same
+     * action is used to remove iNARC pods.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   act - the <code>BrushOffAttackAction</code> for the attack.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitBrushOff(Game game, BrushOffAttackAction act){
+        return toHitBrushOff( game, act.getEntityId(), act.getTargetId(),
+                              act.getArm() );
+    }
+
+    /**
+     * To-hit number for the specified arm to brush off swarming infantry.
+     * If this attack misses, the Mek will suffer punch damage.  This same
+     * action is used to remove iNARC pods.
+     *
+     * @param   game - the <code>Game</code> object containing all entities.
+     * @param   attackerId - the <code>int</code> ID of the attacking unit.
+     * @param   targetId - the <code>int</code> ID of the attack's target.
+     * @param   arm - the <code>int</code> of the arm making the attack;
+     *          this value must be <code>BrushOffAttackAction.RIGHT</code>
+     *          or <code>BrushOffAttackAction.LEFT</code>.
+     * @return  the <code>ToHitData</code> containing the target roll.
+     */
+    public static ToHitData toHitBrushOff(Game game, int attackerId, 
+                                          int targetId, int arm) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        final int armLoc = (arm == BrushOffAttackAction.RIGHT)
+                           ? Mech.LOC_RARM : Mech.LOC_LARM;
+        ToHitData toHit;
+
+        // non-mechs can't BrushOff
+        if (!(ae instanceof Mech)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Only mechs can brush off swarming infantry");
+        }
+
+        // arguments legal?
+        if ( arm != BrushOffAttackAction.RIGHT &&
+             arm != BrushOffAttackAction.LEFT ) {
+            throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
+        }
+        if (ae == null || te == null) {
+            throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        if ( targetId != ae.getSwarmAttackerId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Can only brush off swarming infantry" );
+        }
+
+        // Quads can't brush off.
+        if ( ae.entityIsQuad() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        // Can't brush off with flipped arms
+        if (ae.getArmsFlipped()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
+        }
+
+        // check if arm is present
+        if (ae.isLocationDestroyed(armLoc)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+        }
+        
+        // check if shoulder is functional
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
+        }  
+        
+        // check if attacker has fired arm-mounted weapons
+        if (ae.weaponFiredFrom(armLoc)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
+        }
+
+        // can't physically attack mechs making dfa attacks
+        if (te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        }
+        
+        // Can't brush off while prone.
+        if (ae.isProne()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+        
+        // okay, modifiers...
+        toHit = new ToHitData(ae.getCrew().getPiloting(), "base PSR");
+        toHit.addModifier( 4, "brush off swarming infantry" );
+        
+        // damaged or missing actuators
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
+            toHit.addModifier(2, "Upper arm actuator destroyed");
+        }
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
+            toHit.addModifier(2, "Lower arm actuator missing or destroyed");
+        }
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+            toHit.addModifier(1, "Hand actuator missing or destroyed");
+        }
+
+        // done!
+        return toHit;
+    }
+
+    /**
+     * Damage that the specified mech does with a brush off attack.
+     * This equals the damage done by a punch from the same arm.
+     *
+     * @param   entity - the <code>Entity</code> brushing off the swarm.
+     * @param   arm - the <code>int</code> of the arm making the attack;
+     *          this value must be <code>BrushOffAttackAction.RIGHT</code>
+     *          or <code>BrushOffAttackAction.LEFT</code>.
+     * @return  the <code>int</code> amount of damage caused by the attack.
+     *          If the attack hits, the swarming infantry takes the damage;
+     *          if the attack misses, the entity deals the damage to themself.
+     */
+    public static int getBrushOffDamageFor(Entity entity, int arm) {
+        return getPunchDamageFor( entity, arm );
     }
 
 } // End public class Compute

@@ -24,15 +24,29 @@ public abstract class TurnOrdered implements Serializable
     private InitiativeRoll      initiative      = new InitiativeRoll();    
 
     private transient int       turns_other     = 0;
-    private transient int       turns_last      = 0;
+    private transient int       turns_even      = 0;
     private transient int       turns_multi     = 0;
+
+    /**
+     * Return the number of "normal" turns that this item requires.
+     * This is normally the sum of multi-unit turns and the other turns.
+     * <p/>
+     * Subclasses are expected to override this value in order to make
+     * the "move even" code work correctly.
+     *
+     * @return  the <code>int</code> number of "normal" turns this item
+     * should take in a phase.
+     */
+    public int getNormalTurns() {
+        return this.getMultiTurns() + this.getOtherTurns();
+    }
 
     public int getOtherTurns() {  
 	return turns_other;     
     }                          
 
-    public int getLastTurns() {   
-	return turns_last;       
+    public int getEvenTurns() {   
+	return turns_even;       
     }
 
     public int getMultiTurns() {
@@ -44,8 +58,8 @@ public abstract class TurnOrdered implements Serializable
         turns_other++;
     }
 
-    public void incrementLastTurns() {
-        turns_last++;
+    public void incrementEvenTurns() {
+        turns_even++;
     }
 
     public void incrementMultiTurns() {
@@ -56,8 +70,8 @@ public abstract class TurnOrdered implements Serializable
         turns_other = 0;
     }
 
-    public void resetLastTurns() {
-        turns_last = 0;
+    public void resetEvenTurns() {
+        turns_even = 0;
     }
 
     public void resetMultiTurns() {
@@ -88,6 +102,7 @@ public abstract class TurnOrdered implements Serializable
         //This is the *auto-reroll* code for the Tactical Genius (lvl 3)
         // pilot ability.  It is NOT CURRENTLY IMPLEMENTED.  This code may
         // be incomplete/buggy/just plain wrong.
+        // TODO : fix me
         /**
         if (v.firstElement() instanceof Team) {
             //find highest init roll
@@ -162,10 +177,10 @@ public abstract class TurnOrdered implements Serializable
      */
     public static TurnVectors generateTurnOrder( Vector v )
     {
-	int[] num_last_turns = new int[v.size()];
+	int[] num_even_turns = new int[v.size()];
 	int[] num_normal_turns = new int[v.size()];
        
-	int total_last_turns = 0;
+	int total_even_turns = 0;
 	int total_normal_turns = 0;
 	int index;
         TurnOrdered[] order = new TurnOrdered[v.size()];
@@ -191,28 +206,27 @@ public abstract class TurnOrdered implements Serializable
             final TurnOrdered item = (TurnOrdered)i.next();
             order[orderedItems] = item;
 	    
-	    // The sum of multi-move and other turns is the "normal" turns.
-            // Track last turns separately
-            num_normal_turns[orderedItems] =
-                item.getMultiTurns() + item.getOtherTurns();
-            num_last_turns[orderedItems] = item.getLastTurns();
+            // Track even turns separately from the normal turns.
+            num_normal_turns[orderedItems] = item.getNormalTurns();
+            num_even_turns[orderedItems] = item.getEvenTurns();
 
             // Keep a running total.
-	    total_last_turns += num_last_turns[orderedItems];
+	    total_even_turns += num_even_turns[orderedItems];
 	    total_normal_turns += num_normal_turns[orderedItems];
         }	
 
 	int min;
 	int turns_left;
-	TurnVectors turns =
-            new TurnVectors(total_normal_turns, total_last_turns);
 
-	// We will do the 'normal' turns first, and then the 'last' turns.
+	// We will do the 'normal' turns first, and then the 'even' turns.
 	min = Integer.MAX_VALUE;
 	for(index = 0; index < orderedItems ; index++) {
 	    if ( num_normal_turns[index] != 0 && num_normal_turns[index] < min)
 		min = num_normal_turns[index];
 	}
+
+	TurnVectors turns =
+            new TurnVectors(total_normal_turns, total_even_turns, min);
 
         // Allocate the normal turns.
 	turns_left = total_normal_turns;
@@ -230,35 +244,35 @@ public abstract class TurnOrdered implements Serializable
 		    num_normal_turns[index]--;
 		    turns_left--;
 		}
-		    
+
 	    }
 	    // Since the smallest unit count had to place 1, reduce min)
 	    min--;
 
 	} // Handle the next 'normal' turn.
 
-	// Now, we allocate the 'last' turns, if there are any.
-	if ( total_last_turns > 0 ) {
+	// Now, we allocate the 'even' turns, if there are any.
+	if ( total_even_turns > 0 ) {
 	    
 	    min = Integer.MAX_VALUE;
 	    for (index = 0; index < orderedItems ; index++) {
-		if ( num_last_turns[index] != 0 && num_last_turns[index] < min)
-		    min = num_last_turns[index];
+		if ( num_even_turns[index] != 0 && num_even_turns[index] < min)
+		    min = num_even_turns[index];
 	    }
 	    
-	    turns_left = total_last_turns;
+	    turns_left = total_even_turns;
 	    while (turns_left > 0) {
 		for (index = 0; index < orderedItems; index++) {
 		    // If you have no turns here, skip
-		    if (num_last_turns[index] == 0)
+		    if (num_even_turns[index] == 0)
 			continue;
 		    
                     // If you have less than twice the lowest,
                     // move 1.  Otherwise, move more.
-		    int ntm = num_last_turns[index] / min;
+		    int ntm = num_even_turns[index] / min;
                     for (int j = 0; j < ntm; j++) {
-                        turns.addLast(order[index]);
-                        num_last_turns[index]--;
+                        turns.addEven(order[index]);
+                        num_even_turns[index]--;
                         turns_left--;
                     }
 		    
@@ -266,9 +280,9 @@ public abstract class TurnOrdered implements Serializable
                 // Since the smallest unit count had to place 1, reduce min)
                 min--;
 
-            }  // Handle the next 'last' turn
+            }  // Handle the next 'even' turn
 
-	} // End have-'last'-turns
+	} // End have-'even'-turns
 
 	return turns;
 

@@ -252,10 +252,11 @@ Drawing Board.
                 integer value from 0 to 7 is valid.
         piloting - required - the piloting skill of the pilot or crew.  Any
                 integer value from 0 to 7 is valid.
-        hits - optional - the number of hits the pilot has suffered.  Valid
-                values are any integer value from 0 to 5 or Dead.  If omitted,
-                a value of 0 is assumed.
-
+        hits - default: 0 - the number of hits the pilot has suffered.  Valid
+                values are any integer value from 0 to 5 or Dead.
+        autoeject - default: false - identifies if the pilot will autoeject
+                if the unit sufferes an ammo explosion.  Any boolean value is
+                valid.
 
 <location> - The contents and condition of a single location within the
         entity.  Contains zero to three <armor> elements and zero or more

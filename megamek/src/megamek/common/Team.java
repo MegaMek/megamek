@@ -70,11 +70,27 @@ public final class Team extends TurnOrdered implements Serializable
         return id;
     }
 
-    public int getLastTurns() {
-        // Sum the last turns of all Players in this Team.
+    /**
+     * Return the number of "normal" turns that this item requires.
+     * This is normally the sum of multi-unit turns and the other turns.
+     * A team without any "normal" turns must return it's number of even
+     * turns to produce a fair distribution of moves.
+     *
+     * @return  the <code>int</code> number of "normal" turns this item
+     * should take in a phase.
+     */
+    public int getNormalTurns() {
+        int normal = this.getMultiTurns() + this.getOtherTurns();
+        if (0 == normal)
+            normal = this.getEvenTurns();
+        return normal;
+    }
+
+    public int getEvenTurns() {
+        // Sum the even turns of all Players in this Team.
         int sum = 0;
         for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
-            sum += ( (Player) loop.nextElement() ).getLastTurns();
+            sum += ( (Player) loop.nextElement() ).getEvenTurns();
         }
         return sum;
     }

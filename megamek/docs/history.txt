@@ -4,6 +4,9 @@ v0.29.57 (CVS)
 + Client window does not grab focus if it belongs to a bot.
 + Game option: Night Battle (Partly implementated: Modifier is there, but
   searchlights are incomplete).
++ Patch 1002093: Change meaning of "{Inf|Protos} Move Last".
++ Handle a side without Meks and Tanks in "{Inf|Protos} Move Last".
++ Renamed all "last turn" variables to "even turn" variables.
   
 v0.29.56 (2004-12-05 11:00am)
 + Patch 1067681: Set Autoejected MW to dead when killed.

@@ -4,6 +4,7 @@ v 0.29.25 (CVS)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated
         images for Bushwacker, Fafnir, and Uziel
 + Data 887869: added all changes that coralbeach submitted (images by Vertigo)
++ Added test to confirm correctness of BoardEncoder.java.
 
 v 0.29.24 (2004-01-31 12:45pm)
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)

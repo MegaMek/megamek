@@ -3607,7 +3607,7 @@ public class BoardView1
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
             final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
-            final String roll = WeaponAttackAction.toHit(game, attack).getValueAsString();
+            final String roll = attack.toHit(game).getValueAsString();
             weaponDescs.addElement( wtype.getName() + "; needs " + roll );
         }
 

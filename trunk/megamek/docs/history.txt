@@ -4,6 +4,7 @@ v 0.29.21 (CVS)
 + Patch 867652: cleaned up megamek-icon.gif
 + Patch 868927: Hide MechDisplay at end of turn
 + Patch 867864: only twist turrets if crew conscious
++ Patch 867883: put unit shortName into MechDisplay title
 
 v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.

@@ -118,7 +118,7 @@ public class WeaponType extends EquipmentType
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
-        weapon.bv = 9;
+        weapon.bv = 6;
         
         return weapon;
     }

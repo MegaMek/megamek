@@ -1845,7 +1845,7 @@ public class Compute
 		if (range == RANGE_OUT_OF) {
 			return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
 		}
-		if (range == 0 && !isWeaponInfantry) {
+		if (distance == 0 && !isWeaponInfantry) {
 			return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
 		}
 

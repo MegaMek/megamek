@@ -78,6 +78,7 @@ public class Settings
     public static Color     moveMASCColor           = new Color(255,140,0);
     
     public static String    mapTileset              = "defaulthexset.txt";
+    public static String    minimapColours          = "defaultminimap.txt";    
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
 
@@ -280,6 +281,10 @@ scan:
                         st.nextToken();
                         mapTileset = st.sval;
                     }
+                    else if(key.equals("minimapcolours")) {
+                        st.nextToken();
+                        minimapColours = st.sval;
+                    }
                     else if ( key.equals("mekhitloclog") ) {
                         st.nextToken();
                         mekHitLocLogName = new String(st.sval);
@@ -396,6 +401,7 @@ scan:
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
+            cw.write("minimapcolours \"" + minimapColours + "\"\r\n");
             cw.write("showmovestep " + showMoveStep + "\r\n");
             cw.write("movestepdelay " + moveStepDelay + "\r\n");
             cw.write("showwrecks " + showWrecks + "\r\n");

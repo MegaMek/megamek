@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
-
+import java.io.*;
 
 import megamek.common.*;
 
@@ -31,7 +31,8 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     // these indices match those in Terrain.java, and are therefore sensitive to any changes there
 
     private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
-    private final static Color HEAVY_WOODS = new Color(160,200,100);
+    private static Color HEAVY_WOODS;
+    private static Color BACKGROUND;
     
     private final static int SHOW_NO_HEIGHT = 0;
     private final static int SHOW_GROUND_HEIGHT = 1;
@@ -49,7 +50,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private final int    buttonHeight = 14;
     private boolean      minimized = false;
     private int          heightBufer;
-    private final int    unitSize = 6;//variable which define size of triangle for unit representation
+    private int          unitSize = 6;//variable which define size of triangle for unit representation
     private Vector       roadHexIndexes = new Vector();
     private int          zoom = 0;
     private int[]        hexSide = {3,5,6,8,10,12};
@@ -98,19 +99,76 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
 
     private void initializeColors() {
-        m_terrainColors[0] = new Color(218,215,170);
-        m_terrainColors[Terrain.WOODS] = new Color(180,230,130);
-        m_terrainColors[Terrain.ROUGH] = new Color(215,181,0);
-        m_terrainColors[Terrain.RUBBLE] = new Color(200,200,200);
-        m_terrainColors[Terrain.WATER] = new Color(200,247,253);
-        m_terrainColors[Terrain.PAVEMENT] = new Color(204,204,204);
-        m_terrainColors[Terrain.ROAD] = new Color(71,79,107);
-        m_terrainColors[Terrain.FIRE] = Color.red;
-        m_terrainColors[Terrain.SMOKE] = new Color(204,204,204);
-        m_terrainColors[Terrain.SWAMP] = new Color(49,136,74);
-        m_terrainColors[Terrain.BUILDING] = new Color(204,204,204);
-        m_terrainColors[Terrain.BRIDGE] = new Color(109,55,25);
+        int red;
+        int green;
+        int blue;
 
+        try {
+            File coloursFile = new File("data/hexes/" + Settings.minimapColours);
+            if(!coloursFile.exists()) {
+                return;
+            }
+            Reader cr = new FileReader(coloursFile);
+            StreamTokenizer st = new StreamTokenizer(cr);
+
+            st.lowerCaseMode(true);
+            st.quoteChar('"');
+            st.commentChar('#');
+
+scan:
+            while(true) {
+                // undefined colours will be black
+                red=0;
+                green=0;
+                blue=0;
+
+                switch(st.nextToken()) {
+                case StreamTokenizer.TT_EOF:
+                    break scan;
+                case StreamTokenizer.TT_EOL:
+                    break scan;
+                case StreamTokenizer.TT_WORD:
+                    // read in 
+                    String key = st.sval;
+                    if (key.equals("background")) {
+                        st.nextToken();
+                        red = (int)st.nval;
+                        st.nextToken();
+                        green = (int)st.nval;
+                        st.nextToken();
+                        blue = (int)st.nval;
+                        
+                        BACKGROUND = new Color(red,green,blue);
+                   } else if (key.equals("unitsize")) {
+                        st.nextToken();
+                        unitSize = (int)st.nval;
+                   } else if (key.equals("heavywoods")) {
+                        st.nextToken();
+                        red = (int)st.nval;
+                        st.nextToken();
+                        green = (int)st.nval;
+                        st.nextToken();
+                        blue = (int)st.nval;
+                        
+                        HEAVY_WOODS = new Color(red,green,blue);
+                    } else {
+                        st.nextToken();
+                        red = (int)st.nval;
+                        st.nextToken();
+                        green = (int)st.nval;
+                        st.nextToken();
+                        blue = (int)st.nval;
+                        
+                        m_terrainColors[Terrain.parse(key)]=new Color(red,green,blue);
+                   }
+                }
+            }
+
+            cr.close();
+        } catch(Exception e) {
+            System.err.println("error reading MiniMap colours file:");
+            System.err.println(e.getMessage());
+        }
     }
 
     private void initializeMap() {
@@ -142,7 +200,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
-        g.setColor(Color.black);
+        g.setColor(BACKGROUND);
         g.fillRect(0,0,getSize().width,getSize().height);
         g.setColor(oldColor);
         if (!minimized){

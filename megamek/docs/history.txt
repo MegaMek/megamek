@@ -92,6 +92,12 @@ v 0.26
 VERSION HISTORY:
 ----------------
 v next
++ added Dima Nemchenko's patch for confirm dialogs on physical attacks
++ added Cord Awtry's patch for a next target button
++ weapons with no ammo left can't fire
++ added some new fields for use in 3050+ weapons
+
+v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels
 + 543735: hip actuator hit halves movement, now rounded up
 + 543735: hip actuator hit piloting modifier now ignores other actuator hits

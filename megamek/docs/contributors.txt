@@ -11,6 +11,8 @@ Lot of people have contributed to the MegaMek project.
      Derek Evans
      Nathan Rowden <njrkrynn@attbi.com>
      Brian Bucklew <brian.bucklew@scriptlogic.com>
+     Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>
+     Cord Awtry <kipsta@bs-interactive.com>
 
   Mech Data Maintainer
      Jeff "Shrike" Biron <Shrike@dropshipcommand.com>

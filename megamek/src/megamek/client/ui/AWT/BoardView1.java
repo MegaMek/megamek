@@ -1352,7 +1352,7 @@ public class BoardView1
             boolean found = false;
             for (Iterator j = temp.iterator(); j.hasNext();) {
                 final StepSprite sprite = (StepSprite)j.next();
-                if (sprite.getStep().equals(step)) {
+                if (sprite.getStep().canReuseSprite(step)) {
                     pathSprites.addElement(sprite);
                     found = true;
                 }

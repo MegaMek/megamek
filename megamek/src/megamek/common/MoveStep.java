@@ -1125,4 +1125,25 @@ public class MoveStep implements Serializable {
 
         return true;
     }
+
+    //Used by BoardView to see if we can re-use an old movement sprite.
+    public boolean canReuseSprite(MoveStep other) {
+        if (this.type == other.type &&
+            this.facing == other.facing &&
+            this.mpUsed == other.mpUsed &&
+            this.movementType == other.movementType &&
+            this.isProne == other.isProne &&
+            this.danger == other.danger &&
+            this.pastDanger == other.pastDanger &&
+            this.isUsingMASC == other.isUsingMASC &&
+            this.targetNumberMASC == other.targetNumberMASC &&
+            this.isPavementStep == other.isPavementStep &&
+            !this.isStackingViolation &&
+            !other.isStackingViolation) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

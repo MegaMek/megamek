@@ -712,9 +712,9 @@ class WeaponPanel extends BufferedPanel
         }
             
         // update range
-        int shortR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange(); 
-        int mediumR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange(); 
-        int longR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange(); 
+        int shortR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange(); 
+        int mediumR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange(); 
+        int longR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange(); 
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
@@ -1054,12 +1054,12 @@ class SystemPanel
             Mounted m = getSelectedEquipment();
           
             boolean bOwner = (client.getLocalPlayer() == en.getOwner());
-            if (m != null && bOwner && m.getType() instanceof AmmoType 
-                    && m.getShotsLeft() > 0 && !m.isDumping()) {
+            if (m != null && bOwner && m.getType() instanceof AmmoType
+                && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && bOwner && m.getType().hasModes()) {
-                if (!m.isDestroyed()) {
+                if (!m.isDestroyed() && en.isActive()) {
                     m_chMode.setEnabled(true);
                 }
                 modeLabel.setEnabled(true);

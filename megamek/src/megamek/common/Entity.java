@@ -3125,10 +3125,10 @@ public abstract class Entity
   
     /**
      * Um, basically everything can spot for LRM indirect fire.
-     * @return true, I would think.
+     * @return true, if the entity is active
      */
     public boolean canSpot() {
-        return true;
+        return isActive();
     }
 
     public String toString() {

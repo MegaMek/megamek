@@ -28,7 +28,8 @@ import megamek.common.actions.*;
  */
 public class BoardView1
     extends Canvas
-    implements BoardListener, MouseListener, MouseMotionListener, Runnable
+    implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
+    Runnable
 {
     private static final int        PIC_MAX				= 4;
     private static final int        PIC_MECH_LIGHT		= 0;
@@ -105,6 +106,7 @@ public class BoardView1
         
         game.board.addBoardListener(this);
 		scroller.start();
+		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
         
@@ -845,6 +847,38 @@ public class BoardView1
 	}
     
 	//
+	// KeyListener
+	//
+	public void keyPressed(KeyEvent ke) {
+		switch(ke.getKeyCode()) {
+		case KeyEvent.VK_UP :
+			scroll.y -= 36;
+			break;
+		case KeyEvent.VK_DOWN :
+			scroll.y += 36;
+			break;
+		case KeyEvent.VK_LEFT :
+			scroll.x -= 36;
+			break;
+		case KeyEvent.VK_RIGHT :
+			scroll.x += 36;
+			break;
+		}
+        if (isTipShowing()) {
+            hideTooltip();
+        }
+		lastIdle = System.currentTimeMillis();
+        checkScrollBounds();
+		repaint();
+    }
+	public void keyReleased(KeyEvent ke) {
+		;
+	}
+	public void keyTyped(KeyEvent ke) {
+		;
+	}
+
+    //
 	// MouseListener
 	//
 	public void mousePressed(MouseEvent me) {

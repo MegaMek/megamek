@@ -113,6 +113,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29 release candidate 2 (CVS)
++ Data 754926: Added kurt_kajal's bridge images.
++ Bug 755006, Data 755442: Desertmountain boards should have rough, not rubble.
+
 v 0.29 release candidate 1 (06-16-03, 11pm)
 + Bug 748959: fixed bug with moved units not updating
 + chat box may scroll to bottom properly on Linux (thanks Bluebird)

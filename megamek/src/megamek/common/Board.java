@@ -258,13 +258,6 @@ public class Board
     }
     
     /**
-     * Initializes a hex in its surroundings.
-     */
-    private void initializeHex(Coords pos) {
-        initializeHex(pos.x, pos.y);
-    }
-    
-    /**
      * Initialize all hexes
      */
     private void initializeAll() {

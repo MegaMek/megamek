@@ -153,8 +153,7 @@ public class Settings
     public static char      unitStartChar            = 'A'; // == '\u0041'
 
     /** The number of milliseconds to search for an optimum path. */
-    public static int       maxPathfinderTime        = 0;
-//     public static int       maxPathfinderTime        = MovePath.DEFAULT_PATHFINDER_TIME_LIMIT;
+    public static int       maxPathfinderTime        = MovePath.DEFAULT_PATHFINDER_TIME_LIMIT;
 
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;

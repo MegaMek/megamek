@@ -15,14 +15,13 @@
 package megamek.common;
 
 import java.util.*;
-import java.io.IOException;
 
 /**
  * Represtents a volume of space set aside for carrying troops and their
  * equipment under battle conditions.  Typically, a component of an APC.
  */
 
-/* package */ final class TroopSpace implements Transporter {
+public final class TroopSpace implements Transporter {
 
     // Private attributes and helper functions.
 

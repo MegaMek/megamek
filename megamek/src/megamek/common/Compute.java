@@ -391,47 +391,6 @@ public class Compute
         }
     }
 
-    /**
-     * Confirm that the given entity can fire the indicated equipment.
-     *
-     * @param   entity the <code>Entity</code> which owns the equipment.
-     *          This value may be <code>null</code>.
-     * @param   mount the <code>Mounted</code> equipment being tested.
-     *          This value may be <code>null</code>.
-     * @return  <code>true</code> if the equipment can be fired by the
-     *          entity; <code>false</code> otherwise.
-     */
-    public static boolean canFire( Entity entity, Mounted mount ) {
-
-        // Validate the input parameters.
-        if ( null == entity || null == mount ) {
-            return false;
-        }
-
-        // Equipment operational?
-        if ( !mount.isReady() || mount.isBreached() || mount.isMissing() ) {
-            return false;
-        }
-
-        // Oneshot fired?
-        EquipmentType equip = mount.getType();
-        if( ( ( equip instanceof WeaponType &&
-                equip.hasFlag(WeaponType.F_ONESHOT) ) ||
-              ( equip instanceof MiscType &&
-                equip.hasFlag(MiscType.F_AP_POD) ) )
-            && mount.isFired() ) {
-            return false;
-        }
-
-        // Is the entity even active?
-        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
-            return false;
-        }
-
-        // Otherwise, the equipment can be fired.
-        return true;
-    }
-
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
         return toHitWeapon(game, waa.getEntityId(),
                            game.getTarget(waa.getTargetType(), waa.getTargetId()),
@@ -1721,7 +1680,7 @@ public class Compute
         if (entity.getLocationStatus(armLoc) == Entity.LOC_WET) {
             multiplier /= 2.0f;
         }
-        return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
+        return (int)Math.floor(damage * multiplier) + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
     public static ToHitData toHitKick(Game game, KickAttackAction kaa) {
@@ -1990,7 +1949,7 @@ public class Compute
         if (entity.getLocationStatus(legLoc) == Entity.LOC_WET) {
             multiplier /= 2.0f;
         }
-        return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
+        return (int)Math.floor(damage * multiplier) + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
     public static ToHitData toHitClub(Game game, ClubAttackAction caa) {
@@ -2262,7 +2221,7 @@ public class Compute
             nDamage /= 2.0f;
         }
 
-        return nDamage + modifyPhysicalDamagaForMeleeSpecialist(entity);
+        return nDamage + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {
@@ -2795,16 +2754,6 @@ public class Compute
       }
 
     /**
-     * Modifier to physical attack damage due to melee specialist
-     */
-      public static int modifyPhysicalDamagaForMeleeSpecialist(Entity entity) {
-        if ( !entity.getCrew().getOptions().booleanOption("melee_specialist") )
-          return 0;
-
-        return 1;
-      }
-
-    /**
      * Modifier to attacks due to target movement
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
@@ -3162,62 +3111,6 @@ public class Compute
     }
 
     /**
-     * Returns whether an entity can find a club in its current location
-     */
-    public static boolean canMechFindClub(Game game, int entityId) {
-        final Entity entity = game.getEntity(entityId);
-        if ( null == entity.getPosition() ) {
-            return false;
-        }
-        final Hex hex = game.board.getHex(entity.getPosition());
-
-        //Non bipeds can't
-        if ( entity.getMovementType() != Entity.MovementType.BIPED ) {
-            return false;
-        }
-
-        // Is the entity active?
-        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
-            return false;
-        }
-
-        // Can't find clubs while spotting.
-        if ( entity.isSpotting() ) {
-            return false;
-        }
-
-        //Check game options
-        if (game.getOptions().booleanOption("no_clan_physical") &&
-            entity.isClan()) {
-            return false;
-        }
-
-        // The hex must contain woods or rubble from
-        // a medium, heavy, or hardened building.
-        //TODO: missing limbs are clubs.
-        if ( hex.levelOf(Terrain.WOODS) < 1 &&
-             hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM ) {
-            return false;
-        }
-
-        // also, need shoulders and hands
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
-            return false;
-        }
-
-        // and last, check if you already have a club, greedy
-        if (clubMechHas(entity) != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    /**
      * Returns the club a mech possesses, or null if none.
      */
     public static Mounted clubMechHas(Entity entity) {
@@ -3228,19 +3121,6 @@ public class Compute
             }
         }
         return null;
-    }
-
-    /**
-     * Returns whether an entity can flee from its current position.  Currently
-     * returns true if the entity is on the edge of the board.
-     */
-    public static boolean canEntityFlee(Game game, int entityId) {
-        Entity entity = game.getEntity(entityId);
-        Coords pos = entity.getPosition();
-        return pos != null && entity.getWalkMP() > 0 && !entity.isProne()
-            && !entity.isShutDown() && !entity.getCrew().isUnconcious()
-            && (pos.x == 0 || pos.x == game.board.width - 1
-                || pos.y == 0 || pos.y == game.board.height - 1);
     }
 
     /**
@@ -3630,160 +3510,6 @@ public class Compute
         }
 
         return 0;
-    }
-
-    /**
-     * To-hit number for the specified arm to brush off swarming infantry.
-     * If this attack misses, the Mek will suffer punch damage.  This same
-     * action is used to remove iNARC pods.
-     *
-     * @param   game - the <code>Game</code> object containing all entities.
-     * @param   act - the <code>BrushOffAttackAction</code> for the attack.
-     * @return  the <code>ToHitData</code> containing the target roll.
-     */
-    public static ToHitData toHitBrushOff(Game game, BrushOffAttackAction act){
-        return toHitBrushOff( game, act.getEntityId(),
-                              game.getTarget(act.getTargetType(),
-                                             act.getTargetId()),
-                              act.getArm() );
-    }
-
-    /**
-     * To-hit number for the specified arm to brush off swarming infantry.
-     * If this attack misses, the Mek will suffer punch damage.  This same
-     * action is used to remove iNARC pods.
-     *
-     * @param   game - the <code>Game</code> object containing all entities.
-     * @param   attackerId - the <code>int</code> ID of the attacking unit.
-     * @param   target - the <code>Targetable</code> object being targeted.
-     * @param   arm - the <code>int</code> of the arm making the attack;
-     *          this value must be <code>BrushOffAttackAction.RIGHT</code>
-     *          or <code>BrushOffAttackAction.LEFT</code>.
-     * @return  the <code>ToHitData</code> containing the target roll.
-     */
-    public static ToHitData toHitBrushOff(Game game, int attackerId,
-                                          Targetable target, int arm) {
-        final Entity ae = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
-        Entity te = null;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            te = (Entity) target;
-            targetId = target.getTargetId();
-        }
-        final int armLoc = (arm == BrushOffAttackAction.RIGHT)
-                           ? Mech.LOC_RARM : Mech.LOC_LARM;
-        ToHitData toHit;
-
-        // non-mechs can't BrushOff
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
-                                 "Only mechs can brush off swarming infantry");
-        }
-
-        // arguments legal?
-        if ( arm != BrushOffAttackAction.RIGHT &&
-             arm != BrushOffAttackAction.LEFT ) {
-            throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
-        }
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
-        if ( targetId != ae.getSwarmAttackerId() ||
-             te == null || !(te instanceof Infantry) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
-                                 "Can only brush off swarming infantry" );
-        }
-
-        // Quads can't brush off.
-        if ( ae.entityIsQuad() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
-        }
-
-        // Can't brush off with flipped arms
-        if (ae.getArmsFlipped()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
-        }
-
-        // check if arm is present
-        if (ae.isLocationBad(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
-        }
-
-        // check if shoulder is functional
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
-        }
-
-        // check if attacker has fired arm-mounted weapons
-        if (ae.weaponFiredFrom(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
-        }
-
-        // can't physically attack mechs making dfa attacks
-        if ( te != null && te.isMakingDfa() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
-        }
-
-        // Can't brush off while prone.
-        if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
-
-        // Can't target woods or a building with a brush off attack.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
-        }
-
-        // okay, modifiers...
-        toHit = new ToHitData(ae.getCrew().getPiloting(), "base PSR");
-        toHit.addModifier( 4, "brush off swarming infantry" );
-
-        // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
-            toHit.addModifier(2, "Upper arm actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
-            toHit.addModifier(2, "Lower arm actuator missing or destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
-            toHit.addModifier(1, "Hand actuator missing or destroyed");
-        }
-
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
-
-        // If the target has Assault claws, give a 1 modifier.
-        // We can stop looking when we find our first match.
-        for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
-            Mounted mount = (Mounted) iter.nextElement();
-            EquipmentType equip = mount.getType();
-            if ( BattleArmor.ASSAULT_CLAW.equals
-                 (equip.getInternalName()) ) {
-                toHit.addModifier( 1, "defender has assault claws" );
-                break;
-            }
-        }
-
-        // done!
-        return toHit;
-    }
-
-    /**
-     * Damage that the specified mech does with a brush off attack.
-     * This equals the damage done by a punch from the same arm.
-     *
-     * @param   entity - the <code>Entity</code> brushing off the swarm.
-     * @param   arm - the <code>int</code> of the arm making the attack;
-     *          this value must be <code>BrushOffAttackAction.RIGHT</code>
-     *          or <code>BrushOffAttackAction.LEFT</code>.
-     * @return  the <code>int</code> amount of damage caused by the attack.
-     *          If the attack hits, the swarming infantry takes the damage;
-     *          if the attack misses, the entity deals the damage to themself.
-     */
-    public static int getBrushOffDamageFor(Entity entity, int arm) {
-        return getPunchDamageFor( entity, arm );
     }
 
     /**

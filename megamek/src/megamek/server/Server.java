@@ -6268,9 +6268,9 @@ implements Runnable, ConnectionHandler {
                 // Any clear attempt can result in accidental ignition, even
                 // weapons that can't normally start fires.  that's weird.
                 // Buildings can't be accidentally ignited.
-                if ( bldg != null &&
-                     tryIgniteHex(target.getPosition(), bInferno, 9) ) {
-                    return;
+                if ( bldg == null) {
+                	boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
+					if (ignited) return;
                 }
 
                 int tn = 14 - nDamage;

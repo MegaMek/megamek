@@ -116,7 +116,9 @@
     <delete file="${timestampfile}"/>
     <delete file="${jarfile}"/>
     <delete>
-        <fileset dir="${basedir}" includes="*.zip"/>
+        <fileset dir="${basedir}">
+           <include name="**/megamek-*.zip"/>
+        </fileset>
     </delete>
   </target>
 

@@ -1009,7 +1009,7 @@ public class Compute
             }
         }
         
-        if (primaryTarget != targetId) {
+        if (primaryTarget != Entity.NONE && primaryTarget != targetId) {
             if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD)) {
                 toHit.addModifier(1, "secondary target modifier");
             } else {

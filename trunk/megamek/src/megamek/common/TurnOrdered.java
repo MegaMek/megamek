@@ -117,8 +117,7 @@ public abstract class TurnOrdered implements Serializable
                 }
             }
             if (ties.size() > 1) {
-                System.out.println("->TIE: " + ((Team)item).getId());
-                rollInitAndResolveTies(ties, null); // null should be reroll? debug
+                rollInitAndResolveTies(ties, null);
             }
         }
     }

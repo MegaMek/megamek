@@ -2833,8 +2833,8 @@ public class Server
     private String explodeEquipment(Entity en, int loc, int slot) {
         Mounted mounted = en.getEquipment(en.getCritical(loc, slot).getIndex());
         StringBuffer desc = new StringBuffer();
-        // is this hit-able?
-        if (mounted.isHit() || mounted.isDestroyed()) {
+        // is this already destroyed?
+        if (mounted.isDestroyed()) {
             System.err.println("server: explodeEquipment called on destroyed"
                                + " equipment (" + mounted.getName() + ")");
             return "";

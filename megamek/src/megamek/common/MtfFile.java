@@ -208,7 +208,7 @@ public class MtfFile implements MechLoader {
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
             boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
-            mech.addEngineSinks(Integer.parseInt(heatSinks.substring(11, 14).trim()), dblSinks);
+            int expectedSinks = Integer.parseInt(heatSinks.substring(11, 14).trim());
 
             mech.autoSetInternal();
 
@@ -234,6 +234,9 @@ public class MtfFile implements MechLoader {
             if (mech.isClan()) {
                 mech.addClanCase();
             }
+            
+            // add any heat sinks not allocated
+            mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
 
             return mech;
         } catch (NumberFormatException ex) {

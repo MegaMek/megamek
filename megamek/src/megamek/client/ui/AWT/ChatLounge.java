@@ -31,13 +31,17 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Client client;
         
     // buttons & such
+    private Panel panPlayerInfo;
+    private Label labPlayerInfo;
+    private List lisPlayerInfo;
     private Label labColor;
     private Label labTeam;            
     private Choice choColor;
     private Choice choTeam;
+    
+    
     private Button butOptions;
-    private Panel panColor;
-      
+
     private Label labBoardSize;
     private Label labMapSize;
     private List lisBoardsSelected;
@@ -52,11 +56,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Panel panEntities;
     
     private Label labStarts;
-    private Button[] butPos;
-    private Label labMiddlePosition;
-    private Panel panStartButtons;
     private List lisStarts;
     private Panel panStarts;
+    private Button butChangeStart;
       
     private Label labBVs;
     private List lisBVs;
@@ -66,6 +68,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Panel panBVs;
       
     private Panel panMain;
+    
+    private Panel panUnits;
+    private Panel panTop;
         
     private Label labStatus;
     private Button butReady;
@@ -82,21 +87,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                 
         ChatterBox cb = client.cb;
                 
-        panColor = new Panel();
-            
-        labColor = new Label("Color:", Label.RIGHT);
-        labTeam = new Label("Team:", Label.RIGHT);
-                
-        choColor = new Choice();
-        choColor.addItemListener(this);
-        setupColors();
-                
-        choTeam = new Choice();
-        choTeam.addItemListener(this);
-        setupTeams();
-        
-        butOptions = new Button("Game Options");
+        butOptions = new Button("Game Options...");
         butOptions.addActionListener(this);
+        
+        setupPlayerInfo();
         
         setupBoardSettings();
         refreshGameSettings();
@@ -111,7 +105,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshStarts();
         
         setupMainPanel();
-            
         
         labStatus = new Label("", Label.CENTER);
                 
@@ -119,30 +112,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         butReady.setActionCommand("ready");
         butReady.addActionListener(this);
                 
-        // layout colors
-        panColor.add(labColor);
-        panColor.add(choColor);
-        panColor.add(labTeam);
-        panColor.add(choTeam);
-        panColor.add(butOptions);
-                
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
                 
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panColor, gridbag, c);
-
         c.weightx = 1.0;    c.weighty = 1.0;
+        c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panMain, gridbag, c);
 
         c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(labStatus, gridbag, c);
 
         c.gridwidth = 1;
@@ -152,11 +133,75 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(butReady, gridbag, c);
+        
+        validate();
     }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
+    }
+    
+    /**
+     * Sets up the player info (color, team) panel
+     */
+    private void setupPlayerInfo() {
+        panPlayerInfo = new Panel();
+        
+        labPlayerInfo = new Label("Player Setup");
+        
+        lisPlayerInfo = new List(5);
+        lisPlayerInfo.setEnabled(false);
+        
+        labColor = new Label("Color:", Label.RIGHT);
+        labTeam = new Label("Team:", Label.RIGHT);
+                
+        choColor = new Choice();
+        choColor.addItemListener(this);
+        setupColors();
+                
+        choTeam = new Choice();
+        choTeam.addItemListener(this);
+        setupTeams();
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panPlayerInfo.setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.VERTICAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labPlayerInfo, c);
+        panPlayerInfo.add(labPlayerInfo);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;    c.weighty = 1.0;
+        gridbag.setConstraints(lisPlayerInfo, c);
+        panPlayerInfo.add(lisPlayerInfo);
+
+        c.gridwidth = 1;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labColor, c);
+        panPlayerInfo.add(labColor);
+            
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(choColor, c);
+        panPlayerInfo.add(choColor);
+            
+        c.gridwidth = 1;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labTeam, c);
+        panPlayerInfo.add(labTeam);
+            
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(choTeam, c);
+        panPlayerInfo.add(choTeam);
+        
+        refreshPlayerInfo();
     }
   
   
@@ -168,8 +213,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         labMapSize = new Label("Map Size: # x # boards", Label.CENTER);
         
         lisBoardsSelected = new List(5);
+        lisBoardsSelected.setEnabled(false);
             
-        butChangeBoard = new Button("Edit / View");
+        butChangeBoard = new Button("Edit / View Map...");
         butChangeBoard.setActionCommand("change_board");
         butChangeBoard.addActionListener(this);
             
@@ -209,18 +255,62 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
             lisBoardsSelected.add((index++) + ": " + (String)i.nextElement());
         }
-        lisBoardsSelected.select(0);
     }
     
     private void setupMainPanel() {
+        
+        panUnits = new Panel(new BorderLayout());
+        panUnits.add(panEntities, BorderLayout.CENTER);
+        panUnits.add(panBVs, BorderLayout.EAST);
+        
+        setupTop();
             
         panMain = new Panel();
-        panMain.setLayout(new GridBagLayout());
         
-        panMain.add(panBoardSettings);
-        panMain.add(panStarts);
-        panMain.add(panEntities);
-        panMain.add(panBVs);
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panMain.setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.VERTICAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(butOptions, c);
+        panMain.add(butOptions);
+            
+        c.weightx = 1.0;    c.weighty = 1.0;
+        gridbag.setConstraints(panTop, c);
+        panMain.add(panTop);
+            
+        gridbag.setConstraints(panUnits, c);
+        panMain.add(panUnits);
+    }
+    
+    /**
+     * Sets up the top panel with the player info, map info and starting
+     * positions
+     */
+    private void setupTop() {
+        panTop = new Panel(new BorderLayout());
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panTop.setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 1.0;
+        c.gridwidth = 1;
+        gridbag.setConstraints(panBoardSettings, c);
+        panTop.add(panBoardSettings);
+            
+        gridbag.setConstraints(panStarts, c);
+        panTop.add(panStarts);
+            
+        gridbag.setConstraints(panPlayerInfo, c);
+        panTop.add(panPlayerInfo);
     }
   
     /**
@@ -228,18 +318,22 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupEntities() {
         lisEntities = new List(10);
+        lisEntities.addActionListener(this);
+        lisEntities.addItemListener(this);
 
-        butLoad = new Button("Open Mech File...");
+        butLoad = new Button("Add A Mech...");
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
 
-         butCustom = new Button("View/Edit Mech...");
+        butCustom = new Button("Configure / View Mech Info...");
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
+        butCustom.setEnabled(false);
             
         butDelete = new Button("Delete Mech");
         butDelete.setActionCommand("delete_mech");
         butDelete.addActionListener(this);
+        butDelete.setEnabled(false);
             
         panEntities = new Panel();
             
@@ -268,14 +362,15 @@ public class ChatLounge extends AbstractPhaseDisplay
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
     }
-
+    
     /**
      * Sets up the battle values panel
      */
-        private void setupBVs() {
+    private void setupBVs() {
         labBVs = new Label("Total Battle Values", Label.CENTER);
-            
+
         lisBVs = new List(5);
+        lisBVs.setEnabled(false);
             
         panBVs = new Panel();
             
@@ -316,36 +411,31 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupStarts() {
         labStarts = new Label("Starting Positions", Label.CENTER);
-        
-        butPos = new Button[9];
-        for (int i = 0; i < 9; i++) {
-            butPos[i] = new Button(startNames[i]);
-            butPos[i].setActionCommand("starting_pos_" + i);
-            butPos[i].addActionListener(this);
-        }
-            
-        panStartButtons = new Panel();
-
         lisStarts = new List(5);
-            
+        lisStarts.setEnabled(false);
+        butChangeStart = new Button("Change Start...");
+        butChangeStart.addActionListener(this);
+        
         panStarts = new Panel();
             
-        // layout
-        panStartButtons.setLayout(new GridLayout(3, 3));
-        panStartButtons.add(butPos[1]);
-        panStartButtons.add(butPos[2]);
-        panStartButtons.add(butPos[3]);
-        panStartButtons.add(butPos[8]);
-        panStartButtons.add(butPos[0]);
-        panStartButtons.add(butPos[4]);
-        panStartButtons.add(butPos[7]);
-        panStartButtons.add(butPos[6]);
-        panStartButtons.add(butPos[5]);
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStarts.setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labStarts, c);
+        panStarts.add(labStarts);
+            
+        c.weightx = 1.0;    c.weighty = 1.0;
+        gridbag.setConstraints(lisStarts, c);
+        panStarts.add(lisStarts);
         
-        panStarts.setLayout(new BorderLayout());
-        panStarts.add(labStarts, BorderLayout.NORTH);
-        panStarts.add(panStartButtons, BorderLayout.WEST);
-        panStarts.add(lisStarts, BorderLayout.CENTER);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butChangeStart, c);
+        panStarts.add(butChangeStart);
     }
 
     /**
@@ -366,13 +456,13 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             if(entity.hasC3i()) {
-               TreeSet = "";
-               if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
-               TreeView = " (" + entity.getC3NetID() + ")";
+                TreeSet = "";
+                if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
+                TreeView = " (" + entity.getC3NetID() + ")";
             }
             else if(entity.hasC3()) {
                 if(entity.getC3Master() == null) {
-                    if(entity.hasC3S()) 
+                    if(entity.hasC3S())
                         TreeSet = "***";
                     else
                         TreeSet = "*";
@@ -392,14 +482,31 @@ public class ChatLounge extends AbstractPhaseDisplay
                 TreeSet = "";
                 TreeView = "";
             }
-            lisEntities.add(TreeSet + entity.getDisplayName() 
-                            + " (" + entity.getCrew().getGunnery() 
-                            + "/" + entity.getCrew().getPiloting() + " pilot)"
-                            + " BV=" + entity.calculateBattleValue() + TreeView);
+            lisEntities.add(TreeSet + entity.getDisplayName()
+            + " (" + entity.getCrew().getGunnery()
+            + "/" + entity.getCrew().getPiloting() + " pilot)"
+            + " BV=" + entity.calculateBattleValue() + TreeView);
             entityCorrespondance[listIndex++] = entity.getId();
         }
-  }
+    }
     
+    /**
+     * Refreshes the player info
+     */
+    private void refreshPlayerInfo() {
+        lisPlayerInfo.removeAll();
+        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if(player != null) {
+                StringBuffer pi = new StringBuffer();
+                pi.append(player.getName()).append(" : ");
+                pi.append(Player.colorNames[player.getColorIndex()]).append(", ");
+                pi.append(Player.teamNames[player.getTeam()]);
+                lisPlayerInfo.add(pi.toString());
+            }
+        }
+    }
+
     /**
      * Refreshes the battle values/tons from the client
      */
@@ -439,7 +546,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             Player player = (Player)i.nextElement();
             if(player != null) {
-                lisStarts.add(player.getName() + " : " + startNames[player.getStartingPos()]);
+                StringBuffer ssb = new StringBuffer();
+                ssb.append(player.getName()).append(" : ");
+                ssb.append(startNames[player.getStartingPos()]);
+                lisStarts.add(ssb.toString());
             }
         }
     }
@@ -467,9 +577,8 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupTeams() {
         choTeam.removeAll();
-        choTeam.add("No Team");
-        for (int i = 1; i < Player.MAX_TEAMS; i++) {
-            choTeam.add("Team " + i);
+        for (int i = 0; i < Player.MAX_TEAMS; i++) {
+            choTeam.add(Player.teamNames[i]);
         }
         choTeam.select(client.getLocalPlayer().getTeam());
     }
@@ -536,6 +645,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     public void gamePlayerStatusChange(GameEvent ev) {
         refreshReadyButton();
         refreshBVs();
+        refreshPlayerInfo();
         refreshStarts();
         refreshColors();
     }
@@ -565,6 +675,10 @@ public class ChatLounge extends AbstractPhaseDisplay
             changeTeam(choTeam.getSelectedIndex());
         } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
             refreshBVs();
+        } else if (ev.getSource() == lisEntities) {
+            boolean selected = lisEntities.getSelectedIndex() != -1;
+            butCustom.setEnabled(selected);
+            butDelete.setEnabled(selected);
         }
         
     }
@@ -578,7 +692,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             refreshReadyButton();
         } else if (ev.getSource() == butLoad) {
             loadMech();
-        } else if (ev.getSource() == butCustom) {
+        } else if (ev.getSource() == butCustom ||  ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {
             // delete mech
@@ -593,10 +707,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             // game options
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
-        } else if (ev.getActionCommand().startsWith("starting_pos_")) {
-            // starting position
-            client.getLocalPlayer().setStartingPos(Integer.parseInt(ev.getActionCommand().substring(13)));
-            client.sendPlayerInfo();
+        } else if (ev.getSource() == butChangeStart) {
+            client.getStartingPositionDialog().update();
+            client.getStartingPositionDialog().show();
         }
     }
     

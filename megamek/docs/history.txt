@@ -9,6 +9,7 @@ v0.29.59 (CVS)
 + Bug 987956: on failure to get up, firing mod for walking/running missing
 + Bug 1091239: Vehicle Targeting Computer cannot be set to Aimed Shots
 + Unconcious and shutdown units should not be able to pick up ejected pilots
++ Bug 1090577: Do not pick up pilots that died in the end phase
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

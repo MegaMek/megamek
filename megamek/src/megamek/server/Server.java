@@ -13262,7 +13262,7 @@ implements Runnable, ConnectionHandler {
                 public boolean accept(Entity entity) {
                     if (entity instanceof MechWarrior) {
                         MechWarrior mw = (MechWarrior)entity;
-                        if (mw.getPickedUpById() == Entity.NONE) {
+                        if (mw.getPickedUpById() == Entity.NONE && !mw.isDoomed()) {
                             return true;
                         }
                     }

@@ -38,6 +38,8 @@ public class Settings
     public static int       displaySizeWidth        = 210;
     public static int       displaySizeHeight       = 370;
     
+    public static boolean   autoEndFiring           = true;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
     
@@ -138,6 +140,10 @@ scan:
                         displaySizeWidth = (int)st.nval;
                         st.nextToken();
                         displaySizeHeight = (int)st.nval;
+                    }
+                    else if (key.equals("autoendfiring")) {
+                        st.nextToken();
+                        autoEndFiring = Boolean.valueOf(st.sval).booleanValue();
                     }
                     else if(key.equals("playername")) {
                         st.nextToken();
@@ -241,6 +247,7 @@ scan:
             cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
+            cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

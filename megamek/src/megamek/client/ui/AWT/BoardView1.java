@@ -1992,6 +1992,7 @@ public class BoardView1
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if ( !Settings.rightDragScroll &&
+            !Settings.alwaysRightClickScroll &&    
             game.getPhase() == Game.PHASE_FIRING ) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
@@ -2077,6 +2078,7 @@ public class BoardView1
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
 
         if ( !Settings.rightDragScroll &&
+            !Settings.alwaysRightClickScroll &&
             game.getPhase() == Game.PHASE_FIRING) {
             // In the firing phase, also disable scrolling if
             //  the right or middle buttons are clicked, since

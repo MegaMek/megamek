@@ -92,7 +92,16 @@ implements Runnable {
         
         // display server start text
         System.out.println("s: starting a new server...");
-        System.out.println("s: address = " + serverSocket.getInetAddress().getHostAddress() + " port = " + serverSocket.getLocalPort());
+        try {
+            String host = InetAddress.getLocalHost().getHostName();
+            System.out.println("s: hostname = '" + host + "', port = " + serverSocket.getLocalPort());
+            InetAddress[] addresses = InetAddress.getAllByName(host);
+            for (int i = 0; i < addresses.length; i++) {
+                System.out.println("s: hosting on address = " + addresses[i].getHostAddress());
+            }
+        } catch (UnknownHostException  e) {
+            // oh well.
+        }
         System.out.println("s: password = " + this.password);
         
         connector = new Thread(this);

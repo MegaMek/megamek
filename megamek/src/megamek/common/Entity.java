@@ -288,8 +288,35 @@ public abstract class Entity
         return displacementAttack != null;
     }
 
+    public DisplacementAttackAction getDisplacementAttack() {
+        return displacementAttack;
+    }
+
     public void setDisplacementAttack(DisplacementAttackAction displacementAttack) {
         this.displacementAttack = displacementAttack;
+    }
+    
+    /**
+     * Returns true if any other entities this entity knows of are making a
+     * displacement attack on this entity.
+     */
+    public boolean isTargetOfDisplacementAttack() {
+        return findTargetedDisplacement() != null;
+    }
+    
+    /**
+     * Returns any known displacement attacks (should only be one) that this
+     * entity is a target of.
+     */
+    public DisplacementAttackAction findTargetedDisplacement() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity other = (Entity)i.nextElement();
+            if (other.hasDisplacementAttack() 
+            && other.getDisplacementAttack().getTargetId() == id) {
+                return other.getDisplacementAttack();
+            }
+        }
+        return null;
     }
 
     public boolean isFindingClub() {

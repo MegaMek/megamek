@@ -1603,8 +1603,15 @@ public class Server
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
 
-            // add to the list.
-            attacks.addElement(ea);
+            // move push attacks the end of the displacement attacks
+            if (ea instanceof PushAttackAction) {
+                PushAttackAction paa = (PushAttackAction)ea;
+                entity.setDisplacementAttack(paa);
+                pendingCharges.add(paa);
+            } else {
+                // add to the normal attack list.
+                attacks.addElement(ea);
+            }
             
             // if torso twist, twist so that everybody can see it later
             if (ea instanceof TorsoTwistAction) {
@@ -1614,6 +1621,7 @@ public class Server
                 FlipArmsAction faa = (FlipArmsAction)ea;
                 game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
             }
+            
 
             // send an outgoing packet to everybody
             send(createAttackPacket(ea));

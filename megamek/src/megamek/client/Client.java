@@ -50,8 +50,9 @@ public class Client extends Panel
     public String                eotr;
         
     // keep me
-    public ChatterBox            cb;
-    public BoardView1            bv;
+    public ChatterBox           cb;
+    public BoardView1           bv;
+    public BoardComponent       bc;
     public Window               mechW;
     public MechDisplay          mechD;
         
@@ -80,6 +81,7 @@ public class Client extends Panel
         game = new Game();
 
         bv = new BoardView1(game, frame);
+//        bc = new BoardComponent(bv);
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 320);

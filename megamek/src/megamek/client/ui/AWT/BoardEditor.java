@@ -29,6 +29,7 @@ public class BoardEditor extends Container
     public Frame                frame;
     
     public Board                board;
+    private BoardView1          bv;
     public Hex                    curHex;
     
     public String                curpath, curfile;
@@ -55,11 +56,14 @@ public class BoardEditor extends Container
      * @param frame            parent frame, for dialogs & such.
      * @param board            the board to edit.
      */
-    public BoardEditor(Frame frame, Board board) {
+    public BoardEditor(Frame frame, Board board, BoardView1 bv) {
         this.frame = frame;
         this.board = board;
+        this.bv = bv;
         
-    frame.setTitle("MegaMek Editor : Unnamed");
+        board.newData(0, 0, new Hex[0]);
+        
+        frame.setTitle("MegaMek Editor : Unnamed");
         
         nameL = new Label("Name (no tile selected)", Label.CENTER);
         typeL = new Label("Type (no tile selected)", Label.CENTER);
@@ -69,7 +73,7 @@ public class BoardEditor extends Container
         for(int i = 9; i > -6; i--) {
             elevC.add("" + i);
         }
-    elevC.select("0");
+        elevC.select("0");
         elevC.addItemListener(this);
         
         loadedL = new Label("Hexes Loaded:", Label.LEFT);

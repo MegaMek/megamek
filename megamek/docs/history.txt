@@ -103,6 +103,7 @@ v 0.24.1 (03-17-02, 11pm)
 + mechwarrior gunnery/piloting skill factored into BV
 + factored piloting skill differential into charging/dfa to-hit
 + fixed a bug causing weapons fire tooltips not to display sometimes
++ even more mechs! (thanks Shrike@dropshipcommand.com again)
 
 v 0.24.0 (03-18-02, 12:30pm)
 + mechs making a dfa attack can't be physically attacked

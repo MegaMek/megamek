@@ -579,6 +579,10 @@ class WeaponPanel
      * Selects the weapon at the specified index in the list
      */
     public void selectWeapon(int wn) {
+        if (wn == -1) {
+            weaponList.select(-1);
+            return;
+        }        
         int index = weapons.indexOf(entity.getEquipment(wn));
         weaponList.select(index);
         displaySelected();

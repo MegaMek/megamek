@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.22-dev (CVS)
+v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly
 + Applied Wirianto Djunaidi's 2003-05-30 updates.
 + Bug 721574: several changes to GAAttack and GALance to avoid lockup problem.

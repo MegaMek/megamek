@@ -187,6 +187,24 @@ public class GameOption implements Serializable {
         }
     }
 
+    // Turns this option "off"
+    public void clearValue() {
+        switch (type) {
+            case STRING : 
+            case CHOICE : 
+                setValue("");
+                break;
+            case BOOLEAN : 
+                setValue(false);
+                break;
+            case INTEGER : 
+                setValue(0);
+                break;
+            case FLOAT : 
+                setValue(0);
+        }
+    }
+
     private boolean isValidValue(Object object) {
         switch (type) {
             case STRING : 

@@ -49,7 +49,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
 	
 	private int stepY = 53;
 	
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);	
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayArmorLargeFontSize);
 	
 	/**
      * This constructor have to be called anly from addNotify() method

@@ -2043,18 +2043,21 @@ implements Runnable {
         
         // yeech.  handle damage. . different weapons do this in very different ways
         int hits = 1, amsHits = 0, nCluster = 1;
+        int nDamPerHit = wtype.getDamage();
         boolean bSalvo = false;
         String sSalvoType = " shot(s) ";
-        
+
         if (isWeaponInfantry) {
             // Infantry damage depends on # men left in platoon.
             bSalvo = true;
             platoon = (Infantry)ae;
             nCluster = 5;
+            nDamPerHit = 1;
             hits = platoon.getDamage(platoon.getShootingStrength());
         } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
             sSalvoType = " missile(s) ";
             bSalvo = true;
+            nDamPerHit = atype.getDamagePerShot();
             
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
                 nCluster = 5;
@@ -2098,8 +2101,10 @@ implements Runnable {
             }
             
         } else if (atype != null && atype.hasFlag(AmmoType.F_CLUSTER)) {
+	    // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = Compute.missilesHit(wtype.getRackSize());
+            nDamPerHit = 1;
         } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
             bSalvo = true;
             hits = Compute.missilesHit(2);
@@ -2114,26 +2119,13 @@ implements Runnable {
             }
         } else if (atype != null && atype.hasFlag(AmmoType.F_MG) && !isWeaponInfantry && (te instanceof Infantry)) {
             // Mech and Vehicle MGs do *DICE* of damage to PBI.
-            bSalvo = true;
-            hits = Compute.d6(wtype.getDamage());
+	    // 2002-10-24 Suvarov454 : no need for so many lines in the report.
+            nDamPerHit = Compute.d6(wtype.getDamage());
+	    phaseReport.append( "riddles the target with " + 
+				nDamPerHit + sSalvoType + "and " );
         }
-        
-        if (bSalvo) {
-            phaseReport.append(hits + sSalvoType + " hit" + toHit.getTableDesc() + ".");
-            
-            if (amsHits > 0) {
-                phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
-            }
-            phaseReport.append("\n\t");            
-        }
-        
-        int nDamPerHit = wtype.getDamage();
-        if (nDamPerHit == wtype.DAMAGE_MISSILE) {
-            nDamPerHit = atype.getDamagePerShot();
-        } else if (isWeaponInfantry) {
-            nDamPerHit = 1;
-        } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
-            // HGR does range-dependent damage
+        else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
+	    // HGR does range-dependent damage
             int nRange = ae.getPosition().distance(te.getPosition());
             if (nRange <= wtype.getShortRange()) {
                 nDamPerHit = 25;
@@ -2143,24 +2135,40 @@ implements Runnable {
                 nDamPerHit = 10;
             }
         }
+
+	// Report the number of hits.
+        if (bSalvo) {
+            phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc() + ".");
             
+            if (amsHits > 0) {
+                phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
+            }
+	    /* 2002-10-24 Suvarov454 : commented out to clean up weapons phase.
+            phaseReport.append("\n\t");
+	    */
+        }
+
         // for each cluster of hits, do a chunk of damage
         while (hits > 0) {
-            int nDamage = nDamPerHit * Math.min(nCluster, hits);
-            
+            int nDamage;
+
+	    // Flamers do heat, not damage.
             if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
-               phaseReport.append("\n\tTarget gains ").append(nDamage).append(" more heat during heat phase.\n");
-               te.heatBuildup += hits;
-               continue;
+		nDamage = nDamPerHit * hits;
+		phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
+		te.heatBuildup += nDamage;
+		hits = 0;
             }
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            if (!bSalvo) {
-                phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+	    else {
+		HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+		nDamage = nDamPerHit * Math.min(nCluster, hits);
+		if (!bSalvo) {
+		    phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+		}
+		phaseReport.append(damageEntity(te, hit, nDamage));
+		hits -= nCluster;
             }
-            phaseReport.append(damageEntity(te, hit, nDamage));
-            
-            hits -= nCluster;
-        }
+        } // Handle the next cluster.
         phaseReport.append("\n");
     }
     

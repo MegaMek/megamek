@@ -13,6 +13,7 @@
 # Images should be greyscale, 84x72 pixel gifs with the mech centered.  The
 # tinting process is subtractive, so make images light.
 # 
+# New images:Crusader, Wasp, Warhammer, Archer, Jagermech
 
 # these 5 must be in here
 mech "default_light" "default_light.gif"
@@ -28,3 +29,31 @@ mech "HBK-*" "default_medium.gif"
 mech "SCP-*" "default_quad.gif"
 mech "RFL-*" "default_heavy.gif"
 mech "AS7-*" "default_assault.gif"
+
+# by Dima Nemchenko (nemchenk)
+mech "MAD-*" "marauder.gif"
+
+# these pics by vestifex
+mech "JR7-*" "jenner.gif"
+mech "UM-*" "urbanmech.gif"
+mech "JM6-*" "jagermech.gif"
+mech "FS9-*" "firestarter.gif"
+mech "RVN-*" "raven.gif"
+mech "CPLT-*" "catapult.gif"
+mech "BJ-*" "blackjack.gif"
+mech "PNT-*" "panther.gif"
+mech "WLF-*" "wolfhound.gif"
+mech "BNC-*" "banshee.gif"
+mech "CN9-*" "centurion.gif"
+mech "HGN-*" "highlander.gif"
+mech "TBT-*" "trebuchet.gif"
+mech "HCT-*" "hatchetman.gif"
+mech "WVR-*" "wolverine.gif"
+mech "ASN-*" "assasin.gif"
+
+# by grfx_slade
+mech "STG-*" "stinger.gif"
+mech "WSP-*" "wasp.gif"
+mech "WHM-*" "warhammer.gif"
+mech "CRD-*" "crusader.gif"
+mech "ARC-*" "archer.gif

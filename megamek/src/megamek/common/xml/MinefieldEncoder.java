@@ -32,7 +32,7 @@ public class MinefieldEncoder {
     /**
      * Encode a <code>Minefield</code> object to an output writer.
      *
-     * @param   option - the <code>Minefield</code> to be encoded.
+     * @param   minefield - the <code>Minefield</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -40,9 +40,35 @@ public class MinefieldEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Minefield option, Writer out )
+    public static void encode( Minefield minefield, Writer out )
         throws IOException
     {
+        // First, validate our input.
+        if ( null == minefield ) {
+            throw new IllegalArgumentException( "The minefield is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this minefield.
+        out.write( "<minefield version=\"1.0\">" );
+
+        // Encode the game's data.
+        out.write( "<minefieldData type=\"" );
+        out.write( minefield.getType() );
+        out.write( "\" playerId=\"" );
+        out.write( minefield.getPlayerId() );
+        out.write( "\" setting=\"" );
+        out.write( minefield.getSetting() );
+        out.write( "\" damage=\"" );
+        out.write( minefield.getDamage() );
+        out.write( "\" >" );
+        CoordsEncoder.encode( minefield.getCoords(), out );
+        out.write( "</minefieldData>" );
+
+        // Finish the XML stream for this game.
+        out.write( "</game>" );
     }
 
     /**

@@ -32,7 +32,7 @@ public class TeamEncoder {
     /**
      * Encode a <code>Team</code> object to an output writer.
      *
-     * @param   option - the <code>Team</code> to be encoded.
+     * @param   team - the <code>Team</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -40,9 +40,45 @@ public class TeamEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Team option, Writer out )
+    public static void encode( Team team, Writer out )
         throws IOException
     {
+        Enumeration iter; // used when marching through a list of sub-elements
+
+        // First, validate our input.
+        if ( null == team ) {
+            throw new IllegalArgumentException( "The team is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this team
+        out.write( "<team version=\"1.0\" >" );
+
+        // Write the hex array to the stream.
+        out.write( "<teamData id=\"" );
+        out.write( team.getId() );
+        out.write( "\">" );
+
+        // Write the coordinate of the team.
+        iter = team.getPlayers();
+        if ( iter.hasMoreElements() ) {
+            out.write( "<playerIds>" );
+            while ( iter.hasMoreElements() ) {
+                final Player player = (Player) iter.nextElement();
+                out.write( "<player id=\"" );
+                out.write( player.getId() );
+                out.write( "\" />" );
+            }
+        }
+        out.write( "</playerIds>" );
+
+        // TODO : Do I have to do something for Turn_Vectors?
+
+        // Finish the XML stream for this team.
+        out.write( "</teamData>" );
+        out.write( "</team>" );
     }
 
     /**

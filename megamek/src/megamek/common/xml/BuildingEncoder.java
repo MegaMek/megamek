@@ -43,6 +43,48 @@ public class BuildingEncoder {
     public static void encode( Building bldg, Writer out )
         throws IOException
     {
+        Enumeration iter; // used when marching through a list of sub-elements
+        Coords coords;
+
+        // First, validate our input.
+        if ( null == bldg ) {
+            throw new IllegalArgumentException( "The board is null." );
+        }
+        if ( null == out ) {
+            throw new IllegalArgumentException( "The writer is null." );
+        }
+
+        // Start the XML stream for this building
+        out.write( "<building version=\"1.0\" >" );
+
+        // Write the hex array to the stream.
+        out.write( "<buildingData id=\"" );
+        out.write( bldg.getId() );
+        out.write( "\" type=\"" );
+        out.write( bldg.getType() );
+        out.write( "\" currentCF=\"" );
+        out.write( bldg.getCurrentCF() );
+        out.write( "\" phaseCF=\"" );
+        out.write( bldg.getPhaseCF() );
+        out.write( "\" name=\"" );
+        out.write( bldg.getName() );
+        out.write( "\" isBurning=\"" );
+        out.write( bldg.isBurning() ? "true" : "false" );
+        out.write( "\" >" );
+
+        // Write the coordinate of the building.
+        iter = bldg.getCoords();
+        if ( iter.hasMoreElements() ) {
+            while ( iter.hasMoreElements() ) {
+                // Encode the infernos as these coordinates.
+                coords = (Coords) iter.nextElement();
+                CoordsEncoder.encode( coords, out );
+            }
+        }
+        out.write( "</buildingData>" );
+
+        // Finish the XML stream for this building.
+        out.write( "</building>" );
     }
 
     /**

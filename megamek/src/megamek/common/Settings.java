@@ -72,6 +72,8 @@ public class Settings
      * @see     megamek.client.BoardView1#doScroll()
      */    
     public static boolean   explicitScrollOnly      = false;
+
+    public static boolean   alwaysScrollOnRightClick = false;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor         = 0;
@@ -429,6 +431,10 @@ scan:
                         st.nextToken();
                         explicitScrollOnly = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if(key.equals("alwaysscrollonrightclick")) {
+                        st.nextToken();
+                        alwaysScrollOnRightClick = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -532,6 +538,7 @@ scan:
             cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
             cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
+            cw.write("alwaysscrollonrightclick " + alwaysScrollOnRightClick + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

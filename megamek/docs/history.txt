@@ -91,14 +91,14 @@ infantry:
 buildings:
 - Test all of my assumptions.
 - Where do I put the attacker when it charges or DFAs a building?!?
+- Do multihex buildings absorb damage charges within the building?
+- When a unit is displaced through a building, do we handle it like normal
+  movement through a wall?
 - Combat inside a multi-hex building is wierd:
 -- Targets get +3 cover bonus.
 -- Each level difference is an additional +1 hex to range.
 -- No minimum ranges mod (Archers go yay!).
 -- Shots from above or below use special hit location tables.
--- Do multihex buildings absorb damage charges within the building?
--- When a unit is displaced through a building, do we handle it like normal
-   movement through a wall?
 - Buildings need to roll for basements.
 -- Roll when first unit enters.
 -- Basement collapse drops floor of hex, but not surface or ceiling.
@@ -133,6 +133,8 @@ v 0.28.15-dev
 + 586306: Added FASA maps.
 + 724966: Added corrected maps.
 + 726265: Added Dirk Wilhelm's "Blind Drop" patch.
++ Added Wirianto's formatting update.
++ Added Wirianto's fix that prevents off-board fires from crashing the game.
 
 v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).

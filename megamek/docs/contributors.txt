@@ -21,6 +21,7 @@ Lot of people have contributed to the MegaMek project.
      Hugh "TigerWraith" Peeples
      James "Suvarov454" Damour <suvarov454@users.sourceforge.net>
      Jason "Ensign" Bush <ensign@users.sourceforge.net>
+     Tim Mead
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

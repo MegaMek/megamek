@@ -135,7 +135,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * @param   entity - the <code>Entity</code> conducting the thrash attack.
      * @return  The <code>int</code> amount of damage caused by this attack.
      */
-    public static int getThrashDamageFor( Entity entity ) {
+    public static int getDamageFor( Entity entity ) {
         int nDamage = Math.round( entity.getWeight() / 3.0f );
         return nDamage;
     }

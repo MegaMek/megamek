@@ -20,6 +20,7 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.DfaAttackAction;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
@@ -838,13 +839,13 @@ public class MovementDisplay
                     int toAttacker = 0;
                     if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
                         Entity te = (Entity) target;
-                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved());
+                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce(),te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved());
                     }
                     else if ( target.getTargetType() ==
                               Targetable.TYPE_BUILDING ) {
                         Building bldg = client.game.board.getBuildingAt
                             ( moveto );
-                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),bldg);
+                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce(),bldg);
                     }
 
                     // Ask the player if they want to charge.
@@ -854,7 +855,7 @@ public class MovementDisplay
                            " (" + Compute.oddsAbove(toHit.getValue()) +
                            "%)   (" + toHit.getDesc() + ")"
                            + "\nDamage to Target: "+
-                           ChargeAttackAction.getChargeDamageFor(ce(),cmd.getHexesMoved())+
+                           ChargeAttackAction.getDamageFor(ce(),cmd.getHexesMoved())+
                            " (in 5pt clusters)"+ toHit.getTableDesc()
                            + "\nDamage to Self: " +
                            toAttacker +
@@ -884,7 +885,7 @@ public class MovementDisplay
                 }
 
                 // check if it's a valid DFA
-                ToHitData toHit = Compute.toHitDfa( client.game,
+                ToHitData toHit = DfaAttackAction.toHit( client.game,
                                                     cen,
                                                     target,
                                                     cmd);
@@ -896,10 +897,10 @@ public class MovementDisplay
                            " (" + Compute.oddsAbove(toHit.getValue()) +
                            "%)   (" + toHit.getDesc() + ")"
                            + "\nDamage to Target: " +
-                           Compute.getDfaDamageFor(ce()) +
+                           DfaAttackAction.getDamageFor(ce()) +
                            " (in 5pt clusters)" + toHit.getTableDesc()
                            + "\nDamage to Self: " +
-                           Compute.getDfaDamageTakenBy(ce()) +
+                           DfaAttackAction.getDamageTakenBy(ce()) +
                            " (in 5pt clusters) (using Kick table)" ) ) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);

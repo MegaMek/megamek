@@ -353,15 +353,15 @@ public class PhysicalDisplay
      * Punch the target!
      */
     private void punch() {
-  final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
-  final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
+  final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.LEFT);
+  final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
 
   if (clientgui.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
     "To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
-    + "\nDamage [RA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
+    + "\nDamage [RA]: "+PunchAttackAction.getDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
     + "\n   and/or"
     +"\nTo Hit [LA]: " + leftArm.getValueAsString() + " (" + Compute.oddsAbove(leftArm.getValue()) + "%)   (" + leftArm.getDesc() + ")"
-    + "\nDamage [LA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.LEFT)+leftArm.getTableDesc()
+    + "\nDamage [LA]: "+PunchAttackAction.getDamageFor(ce(),PunchAttackAction.LEFT)+leftArm.getTableDesc()
   ) ) {
           disableButtons();
           if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
@@ -380,8 +380,8 @@ public class PhysicalDisplay
      * Kick the target!
      */
     private void kick() {
-  ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
-  ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
+  ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
+  ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
   ToHitData attackLeg;
   int attackSide;
 
@@ -395,7 +395,7 @@ public class PhysicalDisplay
 
   if (clientgui.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
     "To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
-    + "\nDamage: "+Compute.getKickDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
+    + "\nDamage: "+KickAttackAction.getDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
   ) ) {
     disableButtons();
     attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
@@ -407,14 +407,13 @@ public class PhysicalDisplay
      * Push that target!
      */
     private void push() {
-  ToHitData toHit = Compute.toHitPush(client.game, cen, target);
-  if (clientgui.doYesNoDialog( "Push " + target.getDisplayName() + "?",
-    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-  ) ) {
-    disableButtons();
-    attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
-    ready();
-  };
+        ToHitData toHit = PushAttackAction.toHit(client.game, cen, target);
+        if (clientgui.doYesNoDialog( "Push " + target.getDisplayName() + "?",
+            "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")") ) {
+            disableButtons();
+            attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
+            ready();
+        }
     }
     
     /**
@@ -422,7 +421,7 @@ public class PhysicalDisplay
      */
     private void club() {
         Mounted club = Compute.clubMechHas(ce());
-        ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
+        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target, club);
         StringBuffer buff = new StringBuffer();
         buff.append ("To Hit: ")
             .append (toHit.getValueAsString())
@@ -431,7 +430,7 @@ public class PhysicalDisplay
             .append ("%)   (")
             .append (toHit.getDesc())
             .append (")\nDamage: ")
-            .append (Compute.getClubDamageFor(ce(),club))
+            .append (ClubAttackAction.getDamageFor(ce(),club))
             .append (toHit.getTableDesc());
         if ( clientgui.doYesNoDialog( "Club " + target.getDisplayName() + "?",
                                       buff.toString()
@@ -447,11 +446,11 @@ public class PhysicalDisplay
      */
     
     private void proto() {
-    	ToHitData proto = Compute.toHitProto(client.game, cen, target);
+    	ToHitData proto = ProtomechPhysicalAttackAction.toHit(client.game, cen, target);
 
     	if (clientgui.doYesNoDialog( "Protomech physical attack at " + target.getDisplayName() + "?",
     	    "To Hit: " + proto.getValueAsString() + " (" + Compute.oddsAbove(proto.getValue()) + "%)   (" + proto.getDesc() + ")"
-    	    + "\nDamage: "+Compute.getProtoPhysicalDamageFor(ce())+proto.getTableDesc()
+    	    + "\nDamage: "+ProtomechPhysicalAttackAction.getDamageFor(ce())+proto.getTableDesc()
     	) ) {
     		disableButtons();
     	    attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
@@ -463,9 +462,9 @@ public class PhysicalDisplay
      * Sweep off the target with the arms that the player selects.
      */
     private void brush() {
-        ToHitData toHitLeft = BrushOffAttackAction.toHitBrushOff
+        ToHitData toHitLeft = BrushOffAttackAction.toHit
             ( client.game, cen, target, BrushOffAttackAction.LEFT );
-        ToHitData toHitRight = BrushOffAttackAction.toHitBrushOff
+        ToHitData toHitRight = BrushOffAttackAction.toHit
             ( client.game, cen, target, BrushOffAttackAction.RIGHT );
         boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
         boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
@@ -505,7 +504,7 @@ public class PhysicalDisplay
         // If we can hit with the left arm, get
         // the damage and construct the string.
         if ( canHitLeft ) {
-            damageLeft = BrushOffAttackAction.getBrushOffDamageFor
+            damageLeft = BrushOffAttackAction.getDamageFor
                 ( ce(), BrushOffAttackAction.LEFT );
             left = new StringBuffer( "Left Arm to-hit: " );
             left.append( toHitLeft.getValueAsString() )
@@ -518,7 +517,7 @@ public class PhysicalDisplay
         // If we can hit with the right arm, get
         // the damage and construct the string.
         if ( canHitRight ) {
-            damageRight = BrushOffAttackAction.getBrushOffDamageFor
+            damageRight = BrushOffAttackAction.getDamageFor
                 ( ce(), BrushOffAttackAction.RIGHT );
             right = new StringBuffer( "Right Arm to-hit: " );
             right.append( toHitRight.getValueAsString() )
@@ -616,7 +615,7 @@ public class PhysicalDisplay
             .append( toHit.getDesc() )
             .append( ")" )
             .append( "\nDamage: " )
-            .append( ThrashAttackAction.getThrashDamageFor(ce()) )
+            .append( ThrashAttackAction.getDamageFor(ce()) )
             .append( toHit.getTableDesc() );
 
         // Give the user to cancel the attack.
@@ -659,36 +658,36 @@ public class PhysicalDisplay
         // dis/enable punch button
         if (cen != Entity.NONE && target != null) {
             // punch?
-            final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
-            final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
+            final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.LEFT);
+            final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
             boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
                               || rightArm.getValue() != ToHitData.IMPOSSIBLE;
             setPunchEnabled(canPunch);
             
             // kick?
-            ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
-            ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
+            ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFT);
+            ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
             boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
             setKickEnabled(canKick);
             
             // how about push?
-            ToHitData push = Compute.toHitPush(client.game, cen, target);
+            ToHitData push = PushAttackAction.toHit(client.game, cen, target);
             setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
             
             // clubbing?
             Mounted club = Compute.clubMechHas(ce());
             if (club != null) {
-                ToHitData clubToHit = Compute.toHitClub(client.game, cen, target, club);
+                ToHitData clubToHit = ClubAttackAction.toHit(client.game, cen, target, club);
                 setClubEnabled(clubToHit.getValue() != ToHitData.IMPOSSIBLE);
             } else {
                 setClubEnabled(false);
             }
 
             // Brush off swarming infantry?
-            ToHitData brushRight = BrushOffAttackAction.toHitBrushOff
+            ToHitData brushRight = BrushOffAttackAction.toHit
                 ( client.game, cen, target, BrushOffAttackAction.RIGHT );
-            ToHitData brushLeft = BrushOffAttackAction.toHitBrushOff
+            ToHitData brushLeft = BrushOffAttackAction.toHit
                 ( client.game, cen, target, BrushOffAttackAction.LEFT );
             boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
                                 brushLeft.getValue() != ToHitData.IMPOSSIBLE);
@@ -699,7 +698,7 @@ public class PhysicalDisplay
             setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
             
             // make a Protomech physical attack?
-            ToHitData proto = Compute.toHitProto
+            ToHitData proto = ProtomechPhysicalAttackAction.toHit
 			   ( client.game, cen, target);
             setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
         } else {

@@ -783,15 +783,15 @@ public class FiringDisplay
                       ash.allowAimedShotWith(weapon);
               ash.setEnableAll(aiming);
               if (aiming) {
-                toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, ash.getAimingAt(), ash.getAimingMode());
+                toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, ash.getAimingAt(), ash.getAimingMode());
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
               } else {
-                toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
+                toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
               }
               ash.setPartialCover(toHit.getHitTable() == ToHitData.HIT_PUNCH);
             } else {
-              toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
+              toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
             clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));

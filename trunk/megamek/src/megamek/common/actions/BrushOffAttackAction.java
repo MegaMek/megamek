@@ -62,8 +62,8 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *          If the attack hits, the swarming infantry takes the damage;
      *          if the attack misses, the entity deals the damage to themself.
      */
-    public static int getBrushOffDamageFor(Entity entity, int arm) {
-        return Compute.getPunchDamageFor(entity, arm);
+    public static int getDamageFor(Entity entity, int arm) {
+        return PunchAttackAction.getDamageFor(entity, arm);
     }
 
     /**
@@ -76,7 +76,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * @return  the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
-        return toHitBrushOff(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
     }
 
     /**
@@ -92,7 +92,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *          or <code>BrushOffAttackAction.LEFT</code>.
      * @return  the <code>ToHitData</code> containing the target roll.
      */
-    public static ToHitData toHitBrushOff(Game game, int attackerId, Targetable target, int arm) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int arm) {
 		final Entity ae = game.getEntity(attackerId);
 		int targetId = Entity.NONE;
 		Entity te = null;

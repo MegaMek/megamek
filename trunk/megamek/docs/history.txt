@@ -124,6 +124,7 @@ v 0.28.18-dev (CVS)
 + Updated get up and go prone graphics (and fixed problem with getting up
      arrow not displaying).
 + Bug 736534: Fixed Scenario Loading to use new initiative code.
++ Fixed bug preventing Systems Mode dropdown from showing current choice.
 
 v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move

@@ -1112,6 +1112,7 @@ class SystemPanel
                 for (int x = 0; x < saModes.length; x++) {
                     m_chMode.add(saModes[x]);
                 }
+                m_chMode.select(m.curMode());
             }
         }
         else if (ev.getItemSelectable() == m_chMode) {

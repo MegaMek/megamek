@@ -432,10 +432,13 @@ public class Client extends Panel
                 final Entity entity = (Entity)i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
-            // can also target the hex
+            // can also target the hex if it contains woods
             if (curPanel instanceof FiringDisplay) {
-                popup.add(new TargetMenuItem(new HexTarget(coords, false)));
-                popup.add(new TargetMenuItem(new HexTarget(coords, true)));
+                Hex h = game.board.getHex(coords);
+                if (h != null && h.contains(Terrain.WOODS)) {
+                    popup.add(new TargetMenuItem(new HexTarget(coords, false)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords, true)));
+                }
             }
         }
     }

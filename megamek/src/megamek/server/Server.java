@@ -3155,6 +3155,52 @@ implements Runnable {
         }
         return nShots;
     }
+    
+    private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {        
+    
+        boolean bAnyTerrain = false;
+        // inferno always ignites
+        if (bInferno) {
+            game.board.addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
+            nTargetRoll = 0;
+            bAnyTerrain = true;
+        }
+        
+        Hex hex = game.board.getHex(c);                                 
+        if (burn(hex, nTargetRoll, bAnyTerrain)) {
+            phaseReport.append("           The hex ignites!\n");
+            sendChangedHex(c);
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean tryClearHex(Coords c, int nTarget) {
+        
+        Hex h = game.board.getHex(c);
+        int woodsRoll = Compute.d6(2);
+        phaseReport.append("    Checking to clear woods; needs " ).append( nTarget )
+                .append( ", rolls " ).append( woodsRoll ).append( ": ");
+
+        if(woodsRoll >= nTarget) {
+            int woods = h.levelOf(Terrain.WOODS);
+            if(woods > 1) {
+                 h.removeTerrain(Terrain.WOODS);
+                 h.addTerrain(new Terrain(Terrain.WOODS, woods - 1));
+                 phaseReport.append(" Heavy Woods converted to Light Woods!\n");
+            }
+            else if(woods == 1) {
+                 h.removeTerrain(Terrain.WOODS);
+                 h.addTerrain(new Terrain(Terrain.ROUGH, 1));
+                 phaseReport.append(" Light Woods converted to Rough!\n");
+            }
+            sendChangedHex(c);
+            return true;
+        } else {
+            phaseReport.append(" fails!\n");
+            return false;
+        }
+    }
 
 
     /**
@@ -3181,6 +3227,11 @@ implements Runnable {
         BattleArmor troopers = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
+        boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
+        if (!bInferno) {
+            // also check for inferno infantry
+            bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
+        }
         
         if (lastEntityId != ae.getId()) {
             phaseReport.append("\nWeapons fire for " ).append( ae.getDisplayName() ).append( "\n");
@@ -3277,45 +3328,15 @@ implements Runnable {
                 phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
             }
             
-            // If the target is in the woods and the weapon misses,
-            // and the weapon is a large weapon, set the woods on fire,
-            // unless the weapon is a Streak SRM.
-            Coords targetCoords = target.getPosition();
-            Hex targetHex = game.getBoard().getHex(targetCoords);
+            // Non-streaks can set fires on misses
+            if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL && wtype.getAmmoType() != AmmoType.T_SRM_STREAK) {
+                
+                // make sure it's a fire-setting weapon
+                if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
+                    tryIgniteHex(target.getPosition(), bInferno, 11);
+                }
+            }
 
-            // Inferno rounds always cause fires.
-            if ( usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO ) {
-                game.board.addInfernoTo( targetCoords,
-                                         InfernoTracker.STANDARD_ROUND,
-                                         1 );
-                if ( !targetHex.contains(Terrain.FIRE) ) {
-                    phaseReport.append
-                        ("           Missed inferno shot sets the hex on fire! \n");
-                }
-            }
-            // Handle Inferno SRM-equipped infantry.
-            if ( isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO) ) {
-                game.board.addInfernoTo( targetCoords,
-                                         InfernoTracker.STANDARD_ROUND,
-                                         1 );
-                if ( !targetHex.contains(Terrain.FIRE) ) {
-                    phaseReport.append
-                        ("           Missed inferno shot sets the hex on fire! \n");
-                }
-            }
-            else if ( targetHex.contains(Terrain.WOODS) &&
-                 !(targetHex.contains(Terrain.FIRE)) &&
-                 toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
-                 wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {
-                // 11 or 12 is the same odds as 2 or 3
-                if ( wtype.getFireTN() != TargetRoll.IMPOSSIBLE &&
-                     burn(targetHex, 11) == true )
-                {
-                    sendChangedHex(targetCoords);
-                    phaseReport.append
-                        ("           Missed shot sets the woods on fire! \n");
-                }
-            }// end if target has woods and no fire
             return;
         }
         
@@ -3339,7 +3360,6 @@ implements Runnable {
         boolean bECMAffected = false;
         boolean bMekStealthActive = false;
         String sSalvoType = " shot(s) ";
-        boolean bInfernoRound = false;
 
         // Mek swarms attach the attacker to the target.
         if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
@@ -3379,11 +3399,10 @@ implements Runnable {
             }
 
             // Handle Inferno SRM squads.
-            if ( wtype.hasFlag(WeaponType.F_INFERNO) ) {
+            if (bInferno) {
                 nCluster = hits;
                 nDamPerHit = 0;
                 sSalvoType = " Inferno missle(s) ";
-                bInfernoRound = true;
                 bSalvo = false;
             }
 
@@ -3398,11 +3417,10 @@ implements Runnable {
             hits = platoon.getDamage(platoon.getShootingStrength());
 
             // Handle Inferno SRM infantry.
-            if ( wtype.hasFlag(WeaponType.F_INFERNO) ) {
+            if (bInferno) {
                 nCluster = hits;
                 nDamPerHit = 0;
                 sSalvoType = " Inferno missle(s) ";
-                bInfernoRound = true;
                 bSalvo = false;
             }
         } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE ||
@@ -3471,11 +3489,10 @@ implements Runnable {
 
             // If dealing with Inferno rounds set damage to zero and reset
             // all salvo bonuses (cannot mix with other special munitions).
-            if (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO) {
+            if (bInferno) {
                     nDamPerHit = 0;
                     nSalvoBonus = 0;
                     sSalvoType = " inferno missile(s) ";
-                    bInfernoRound = true;
                     bSalvo = false;
             }
 
@@ -3614,41 +3631,28 @@ implements Runnable {
 
             // If the attack was with inferno rounds then
             // do heat and fire instead of damage.
-            if ( bInfernoRound ) {
+            if ( bInferno ) {
                 // TODO: remove this block and make infantry invalid
                 //       targets for Infernos in Compute#toHitWeapon()
                 // Infernos cannot attack infantry directly so instead
                 // they attack hits the hex and sets it on fire.
                 if (target instanceof Infantry) {
-                    Coords c = target.getPosition();
-                    Hex h = game.getBoard().getHex(c);
                     phaseReport.append("hits!\n");
-                    phaseReport.append(" Fire started in hex!\n");
-                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
-                    game.board.addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
-                    sendChangedHex(c);
+                    tryIgniteHex(target.getPosition(), true, 0);
                     return;
                 }
 
-                // targeting a hex
-                if(target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-                    target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
-                    Coords c = target.getPosition();
-                    Hex h = game.getBoard().getHex(c);
-
+                // targeting a hex for ignition
+                if(target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
                     phaseReport.append( "hits with " )
                         .append( hits )
                         .append( " inferno missles.\n" );
-                    phaseReport.append(" Fire started in hex!\n");
-                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
-                    game.board.addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
-                    sendChangedHex(c);
+                    tryIgniteHex(target.getPosition(), true, 0);
                     return;
                 }
-                // Targeting something other than infantry or a hex.
-                else if (entityTarget != null ) {
+                
+                // Targeting an entity
+                if (entityTarget != null ) {
                     entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
                                      hits );
                     if ( !bSalvo ) {
@@ -3676,55 +3680,34 @@ implements Runnable {
                 }
             } // End is-inferno
 
-            // if we're targeting a hex, then 
-            // should be able to split up targeting for clear and targeting for ignite now
-            if(target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-                target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
-              nDamage = nDamPerHit * hits;
-              phaseReport.append("hits!\n");
-              phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
-              Coords c = target.getPosition();
-              Hex h = game.getBoard().getHex(c);
-              if(!h.contains(Terrain.WOODS)) return; // only woods can be lit on fire or cleared at the moment
-              int TN = 14 - nDamage;
-              if(!wtype.hasFlag(WeaponType.F_FLAMER)) {
-                int Woods = h.levelOf(Terrain.WOODS);
-                if(Woods < 1) return;
-                int woodsRoll = Compute.d6(2);
-                phaseReport.append("    Checking to clear woods; needs " ).append( TN ).append( ", rolls " ).append( woodsRoll ).append( ": ");
-
-
-                if(woodsRoll >= TN) {
-                  if(Woods > 1) {
-                     h.removeTerrain(Terrain.WOODS);
-                     h.addTerrain(new Terrain(Terrain.WOODS, Woods - 1));
-                     phaseReport.append(" Heavy Woods converted to Light Woods!\n");
-                  }
-                  else if(Woods == 1) {
-                     h.removeTerrain(Terrain.WOODS);
-                     h.addTerrain(new Terrain(Terrain.ROUGH, 1));
-                     phaseReport.append(" Light Woods converted to Rough!\n");
-                  }
-                  sendChangedHex(c);
-                } else {
-                  phaseReport.append(" fails!\n");
+            // targeting a hex for igniting
+            if (target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+                phaseReport.append("hits!\n");
+                if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
+                    tryIgniteHex(target.getPosition(), bInferno, wtype.getFireTN());
                 }
-              }
-
-
-              TN = wtype.getFireTN();
-              phaseReport.append("    Checking to start fire in hex; needs " ).append( TN ).append( ", ");
-              int fireRoll = Compute.d6(2);
-              phaseReport.append("rolls " ).append( fireRoll ).append( " : ");
-              if(fireRoll >= TN) {
-                 phaseReport.append(" Fire started!\n");
-                 h.addTerrain(new Terrain(Terrain.FIRE, 1));
-                 sendChangedHex(c);
-              }
-              else {
-                 phaseReport.append(" No fire.\n");
-              }             
-              return;
+                return;
+            }
+            
+            // targeting a hex for clearing
+            // is it true that flamers can't clear?
+            if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                nDamage = nDamPerHit * hits;
+                phaseReport.append("hits!\n");
+                phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
+                
+                // any clear attempt can result in accidental ignition
+                // even weapons that can't normally start fires.  that's weird. . 
+                if (tryIgniteHex(target.getPosition(), bInferno, 9)) {
+                    return;
+                }
+                
+                int tn = 14 - nDamage;
+                if(!wtype.hasFlag(WeaponType.F_FLAMER)) {
+                    tryClearHex(target.getPosition(), tn);
+                } 
+                
+                return;
             }
 
             // Battle Armor squads equipped with fire protection
@@ -6030,11 +6013,16 @@ implements Runnable {
      * Returns true if the hex is set on fire with the specified roll.  Of
      * course, also checks to see that fire is possible in the specified hex.
      */
-    public boolean burn(Hex hex, int roll) {
+    public boolean burn(Hex hex, int roll, boolean bAnyTerrain) {
         if (!game.getOptions().booleanOption("fire") || null == hex 
-        || hex.contains(Terrain.FIRE) || !(hex.contains(Terrain.WOODS))) {
+                || hex.contains(Terrain.FIRE)) {
             return false;
         }
+        
+        if (!bAnyTerrain && !(hex.contains(Terrain.WOODS))) {
+            return false;
+        }
+        
         int fireRoll = Compute.d6(2);
         if (fireRoll >= roll) {
             hex.addTerrain(new Terrain(Terrain.FIRE, 1));
@@ -6042,6 +6030,11 @@ implements Runnable {
         } else {
             return false;
         }
+    }
+    
+    // default signature, assuming only woods can burn
+    public boolean burn(Hex hex, int roll) {
+        return burn(hex, roll, false);
     }
     
     

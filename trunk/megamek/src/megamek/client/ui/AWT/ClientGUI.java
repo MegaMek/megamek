@@ -231,6 +231,7 @@ public class ClientGUI
 
         try {
             bv = new BoardView1(client.game, frame);
+            bv.setLocalPlayer(client.getLocalPlayer());
         } catch (IOException e) {
             doAlertDialog("Fatal Error", "Could not initialise:\n" + e);
             die();
@@ -634,9 +635,6 @@ public class ClientGUI
                     panMain.add(main, this.bv);
                 }
                 panSecondary.add(secondary, component);
-                //Should have a local player by now.  Surely there
-                // is a better place to put this though...
-                bv.setLocalPlayer(client.getLocalPlayer());
                 break;
             case Game.PHASE_TARGETING :
                 component = new TargetingPhaseDisplay(this, false);

@@ -446,10 +446,13 @@ public class Compute
 		}
 		
         // Arty shots have to be with arty, non arty shots with non arty.
-        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && !wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && 
+                (!wtype.hasFlag(WeaponType.F_ARTILLERY) || 
+                        ((atype.getMunitionType() == AmmoType.M_FASCAM) || 
+                        (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) || 
+                        (atype.getMunitionType() == AmmoType.M_INFERNO_IV)))) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
         }
-        
         // Arrow IV submunition TargetTypes must use appropriate ammo
         if (!((target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) ||
               (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) ||

@@ -34,6 +34,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private static Color HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
+    private static Color SMOKE_AND_FIRE;
     
     private final static int SHOW_NO_HEIGHT = 0;
     private final static int SHOW_GROUND_HEIGHT = 1;
@@ -116,6 +117,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         m_terrainColors[Terrain.ROAD]     = new Color(71,79,107);
         m_terrainColors[Terrain.FIRE]     = Color.red;
         m_terrainColors[Terrain.SMOKE]    = new Color(204,204,204);
+        SMOKE_AND_FIRE                    = new Color(153,0,0);
         m_terrainColors[Terrain.SWAMP]    = new Color(49,136,74);
         m_terrainColors[Terrain.BUILDING] = new Color(204,204,204);
         m_terrainColors[Terrain.BRIDGE]   = new Color(109,55,25);
@@ -181,6 +183,15 @@ scan:
                     blue = (int)st.nval;
 
                     SINKHOLE = new Color(red,green,blue);
+                } else if (key.equals("smokeandfire")) {
+                    st.nextToken();
+                    red = (int)st.nval;
+                    st.nextToken();
+                    green = (int)st.nval;
+                    st.nextToken();
+                    blue = (int)st.nval;
+
+                    SMOKE_AND_FIRE = new Color(red,green,blue);
                 } else {
                     st.nextToken();
                     red = (int)st.nval;
@@ -695,6 +706,10 @@ scan:
                 if (j == Terrain.WOODS && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
                 };
+                // contains both smoke and fire
+                if (j == Terrain.SMOKE && x.getTerrain(Terrain.FIRE) != null) {
+                    terrColor = SMOKE_AND_FIRE;
+                }
                 break;
             }
         }

@@ -57,9 +57,6 @@ physical attacks:
 displacement issues:
 - domino effect: mechs with movement available can roll to step out of the way
 
-pilots:
-- successive consciousness checks should be made from low rolls to high
-
 falling:
 - only fall to surface of water
 
@@ -74,6 +71,7 @@ VERSION HISTORY:
 ----------------
 v CVS
 + Applied skids patch to CVS tree.
++ Successive consciousness checks should be made from low rolls to high.
 
 v 0.27.6 (11-08-01, 6pm)
 + Added Kai's fire patch (only working for missed shots, presently)

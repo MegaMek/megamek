@@ -140,28 +140,4 @@ public class Pilot
          
         return multiplier;
     }
-    
-    /**
-     * Returns the conciousness roll number
-     * 
-     * TODO: maybe this should be in Rules?
-     */
-    public int getConciousnessNumber() {
-        switch(hits) {
-        case 0:
-            return 2;
-        case 1:
-            return 3;
-        case 2:
-            return 5;
-        case 3:
-            return 7;
-        case 4:
-            return 10;
-        case 5:
-            return 11;
-        default:
-            return Integer.MAX_VALUE;
-        }
-    }
 }

@@ -8,6 +8,7 @@ v 0.29.19 (CVS)
 + Bug 775759: CHECK_FALSE overrides other autos in target rolls
 + Bug 855550, Patch 855623: don't allow shutdown or unconcious units to flee.
 + Bug 854422: Notify user when AMS shoots down a Narc pod
++ Patch 819982, RFE 748896: add option to allow tanks to "eject".
 
 v 0.29.18 (2003-11-26, 7:30am)
 + Bug 843723, Patch 842834: fix race condition with "Done" button

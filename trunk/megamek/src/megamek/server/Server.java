@@ -1538,7 +1538,6 @@ implements Runnable {
             if (step.getType() == MovementData.STEP_CHARGE) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                distance = step.getDistance();
                 mpUsed = step.getMpUsed();
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
@@ -1550,7 +1549,6 @@ implements Runnable {
             if (step.getType() == MovementData.STEP_DFA) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                distance = step.getDistance();
                 mpUsed = step.getMpUsed();
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(daa);

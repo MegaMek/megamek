@@ -327,7 +327,6 @@ public class TestBot extends BotClientWrapper {
     } else {
       enemies_moved = initiative;
       Vector possible = new Vector();
-      Vector inf_possible = new Vector();
       Iterator i = this.getEntitiesOwned().iterator();
       int selectable = 0;
       EntityState[] best = null;
@@ -338,7 +337,7 @@ public class TestBot extends BotClientWrapper {
         CEntity cen = this.enemies.get(entity);
         
         // if we can't move this entity right now, ignore it
-        if (game.getTurn().isValidEntity(entity)) {
+        if (!game.getTurn().isValidEntity(entity)) {
             continue;
         }
         
@@ -367,14 +366,6 @@ public class TestBot extends BotClientWrapper {
           short_circuit = true;
         }
       }
-
-      // If only infantry can move, then choose from that list.
-      if ( possible.size() <= 0 ) {
-	  possible = inf_possible;
-      }
-
-      // Discard the infantry moves.
-      inf_possible = null;
 
       //should ignore mechs that are not engaged
       //and only do the below when there are 2 or mechs left to move

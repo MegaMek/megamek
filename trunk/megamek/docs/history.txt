@@ -25,7 +25,6 @@ general:
 - in the lobby, perhaps the mech name could be hidden and only show the BV
 
 board display:
-? display something in exchange phase
 ? show dead mechs as rubble?
 ? some way to resize chat to be bigger or smaller
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
@@ -86,6 +85,8 @@ v 0.28.6-dev (CVS)
 + Allow scenarios to define a rotated board.
 + all selectable entity determination controlled by GameTurn
 + 682166 LMG and HMG racksize == weapon damage; add half-ton ammo
++ 679250 Change BA NARC racksize to prevent listing in ammo selector.
++ Striker Light Tank (level 1 & 2, and LRM variant) shouldn't show Mek gif.
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

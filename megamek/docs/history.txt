@@ -8,6 +8,7 @@ v0.29.51 (CVS)
 + Bug 1035223: Vector#clear does not work with MS JRE
 + Bug 1035780: fixed Summoer and Hellbringer image transparency
 + Bug 1035224: wrong Longbow variant pic
++ Bug 1037687: Narc bonus applied when using special ammo
 
 v0.29.50 (2004-09-26 1:15pm)
 + Bug 1031414: location exposure should be checked after each fall

@@ -1957,7 +1957,7 @@ public class Server
 						// damage transfers, maybe
 						damage -= te.getInternal(loc);
 						te.setInternal(Entity.ARMOR_DESTROYED, loc);
-						desc += " Internal Structure destroyed,";
+						desc += " <<<SECTION DESTROYED>>>,";
 					}
 				}
 			
@@ -2028,7 +2028,7 @@ public class Server
 			if (loc == Mech.LOC_HEAD ||
 			   loc == Mech.LOC_RARM || loc == Mech.LOC_LARM || 
 			   loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
-				desc += " " + en.getLocationName(loc) + " blown off.";
+				desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
 				destroyLocation(en, loc);
 				if (loc == Mech.LOC_HEAD) {
 					en.crew.setDead(true);
@@ -2058,7 +2058,7 @@ public class Server
 				en.setCritical(loc, slot, cs);
 				switch(cs.getType()) {
 				case CriticalSlot.TYPE_SYSTEM :
-					desc += "\n            <<<CRITICAL HIT>> on " + Mech.systemNames[cs.getIndex()] + ".";
+					desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
 					switch(cs.getIndex()) {
 					case Mech.SYSTEM_COCKPIT :
 						// boink!
@@ -2093,11 +2093,11 @@ public class Server
 					}
 					break;
 				case CriticalSlot.TYPE_WEAPON :
-					desc += "\n            <<<CRITICAL HIT>> on " + en.getWeapon(cs.getIndex()).getType().getName() + ".";
+					desc += "\n            <<<CRITICAL HIT>>> on " + en.getWeapon(cs.getIndex()).getType().getName() + ".";
 					en.getWeapon(cs.getIndex()).setDestroyed(true);
 					break;
 				case CriticalSlot.TYPE_AMMO :
-					desc += "\n            <<<CRITICAL HIT>> on " + en.getAmmo(cs.getIndex()).getName() + ".";
+					desc += "\n            <<<CRITICAL HIT>>> on " + en.getAmmo(cs.getIndex()).getName() + ".";
 					en.getWeapon(cs.getIndex()).setDestroyed(true);
                     desc += explodeAmmo(en, loc, slot);
 					break;
@@ -2272,7 +2272,7 @@ public class Server
 	 */
 	private void doEntityFall(Entity entity, Coords fallPos, int height, 
                               int roll) {
-        doEntityFall(entity, fallPos, height, Compute.d6(1) - 1, roll);
+        doEntityFall(entity, fallPos, height, Compute.d6(1), roll);
 	}
 	
 	/**
@@ -2534,7 +2534,7 @@ public class Server
 		
 		public int				id;
 		
-		public Thread			pump;
+		public Thread			receiver;
 		
 		
 		public Connection(Socket socket, int id) {
@@ -2542,8 +2542,8 @@ public class Server
 			this.id = id;
 			
 			// start pump thread
-			pump = new Thread(this);
-			pump.start();
+			receiver = new Thread(this);
+			receiver.start();
 		}
         
         public int getId() {
@@ -2554,7 +2554,7 @@ public class Server
 		 * Kill off the thread
 		 */
 		public void die() {
-			pump = null;
+			receiver = null;
 		}
 		
 		
@@ -2605,71 +2605,67 @@ public class Server
 	        	disconnected(id);
 	        }
         }
+        
+        /**
+         * Process a packet
+         */
+        private void handle(Packet c) {
+			//System.out.println("s(" + cn + "): received command");
+			// act on it
+			switch(c.getCommand()) {
+            case Packet.COMMAND_CLIENT_NAME :
+                receiveClientName(c, id);
+                break;
+			case Packet.COMMAND_PLAYER_UPDATE :
+				receivePlayerInfo(c);
+                validatePlayerInfo(id);
+                send(createPlayerUpdatePacket(id));
+				break;
+			case Packet.COMMAND_ENTITY_READY :
+				receiveEntityReady(c, id);
+				send(createEntityPacket(c.getIntValue(0)));
+				break;
+			case Packet.COMMAND_PLAYER_READY :
+                receivePlayerReady(c, id);
+                send(createPlayerReadyPacket(id));
+				checkReady();
+				break;
+			case Packet.COMMAND_CHAT :
+                String chat = (String)c.getObject(0);
+                sendChatToAll(getPlayer(id).getName(), chat);
+				break;
+			case Packet.COMMAND_ENTITY_MOVE :
+				doEntityMovement(c, id);
+				break;
+			case Packet.COMMAND_ENTITY_ATTACK :
+				receiveAttack(c);
+				break;
+			case Packet.COMMAND_ENTITY_ADD :
+				receiveEntityAdd(c, id);
+                resetPlayerReady();
+                transmitAllPlayerReadys();
+				break;
+			case Packet.COMMAND_ENTITY_REMOVE :
+				receiveEntityDelete(c, id);
+                resetPlayerReady();
+                transmitAllPlayerReadys();
+				break;
+			case Packet.COMMAND_SENDING_GAME_SETTINGS :
+				gameSettings = (GameSettings)c.getObject(0);
+                resetPlayerReady();
+                transmitAllPlayerReadys();
+                send(createSettingsPacket());
+				break;
+			}
+        }
 
 		
 		/**
-		 * listen for player messages
+		 * listen for packets & handle them
 		 */
 		public void run() {
-			Thread currentThread = Thread.currentThread();
-			Packet c;
-			while (pump == currentThread) {
-				// get a command
-				c = readCommand();
-				if (c != null) {
-					//System.out.println("s(" + cn + "): received command");
-					// act on it
-					switch(c.getCommand()) {
-                    case Packet.COMMAND_CLIENT_NAME :
-                        receiveClientName(c, id);
-                        break;
-					case Packet.COMMAND_PLAYER_UPDATE :
-						receivePlayerInfo(c);
-                        validatePlayerInfo(id);
-                        send(createPlayerUpdatePacket(id));
-						break;
-					case Packet.COMMAND_ENTITY_READY :
-						receiveEntityReady(c, id);
-						send(createEntityPacket(c.getIntValue(0)));
-						break;
-					case Packet.COMMAND_PLAYER_READY :
-                        receivePlayerReady(c, id);
-                        send(createPlayerReadyPacket(id));
-						checkReady();
-						break;
-					case Packet.COMMAND_CHAT :
-                        String chat = (String)c.getObject(0);
-                        if (chat.equalsIgnoreCase("/reset")) {
-                            resetServer();
-                        } else {
-                            sendChatToAll(getPlayer(id).getName(), chat);
-                        }
-						break;
-					case Packet.COMMAND_ENTITY_MOVE :
-						doEntityMovement(c, id);
-						break;
-					case Packet.COMMAND_ENTITY_ATTACK :
-						receiveAttack(c);
-						break;
-					case Packet.COMMAND_ENTITY_ADD :
-						receiveEntityAdd(c, id);
-                        resetPlayerReady();
-                        transmitAllPlayerReadys();
-						break;
-					case Packet.COMMAND_ENTITY_REMOVE :
-						receiveEntityDelete(c, id);
-                        resetPlayerReady();
-                        transmitAllPlayerReadys();
-						break;
-					case Packet.COMMAND_SENDING_GAME_SETTINGS :
-						gameSettings = (GameSettings)c.getObject(0);
-                        resetPlayerReady();
-                        transmitAllPlayerReadys();
-                        send(createSettingsPacket());
-						break;
-					}
-				}
-				// again!
+			while (receiver == Thread.currentThread()) {
+				handle(readCommand());
 			}
 		}
 	}

@@ -1,97 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- This is an ant build file. See: "http://jakarta.apache.org/ant"-->
-<project name="MegaMek" default="compile">
+<project default="compile" name="MegaMek">
 
   <!-- Global properties for this build -->
-  <property name="src"              value="${basedir}"/>
-  <property name="build"            value="${basedir}/classes"/>
-  <property name="maindir"          value="megamek"/>
-  <property name="doc"              value="docs" />
-  <property name="timestampfile"    value="timestamp" />
-  <property name="jarfile"          value="MegaMek.jar" />
-  <property name="jarmanifest"      value="manifest.txt" /> 
-  <property name="exefile"          value="MegaMek.exe" />
-  <property name="cvsdir"           value="cvsdev" />
+  <property name="src" value="${basedir}"/>
+  <property name="build" value="${basedir}/classes"/>
+  <property name="maindir" value="megamek"/>
+  <property name="doc" value="docs"/>
+  <property name="timestampfile" value="timestamp"/>
+  <property name="jarfile" value="MegaMek.jar"/>
+  <property name="jarmanifest" value="manifest.txt"/> 
+  <property name="exefile" value="MegaMek.exe"/>
+  <property name="cvsdir" value="cvsdev"/>
 
-  <target name="init" description="Initialize system before build">
+  <target description="Initialize system before build" name="init">
      <!-- Create the time stamp -->
      <tstamp/>
      <!-- Ensure that the build directory exists. -->
      <mkdir dir="${build}"/>    
   </target>
 
-  <target name="compile" depends="init" description="Compile java sources into class files">
-    <javac srcdir="${src}" destdir="${build}" classpath="${basedir}" target="1.1"/>
-    <touch file="${timestampfile}" />
+  <target depends="init" description="Compile java sources into class files" name="compile">
+    <javac classpath="${basedir}" destdir="${build}" srcdir="${src}" target="1.1"/>
+    <touch file="${timestampfile}"/>
   </target>
 
-  <target name="jar" depends="compile" description="Create application jar file">
-      <jar jarfile="${jarfile}" manifest="${jarmanifest}" basedir="${build}"/>
+  <target depends="compile" description="Create application jar file" name="jar">
+      <jar basedir="${build}" jarfile="${jarfile}" manifest="${jarmanifest}"/>
   </target>
 
-  <target name="exe" depends="compile" description="Creates application exe file">
+  <target depends="compile" description="Creates application exe file" name="exe">
 	<!-- jexegen /out:MegaMek.exe /base:classes /main:megamek.MegaMek /r  *.class -->
-     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe" >
-	<arg line="/out:${exefile} /base:${build} /main:megamek.MegaMek /r *.class" />
+     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe">
+	<arg line="/out:${exefile} /base:${build} /main:megamek.MegaMek /r *.class"/>
      </exec>
   </target>
 
-  <target name="run" depends="compile">
+  <target depends="compile" name="run">
      <java classname="megamek.MegaMek" fork="true">
         <classpath>
-	   <pathelement path="${basedir}" />
-	   <pathelement path="${build}" />
+	   <pathelement path="${basedir}"/>
+	   <pathelement path="${build}"/>
 	</classpath>
      </java>
   </target>
 
   <target name="doc">
-     <mkdir dir="${doc}" />
-     <javadoc sourcepath="${src}" destdir="${doc}" classpath="${basedir}" windowtitle="MegaMek API" packagenames="megamek.*" package="yes" />
+     <mkdir dir="${doc}"/>
+     <javadoc classpath="${basedir}" destdir="${doc}" package="yes" packagenames="megamek.*" sourcepath="${src}" windowtitle="MegaMek API"/>
   </target>
   
-  <target name="clean" description="Remove all compiled and generated files">
+  <target description="Remove all compiled and generated files" name="clean">
     <!-- Delete the ${build} directory tree -->
     <delete dir="${build}"/>
     <delete dir="${doc}"/>
-    <delete file="${timestampfile}" />
-    <delete file="${jarfile}" />
-    <delete file="${exefile}" />
+    <delete file="${timestampfile}"/>
+    <delete file="${jarfile}"/>
+    <delete file="${exefile}"/>
   </target>
 
-  <target name="all" depends="compile, jar, exe" />
+  <target depends="compile, jar, exe" name="all"/>
 
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-init">
     <tstamp/>
-    <mkdir dir="${cvsdir}" />
-    <mkdir dir="${cvsdir}/megamek/classes" />
+    <mkdir dir="${cvsdir}"/>
+    <mkdir dir="${cvsdir}/megamek/classes"/>
   </target>
 
-  <target name="cvsdev-get" depends="cvsdev-init">
-    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek"
-        package="megamek" dest="${cvsdir}"
-    />
+  <target depends="cvsdev-init" name="cvsdev-get">
+    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek" dest="${cvsdir}" package="megamek"/>
   </target>
 
-  <target name="cvsdev-build" depends="cvsdev-init">
+  <target depends="cvsdev-init" name="cvsdev-build">
     <!-- compile -->
-    <javac srcdir="${cvsdir}/megamek" destdir="${cvsdir}/megamek/classes" classpath="${cvsdir}/megamek" target="1.1"/>
+    <javac classpath="${cvsdir}/megamek" destdir="${cvsdir}/megamek/classes" srcdir="${cvsdir}/megamek" target="1.1"/>
     <!-- build -->
-    <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe" >
-      <arg line="/out:${cvsdir}/megamek/MegaMek.exe /base:${cvsdir}/megamek/classes /main:megamek.MegaMek /r *.class" />
+    <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe">
+      <arg line="/out:${cvsdir}/megamek/MegaMek.exe /base:${cvsdir}/megamek/classes /main:megamek.MegaMek /r *.class"/>
     </exec>
-    <jar jarfile="${cvsdir}/megamek/MegaMek.jar" manifest="${cvsdir}/megamek/manifest.txt" basedir="${cvsdir}/megamek/classes"/>
-    <touch file="${cvsdir}/megamek/${timestampfile}" />
+    <jar basedir="${cvsdir}/megamek/classes" jarfile="${cvsdir}/megamek/MegaMek.jar" manifest="${cvsdir}/megamek/manifest.txt"/>
+    <touch file="${cvsdir}/megamek/${timestampfile}"/>
   </target>
 
-  <target name="cvsdev-package" depends="cvsdev-init">
-    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsdir}/megamek" />
+  <target depends="cvsdev-init" name="cvsdev-package">
+    <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
   </target>
   
   <target name="cvsdev-clean">
     <delete dir="${cvsdir}"/>
   </target>
 
-  <target name="cvsdev" depends="cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" />
+  <target depends="cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" name="cvsdev"/>
 
 </project>

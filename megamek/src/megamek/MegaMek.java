@@ -106,8 +106,7 @@ public class MegaMek
             if ( confirm.getAnswer() ) {
                 showHelp();
             };
-        };        
-
+        };
     }
 
     /**

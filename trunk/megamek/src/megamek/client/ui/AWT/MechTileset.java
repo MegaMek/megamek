@@ -129,14 +129,34 @@ public class MechTileset {
         while(st.nextToken() != StreamTokenizer.TT_EOF) {
             String name = null;
             String imageName = null;
-            if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
+            if ( st.ttype == StreamTokenizer.TT_WORD
+                 && st.sval.equalsIgnoreCase("include") ) {
+                st.nextToken();
+                name = st.sval;
+                System.out.print( "Loading more unit images from " );
+                System.out.print( name );
+                System.out.println( "..." );
+                try {
+                    this.loadFromFile(name);
+                System.out.print( "... finished " );
+                System.out.print( name );
+                System.out.println( "." );
+                }
+                catch (IOException ioerr) {
+                    System.out.print( "... failed: " );
+                    System.out.print( ioerr.getMessage() );
+                    System.out.println( "." );
+                }
+            } else if ( st.ttype == StreamTokenizer.TT_WORD
+                        && st.sval.equalsIgnoreCase("chassis") ) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
                 chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
-            } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
+            } else if ( st.ttype == StreamTokenizer.TT_WORD
+                        && st.sval.equalsIgnoreCase("exact") ) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();

@@ -71,22 +71,54 @@ public class Coords
      *  otherwise, a new copy of this coordinate.
      * @param direction the direction.
      */
-    public Coords translated(int direction) {
+    public final Coords translated(int dir) {
+        return new Coords(xInDir(x, y, dir), yInDir(x, y, dir));
+        /*
         switch(direction) {
-        case 0:
-            return new Coords(x, y - 1);
-        case 1:
-            return new Coords(x + 1, y - (isXOdd() ? 0 : 1));
-        case 2:
-            return new Coords(x + 1, y + (isXOdd() ? 1 : 0));
-        case 3:
-            return new Coords(x, y + 1);
-        case 4:
-            return new Coords(x - 1, y + (isXOdd() ? 1 : 0));
-        case 5:
-            return new Coords(x - 1, y - (isXOdd() ? 0 : 1));
-        default:
-            return new Coords(this);
+            case 0 : return new Coords(x, y - 1);
+            case 1 : return new Coords(x + 1, y - (x + 1 & 1));
+            case 2 : return new Coords(x + 1, y + (x & 1));
+            case 3 : return new Coords(x, y + 1);
+            case 4 : return new Coords(x - 1, y + (x & 1));
+            case 5 : return new Coords(x - 1, y - (x + 1 & 1));
+            default: return new Coords(x, y);
+        }
+         */
+    }
+    
+    /**
+     * Returns the x parameter of the coordinates in the direction
+     */
+    public final static int xInDir(int x, int y, int dir) {
+         switch (dir) {
+             case 1 :
+             case 2 :
+                 return x + 1;
+             case 4 :
+             case 5 :
+                 return x - 1;
+             default :
+                 return x;
+         }
+    }
+    
+    /**
+     * Returns the y parameter of the coordinates in the direction
+     */
+    public final static int yInDir(int x, int y, int dir) {
+        switch (dir) {
+            case 0 : 
+                return y - 1;
+            case 1 : 
+            case 5 :
+                return y - ((x + 1) & 1);
+            case 2 : 
+            case 4 : 
+                return y + (x & 1);
+            case 3 : 
+                return y + 1;
+            default :
+                return y;
         }
     }
     
@@ -255,7 +287,7 @@ public class Coords
     /**
      * Returns a string representing a coordinate in "board number" format.
      */
-    public String getBoardNum() {
+    public final String getBoardNum() {
         StringBuffer num = new StringBuffer();
         
         num.append((x < 9 ? "0" : "") + (x + 1));

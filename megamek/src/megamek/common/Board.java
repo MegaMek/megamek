@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -19,20 +19,18 @@ import java.io.*;
 
 public class Board
 implements Serializable {
-    public static final int    BOARD_HEX_CLICK            = 1;
-    public static final int    BOARD_HEX_DOUBLECLICK    = 2;
-    public static final int    BOARD_HEX_DRAG            = 3;
+    public static final int     BOARD_HEX_CLICK         = 1;
+    public static final int     BOARD_HEX_DOUBLECLICK   = 2;
+    public static final int     BOARD_HEX_DRAG          = 3;
     
-    public int                width;
-    public int                height;
+    public int                  width;
+    public int                  height;
     
-    public transient Coords        lastCursor;
-    public transient Coords        highlighted;
-    public transient Coords        selected;
+    public transient Coords     lastCursor;
+    public transient Coords     highlighted;
+    public transient Coords     selected;
     
-    public Hex[] data;
-    
-    public Terrain[] terrains;
+    public Hex[]                data;
     
     protected transient Vector boardListeners;
     
@@ -60,7 +58,6 @@ implements Serializable {
         highlighted = null;
         selected = null;
         
-        terrains = new Terrain[0];
         boardListeners = new Vector();
     }
     
@@ -80,6 +77,8 @@ implements Serializable {
         lastCursor = null;
         highlighted = null;
         selected = null;
+        
+        initializeAll();
         
         processBoardEvent(new BoardEvent(this, new Coords(), null, BoardEvent.BOARD_NEW_BOARD, 0));
     }
@@ -113,7 +112,6 @@ implements Serializable {
         
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
-                mergeTerrain(boards[i * sheetWidth + j]);
                 copyBoardInto(j * width, i * height, boards[i * sheetWidth + j]);
             }
         }
@@ -136,32 +134,6 @@ implements Serializable {
     }
     
     /**
-     * Merges the terrain sets this and another board.  This may result in
-     * each board having terrain in its set that is not used on the board.
-     *
-     * If I was really ambitious, I'd make it so that the other board would update
-     * all of its hexes to use the new, combines terrain set.
-     */
-    private void mergeTerrain(Board other) {
-        Vector combined = new Vector();
-        // add this board's terrain
-        for (int i = 0; i < this.terrains.length; i++) {
-            combined.addElement(this.terrains[i]);
-        }
-        // add the other board's terrain that is not already in the combined set
-        for (int i = 0; i < other.terrains.length; i++) {
-            if (combined.indexOf(other.terrains[i]) == -1) {
-                combined.addElement(other.terrains[i]);
-            }
-        }
-        // give both boards the resulting terrain set
-        this.terrains = new Terrain[combined.size()];
-        other.terrains = new Terrain[combined.size()];
-        combined.copyInto(this.terrains);
-        combined.copyInto(other.terrains);
-    }
-    
-    /**
      * Determines if this Board contains the (x, y) Coords,
      * and if so, returns the Hex at that position.
      *
@@ -176,6 +148,80 @@ implements Serializable {
             return data[y * width + x];
         } else {
             return null;
+        }
+    }
+    
+    /**
+     * Gets the hex in the specified direction from the specified starting
+     * coordinates.
+     */
+    public Hex getHexInDir(Coords c, int dir) {
+        return getHexInDir(c.x, c.y, dir);
+    }
+    
+    /**
+     * Gets the hex in the specified direction from the specified starting
+     * coordinates.
+     *
+     * Avoids calls to Coords.translated, and thus, object construction.
+     */
+    public Hex getHexInDir(int x, int y, int dir) {
+        return getHex(Coords.xInDir(x, y, dir), Coords.yInDir(x, y, dir));
+    }
+    
+    /**
+     * Initializes a hex in its surroundings.
+     */
+    private void initializeHex(Coords pos) {
+        initializeHex(pos.x, pos.y);
+    }
+    
+    /**
+     * Initialize all hexes
+     */
+    private void initializeAll() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                initializeHex(x, y);
+            }
+        }
+    }
+    
+    /**
+     * Initialize a hex and the hexes around it
+     */
+    public void initializeAround(int x, int y) {
+        initializeHex(x, y);
+        for (int i = 0; i < 6; i++) {
+            initializeInDir(x, y, i);
+        }
+    }
+    
+    /**
+     * Initializes a hex in a specific direction from an origin hex
+     */
+    private void initializeInDir(int x, int y, int dir) {
+        initializeHex(Coords.xInDir(x, y, dir), Coords.yInDir(x, y, dir));
+    }
+    
+    /**
+     * Initializes a hex in its surroundings.  Currently sets the connects
+     * parameter appropriately to the surrounding hexes.
+     *
+     * If a surrounding hex is off the board, it checks the hex opposite the
+     * missing hex.
+     */
+    public void initializeHex(int x, int y) {
+        Hex hex = getHex(x, y);
+        
+        if (hex == null) {
+            return;
+        }
+        
+        hex.clearExits();
+        for (int i = 0; i < 6; i++) {
+            Hex other = getHexInDir(x, y, i);
+            hex.setExits(other, i);
         }
     }
     
@@ -211,7 +257,8 @@ implements Serializable {
     
     /**
      * Determines if this Board contains the (x, y) Coords,
-     * and if so, sets the specified Hex into that position.
+     * and if so, sets the specified Hex into that position
+     * and initializes it.
      *
      * @param x the x Coords.
      * @param y the y Coords.
@@ -219,6 +266,7 @@ implements Serializable {
      */
     public void setHex(int x, int y, Hex hex) {
         data[y * width + x] = hex;
+        initializeAround(x, y);
         processBoardEvent(new BoardEvent(this, new Coords(x, y), null, BoardEvent.BOARD_CHANGED_HEX, 0));
     }
     
@@ -446,11 +494,6 @@ implements Serializable {
     public void load(InputStream is) {
         int nw = 0, nh = 0, di = 0;
         Hex[] nd = new Hex[0];
-        Hashtable terrainHash = new Hashtable();
-        //Vector terrainLoaded = new Vector();
-        for(int i = 0; i < terrains.length; i++) {
-            terrainHash.put(terrains[i].name, terrains[i]);
-        }
         
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
@@ -471,30 +514,17 @@ implements Serializable {
                     nh = Integer.parseInt(args[1]);
                     nd = new Hex[nw * nh];
                     di = 0;
-                }
-                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("hex")) {
+                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("hex")) {
                     // read rest of line
-                    String[] args = {"", "", "", "0"};
+                    String[] args = {"", "0", "", ""};
                     int i = 0;
                     while(st.nextToken() == StreamTokenizer.TT_WORD || st.ttype == '"' || st.ttype == StreamTokenizer.TT_NUMBER) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int)st.nval + "" : st.sval;
                     }
-                    if(!terrainHash.containsKey(args[0])) {
-                        Terrain terrain = new Terrain(args[0], Terrain.parse(args[1]), args[2]);
-                        terrainHash.put(terrain.name, terrain);
-                    }
-                    Hex hex = new Hex((Terrain)terrainHash.get(args[0]), Integer.parseInt(args[3]));
-                    nd[di++] = hex;
-//                    // check terrainB type
-//                    int hex_terrain = Hex.parse(args[1]);
-//                    // if valid, add to list
-//                    if(hex_terrain != -1) {
-//                        Hex hex = new Hex(args[0], hex_terrain, args[2], Integer.parseInt(args[3]));
-//           
-//                        nd[di++] = hex;
-//                    }
-                }
-                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("end")) {
+                    int elevation = Integer.parseInt(args[1]);
+                    nd[indexFor(args[0], nw)] = new Hex(elevation, args[2], args[3]);
+                    
+                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("end")) {
                     break;
                 }
             }
@@ -502,20 +532,26 @@ implements Serializable {
             System.err.println("i/o error reading board");
             System.err.println(ex);
         }
+        
+        // fill nulls with blank hexes
+        for (int i = 0; i < nd.length; i++) {
+            if (nd[i] == null) {
+                nd[i] = new Hex();
+            }
+        }
+        
         // check data integrity
         if(nw > 1 || nh > 1 || di == nw * nh) {
             newData(nw, nh, nd);
-            
-            terrains = new Terrain[terrainHash.size()];
-            int tcount = 0;
-            for (Enumeration i = terrainHash.elements(); i.hasMoreElements();) {
-                terrains[tcount++] = (Terrain)i.nextElement();
-            }
-            
-            //System.out.println("board.load: terrain array length = " + terrains.length);
         } else {
             System.err.println("board data invalid");
         }
+    }
+    
+    private int indexFor(String hexNum, int width) {
+        int x = Integer.parseInt(hexNum.substring(0, hexNum.length() - 2)) - 1;
+        int y = Integer.parseInt(hexNum.substring(hexNum.length() - 2)) - 1;
+        return y * width + x;
     }
     
     
@@ -527,11 +563,35 @@ implements Serializable {
             Writer w = new OutputStreamWriter(os);
             // write
             w.write("size " + width + " " + height + "\r\n");
-            for(int i = 0; i < data.length; i++) {
+            for (int i = 0; i < data.length; i++) {
                 Hex hex = data[i];
-                w.write("hex \"" + hex.getTerrain().name + "\" " + Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" + hex.getTerrain().picfile + "\" " + hex.getElevation() + "\r\n");
+                boolean firstTerrain = true;
+                
+                StringBuffer hexBuff = new StringBuffer("hex ");
+                hexBuff.append(new Coords(i % width, i / width).getBoardNum());
+                hexBuff.append(" ");
+                hexBuff.append(hex.getElevation());
+                hexBuff.append(" \"");
+                for (int j = 0; j < Terrain.SIZE; j++) {
+                    Terrain terrain = hex.getTerrain(j);
+                    if (terrain != null) {
+                        if (!firstTerrain) {
+                            hexBuff.append(";");
+                        }
+                        hexBuff.append(terrain.toString());
+                        firstTerrain = false;
+                    }
+                }
+                hexBuff.append("\" \"");
+                if (hex.getTheme() != null) {
+                    hexBuff.append(hex.getTheme());
+                }
+                hexBuff.append("\"\r\n");
+                
+                w.write(hexBuff.toString());
+//                w.write("hex \"" + hex.getTerrain().name + "\" " + Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" + hex.getTerrain().picfile + "\" " + hex.getElevation() + "\r\n");
             }
-            w.write("end" + "\r\n");
+            w.write("end\r\n");
             // make sure it's written
             w.flush();
         } catch(IOException ex) {

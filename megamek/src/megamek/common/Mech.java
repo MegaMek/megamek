@@ -211,8 +211,7 @@ public abstract class Mech
         int sinksUnderwater = 0;
         final Hex curHex = game.board.getHex(getPosition());
         // are we even in water?  is it depth 1+
-        if (curHex.getTerrainType() != Terrain.WATER
-            || curHex.getElevation() >= 0) {
+        if (curHex.levelOf(Terrain.WATER) > 0) {
             return capacity;
         } else if (curHex.getElevation() == -1) {
           if ( isProne() ) {

@@ -322,7 +322,7 @@ public class PhysicalDisplay
 		"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
 	) ) {
 		disableButtons();
-		attacks.addElement(new PushAttackAction(cen, ten));
+		attacks.addElement(new PushAttackAction(cen, ten, te().getPosition()));
 		ready();
 	};
     }

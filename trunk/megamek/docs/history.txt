@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.40 (CVS)
+
 v0.29.39 (2004-07-04 8:30pm)
 + Bug 982019: Fix for Hauptmann HA1-OA and Templar Grayson and Tancred pics.
 + RFE 899893: Use old Marauder IIC image

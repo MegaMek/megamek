@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.10-dev
 + All movement resets result in the "walk" gear being selected
++ Back space removes the last movement step.
 
 v 0.29.10 (09-08-03, 2pm)
 + Bug 799275: Gauss ammo defensive BV correctly calculated.--LDE

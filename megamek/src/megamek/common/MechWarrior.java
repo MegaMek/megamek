@@ -38,9 +38,8 @@ public class MechWarrior extends Infantry {
     }
     
     public boolean isSelectableThisTurn(Game game) {
-        return !done && (this.getTransportId() == Entity.NONE) && 
-           (pickedUpById == Entity.NONE) && !isUnloadedThisTurn() &&
-           !isClearingMinefield();
+        return (pickedUpById == Entity.NONE)
+            && super.isSelectableThisTurn( game );
     }
 
     public int getOriginalRideId() {
@@ -67,4 +66,14 @@ public class MechWarrior extends Infantry {
     public void setPickedUpById(int pickedUpById) {
         this.pickedUpById = pickedUpById;
     }
+
+    /**
+     * Mek pilots have not inherent battle value.
+     * <p/>
+     * Overrides <code>Infantry#calculateBattleValue()</code>.
+     */
+    public int calculateBattleValue() {
+        return 0;
+    }
+
 }

@@ -25,14 +25,6 @@ import megamek.client.*;
  */
 public class Compute
 {
-// begin killme block
-//     public static final int        RANGE_MINIMUM    = 0;
-//     public static final int        RANGE_SHORT      = 1;
-//     public static final int        RANGE_MEDIUM     = 2;
-//     public static final int        RANGE_LONG       = 3;
-//     public static final int        RANGE_EXTREME    = 4;
-//     public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
-//  end  killme block
 
     public static final int        ARC_360          = 0;
     public static final int        ARC_FORWARD      = 1;
@@ -47,17 +39,20 @@ public class Compute
 
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
-        return random.d6(dice);
+        Roll roll = random.d6 (dice);
+        return roll.getIntValue();
     }
 
     /** Wrapper to random#d6() */
     public static int d6() {
-        return random.d6();
+        Roll roll = random.d6();
+        return roll.getIntValue();
     }
 
     /** Wrapper to random#randomInt(n) */
     public static int randomInt( int maxValue ) {
-        return random.randomInt(maxValue);
+        Roll roll = new MMRoll (random, maxValue);
+        return roll.getIntValue();
     }
 
     /**
@@ -359,7 +354,7 @@ public class Compute
             Coords temp = first;
             first = second;
             second = temp;
-        } else if (random.d6() > 3) {
+        } else if (Compute.d6() > 3) {
             // switch randomly
             Coords temp = first;
             first = second;

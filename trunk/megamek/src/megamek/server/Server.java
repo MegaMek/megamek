@@ -8317,22 +8317,23 @@ implements Runnable, ConnectionHandler {
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 desc.append( "\n            Movement system damaged!" );
+                
                 int nMP = te.getOriginalWalkMP();
-                if (nMP <= 1) {
-                    // From http://www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
-                    // page 19, tanks are only immobile if they take that critical hit.
-                    // ((Tank)te).immobilize();
-                    // Does the hovercraft sink?
-                    te_hex = game.board.getHex( te.getPosition() );
-                    if ( te.getMovementType() == Entity.MovementType.HOVER &&
-                         te_hex.levelOf(Terrain.WATER) > 0 ) {
-                        desc.append( destroyEntity(te, "a watery grave",
-                                                   false) );
-                    }
-                }
-                else {
+                if (nMP > 0) {
                     te.setOriginalWalkMP(nMP - 1);
-                }
+
+                    if (te.getOriginalWalkMP()==0) {
+                        // From http://www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
+                        // page 19, tanks are only immobile if they take that critical hit.
+                        // ((Tank)te).immobilize();
+
+                        // Hovercraft reduced to 0MP over water sink
+                        if ( te.getMovementType() == Entity.MovementType.HOVER &&
+                                game.board.getHex( te.getPosition() ).levelOf(Terrain.WATER) > 0 ) {
+                            desc.append( destroyEntity(te, "a watery grave", false) );
+                        }
+                    };
+                };
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc.append( "\n            Movement system destroyed!" );

@@ -179,7 +179,7 @@ public class DeployMinefieldDisplay
     		if (mf.getPlayerId() == client.getLocalPlayer().getId()) {
 		        butDone.setEnabled(false);
 	    		client.game.removeMinefield(mf);
-	    		deployedMinefields.remove(mf);
+	    		deployedMinefields.removeElement(mf);
 	    		switch (mf.getType()) {
 	    			case (Minefield.TYPE_CONVENTIONAL) :
 		        	deployM = true;
@@ -222,7 +222,7 @@ public class DeployMinefieldDisplay
     			return;
     		}
     		client.game.addMinefield(mf);
-    		deployedMinefields.add(mf);
+    		deployedMinefields.addElement(mf);
     		client.bv.update(client.bv.getGraphics());
     	}
     	

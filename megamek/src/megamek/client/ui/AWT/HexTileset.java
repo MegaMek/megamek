@@ -359,7 +359,7 @@ public class HexTileset {
         	images = new java.util.Vector();
         	for (int i = 0; i < filenames.size(); i++) {
         		String filename = (String) filenames.elementAt(i);
-        		images.add(comp.getToolkit().getImage("data/hexes/" + filename));
+        		images.addElement(comp.getToolkit().getImage("data/hexes/" + filename));
         	}
 //			image = comp.getToolkit().getImage("data/hexes/" + imageFile);
         }

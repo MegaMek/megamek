@@ -120,6 +120,7 @@ v 0.29.9-dev
 + Bug 774533: Added isRepairable() to indicate that a unit can be rebuit.
 + Bug 762509: Can't run or jump when unjamming a RAC.
 + Found and fixed an NPE when hit "done" in movement phase.
++ MSJDK compatibility changes(Vector issues). No net change.
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

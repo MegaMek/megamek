@@ -630,6 +630,7 @@ implements Runnable {
      */
     private void resetEntityPhase() {
         // first, mark doomed entities as destroyed and move them to the graveyard
+        Vector toRemove = new Vector(0, 10);
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             
@@ -641,16 +642,25 @@ implements Runnable {
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
             }
+            
             if (entity.isDestroyed() || entity.getCrew().isDead()) {
-                int condition = Game.UNIT_SALVAGEABLE;
-                if ( !entity.isSalvage() ) {
-                    condition = Game.UNIT_DEVASTATED;
-                }
-                game.removeEntity(entity.getId(), condition);
-                send( createRemoveEntityPacket(entity.getId(), condition) );
+                toRemove.add(entity);
             }
         }
         
+        // actually remove all flagged entities
+        for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
+            final Entity entity = (Entity)e.nextElement();
+            int condition = Game.UNIT_SALVAGEABLE;
+            if ( !entity.isSalvage() ) {
+                condition = Game.UNIT_DEVASTATED;
+            }
+            
+            game.removeEntity(entity.getId(), condition);
+            send( createRemoveEntityPacket(entity.getId(), condition) );
+        }
+        
+        // do some housekeeping on all the remaining
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             

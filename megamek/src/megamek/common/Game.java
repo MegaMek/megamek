@@ -498,8 +498,9 @@ public class Game implements Serializable
                 smithereens.addElement( toRemove );
                 break;
             }
+        } else {
+            System.err.println("Game#removeEntity: could not find entity to remove");
         }
-    
     }
     
     /**

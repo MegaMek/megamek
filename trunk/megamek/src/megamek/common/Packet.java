@@ -54,7 +54,7 @@ public class Packet
     
     
     private int                command;
-  private Object[]  data;
+    private Object[]  data;
     
     /**
      * Contructs a new Packet with just the command and no
@@ -88,6 +88,13 @@ public class Packet
      */
     public int getCommand() {
         return command;
+    }
+    
+    /**
+     * Returns the data in the packet
+     */
+    public Object[] getData() {
+        return data;
     }
     
     /**

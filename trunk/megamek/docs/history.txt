@@ -64,6 +64,7 @@ weapon attacks:
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
+- leg-mounted weapons should not fire through a hex that provides partial cover
 
 physical attacks:
 - clubbing
@@ -101,6 +102,8 @@ v next
 + 532066: limb destruction should not prevent physical attacks in the same phase
 + 532073: criticals should no longer transfer incorrectly
 + pilot damage resulting from falling during fire phase resolved immediately
++ connection class seperated from server class
++ connections send packets on a seperate thread
 
 v 0.24.2 (03-20-02, 10pm)
 + .mep files load weapons with no space between "(R)" and the weapon name now

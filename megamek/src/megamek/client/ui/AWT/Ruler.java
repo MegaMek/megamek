@@ -377,7 +377,7 @@ public class Ruler extends Dialog implements BoardListener {
 
    public void boardHexMoused(BoardEvent b) {
       if ((b.getModifiers() & MouseEvent.ALT_MASK) != 0) {
-         if (b.getType() == b.BOARD_HEX_CLICKED) {
+         if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
             addPoint(b.getCoords());
          }
       }

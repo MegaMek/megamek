@@ -100,7 +100,7 @@ public class BuildingBlock {
                 
                 //check for blank lines & comment lines...
                 //don't add them to the rawData if they are
-                if (data.length() > 0 && !data.startsWith(""+this.comment)) 
+                if (data.length() > 0 && !data.startsWith(""+BuildingBlock.comment)) 
                     this.rawData.add(data);
                 
                                 
@@ -427,7 +427,7 @@ public class BuildingBlock {
         this.writeBlockComment("building block data file");
         rawData.add(new String("")); //blank line..
     
-        this.writeBlockData("BlockVersion", ""+this.version);
+        this.writeBlockData("BlockVersion", ""+BuildingBlock.version);
         
         return true;
     }
@@ -540,7 +540,7 @@ public boolean writeBlockData(String blockName, String [] blockData) {
      */    
     public boolean writeBlockComment(String theComment) {
      
-        rawData.add(this.comment+theComment);
+        rawData.add(BuildingBlock.comment+theComment);
         return true;
         
     }

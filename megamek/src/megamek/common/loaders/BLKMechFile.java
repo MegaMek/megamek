@@ -133,21 +133,21 @@ public class BLKMechFile extends BLKFile implements MechLoader {
             }
             armor = dataFile.getDataAsInt("Armor");
             
-            mech.initializeArmor(armor[this.HD],mech.LOC_HEAD) ;
+            mech.initializeArmor(armor[BLKMechFile.HD],Mech.LOC_HEAD) ;
             
-            mech.initializeArmor( armor[this.LA], mech.LOC_LARM );
-            mech.initializeArmor(armor[this.RA], mech.LOC_RARM );
-            mech.initializeArmor(armor[this.LL], mech.LOC_LLEG );
-            mech.initializeArmor(armor[this.RL], mech.LOC_RLEG );
+            mech.initializeArmor( armor[BLKMechFile.LA], Mech.LOC_LARM );
+            mech.initializeArmor(armor[BLKMechFile.RA], Mech.LOC_RARM );
+            mech.initializeArmor(armor[BLKMechFile.LL], Mech.LOC_LLEG );
+            mech.initializeArmor(armor[BLKMechFile.RL], Mech.LOC_RLEG );
             
-            mech.initializeArmor(armor[this.CF],mech.LOC_CT );
-            mech.initializeArmor( armor[this.LF],mech.LOC_LT);
-            mech.initializeArmor(armor[this.RF],mech.LOC_RT );
+            mech.initializeArmor(armor[BLKMechFile.CF],Mech.LOC_CT );
+            mech.initializeArmor( armor[BLKMechFile.LF],Mech.LOC_LT);
+            mech.initializeArmor(armor[BLKMechFile.RF],Mech.LOC_RT );
             
             //changed...
-            mech.initializeRearArmor( armor[this.CB],mech.LOC_CT);
-            mech.initializeRearArmor(armor[this.LB],mech.LOC_LT);
-            mech.initializeRearArmor(armor[this.RB],mech.LOC_RT);
+            mech.initializeRearArmor( armor[BLKMechFile.CB],Mech.LOC_CT);
+            mech.initializeRearArmor(armor[BLKMechFile.LB],Mech.LOC_LT);
+            mech.initializeRearArmor(armor[BLKMechFile.RB],Mech.LOC_RT);
             
             
             if (!dataFile.exists("internal armor") ) {
@@ -186,14 +186,14 @@ public class BLKMechFile extends BLKFile implements MechLoader {
             //load equipment stuff...
             com.sun.java.util.collections.Vector [] criticals = new com.sun.java.util.collections.Vector[8];
             
-            criticals[mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
-            criticals[mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
-            criticals[mech.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
-            criticals[mech.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
-            criticals[mech.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
-            criticals[mech.LOC_LT] = dataFile.getDataAsVector("lt criticals");
-            criticals[mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
-            criticals[mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
+            criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
+            criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
+            criticals[Mech.LOC_RARM] = dataFile.getDataAsVector("ra criticals");
+            criticals[Mech.LOC_LLEG] = dataFile.getDataAsVector("ll criticals");
+            criticals[Mech.LOC_RLEG] = dataFile.getDataAsVector("rl criticals");
+            criticals[Mech.LOC_LT] = dataFile.getDataAsVector("lt criticals");
+            criticals[Mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
+            criticals[Mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
             
             //criticals[mech.LOC_LTR] = new com.sun.java.util.collections.Vector(0);
             //criticals[mech.LOC_RTR] = new com.sun.java.util.collections.Vector(0);

@@ -1068,8 +1068,10 @@ implements Runnable {
                 game.resetPhaseReport();
                 phaseReport = game.getPhaseReport(); //HACK
                 resolveHeat();
+                phaseReport.append("\n\nEnd Phase\n------------------------\n");
                 checkForSuffocation();
                 resolveFire();
+                resolveAmmoDumps();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
                 resetEntityPhase(phase);
@@ -8119,6 +8121,28 @@ implements Runnable {
     private void doEntityFall(Entity entity, PilotingRollData roll) {
         doEntityFall(entity, entity.getPosition(), 0, roll);
     }
+    
+    /**
+     * Report:
+     * - Any ammo dumps beginning the following round.
+     * - Any ammo dumps that have ended with the end of this round.
+     */
+    private void resolveAmmoDumps() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            for (Enumeration j = entity.getAmmo(); j.hasMoreElements(); ) {
+                Mounted m = (Mounted)j.nextElement();
+                if (m.isPendingDump()) {
+                    phaseReport.append(entity.getDisplayName()).append(" will begin dumping ")
+                    .append(m.getName()).append(" in the following round.\n");
+                }
+                else if (m.isDumping()) {
+                    phaseReport.append(entity.getDisplayName()).append(" has finished dumping ")
+                    .append(m.getName()).append(".\n");
+                }
+            }
+        }
+    }
 
     /** Make fires spread, smoke spread, and make sure that all fires
      * started this turn are marked as "burning" for next turn.
@@ -8143,8 +8167,6 @@ implements Runnable {
         int height = board.height;
         int windDirection = game.getWindDirection();
         
-        phaseReport.append("\n\nResolving fire movement \n ------------------------\n");
-
         // Get the position map of all entities in the game.
         Hashtable positionMap = game.getPositionMap();
 

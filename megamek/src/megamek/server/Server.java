@@ -6584,8 +6584,6 @@ implements Runnable, ConnectionHandler {
     private void resolvePhysicalAttacks() {
         roundReport.append("\nPhysical Attack Phase\n-------------------\n");
 
-        int cen = Entity.NONE;
-
         // add any pending charges
         for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
             game.addAction((EntityAction)i.nextElement());
@@ -6595,6 +6593,8 @@ implements Runnable, ConnectionHandler {
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
 
+        Vector results = new Vector(game.actionsSize());
+        
         // loop thru received attack actions
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
@@ -6605,111 +6605,14 @@ implements Runnable, ConnectionHandler {
             && !(o instanceof DfaAttackAction)) {
                 continue;
             }
-
-            if (o instanceof PunchAttackAction) {
-                PunchAttackAction paa = (PunchAttackAction)o;
-                if (paa.getArm() == PunchAttackAction.BOTH) {
-                    // If we're punching while prone (at a Tank,
-                    // duh), then we can only use one arm.
-                    Entity ae = game.getEntity( aa.getEntityId() );
-                    if ( ae.isProne() ) {
-                        // As a sanity check, make certain
-                        // that no arm has been destroyed.
-                        if ( ae.isLocationBad(Mech.LOC_RARM) ) {
-                            phaseReport.append( ae.getDisplayName() ).append
-                                ( " can't punch: right arm destroyed.\n" );
-                            continue;
-                        }
-                        else if ( ae.isLocationBad(Mech.LOC_LARM) ) {
-                            phaseReport.append( ae.getDisplayName() ).append
-                                ( " can't punch: left arm destroyed.\n" );
-                            continue;
-                        }
-
-                        // Find out which arm has the best attack.
-                        paa.setArm(PunchAttackAction.LEFT);
-                        ToHitData left = Compute.toHitPunch( game, paa );
-                        double oddsLeft = Compute.oddsAbove(left.getValue());
-                        int damageLeft = Compute.getPunchDamageFor
-                            ( ae, PunchAttackAction.LEFT );
-                        paa.setArm(PunchAttackAction.RIGHT);
-                        ToHitData right = Compute.toHitPunch( game, paa );
-                        double oddsRight = Compute.oddsAbove(right.getValue());
-                        int damageRight = Compute.getPunchDamageFor
-                            ( ae, PunchAttackAction.RIGHT );
-
-                        // Use the best attack.
-                        if (  oddsLeft*damageLeft > oddsRight*damageRight ) {
-                            // Be sure to set the left arm first.
-                            paa.setArm(PunchAttackAction.LEFT);
-                            resolvePunchAttack(paa, cen);
-                            cen = paa.getEntityId();
-                        } else {
-                            // We've already set the right arm.
-                            resolvePunchAttack(paa, cen);
-                            cen = paa.getEntityId();
-                        }
-                    } // End Entity-is-prone
-                    else {
-                        paa.setArm(PunchAttackAction.LEFT);
-                        resolvePunchAttack(paa, cen);
-                        cen = paa.getEntityId();
-                        paa.setArm(PunchAttackAction.RIGHT);
-                        resolvePunchAttack(paa, cen);
-                    }
-                } else {
-                    resolvePunchAttack(paa, cen);
-                    cen = paa.getEntityId();
-                }
-            } else if (o instanceof KickAttackAction) {
-                KickAttackAction kaa = (KickAttackAction)o;
-                resolveKickAttack(kaa, cen);
-                cen = kaa.getEntityId();
-            } else if (o instanceof BrushOffAttackAction) {
-                BrushOffAttackAction baa = (BrushOffAttackAction)o;
-                if (baa.getArm() == BrushOffAttackAction.BOTH) {
-                    baa.setArm(BrushOffAttackAction.LEFT);
-                    resolveBrushOffAttack(baa, cen);
-                    cen = baa.getEntityId();
-                    baa.setArm(BrushOffAttackAction.RIGHT);
-                    resolveBrushOffAttack(baa, cen);
-                } else {
-                    resolveBrushOffAttack(baa, cen);
-                    cen = baa.getEntityId();
-                }
-            } else if (o instanceof ThrashAttackAction) {
-                ThrashAttackAction taa = (ThrashAttackAction)o;
-                resolveThrashAttack(taa, cen);
-                cen = taa.getEntityId();
-            } else if (o instanceof ProtomechPhysicalAttackAction) {
-            	ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)o;
-            	resolveProtoAttack(ppaa, cen);
-            	cen = ppaa.getEntityId();
-            } else if (o instanceof ClubAttackAction) {
-                ClubAttackAction caa = (ClubAttackAction)o;
-                resolveClubAttack(caa, cen);
-                cen = caa.getEntityId();
-            } else if (o instanceof PushAttackAction) {
-                PushAttackAction paa = (PushAttackAction)o;
-                resolvePushAttack(paa, cen);
-                cen = paa.getEntityId();
-            }  else if (o instanceof ChargeAttackAction) {
-                ChargeAttackAction caa = (ChargeAttackAction)o;
-                resolveChargeAttack(caa, cen);
-                cen = caa.getEntityId();
-            }  else if (o instanceof DfaAttackAction) {
-                DfaAttackAction daa = (DfaAttackAction)o;
-                resolveDfaAttack(daa, cen);
-                cen = daa.getEntityId();
-            } else {
-                // hmm, error.
-            }
-            // Not all targets are Entities.
-            Targetable target = game.getTarget( aa.getTargetType(),
-                                            aa.getTargetId() );
-            if ( target instanceof Entity ) {
-                creditKill( (Entity) target, game.getEntity(cen) );
-            }
+            AbstractAttackAction aaa = (AbstractAttackAction)o;
+            results.addElement(preTreatPhysicalAttack(aaa));
+        }
+        int cen = Entity.NONE;
+        for (Enumeration i = results.elements(); i.hasMoreElements();) {
+            PhysicalResult pr = (PhysicalResult)i.nextElement();
+            resolvePhysicalAttack(pr, cen);
+            cen = pr.aaa.getEntityId();
         }
     }
 
@@ -6780,8 +6683,9 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a punch attack
      */
-    private void resolvePunchAttack(PunchAttackAction paa, int lastEntityId) {
-        final Entity ae = game.getEntity(paa.getEntityId());
+    private void resolvePunchAttack(PhysicalResult pr, int lastEntityId) {
+        final PunchAttackAction paa = (PunchAttackAction)pr.aaa;
+    	final Entity ae = game.getEntity(paa.getEntityId());
         final Targetable target = game.getTarget(paa.getTargetType(), paa.getTargetId());
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -6789,6 +6693,13 @@ implements Runnable, ConnectionHandler {
         }
         final String armName = paa.getArm() == PunchAttackAction.LEFT
         ? "Left Arm" : "Right Arm";
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = paa.getArm() == PunchAttackAction.LEFT
+		? pr.damage : pr.damageRight;
+        final ToHitData toHit = paa.getArm() == PunchAttackAction.LEFT
+		? pr.toHit : pr.toHitRight;
+        int roll = paa.getArm() == PunchAttackAction.LEFT
+		? pr.roll : pr.rollRight;
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
         // Which building takes the damage?
@@ -6805,9 +6716,6 @@ implements Runnable, ConnectionHandler {
 //            phaseReport.append(" but the target is already destroyed!\n");
 //            return;
 //        }
-        // compute to-hit
-        ToHitData toHit = Compute.toHitPunch(game, paa);
-        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the punch is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
@@ -6815,13 +6723,9 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the punch is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-
-        int damage = Compute.getPunchDamageFor(ae, paa.getArm());
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -6885,7 +6789,8 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a kick attack
      */
-    private void resolveKickAttack(KickAttackAction kaa, int lastEntityId) {
+    private void resolveKickAttack(PhysicalResult pr, int lastEntityId) {
+    	KickAttackAction kaa = (KickAttackAction)pr.aaa;
         final Entity ae = game.getEntity(kaa.getEntityId());
         final Targetable target = game.getTarget(kaa.getTargetType(), kaa.getTargetId());
         Entity te = null;
@@ -6895,6 +6800,10 @@ implements Runnable, ConnectionHandler {
         final String legName = kaa.getLeg() == KickAttackAction.LEFT
         ? "Left Leg"
         : "Right Leg";
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
         // Which building takes the damage?
@@ -6911,9 +6820,6 @@ implements Runnable, ConnectionHandler {
 //            phaseReport.append(" but the target is already destroyed!\n");
 //            return;
 //        }
-        // compute to-hit
-        ToHitData toHit = Compute.toHitKick(game, kaa);
-        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the kick is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
@@ -6922,13 +6828,9 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the kick is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-
-        int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7000,8 +6902,13 @@ implements Runnable, ConnectionHandler {
      * Handle a Protomech physicalattack
      */
     
-    private void resolveProtoAttack(ProtomechPhysicalAttackAction ppaa, int lastEntityId) {
+    private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
+    	final ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)pr.aaa;
         final Entity ae = game.getEntity(ppaa.getEntityId());
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
         final Targetable target = game.getTarget(ppaa.getTargetType(), ppaa.getTargetId());
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -7017,9 +6924,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("    Protomech physical attack" ).append( " at " ).append( target.getDisplayName());
-        // compute to-hit
-        ToHitData toHit = Compute.toHitProto(game, ppaa);
-        int roll = 0;
+        
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
@@ -7027,13 +6932,10 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the attack is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
+            // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-
-        int damage = Compute.getProtoPhysicalDamageFor(ae);
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7098,14 +7000,24 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a brush off attack
      */
-    private void resolveBrushOffAttack( BrushOffAttackAction baa,
+    private void resolveBrushOffAttack( PhysicalResult pr,
                                         int lastEntityId ) {
+    	final BrushOffAttackAction baa = (BrushOffAttackAction)pr.aaa;
         final Entity ae = game.getEntity(baa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "brush off".
         final Entity te = game.getEntity(baa.getTargetId());
         final String armName = baa.getArm() == BrushOffAttackAction.LEFT
             ? "Left Arm" : "Right Arm";
 
+        // get damage, ToHitData and roll from the PhysicalResult
+        // ASSUMPTION: buildings can't absorb *this* damage.
+        int damage = baa.getArm() == BrushOffAttackAction.LEFT
+		? pr.damage : pr.damageRight;
+        final ToHitData toHit = baa.getArm() == BrushOffAttackAction.LEFT
+		? pr.toHit : pr.toHitRight;
+        int roll = baa.getArm() == BrushOffAttackAction.LEFT
+		? pr.roll : pr.rollRight;
+        
         if (lastEntityId != baa.getEntityId()) {
             phaseReport.append( "\nPhysical attacks for " )
                 .append( ae.getDisplayName() )
@@ -7117,8 +7029,6 @@ implements Runnable, ConnectionHandler {
             .append( " with " )
             .append( armName );
 
-        // compute to-hit
-        ToHitData toHit = baa.toHit(game);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append( ", but the brush off is impossible (" )
                 .append( toHit.getDesc() )
@@ -7127,12 +7037,8 @@ implements Runnable, ConnectionHandler {
         }
         phaseReport.append("; needs ").append(toHit.getValue()).append(", ");
 
-        // roll
-        int roll = Compute.d6(2);
+        // report the roll
         phaseReport.append("rolls ").append(roll).append(" : ");
-
-        // ASSUMPTION: buildings can't absorb *this* damage.
-        int damage = BrushOffAttackAction.getBrushOffDamageFor(ae, baa.getArm());
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7171,13 +7077,20 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a thrash attack
      */
-    private void resolveThrashAttack( ThrashAttackAction baa,
+    private void resolveThrashAttack( PhysicalResult pr,
                                         int lastEntityId ) {
-        final Entity ae = game.getEntity(baa.getEntityId());
+    	final ThrashAttackAction taa = (ThrashAttackAction)pr.aaa;
+        final Entity ae = game.getEntity(taa.getEntityId());
+        
+        // get damage, ToHitData and roll from the PhysicalResult
+        int hits = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
+        
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
-        final Entity te = game.getEntity(baa.getTargetId());
+        final Entity te = game.getEntity(taa.getTargetId());
 
-        if (lastEntityId != baa.getEntityId()) {
+        if (lastEntityId != taa.getEntityId()) {
             phaseReport.append( "\nPhysical attacks for " )
                 .append( ae.getDisplayName() )
                 .append( "\n" );
@@ -7186,8 +7099,6 @@ implements Runnable, ConnectionHandler {
         phaseReport.append("    Thrash at " )
             .append( te.getDisplayName() );
 
-        // compute to-hit
-        ToHitData toHit = baa.toHit(game);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append( ", but the thrash is impossible (" )
                 .append( toHit.getDesc() )
@@ -7203,8 +7114,7 @@ implements Runnable, ConnectionHandler {
                 .append( toHit.getValue() )
                 .append( ", " );
 
-            // roll
-            int roll = Compute.d6(2);
+            // report the roll
             phaseReport.append("rolls ").append(roll).append(" : ");
 
             // do we hit?
@@ -7216,9 +7126,8 @@ implements Runnable, ConnectionHandler {
         }
 
         // Standard damage loop in 5 point clusters.
-        int hits = ThrashAttackAction.getThrashDamageFor(ae);
         phaseReport.append( " and deals " )
-            .append( hits )
+            .append( hits)
             .append( " points of damage in 5 point clusters.");
         while ( hits > 0 ) {
             int damage = Math.min(5, hits);
@@ -7232,23 +7141,23 @@ implements Runnable, ConnectionHandler {
 
         // Thrash attacks cause PSRs.  Failed PSRs cause falling damage.
         // This fall damage applies even though the Thrashing Mek is prone.
-        PilotingRollData roll = ae.getBasePilotingRoll();
-        roll.addModifier( 0, "thrashing at infantry" );
+        PilotingRollData rollData = ae.getBasePilotingRoll();
+        rollData.addModifier( 0, "thrashing at infantry" );
         phaseReport.append( ae.getDisplayName() )
             .append( " must make a piloting skill check (" )
             .append( "thrashing at infantry).\n");
         final int diceRoll = Compute.d6(2);
         phaseReport.append("Needs " )
-            .append( roll.getValueAsString() )
+            .append( rollData.getValueAsString() )
             .append( " [" )
-            .append( roll.getDesc() )
+            .append( rollData.getDesc() )
             .append( "]" )
             .append( ", rolls " )
             .append( diceRoll )
             .append( " : " );
-        if (diceRoll < roll.getValue()) {
+        if (diceRoll < rollData.getValue()) {
             phaseReport.append("fails.\n");
-            doEntityFall( ae, roll );
+            doEntityFall( ae, rollData );
         } else {
             phaseReport.append("succeeds.\n");
         }
@@ -7258,8 +7167,13 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a club attack
      */
-    private void resolveClubAttack(ClubAttackAction caa, int lastEntityId) {
+    private void resolveClubAttack(PhysicalResult pr, int lastEntityId) {
+    	final ClubAttackAction caa = (ClubAttackAction)pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -7284,9 +7198,6 @@ implements Runnable, ConnectionHandler {
 //            phaseReport.append(" but the target is already destroyed!\n");
 //            return;
 //        }
-        // compute to-hit
-        ToHitData toHit = Compute.toHitClub(game, caa);
-        int roll = 0;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
@@ -7294,13 +7205,10 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the club attack is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
+            // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
-
-        int damage = Compute.getClubDamageFor(ae, caa.getClub());
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -7368,11 +7276,15 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a push attack
      */
-    private void resolvePushAttack(PushAttackAction paa, int lastEntityId) {
+    private void resolvePushAttack(PhysicalResult pr, int lastEntityId) {
+    	final PushAttackAction paa = (PushAttackAction)pr.aaa;    	
         final Entity ae = game.getEntity(paa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "push".
         final Entity te = game.getEntity(paa.getTargetId());
-
+        // get roll and ToHitData from the PhysicalResult
+        int roll = pr.roll;
+        final ToHitData toHit = pr.toHit;
+        
         if (lastEntityId != paa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
@@ -7385,16 +7297,13 @@ implements Runnable, ConnectionHandler {
 //            return;
 //        }
 
-        // compute to-hit
-        ToHitData toHit = Compute.toHitPush(game, paa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the push is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
         }
         phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
 
-        // roll
-        int roll = Compute.d6(2);
+        // report the roll
         phaseReport.append("rolls " ).append( roll ).append( " : ");
 
         // do we hit?
@@ -7445,9 +7354,14 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a charge attack
      */
-    private void resolveChargeAttack(ChargeAttackAction caa, int lastEntityId) {
+    private void resolveChargeAttack(PhysicalResult pr, int lastEntityId) {
+    	final ChargeAttackAction caa = (ChargeAttackAction)pr.aaa;
         final Entity ae = game.getEntity(caa.getEntityId());
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
         Entity te = null;
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
@@ -7499,11 +7413,7 @@ implements Runnable, ConnectionHandler {
             return;
         }
 
-        // compute to-hit
-        ToHitData toHit = caa.toHit(game);
-
         // if the attacker's prone, fudge the roll
-        int roll;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
             phaseReport.append(", but the charge is impossible (" ).append( toHit.getDesc() ).append( ") : ");
@@ -7511,8 +7421,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the charge is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
+            // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
@@ -7533,7 +7442,6 @@ implements Runnable, ConnectionHandler {
         else if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
 
             // The building takes the full brunt of the attack.
-            int damage = ChargeAttackAction.getChargeDamageFor(ae);
             phaseReport.append( "hits.\n  " )
                 .append( damageBuilding( bldg, damage ) );
 
@@ -7648,9 +7556,14 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a death from above attack
      */
-    private void resolveDfaAttack(DfaAttackAction daa, int lastEntityId) {
-        final Entity ae = game.getEntity(daa.getEntityId());
+    private void resolveDfaAttack(PhysicalResult pr, int lastEntityId) {
+        final DfaAttackAction daa = (DfaAttackAction)pr.aaa;
+    	final Entity ae = game.getEntity(daa.getEntityId());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
         Entity te = null;
         if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
@@ -7696,11 +7609,7 @@ implements Runnable, ConnectionHandler {
             return;
         }
 
-        // compute to-hit
-        ToHitData toHit = Compute.toHitDfa(game, daa);
-
         // hack: if the attacker's prone, or incapacitated, fudge the roll
-        int roll;
         if (ae.isProne() || !ae.isActive()) {
             roll = -12;
             phaseReport.append(" but the attacker is prone or incapacitated : ");
@@ -7711,8 +7620,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(", the DFA is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
             roll = Integer.MAX_VALUE;
         } else {
-            // roll
-            roll = Compute.d6(2);
+            // report the roll
             phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
             phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
@@ -7740,7 +7648,6 @@ implements Runnable, ConnectionHandler {
 
         // we hit...
         // Can't DFA a target inside of a building.
-        int damage = Compute.getDfaDamageFor(ae);
         int damageTaken = Compute.getDfaDamageTakenBy(ae);
 
         phaseReport.append("hits.");
@@ -12535,5 +12442,154 @@ implements Runnable, ConnectionHandler {
     	if (target.isDoomed() && !target.getGaveKillCredit()) {
     		attacker.addKill(target);
     	}
+    }
+    
+    /**
+     * pre-treats a physical attack
+     * 
+     * @param aaa The <code>AbstractAttackAction</code> of the physical attack 
+     *            to pre-treat
+     * 
+     * @return    The <code>PhysicalResult</code> of that attaction, including
+     *            possible damage.
+     */     
+    private PhysicalResult preTreatPhysicalAttack(AbstractAttackAction aaa) {
+    	final Entity ae = game.getEntity(aaa.getEntityId());
+    	int damage = 0;
+    	PhysicalResult pr = new PhysicalResult();
+    	ToHitData toHit = new ToHitData();
+    	pr.roll = Compute.d6(2);
+    	pr.aaa = aaa;
+    	if (aaa instanceof BrushOffAttackAction) {
+    		BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
+    		int arm = baa.getArm();
+    		baa.setArm(BrushOffAttackAction.LEFT);
+    		toHit = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.LEFT);
+    		baa.setArm(BrushOffAttackAction.RIGHT);
+    		pr.toHitRight = BrushOffAttackAction.toHitBrushOff(game, aaa.getEntityId(), aaa.getTarget(game), BrushOffAttackAction.RIGHT);
+    		damage = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.LEFT);
+    		pr.damageRight = BrushOffAttackAction.getBrushOffDamageFor(ae, BrushOffAttackAction.RIGHT);
+    		baa.setArm(arm);
+    		pr.rollRight = Compute.d6(2);
+    		pr.aaa = (AbstractAttackAction)baa;
+    	} else if (aaa instanceof ChargeAttackAction) {
+    		ChargeAttackAction caa = (ChargeAttackAction)aaa;
+    		toHit = caa.toHit(game);
+    		damage = ChargeAttackAction.getChargeDamageFor(ae);
+    	} else if (aaa instanceof ClubAttackAction) {
+    		ClubAttackAction caa = (ClubAttackAction)aaa;
+    		toHit = Compute.toHitClub(game, caa);
+    		damage = Compute.getClubDamageFor(ae, caa.getClub());
+    	} else if (aaa instanceof DfaAttackAction) {
+    		DfaAttackAction daa = (DfaAttackAction)aaa;
+    		toHit = Compute.toHitDfa(game, daa);
+    		damage = Compute.getDfaDamageFor(ae);
+    	} else if (aaa instanceof KickAttackAction) {
+    		KickAttackAction kaa = (KickAttackAction)aaa;
+    		toHit = Compute.toHitKick(game, kaa);
+    		damage = Compute.getKickDamageFor(ae, kaa.getLeg());
+    	} else if (aaa instanceof ProtomechPhysicalAttackAction) {
+    		ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction)aaa;
+    		toHit = Compute.toHitProto(game, paa);
+    		damage = Compute.getProtoPhysicalDamageFor(ae);
+    	} else if (aaa instanceof PunchAttackAction) {
+    		PunchAttackAction paa = (PunchAttackAction)aaa;
+    		int arm = paa.getArm();
+    		int damageRight = 0;
+    		paa.setArm(PunchAttackAction.LEFT);
+    		toHit = Compute.toHitPunch(game, paa);
+    		paa.setArm(PunchAttackAction.RIGHT);
+    		ToHitData toHitRight = Compute.toHitPunch(game, paa);
+    		damage = Compute.getPunchDamageFor(ae, PunchAttackAction.LEFT);
+    		damageRight = Compute.getPunchDamageFor(ae, PunchAttackAction.RIGHT);
+    		paa.setArm(arm);
+            // If we're punching while prone (at a Tank,
+            // duh), then we can only use one arm.
+    		if ( ae.isProne() ) {
+    			double oddsLeft = Compute.oddsAbove(toHit.getValue());
+    			double oddsRight = Compute.oddsAbove(toHitRight.getValue());
+                // Use the best attack.
+                if (  oddsLeft*damage > oddsRight*damageRight ) {
+                    paa.setArm(PunchAttackAction.LEFT);
+                } else paa.setArm(PunchAttackAction.RIGHT);   
+    		}
+    		pr.damageRight = damageRight;
+    		pr.toHitRight = toHitRight;
+    		pr.rollRight = Compute.d6(2);
+    		pr.aaa = (AbstractAttackAction)paa;
+    	} else if (aaa instanceof PushAttackAction) {
+    		PushAttackAction paa = (PushAttackAction)aaa;
+    		toHit = Compute.toHitPush(game, paa);
+    	} else if (aaa instanceof ThrashAttackAction) {
+    		ThrashAttackAction taa = (ThrashAttackAction)aaa;
+    		toHit = taa.toHit(game);
+    		damage = ThrashAttackAction.getThrashDamageFor(ae);
+    	}
+        pr.toHit = toHit;
+        pr.damage = damage;
+    	return pr;
+    }
+    
+    private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
+    	AbstractAttackAction aaa = pr.aaa;
+    	int roll = pr.roll;
+    	if (aaa instanceof PunchAttackAction) {
+            PunchAttackAction paa = (PunchAttackAction)aaa;
+            if (paa.getArm() == PunchAttackAction.BOTH) {
+            	paa.setArm(PunchAttackAction.LEFT);
+            	pr.aaa = (AbstractAttackAction)paa;
+                resolvePunchAttack(pr, cen);
+                cen = paa.getEntityId();
+                paa.setArm(PunchAttackAction.RIGHT);
+                pr.aaa = (AbstractAttackAction)paa;
+                resolvePunchAttack(pr, cen);
+            } else {
+            	resolvePunchAttack(pr, cen);
+            	cen = paa.getEntityId();
+            }            
+        } else if (aaa instanceof KickAttackAction) {
+            resolveKickAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof BrushOffAttackAction) {
+            BrushOffAttackAction baa = (BrushOffAttackAction)aaa;
+            if (baa.getArm() == BrushOffAttackAction.BOTH) {
+                baa.setArm(BrushOffAttackAction.LEFT);
+                pr.aaa = (AbstractAttackAction)baa;
+                resolveBrushOffAttack(pr, cen);
+                cen = baa.getEntityId();
+                baa.setArm(BrushOffAttackAction.RIGHT);
+                pr.aaa = (AbstractAttackAction)baa;
+                resolveBrushOffAttack(pr, cen);
+            } else {
+                resolveBrushOffAttack(pr, cen);
+                cen = baa.getEntityId();
+            }
+        } else if (aaa instanceof ThrashAttackAction) {
+            resolveThrashAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof ProtomechPhysicalAttackAction) {
+        	resolveProtoAttack(pr, cen);
+        	cen = aaa.getEntityId();
+        } else if (aaa instanceof ClubAttackAction) {
+            resolveClubAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof PushAttackAction) {
+            resolvePushAttack(pr, cen);
+            cen = aaa.getEntityId();
+        }  else if (aaa instanceof ChargeAttackAction) {
+            resolveChargeAttack(pr, cen);
+            cen = aaa.getEntityId();
+        }  else if (aaa instanceof DfaAttackAction) {
+            resolveDfaAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else {
+            // hmm, error.
+        }
+        // Not all targets are Entities.
+        Targetable target = game.getTarget( aaa.getTargetType(),
+                                        aaa.getTargetId() );
+        if ( target instanceof Entity ) {
+            creditKill( (Entity) target, game.getEntity(cen) );
+        }
     }
 }

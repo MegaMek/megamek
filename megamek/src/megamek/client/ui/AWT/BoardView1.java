@@ -135,7 +135,7 @@ public class BoardView1
         view.setSize(getOptimalView(size));
         offset.setLocation(getOptimalOffset(size));
 
-        if (!tileManager.isLoaded()) {
+        if (!this.isTileImagesLoaded()) {
             if (!tileManager.isStarted()) {
                 g.drawString("loading images...", 20, 50);
                 System.out.println("boardview1: load all images called");
@@ -2090,5 +2090,15 @@ public class BoardView1
             }
             return tipStrings;
         }
+    }
+
+    /**
+     * Determine if the tile manager's images have been loaded.
+     *
+     * @return  <code>true</code> if all images have been loaded.
+     *          <code>false</code> if more need to be loaded.
+     */
+    public boolean isTileImagesLoaded() {
+        return this.tileManager.isLoaded();
     }
 }

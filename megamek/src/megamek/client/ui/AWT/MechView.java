@@ -34,6 +34,7 @@ public class MechView {
     private Entity mech;
     private boolean isMech;
     private boolean isInf;
+    private boolean isVehicle;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
     private boolean hasMASC;
@@ -44,6 +45,7 @@ public class MechView {
         mech = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
+        isVehicle = entity instanceof Tank;
         hasEndoSteel = false;
         hasFerroFibrous = false;
 
@@ -86,8 +88,13 @@ public class MechView {
                 .append( ")");
         }
         sBasic.append( "/" )
-            .append( mech.getJumpMP() )
-            .append( "\n" );
+            .append( mech.getJumpMP() );
+        if (isVehicle) {
+            sBasic.append(" (")
+                .append(entity.getMovementTypeAsString())
+                .append(")");
+        }
+        sBasic.append( "\n" );
         if ( isMech ) {
             Mech aMech = (Mech) mech;
             sBasic.append( "Engine: " )

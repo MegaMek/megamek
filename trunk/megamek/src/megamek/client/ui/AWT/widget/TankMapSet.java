@@ -155,9 +155,9 @@ public class TankMapSet implements DisplayMapSet{
     //Labels for Front view
     labels[Tank.LOC_FRONT] = createLabel("Front Armor", fm, Color.black,65,35);
     labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel("Front I.S.", fm, Color.black,63,57);
-    labels[Tank.LOC_LEFT] = createLabel("LA", fm, Color.black,19,135);
+    labels[Tank.LOC_LEFT] = createLabel("LS", fm, Color.black,19,135);
     labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel("L. I.S.", fm, Color.black,49,106);
-    labels[Tank.LOC_RIGHT] = createLabel("RA", fm, Color.black,124,135);
+    labels[Tank.LOC_RIGHT] = createLabel("RS", fm, Color.black,124,135);
     labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel("R. I.S.", fm, Color.black,95,106);
     labels[Tank.LOC_REAR] = createLabel("Rear Armor", fm, Color.black,65,257);
     labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel("Rear I.S.", fm, Color.black,63,239);

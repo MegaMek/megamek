@@ -430,7 +430,8 @@ public abstract class Entity
      * entities can not be selected.
      */
     public boolean isSelectableThisTurn(Game game) {
-        return !done && isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) && (conveyance == Entity.NONE) && !isClearingMinefield();
+        return !done && (conveyance == Entity.NONE) && !isClearingMinefield();
+        //&& isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) 
     }
 
     /**
@@ -1969,7 +1970,7 @@ public abstract class Entity
     public void newRound(int roundNumber)
     {
         unloadedThisTurn = false;
-        done = !this.isActive(roundNumber);
+        done = false;
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;

@@ -706,7 +706,7 @@ implements Runnable {
             if ( phase == Game.PHASE_DEPLOYMENT ) {
               entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
-              entity.setDone(!entity.isActive());
+              entity.setDone(false);
             }
         }
     }
@@ -1700,44 +1700,64 @@ implements Runnable {
      * Determines if an entity is eligible for a phase.
      */
     private boolean isEligibleFor(Entity entity, int phase) {
-        if ( phase == Game.PHASE_DEPLOYMENT ) {
-          if ( entity.isDeployed() )
-            return false;
-        } else {
-          if ( !entity.isDeployed() )
+        // only deploy in deployment phase
+        if ((phase == Game.PHASE_DEPLOYMENT) == entity.isDeployed()) {
             return false;
         }
         
         switch (phase) {
+            case Game.PHASE_MOVEMENT :
+                return isEligibleForMovement(entity);
             case Game.PHASE_FIRING :
-                return isEligibleForFiring(entity, phase);
+                return isEligibleForFiring(entity);
             case Game.PHASE_PHYSICAL :
-                if (entity instanceof Mech) {
-                    return isEligibleForPhysical(entity, phase);
-                }
-                else {
-                    return false;
-                }
+                return isEligibleForPhysical(entity);
             default:
                 return true;
         }
     }
     
     /**
+     * Pretty much anybody's eligible for movement. If the game option
+     * is toggled on, inactive and immobile entities are not eligible.
+     * @param entity
+     * @return
+     */
+    private boolean isEligibleForMovement(Entity entity) {
+        // check game options
+        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
+            return true;
+        }
+        
+        // must be active
+        if (!entity.isActive() || entity.isImmobile()) {
+            return false;
+        } 
+        
+        return true;    
+    }
+    
+    /**
      * An entity is eligible if its to-hit number is anything but impossible.
      * This is only really an issue if friendly fire is turned off.
      */
-    private boolean isEligibleForFiring(Entity entity, int phase) {
+    private boolean isEligibleForFiring(Entity entity) {
         // if you're charging, no shooting
-        if (entity.isUnjammingRAC()) return false;
-        if (entity.isCharging() || entity.isMakingDfa()) {
+        if (entity.isUnjammingRAC()
+            || entity.isCharging()
+            || entity.isMakingDfa()) {
             return false;
         }
         
-        //        // check game options
-        //        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
-        //            return true;
-        //        }
+        // check game options
+        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+            return true;
+        }
+        
+        // must be active
+        if (!entity.isActive()) {
+            return false;
+        } 
         
         // TODO: check for any weapon attacks
         
@@ -1747,16 +1767,21 @@ implements Runnable {
     /**
      * Check if the entity has any valid targets for physical attacks.
      */
-    private boolean isEligibleForPhysical(Entity entity, int phase) {
+    private boolean isEligibleForPhysical(Entity entity) {
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
         
-        // dead mek walking
-        if (!entity.isActive()) return false;
+        // only mechs have physical attacks (except tank charges)
+        if (!(entity instanceof Mech)) {
+            return false;
+        }
         
         // if you're charging or finding a club, it's already declared
-        if (entity.isUnjammingRAC()) return false;
-        if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
+        if (entity.isUnjammingRAC()
+            || entity.isCharging()
+            || entity.isMakingDfa()
+            || entity.isFindingClub()
+            || entity.isSpotting()) {
             return false;
         }
         
@@ -1765,6 +1790,11 @@ implements Runnable {
             return true;
         }
 
+        // dead mek walking
+        if (!entity.isActive()) {
+            return false;
+        } 
+        
         // Try to find a valid entity target.
         Enumeration e = game.getEntities();
         while ( !canHit && e.hasMoreElements() ) {
@@ -1782,39 +1812,7 @@ implements Runnable {
                 continue;
             }
 
-            canHit |= Compute.toHitPunch
-                ( game, entity.getId(), target,
-                 PunchAttackAction.LEFT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitPunch
-                ( game, entity.getId(), target,
-                 PunchAttackAction.RIGHT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitKick
-                ( game, entity.getId(), target,
-                 KickAttackAction.LEFT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitKick
-                ( game, entity.getId(), target,
-                 KickAttackAction.RIGHT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitBrushOff
-                ( game, entity.getId(), target,
-                  BrushOffAttackAction.LEFT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitBrushOff
-                ( game, entity.getId(), target,
-                  BrushOffAttackAction.RIGHT ).getValue()
-                != ToHitData.IMPOSSIBLE;
-
-            canHit |= Compute.toHitThrash
-                ( game, entity.getId(), target ).getValue()
-                != ToHitData.IMPOSSIBLE;
+            canHit |= canPhysicalTarget(game, entity.getId(), target);
 
         }
 
@@ -1838,44 +1836,52 @@ implements Runnable {
                                                                   game.board,
                                                                   false );
 
-                canHit |= Compute.toHitPunch
-                    ( game, entity.getId(), target,
-                      PunchAttackAction.LEFT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitPunch
-                    ( game, entity.getId(), target,
-                      PunchAttackAction.RIGHT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitKick
-                    ( game, entity.getId(), target,
-                      KickAttackAction.LEFT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitKick
-                    ( game, entity.getId(), target,
-                      KickAttackAction.RIGHT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitBrushOff
-                    ( game, entity.getId(), target,
-                      BrushOffAttackAction.LEFT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitBrushOff
-                    ( game, entity.getId(), target,
-                      BrushOffAttackAction.RIGHT ).getValue()
-                    != ToHitData.IMPOSSIBLE;
-
-                canHit |= Compute.toHitThrash
-                    ( game, entity.getId(), target ).getValue()
-                    != ToHitData.IMPOSSIBLE;
+                canHit |= canPhysicalTarget(game, entity.getId(), target);
 
             } // Check the next hex of the building
 
         } // Check the next building
 
+        return canHit;
+    }
+    
+    private boolean canPhysicalTarget(Game game, int entityId, Targetable target) {
+        boolean canHit = false;
+        
+        canHit |= Compute.toHitPunch
+            ( game, entityId, target,
+             PunchAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitPunch
+            ( game, entityId, target,
+             PunchAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitKick
+            ( game, entityId, target,
+             KickAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitKick
+            ( game, entityId, target,
+             KickAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitBrushOff
+            ( game, entityId, target,
+              BrushOffAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitBrushOff
+            ( game, entityId, target,
+              BrushOffAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitThrash
+            ( game, entityId, target ).getValue()
+            != ToHitData.IMPOSSIBLE;
+                
         return canHit;
     }
 

@@ -3528,7 +3528,7 @@ public class Compute
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        final int nightModifier = (attacker.game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         // Can only attack a Mek's legs.
         if ( !(defender instanceof Mech) ) {
@@ -3609,7 +3609,7 @@ public class Compute
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
-        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        final int nightModifier = (attacker.game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         // Can only swarm a Mek.
         if ( !(defender instanceof Mech) ) {

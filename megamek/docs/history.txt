@@ -80,9 +80,12 @@ FUTURE VERSION PLANS:
 - interface cleaned up: reasonably intuitive & bug-free
 
 v 0.25
-- game ends when only one player is left
+- game ends/restarts when only one player is left
 - observer mode
 - players that connect with the same name as a "ghost" take control of that player
+- option to start dedicated server from command line
+- simple game logs (chat/reports)
+- clubs/hatchets (if I have time)
 
 VERSION HISTORY:
 ----------------
@@ -95,6 +98,8 @@ v next
 + fixed a bug where a mech would fail to get up but move anyhow
 + fixed a bug where a leg destroyed critical would not cause a mech to fall
 + added MegaMek.cfg option to set map text color
++ map selector now handles custom boards
++ experimental ai client from Michael Hanson
 
 v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping

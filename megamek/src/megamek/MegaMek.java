@@ -19,6 +19,7 @@ import java.awt.event.*;
 
 import megamek.common.*;
 import megamek.client.*;
+import megamek.client.bot.*;
 import megamek.server.*;
 
 public class MegaMek
@@ -57,7 +58,7 @@ public class MegaMek
      * Display the main menu.
      */
     public void showMainMenu() {
-        Button hostB, connectB, editB, dedicatedB;
+        Button hostB, connectB, botB, editB, dedicatedB;
             
         frame.removeAll();
         
@@ -69,6 +70,10 @@ public class MegaMek
         connectB.setActionCommand("game_connect");
         connectB.addActionListener(this);
         
+        botB = new Button("Connect to a Game as a Bot...");
+        botB.setActionCommand("game_botconnect");
+        botB.addActionListener(this);
+
         dedicatedB = new Button("Dedicated Server...");
         dedicatedB.setActionCommand("server_dedicated");
         dedicatedB.addActionListener(this);
@@ -89,6 +94,7 @@ public class MegaMek
 
         addBag(hostB, gridbag, c);
         addBag(connectB, gridbag, c);
+        addBag(botB, gridbag, c);
         addBag(dedicatedB, gridbag, c);
         addBag(editB, gridbag, c);
 
@@ -208,6 +214,30 @@ public class MegaMek
         
         showGame();
     }
+    public void connectBot() {
+        ConnectDialog cd;	
+
+        cd = new ConnectDialog(frame);
+        cd.show();
+        // verify dialog data
+        if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
+            return;
+        }
+        // initialize game
+        client = new BotClient(frame, cd.name);
+
+		// verify connection
+        if(!client.connect(cd.serverAddr, cd.port)) {
+            server = null;
+            client = null;
+            new AlertDialog(frame, "Connect to a Game", "Error: could not connect.").show();
+            return;
+        }
+        // wait for full connection
+        client.retrieveServerInfo();
+        
+        showGame();
+    }
   
   /**
    * Starts the server, but no client
@@ -254,6 +284,10 @@ public class MegaMek
         if(ev.getActionCommand().equalsIgnoreCase("game_connect")) {
             connect();
         }
+        if(ev.getActionCommand().equalsIgnoreCase("game_botconnect")) {
+            connectBot();
+        }
+
         if(ev.getActionCommand().equalsIgnoreCase("server_dedicated")) {
             dedicatedServer();
         }

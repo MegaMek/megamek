@@ -57,7 +57,7 @@ public class Client extends Panel
     public Window               mechW;
     public MechDisplay          mechD;
         
-    private Panel                curPanel;
+    protected Panel                curPanel;
     
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
@@ -127,7 +127,7 @@ public class Client extends Panel
     /**
      * The client has become disconnected from the server
      */
-    private void disconnected() {
+    protected void disconnected() {
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
         alert.show();
         System.exit(0);
@@ -207,7 +207,7 @@ public class Client extends Panel
      * Changes the game phase, and the displays that go
      * along with it.
      */
-    private void changePhase(int phase) {
+    protected void changePhase(int phase) {
         this.game.phase = phase;
         
         // remove the current panel
@@ -255,7 +255,7 @@ public class Client extends Panel
     }
     
     
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -287,7 +287,7 @@ public class Client extends Panel
      * 
      * @param be        the board event.
      */
-    private void processGameEvent(GameEvent ge) {
+    protected void processGameEvent(GameEvent ge) {
         for(Enumeration e = gameListeners.elements(); e.hasMoreElements();) {
             GameListener l = (GameListener)e.nextElement();
             switch(ge.type) {
@@ -339,7 +339,7 @@ public class Client extends Panel
     /** 
      * Change whose turn it is.
      */
-    private void changeTurn(int turn) {
+    protected void changeTurn(int turn) {
         this.game.setTurn(turn);
         processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, getPlayer(turn), ""));
     }
@@ -467,7 +467,7 @@ public class Client extends Panel
     /**
      * Receives player information from the message packet.
      */
-    private void receivePlayerInfo(Packet c) {
+    protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
         Player newPlayer = (Player)c.getObject(1);
         if (getPlayer(newPlayer.getId()) != null) {
@@ -481,7 +481,7 @@ public class Client extends Panel
     /**
      * Loads the board from the data in the net command.
      */
-    private void receiveBoard(Packet c) {
+    protected void receiveBoard(Packet c) {
         Board newBoard = (Board)c.getObject(0);
         game.board.newData(newBoard.width, newBoard.height, newBoard.data);
         game.board.terrains = newBoard.terrains;
@@ -490,7 +490,7 @@ public class Client extends Panel
     /**
      * Loads the entities from the data in the net command.
      */
-    private void receiveEntities(Packet c) {
+    protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
         // re-link player in each entity
         for(Enumeration i = newEntities.elements(); i.hasMoreElements();) {
@@ -509,7 +509,7 @@ public class Client extends Panel
     /**
      * Loads entity update data from the data in the net command.
      */
-    private void receiveEntityUpdate(Packet c) {
+    protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Coords oc = game.getEntity(eindex).getPosition();
         Entity entity = (Entity)c.getObject(1);
@@ -526,7 +526,7 @@ public class Client extends Panel
     /**
      * Loads entity firing data from the data in the net command
      */
-    private void receiveAttack(Packet c) {
+    protected void receiveAttack(Packet c) {
         Object o = c.getObject(0);
         if (o instanceof AttackAction) {
             bv.addAttack((AttackAction)o);
@@ -567,7 +567,7 @@ public class Client extends Panel
     /**
      * send the message to the server
      */
-    private void send(Packet packet) {
+    protected void send(Packet packet) {
         try {
             if (out == null) {
                 out = new ObjectOutputStream(socket.getOutputStream());

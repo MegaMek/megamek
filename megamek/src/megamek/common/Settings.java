@@ -102,8 +102,6 @@ scan:
                         st.nextToken();
                         int blue = (int)st.nval;
                         mapTextColor = new Color(red, green, blue);
-                        
-                        System.out.println("map text color set to " + mapTextColor);
                     }
                     
                 }

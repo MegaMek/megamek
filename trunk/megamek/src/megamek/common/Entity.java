@@ -1933,7 +1933,7 @@ public abstract class Entity
      */
 
     public boolean hasC3S() {
-        if (isShutDown()) return false;
+        if (isShutDown() || isOffBoard()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S)
@@ -1945,7 +1945,7 @@ public abstract class Entity
     }
 
     public boolean hasC3M() {
-        if (isShutDown()) return false;
+        if (isShutDown() || isOffBoard()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M)
@@ -1964,7 +1964,7 @@ public abstract class Entity
     }
 
     public boolean hasC3MM() {
-        if (isShutDown()) return false;
+        if (isShutDown() || isOffBoard()) return false;
 
         // Have we already determined that there's no company command master?
         if ( C3CompanyMasterIndex == LOC_NONE ) return false;
@@ -2010,7 +2010,7 @@ public abstract class Entity
     }
 
     public boolean hasC3i() {
-        if (isShutDown()) return false;
+        if (isShutDown() || isOffBoard()) return false;
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I)

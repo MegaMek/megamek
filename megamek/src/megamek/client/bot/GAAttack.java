@@ -45,7 +45,7 @@ public class GAAttack extends GA {
         this.target_array = game.getEntitiesVector();
         Vector temp = new Vector();
         for (int i = 0; i < target_array.size(); i++) {
-            Entity entity = (Entity) target_array.get(i);
+            Entity entity = (Entity) target_array.elementAt(i);
             if (entity.isEnemyOf(attacker.entity) && entity.isDeployed()) {
                 temp.add(new Integer(i));
             }
@@ -67,7 +67,7 @@ public class GAAttack extends GA {
         if (damages == null)
             damages = this.getDamageUtilities();
         for (int k = 0; k < this.target_array.size(); k++) {
-            Entity enemy = (Entity) this.target_array.get(k);
+            Entity enemy = (Entity) this.target_array.elementAt(k);
             if (enemy.getId() == to.entity.getId()) {
                 return damages[k];
             }
@@ -87,7 +87,7 @@ public class GAAttack extends GA {
         if (chromVector.genes[chromosomeDim - 1] >= this.target_array.size()) {
             chromVector.genes[chromosomeDim - 1] = ((Integer) this.valid_target_indexes.elementAt(0)).intValue();
         }
-        Entity target = (Entity) this.target_array.get(chromVector.genes[chromosomeDim - 1]);
+        Entity target = (Entity) this.target_array.elementAt(chromVector.genes[chromosomeDim - 1]);
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             AttackOption a = (AttackOption) (((Vector) (attack.elementAt(iGene))).elementAt(chromVector.genes[iGene]));
             if (a.target != null) { //if not the no fire option
@@ -104,7 +104,7 @@ public class GAAttack extends GA {
 
         for (int k = 0; k < this.target_array.size(); k++) {
             double total_utility = 0;
-            Entity en = (Entity) this.target_array.get(k);
+            Entity en = (Entity) this.target_array.elementAt(k);
             CEntity enemy = null;
             if ((enemy = (CEntity) this.targets.get(new Integer(en.getId()))) != null) {
                 if (enemy.possible_damage[ToHitData.SIDE_FRONT] > 0) {
@@ -136,11 +136,11 @@ public class GAAttack extends GA {
         int heat_total = 0;
         Entity target = null;
         try {
-            target = (Entity) this.target_array.get(chromVector.genes[chromosomeDim - 1]);
+            target = (Entity) this.target_array.elementAt(chromVector.genes[chromosomeDim - 1]);
         } catch (Exception e) {
             System.out.println(chromosomeDim + " " + chromVector.genes.length);
             System.out.println(this.target_array.size());
-            target = (Entity) this.target_array.get(((Integer) this.valid_target_indexes.get(0)).intValue());
+            target = (Entity) this.target_array.elementAt(((Integer) this.valid_target_indexes.get(0)).intValue());
         }
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             final int[] genes = chromVector.genes;

@@ -57,7 +57,7 @@ public class PhysicalOption {
         AbstractAttackAction aaa = toAction();
         Vector v = new Vector();
         if (aaa != null) {
-            v.add(aaa);
+            v.addElement(aaa);
         }
         return v;
     }

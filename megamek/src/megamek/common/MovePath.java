@@ -709,7 +709,7 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
-    protected class MovePathComparator implements Comparator {
+    protected static class MovePathComparator implements Comparator {
         private Coords destination;
         boolean backward;
 

@@ -59,7 +59,6 @@ public class MechSummaryCache
         Vector vMechs = new Vector();
         Set sKnownFiles = new HashSet();
         long lLastCheck = 0;
-        long lStart = System.currentTimeMillis();
 
         System.out.println("");
         System.out.println("Reading mech files:");
@@ -137,7 +136,7 @@ public class MechSummaryCache
         // save updated cache back to disk
         if (bNeedsUpdate) {
             try {
-                saveCache(lStart);
+                saveCache();
             } catch (Exception e) {
                 System.out.println("Unable to save mech cache");
             }
@@ -147,7 +146,7 @@ public class MechSummaryCache
         System.out.println("");
     }
     
-    private void saveCache(long lStart)
+    private void saveCache()
         throws Exception
     {
         System.out.println("Saving mechcache");

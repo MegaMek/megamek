@@ -6,6 +6,7 @@ v0.29.36 (CVS)
 + Data 949800 and 949801: Cyclops CP-11-C3 and some mixed tech mech fixes.
 + Use StringBuffer.append() instead of String + String.
 + Task 99235: Fire/smoke processing faster now.
++ Patch 946255: added limbs entries to shrubbery theme
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

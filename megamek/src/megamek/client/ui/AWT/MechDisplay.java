@@ -782,47 +782,11 @@ class WeaponPanel
             wLongR.setText("" + wtype.getLongRange());
         }
 
-        // override the display for the various ATM ammos
-        if(AmmoType.T_ATM == wtype.getAmmoType())
-        {
-            /* begin killme block
-            // get the linked ammo
-            for (Enumeration j = entity.getAmmo(); j.hasMoreElements();)
-            {
-                Mounted mountedAmmo = (Mounted)j.nextElement();
-                AmmoType atype = (AmmoType)mountedAmmo.getType();
-                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping())
-                {
-                    continue;
-                }
-                if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize())
-                {
-                    if (mounted.getLinked() == mountedAmmo)
-                    {
-                    end killme block */
+        // Update the range display to account for the weapon's loaded ammo.
+        if ( null != mounted.getLinked() ) {
             AmmoType atype = (AmmoType) mounted.getLinked().getType();
-            System.err.println( "The ammo is " + atype.getInternalName() );//killme
-                        if(atype.hasFlag(AmmoType.F_ATM_ER))
-                        {
-                            wMinR.setText("4");
-                            wShortR.setText("1 - 9");
-                            wMedR.setText("10 - 18");
-                            wLongR.setText("19 - 27");
-                        }
-                        else if(atype.hasFlag(AmmoType.F_ATM_HE))
-                        {
-                            wMinR.setText("---");
-                            wShortR.setText("1 - 3");
-                            wMedR.setText("4 - 6");
-                            wLongR.setText("7 - 9");
-                        }
-                        /* begin killme block 
-                    }
-                }
-            }
-            end killme block */
-
-        } // End weapon-is-ATM
+            updateRangeDisplayForAmmo( atype );
+        }
 
         // update ammo selector
         boolean bOwner = (client.getLocalPlayer() == entity.getOwner());
@@ -873,8 +837,43 @@ class WeaponPanel
             sb.append(m.getDesc().substring(ammoIndex + 4));
         }
         return sb.toString();
-    }            
-        
+    }
+
+    /**
+     * Update the range display for the selected ammo.
+     *
+     * @param   atype - the <code>AmmoType</code> of the weapon's loaded ammo.
+     */
+    private void updateRangeDisplayForAmmo( AmmoType atype ) {
+
+        // Only override the display for the various ATM ammos
+        if(AmmoType.T_ATM == atype.getAmmoType())
+        {
+            if(atype.hasFlag(AmmoType.F_ATM_ER))
+            {
+                wMinR.setText("4");
+                wShortR.setText("1 - 9");
+                wMedR.setText("10 - 18");
+                wLongR.setText("19 - 27");
+            }
+            else if(atype.hasFlag(AmmoType.F_ATM_HE))
+            {
+                wMinR.setText("---");
+                wShortR.setText("1 - 3");
+                wMedR.setText("4 - 6");
+                wLongR.setText("7 - 9");
+            }
+            else
+            {
+                wMinR.setText("4");
+                wShortR.setText("1 - 5");
+                wMedR.setText("6 - 10");
+                wLongR.setText("11 - 15");
+            }
+        } // End weapon-is-ATM
+
+    } // End private void updateRangeDisplayForAmmo( AmmoType )
+
     // 
     // ItemListener
     //
@@ -890,6 +889,9 @@ class WeaponPanel
             Mounted mWeap = (Mounted)weapons.elementAt(n);
             Mounted mAmmo = (Mounted)vAmmo.elementAt(m_chAmmo.getSelectedIndex());
             entity.loadWeapon(mWeap, mAmmo);
+            // Update the range display to account for the weapon's loaded ammo.
+            AmmoType atype = (AmmoType) mAmmo.getType();
+            updateRangeDisplayForAmmo( atype );
         }
     }
         

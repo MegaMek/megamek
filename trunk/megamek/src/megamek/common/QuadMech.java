@@ -99,7 +99,7 @@ public class QuadMech extends Mech
       int destroyedLegs = countDestroyedLegs();
       
       if ( countDestroyedLegs() <= 1 ) {
-        return (int)Math.ceil(getWalkMP() * 1.5);
+        return super.getRunMP();
       } else {
         return getWalkMP();
       }

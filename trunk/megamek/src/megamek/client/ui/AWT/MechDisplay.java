@@ -36,15 +36,17 @@ public class MechDisplay extends Panel
     public ArmorPanel            aPan;
     public WeaponPanel            wPan;
     public SystemPanel            sPan;
+    private Client              client;
     
     private Entity              currentlyDisplaying = null;
     
     /**
      * Creates and lays out a new mech display.
      */
-    public MechDisplay() {
+    public MechDisplay(Client client) {
         super(new GridBagLayout());
         
+        this.client = client;
         movBut = new Button("Movement");
         movBut.addActionListener(this);
         armBut = new Button("Armor");
@@ -61,7 +63,7 @@ public class MechDisplay extends Panel
         displayP.add("armor", aPan);
         wPan = new WeaponPanel();
         displayP.add("weapons", wPan);
-        sPan = new SystemPanel();
+        sPan = new SystemPanel(client);
         displayP.add("systems", sPan);
         
         // layout main panel
@@ -804,15 +806,26 @@ class SystemPanel
     extends Panel
     implements ItemListener 
 {
+    private static Object SYSTEM = new Object();
+    
     public Label locLabel;
     public Label slotLabel;
     public java.awt.List slotList;
     public java.awt.List locList;
     
+    private Vector vEquipment = new Vector(16);
+    
+    public Choice m_chMode;
+    public Button m_bDumpAmmo;
+    public Label modeLabel;
+    private Client client;
+    
     Entity en;
     
-    public SystemPanel() {
+    public SystemPanel(Client client) {
         super();
+        
+        this.client = client;
         
         locLabel = new Label("Location", Label.CENTER);
         slotLabel = new Label("Slot", Label.CENTER);
@@ -820,33 +833,94 @@ class SystemPanel
         locList = new List(8, false);
         locList.addItemListener(this);
         slotList = new List(12, false);
-        slotList.setEnabled(false);
+        slotList.addItemListener(this);
+        //slotList.setEnabled(false);
         
-        // layout main panel
+        m_chMode = new Choice();
+        m_chMode.add("   ");
+        m_chMode.setEnabled(false);
+        m_chMode.addItemListener(this);
+        m_bDumpAmmo = new Button("Dump");
+        m_bDumpAmmo.setEnabled(false);
+        modeLabel = new Label("Mode", Label.CENTER);
+        modeLabel.setEnabled(false);
+        
+        // layout choice panel
+        Panel p = new Panel();
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
+        p.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;    c.weighty = 0.0;
+        c.gridwidth = 1;    c.gridheight = 1;
+        gridbag.setConstraints(modeLabel, c);
+        p.add(modeLabel);
+        
+        c.gridx = 1;
+        c.weightx = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(m_chMode, c);
+        p.add(m_chMode);
+        
+        c.gridx = 0;        c.gridy = 1;
+        gridbag.setConstraints(m_bDumpAmmo, c);
+        p.add(m_bDumpAmmo);
+        
+        // layout main panel
+        gridbag = new GridBagLayout();
+        c = new GridBagConstraints();
         setLayout(gridbag);
         
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 0.5;    c.weighty = 0.0;
         c.gridwidth = 1;
         gridbag.setConstraints(locLabel, c);
         add(locLabel);
         
+        c.weightx = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(slotLabel, c);
         add(slotLabel);
         
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 0.5;    c.weighty = 1.0;
         c.gridwidth = 1;
+        c.gridheight = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(locList, c);
         add(locList);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 2;
+        c.gridy = 1;
+        c.gridx = 1;
+        c.weightx = 1.0;
+        c.weighty = 0.8;
         gridbag.setConstraints(slotList, c);
         add(slotList);
+        
+        c.gridy = 4;
+        c.weighty = 0.2;
+        c.gridheight = 1;
+        gridbag.setConstraints(p, c);
+        add(p);
+    }
+    
+    public int getSelectedLocation() {
+        return locList.getSelectedIndex();
+    }
+    
+    public Mounted getSelectedEquipment() {
+        int n = slotList.getSelectedIndex();
+        if (n == -1) {
+            return null;
+        }
+        Object o = vEquipment.elementAt(n);
+        if (o == SYSTEM) {
+            return null;
+        }
+        return (Mounted)o;
     }
 
     /**
@@ -868,20 +942,29 @@ class SystemPanel
     public void displaySlots() {
         int loc = locList.getSelectedIndex();
         slotList.removeAll();
+        vEquipment = new Vector(16);
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
+            StringBuffer sb = new StringBuffer(32);
             if(cs == null) {
-                slotList.add("---");
+                sb.append("---");
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + Mech.systemNames[cs.getIndex()]);
+                    sb.append(cs.isDestroyed() ? "*" : "").append(Mech.systemNames[cs.getIndex()]);
+                    vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getEquipment(cs.getIndex()).getDesc());
+                    Mounted m = en.getEquipment(cs.getIndex());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(m.getDesc());
+                    if (m.getType().hasModes()) {
+                        sb.append(" (").append(m.curMode()).append(")");
+                    }
+                    vEquipment.addElement(m);
                     break;
                 }
             }
+            slotList.add(sb.toString());
         }
     }
 
@@ -891,6 +974,46 @@ class SystemPanel
     public void itemStateChanged(ItemEvent ev) {
         if(ev.getItemSelectable() == locList) {
             displaySlots();
+        }
+        else if (ev.getItemSelectable() == slotList) {
+            m_bDumpAmmo.setEnabled(false);
+            m_chMode.setEnabled(false);
+            modeLabel.setEnabled(false);
+            Mounted m = getSelectedEquipment();
+          
+            if (m != null && m.getType() instanceof AmmoType 
+                    && m.getShotsLeft() > 0) {
+                m_bDumpAmmo.setEnabled(true);
+            }
+            else if (m != null && m.getType().hasModes()) {
+                m_chMode.setEnabled(true);
+                modeLabel.setEnabled(true);
+                m_chMode.removeAll();
+                String[] saModes = m.getType().getModes();
+                for (int x = 0; x < saModes.length; x++) {
+                    m_chMode.add(saModes[x]);
+                }
+            }
+        }
+        else if (ev.getItemSelectable() == m_chMode) {
+            Mounted m = getSelectedEquipment();
+            if (m != null && m.getType().hasModes()) {
+                int nMode = m.setMode(m_chMode.getSelectedItem());
+            
+            
+                // send the event to the server
+                client.sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
+                    
+                // notify the player
+                if (m.getType().hasInstantModeSwitch()) {
+                    client.cb.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+                }
+                else {
+                    client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
+                            " at end of turn.");
+                }
+                displaySlots();
+            }
         }
     }
 }

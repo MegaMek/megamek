@@ -35,6 +35,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_HATCHET           = 0x0010;
     public static final int     F_TREE_CLUB         = 0x0020;
     public static final int     F_CASE              = 0x0040;
+    public static final int     F_MASC              = 0x0080;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -57,6 +58,13 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_MASC)) {
+            if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+                return (float)Math.round(entity.getWeight() / 25.0f);
+            }
+            else {
+                return (float)Math.round(entity.getWeight() / 20.0f);
+            }
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -73,7 +81,14 @@ public class MiscType extends EquipmentType {
             return 3;
 		} else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
 			return 2;
-		}
+        } else if (hasFlag(F_MASC)) {
+            if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+                return Math.round(entity.getWeight() / 25.0f);
+            }
+            else {
+                return Math.round(entity.getWeight() / 20.0f);
+            }
+        }
         // right, well I'll just guess then
         return 1;
     }
@@ -109,6 +124,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLDoubleHeatSink());
         EquipmentType.addType(createISCASE());
         EquipmentType.addType(createCLCASE());
+        EquipmentType.addType(createISMASC());
+        EquipmentType.addType(createCLMASC());
     }
     
     public static MiscType createHeatSink() {
@@ -277,6 +294,44 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags |= F_CASE;
         misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createISMASC() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "MASC";
+        misc.internalName = "ISMASC";
+        misc.mepName = misc.name;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.flags |= F_MASC;
+        misc.bv = 0;
+        
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        
+        return misc;
+    }
+    
+    public static MiscType createCLMASC() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "MASC";
+        misc.internalName = "CLMASC";
+        misc.mepName = misc.name;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.flags |= F_MASC;
+        misc.bv = 0;
+        
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
         
         return misc;
     }

@@ -42,6 +42,7 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_ATTACK        = 12;
     public static final int        COMMAND_ENTITY_READY         = 13;
     public static final int        COMMAND_ENTITY_UPDATE        = 14;
+    public static final int        COMMAND_ENTITY_MODECHANGE    = 26;  // reorder me
     
     public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me
     

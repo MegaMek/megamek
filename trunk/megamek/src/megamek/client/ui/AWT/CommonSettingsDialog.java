@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -19,8 +19,9 @@ import java.awt.event.*;
 
 import megamek.common.Settings;
 
-public class CommonSettingsDialog extends ClientDialog implements ActionListener, ItemListener {
-
+public class CommonSettingsDialog extends ClientDialog
+    implements ActionListener, ItemListener
+{
     private ScrollPane  scrOptions = new ScrollPane();
 
     private Checkbox    minimapEnabled;
@@ -237,9 +238,7 @@ public class CommonSettingsDialog extends ClientDialog implements ActionListener
         // Center this dialog.
         pack();
 
-        
-        setLocationAndSize(tempPanel);
-
+        setLocationAndSize(tempPanel.getSize());
     }
 
     /**

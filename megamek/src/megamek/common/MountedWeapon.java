@@ -17,7 +17,7 @@ package megamek.common;
 import java.io.*;
 
 public class MountedWeapon
-	implements Serializable 
+    implements Serializable 
 {
     private boolean             ready = true;
     private boolean             destroyed = false;

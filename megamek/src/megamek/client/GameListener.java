@@ -17,12 +17,12 @@ package megamek.client;
 import megamek.common.*;
 
 public interface GameListener
-	extends java.util.EventListener
+    extends java.util.EventListener
 {
-	public void gamePlayerChat(GameEvent e);
-	public void gamePlayerStatusChange(GameEvent e);
-	public void gameTurnChange(GameEvent e);
-	public void gamePhaseChange(GameEvent e);
-	public void gameNewEntities(GameEvent e);
-	public void gameNewSettings(GameEvent e);
+    public void gamePlayerChat(GameEvent e);
+    public void gamePlayerStatusChange(GameEvent e);
+    public void gameTurnChange(GameEvent e);
+    public void gamePhaseChange(GameEvent e);
+    public void gameNewEntities(GameEvent e);
+    public void gameNewSettings(GameEvent e);
 }

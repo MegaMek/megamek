@@ -16,18 +16,18 @@ package megamek.common;
 
 public class PilotingRollData
 {
-	public static final int AUTOMATIC_FALL = Integer.MAX_VALUE;
-	
+    public static final int AUTOMATIC_FALL = Integer.MAX_VALUE;
+    
     private int entityId;
     
     private int value;
     private StringBuffer desc;
     
-	public PilotingRollData(int entityId, int value, String desc) {
-		this.entityId = entityId;
-		this.value = value;
-		this.desc = new StringBuffer(desc);
-	}
+    public PilotingRollData(int entityId, int value, String desc) {
+        this.entityId = entityId;
+        this.value = value;
+        this.desc = new StringBuffer(desc);
+    }
     
     public int getEntityId() {
         return entityId;

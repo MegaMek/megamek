@@ -139,6 +139,9 @@ v 0.29.2 (06-??-03, ??)
   button which will write the current state of the game options to the
   gameoptions.xml file. This file is read at start up if you are hosting a game
   and will automatically set your desired 'default' options.
++ Task L3 Firing while down: MaxTech firing while down rule: can fire if you 
+  still have one arm but are at a +1 to hit with all weapons and can not
+  fire weapons in that arm.
   
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

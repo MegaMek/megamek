@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -35,48 +35,48 @@ public class BoardView1
     private static final int        TIP_DELAY = 1000;
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
-    
+
     private static final Font       FONT_HEXNUM = new Font("SansSerif", Font.PLAIN, 10);
     private static final Font       FONT_ELEV = new Font("SansSerif", Font.PLAIN, 9);
 
     private Game game;
     private Frame frame;
-    
+
     private Point mousePos = new Point();
     private Rectangle view = new Rectangle();
     private Point offset = new Point();
     private Dimension boardSize;
-    
+
     // scrolly stuff:
     private boolean isScrolling = false;
     private Thread scroller = new Thread(this);
     private Point scroll = new Point();
-    
+
     // back buffer to draw to
     private Image backImage;
     private Dimension backSize;
     private Graphics backGraph;
-    
+
     // buffer for all the hexes you can possibly see
     private Image boardImage;
     private Rectangle boardRect;
     private Graphics boardGraph;
-    
+
     // entity sprites
     private Vector entitySprites = new Vector();
     private Hashtable entitySpriteIds = new Hashtable();
-    
+
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
     private CursorSprite selectedSprite;
-    
+
     // sprite for current movement
     private Vector pathSprites = new Vector();
-    
+
     // vector of sprites for all firing lines
     private Vector attackSprites = new Vector();
-    
+
     // vector of sprites for C3 network lines
     private Vector C3Sprites = new Vector();
 
@@ -84,40 +84,40 @@ public class BoardView1
     private Window tipWindow;
     private boolean isTipPossible = false;
     private long lastIdle;
-    
+
     private TilesetManager tileManager = new TilesetManager(this);
 
     // polygons for a few things
     private Polygon              hexPoly;
     private Polygon[]            facingPolys;
     private Polygon[]            movementPolys;
-    
+
     // should we mark deployment hexes for a player?
     private Player               m_plDeployer = null;
-    
+
     /**
      * Construct a new board view for the specified game
      */
     public BoardView1(Game game, Frame frame) {
         this.game = game;
         this.frame = frame;
-        
+
         game.board.addBoardListener(this);
         scroller.start();
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
-        
+
         // tooltip
         tipWindow = new Window(frame);
-        
+
         initPolys();
-        
+
         cursorSprite = new CursorSprite(Color.cyan);
         highlightSprite = new CursorSprite(Color.white);
         selectedSprite = new CursorSprite(Color.blue);
     }
- 
+
     public void paint(Graphics g) {
         update(g);
     }
@@ -133,7 +133,7 @@ public class BoardView1
         view.setLocation(scroll);
         view.setSize(getOptimalView(size));
         offset.setLocation(getOptimalOffset(size));
-        
+
         if (!tileManager.isLoaded()) {
             if (!tileManager.isStarted()) {
                 g.drawString("loading images...", 20, 50);
@@ -153,49 +153,49 @@ public class BoardView1
             // clear current graphics
             g.clearRect(0, 0, size.width, size.height);
         }
-        
+
         // make sure board rectangle contains our current view rectangle
         if (boardImage == null || !boardRect.union(view).equals(boardRect)) {
             updateBoardImage();
         }
-        
+
         // draw onto the back buffer:
-        
+
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
-        
+
         // draw highlight border
         drawSprite(highlightSprite);
-        
+
         // draw C3 links
         drawSprites(C3Sprites);
 
         // draw onscreen entities
         drawSprites(entitySprites);
-        
+
         // draw onscreen attacks
         drawSprites(attackSprites);
-        
+
         // draw movement, if valid
         drawSprites(pathSprites);
-        
+
         // draw cursors
         drawSprite(cursorSprite);
         drawSprite(selectedSprite);
-        
+
         // draw deployment indicators
         if (m_plDeployer != null) {
             drawDeployment();
         }
-        
+
         // draw the back buffer onto the screen
         g.drawImage(backImage, offset.x, offset.y, this);
-        
-        
+
+
 //        final long finish = System.currentTimeMillis();
 //        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
     }
-    
+
     /**
      * Think up the size of the view rectangle based on the size of the component
      * and the size of board
@@ -203,7 +203,7 @@ public class BoardView1
     private Dimension getOptimalView(Dimension size) {
         return new Dimension(Math.min(size.width, boardSize.width), Math.min(size.height, boardSize.height));
     }
-    
+
     /**
      * Where should the offset be for this screen size?
      */
@@ -218,7 +218,7 @@ public class BoardView1
             }
             return new Point(ox, oy);
     }
-    
+
     /**
      * Repaint the bounds of a sprite, offset by view
      */
@@ -227,7 +227,7 @@ public class BoardView1
             repaint(bounds.x - view.x + offset.x, bounds.y - view.y + offset.y, bounds.width, bounds.height);
         }
     }
-    
+
     /**
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
@@ -238,7 +238,7 @@ public class BoardView1
             drawSprite(sprite);
         }
     }
-    
+
     /**
      * Draws a sprite, if it is in the current view
      */
@@ -252,7 +252,7 @@ public class BoardView1
             sprite.drawOnto(backGraph, drawX, drawY, this);
         }
     }
-    
+
     /**
      * Draw an outline around legal deployment hexes
      */
@@ -260,38 +260,38 @@ public class BoardView1
         // only update visible hexes
         int drawX = view.x / 63 - 1;
         int drawY = view.y / 72 - 1;
-        
+
         int drawWidth = view.width / 63 + 3;
         int drawHeight = view.height / 72 + 3;
-        
+
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {                        
+            for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
                 p.translate(-(view.x), -(view.y));
                 if (game.board.isLegalDeployment(c, m_plDeployer)) {
                     backGraph.setColor(Color.yellow);
-                    int[] xcoords = { p.x + 21, p.x + 62, p.x + 83, p.x + 83, 
+                    int[] xcoords = { p.x + 21, p.x + 62, p.x + 83, p.x + 83,
                             p.x + 62, p.x + 21, p.x, p.x };
-                    int[] ycoords = { p.y, p.y, p.y + 35, p.y + 36, p.y + 71, 
+                    int[] ycoords = { p.y, p.y, p.y + 35, p.y + 36, p.y + 71,
                             p.y + 71, p.y + 36, p.y + 35 };
                     backGraph.drawPolygon(xcoords, ycoords, 8);
                 }
             }
         }
     }
-    
+
     /**
      * Updates the board buffer to contain all the hexes needed by the view.
      */
     private void updateBoardImage() {
         // check to make sure image is big enough
-        if (boardGraph == null || view.width > boardRect.width 
+        if (boardGraph == null || view.width > boardRect.width
             || view.height > boardRect.height) {
             boardImage = createImage(view.width, view.height);
             boardGraph = boardImage.getGraphics();
-            
+
             System.out.println("boardview1: made a new board buffer " + boardRect);
             boardRect = new Rectangle(view);
             drawHexes(view);
@@ -300,7 +300,7 @@ public class BoardView1
             moveBoardImage();
         }
     }
-    
+
     /**
      * Moves the board view to another area.
      */
@@ -309,18 +309,18 @@ public class BoardView1
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
         boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
                             boardRect.x - view.x, boardRect.y - view.y);
-        
+
         // what's left to paint?
         int midX = Math.max(view.x, boardRect.x);
         int midWidth = view.width - Math.abs(view.x - boardRect.x);
-        Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x, view.height); 
-        Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height); 
-        Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y - view.y); 
-        Rectangle unBottom = new Rectangle(midX, boardRect.y + boardRect.height, midWidth, view.y - boardRect.y); 
-        
+        Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x, view.height);
+        Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height);
+        Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y - view.y);
+        Rectangle unBottom = new Rectangle(midX, boardRect.y + boardRect.height, midWidth, view.y - boardRect.y);
+
         // update boardRect
         boardRect = new Rectangle(view);
-        
+
         // paint needed areas
         if (unLeft.width > 0) {
             drawHexes(unLeft);
@@ -333,21 +333,21 @@ public class BoardView1
             drawHexes(unBottom);
         }
     }
-    
+
     /**
      * Redraws all hexes in the specified rectangle
      */
     private void drawHexes(Rectangle rect) {
         int drawX = rect.x / 63 - 1;
         int drawY = rect.y / 72 - 1;
-        
+
         int drawWidth = rect.width / 63 + 3;
         int drawHeight = rect.height / 72 + 3;
-        
+
         // only draw what we came to draw
         boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
                            rect.width, rect.height);
-        
+
         // clear, if we need to
         if (rect.x < 21) {
             boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y, 21 - rect.x, rect.height);
@@ -361,7 +361,7 @@ public class BoardView1
         if (rect.y > boardSize.height - view.height - 36) {
             boardGraph.clearRect(rect.x - boardRect.x, boardRect.height - 36, rect.width, 36);
         }
-        
+
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -369,7 +369,7 @@ public class BoardView1
             }
         }
     }
-    
+
     /**
      * Redraws a hex and all the hexes immediately around it.  Used when the
      * hex is on the screen, as opposed to when it is scrolling onto the screen,
@@ -385,7 +385,7 @@ public class BoardView1
         drawHex(c.translated(4));
         drawHex(c.translated(5));
     }
-    
+
     /**
      * Draws a hex onto the board buffer.  This assumes that boardRect is
      * current, and does not check if the hex is visible.
@@ -394,17 +394,17 @@ public class BoardView1
         if (!game.board.contains(c)) {
             return;
         }
-        
+
         final Hex hex = game.board.getHex(c);
         final Point hexLoc = getHexLocation(c);
-        
+
         int level = hex.getElevation();
         int depth = hex.depth();
-        
+
         // offset drawing point
         int drawX = hexLoc.x - boardRect.x;
         int drawY = hexLoc.y - boardRect.y;
-        
+
         // draw picture
         boardGraph.drawImage(tileManager.baseFor(hex), drawX, drawY, this);
         if (tileManager.supersFor(hex) != null) {
@@ -412,7 +412,7 @@ public class BoardView1
                 boardGraph.drawImage((Image)i.next(), drawX, drawY, this);
             }
         }
-        
+
         // draw hex number
         boardGraph.setColor(Settings.mapTextColor);
         boardGraph.setFont(FONT_HEXNUM);
@@ -449,7 +449,7 @@ public class BoardView1
         }
 
     }
-    
+
     /**
      * Returns true if an elevation line should be drawn between the starting
      * hex and the hex in the direction specified.  Results should be
@@ -461,7 +461,7 @@ public class BoardView1
         final Hex destHex = game.board.getHexInDir(src, direction);
         return destHex != null && srcHex.floor() != destHex.floor();
     }
-    
+
     /**
      * Returns the absolute position of the upper-left hand corner
      * of the hex graphic
@@ -472,7 +472,7 @@ public class BoardView1
     private Point getHexLocation(Coords c) {
         return getHexLocation(c.x, c.y);
     }
-    
+
     /**
      * Returns the coords at the specified point
      */
@@ -481,7 +481,7 @@ public class BoardView1
         final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
         return new Coords(x, y);
     }
-    
+
     /**
      * Shows the tooltip thinger
      */
@@ -493,12 +493,12 @@ public class BoardView1
         if (tipText == null) {
             return;
         }
-        
+
         // update tip text
         tipWindow.removeAll();
         tipWindow.add(new TooltipCanvas(tipText));
         tipWindow.pack();
-        
+
         tipLoc.translate(mousePos.x, mousePos.y + 20);
 
         // adjust horizontal location for the tipWindow if it goes off the frame
@@ -522,7 +522,7 @@ public class BoardView1
         tipWindow = new Window(frame);
       }
     }
-    
+
     /**
      * The text to be displayed when the mouse is at a certain point
      */
@@ -552,7 +552,7 @@ public class BoardView1
                 stringsSize += 1 + aSprite.weaponDescs.size();
             }
         }
-        
+
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
             return null;
@@ -569,10 +569,10 @@ public class BoardView1
  	      mhex.contains(Terrain.BUILDING)) ) {
             stringsSize += 1;
  	}
- 
+
         // are we on a hex?
         if (mhex != null) {
-            strings[stringsIndex] = "Hex " + mcoords.getBoardNum() 
+            strings[stringsIndex] = "Hex " + mcoords.getBoardNum()
                         + "; level " + mhex.getElevation();
             stringsIndex += 1;
 
@@ -608,7 +608,7 @@ public class BoardView1
                 stringsIndex += entityStrings.length;
             }
         }
-        
+
         // check if it's on any attacks
         for (Iterator i = attackSprites.iterator(); i.hasNext();) {
             final AttackSprite aSprite = (AttackSprite)i.next();
@@ -621,21 +621,21 @@ public class BoardView1
 
         return strings;
     }
-    
+
     /**
      * Hides the tooltip thinger
      */
     public void hideTooltip() {
         tipWindow.setVisible(false);
     }
-    
+
     /**
      * Returns true if the tooltip is showing
      */
     private boolean isTipShowing() {
         return tipWindow.isShowing();
     }
-    
+
     /**
      * Checks if the mouse has been idling for a while and if so, shows the
      * tooltip window
@@ -649,7 +649,7 @@ public class BoardView1
             showTooltip();
         }
     }
-    
+
     /**
      * Clears the sprite for an entity and prepares it to be re-drawn.  Replaces
      * the old sprite with the new!
@@ -660,24 +660,24 @@ public class BoardView1
         EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
         Vector newSprites = new Vector(entitySprites);
         Hashtable newSpriteIds = new Hashtable(entitySpriteIds);
-        
-        
+
+
         if (sprite != null) {
             newSprites.removeElement(sprite);
         }
-        
+
         if (entity.getPosition() != null) {
             sprite = new EntitySprite(entity);
             newSprites.addElement(sprite);
             newSpriteIds.put(new Integer(entity.getId()), sprite);
         }
-        
+
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
         for (java.util.Enumeration i = C3Sprites.elements(); i.hasMoreElements();) {
           final C3Sprite c3sprite = (C3Sprite)i.nextElement();
-          if (c3sprite.entityId == entity.getId()) 
+          if (c3sprite.entityId == entity.getId())
               C3Sprites.removeElement(c3sprite);
           else if(c3sprite.masterId == entity.getId()) {
               if(entity.hasC3()) { // only redraw client-to-master; otherwise we leave stray lines when we move
@@ -687,37 +687,37 @@ public class BoardView1
 
           }
         }
-        
+
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
 
         repaint(100);
     }
-    
+
     /**
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     private void redrawAllEntities() {
         Vector newSprites = new Vector(game.getNoOfEntities());
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
-        
-        clearC3Networks();      
+
+        clearC3Networks();
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if (entity.getPosition() == null) continue;
-            
+
             EntitySprite sprite = new EntitySprite(entity);
             newSprites.add(sprite);
             newSpriteIds.put(new Integer(entity.getId()), sprite);
 
             if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
         }
-        
+
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
         repaint(100);
     }
-    
+
     /**
      * Moves the cursor to the new position, or hides it, if newPos is null
      */
@@ -732,8 +732,8 @@ public class BoardView1
         repaintBounds(oldBounds);
         repaintBounds(cursor.getBounds());
     }
-    
-    
+
+
     public void centerOnHex(Coords c) {
         scroll.setLocation(getHexLocation(c));
         scroll.translate(42 - (view.width / 2), 36 - (view.height / 2));
@@ -742,7 +742,7 @@ public class BoardView1
         checkScrollBounds();
         repaint();
     }
-    
+
     /**
      * Clears the old movement data and draws the new.  Since it's less
      * expensive to check for and reuse old step sprites than to make a whole
@@ -750,12 +750,12 @@ public class BoardView1
      */
     public void drawMovementData(Entity entity, MovementData md) {
         Vector temp = pathSprites;
-        
+
         clearMovementData();
-        
+
         md.clearAllFlags();
         Compute.compile(game, entity.getId(), md);
-        
+
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             // check old movement path for reusable step sprites
@@ -772,7 +772,7 @@ public class BoardView1
             }
         }
     }
-    
+
     /**
      * Clears current movement data from the screen
      */
@@ -784,7 +784,7 @@ public class BoardView1
             repaintBounds(sprite.getBounds());
         }
     }
-    
+
     /**
      * Specifies that this should mark the deployment hexes for a player.  If
      * the player is set to null, no hexes will be marked.
@@ -793,13 +793,13 @@ public class BoardView1
     {
         m_plDeployer = p;
     }
-    
+
     /**
      * Adds a c3 line to the sprite list.
      */
     public void addC3Link(Entity e) {
         if (e.getPosition() == null) return;
-        
+
         if(e.hasC3i()) {
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = (Entity)i.nextElement();
@@ -812,7 +812,7 @@ public class BoardView1
         else if(e.getC3Master() != null) {
             Entity eMaster = e.getC3Master();
             if (eMaster.getPosition() == null) return;
-            
+
             // ECM cuts off the network
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())) {
                 C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
@@ -831,25 +831,34 @@ public class BoardView1
         if (ae == null || t == null) {
             return;
         }
-        
+
         for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
             final AttackSprite sprite = (AttackSprite)i.next();
-            
+
             // can we just add this attack to an existing one?
-            if (sprite.getEntityId() == aa.getEntityId() 
+            if (sprite.getEntityId() == aa.getEntityId()
                 && sprite.getTargetId() == aa.getTargetId()) {
                 // use existing attack, but add this weapon
                 if (aa instanceof WeaponAttackAction) {
                     sprite.addWeapon((WeaponAttackAction)aa);
                 }
+                if (aa instanceof KickAttackAction) {
+                    sprite.addWeapon((KickAttackAction)aa);
+                }
+                if (aa instanceof PunchAttackAction) {
+                    sprite.addWeapon((PunchAttackAction)aa);
+                }
+                if (aa instanceof PushAttackAction) {
+                    sprite.addWeapon((PushAttackAction)aa);
+                }
                 return;
             }
         }
-        
+
         // no re-use possible, add a new one
         attackSprites.addElement(new AttackSprite(aa));
     }
-    
+
     public void clearC3Networks() {
         C3Sprites.removeAllElements();
     }
@@ -860,22 +869,22 @@ public class BoardView1
     public void clearAllAttacks() {
         attackSprites.removeAllElements();
     }
-    
+
     public Image baseFor(Hex hex) {
         return tileManager.baseFor(hex);
     }
-    
+
     public com.sun.java.util.collections.List supersFor(Hex hex) {
         return tileManager.supersFor(hex);
     }
-    
-    
-    
-    
-    
 
-    
-    
+
+
+
+
+
+
+
     public void boardHexMoused(BoardEvent b) {
         ;
     }
@@ -895,7 +904,7 @@ public class BoardView1
         }
     }
     public void boardNewBoard(BoardEvent b) {
-        boardSize = new Dimension(game.board.width * 63 + 21, 
+        boardSize = new Dimension(game.board.width * 63 + 21,
                                   game.board.height * 72 + 36);
         backGraph = null;
         backImage = null;
@@ -904,16 +913,16 @@ public class BoardView1
         boardGraph = null;
         tileManager.reset();
     }
-    
+
     public void boardNewEntities(BoardEvent e) {
         redrawAllEntities();
     }
     public void boardChangedEntity(BoardEvent e) {
-        redrawEntity(e.getEntity()); 
+        redrawEntity(e.getEntity());
     }
-    
-    
-    
+
+
+
     /**
      * If the mouse is at the edges of the screen, this
      * scrolls the board image on the canvas.
@@ -942,7 +951,7 @@ public class BoardView1
             repaint();
         }
     }
-    
+
     /**
      * Makes sure that the scroll dimensions stay in bounds
      */
@@ -959,8 +968,8 @@ public class BoardView1
             scroll.y = (boardSize.height - view.height);
         }
     }
-    
-    
+
+
     /**
      * Initializes the various overlay polygons with their
      * vertices.
@@ -976,7 +985,7 @@ public class BoardView1
         hexPoly.addPoint(21, 71);
         hexPoly.addPoint(0, 36);
         hexPoly.addPoint(0, 35);
-        
+
         // facing polygons
         facingPolys = new Polygon[6];
         facingPolys[0] = new Polygon();
@@ -1043,8 +1052,8 @@ public class BoardView1
         movementPolys[5].addPoint(67, 49);
         movementPolys[5].addPoint(72, 48);
     }
-    
-    
+
+
     //
     // Runnable
     //
@@ -1067,7 +1076,7 @@ public class BoardView1
             }
         }
     }
-    
+
     //
     // KeyListener
     //
@@ -1109,15 +1118,15 @@ public class BoardView1
         if (isTipShowing()) {
             hideTooltip();
         }
-        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
+        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseReleased(MouseEvent me) {
         isScrolling = false;
         isTipPossible = true;
         if (me.getClickCount() == 1) {
-            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers()); 
+            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers());
         } else {
-            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers()); 
+            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers());
         }
     }
     public void mouseEntered(MouseEvent me) {
@@ -1129,7 +1138,7 @@ public class BoardView1
     public void mouseClicked(MouseEvent me) {
         ;
     }
-    
+
     //
     // MouseMotionListener
     //
@@ -1140,7 +1149,7 @@ public class BoardView1
         if (backSize != null) {
             doScroll();
         }
-        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
+        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
     public void mouseMoved(MouseEvent me) {
         mousePos = me.getPoint();
@@ -1150,25 +1159,25 @@ public class BoardView1
         lastIdle = System.currentTimeMillis();
         isTipPossible = true;
     }
-    
+
     /**
      * Displays a bit of text in a box.
-     * 
+     *
      * TODO: make multi-line
      */
     private class TooltipCanvas extends Canvas
     {
         private String[] tipStrings;
         private Dimension size;
-        
+
         public TooltipCanvas(String[] tipStrings) {
             this.tipStrings = tipStrings;
-            
+
             // setup
             setFont(new Font("SansSerif", Font.PLAIN, 12));
             setBackground(SystemColor.info);
             setForeground(SystemColor.infoText);
-            
+
             // determine size
             final FontMetrics fm = getFontMetrics(getFont());
             int width = 0;
@@ -1180,7 +1189,7 @@ public class BoardView1
             size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
             setSize(size);
         }
-        
+
         public void paint(Graphics g) {
             final FontMetrics fm = getFontMetrics(getFont());
             g.setColor(getBackground());
@@ -1192,8 +1201,8 @@ public class BoardView1
             }
         }
     }
-    
-    
+
+
     /**
      * Everything in the main map view is either the board or it's a sprite
      * displayed on top of the board.  Most sprites store a transparent image
@@ -1204,19 +1213,19 @@ public class BoardView1
     {
         protected Rectangle bounds;
         protected Image image;
-        
+
         /**
          * Do any necessary preparation.  This is called after creation,
          * but before drawing, when a device context is ready to draw with.
          */
         public abstract void prepare();
-        
+
         /**
          * When we draw our buffered images, it's necessary to implement
-         * the ImageObserver interface.  This provides the necesasry 
+         * the ImageObserver interface.  This provides the necesasry
          * functionality.
          */
-        public boolean imageUpdate(Image image, int infoflags, int x, int y, 
+        public boolean imageUpdate(Image image, int infoflags, int x, int y,
                                    int width, int height) {
             if (infoflags == ImageObserver.ALLBITS) {
                 prepare();
@@ -1226,7 +1235,7 @@ public class BoardView1
                 return true;
             }
         }
-        
+
         /**
          * Returns our bounding rectangle.  The coordinates here are stored
          * with the top left corner of the _board_ being 0, 0, so these do
@@ -1235,7 +1244,7 @@ public class BoardView1
         public Rectangle getBounds() {
             return bounds;
         }
-        
+
         /**
          * Are we ready to draw?  By default, checks to see that our buffered
          * image has been created.
@@ -1243,7 +1252,7 @@ public class BoardView1
         public boolean isReady() {
             return image != null;
         }
-        
+
         /**
          * Draws this sprite onto the specified graphics context.
          */
@@ -1255,7 +1264,7 @@ public class BoardView1
                 prepare();
             }
         }
-        
+
         /**
          * Returns true if the point is inside this sprite.  Uses board
          * coordinates, not screen coordinates.   By default, just checks our
@@ -1265,7 +1274,7 @@ public class BoardView1
         public boolean isInside(Point point) {
             return bounds.contains(point);
         }
-        
+
         /**
          * Since most sprites being drawn correspond to something in the game,
          * this returns a little info for a tooltip.
@@ -1274,41 +1283,41 @@ public class BoardView1
             return null;
         }
     }
-    
+
     /**
      * Sprite for a cursor.  Just a hexagon outline in a specified color.
      */
     private class CursorSprite extends Sprite
     {
         private Color color;
-        
-        public CursorSprite(Color color) { 
+
+        public CursorSprite(Color color) {
             this.color = color;
             this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
                                         hexPoly.getBounds().height + 1);
             this.image = null;
-            
+
             // start offscreen
             bounds.setLocation(-100, -100);
         }
-        
+
         public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
-            
+
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
             // draw attack poly
             graph.setColor(color);
             graph.drawPolygon(hexPoly);
-            
+
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                     new KeyAlphaFilter(TRANSPARENT)));
         }
-        
+
         public void setLocation(int x, int y) {
             bounds.setLocation(x, y);
         }
@@ -1316,7 +1325,7 @@ public class BoardView1
             bounds.setLocation(point);
         }
     }
-    
+
     /**
      * Sprite for an entity.  Changes whenever the entity changes.  Consists
      * of an image, drawn from the Tile Manager; facing and possibly secondary
@@ -1326,36 +1335,36 @@ public class BoardView1
     {
         private Entity entity;
         private Rectangle entityRect;
-        
+
         public EntitySprite(Entity entity) {
             this.entity = entity;
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,  
-                                 getFontMetrics(font).stringWidth(shortName) + 1, 
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
                                  getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
-            
+
             this.bounds = tempBounds;
             this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
             this.image = null;
         }
-        
+
         /**
-         * Creates the sprite for this entity.  It is an extra pain to 
+         * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
          */
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,  
-                                 getFontMetrics(font).stringWidth(shortName) + 1, 
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
                                  getFontMetrics(font).getAscent());
             Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
-            
+
             // create image for buffer
             Image tempImage;
             Graphics graph;
@@ -1366,14 +1375,14 @@ public class BoardView1
                 // argh!  but I want it!
                 return;
             }
-            
+
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
-            
+
             // draw entity image
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
-            
+
             // draw box with shortName
             Color col;
             Color bcol;
@@ -1395,26 +1404,26 @@ public class BoardView1
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             graph.setColor(entity.isDone() ? Color.lightGray : Color.black);
             graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
-            
+
             // draw facing
             graph.setColor(Color.white);
             if (entity.getFacing() != -1) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
-            
+
             // draw the 'flip arms' arrow
             if ( (entity.getFacing() != -1) && entity.getArmsFlipped() ) {
               graph.setColor(Color.red);
               int flipDir = entity.getFacing();
-              
+
               if ( flipDir < 3 )
                 flipDir = flipDir + 3;
               else
                 flipDir = flipDir - 3;
-                
+
               graph.drawPolygon(facingPolys[flipDir]);
             }
-                        
+
             // draw condition strings
             if (entity.isImmobile() && !entity.isProne()) {
                 // draw "IMMOBILE"
@@ -1437,7 +1446,7 @@ public class BoardView1
                 graph.drawString("IMMOBILE", 17, 34);
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 47);
-            }    
+            }
 
             // If this unit is being swarmed or is swarming another, say so.
             if ( Entity.NONE != entity.getSwarmAttackerId() ) {
@@ -1452,32 +1461,32 @@ public class BoardView1
               int baseBarLength = 23;
               int barLength = 0;
               double percentRemaining = 0.00;
-              
+
               percentRemaining = entity.getArmorRemainingPercent();
               barLength = (int)(baseBarLength * percentRemaining);
-              
+
               graph.setColor(Color.darkGray);
               graph.fillRect(56, 7, 23, 3);
               graph.setColor(Color.lightGray);
               graph.fillRect(55, 6, 23, 3);
               graph.setColor(getStatusBarColor(percentRemaining));
               graph.fillRect(55, 6, barLength, 3);
-              
+
               percentRemaining = entity.getInternalRemainingPercent();
               barLength = (int)(baseBarLength * percentRemaining);
-              
+
               graph.setColor(Color.darkGray);
               graph.fillRect(56, 11, 23, 3);
               graph.setColor(Color.lightGray);
               graph.fillRect(55, 10, 23, 3);
               graph.setColor(getStatusBarColor(percentRemaining));
               graph.fillRect(55, 10, barLength, 3);
-              
+
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                     new KeyAlphaFilter(TRANSPARENT)));
         }
-         
+
         private Color getStatusBarColor(double percentRemaining) {
           if ( percentRemaining <= .25 )
             return Color.red;
@@ -1486,27 +1495,27 @@ public class BoardView1
           else
             return new Color(16, 196, 16);
         }
-        
+
         /**
          * Overrides to provide for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
             return entityRect.contains(point.x + view.x - offset.x, point.y + view.y - offset.y);
         }
-        
+
         private String[] getTooltip() {
             String[] tipStrings = new String[3];
             tipStrings[0] = entity.getChassis() + " (" + entity.getOwner().getName() + "); "
             + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
-            tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance 
-            + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");" 
-            + " Heat " + entity.heat; 
-            tipStrings[2] = "Armor " + entity.getTotalArmor() 
+            tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance
+            + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");"
+            + " Heat " + entity.heat;
+            tipStrings[2] = "Armor " + entity.getTotalArmor()
                             + "; Internal " + entity.getTotalInternal();
             return tipStrings;
         }
     }
-    
+
     /**
      * Sprite for a step in a movement path.  Only one sprite should exist for
      * any hex in a path.  Contains a colored number, and arrows indicating
@@ -1515,20 +1524,20 @@ public class BoardView1
     private class StepSprite extends Sprite
     {
         private MovementData.Step step;
-        
+
         public StepSprite(MovementData.Step step) {
             this.step = (MovementData.Step)step.clone();
-            
+
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
             this.image = null;
         }
-        
+
         public void prepare() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
             Graphics graph = tempImage.getGraphics();
-            
+
             // fill with key color
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
@@ -1567,7 +1576,7 @@ public class BoardView1
             case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
             case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
                 // draw arrows showing them entering the next
-                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
+                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
                                      movePoly.npoints);
                 graph.setColor(Color.darkGray);
                 myPoly.translate(stepPos.x + 1, stepPos.y + 1);
@@ -1605,7 +1614,7 @@ public class BoardView1
             case MovementData.STEP_TURN_LEFT:
             case MovementData.STEP_TURN_RIGHT:
                 // draw arrows showing the facing
-                myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, 
+                myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints,
                                      facingPoly.npoints);
                 graph.setColor(Color.darkGray);
                 myPoly.translate(stepPos.x + 1, stepPos.y + 1);
@@ -1645,28 +1654,28 @@ public class BoardView1
             default :
                 break;
             }
-            
+
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                     new KeyAlphaFilter(TRANSPARENT)));
         }
-        
+
         public MovementData.Step getStep() {
             return step;
         }
-        
+
         private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append( step.getMpUsed() );
 
             // If the step is using a road bonus, mark it.
-            if ( step.isOnPavement() ) { 
+            if ( step.isOnPavement() ) {
                 costStringBuf.append( "+" );
             }
 
             // If the step is dangerous, mark it.
-            if ( step.isDanger() ) { 
+            if ( step.isDanger() ) {
                 costStringBuf.append( "*" );
             }
 
@@ -1687,7 +1696,7 @@ public class BoardView1
         }
 
     }
-    
+
     /**
      * Sprite and info for a C3 network.  Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.
@@ -1695,10 +1704,10 @@ public class BoardView1
     private class C3Sprite extends Sprite
     {
         private Polygon C3Poly;
-        
+
         protected int entityId;
         protected int masterId;
-        
+
         public C3Sprite(Entity e, Entity m) {
             this.entityId = e.getId();
             this.masterId = m.getId();
@@ -1716,26 +1725,26 @@ public class BoardView1
             }
             final Point a = getHexLocation(e.getPosition());
             final Point t = getHexLocation(m.getPosition());
-        
+
             final double an = (e.getPosition().radian(m.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             final double lw = 1; // line width
-        
+
             // make a polygon
             C3Poly = new Polygon();
             C3Poly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
             C3Poly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
             C3Poly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
             C3Poly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
-            
+
             // set bounds
             this.bounds = new Rectangle(C3Poly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
-            
+
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
             // set names & stuff
-            
+
             // nullify image
             this.image = null;
         }
@@ -1743,26 +1752,26 @@ public class BoardView1
         public void prepare() {
             ;
         }
-        
+
         public boolean isReady() {
             return true;
         }
-        
+
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
             drawPoly.translate(x, y);
-            
+
             g.setColor(game.getEntity(entityId).getOwner().getColor());
             g.fillPolygon(drawPoly);
             g.setColor(Color.black);
             g.drawPolygon(drawPoly);
         }
-        
+
         /**
          * Return true if the point is inside our polygon
          */
         public boolean isInside(Point point) {
-            return C3Poly.contains(point.x + view.x - bounds.x - offset.x, 
+            return C3Poly.contains(point.x + view.x - bounds.x - offset.x,
                                           point.y + view.y - bounds.y - offset.y);
         }
 
@@ -1789,7 +1798,7 @@ public class BoardView1
         private String attackerDesc;
         private String targetDesc;
         private Vector weaponDescs = new Vector();
-        
+
         public AttackSprite(AttackAction attack) {
 
             this.attacks.addElement(attack);
@@ -1823,13 +1832,13 @@ public class BoardView1
             } else {
                 attackPoly = new StraightArrowPolygon(a, t, 4, 8, false);
             }
-            
+
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
 
             // set names & stuff
             attackerDesc = ae.getDisplayName();
@@ -1837,11 +1846,20 @@ public class BoardView1
             if (attack instanceof WeaponAttackAction) {
                 addWeapon((WeaponAttackAction)attack);
             }
-            
+            if (attack instanceof KickAttackAction) {
+                addWeapon((KickAttackAction)attack);
+            }
+            if (attack instanceof PunchAttackAction) {
+                addWeapon((PunchAttackAction)attack);
+            }
+            if (attack instanceof PushAttackAction) {
+                addWeapon((PushAttackAction)attack);
+            }
+
             // nullify image
             this.image = null;
         }
-        
+
 
         /** If we have build full arrow already with single attack and have got
          * counter attack from our target lately - lets change arrow to halved.
@@ -1870,37 +1888,37 @@ public class BoardView1
         public void prepare() {
             ;
         }
-        
+
         public boolean isReady() {
             return true;
         }
-        
+
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             Polygon drawPoly = new Polygon(attackPoly.xpoints, attackPoly.ypoints, attackPoly.npoints);
             drawPoly.translate(x, y);
-            
+
             g.setColor(attackColor);
             g.fillPolygon(drawPoly);
             g.setColor(Color.gray.darker());
             g.drawPolygon(drawPoly);
         }
-        
+
         /**
          * Return true if the point is inside our polygon
          */
         public boolean isInside(Point point) {
-            return attackPoly.contains(point.x + view.x - bounds.x - offset.x, 
+            return attackPoly.contains(point.x + view.x - bounds.x - offset.x,
                                           point.y + view.y - bounds.y - offset.y);
         }
-        
+
         public int getEntityId() {
             return entityId;
         }
-        
+
         public int getTargetId() {
             return targetId;
         }
-        
+
         /**
          * Adds a weapon to this attack
          */
@@ -1910,7 +1928,58 @@ public class BoardView1
             final int roll = Compute.toHitWeapon(game, attack).getValue();
             weaponDescs.addElement(wtype.getName() + "; needs " + roll);
         }
-        
+
+        public void addWeapon(KickAttackAction attack) {
+            String bufer = "";
+            String rollLeft = "";
+            String rollRight = "";
+            final int leg = attack.getLeg();
+            switch (leg){
+                case KickAttackAction.BOTH:
+                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.LEFT).getValueAsString();
+                    rollRight = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.RIGHT).getValueAsString();
+                    bufer = "Kicks with both legs. Left needs " + rollLeft + "; Right needs " + rollRight;
+                    break;
+                case KickAttackAction.LEFT:
+                    rollLeft = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.LEFT).getValueAsString();
+                    bufer = "Kicks with left leg. Needs " + rollLeft;
+                    break;
+                case KickAttackAction.RIGHT:
+                    rollRight = Compute.toHitKick( game, attack.getEntityId(), attack.getTargetId(), KickAttackAction.RIGHT).getValueAsString();
+                    bufer = "Kicks with right leg. Needs " + rollRight;
+                    break;
+            }
+            weaponDescs.addElement(bufer);
+        }
+
+        public void addWeapon(PunchAttackAction attack) {
+            String bufer = "";
+            String rollLeft = "";
+            String rollRight = "";
+            final int arm = attack.getArm();
+            switch (arm){
+                case PunchAttackAction.BOTH:
+                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.LEFT).getValueAsString();
+                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.RIGHT).getValueAsString();
+                    bufer = "Punches with both arms. Left needs " + rollLeft + "; Right needs " + rollRight;
+                    break;
+                case PunchAttackAction.LEFT:
+                    rollLeft = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.LEFT).getValueAsString();
+                    bufer = "Punches with left arm. Needs " + rollLeft;
+                    break;
+                case PunchAttackAction.RIGHT:
+                    rollRight = Compute.toHitPunch( game, attack.getEntityId(), attack.getTargetId(), PunchAttackAction.RIGHT).getValueAsString();
+                    bufer = "Punches with right arm. Needs " + rollRight;
+                    break;
+            }
+            weaponDescs.addElement(bufer);
+        }
+
+        public void addWeapon(PushAttackAction attack) {
+              final String roll = Compute.toHitPush(game, attack).getValueAsString();
+              weaponDescs.addElement("Pushes. Needs " + roll);
+        }
+
         private String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;

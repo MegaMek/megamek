@@ -31,8 +31,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Client client;
         
     // buttons & such
-    private Label labColor, labTeam;            
-    private Choice choColor, choTeam;
+    private Label labColor;
+    private Label labTeam;            
+    private Choice choColor;
+    private Choice choTeam;
     private Panel panColor;
       
     private Label labBoardSize;
@@ -86,13 +88,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                 
         choColor = new Choice();
         choColor.addItemListener(this);
-                
         setupColors();
                 
         choTeam = new Choice();
-        choTeam.addItem("Not Functional");
-        choTeam.setEnabled(false);
-            
+        choTeam.addItemListener(this);
+        setupTeams();
+        
         setupBoardSettings();
         refreshGameSettings();
             
@@ -104,15 +105,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         
         setupStarts();
         refreshStarts();
+        
+        setupMainPanel();
             
-        panMain = new Panel();
-        panMain.setLayout(new GridBagLayout());
-            
-        panMain.add(panBoardSettings);
-        panMain.add(panStarts);
-        panMain.add(panEntities);
-        panMain.add(panBVs);
-            
+        
         labStatus = new Label("", Label.CENTER);
                 
         butReady = new Button("I'm Ready.");
@@ -209,6 +205,17 @@ public class ChatLounge extends AbstractPhaseDisplay
             lisBoardsSelected.add((index++) + ": " + (String)i.nextElement());
         }
         lisBoardsSelected.select(0);
+    }
+    
+    private void setupMainPanel() {
+            
+        panMain = new Panel();
+        panMain.setLayout(new GridBagLayout());
+        
+        panMain.add(panBoardSettings);
+        panMain.add(panStarts);
+        panMain.add(panEntities);
+        panMain.add(panBVs);
     }
   
     /**
@@ -410,7 +417,7 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupColors() {
         choColor.removeAll();
-        for(int i = 0; i < Player.colorNames.length; i++) {
+        for (int i = 0; i < Player.colorNames.length; i++) {
             choColor.add(Player.colorNames[i]);
         }
         choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
@@ -421,6 +428,28 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void refreshColors() {
         choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
+    }
+  
+    /**
+     * Setup the team choice box
+     */
+    private void setupTeams() {
+        choTeam.removeAll();
+        choTeam.add("No Team");
+        choTeam.add("Team 1");
+        choTeam.add("Team 2");
+        choTeam.add("Team 3");
+        choTeam.add("Team 4");
+        choTeam.add("Team 5");
+        choTeam.select(client.getLocalPlayer().getTeam());
+    }
+  
+
+    /**
+     * Highlight the team the player is playing on.
+     */
+    private void refreshTeams() {
+        choTeam.select(client.getLocalPlayer().getTeam());
     }
   
     /**
@@ -435,6 +464,14 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     public void changeColor(int nc) {
         client.getLocalPlayer().setColorIndex(nc);
+        client.sendPlayerInfo();
+    }
+  
+    /**
+     * Change local player team.
+     */
+    public void changeTeam(int team) {
+        client.getLocalPlayer().setTeam(team);
         client.sendPlayerInfo();
     }
   
@@ -469,12 +506,13 @@ public class ChatLounge extends AbstractPhaseDisplay
     public void itemStateChanged(ItemEvent ev) {
         if (ev.getSource() == choColor) {
             changeColor(choColor.getSelectedIndex());
-        } else if (ev.getSource() ==chkBV || ev.getSource() == chkTons) {
+        } else if (ev.getSource() == choTeam) {
+            changeTeam(choTeam.getSelectedIndex());
+        } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
             refreshBVs();
         }
         
     }
-
 
     //
     // ActionListener

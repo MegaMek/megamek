@@ -29,18 +29,28 @@ public class MiniReportDisplay extends Dialog
     public MiniReportDisplay(Frame parent, String sReport) {
         super(parent, "Turn Report", true);
         
-        taData = new TextArea(sReport, 20, 48);
-        taData.setEditable(false);
         butOkay = new Button("Okay");
         butOkay.addActionListener(this);
+        taData = new TextArea(sReport, 20, 48);
+        taData.setEditable(false);
+
         setLayout(new BorderLayout());
         
-        add(BorderLayout.CENTER, taData);
         add(BorderLayout.SOUTH, butOkay);
+        add(BorderLayout.CENTER, taData);
         setSize(400, 300);
         doLayout();
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+
+        // closing the window is the same as hitting butOkay
+        addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    actionPerformed(new ActionEvent(butOkay,ActionEvent.ACTION_PERFORMED,butOkay.getLabel()));
+                };
+        });
+
+        butOkay.requestFocus();
     }
     
     public void actionPerformed(ActionEvent ae) {

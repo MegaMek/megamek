@@ -608,12 +608,14 @@ public abstract class Entity
     public abstract HitData rollHitLocation(int table, int side);
 
     /**
-     * Gets the location that excess damage transfers to
+     * Gets the location that excess damage transfers to.  That is, one
+     * location inwards.
      */
     public abstract HitData getTransferLocation(HitData hit);
                                                     
     /**
-     * Gets the location that is destroyed recursively
+     * Gets the location that is destroyed recursively.  That is, one location
+     * outwards.
      */
     public abstract int getDependentLocation(int loc);
     

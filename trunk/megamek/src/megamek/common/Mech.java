@@ -170,6 +170,14 @@ public abstract class Mech
     }
     
     /**
+     * Returns true if this mech has an XL engine.  For now, just checks if 
+     * there are any engine critical slots in the right torso.
+     */
+    public boolean hasXL() {
+        return getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) > 0;
+    }
+    
+    /**
      * This mech's jumping MP modified for missing jump jets
      */
     public int getJumpMP() {
@@ -755,7 +763,36 @@ public abstract class Mech
         // subtract for explosive ammo
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
+            int loc = mounted.getLocation();
             AmmoType atype = (AmmoType)mounted.getType();
+            
+            // only count explosive ammo
+            if (!atype.isExplosive()) {
+                continue;
+            }
+            
+            if (isClan()) {
+                // clan mechs only count ammo in ct, legs or head
+                if (loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG 
+                && loc != LOC_HEAD) {
+                    continue;
+                }
+            } else {
+                // inner sphere with XL counts everywhere
+                if (!hasXL()) {
+                    // without XL, only count torsos if not CASEed, and arms
+                    // if arm & torso not CASEed
+                    if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
+                        continue;
+                    }
+                    if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
+                        continue;
+                    }
+                    if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
+                        continue;
+                    }
+                }
+            }
             
             dbv -= (int)(20.0 * atype.getTonnage(this));
         }

@@ -99,6 +99,7 @@ v next
 + 568363: movement in depth 3+ water possible again
 + fixed a different bug with minimum movement and water
 + added new bot code by Steven Hawkins <skh_mail@yahoo.com>
++ CASE now applies to BV calculation
 
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified

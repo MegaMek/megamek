@@ -73,6 +73,8 @@ v next
 + 652106: possible fix for linux flickering in lobby
 + 652105: board pop-up menu appears on linux (and mac too, maybe)
 + added dialog about where to find help with the board editor
++ 561342: ammo decreased before damage is assigned
++ AMS owner, not launcher owner, gets AMS heat
 
 v 0.27.11 (12-13-02, 8:10pm)
 + killing a C3 network master no longer crashes the client

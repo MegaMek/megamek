@@ -13411,6 +13411,9 @@ implements Runnable, ConnectionHandler {
         Enumeration sinkableTanks = 
             game.getSelectedEntities( new EntitySelector() {
             public boolean accept(Entity entity) {
+                if (entity.isOffBoard()) {
+                    return false;
+                }
                 // TODO : correctly handle bridges.
                 if (entity instanceof Tank && 
                     (entity.getMovementType() == Entity.MovementType.TRACKED ||

@@ -990,19 +990,19 @@ class HMVMovementType
   public static final Hashtable types = new Hashtable();
 
   public static final HMVMovementType TRACKED =
-    new HMVMovementType("Tracked", 1032);
+    new HMVMovementType("Tracked", 8);
   public static final HMVMovementType WHEELED =
-    new HMVMovementType("Wheeled", 1040);
+    new HMVMovementType("Wheeled", 16);
   public static final HMVMovementType HOVER =
-    new HMVMovementType("Hover", 1056);
+    new HMVMovementType("Hover", 32);
   public static final HMVMovementType VTOL =
-    new HMVMovementType("V.T.O.L", 1088);
+    new HMVMovementType("V.T.O.L", 64);
   public static final HMVMovementType HYDROFOIL =
-    new HMVMovementType("Hydrofoil", 1152);
+    new HMVMovementType("Hydrofoil", 128);
   public static final HMVMovementType SUBMARINE =
-    new HMVMovementType("Submarine", 1280);
+    new HMVMovementType("Submarine", 256);
   public static final HMVMovementType DISPLACEMENT_HULL =
-    new HMVMovementType("Displacement Hull", 1536);
+    new HMVMovementType("Displacement Hull", 512);
 
   private HMVMovementType(String name, int id)
   {
@@ -1012,7 +1012,9 @@ class HMVMovementType
 
   public static HMVMovementType getType(int i)
   {
-    return (HMVMovementType) types.get(new Integer(i));
+      // Only pay attention to the movement type bits.
+      i &= 1016;
+      return (HMVMovementType) types.get(new Integer(i));
   }
 
 }

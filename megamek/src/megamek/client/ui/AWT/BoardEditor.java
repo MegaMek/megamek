@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -58,11 +58,14 @@ public class BoardEditor extends Container
     private Checkbox            cheTerrExitSpecified;
     private TextField           texTerrExits;
     private Button              butTerrExits;
-    
-    private Button              butAddTerrain;
-    
+
+    private Panel               panRoads;
+    private Checkbox            cheRoadsAutoExit;
+
     private Label               labTheme;
     private TextField           texTheme;
+
+    private Button              butAddTerrain;
     
     private Label               blankL;
     
@@ -129,11 +132,16 @@ public class BoardEditor extends Container
         panTerrExits.add(cheTerrExitSpecified);
         panTerrExits.add(butTerrExits);
         panTerrExits.add(texTerrExits);
-        
+
+        panRoads = new Panel(new FlowLayout());
+        cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
+        cheRoadsAutoExit.addItemListener( this );
+        panRoads.add(cheRoadsAutoExit);
+
         labTheme = new Label("Theme:", Label.LEFT);
         texTheme = new TextField("", 15);
         texTheme.addTextListener(this);
-        
+
         labBoard = new Label("Board:", Label.LEFT);
         butBoardNew = new Button("New...");
         butBoardNew.addActionListener(this);
@@ -177,9 +185,10 @@ public class BoardEditor extends Container
         addBag(butDelTerrain, gridbag, c);
         addBag(panTerrainType, gridbag, c);
         addBag(panTerrExits, gridbag, c);
-        addBag(butAddTerrain, gridbag, c);
+        addBag(panRoads, gridbag, c);
         addBag(labTheme, gridbag, c);
         addBag(texTheme, gridbag, c);
+        addBag(butAddTerrain, gridbag, c);
     
         c.weightx = 1.0;    c.weighty = 1.0;
         addBag(blankL, gridbag, c);
@@ -222,7 +231,6 @@ public class BoardEditor extends Container
         }
         
         texTheme.setText(curHex.getTheme());
-        
         repaint();
         canHex.repaint();
     }
@@ -292,11 +300,11 @@ public class BoardEditor extends Container
         bnd.show();
         
         if(bnd.getX() > 0 || bnd.getY() > 0) {
-            Hex[] newHexes = new Hex[ bnd.getX() * bnd.getY() ];
-            for(int i = 0; i < newHexes.length; i++) {
-                newHexes[i] = new Hex();
+            Hex[] newHexes = new Hex[ bnd.getX() * bnd.getY() ]; 
+            for(int i = 0; i < newHexes.length; i++) { 
+                newHexes[i] = new Hex(); 
             }
-            board.newData(bnd.getX(), bnd.getY(), newHexes);
+            board.newData(bnd.getX(), bnd.getY(), newHexes); 
             curpath = null;
             curfile = null;
             frame.setTitle("MegaMek Editor : Unnamed");
@@ -328,7 +336,9 @@ public class BoardEditor extends Container
         }
         
         frame.setTitle("MegaMek Editor : " + curfile);
-        
+
+        cheRoadsAutoExit.setState( board.getRoadsAutoExit() );
+
         refreshTerrainList();
     }
 
@@ -369,7 +379,6 @@ public class BoardEditor extends Container
             // I want a file, y'know!
             return;
         }
-        
         curpath = fd.getDirectory();
         curfile = fd.getFile();
 
@@ -430,6 +439,12 @@ public class BoardEditor extends Container
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource() == lisTerrain) {
             refreshTerrainFromList();
+        }
+        else if ( ie.getSource() == cheRoadsAutoExit ) {
+            // Set the new value for the option, and refrest the board.
+            board.setRoadsAutoExit( cheRoadsAutoExit.getState() );
+            board.newData( board );
+            canHex.repaint();
         }
     }
     
@@ -517,7 +532,7 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        } 
+        }
     }
 
     

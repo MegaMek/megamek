@@ -18,7 +18,7 @@ information on the board file format, and the tileset file format.
 
   The Hex Work Area
     Along the right side of the screen, above the save/load buttons, there are
-    controls for working with a hex.  From top to bottom, there is a picture of 
+    controls for working with a hex.  From top to bottom, there is a picture of
     your working hex, controls to adjust elevation, a list of terrain types
     present in the working hex, and controls to remove, add, or adjust terrain.
 
@@ -65,33 +65,59 @@ information on the board file format, and the tileset file format.
     diagram of the exits and checkboxes for easy setting.  When you close this
     dialog, it automatically activates the Add/Set action.
 
+    Normally, roads automatically exit onto all adjacent pavement hexes.  The
+    designer of the board can override this by explicitly specifying the exits
+    of the road hex (as described above).  On some boards, however, it is
+    easier to specify the road hexes that *do* exit onto a pavement hex rather
+    than saying which ones do *not* exit onto the pavement.  For those boards,
+    uncheck the "Exit Roads to Pavement" checkbox.  Each time you check or un-
+    check the "Exit Roads to Pavement" checkbox, the map refreshes itself to
+    show you the results.  The if this checkbox is not checked when you save
+    the board, the "exit_roads_to_pavement" option described below will be set
+    to "false".  Please note that, when multiple boards are used in a game, if
+    one board has the "exit_roads_to_pavement" option set to "false", *NO*
+    roads will automatically exit onto a pavement hex, so use this option
+    sparingly.
+
   Types Of Terrain Features
     The game expects the level for each type of terrain feature within a certain
     range.  Values not in this range may cause the terrain to appear on the map,
     but there will usually be no game effect, or, worse, undesirable effects.
     A lot of terrain is activated with a value of "1".
 
+    Some types of terrain should only appear in combination with other types.
+    The bldg_cf, bldg_elev, and bldg_basement should only appear in a hex that
+    has a building level > 0.  The swamp terrain should only appear in a clear,
+    rough, or woods hex.
+
+    The "fluff" terrain type can be used to place special images on the map
+    board that have no effect on play, but improve the overall appearance of
+    the map.  The level of fluff in the terrain, coupled with the exits that
+    are specified for the fluff, determine the image that appears.  The full
+    list of fluff images available, and the level and exits needed to display
+    them, can be seen in the file, "data/hexes/defaulthexset.txt".
+
     The terrain feature types and their expected values:
 
         woods: 1-2; 1 for light woods, 2 for heavy woods
         rough: 1
-        rubble: 0-4; 0 for "natural" rubble, 1-4 corresponding to building types
+        rubble: 1-4; 1-4 corresponding to building types
         water: 0+; the hex elevation is the elevation for the surface of the 
             water, and the water level is the depth of the water
         pavement: 1
-        road: 1 (cosmetic only in 0.26)
-        river: (do not use--this type to be removed)
-        fire: 1 (not functional in 0.26)
-        smoke: 1 (not functional in 0.26)
-        swamp: 1 (not functional in 0.26)
-        building: 1-4 (not functional in 0.26); 1 = light ... 4 = reinforced
+        road: 1
+        fire: 1
+        smoke: 1
+        swamp: 1 (not functional in v0.29)
+        building: 1-4; 1 = light ... 4 = hardened
         bldg_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
-        bldg_elev: 1+; defaults to 1 if not present
+        bldg_elev: 1+; you must supply a number if a building is supplied.
         bldg_basement: 0-2; indicates depth, leaving this parameter out 
             indicates that the game should "roll" for the basement dynamically
         bridge: 1-4 (not functional in 0.26); 1 = light ... 4 = reinforced
         bridge_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bridge_elev: any; surface of the bridge, defaults to 0 if not present
+        fluff: 2,4-9 (no 1 or 3 in v0.29); see the notes above.
         
     Future additions may include ice, as well as some of the terrain present in
     the Maximum Tech sourcebook (jungle, magma, etc.)
@@ -104,14 +130,22 @@ board files by hand.  This refrence is just for creating a different editor.
     extention, in the data/boards directory.
 
     Board files consist of a keyword, usually followed by several parameters.  
-    The three keywords used are "size", "hex", and "end".  Keywords should begin
-    the line of text they are on.  Parameters are seperated by a space.  String 
-    parameters with a space in them, or empty string paramters can be quoted.  
-    Comment lines are preceded by the hash (#) character.
+    The four keywords used are "size", "option", "hex", and "end".  Keywords
+    should begin the line of text they are on.  Parameters are seperated by a
+    space.  String parameters with a space in them, or empty string paramters
+    can be quoted.  Comment lines are preceded by the hash (#) character.
 
   The "size" Keyword
     The size keyword is followed by the width and the height of the board, in
     hexes.  The default size is 16x17.  This would appear as "size 16 17".
+
+  The "option" Keyword
+    The option keyword is followed by the name of the option and the option's
+    value for the board.  In v0.29, the only option recognized by MegaMek is
+    exit_roads_to_pavement.  If this option is set to false, road hexes will
+    not automatically exit into pavement hexes.  If a game's playing area uses
+    more than one board, if any board sets this option to false, no road hexes
+    on *any* board will automatically exit into pavement hexes.
 
   The "end" Keyword
     The end keyword indicates the end of data.  It has no parameters and appears
@@ -141,10 +175,12 @@ board files by hand.  This refrence is just for creating a different editor.
 
     The theme of the hex is purely for cosmetic purposes.  It should be left
     blank for ordinary hexes by putting empty quotes in its place.  The theme
-    parameter is not supported by the editor in 0.26, but its eventual function
     is intended as a tag for the tileset file to indicate a special graphic for
     the hex.  Its uses might include indicating a specific graphic for a 
-    building, or making rivers distinct from lakes.
+    building, or making rivers distinct from lakes.  In v0.29, only the "snow"
+    theme is available.  Note, the "snow" theme does *not* implement the "ice"
+    or "cold weather" rules from the BattleTech Master Rules; they just look
+    like they should.
 
     Hex data can appear in any order, as long as there is only one hex at any
     specific coordinates.  Any coordinates with no data will be filled in with
@@ -196,7 +232,7 @@ game base directory.
     Any terrain matched exactly in this manner is then removed from 
     consideration for future matches.
 
-    As an example of the matching process, take a hex on the board, at level 2, 
+    As an example of the matching process, take a hex on the board, at level 2,
     and with woods and road.  This hex would appear in the board file as:
         hex 0205 2 "woods:1;road:1" ""
     Let's also assume that this road is part of a larger road, running north to
@@ -207,6 +243,14 @@ game base directory.
         super * "road:1:09" "" "boring/road09.gif"
         base 2 "woods:1" "" "boring/light_forest_2.gif"
     Both are perfect matches when evaluated by the program.
+
+    Some images require two or more terrains to be used in tandem.  Take, for
+    example, the "light_woods_swamp_1.gif" image.  This is the image that would
+    be used for the following hex:
+        hex 0205 1 "woods:1;swamp:1" ""
+
+    The relevant entry from the default tileset is:
+        base 1 "woods:1;swamp:1" "" "swamp/light_forest_swamp_1.gif"
 
     For the super image, the elevation is a match, because it's a wildcard.  
     The hex being evaluated contains a perfect match for all terrain specified 

@@ -27,10 +27,11 @@ public final class Player
     public static final int     TEAM_NONE = 0;
     
     public static final int     colorRGBs[] = {0x8686BF, 0xF2F261, 0xCC6666,
-    0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B};
+    0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B,
+    0x800080};
     
     public static final String  colorNames[] = {"Blue", "Yellow", "Red",  
-    "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown"};
+    "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown", "Purple"};
     
     public static final String  teamNames[] = {"No Team", "Team 1", "Team 2", 
     "Team 3", "Team 4", "Team 5"};

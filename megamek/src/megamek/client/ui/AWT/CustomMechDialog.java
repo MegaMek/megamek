@@ -275,11 +275,17 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     continue;
                 }
 
-                // Battle Armor ammo can't be selected, nor can proto ammo by non protos.
+                // Battle Armor ammo can't be selected at all, proto ammo
+                // can't be selected by non protos, and vice versa.
+                System.err.print( atCheck.getInternalName() );//killme
+                System.err.print( ", is proto ammo: " );//killme
+                System.err.print( atCheck.hasFlag(AmmoType.F_PROTOMECH));//killme
+                System.err.print( ", and is going on a proto:");//killme
+                System.err.println( entity instanceof Protomech );
                 if ( bTechMatch &&
                      atCheck.getRackSize() == at.getRackSize() &&
                      !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
-                     ( !atCheck.hasFlag(AmmoType.F_PROTOMECH) ||
+                     ( atCheck.hasFlag(AmmoType.F_PROTOMECH) ==
                        entity instanceof Protomech ) &&
                      atCheck.getTonnage(entity) == at.getTonnage(entity) ) {
                     vTypes.addElement(atCheck);

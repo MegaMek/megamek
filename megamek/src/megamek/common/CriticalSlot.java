@@ -28,6 +28,7 @@ public class CriticalSlot
     private boolean                missing; // location destroyed
     private boolean                destroyed;
     private boolean                hittable; // false = hits rerolled
+    private boolean                useless; //true = breached
     
     public CriticalSlot(int type, int index) {
         this(type, index, true);
@@ -70,7 +71,15 @@ public class CriticalSlot
     public void setMissing(boolean missing) {
         this.missing = missing;
     }
-    
+
+    public boolean isBreached() {
+        return useless;
+    }
+
+    public void setBreached(boolean breached) {
+        this.useless = breached;
+    }
+
     /**
      * Has this slot been damaged?
      */

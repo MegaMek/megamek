@@ -121,6 +121,7 @@ v 0.29.5-dev (CVS)
 + Data 775886, 775888, 775891: Added rancherion's images.
 + RFE 775704, Data 775984: Added starcaptaintorc's images.
 + Bug 776084: target partial cover now counts in indirect fire
++ Patch 726073: Applied bobthdull's updated patch for underwater rules
 
 v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).

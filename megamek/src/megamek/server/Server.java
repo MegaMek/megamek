@@ -2633,6 +2633,11 @@ implements Runnable {
                 // check for inferno wash-off
                 checkForWashedInfernos(entity, curPos);
             }
+            //in water, may or may not be a new hex, neccessary to check during movement, for breach damage, and always, to set dry if appropriate
+            //if NOT possible to flood armorless locations while moving, this can be removed
+            //TODO: possibly make the locations local and set later
+            doSetLocationsExposure(entity, curHex, isPavementStep);
+            //TODO: loop all locations:              phaseReport.append(breachCheck(entity, loc, 0));  //check for breaches while moving
 
             // Handle loading units.
             if ( step.getType() == MovementData.STEP_LOAD ) {
@@ -2895,6 +2900,8 @@ implements Runnable {
             checkForWashedInfernos(entity, curPos);
 
         } // End entity-is-jumping
+        // update entity's locations' exposure
+        doSetLocationsExposure(entity, game.board.getHex(curPos), game.board.getHex(curPos).surface() <= entity.getElevation() );
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() 
@@ -3013,6 +3020,33 @@ implements Runnable {
                 entity.heatBuildup += Math.max(3, entity.delta_distance);
             }
         }
+    }
+
+    public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep) {
+        String desc = new String(); //if NOT possible to flood armorless locations while moving, this and all "desc" references can be removed
+        if ( hex.levelOf(Terrain.WATER) > 0
+            && entity.getMovementType() != Entity.MovementType.HOVER
+            && !isPavementStep) {
+            if (entity instanceof Mech && !entity.isProne() && hex.levelOf(Terrain.WATER) == 1) {
+                for (int loop = 0; loop < entity.locations(); loop++) {
+                    entity.setLocationStatus(loop, entity.LOC_NORMAL);  //this will need to adjust for VACUUM, and add a breachCheck
+                }
+                entity.setLocationStatus(Mech.LOC_RLEG, entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, entity.LOC_WET);
+                desc += breachCheck(entity, Mech.LOC_RLEG, 0); 
+                desc += breachCheck(entity, Mech.LOC_LLEG, 0); 
+            } else {
+                for (int loop = 0; loop < entity.locations(); loop++) {
+                    entity.setLocationStatus(loop, entity.LOC_WET);
+                    desc += breachCheck(entity, loop, 0); 
+                }
+            }
+        }else {
+            for (int loop = 0; loop < entity.locations(); loop++) {
+                entity.setLocationStatus(loop, entity.LOC_NORMAL); //this will need to adjust for VACUUM, and add a breachCheck
+            } 
+        }
+        phaseReport.append(desc);
     }
 
     /**
@@ -3437,9 +3471,9 @@ implements Runnable {
                 entity.setDisplacementAttack(paa);
                 game.addCharge(paa);
             } else if (ea instanceof DodgeAction) {
-              entity.dodging = true;
+                entity.dodging = true;
             } else if (ea instanceof SpotAction) {
-        entity.setSpotting(true);
+                entity.setSpotting(true);
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);
@@ -3514,9 +3548,9 @@ implements Runnable {
             else if (ea instanceof FindClubAction) {
                 resolveFindClub(entity);
             } 
-      else if (ea instanceof UnjamAction) {
-        resolveUnjam(entity);
-      } 
+			else if (ea instanceof UnjamAction) {
+				resolveUnjam(entity);
+			} 
         }
     }
     
@@ -4179,7 +4213,7 @@ implements Runnable {
                 if ( wtype.getAmmoType() == AmmoType.T_ATM ||
                      ( mLinker != null &&
                        mLinker.getType() instanceof MiscType && 
-                       !mLinker.isDestroyed() && !mLinker.isMissing() &&
+                       !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
                             
                     // check ECM interference
@@ -6524,6 +6558,7 @@ implements Runnable {
                     te.damageThisPhase += damage;
                     damage = 0;
                     desc += " " + te.getArmor(hit) + " Armor remaining";
+                    desc += breachCheck(te, hit.getLocation(), 1);
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
@@ -6531,6 +6566,7 @@ implements Runnable {
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
                     desc += " Armor destroyed,";
+                    desc += breachCheck(te, hit.getLocation(), 1);
                 }
             }
             
@@ -6974,6 +7010,70 @@ implements Runnable {
     }
     
     /**
+     * Checks for location breach and returns phase logging
+     */
+    private String breachCheck(Entity entity, int loc, int hitflag) {
+        String desc = new String();
+        if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) { //covers both water and vacuum
+            int breachroll = hitflag;
+            if (entity.getArmor(loc) > 0 && (entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true) && breachroll == 1) { //if has armor and took damage ...
+                breachroll = Compute.d6(2);
+                desc += "\n            Possible breach on " + entity.getLocationAbbr(loc) + ". Roll = " + breachroll +".";
+            }
+            if (breachroll >= 10 || !(entity.getArmor(loc) > 0) || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true) ) {//breach by damage or no armor
+                desc += breachLocation(entity, loc);
+            }
+        }
+        return desc;
+    }
+
+    /**
+     * Marks all equipment in a location on an entity as useless.
+     */
+    private String breachLocation(Entity en, int loc) {
+        String desc = new String();
+        if (en.getInternal(loc) < 0 || en.getLocationStatus(loc) < Entity.LOC_NORMAL) { //already destroyed or breached? don't bother
+            return desc;
+        }
+        desc += "<<<" + en.getLocationAbbr(loc) + " BREACHED>>>";
+        en.setLocationStatus(loc, Entity.LOC_BREACHED);
+        //equipment and crits will be marked in applyDamage?
+        // equipment marked missing
+        for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc) {
+                mounted.setBreached(true);
+            }
+        }
+        // all critical slots set as missing
+        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+            final CriticalSlot cs = en.getCritical(loc, i);
+            if (cs != null) {
+                cs.setBreached(true);
+            }
+        }
+
+        //if it's a leg, the entity falls
+        if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
+            game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg breached"));
+        }
+        //Check location for engine/cockpit breach and report accordingly
+       if (loc == Mech.LOC_CT) {
+             desc += destroyEntity(en, "hull breach");
+        }
+        if (loc == Mech.LOC_HEAD) {
+            en.crew.setDoomed(true);
+            desc += destroyEntity(en, "hull breach");
+            desc += "\n*** " + en.getDisplayName() + " Pilot Drowned! ***";
+        }
+        // dependent locations considered breached
+        if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
+            desc += breachLocation(en, en.getDependentLocation(loc));
+        }
+        return desc;
+    }
+
+    /**
      * Marks all equipment in a location on an entity as destroyed.
      */
     private void destroyLocation(Entity en, int loc) {
@@ -7317,6 +7417,20 @@ implements Runnable {
         // the fall may kill the entity which will reset the attacker ID.
         final int swarmerId = entity.getSwarmAttackerId();
 
+        //positioning must be prior to damage for proper handling of breaches
+	// Only Mechs can fall prone.
+	if ( entity instanceof Mech ) {
+	    entity.setProne(true);
+	}
+        entity.setPosition(fallPos);
+        entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
+        entity.setSecondaryFacing(entity.getFacing());
+        if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
+            for (int loop=0; loop< entity.locations();loop++){
+                entity.setLocationStatus(loop, entity.LOC_WET);
+            }
+        } 
+
         // standard damage loop
         while (damage > 0) {
             int cluster = Math.min(5, damage);
@@ -7349,14 +7463,6 @@ implements Runnable {
             }
         }
          
-        // Only Mechs can fall prone.
-        if ( entity instanceof Mech ) {
-            entity.setProne(true);
-        }
-        entity.setPosition(fallPos);
-        entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
-        entity.setSecondaryFacing(entity.getFacing());
-
         // Now dislodge any swarming infantry.
         if ( Entity.NONE != swarmerId ) {
             final Entity swarmer = game.getEntity( swarmerId );

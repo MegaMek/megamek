@@ -64,6 +64,11 @@ public abstract class Entity
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
 
+    public static final int        LOC_BREACHED        = -1;
+    public static final int        LOC_NORMAL          = 0;
+    public static final int        LOC_VACUUM          = 1;
+    public static final int        LOC_WET             = 2;
+
     protected transient Game    game;
 
     protected int               id = Entity.NONE;
@@ -113,6 +118,7 @@ public abstract class Entity
     public int                  mpUsed = 0;
     public int                  moved = MOVE_NONE;
 
+    private int[]               exposure;
     private int[]               armor;
     private int[]               internal;
     private int[]               orig_armor;
@@ -191,6 +197,7 @@ public abstract class Entity
         this.orig_armor = new int[locations()];
         this.orig_internal = new int[locations()];
         this.crits = new CriticalSlot[locations()][];
+        this.exposure = new int[locations()];
         for (int i = 0; i < locations(); i++) {
             this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
@@ -1095,7 +1102,19 @@ public abstract class Entity
     * Is this location destroyed?
     */
     public boolean isLocationDestroyed(int loc) {
-        return getInternal(loc) == ARMOR_DESTROYED;
+        return getInternal(loc) == ARMOR_DESTROYED || getLocationStatus(loc) == LOC_BREACHED;
+    }
+
+    //returns exposure or breached flag for location
+    public int getLocationStatus(int loc) {
+        return exposure[loc];
+    }
+
+    //sets location exposure
+    public void setLocationStatus(int loc, int status) {
+        if (exposure[loc] > LOC_BREACHED) { //can't change BREACHED status
+            exposure[loc] = status;
+        }
     }
     
     /**
@@ -1312,7 +1331,7 @@ public abstract class Entity
         for (Enumeration i = getAmmo(); i.hasMoreElements();) {
             Mounted mountedAmmo = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mountedAmmo.getType();
-            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
+            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
                 continue;
             }
             if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
@@ -1327,7 +1346,7 @@ public abstract class Entity
      */
     public void loadWeapon(Mounted mounted, Mounted mountedAmmo)
     {
-        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping()) {
+        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
             return;
         }
         
@@ -1509,7 +1528,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
-                if (ccs.isDestroyed()) {
+                if (ccs.isDestroyed() || ccs.isBreached()) {
                     hits++;
                 }
             }
@@ -1529,7 +1548,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
-                if (ccs.isDamaged()) {
+                if (ccs.isDamaged() || ccs.isBreached()) {
                     hits++;
                 }
             }
@@ -1619,7 +1638,7 @@ public abstract class Entity
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
-            && ccs.getIndex() == system && !ccs.isDestroyed()) {
+            && ccs.getIndex() == system && !ccs.isDestroyed() && !ccs.isBreached()) {
                 return true;
             }
         }
@@ -1649,7 +1668,7 @@ public abstract class Entity
             Mounted m = (Mounted)e.nextElement();
             EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)) {
-                return !(m.isDestroyed() || m.isMissing());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
         return false;
@@ -1684,7 +1703,7 @@ public abstract class Entity
         for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-                return !(m.isDestroyed() || m.isMissing());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
         }
         return false;
@@ -1699,7 +1718,7 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3S) 
-                    && !m.isDestroyed()) {
+                    && !m.isDestroyed() && !m.isBreached()) {
                 return true;
             }
         }
@@ -1711,7 +1730,7 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M) 
-                    && !m.isDestroyed()) {
+                    && !m.isDestroyed() && !m.isBreached()) {
                 return true;
             }
         }
@@ -1727,7 +1746,7 @@ public abstract class Entity
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3I) 
-                    && !m.isDestroyed()) {
+                    && !m.isDestroyed() && !m.isBreached() ) {
                 return true;
             }
         }

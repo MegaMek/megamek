@@ -394,9 +394,25 @@ exact   "Hetzer Wheeled Assault Gun (LB-X Variant)" "hetzer_b.gif"
 #exact   "JagerMech JM6-DD" "jagermech_b.gif"
 #exact   "Zeus ZEU-9S" "zeus_b.gif"
 
-# BH
+# mechset.txt edited by BH-21
 chassis "Black Hawk-KU" "Blackhawk.gif"
 chassis "Nova" "Blackhawk.gif"
+
+# made by BH-21
+chassis "flatbed truck" "truck.gif"
+# chassis "jeep" "jeep.gif"
+chassis "skimmer" "skimmer.gif"
+chassis "swift wind scout car" "swiftwind.gif"
+exact "j-27 ordnance transport" "j27.gif"
+exact "j-27 ordnance transport (+ trailer)" "j27t.gif"
+chassis "skulker wheeled scout tank" "skulker.gif"
+chassis "packrat lrpv" "packrat.gif"
+chassis "m.a.s.h." "mash.gif"
+chassis "mobile hq" "hq.gif"
+chassis "coolant truck" "coolanttruck.gif"
+chassis "hi-scout drone carrier" "dronecarrier.gif"
+exact "hi-scout drone path track" "dronetrack.gif"
+exact "hi-scout drone napfind" "dronehover.gif"
 
 # starcaptaintorc
 chassis "Pack Hunter" "packhunter.gif"

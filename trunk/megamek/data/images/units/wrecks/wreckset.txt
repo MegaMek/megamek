@@ -27,3 +27,18 @@ exact "default_tank" "default_tank_wreck.gif"
 
 # put custom pictures here:
 
+# by BH-21
+chassis "flatbed truck" "truck_wreck.gif"
+chassis "jeep" "truck_wreck.gif"
+chassis "skimmer" "truck_wreck.gif"
+chassis "swift wind scout car" "truck_wreck.gif"
+exact "j-27 ordnance transport" "truck_wreck.gif"
+exact "j-27 ordnance transport (+ trailer)" "truck_wreck.gif"
+chassis "skulker wheeled scout tank" "truck_wreck.gif"
+chassis "packrat lrpv" "truck_wreck.gif"
+chassis "m.a.s.h." "truck_wreck.gif"
+chassis "mobile hq" "truck_wreck.gif"
+chassis "coolant truck" "truck_wreck.gif"
+chassis "hi-scout drone carrier" "truck_wreck.gif"
+exact "hi-scout drone path track" "truck_wreck.gif"
+exact "hi-scout drone napfind" "truck_wreck.gif"

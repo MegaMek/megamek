@@ -190,13 +190,19 @@ public class MtfFile implements MechLoader {
 
             //TODO: this ought to be a better test
             boolean innerSphere = "Inner Sphere".equals(this.techBase.substring(9).trim());
+            boolean mixed = "Mixed".equals(this.techBase.substring(9).trim());
             switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 1 :
                     mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
                     break;
                 case 2 :
-                    mech.setTechLevel(innerSphere ? TechConstants.T_IS_LEVEL_2
-                                                  : TechConstants.T_CLAN_LEVEL_2);
+                    if (innerSphere) {
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                    } else if (mixed) {
+                        mech.setTechLevel(TechConstants.T_MIXED_LEVEL_2);
+                    } else {
+                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                    }
                     break;
                 default :
                     throw new EntityLoadingException("Unsupported tech base and/or level: " + this.techBase.substring(9) + " (level " + this.rulesLevel.substring(12) + ")");

@@ -11,6 +11,7 @@ v0.29.32 (CVS)
 + Bug 891496: Mechs loosing a leg while trying to stand up don't get to try
 	again
 + RFE 934547: MiniMap now shows Drop Zone
++ Bug 935510: don't allow to replace the game options with a null.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

@@ -32,7 +32,6 @@ public class TargetingPhaseDisplay
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    private static final int    NUM_BUTTON_LAYOUTS = 1;
     // Action command names
     public static final String FIRE_FIRE       = "fireFire";
     public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
@@ -71,18 +70,17 @@ public class TargetingPhaseDisplay
     private boolean            shiftheld;
     private boolean            twisting;
 
-    private Entity[]            visibleTargets  = null;
-    private int                 lastTargetID    = -1;
+    private final int           phase;
 
 
     /**
      * Creates and lays out a new targeting phase display
      * for the specified client.
      */
-    public TargetingPhaseDisplay(ClientGUI clientgui) {
+    public TargetingPhaseDisplay(ClientGUI clientgui, boolean offboard) {
         this.clientgui = clientgui;
         this.client = clientgui.getClient();
-
+        this.phase = offboard?Game.PHASE_OFFBOARD:Game.PHASE_TARGETING;
         shiftheld = false;
 
         // fire
@@ -301,7 +299,7 @@ public class TargetingPhaseDisplay
     private void endMyTurn() {
         // end my turn, then.
         Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
-        if ( Game.PHASE_TARGETING == client.game.getPhase()
+        if ( phase == client.game.getPhase()
              && null != next
              && null != ce()
              && next.getOwnerId() != ce().getOwnerId() ) {
@@ -637,7 +635,7 @@ public class TargetingPhaseDisplay
             return;
         }
 
-        if(client.game.getPhase() == Game.PHASE_TARGETING) {
+        if(client.game.getPhase() == phase) {
             endMyTurn();
 
             if(client.isMyTurn()) {
@@ -655,11 +653,11 @@ public class TargetingPhaseDisplay
             return;
         }
 
-        if(client.isMyTurn() && client.game.getPhase() != Game.PHASE_TARGETING) {
+        if(client.isMyTurn() && client.game.getPhase() != phase) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if(client.game.getPhase() ==  Game.PHASE_TARGETING) {
+        if(client.game.getPhase() ==  phase) {
             setStatusBarText("Waiting to begin Firing phase...");
         }
     }

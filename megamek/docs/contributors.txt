@@ -26,9 +26,11 @@ Lot of people have contributed to the MegaMek project.
      Slava Zipunov <zipp32@users.sourceforge.net>
      Michael Newcomb <mnewcomb@users.sourceforge.net>
      Wirianto Djunaidi
+     Dirk Wilhelm <wayne07@users.sourceforge.net>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
+     Pierre Savard <xsurrealx@users.sourceforge.net>
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

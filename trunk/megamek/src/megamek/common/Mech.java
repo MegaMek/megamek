@@ -1014,6 +1014,20 @@ public abstract class Mech
         
         return (int)Math.round((dbv + obv) * pilotFactor);
     }
+    
+    /**
+     * Returns an end-of-battle report for this mech
+     */
+    public String victoryReport() {
+        StringBuffer report = new StringBuffer();
+        
+        report.append(getDisplayName());
+        report.append('\n');
+        report.append("Pilot : " + crew.getDesc());
+        report.append('\n');
+        
+        return report.toString();
+    }
   
     /**
      * Add in any piloting skill mods

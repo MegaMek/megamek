@@ -1448,6 +1448,11 @@ public abstract class Entity
      */
     public abstract int calculateBattleValue();
     
+    /**
+     * Generates a string containing a report on all useful information about
+     * this entity.
+     */
+    public abstract String victoryReport();
     
     /**
      * Two entities are equal if their ids are equal

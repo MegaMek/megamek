@@ -85,6 +85,10 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v 0.26.8 (07-26-02, 2:30pm)
++ Can now host a game from a user-editable scenario file
++ surviving and dead mechs listed in victory screen
+
 v 0.26.7 (07-19-02, 9pm)
 + fix to check number of engine hits when a side torso is destroyed
 + option to allow mechs to be (directly) pushed off-board and out of the game

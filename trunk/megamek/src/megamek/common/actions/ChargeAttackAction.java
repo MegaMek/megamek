@@ -297,7 +297,19 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+        return getChargeDamageTakenBy (entity, target, false, 0);
+    }
+    
+    public static int getChargeDamageTakenBy(Entity entity, Entity target, boolean maxtech) {
+        return getChargeDamageTakenBy (entity, target, maxtech, entity.delta_distance);
+    }
+    
+    public static int getChargeDamageTakenBy(Entity entity, Entity target, boolean maxtech, int distance) {
+        if (!maxtech) {
+            return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+        } else {
+            return (int) Math.floor(target.getWeight() / 20.0 * distance * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+        }
     }
 
 }

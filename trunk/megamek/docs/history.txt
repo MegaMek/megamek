@@ -14,6 +14,7 @@ v0.29.56 (CVS)
 + Bug 1061059: A unit can only eject its pilot once.
 + Bug 1057844: Pilots stop taking conciousness roll damage after they eject.
 + Bug 1058352: Game can end once all enemy pilots are captured.
++ Patch 1062102: MaxTech Rule: Damage to charging units
 
 v0.29.55 (2004-11-07 11:00pm)
 + Bug 1057995: Correctly handle configuring auto-ejection.

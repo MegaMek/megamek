@@ -151,7 +151,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         labPlayerInfo = new Label("Player Setup");
         
         lisPlayerInfo = new List(5);
-        lisPlayerInfo.setEnabled(false);
         
         labColor = new Label("Color:", Label.RIGHT);
         labTeam = new Label("Team:", Label.RIGHT);
@@ -213,7 +212,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         labMapSize = new Label("Map Size: # x # boards", Label.CENTER);
         
         lisBoardsSelected = new List(5);
-        lisBoardsSelected.setEnabled(false);
+        lisBoardsSelected.addActionListener(this);
             
         butChangeBoard = new Button("Edit / View Map...");
         butChangeBoard.setActionCommand("change_board");
@@ -370,7 +369,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         labBVs = new Label("Total Battle Values", Label.CENTER);
 
         lisBVs = new List(5);
-        lisBVs.setEnabled(false);
             
         panBVs = new Panel();
             
@@ -411,8 +409,10 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupStarts() {
         labStarts = new Label("Starting Positions", Label.CENTER);
+        
         lisStarts = new List(5);
-        lisStarts.setEnabled(false);
+        lisStarts.addActionListener(this);
+
         butChangeStart = new Button("Change Start...");
         butChangeStart.addActionListener(this);
         
@@ -699,7 +699,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (lisEntities.getSelectedIndex() != -1) {
                 client.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
-        } else if (ev.getSource() == butChangeBoard) {
+        } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
             // board settings 
             client.getBoardSelectionDialog().update(client.getMapSettings(), true);
             client.getBoardSelectionDialog().show();
@@ -707,7 +707,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             // game options
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
-        } else if (ev.getSource() == butChangeStart) {
+    } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             client.getStartingPositionDialog().update();
             client.getStartingPositionDialog().show();
         }

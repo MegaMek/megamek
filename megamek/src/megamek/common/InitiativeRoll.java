@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -91,5 +91,19 @@ public class InitiativeRoll implements com.sun.java.util.collections.Comparable,
         }
         return compare;
     }
-    
+
+    public String toString()
+    {
+        StringBuffer buff = new StringBuffer();
+        
+        for ( Enumeration i = rolls.elements(); i.hasMoreElements(); ) {
+            Integer r = (Integer)i.nextElement();
+            buff.append( r.toString() );
+            if ( i.hasMoreElements() ) {
+                buff.append( " / " );
+            }
+        }
+        return buff.toString();
+    }
+
 }

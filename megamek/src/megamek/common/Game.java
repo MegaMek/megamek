@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -69,6 +69,8 @@ public class Game implements Serializable
     private Vector smithereens = new Vector();
 
     private Vector players = new Vector();
+    private Vector teams   = new Vector(); // DES
+
     private Hashtable playerIds = new Hashtable();
     
     /** have the entities been deployed? */
@@ -121,6 +123,19 @@ public class Game implements Serializable
         return board;
     }
     
+
+    /**
+     * Return an enumeration of teams in the game
+     */
+    public Enumeration getTeams() {
+	return teams.elements();
+    }
+
+    /** Return the teams vector */
+    public Vector getTeamsVector() {
+	return teams;
+    }
+
     /**
      * Return an enumeration of player in the game
      */
@@ -247,7 +262,7 @@ public class Game implements Serializable
   
     /** Changes to the next turn, returning it. */
     public GameTurn changeToNextTurn() {
-        turnIndex++;
+        turnIndex++;	
         return getTurn();
     }
     

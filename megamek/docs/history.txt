@@ -6,6 +6,7 @@ v0.29.44 (CVS)
 + Bug 1002304: tooltips hide when phase changes
 + Board Editor "Save as Image" now supports MS VM and has wait dialog.
 + Save Unit List now adds .mul to filename if necessary.
++ Bug 1005554: only add a single Inferno round to a hex when an Entity is hit.
 
 v0.29.43 (2004-08-01 9:15pm)
 + Extra light woods hex in Citytech board.

@@ -1164,6 +1164,7 @@ public abstract class Mech
         // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
+        boolean hasTargComp = hasTargComp();
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
@@ -1182,6 +1183,11 @@ public abstract class Mech
                     dBV *= 1.2;
                 }
             } 
+            
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.2;
+            }
             
             if (mounted.isRearMounted()) {
                 weaponsBVRear += dBV;

@@ -263,7 +263,8 @@ public class MepFile implements MechLoader {
                        throw new EntityLoadingException(ex.getMessage());
                     }
                 } else {
-                    if (!critName.equals("-----------------")) {
+                    if (!critName.equals("-----------------")
+                        && !critName.equals("''")) {
                         // Can't load this piece of equipment!
                         mech.addFailedEquipment(critName);
                     }

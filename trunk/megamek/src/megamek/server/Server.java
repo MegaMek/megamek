@@ -13259,6 +13259,8 @@ implements Runnable, ConnectionHandler {
             pilot.setId(getFreeEntityId());
             game.addEntity(pilot.getId(), pilot);
             send(createAddEntityPacket(pilot.getId()));
+            // make him not get a move this turn
+            pilot.setDone(true);
             // ASSUMPTION: Pilot dies if he ejects unconsciously, BMRr does not
             // specify either way.
             if (entity.getCrew().isDoomed()

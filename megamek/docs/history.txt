@@ -137,6 +137,7 @@ v 0.29.9-dev
   after meks" option.
 + Bug 795729: inactive units may not eject, spot for IDF, or dump ammo
 + Fixed bug with Artemis IV hanging the server
++ Bug 782037: fixed problem with movement paths and re-selecting units
   
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

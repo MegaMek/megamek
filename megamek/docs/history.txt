@@ -72,6 +72,7 @@ VERSION HISTORY:
 ----------------
 v CVS
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.
++ 657119: streak SRMs fire again
 
 v 0.27.12 (12-20-02, 4:30pm)
 + 652106: possible fix for linux flickering in lobby

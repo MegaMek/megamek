@@ -298,6 +298,8 @@ public class MegaMek
             // wait for full connection
             client.retrieveServerInfo();
 
+            server.getGame().getOptions().loadOptions(client, hd.serverPass);
+            
             // popup options dialog
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
@@ -777,6 +779,7 @@ class ScenarioDialog extends Dialog implements ActionListener
     private Label[] m_labels;
     private Choice[] m_typeChoices;
     private Choice[] m_colorChoices;
+    private Choice[] m_camoChoices;
     private Frame m_frame;
 
     public boolean bSet = false;
@@ -791,8 +794,11 @@ class ScenarioDialog extends Dialog implements ActionListener
         m_labels = new Label[pa.length];
         m_typeChoices = new Choice[pa.length];
         m_colorChoices = new Choice[pa.length];
+        m_camoChoices = new Choice[pa.length];
         playerTypes = new int[pa.length];
 
+        Vector camoList = ChatLounge.getCamoList();
+        
         for (int x = 0; x < pa.length; x++) {
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
             m_typeChoices[x] = new Choice();
@@ -804,6 +810,12 @@ class ScenarioDialog extends Dialog implements ActionListener
                 m_colorChoices[x].add(Player.colorNames[i]);
             }
             m_colorChoices[x].select(x);
+            
+            m_camoChoices[x] = new Choice();
+            for ( int i = 0; i < camoList.size(); i++ ) {
+              m_camoChoices[x].add((String)camoList.elementAt(i));
+            }
+            m_camoChoices[x].select(0);
         }
 
         setLayout(new BorderLayout());
@@ -812,10 +824,12 @@ class ScenarioDialog extends Dialog implements ActionListener
         choicePanel.add(new Label("Player"));
         choicePanel.add(new Label("Type"));
         choicePanel.add(new Label("Color"));
+        choicePanel.add(new Label("Camo"));
         for (int x = 0; x < pa.length; x++) {
             choicePanel.add(m_labels[x]);
             choicePanel.add(m_typeChoices[x]);
             choicePanel.add(m_colorChoices[x]);
+            choicePanel.add(m_camoChoices[x]);
         }
         add(choicePanel, BorderLayout.CENTER);
 
@@ -852,6 +866,7 @@ class ScenarioDialog extends Dialog implements ActionListener
                     localName = m_players[x].getName();
                 }
                 m_players[x].setColorIndex(m_colorChoices[x].getSelectedIndex());
+                m_players[x].setCamoFileName(m_camoChoices[x].getSelectedItem());
             }
             bSet = true;
             setVisible(false);

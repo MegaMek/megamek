@@ -215,7 +215,7 @@ public abstract class Entity
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }
-  
+    
     /**
      * Is this entity not shut down, not destroyed and has an active
      * crew?

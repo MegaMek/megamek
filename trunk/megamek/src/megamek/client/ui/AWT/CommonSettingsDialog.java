@@ -19,7 +19,7 @@ import java.awt.event.*;
 
 import megamek.common.Settings;
 
-public class CommonSettingsDialog extends Dialog implements ActionListener, ItemListener {
+public class CommonSettingsDialog extends ClientDialog implements ActionListener, ItemListener {
 
     private ScrollPane  scrOptions = new ScrollPane();
 
@@ -53,7 +53,6 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
     
-    private static final int MIN_Y_LOCATION = 10;
 
     /**
      * Standard constructor.  There is no default constructor for this class.
@@ -233,19 +232,13 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
 	    public void windowClosing(WindowEvent e) { cancel(); }
-	});
+        });
 
         // Center this dialog.
         pack();
 
-        Dimension screenSize = owner.getToolkit().getScreenSize();
-        setSize(Math.min(tempPanel.getSize().width+50,screenSize.width), Math.min(tempPanel.getSize().height+100,screenSize.height));
-
-        int yLoc = owner.getLocation().y + owner.getSize().height/2 - getSize().height/2;
-        int xLoc = owner.getLocation().x + owner.getSize().width/2 - getSize().width/2;
-        if (yLoc < MIN_Y_LOCATION) yLoc = MIN_Y_LOCATION;
         
-        setLocation(xLoc,yLoc);
+        setLocationAndSize(tempPanel);
 
     }
 

@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -266,11 +267,12 @@ public class Mounted implements Serializable, RoundUpdated {
         final WeaponType wtype = (WeaponType)this.getType();
         int nShots = 1;
         // figure out # of shots for variable-shot weapons
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && this.curMode().equals("Ultra")) {
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA
+            && this.curMode().equals("Ultra")) {
             nShots = 2;
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
-                   wtype.getInternalName()
-                   .equals(BattleArmor.MINE_LAUNCHER)) {
+        }
+        else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
+                 wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (this.curMode().equals("2-shot")) {
                 nShots = 2;
             } else if (this.curMode().equals("4-shot")) {
@@ -278,6 +280,9 @@ public class Mounted implements Serializable, RoundUpdated {
             } else if (this.curMode().equals("6-shot")) {
                 nShots = 6;
             }
+        }
+        else if (isRapidFire()) {
+            nShots = 6;
         }
         return nShots;
     }

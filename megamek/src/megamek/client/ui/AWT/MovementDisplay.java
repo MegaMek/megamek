@@ -135,7 +135,7 @@ public class MovementDisplay
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
 
-        butRAC = new Button(".");
+        butRAC = new Button("Unjam RAC");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
 
@@ -615,7 +615,6 @@ public class MovementDisplay
             return;
         }
         butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
-        butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
     }
 
     private void updateLoadButtons() {

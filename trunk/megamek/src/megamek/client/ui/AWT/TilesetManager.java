@@ -51,7 +51,8 @@ public class TilesetManager {
     
     
     // mech images
-    private MechTileset mechTileset = new MechTileset();
+    private MechTileset mechTileset = new MechTileset("data/mex/");
+    private MechTileset wreckTileset = new MechTileset("data/mex/wrecks/");
     private ArrayList mechImageList = new ArrayList();
     private HashMap mechImages = new HashMap();
     
@@ -63,11 +64,10 @@ public class TilesetManager {
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) {
         this.comp = comp;
-        this.tracker = new MediaTracker(comp);
-        
-        
-        
+        this.tracker = new MediaTracker(comp);        
+
         mechTileset.loadFromFile("mechset.txt");
+        wreckTileset.loadFromFile("wreckset.txt");
         hexTileset.loadFromFile(Settings.mapTileset);
 
     }
@@ -84,10 +84,23 @@ public class TilesetManager {
                 System.out.println("Unable to load image for entity: " + entity.getShortName());
             }            
         }
-        // get image rotated for facing
         return entityImage.getIcon();
     }
 
+    public Image wreckMarkerFor(Entity entity) {
+        EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        if (entityImage == null) {
+            // probably double_blind.  Try to load on the fly
+            System.out.println("Loading image for " + entity.getShortName() + " on the fly.");
+            loadImage(entity);
+            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            if (entityImage == null) {
+                // now it's a real problem
+                System.out.println("Unable to load image for entity: " + entity.getShortName());
+            }            
+        }
+        return entityImage.getWreckFacing(entity.getFacing());
+    }
     /**
      * Return the image for the entity
      */
@@ -234,6 +247,10 @@ public class TilesetManager {
     public void loadImage(Entity entity)
     {
             Image base = mechTileset.imageFor(entity, comp);
+            Image wreck = null;
+            if (!(entity instanceof Infantry)) {
+            	wreck = wreckTileset.imageFor(entity, comp);
+            }
             int tint = entity.getOwner().getColorRGB();
             String camo = entity.getOwner().getCamoFileName();
             EntityImage entityImage = null;
@@ -249,7 +266,7 @@ public class TilesetManager {
             
             // if we don't have a cached image, make a new one
             if (entityImage == null) {
-                entityImage = new EntityImage(base, tint, camo, comp);
+                entityImage = new EntityImage(base, wreck, tint, camo, comp);
                 mechImageList.add(entityImage);
                 entityImage.loadFacings();
                 for (int j = 0; j < 6; j++) {
@@ -275,10 +292,12 @@ public class TilesetManager {
      */
     private class EntityImage {
         private Image base;
+        private Image wreck;
         private Image icon;
         private int tint;
         private String camo;
         private Image[] facings = new Image[6];
+        private Image[] wreckFacings = new Image[6];
         private Component comp;
         
         private final int IMG_WIDTH = 84;        
@@ -286,29 +305,46 @@ public class TilesetManager {
         private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
         
         public EntityImage(Image base, int tint, String camo, Component comp) {
+        	this(base, null, tint, camo, comp);
+        }
+
+        public EntityImage(Image base, Image wreck, int tint, String camo, Component comp) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
             this.comp = comp;
+            this.wreck = wreck;
         }
 
         public void loadFacings() {
-            applyColor();
+            base = applyColor(base);
             
             icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = comp.createImage(rotSource);
             }
+
+            if (wreck != null) {
+            	wreck = applyColor(wreck);
+	            for (int i = 0; i < 6; i++) {
+	                ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
+	                wreckFacings[i] = comp.createImage(rotSource);
+	            }
+            }
         }
         
         public Image loadPreviewImage() {
-			applyColor();
+			base = applyColor(base);
             return base;
         }
 
         public Image getFacing(int facing) {
             return facings[facing];
+        }
+        
+        public Image getWreckFacing(int facing) {
+            return wreckFacings[facing];
         }
         
         public Image getBase() {
@@ -319,7 +355,7 @@ public class TilesetManager {
             return icon;
         }
 
-        private void applyColor() {
+        private Image applyColor(Image image) {
           Image iMech, iCamo;
           File camoFile = new File("data/camo/" + camo + ".jpg");
           boolean useCamo = (camo != null) && 
@@ -327,7 +363,7 @@ public class TilesetManager {
           					(camoFile.exists());
           camoFile = null;
           
-          iMech = base;
+          iMech = image;
     
           int[] pMech = new int[IMG_SIZE];
           int[] pCamo = new int[IMG_SIZE];
@@ -337,11 +373,11 @@ public class TilesetManager {
               pgMech.grabPixels();
           } catch (InterruptedException e) {
               System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage());
-              return;
+              return image;
           }
           if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
               System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
-              return;
+              return image;
           }
           
           if (useCamo) {
@@ -351,11 +387,11 @@ public class TilesetManager {
 	              pgCamo.grabPixels();
 	          } catch (InterruptedException e) {
 	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage());
-	              return;
+	              return image;
 	          }
 	          if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
 	              System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted.");
-	              return;
+	              return image;
 	          }
 	      }
 	      
@@ -379,7 +415,8 @@ public class TilesetManager {
             }
           }
         
-          base = comp.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));        
+          image = comp.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+          return image;
         }
     }
 

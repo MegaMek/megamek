@@ -101,10 +101,13 @@ v 0.23
 
 VERSION HISTORY:
 ----------------
-v 0.22.3
+v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server
 + units moving backwards can't change elevation levels
-+ players that disconnect are "ghosts"
++ players that disconnect with active entities become "ghosts"
++ mechs now only punch with available arms instead of always both
++ players disconnecting in the lounge get all their entities removed
++ client now pops up a dialog and quits upon disconnection
 
 v 0.22.2 (02-18-02, 11:30pm)
 + targets prone in depth 1 water can't be hit

@@ -230,7 +230,17 @@ public class PhysicalDisplay
      * Punch the target!
      */
     private void punch() {
-        attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.BOTH));
+        final ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
+        final ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
+        if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
+            && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
+            attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.BOTH));
+        } else if (leftArm.getValue() < rightArm.getValue()) {
+            attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.LEFT));
+        } else {
+            attacks.addElement(new PunchAttackAction(cen, ten, PunchAttackAction.RIGHT));
+        }
+
         ready();
     }
 	
@@ -264,8 +274,8 @@ public class PhysicalDisplay
 		// dis/enable punch button
 		if (cen != Entity.NONE && ten != Entity.NONE) {
             // punch?
-            ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
-            ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
+            final ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
+            final ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
             boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
                               || rightArm.getValue() != ToHitData.IMPOSSIBLE;
             butPunch.setEnabled(canPunch);

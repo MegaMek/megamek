@@ -44,7 +44,8 @@ public final class Player
     private int             order = 0;
     private int             startingPos = 0;
     	
-    public Player(int id) {
+    public Player(int id, String name) {
+        this.name = name;
         this.id = id;
     }
   
@@ -52,16 +53,8 @@ public final class Player
         return name;
     }
   
-    public void setName(String name) {
-	    this.name = name;
-    }
-  
     public int getId() {
         return id;
-    }
-  
-    public void setId(int id) {
-        this.id = id;
     }
   
     public boolean isReady() {

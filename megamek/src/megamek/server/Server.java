@@ -88,21 +88,34 @@ public class Server
 		sendToPending(cn, new Packet(Packet.COMMAND_SERVER_NAME, name));
 	}
 	
-	/**
-	 * Called when a client has completely connected.
-	 */
-	private void connected(int connId) {
-        // move them from pending to active
-        Connection conn = getPendingConnection(connId);
-        connectionsPending.removeElement(conn);
+    /**
+     * Recieves a client name, sent from a pending connection as a signal to
+     * connect.
+     */
+    private void receiveClientName(Packet packet, int connId) {
+        final Connection conn = getPendingConnection(connId);
         
+        // this had better be from a pending connection
+        if (conn == null) {
+            System.out.println("server: got a client name from a non-pending connection");
+            return;
+        }
+        
+        // right, switch the connection into the "active" bin
+        connectionsPending.removeElement(conn);
         connections.addElement(conn);
         connectionIds.put(new Integer(conn.getId()), conn);
         
+        // add and validate the player info
+        game.addPlayer(connId, new Player(connId, (String)packet.getObject(0)));
         validatePlayerInfo(connId);
-	    // send their player to them, with id and everything
-        send(connId, createPlayerConnectPacket(connId));
+
+        // send info that the player has connected
+        send(createPlayerConnectPacket(connId));
+        
+        // tell them their local playerId
         send(connId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(connId)));
+        
 	    // send current game info
         transmitAllPlayerConnects(connId);
         send(connId, createSettingsPacket());
@@ -114,9 +127,8 @@ public class Server
                            + getClient(connId).socket.getInetAddress());
         sendChatToAll("***Server", getPlayer(connId).getName() + " connected from "
                            + getClient(connId).socket.getInetAddress());
-        
-	}
-  
+    }
+
     /**
      * Validates the player info.
      */
@@ -155,13 +167,19 @@ public class Server
 		connections.removeElement(conn);
         connectionIds.remove(new Integer(connId));
         
-        // now, what we do about the player depends...
-        if (game.getEntitiesOwnedBy(player) == 0) {
-            game.removePlayer(player.getId());
-    		send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
-        } else {
+        // in the lounge, just remove all entities for that player
+        if (game.phase == Game.PHASE_LOUNGE) {
+            removeAllEntitesOwnedBy(player);
+            send(createEntitiesPacket());
+        }
+        
+        // it a player has active entities, he becomes a ghost
+        if (game.getEntitiesOwnedBy(player) > 0) {
             player.setGhost(true);
             send(createPlayerUpdatePacket(player.getId()));
+        } else {
+            game.removePlayer(player.getId());
+    		send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
         }
         
         System.out.println("s: player " + connId + " disconnected");
@@ -176,11 +194,43 @@ public class Server
 	}
 
 	/**
-	 * Counts up how many players are connected.
+	 * Counts up how many non-ghost, non-observer players are connected.
 	 */
-	private int countPlayers() {
-		return connections.size();
+	private int countActivePlayers() {
+        int count = 0;
+        
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            
+            if (!player.isGhost() && !player.isObserver()) {
+                count++;
+            }
+        }
+        
+        return count;
 	}
+    
+    /**
+     * Removes all entities owned by a player.  Please only call this when it
+     * won't cause trouble (the lounge, for instance, or between phases.)
+     */
+    private void removeAllEntitesOwnedBy(Player player) {
+        Vector toRemove = new Vector();
+        
+		for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+			Entity entity = (Entity)e.nextElement();
+            
+            if (entity.getOwner().equals(player)) {
+                toRemove.addElement(entity);
+            }
+        }
+        
+		for (Enumeration e = toRemove.elements(); e.hasMoreElements();) {
+			Entity entity = (Entity)e.nextElement();
+            
+            game.removeEntity(entity.getId());
+        }
+    }
     
     /**
      * a shorter name for getConnection()
@@ -357,7 +407,8 @@ public class Server
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             
-            player.setReady(!getClient(player.getId()).active());
+            player.setReady(game.getEntitiesOwnedBy(player) <= 0);
+            
         }
         transmitAllPlayerReadys();
 	}
@@ -367,8 +418,9 @@ public class Server
 	 * to the next turn or phase or that stuff.
 	 */
 	private void checkReady() {
-		// first: check if everybody's ready
-		boolean allAboard = true;
+        // are there any active players?
+		boolean allAboard = countActivePlayers() > 0;
+		// check if all active players are ready
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             if (!player.isReady()) {
@@ -428,7 +480,7 @@ public class Server
     private void prepareForPhase(int phase) {
         switch (phase) {
         case Game.PHASE_EXCHANGE :
-            gameSettings.friendlyFire = countPlayers() <= 1;
+            gameSettings.friendlyFire = game.getNoOfPlayers() <= 1;
             resetPlayerReady();
             // apply board layout settings to produce a mega-board
             Board[] sheetBoards = new Board[gameSettings.sheetWidth * gameSettings.sheetHeight];
@@ -592,9 +644,11 @@ public class Server
 	 * Changes it to make it the specified player's turn.
 	 */
 	private void changeTurn(int turn) {
-		game.setTurn(turn);
-		getPlayer(game.getTurn()).setReady(false);
-		send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
+        final Player player = getPlayer(game.getTurn());
+        
+	    game.setTurn(turn);
+	    player.setReady(false);
+	    send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
 	}
   
     /**
@@ -670,33 +724,11 @@ public class Server
 	}
     
     /**
-     * Write the initiative results to the report
-     */
-    private void writeInitiativeReport() {
-        // write to report
-        roundReport.append("\nInitiative Phase for Round #" + roundCounter
-                           + "\n------------------------------\n");
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            roundReport.append(player.getName() + " rolls a " + 
-                               player.getInitiative() + ".\n");
-        }
-        roundReport.append("\nThe turn order is:\n  ");
-        for (int i = 0; i < turns.length; i++) {
-            roundReport.append((i == 0 ? "" : ", ") + getPlayer(turns[i]).getName());
-        }
-        roundReport.append("\n");
-    
-		// reset turn index
-		ti = 0;
-    }
-    
-    /**
      * Determine turn order by number of entities that are selectable this phase
      */
     private void determineTurnOrder() {
 		// determine turn order
-		int[] order = new int[countPlayers()];
+		int[] order = new int[game.getNoOfPlayers()];
 		int oi = 0;
 		for (int j = 0; j < 13; j++) {
             for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
@@ -734,22 +766,46 @@ public class Server
 				}
 			}
 			// cycurPose through order list
-			for (int i = 0; i < countPlayers(); i++) {
-				if (noe[order[i]] > 0) {
+            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+                final Player player = (Player)i.nextElement();
+                
+				if (noe[order[player.getId()]] > 0) {
 					// if you have less than twice the next lowest,
 					// move 1, otherwise, move more.
 					// if you have less than half the maximum,
 					// move none
-					int ntm = Math.max(1, (int)Math.floor(noe[order[i]] / lnoe));
+					int ntm = Math.max(1, (int)Math.floor(noe[order[player.getId()]] / lnoe));
 					for (int j = 0; j < ntm; j++) {
-						turns[ti++] = order[i];
-						noe[order[i]]--;
+						turns[ti++] = order[player.getId()];
+						noe[order[player.getId()]]--;
 					}
 				}
 			}
 		}
         // reset turn counter
         ti = 0;
+    }
+    
+    /**
+     * Write the initiative results to the report
+     */
+    private void writeInitiativeReport() {
+        // write to report
+        roundReport.append("\nInitiative Phase for Round #" + roundCounter
+                           + "\n------------------------------\n");
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            roundReport.append(player.getName() + " rolls a " + 
+                               player.getInitiative() + ".\n");
+        }
+        roundReport.append("\nThe turn order is:\n  ");
+        for (int i = 0; i < turns.length; i++) {
+            roundReport.append((i == 0 ? "" : ", ") + getPlayer(turns[i]).getName());
+        }
+        roundReport.append("\n");
+    
+		// reset turn index
+		ti = 0;
     }
     
     /**
@@ -2210,7 +2266,6 @@ public class Server
 		public Socket     socket;
 		//public Player     player;
 		
-		public boolean		connected;
 		public int				id;
 		
 		public Thread			pump;
@@ -2220,7 +2275,6 @@ public class Server
 			this.socket = socket;
 			this.id = id;
 			
-			//player = new Player(id);
 			// start pump thread
 			pump = new Thread(this);
 			pump.start();
@@ -2231,30 +2285,12 @@ public class Server
         }
 		
 		/**
-		 * Kill off the thread and set disconnected
+		 * Kill off the thread
 		 */
 		public void die() {
-			connected = false;
 			pump = null;
 		}
 		
-		/**
-		 * Returns true if the client is connected, and if the player
-		 * controls any entities
-		 */
-		public boolean active() {
-			if (!connected) {
-				return false;
-			}
-			for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-				Entity entity = (Entity)i.nextElement();
-				if (getPlayer(id).equals(entity.getOwner()) 
-                    && (!entity.isDestroyed() && !entity.isDoomed())) {
-			            		return true;
-				}
-			}
-			return false;
-		}
 		
 		/**
 		 * Allow the player to set whatever parameters he is able to
@@ -2319,12 +2355,7 @@ public class Server
 					// act on it
 					switch(c.getCommand()) {
                     case Packet.COMMAND_CLIENT_NAME :
-                        if (!connected) {
-                            game.addPlayer(id, new Player(id));
-                            game.getPlayer(id).setName((String)c.getObject(0));
-			                connected = true;
-			                connected(id);
-                        }
+                        receiveClientName(c, id);
                         break;
 					case Packet.COMMAND_PLAYER_UPDATE :
 						receivePlayerInfo(c);

@@ -8123,6 +8123,7 @@ implements Runnable, ConnectionHandler {
         StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
+        boolean wasDamageIS = false;
         Hex te_hex = null;
 
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
@@ -8484,8 +8485,12 @@ implements Runnable, ConnectionHandler {
 
             // loop to next location
             hit = nextHit;
+            if (damageIS) {
+                wasDamageIS = true;
+                damageIS = false;
+            }
         }
-        if (damageIS) desc.append( "\n" );
+        if (wasDamageIS) desc.append( "\n" );
         return desc.toString();
     }
 

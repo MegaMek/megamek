@@ -9,6 +9,7 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -61,6 +62,16 @@ public class CEntity {
             1.0 }, {
             1.0 }, {
             1.0 }
+    };
+    final static double PROTOMECH_ARMOR[][] = { { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 }, {
+        1.0 /31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 }, {
+        1.0 /31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 }, {
+        1.0 /31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 }
+    };
+    final static double PROTOMECH_MG_ARMOR[][] = { { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 }, {
+        1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 }, {
+        1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 }, {
+        1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 }
     };
     final static double MECH_ARMOR[][] =
         { { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
@@ -271,6 +282,12 @@ public class CEntity {
             }
         } else if (this.entity instanceof Infantry) {
             armor = INFANTRY_ARMOR;
+        } else if (this.entity instanceof Protomech) {
+            if (((Protomech) entity).hasMainGun()) {
+                armor = PROTOMECH_MG_ARMOR;
+            } else {
+                armor = PROTOMECH_ARMOR;
+            }
         }
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
             double total = 0;

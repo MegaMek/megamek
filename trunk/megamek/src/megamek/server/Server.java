@@ -1663,7 +1663,7 @@ public class Server
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
-        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
 
         if (lastEntityId != waa.getEntityId()) {
@@ -1687,6 +1687,7 @@ public class Server
         // try reloading
         if (usesAmmo && ammo != null && ammo.getShotsLeft() == 0) {
             ae.loadWeapon(weapon);
+            ammo = weapon.getLinked();
         }
 
         // should we even bother?

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.18 (CVS)
+v 0.29.18 (2003-11-26, 7:30am)
 + Bug 843723, Patch 842834: fix race condition with "Done" button
 + Data 841109: applied Hopalong's updated mechfiles and mex set.
 + Bug 841393: Blackjack BJ-1 should have lower arm actuator

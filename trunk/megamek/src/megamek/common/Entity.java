@@ -39,6 +39,7 @@ public abstract class Entity
     public static final int REMOVE_IN_RETREAT     = 0x0100;
     public static final int REMOVE_SALVAGEABLE    = 0x0200;
     public static final int REMOVE_DEVASTATED     = 0x0400;
+    public static final int REMOVE_NEVER_JOINED   = 0x0800;
     
     // weight class limits
     public static final int        WEIGHT_LIGHT        = 35;

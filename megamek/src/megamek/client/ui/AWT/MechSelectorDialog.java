@@ -149,6 +149,7 @@ public class MechSelectorDialog
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);
         }
+        m_chType.addItem("IS All");
         m_chType.addItem("All");
 
         m_chUnitType.addItem("Mek");
@@ -187,7 +188,10 @@ public class MechSelectorDialog
         for (int x = 0; x < mechs.length; x++) {
             // watch out for hard-coded constants below
             if ( (nWeight == 0 || mechs[x].getWeightClass() == nWeight) && 
-                 (nType == 4 || mechs[x].getType() == nType) && 
+                 (nType == 5
+                  || (nType == 4
+                      && mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 )
+                  || mechs[x].getType() == nType) && 
                  ( sUnitType.equals( "All" ) ||
                    mechs[x].getUnitType().equals(sUnitType) ) ) {
                 vMechs.addElement(mechs[x]);

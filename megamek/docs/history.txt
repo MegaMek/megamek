@@ -15,6 +15,7 @@ v 0.29.15 (CVS)
 + RFE 787056: Set the default Mech Display window width to 235.
 + Sort the available boards by name.
 + There should be no megamek.client classes in megamek.common or megamek.server
++ RFE 744493: Have an "IS All" tech level option.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

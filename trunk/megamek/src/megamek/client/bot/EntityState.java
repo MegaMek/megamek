@@ -226,8 +226,9 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       }
       // We need the previous step.
       MovementData.Step prevStep = null;
-      if ( this.length() > 0 )
-	  prevStep = (MovementData.Step) super.getStep(super.length());
+      if (this.length() > 1) {
+	  prevStep = (MovementData.Step)getStep(length() - 1);
+      }
       // check for danger
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType, prevStep, overallMoveType) || step_type == MovementData.STEP_GET_UP);
       

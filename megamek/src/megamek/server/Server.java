@@ -2616,14 +2616,7 @@ implements Runnable, ConnectionHandler {
                 wasProne = false;
                 game.resetPSRs(entity);
                 doSkillCheckInPlace(entity, rollTarget);
-            } else if (firstStep) {
-                // running with destroyed hip or gyro needs a check
-                rollTarget = entity.checkRunningWithDamage(overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    doSkillCheckInPlace(entity, rollTarget);
-                }
             }
-
             // did the entity just fall?
             if (!wasProne && entity.isProne()) {
                 moveType = step.getMovementType();
@@ -3402,6 +3395,12 @@ implements Runnable, ConnectionHandler {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+
+        // if we ran with destroyed hip or gyro, we need a psr
+        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            doSkillCheckInPlace(entity, rollTarget);
+        }
 
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {

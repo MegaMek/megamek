@@ -523,7 +523,6 @@ public class Game implements Serializable
         boolean         result;
         Hashtable       playerFlags = null;
         Enumeration     enum = null;
-        Iterator        units = null;
         Mounted         equip = null;
         String          name = null;
 

@@ -82,7 +82,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.1 (01-16-03, 4:06pm)
+v 0.28.1 (01-20-03, 7:19pm)
 + COMPATABILITY BREAKER: allow Charges and DFAs to target *any* enemy in hex.
 + 643582: Allow vehicles to transport infantry.
 + Update skidding to better match the BMRr.
@@ -92,10 +92,12 @@ v 0.28.1 (01-16-03, 4:06pm)
 + 638815: Allow players to rotate maps 180 degrees.
 + Fixed error in many IS MTF files (possible bug in Mek editor).
 + Added BattleArmor stealth, mimetic camoflage, and single-hex ECM.
-+ 669169: Turns while stacking with the enemy.
++ 669169: Allow turns after first step while stacking with the enemy.
 + Applied the ATM patch written by ensign@users.sourceforge.net.
 + 660585: Implemented Mek Stealth Armor.
 + JDK 1.1 compatibilty restored(?)
++ Switching ATM ammo should change range display.
++ Add "Purple" to list of player colors.
 
 v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks

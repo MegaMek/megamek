@@ -37,7 +37,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private final static int SHOW_GROUND_HEIGHT = 1;
     private final static int SHOW_BUILDING_HEIGHT = 2;
     private final static int SHOW_TOTAL_HEIGHT = 3;
-  private final static int NBR_MODES = 3;
+    private final static int NBR_MODES = 3;
 
     private Image        m_mapImage;
     private BoardView1   m_bview;
@@ -59,9 +59,9 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private int[]        halfRoadWidthBySin30 = {0,0,1,1,1,2};
     private int[]        halfRoadWidth        = {0,0,1,2,3,3};
 
-  private int          heightDisplayMode = SHOW_NO_HEIGHT;
-  Coords        firstLOS;
-  Coords        secondLOS;
+    private int          heightDisplayMode = SHOW_NO_HEIGHT;
+    Coords               firstLOS;
+    Coords               secondLOS;
   
     /**
      * Creates and lays out a new mech display.
@@ -82,6 +82,8 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         this (d, c.game, bview);
         
         c.addGameListener(this);
+        c.minimapW.addKeyListener(c.menuBar);
+        addKeyListener(c.menuBar);
     }
 
     public synchronized void update(Graphics g) {

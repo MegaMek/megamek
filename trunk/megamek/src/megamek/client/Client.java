@@ -39,10 +39,10 @@ public class Client extends Panel
     public Frame                frame;
 
     // A menu bar to contain all actions.
-    private CommonMenuBar       menuBar = new CommonMenuBar();
-    private CommonAboutDialog   about   = null;
-    private CommonHelpDialog    help    = null;
-    private CommonSettingsDialog        setdlg = null;
+    protected CommonMenuBar             menuBar = new CommonMenuBar(this);
+    private CommonAboutDialog           about   = null;
+    private CommonHelpDialog            help    = null;
+    private CommonSettingsDialog        setdlg  = null;
 
     // we need these to communicate with the server
     private String              name;
@@ -1840,5 +1840,4 @@ public class Client extends Panel
             System.out.println(buf.toString());
         }
     }
-
 }

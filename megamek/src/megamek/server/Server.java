@@ -534,7 +534,7 @@ public class Server
             resolveCrewDamage();
             resolveCrewWakeUp();
             if (phaseReport.length() > 0) {
-                roundReport.append(phaseReport);
+                roundReport.append(phaseReport.toString());
             }
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
@@ -598,7 +598,7 @@ public class Server
             resolveCrewDamage();
             // check phase report
             if (phaseReport.length() > 0) {
-                roundReport.append(phaseReport);
+                roundReport.append(phaseReport.toString());
                 changePhase(Game.PHASE_MOVEMENT_REPORT);
             } else {
                 roundReport.append("<nothing>\n");
@@ -615,7 +615,7 @@ public class Server
             resolvePilotingRolls();
             // check phase report
             if (phaseReport.length() > 0) {
-                roundReport.append(phaseReport);
+                roundReport.append(phaseReport.toString());
                 changePhase(Game.PHASE_FIRING_REPORT);
             } else {
                 roundReport.append("<nothing>\n");
@@ -632,7 +632,7 @@ public class Server
             resolvePilotingRolls();
             // check phase report
             if (phaseReport.length() > 0) {
-                roundReport.append(phaseReport);
+                roundReport.append(phaseReport.toString());
             } else {
                 roundReport.append("<nothing>\n");
             }

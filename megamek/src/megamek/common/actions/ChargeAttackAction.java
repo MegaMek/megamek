@@ -45,14 +45,22 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      * To-hit number for a charge, assuming that movement has been handled
      */
     public ToHitData toHit(Game game) {
+        return toHit(game, false);
+    }
+    
+    public ToHitData toHit(Game game, boolean skid) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved);
+        return toHit(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved, skid);
+    }
+    
+    public ToHitData toHit(Game game, Targetable target, Coords src, int movement) {
+        return toHit(game, target, src, movement, false);
     }
 
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(Game game, Targetable target, Coords src, int movement) {
+    public ToHitData toHit(Game game, Targetable target, Coords src, int movement, boolean skid) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -134,8 +142,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
 
-        // target must have moved already
-        if (te != null && !te.isDone()) {
+        // target must have moved already, unless it's a skid charge
+        if (te != null && !te.isDone() && !skid) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
 

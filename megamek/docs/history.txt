@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.46 (CVS)
+v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling
 + Re-added option to use right-click near the edge of the map scrolling
     also in the firing phase.

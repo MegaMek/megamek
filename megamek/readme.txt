@@ -59,7 +59,9 @@ Microsoft VM (Windows):
 Microsoft no longer makes their VM available for seperate download.
 Installing Windows XP SP1 should do the trick.  If you don't have Windows
 XP, and still want to use the MS VM, then please ask for help on the
-forum (http://sourceforge.net/forum/forum.php?forum_id=154580).
+forum (http://sourceforge.net/forum/forum.php?forum_id=154580).  Keep
+in mind that you should be able to use Sun's Java VM (above) as an
+alternative since they have a windows version available.
 
 Mac OSX 10.1 and above:
 Java updates are included in OS updates for 10.1 and above.  There is no

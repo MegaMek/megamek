@@ -15,7 +15,7 @@
  * Created on May 10, 2004
  *
  */
-package megamek.common;
+package megamek.common.weapons;
 
 /**
  * @author Andrew Hunter
@@ -26,4 +26,6 @@ public interface AttackHandler {
 	public boolean cares(int phase);
 	//If it cares, call this.  If it needs to remain in queue, returns true, else false.
 	public boolean handle(int phase);
+	//Frankly, wish I could get rid of this, but I think certain things occaisonly need to know the firer.
+	public int getAttackerId();
 }

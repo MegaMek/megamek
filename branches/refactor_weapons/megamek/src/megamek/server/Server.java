@@ -25,6 +25,7 @@ import megamek.server.commands.*;
 import megamek.common.net.*;
 import megamek.common.options.*;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.*;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -11796,11 +11797,19 @@ implements Runnable, ConnectionHandler {
      * Loops through all the attacks the game has.  
      * Checks if they care about current phase, 
      * if so, runs them, and removes them if they don't want to stay.
+     * TODO: Refactor the new entity annoucement out of here.
      */
     private void handleAttacks() {
+    	int lastAttackerId=0;
     	for(Enumeration i=game.getAttacks();i.hasMoreElements();) {
     		AttackHandler ah = (AttackHandler)i.nextElement();
     		if(ah.cares(game.getPhase())) {
+    			int aId=ah.getAttackerId();
+    			if(aId!=lastAttackerId) {
+    				phaseReport.append("\nWeapons fire for ").append(game.getEntity(aId).getDisplayName()).
+		            append("\n");
+    			}
+    			lastAttackerId=aId;
     			boolean keep = ah.handle(game.getPhase());
     			if(!keep) {
     				game.removeAttack(ah);

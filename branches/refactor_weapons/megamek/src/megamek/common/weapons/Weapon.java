@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 import megamek.common.AmmoType;
-import megamek.common.AttackHandler;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
@@ -420,8 +419,7 @@ public abstract class Weapon extends WeaponType {
         }       
 
         // make sure weapon can clear minefield
-		if (target instanceof MinefieldTarget &&
-			!AmmoType.canClearMinefield(atype)) {
+		if (target instanceof MinefieldTarget) {//only certain weaps can, not base.  
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
 		}
         // Arty shots have to be with arty, non arty shots with non arty.
@@ -466,7 +464,7 @@ public abstract class Weapon extends WeaponType {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
         }
 
-        // Some weapons can't cause fires, but Infernos always can.
+        // Some weapons can't cause fires
         if ( wtype.hasFlag(WeaponType.F_NO_FIRES) &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");

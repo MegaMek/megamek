@@ -75,6 +75,7 @@ v (next)
 + Abstracted equipment mode system
 + AMS can be turned off
 + fixed crash with bot and non-mech units
++ 622376: infantry can jump over water
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

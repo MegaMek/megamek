@@ -1119,7 +1119,7 @@ implements Runnable, ConnectionHandler {
                 remaining += game.getProtomechsLeft(playerId);
             }
             int moreInfAndProtoTurns =
-                Math.min(Game.INF_AND_PROTOS_MOVE_MULTI - 1, remaining);
+                Math.min(game.getOptions().intOption("inf_proto_move_multi") - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
@@ -1903,7 +1903,7 @@ implements Runnable, ConnectionHandler {
         int numTeamsMoving = 0;
         for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
             final Team team = (Team) loop.nextElement();
-            allTeamTurns.put( team, team.determineTeamOrder() );
+            allTeamTurns.put( team, team.determineTeamOrder(game) );
 
             // Track both the number of times we've checked the team for
             // "leftover" turns, and the number of "leftover" turns placed.
@@ -1913,13 +1913,13 @@ implements Runnable, ConnectionHandler {
             evenTrackers.put (team, evenTracker);
 
             // Count this team if it has any "normal" moves.
-            if (team.getNormalTurns() > 0)
+            if (team.getNormalTurns(game) > 0)
                 numTeamsMoving++;
         }
 
         // Now, generate the global order of all teams' turns.
         TurnVectors team_order = TurnOrdered.generateTurnOrder
-            ( game.getTeamsVector() );
+            ( game.getTeamsVector(), game );
 
         // See if there are any loaded units stranded on immobile transports.
         Enumeration strandedUnits = game.getSelectedEntities

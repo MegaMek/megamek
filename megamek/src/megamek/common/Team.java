@@ -61,9 +61,9 @@ public final class Team extends TurnOrdered implements Serializable
         TurnOrdered.rollInitiative( players );
     }
 
-    public TurnVectors determineTeamOrder()
+    public TurnVectors determineTeamOrder(Game game)
     {
-        return TurnOrdered.generateTurnOrder( players );
+        return TurnOrdered.generateTurnOrder( players , game);
     }
 
     public int getId() {
@@ -79,8 +79,8 @@ public final class Team extends TurnOrdered implements Serializable
      * @return  the <code>int</code> number of "normal" turns this item
      * should take in a phase.
      */
-    public int getNormalTurns() {
-        int normal = this.getMultiTurns() + this.getOtherTurns();
+    public int getNormalTurns(Game game) {
+        int normal = this.getMultiTurns(game) + this.getOtherTurns();
         if (0 == normal)
             normal = this.getEvenTurns();
         return normal;
@@ -104,11 +104,11 @@ public final class Team extends TurnOrdered implements Serializable
         return sum;
     }
 
-    public int getMultiTurns() {
+    public int getMultiTurns(Game game) {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
         for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
-            sum += ( (Player) loop.nextElement() ).getMultiTurns();
+            sum += ( (Player) loop.nextElement() ).getMultiTurns(game);
         }
         return sum;
     }

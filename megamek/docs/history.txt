@@ -88,6 +88,9 @@ VERSION HISTORY:
 ----------------
 v next
 + weapon critical hits should actually disable the weapon
++ mech display window resizable 
++ now using contents of Sun's Collections.jar
++ changed .blk loading files to be compatible with Java 1.1
 
 v 0.25.0 (04-11-02, 10:45am)
 + moved extra weapon fire checking around in the code

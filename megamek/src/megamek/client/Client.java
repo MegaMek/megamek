@@ -87,7 +87,7 @@ public class Client extends Panel
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 340);
-        mechW.setResizable(false);
+        mechW.setResizable(true);
         mechD = new MechDisplay();
         mechW.add(mechD);
             

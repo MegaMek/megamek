@@ -50,6 +50,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem fileBoardOpen = null;
     private MenuItem fileBoardSave = null;
     private MenuItem fileBoardSaveAs = null;
+    private MenuItem fileBoardSaveAsImage = null;
 
     /**
      * When we have a unit list, set this to <code>true</code>.
@@ -212,6 +213,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         fileBoardSaveAs.addActionListener( this );
         fileBoardSaveAs.setActionCommand( "fileBoardSaveAs" );
         submenu.add( fileBoardSaveAs );
+        fileBoardSaveAsImage = new MenuItem( "Save As Image..." );
+        fileBoardSaveAsImage.addActionListener( this );
+        fileBoardSaveAsImage.setActionCommand( "fileBoardSaveAsImage" );
+        submenu.add( fileBoardSaveAsImage );
 
         // Create the Unit List sub-menu.
         submenu = new Menu( "Unit List" );
@@ -512,13 +517,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
                 fileBoardNew.setEnabled( false );
                 fileBoardOpen.setEnabled( false );
                 fileBoardSave.setEnabled( false );
-                fileBoardSaveAs.setEnabled( false );            
+                fileBoardSaveAs.setEnabled( false );
+                fileBoardSaveAsImage.setEnabled( false );
         // but the main window and map editor do
         } else {
             fileBoardNew.setEnabled( true );
             fileBoardOpen.setEnabled( true );
             fileBoardSave.setEnabled( false );
             fileBoardSaveAs.setEnabled( false );
+            fileBoardSaveAsImage.setEnabled( false );
         };
 
         // If we have a board, we can perform board actions and view the mini map.
@@ -527,6 +534,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             if (null==client) {
                 fileBoardSave.setEnabled( true );
                 fileBoardSaveAs.setEnabled( true );
+                fileBoardSaveAsImage.setEnabled( true );
             };
             viewMiniMap.setEnabled( true );
             if ( isJ2RE ){

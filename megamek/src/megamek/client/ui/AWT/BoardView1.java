@@ -730,6 +730,18 @@ public class BoardView1
         }
     }
 
+    /** This method creates an image the size of the entire board (all
+     * mapsheets), draws the hexes onto it, and returns that image.
+    */
+    public Image getEntireBoardImage() {
+        Image entireBoard = createImage(boardSize.width, boardSize.height);
+        Graphics temp = boardImage.getGraphics();
+        boardGraph = entireBoard.getGraphics();
+        drawHexes(new Rectangle(boardSize));
+        boardGraph = temp;
+        return entireBoard;
+    }
+
     /**
      * Moves the board view to another area.
      */

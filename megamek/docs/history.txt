@@ -72,7 +72,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v CVS
+v 0.27.5 (11-01-02, 10:30pm)
 + Add non-canon options to balance Infantry impact on the init phase.
 + Add error-checking to Entity#elevation().
 + Workaround for 630144: Bot "Beginning of Turn" Race Condition

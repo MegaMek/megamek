@@ -387,7 +387,7 @@ public class Server
                 for (int j = 0; j < entity.getNumberOfCriticals(i); j++) {
                     final CriticalSlot cs = entity.getCritical(i, j);
                     if (cs != null) {
-                        cs.setDestroyed(cs.isHit());
+                        cs.setDestroyed(cs.isDamaged());
                     }
                 }
             }
@@ -611,6 +611,7 @@ public class Server
      * Ends this phase and moves on to the next.
      */
     private void endCurrentPhase() {
+        System.err.println("server: ending phase " + game.phase + "...");
         switch (game.phase) {
         case Game.PHASE_LOUNGE :
             changePhase(Game.PHASE_EXCHANGE);
@@ -641,6 +642,7 @@ public class Server
             checkFor20Damage();
             resolveCrewDamage();
             resolvePilotingRolls();
+            resolveCrewDamage(); // again, I guess
             // check phase report
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport.toString());
@@ -658,7 +660,7 @@ public class Server
             checkFor20Damage();
             resolveCrewDamage();
             resolvePilotingRolls();
-            resolveCrewDamage(); // again? or when else?
+            resolveCrewDamage(); // again, I guess
             // check phase report
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport.toString());
@@ -2246,7 +2248,7 @@ public class Server
                 }
 
                 // is the internal structure gone?
-                if (te.isLocationDestroyed(hit.getLocation())) {
+                if (te.getInternal(hit) <= 0) {
                     destroyLocation(te, hit.getLocation());
                     if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
                         pilotRolls.addElement(new PilotingRollData(te.getId(),
@@ -2332,11 +2334,10 @@ public class Server
                 desc += "\n            Location empty.";
                 break;
             }
-            int slot = (int)(Compute.random.nextDouble() * en.getNumberOfCriticals(loc));
+            int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
             CriticalSlot cs = en.getCritical(loc, slot);
-            if (cs != null && !cs.isHit()) {
+            if (cs != null && cs.isHitable()) {
                 cs.setDoomed(true);
-                en.setCritical(loc, slot, cs);
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
                     desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
@@ -2385,7 +2386,7 @@ public class Server
                     break;
                 }
                 hits--;
-                //System.err.println("s: critical loop, " + hits + " remaining");
+//                System.err.println("s: critical loop, " + hits + " remaining");
             }
         }
 

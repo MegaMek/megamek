@@ -70,8 +70,15 @@ public class CriticalSlot
     /**
      * Has this slot been damaged?
      */
-    public boolean isHit() {
-        return doomed | missing | destroyed;
+    public boolean isDamaged() {
+        return doomed || missing || destroyed;
+    }
+    
+    /**
+     * Can this slot be hit by a critical hit roll?
+     */
+    public boolean isHitable() {
+        return !doomed && !destroyed;
     }
     
     /**

@@ -773,9 +773,7 @@ public abstract class Entity
         int empty = 0;
         
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            if (getCritical(loc, i) != null 
-               && getCritical(loc, i).isDestroyed() == false 
-               && getCritical(loc, i).isDoomed() == false) {
+            if (getCritical(loc, i) != null && getCritical(loc, i).isHitable()) {
                 empty++;
             }
         }
@@ -856,7 +854,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
             
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
-                if (ccs.isHit()) {
+                if (ccs.isDamaged()) {
                     hits++;
                 }
             }

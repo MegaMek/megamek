@@ -59,6 +59,7 @@ public class ClientGUI
     // keep me
     private ChatterBox cb;
     public BoardView1 bv;
+    private Panel scroller;
     public BoardComponent bc;
     public Dialog mechW;
     public MechDisplay mechD;
@@ -230,7 +231,21 @@ public class ClientGUI
         initializeFrame();
 
         try {
+            // Create the board viewer.
             bv = new BoardView1(client.game, frame);
+
+            // Place the board viewer in a set of scrollbars.
+            scroller = new Panel();
+            scroller.setLayout (new BorderLayout());
+            Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
+            Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
+            scroller.add (bv, BorderLayout.CENTER);
+            scroller.add (vertical, BorderLayout.EAST);
+            scroller.add (horizontal, BorderLayout.SOUTH);
+
+            // Assign the scrollbars to the board viewer.
+            bv.setScrollbars (vertical, horizontal);
+
         } catch (IOException e) {
             doAlertDialog("Fatal Error", "Could not initialise:\n" + e);
             die();
@@ -639,7 +654,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "DeployMinefieldDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -648,7 +663,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "DeploymentDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -658,7 +673,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "TargetingPhaseDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -667,7 +682,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "MovementDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -677,7 +692,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "OffboardDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -686,7 +701,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "FiringDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;
@@ -695,7 +710,7 @@ public class ClientGUI
                 main = "BoardView";
                 secondary = "PhysicalDisplay";
                 if (!mainNames.contains(main)) {
-                    panMain.add(main, this.bv);
+                    panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
                 break;

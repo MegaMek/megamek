@@ -206,7 +206,7 @@ public class BLKMechFile {
                 //changed...
             EquipmentType etype = EquipmentType.getByMepName(critName);
             if (etype != null) {
-                mech.addEquipment(new Mounted(etype), loc, rearMounted);
+                mech.addEquipment(etype, loc, rearMounted);
             } else {
                 //System.out.println("blkmechfile: could not find equipment " + critName);
             }

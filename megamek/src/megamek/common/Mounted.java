@@ -42,12 +42,15 @@ public class Mounted implements Serializable{
     
     private Mounted linked = null; // for ammo, or artemis
     
+    private Entity entity; // what I'm mounted on
+    
     private transient EquipmentType type;
     private String typeName;
     
 
     /** Creates new Mounted */
-    public Mounted(EquipmentType type) {
+    public Mounted(Entity entity, EquipmentType type) {
+        this.entity = entity;
         this.type = type;
         this.typeName = type.getInternalName();
         

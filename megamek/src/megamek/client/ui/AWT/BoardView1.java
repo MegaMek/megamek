@@ -94,6 +94,9 @@ public class BoardView1
     private Image[][]            imageCache = new Image[PIC_MAX][6]; // [type][facing]
     private Image[][][]          tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
     
+    private Image fire;
+    private Image fog;
+    
     // polygons for a few things
     private Polygon              hexPoly;
     private Polygon[]            facingPolys;
@@ -140,12 +143,19 @@ public class BoardView1
             tracker.addImage(imageCache[PIC_MECH_MEDIUM][i], 1);
             tracker.addImage(imageCache[PIC_MECH_HEAVY][i], 1);
             tracker.addImage(imageCache[PIC_MECH_ASSAULT][i], 1);
+            
         }
     
         for (int i = 0; i < game.board.terrains.length; i++) {
-            tracker.addImage( game.board.terrains[i].getImage(this), 2);
+            tracker.addImage(game.board.terrains[i].getImage(this), 2);
         }
         
+        fire = getToolkit().getImage("data/hexes/fire2.gif");
+        tracker.addImage(fire, 2);
+
+        fog = getToolkit().getImage("data/hexes/fog.gif");
+        tracker.addImage(fog, 2);
+
         imagesLoading = true;
     }
 
@@ -229,7 +239,7 @@ public class BoardView1
     }
     
     /**
-     * Where shouuld the offset be for this screen size?
+     * Where should the offset be for this screen size?
      */
     private Point getOptimalOffset(Dimension size) {
             int ox = 0;
@@ -388,6 +398,10 @@ public class BoardView1
         
         // draw picture
         boardGraph.drawImage(hex.getImage(this), drawX, drawY, this);
+        
+//        // draw fire
+//        boardGraph.drawImage(fire, drawX, drawY, this);
+        
         // draw text stuff
         boardGraph.setColor(Settings.mapTextColor);
         boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 10));

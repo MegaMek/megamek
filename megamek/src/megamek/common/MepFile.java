@@ -205,7 +205,7 @@ public class MepFile
             
             EquipmentType etype = EquipmentType.getByMepName(critName);
             if (etype != null) {
-                mech.addEquipment(new Mounted(etype), loc, rearMounted);
+                mech.addEquipment(etype, loc, rearMounted);
             } else {
 //                System.out.println("mepfile: could not find equipment " + critName);
             }

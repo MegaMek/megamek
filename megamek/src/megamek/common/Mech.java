@@ -188,7 +188,7 @@ public class Mech
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if(hipHits > 0) {
-                wmp = (hipHits == 1) ? (int)Math.floor((double)wmp / 2.0) : 0;
+                wmp = (hipHits == 1) ? (int)Math.ceil((double)wmp / 2.0) : 0;
             } else {
                 wmp -= actuatorHits;
             }
@@ -773,7 +773,7 @@ public class Mech
      * 
      * Throw exception if full, maybe?
      */
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
         // if there's no actual location, then don't add criticals
         if (loc == LOC_NONE) {
             super.addEquipment(mounted, loc, rearMounted);

@@ -8395,7 +8395,7 @@ implements Runnable, ConnectionHandler {
     }
     
     public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
-        return damageEntity(te, hit, damage, ammoExplosion, 0, false);
+        return damageEntity(te, hit, damage, ammoExplosion, bFrag, false);
     }
     
     public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS) {

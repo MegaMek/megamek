@@ -2562,7 +2562,6 @@ implements Runnable, ConnectionHandler {
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     doSkillCheckInPlace(entity, rollTarget);
                 }
-                firstStep = false;
             }
 
             // did the entity just fall?
@@ -3076,8 +3075,8 @@ implements Runnable, ConnectionHandler {
                         doFlamingDeath(entity);
                 }
             }
-//          check if we used more MPs than the Mech/Vehicle would have in normal gravity
-            if (!i.hasMoreElements()) {
+            // check if we used more MPs than the Mech/Vehicle would have in normal gravity
+            if (!i.hasMoreElements() && !firstStep) {
                 HitData hit;
                 if (entity instanceof Mech) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
@@ -3393,6 +3392,8 @@ implements Runnable, ConnectionHandler {
                 prevFacing = curFacing;
             }
             prevHex = curHex;
+            
+            firstStep = false;
         }
 
         // set entity parameters

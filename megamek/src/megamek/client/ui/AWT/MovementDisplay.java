@@ -585,7 +585,6 @@ public class MovementDisplay
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }
-                firstStep = false;
             }
             
             // set most step parameters
@@ -622,7 +621,7 @@ public class MovementDisplay
             }
             
             // check if we used more MPs than the Mech/Vehicle would have in normal gravity
-            if (!i.hasMoreElements()) {
+            if (!i.hasMoreElements() && !firstStep) {
                 if (entity instanceof Mech) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
                         if (step.getMpUsed() > entity.getRunMP(false)) {
@@ -702,6 +701,8 @@ public class MovementDisplay
                 prevFacing = curFacing;
             }
             prevHex = curHex;
+            
+            firstStep = false;
         }
         
         // but the danger isn't over yet!  landing from a jump can be risky!

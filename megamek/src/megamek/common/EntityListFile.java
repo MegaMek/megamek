@@ -38,12 +38,12 @@ public class EntityListFile {
      *          to be stored in a file.
      * @exception <code>IOException</code> is thrown on any error.
      */
-    public static void saveTo( String fileName, Vector list )
+    public static void saveTo( String filePath, String fileName, Vector list )
         throws IOException {
 
         // Open up the file.
         ObjectOutputStream listStream = new ObjectOutputStream
-            ( new FileOutputStream(fileName) );
+            ( new FileOutputStream(new File(filePath, fileName)) );
 
         // FOR NOW write the list to the file.
         listStream.writeObject( list );
@@ -63,13 +63,14 @@ public class EntityListFile {
      *          loaded from the file.
      * @exception <code>IOException</code> is thrown on any error.
      */
-    public static Vector loadFrom( String fileName ) throws IOException {
+    public static Vector loadFrom( String filePath, String fileName ) 
+        throws IOException {
         Vector output = new Vector();
         Vector temp = null;
 
         // Open up the file.
         ObjectInputStream listStream = new ObjectInputStream
-            ( new FileInputStream(fileName) );
+            ( new FileInputStream(new File(filePath, fileName)) );
 
         // FOR NOW, read a Vector from the file.
         try {

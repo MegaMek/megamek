@@ -4,6 +4,8 @@ v0.29.69 (CVS)
 + Data 1157247: New pictures for Burrock, Great Wyrm, Highlander IIC, Scylla.
 + Bug 1156215: jammed RACs can fire
 + Patch 1158743, Bug 1154050: Infantry takes PSR after taking 20 dmg
++ Added new pics for Direwolf, Firemoth, Gargoyle, Nova, Sunmoner and Warhawk
+    variants.
 
 v0.29.68 (2005-03-06 4:45pm)
 + Bug 1153269 "configure unit" not remembering burst fire mg setup.

@@ -243,3 +243,7 @@ chassis "Tempest" "tempest.gif"
 chassis "Thunder" "thunder.gif"
 chassis "Venom" "venom.gif"
 chassis "Watchman" "watchman.gif"
+
+# Fix broken Scorpion tank images.
+exact "Scorpion Light Tank" "default_tank.gif"
+exact "Scorpion (SRM Variant)" "default_tank.gif"

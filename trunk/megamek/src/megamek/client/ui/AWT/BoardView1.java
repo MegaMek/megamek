@@ -19,6 +19,7 @@ import com.sun.java.util.collections.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.util.Enumeration;
 
 import megamek.client.util.*;
 import megamek.common.*;
@@ -857,6 +858,25 @@ public class BoardView1
 
         // no re-use possible, add a new one
         attackSprites.addElement(new AttackSprite(aa));
+    }
+
+    /**
+     * Clears out all attacks and re-adds the ones in the current game.
+     */
+    public void refreshAttacks() {
+        clearAllAttacks();
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction)i.nextElement();
+            if (ea instanceof AttackAction) {
+                addAttack((AttackAction)ea);
+            }
+        }
+        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction)i.nextElement();
+            if (ea instanceof AttackAction) {
+                addAttack((AttackAction)ea);
+            }
+        }
     }
 
     public void clearC3Networks() {

@@ -666,8 +666,6 @@ public class FiringDisplay
         }
         // if we're ending the firing phase, unregister stuff.
         if(client.game.phase !=  Game.PHASE_FIRING) {
-            client.bv.clearAllAttacks();
-            
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.mechD.removeMouseListener(this);

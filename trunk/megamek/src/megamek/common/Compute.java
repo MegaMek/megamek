@@ -3092,7 +3092,7 @@ public class Compute
         }
         
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack()) {
+        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }
         
@@ -3288,7 +3288,7 @@ public class Compute
         }
         
         // can't attack the target of another displacement attack
-        if (te.isTargetOfDisplacementAttack()) {
+        if (te.isTargetOfDisplacementAttack() && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }        
         

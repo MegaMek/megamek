@@ -63,8 +63,10 @@ public class HexEncoder {
         out.write( Integer.toString(hex.terrainsPresent()) );
         out.write( "\" elevation=\"" );
         out.write( Integer.toString(hex.getElevation()) );
-        out.write( "\" theme=\"" );
-        out.write( hex.getTheme() );
+        if ( null != hex.getTheme() ) {
+            out.write( "\" theme=\"" );
+            out.write( hex.getTheme() );
+        }
         out.write( "\" >" );
         for ( loop = 0; loop < Terrain.SIZE; loop++ ) {
             // If the hex has this kind of terrain, encode it.

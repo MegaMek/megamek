@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.28.23-dev (CVS)
 + Bug 748959: fixed bug with moved units not updating
++ chat box may scroll to bottom properly on Linux (thanks Bluebird)
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.51 (CVS)
+
 v0.29.50 (2004-09-26 1:15pm)
 + Bug 1031414: location exposure should be checked after each fall
 + Bug 1032040: clear artillery spotters only when firing at different hex

@@ -171,8 +171,14 @@ public class Pilot
       return count;
     }
     
-    public String getAdvantageList() {
+    public String getAdvantageList(String sep) {
       StringBuffer adv = new StringBuffer();
+      
+      if ( (null == sep) || (sep.trim().length() == 0) ) {
+        sep = "";
+      } else {
+        sep = sep + " ";
+      }
       
       for (Enumeration i = options.groups(); i.hasMoreElements();) {
         OptionGroup group = (OptionGroup)i.nextElement();
@@ -184,10 +190,11 @@ public class Pilot
           GameOption option = (GameOption)j.nextElement();
           
           if ( option.booleanValue() ) {
-            if ( adv.length() > 0 )
-              adv.append(", ");
-              
-            adv.append(option.getFullName());
+            if ( adv.length() > 0 ) {
+              adv.append(sep);
+            }
+            
+            adv.append(option.getShortName());
           }
         }
       }

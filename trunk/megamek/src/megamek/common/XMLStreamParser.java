@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 /**
  * This class parses an XML input stream.  If the stream is well formed, no
@@ -133,6 +134,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  GUNNERY = "gunnery";
     public static final String  PILOTING= "piloting";
     public static final String  HITS    = "hits";
+    public static final String  ADVS    = "advantages";
     public static final String  INDEX   = "index";
     public static final String  IS_DESTROYED    = "isDestroyed";
     public static final String  POINTS  = "points";
@@ -413,7 +415,8 @@ public class XMLStreamParser implements XMLResponder {
                 String gunnery = (String) attr.get( GUNNERY );
                 String piloting = (String) attr.get( PILOTING );
                 String hits = (String) attr.get( HITS );
-
+                String advantages = (String) attr.get( ADVS );
+                
                 // Did we find required attributes?
                 if ( gunnery == null || gunnery.length() == 0 ) {
                     this.warning.append
@@ -460,6 +463,20 @@ public class XMLStreamParser implements XMLResponder {
                     }
                     crew = new Pilot( pilotName, gunVal, pilotVal );
 
+                    if ( (null != advantages) && (advantages.trim().length() > 0) ) {
+                      StringTokenizer st = new StringTokenizer(advantages);
+                      String adv = st.nextToken();
+                      
+                      try {
+                        
+                        crew.getOptions().getOption(adv).setValue(true);
+                      } catch ( Exception e ) {
+                        this.warning.append("Error restoring advantage: ")
+                            .append( adv )
+                            .append( ".\n" );
+                      }
+                    }
+                    
                     // Was the crew wounded?
                     if ( hits != null ) {
                         // Try to get a good hits value.

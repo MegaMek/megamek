@@ -92,6 +92,8 @@ v CVS
 + show label for Unjam RAC button all the time
 + Fix bug in MovementDisplay that prevents Charges and DFAs from working.
 + 672181: DFAing units do not violate stacking during movement
++ 678789: starting position in scenarios made case-insensitive
++ 678789: wind direction set properly (randomly) in scenarios
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

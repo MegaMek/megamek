@@ -2252,9 +2252,6 @@ public class Server
      * Currently mech only
      */
     private String criticalEntity(Entity en, int loc) {
-//        if (en.isRearLocation(loc)) {
-//            loc = en.getFrontLocation(loc);
-//        }
         String desc = "        Critical hit on " + en.getLocationAbbr(loc) + ". ";
         int hits = 0;
         int roll = Compute.d6(2);
@@ -2360,11 +2357,11 @@ public class Server
      */
     private void destroyLocation(Entity en, int loc) {
         // mark armor, internal as destroyed
-        en.setArmor(Entity.ARMOR_DESTROYED, loc);
+        en.setArmor(Entity.ARMOR_DESTROYED, loc, false);
         en.setInternal(Entity.ARMOR_DESTROYED, loc);
-//        if (en.getRearLocation(loc) != loc) {
-//            en.setArmor(Entity.ARMOR_DESTROYED, en.getRearLocation(loc));
-//        }
+        if (en.hasRearArmor(loc)) {
+            en.setArmor(Entity.ARMOR_DESTROYED, loc, true);
+        }
         // weapons destroyed
         for (int i = 0; i < en.weapons.size(); i++) {
             if (en.getWeapon(i).getLocation() == loc) {

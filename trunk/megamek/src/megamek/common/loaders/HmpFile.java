@@ -604,6 +604,7 @@ public class HmpFile
     isCriticals.put(new Long(0x17), "ISMASC");
     isCriticals.put(new Long(0x18), "ISArtemisIV");
     isCriticals.put(new Long(0x19), "ISCASE");
+    isCriticals.put(new Long(0x23), "Stealth Armor");
     isCriticals.put(new Long(0x33), "ISERLargeLaser");
     isCriticals.put(new Long(0x34), "ISERPPC");
     isCriticals.put(new Long(0x35), "ISFlamer");

@@ -94,15 +94,15 @@ public class MechSelectorDialog
         m_pParams.add(m_chSort);
         
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-		m_pButtons.add(m_labelPlayer);
-		m_pButtons.add(m_chPlayer);
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bCancel);
+        m_pButtons.add(m_labelPlayer);
+        m_pButtons.add(m_chPlayer);
         
         m_pUpper.setLayout(new BorderLayout());
-		m_pPreview.setPreferredSize(84, 72);
-		m_pUpper.add(m_pParams, BorderLayout.WEST);
-		m_pUpper.add(m_pPreview, BorderLayout.CENTER);
+        m_pPreview.setPreferredSize(84, 72);
+        m_pUpper.add(m_pParams, BorderLayout.WEST);
+        m_pUpper.add(m_pPreview, BorderLayout.CENTER);
 
         m_pLeft.setLayout(new BorderLayout());
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);

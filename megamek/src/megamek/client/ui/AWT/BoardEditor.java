@@ -539,6 +539,30 @@ public class BoardEditor extends Container
         FileDialog fd = new FileDialog(frame, "Save Board As Image...", FileDialog.SAVE);
         //        fd.setDirectory("data" + File.separator + "boards");
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+
+        // Add a filter for PNG files
+        fd.setFilenameFilter(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return (null != name && name.endsWith(".png"));
+                }
+            });
+
+        // use base directory by default
+        fd.setDirectory(".");
+
+        // Default to the board's name (if it has one).
+        String fileName = null;
+        if (null != curfile && curfile.length() > 0) {
+            fileName = curfile.toUpperCase();
+            if (fileName.endsWith(".BOARD")) {
+                int length = fileName.length();
+                fileName = fileName.substring (0, length-6);
+            }
+            fileName = fileName.toLowerCase() + ".png";
+            fd.setFile (fileName);
+        }
+
+        // Open the dialog and wait for it's return.
         fd.show();
 
         if(fd.getFile() == null) {

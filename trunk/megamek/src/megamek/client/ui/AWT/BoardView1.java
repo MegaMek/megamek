@@ -74,7 +74,7 @@ public class BoardView1
     private CursorSprite selectedSprite;
     
     // sprite for current movement
-    private PathSprite movementSprite;
+    private Vector pathSprites = new Vector();
     
     // vector of sprites for all firing lines
     private Vector attackSprites = new Vector();
@@ -204,9 +204,10 @@ public class BoardView1
         drawSprites(attackSprites);
         
         // draw movement, if valid
-        if (movementSprite != null) {
-            drawSprite(movementSprite);
-        }
+//        if (movementSprite != null) {
+//            drawSprite(movementSprite);
+//        }
+        drawSprites(pathSprites);
         
         // draw cursors
         drawSprite(cursorSprite);
@@ -606,31 +607,39 @@ public class BoardView1
      * Clears the old movement data and draws the new
      */
     public void drawMovementData(Entity entity, MovementData md) {
-        // get old sprite bounds
-        Rectangle oldBounds = null;
-        if (movementSprite != null) {
-            oldBounds = movementSprite.getBounds();
+        Vector temp = pathSprites;
+        
+        clearMovementData();
+        
+        Compute.compile(game, entity.getId(), md);
+        
+        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            // check old movement path for reusable step sprites
+            boolean found = false;
+            for (Enumeration j = temp.elements(); j.hasMoreElements();) {
+                final StepSprite sprite = (StepSprite)j.nextElement();
+                if (sprite.getStep().equals(step)) {
+                    pathSprites.addElement(sprite);
+                    found = true;
+                }
+            }
+            if (!found) {
+                pathSprites.addElement(new StepSprite(step));
+            }
         }
-        // make new sprite
-        movementSprite = new PathSprite(entity, md);
-        // repaint
-        if (oldBounds != null) {
-            repaintBounds(oldBounds);
-        }
-        repaintBounds(movementSprite.getBounds());
     }
     
     /**
      * Clears current movement data from the screen
      */
     public void clearMovementData() {
-        if (movementSprite == null) {
-            // nothing to clear
-            return;
+        Vector temp = pathSprites;
+        pathSprites = new Vector();
+        for (Enumeration i = temp.elements(); i.hasMoreElements();) {
+            final Sprite sprite = (Sprite)i.nextElement();
+            repaintBounds(sprite.getBounds());
         }
-        final Rectangle oldBounds = movementSprite.getBounds();
-        movementSprite = null;
-        repaintBounds(oldBounds);
     }
     
     /**
@@ -640,6 +649,7 @@ public class BoardView1
         for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
             final AttackSprite sprite = (AttackSprite)i.nextElement();
             
+            // can we just add this attack to an existing one?
             if (sprite.getAttack().getEntityId() == aa.getEntityId() 
                 && sprite.getAttack().getTargetId() == aa.getTargetId()) {
                 // use existing attack, but add this weapon
@@ -650,7 +660,7 @@ public class BoardView1
             }
         }
         
-        // okay, add a new one
+        // no re-use possible, add a new one
         attackSprites.addElement(new AttackSprite(aa));
     }
     
@@ -1237,27 +1247,17 @@ public class BoardView1
     }
     
     /**
-     * Sprite for a movement path
+     * Sprite for a step in a movement path
      */
-    private class PathSprite extends Sprite
+    private class StepSprite extends Sprite
     {
-        private MovementData md;
+        private MovementData.Step step;
         
-        public PathSprite(Entity entity, MovementData md) {
-            this.md = md;
-            Compute.compile(game, entity.getId(), md);
+        public StepSprite(MovementData.Step step) {
+            this.step = step;
             
-            // go thru the data, determining the total area of the path
-            Rectangle pathRect = new Rectangle(getHexLocation(entity.getPosition()), HEX_SIZE);
-            for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
-                final MovementData.Step step = (MovementData.Step)i.nextElement();
-                Point hexPoint = getHexLocation(step.getPosition());
-                
-                // for now, just add the whole hex in
-                pathRect = pathRect.union(new Rectangle(hexPoint, HEX_SIZE));
-            }
-            
-            bounds = pathRect;
+            // step is the size of the hex that this step is in
+            bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
             this.image = null;
         }
         
@@ -1270,79 +1270,80 @@ public class BoardView1
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
-            for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-                final MovementData.Step step = (MovementData.Step)i.nextElement();
-                // setup some variables
-                final Point stepPos = getHexLocation(step.getPosition());
-                stepPos.translate(-bounds.x, -bounds.y);
-                final Polygon facingPoly = facingPolys[step.getFacing()];
-                final Polygon movePoly = movementPolys[step.getFacing()];
-                Polygon myPoly;
-                Color col;
-                // set color
-                switch (step.getMovementType()) {
-                case Entity.MOVE_RUN :
-                    col = Color.yellow;
-                    break;
-                case Entity.MOVE_JUMP :
-                    col = Color.cyan;
-                    break;
-                case Entity.MOVE_ILLEGAL :
-                    col = Color.red;
-                    break;
-                default :
-                    col = Color.green;
-                    break;
+            // setup some variables
+            final Point stepPos = getHexLocation(step.getPosition());
+            stepPos.translate(-bounds.x, -bounds.y);
+            final Polygon facingPoly = facingPolys[step.getFacing()];
+            final Polygon movePoly = movementPolys[step.getFacing()];
+            Polygon myPoly;
+            Color col;
+            // set color
+            switch (step.getMovementType()) {
+            case Entity.MOVE_RUN :
+                col = Color.yellow;
+                break;
+            case Entity.MOVE_JUMP :
+                col = Color.cyan;
+                break;
+            case Entity.MOVE_ILLEGAL :
+                col = Color.red;
+                break;
+            default :
+                col = Color.green;
+                break;
+            }
+
+            // draw arrows and cost for the step
+            switch (step.getType()) {
+            case MovementData.STEP_FORWARDS :
+            case MovementData.STEP_BACKWARDS :
+            case MovementData.STEP_CHARGE :
+            case MovementData.STEP_DFA :
+                // draw arrows showing them entering the next
+                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
+                                     movePoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                // draw movement cost
+                String costString = new Integer(step.getMpUsed()).toString()
+                                    + (step.isDanger() ? "*" : "");
+                if (step.isPastDanger()) {
+                    costString = "(" + costString + ")";
                 }
-                
-                // draw arrows and cost for the step
-                switch (step.getType()) {
-                case MovementData.STEP_FORWARDS :
-                case MovementData.STEP_BACKWARDS :
-                case MovementData.STEP_CHARGE :
-                case MovementData.STEP_DFA :
-                    // draw arrows showing them entering the next
-                    myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
-                                         movePoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    // draw movement cost
-                    String costString = new Integer(step.getMpUsed()).toString()
-                                        + (step.isDanger() ? "*" : "");
-                    if (step.isPastDanger()) {
-                        costString = "(" + costString + ")";
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
-                    int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(costString, costX, stepPos.y + 39);
-                    graph.setColor(col);
-                    graph.drawString(costString, costX - 1, stepPos.y + 38);
-                    break;
-                case MovementData.STEP_TURN_LEFT:
-                case MovementData.STEP_TURN_RIGHT:
-                    // draw arrows showing the facing
-                    myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, 
-                                         facingPoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    break;
-                default :
-                    break;
-                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(costString, costX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(costString, costX - 1, stepPos.y + 38);
+                break;
+            case MovementData.STEP_TURN_LEFT:
+            case MovementData.STEP_TURN_RIGHT:
+                // draw arrows showing the facing
+                myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, 
+                                     facingPoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                break;
+            default :
+                break;
             }
             
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                     new KeyAlphaFilter(TRANSPARENT)));
+        }
+        
+        public MovementData.Step getStep() {
+            return step;
         }
     }
     

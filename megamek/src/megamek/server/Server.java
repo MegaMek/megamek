@@ -4760,9 +4760,25 @@ implements Runnable, ConnectionHandler {
         Coords coords = entity.getPosition();
         Hex curHex = game.board.getHex( coords );
 
+        // Is there a blown off arm in the hex?
+        if (curHex.levelOf(Terrain.ARMS) > 0) {
+            clubType = EquipmentType.get("Limb Club");
+            curHex.addTerrain(new Terrain(Terrain.ARMS, curHex.levelOf(Terrain.ARMS)-1));
+            sendChangedHex(entity.getPosition());
+            phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " picks up a blown-off arm for use as a club.\n");
+        }
+
+        // Is there a blown off leg in the hex?
+        else if (curHex.levelOf(Terrain.LEGS) > 0) {
+            clubType = EquipmentType.get("Limb Club");
+            curHex.addTerrain(new Terrain(Terrain.LEGS, curHex.levelOf(Terrain.LEGS)-1));
+            sendChangedHex(entity.getPosition());
+            phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " picks up a blown-off leg for use as a club.\n");
+        }
+
         // Is there the rubble of a medium, heavy,
         // or hardened building in the hex?
-        if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
+        else if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
 
             // Finding a club is not guaranteed.  The chances are
             // based on the type of building that produced the
@@ -8722,6 +8738,7 @@ implements Runnable, ConnectionHandler {
     private String criticalEntity(Entity en, int loc, int critMod) {
         CriticalSlot slot = null;
         StringBuffer desc = new StringBuffer();
+        Hex h = game.board.getHex(en.getPosition());
         desc.append( "        Critical hit on " )
             .append( en.getLocationAbbr(loc) )
             .append( ". " );
@@ -8761,12 +8778,22 @@ implements Runnable, ConnectionHandler {
                 if (en.getInternal(loc) > 0) {
                     destroyLocation(en, loc);
                 }
+                if (!h.contains( Terrain.LEGS)) {
+                    h.addTerrain(new Terrain(Terrain.LEGS, 1));
+                }
+                else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
+                sendChangedHex(en.getPosition());
                 return desc.toString();
             } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
                 desc.append( "<<<LIMB BLOWN OFF>>> " )
                     .append( en.getLocationName(loc) )
                     .append( " blown off." );
                 destroyLocation(en, loc);
+                if (!h.contains( Terrain.ARMS)) {
+                   h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                }
+                else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                sendChangedHex(en.getPosition());
                 return desc.toString();
             } else if (loc == Mech.LOC_HEAD) {
                 desc.append( "<<<HEAD BLOWN OFF>>> " )

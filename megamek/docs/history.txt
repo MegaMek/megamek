@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.29.34 (CVS)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.
 	Thanks AlbinoSquirrel!
++ Patch 946255, RFE 734354: beerockxs' patch to show blown off limbs
 
 v0.29.33 (2004-05-02, 7:00pm)
 + Bug 937996: Fix NPE when starting a scenario against the bot

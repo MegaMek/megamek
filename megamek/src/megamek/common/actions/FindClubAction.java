@@ -73,10 +73,12 @@ public class FindClubAction extends AbstractEntityAction {
 		}
 
 		// The hex must contain woods or rubble from
-		// a medium, heavy, or hardened building.
-		//TODO: missing limbs are clubs.
+		// a medium, heavy, or hardened building,
+		// or a blown off limb
 		if ( hex.levelOf(Terrain.WOODS) < 1 &&
-			 hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM ) {
+			 hex.levelOf(Terrain.RUBBLE) < Building.MEDIUM && 
+             hex.levelOf(Terrain.ARMS) < 1 &&
+             hex.levelOf(Terrain.LEGS) < 1) {
 			return false;
 		}
 

@@ -1,4 +1,4 @@
-/**
+/*s
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -136,7 +136,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = ammo.name;
         ammo.mepName = "Ammo MG - Full";
-        ammo.mtfName = ammo.name;
+        ammo.mtfName = "MG Ammo (200)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_MG;
@@ -152,7 +152,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Machine Gun Ammo";
         ammo.internalName = ammo.name + " half";
         ammo.mepName = "Ammo MG - Half";
-        ammo.mtfName = ammo.name;
+        ammo.mtfName = "MG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.TYPE_MG;

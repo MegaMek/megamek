@@ -12888,7 +12888,8 @@ implements Runnable, ConnectionHandler {
             if (entity.getCrew().isDoomed() || entity.getCrew().isUnconscious()) {
                 phaseReport.append("but the pilot does not survive!\n");
             }
-            if (!entity.getCrew().isUnconscious()) {
+            else {
+                // Add the pilot as an infantry unit on the battlefield.
                 MechWarrior pilot = new MechWarrior(entity);
                 pilot.setDeployed(true);
                 if ( Entity.NONE == pilot.getId() ) {

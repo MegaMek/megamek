@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.2 (06-??-03, ??)
+v 0.29.2 (06-07-03, 12am)
 + Task L3 Advantages: Added core code for L3 (MaxTech) pilot advantages. To 
   enable these you must enable the MaxTech pilot advantages Game Option. This 
   will make a scrollable box visible in the customize mech dialog. Advantages

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.34 (CVS)
+
 v0.29.33 (2004-05-02, 7:00pm)
 + Bug 937996: Fix NPE when starting a scenario against the bot
 + Bug 937431: fix race condition.

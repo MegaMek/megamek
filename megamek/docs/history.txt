@@ -8,6 +8,7 @@ v0.29.66 (CVS)
 + Bug 927687: Underwater firing problem
 + Added new image for the Kruger Combat Car, and attempt to fix its BLK file
 + Interloper Urban Scout Tank BLK file was overweight.
++ Disabling heatsinks should not take effect until the next turn.
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

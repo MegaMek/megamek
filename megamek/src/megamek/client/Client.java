@@ -71,6 +71,7 @@ public class Client extends Panel
     private MechSelectorDialog      mechSelectorDialog;
     public Thread                   mechSelectorDialogThread;
     private StartingPositionDialog  startingPositionDialog;
+	private PlayerListDialog 		playerListDialog;
 
     // message pump listening to the server
     private Thread              pump;
@@ -233,6 +234,16 @@ public class Client extends Panel
 	}
 
     /**
+     * Called when the user selects the "View->Player List" menu item.
+     */
+    private void showPlayerList() {
+    	if (playerListDialog == null) {
+    		playerListDialog = new PlayerListDialog(frame, this);
+    	}
+    	playerListDialog.show();
+    }
+
+    /**
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
@@ -248,6 +259,9 @@ public class Client extends Panel
         if(event.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
             showOptions();
         }
+        if(event.getActionCommand().equalsIgnoreCase("viewPlayerList")) {
+            showPlayerList();
+        }
     }
     
     /**
@@ -258,6 +272,12 @@ public class Client extends Panel
         unitLoadingDialog.show();
 
         bv = new BoardView1(game, frame);
+
+		ChatterBox2 cb2 = new ChatterBox2(this, bv);
+		bv.setChatBox(cb2);
+        addGameListener(cb2);
+        bv.addKeyListener(cb2);
+
         bv.addMouseListener(this);
         bv.add(popup);
 
@@ -759,6 +779,9 @@ public class Client extends Panel
                 l.gameNewSettings(ge);
                 break;
             }
+        }
+        if (playerListDialog != null) {
+        	playerListDialog.refreshPlayerList();
         }
     }
     

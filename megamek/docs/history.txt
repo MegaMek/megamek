@@ -118,6 +118,7 @@ v 0.29.13-dev
 + RFE 814576: Show PlayerColor when Camo is missing.
 + Added common client settings dialog.
 + Game Options works from the menu.
++ New chat box.
 
 v 0.29.12 (09-28-03, 10:30pm)
 + Shows movement step by step, optional in MegaMek.cfg.

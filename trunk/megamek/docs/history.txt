@@ -15,6 +15,7 @@ v 0.29.28 (2004-03-14 3:30pm)
 + Bug 811987: Level 3 PSR rules tweak.
 + Data 914815: updated readme.txt and readme
 + Bug 802867: Game save bug finally quashed.
++ Patch 914025: use different minimap icons for different unit types.
 
 v 0.29.27 (2004-03-07 9:35pm)
 + Bug 897585: Initiative phase bug fixed.

@@ -1111,7 +1111,7 @@ public abstract class Mech
             if (etype instanceof WeaponType && etype.getName().indexOf("Gauss") != -1) {
                 tonnage = 1.0f;
             }
-            
+             
             // RACs don't really count
             if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
                 tonnage = 0.0f;

@@ -241,7 +241,7 @@ public class Game implements Serializable
     /* The Entity ID space has been polluted; negative ID's below -1000 are targeted coordinates */
 
     public static Coords IdToCoords(int id) {
-        System.out.print(id);
+//          System.out.print(id);
         if (id > -1000) {
             return null;
         }

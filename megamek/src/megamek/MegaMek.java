@@ -367,21 +367,8 @@ public class MegaMek
     }
     
     public static void main(String[] args) {
-        // redirect output to logfiles
-        try {
-            System.out.println("Redirecting output to MegaMek.log");
-            PrintStream ps = new PrintStream(new BufferedOutputStream(
-                        new FileOutputStream("MegaMek.log")));
-            System.setOut(ps);
-            System.setErr(ps);
-        } catch (Exception e) {
-            System.err.println("Unable to redirect output to log");
-            e.printStackTrace();
-        }
-            
-                        
-        
-        Settings.load();
+
+        String logFileName = "MegaMek.log";
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {
                 testDice();
@@ -391,8 +378,34 @@ public class MegaMek
                 new Server(Settings.lastServerPass, Settings.lastServerPort);
                 return;
             }
+            if (args[i].equals("-log")) {
+                // Next argument is the log file's name.
+                i++;
+                if ( i >= args.length || args[i].equals("none")
+                     || args[i].equals("off") ) {
+                    logFileName = null;
+                } else {
+                    logFileName = args[i];
+                }
+            }
         }
-        
+
+        // Redirect output to logfiles, unless turned off.
+        if ( logFileName != null ) {
+            try {
+                System.out.println("Redirecting output to " + logFileName);
+                PrintStream ps = new PrintStream(new BufferedOutputStream(
+                                 new FileOutputStream(logFileName)));
+                System.setOut(ps);
+                System.setErr(ps);
+            } catch (Exception e) {
+                System.err.println("Unable to redirect output to " +
+                                   logFileName);
+                e.printStackTrace();
+            }
+        } // End log-to-file
+
+        Settings.load();
         Frame frame = new Frame("MegaMek");
         MegaMek mm = new MegaMek(frame);
     }

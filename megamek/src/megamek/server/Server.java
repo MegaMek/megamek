@@ -730,7 +730,7 @@ implements Runnable {
      */
     private void changePhase(int phase) {
         game.phase = phase;
-        
+
         // prepare for the phase
         prepareForPhase(phase);
         
@@ -3571,7 +3571,7 @@ implements Runnable {
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
             }
-            
+
             // add +5 Heat if the hex you're in is on fire and was on fire for the full round
             if (entityHex.levelOf(Terrain.FIRE) == 2) {
                 entity.heatBuildup += 5;
@@ -3582,13 +3582,13 @@ implements Runnable {
             roundReport.append(entity.getDisplayName() + " gains " + entity.heatBuildup + " heat,");
             entity.heat += entity.heatBuildup;
             entity.heatBuildup = 0;
-            
+
             // how much heat can we sink?
             int tosink = Math.min(entity.getHeatCapacityWithWater(), entity.heat);
             
             entity.heat -= tosink;
             roundReport.append(" sinks " + tosink + " heat and is now at " + entity.heat + " heat.\n");
-            
+
             // heat effects: start up
             if (entity.heat < 30 && entity.isShutDown()) {
                 if (entity.heat < 14) {
@@ -3606,7 +3606,7 @@ implements Runnable {
                     }
                 }
             }
-            
+
             // heat effects: shutdown!
             if (entity.heat >= 14 && !entity.isShutDown()) {
                 if (entity.heat >= 30) {
@@ -3658,7 +3658,13 @@ implements Runnable {
                     roundReport.append(entity.getDisplayName() + " has 15 or higher heat and damaged life support.  Mechwarrior takes 1 damage.\n");
                     damageCrew(entity, 1);
                 }
+                // The pilot may have just expired.
+                if ( entity.crew.isDead() ) {
+                    roundReport.append( "*** " + entity.getDisplayName() +
+                                        " PILOT BAKES TO DEATH! ***" );
+                }
             }
+
         }
     }
     
@@ -3759,7 +3765,10 @@ implements Runnable {
                 phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
                 phaseReport.append("The target is " + roll.getValueAsString() + " [" + roll.getDesc() + "].\n");
                 for (int j = 0; j < rolls; j++) {
+                    /* restore me
                     final int diceRoll = Compute.d6(2);
+                    */
+        final int diceRoll = 0; //killme
                     phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValueAsString() + ", rolls " + diceRoll + " : ");
                     phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
                     if (diceRoll < roll.getValue()) {
@@ -3887,7 +3896,6 @@ implements Runnable {
  	Hex te_hex = null;
         
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
-        
         //int loc = hit.getLocation();
         HitData nextHit = null;
 
@@ -4417,7 +4425,7 @@ implements Runnable {
                 side = "front";
                 table = ToHitData.SIDE_FRONT;
         }
-        
+
         // calculate damage
         int damage = (int)Math.round(entity.getWeight() / 10) * (height + 1);
         
@@ -4430,6 +4438,7 @@ implements Runnable {
         phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");
         
         // standard damage loop
+
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
@@ -4439,7 +4448,7 @@ implements Runnable {
         
         // pilot damage?
         roll.removeAutos();
-        
+
         if (height > 0) {
             roll.addModifier(height, "height of fall");
         }
@@ -4509,7 +4518,7 @@ implements Runnable {
         int height = board.height;
         int windDirection = game.getWindDirection();
         
-        roundReport.append("\n\nResolving fire movement \n ------------------------\n");
+        phaseReport.append("\n\nResolving fire movement \n ------------------------\n");
         // cycle through all hexes, checking for fire.
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
             
@@ -4631,7 +4640,7 @@ implements Runnable {
     public void removeSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
         Hex nextHex = game.getBoard().getHex(smokeCoords);
-        if (nextHex.contains(Terrain.SMOKE)) {
+        if (nextHex != null && nextHex.contains(Terrain.SMOKE)) {
             nextHex.removeTerrain(Terrain.SMOKE);
             sendChangedHex(smokeCoords);
             phaseReport.append("Smoke clears from " + smokeCoords.getBoardNum() + "!\n");

@@ -85,6 +85,7 @@ v 0.28.6-dev (CVS)
 + 683267: correctly allocate spaces for Endo Steel and Ferro-Fibrous.
 + Allow scenarios to define a rotated board.
 + all selectable entity determination controlled by GameTurn
++ 682166 LMG and HMG racksize == weapon damage; add half-ton ammo
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

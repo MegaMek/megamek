@@ -138,6 +138,7 @@ public abstract class Entity
     public int                  delta_distance = 0;
     public int                  mpUsed = 0;
     public int                  moved = MOVE_NONE;
+    public boolean              gotPavementBonus = false;
 
     private int[]               exposure;
     private int[]               armor;
@@ -2371,6 +2372,7 @@ public abstract class Entity
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
+        gotPavementBonus = false;
 
         setArmsFlipped(false);
         setDisplacementAttack(null);

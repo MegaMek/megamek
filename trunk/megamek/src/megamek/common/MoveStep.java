@@ -836,6 +836,9 @@ public class MoveStep implements Serializable {
             } else if (entity instanceof Tank && isOnlyPavement()
                        && getMpUsed() == entity.getWalkMP() + 1) {
                 movementType = Entity.MOVE_WALK;
+                // store if we got the pavement Bonus for end of phase
+                // gravity psr
+                entity.gotPavementBonus = true;
             } else if (getMpUsed() <= entity.getRunMPwithoutMASC()
                        && !isRunProhibited()) {
                 movementType = Entity.MOVE_RUN;
@@ -851,6 +854,9 @@ public class MoveStep implements Serializable {
                     && getMpUsed() <= (entity.getRunMP() + 1)
                     && !isRunProhibited()) {
                 movementType = Entity.MOVE_RUN;
+                // store if we got the pavement Bonus for end of phase
+                // gravity psr
+                entity.gotPavementBonus = true;
             }
         }
 

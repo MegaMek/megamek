@@ -11,6 +11,7 @@ v0.29.69 (CVS)
 + Bug 1160780: Offboard Deployment and Double Blind NPE
 + When pushing a target off-board, the pushing Mech did not move to the position
     the pushed target previously had.
++ Bug 1047453: extreme gravity PSRs should be made at the end of the movement phase.
 
 v0.29.68 (2005-03-06 4:45pm)
 + Bug 1153269 "configure unit" not remembering burst fire mg setup.

@@ -58,7 +58,7 @@ public class MegaMek
      * Display the main menu.
      */
     public void showMainMenu() {
-        Button hostB, connectB, botB, editB, dedicatedB;
+        Button hostB, connectB, botB, editB;
             
         frame.removeAll();
         
@@ -70,14 +70,10 @@ public class MegaMek
         connectB.setActionCommand("game_connect");
         connectB.addActionListener(this);
         
-        botB = new Button("Connect to a Game as a Bot...");
+        botB = new Button("Connect as a Bot...");
         botB.setActionCommand("game_botconnect");
         botB.addActionListener(this);
 
-        dedicatedB = new Button("Dedicated Server...");
-        dedicatedB.setActionCommand("server_dedicated");
-        dedicatedB.addActionListener(this);
-        
         editB = new Button("Map Editor");
         editB.setActionCommand("editor");
         editB.addActionListener(this);
@@ -95,7 +91,6 @@ public class MegaMek
         addBag(hostB, gridbag, c);
         addBag(connectB, gridbag, c);
         addBag(botB, gridbag, c);
-        addBag(dedicatedB, gridbag, c);
         addBag(editB, gridbag, c);
 
         frame.validate();
@@ -239,25 +234,6 @@ public class MegaMek
         showGame();
     }
   
-  /**
-   * Starts the server, but no client
-   */
-  public void dedicatedServer() {
-        HostDialog hd;
-        
-        hd = new HostDialog(frame);
-        hd.show();
-        // verify dialog data
-        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
-            return;
-        }
-        // start server
-        server = new Server(hd.serverPass, hd.port);
-    
-    // die, frame!
-    frame.setVisible(false);
-  }
-    
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.add(comp);
@@ -284,14 +260,14 @@ public class MegaMek
     }
     
     public static void main(String[] args) {
-        boolean dedicated = false;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {
                 testDice();
                 return;
             }
             if (args[i].equals("-dedicated")) {
-                dedicated = true;
+                new Server(Settings.lastServerPass, Settings.lastServerPort);
+                return;
             }
         }
         
@@ -303,9 +279,6 @@ public class MegaMek
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("main_menu")) {
-            showMainMenu();
-        }
         if(ev.getActionCommand().equalsIgnoreCase("editor")) {
             showEditor();
         }
@@ -317,10 +290,6 @@ public class MegaMek
         }
         if(ev.getActionCommand().equalsIgnoreCase("game_botconnect")) {
             connectBot();
-        }
-
-        if(ev.getActionCommand().equalsIgnoreCase("server_dedicated")) {
-            dedicatedServer();
         }
     }
     

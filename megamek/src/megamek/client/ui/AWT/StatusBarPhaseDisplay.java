@@ -52,10 +52,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       labStatus.setText(text);
     }
     
-    protected void setDisplayButtonEnabled(boolean enabled) {
-      ;
-    }
-
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
       return false;
     }

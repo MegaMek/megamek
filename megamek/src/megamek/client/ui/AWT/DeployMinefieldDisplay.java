@@ -124,9 +124,6 @@ public class DeployMinefieldDisplay
         addBag(panButtons, gridbag, c);
 
         addKeyListener(this);
-        
-        setDisplayButtonEnabled(false);
-
     }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {

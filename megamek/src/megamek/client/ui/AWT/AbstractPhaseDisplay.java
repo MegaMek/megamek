@@ -23,11 +23,6 @@ public abstract class AbstractPhaseDisplay
   extends Panel
   implements BoardListener, GameListener
 {
-	// Action commands.
-	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
-	public static final String VIEW_MINI_MAP         = "viewMiniMap";
-	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
-	public static final String VIEW_UNIT_OVERVIEW    = "viewUnitOverview";
 
     //
     // BoardListener

@@ -130,6 +130,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISUltraAC5());
         EquipmentType.addType(createISUltraAC10());
         EquipmentType.addType(createISUltraAC20());
+        EquipmentType.addType(createISRAC2());
+        EquipmentType.addType(createISRAC5());
         EquipmentType.addType(createISStreakSRM2());
         EquipmentType.addType(createISStreakSRM4());
         EquipmentType.addType(createISStreakSRM6());
@@ -972,6 +974,56 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 282;
         String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
+        
+        return weapon;
+    }
+    
+    public static WeaponType createISRAC2() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Rotary AC/2";
+        weapon.internalName = "ISRotaryAC2";
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 1;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 6;
+        weapon.mediumRange = 12;
+        weapon.longRange = 18;
+        weapon.tonnage = 8.0f;
+        weapon.criticals = 3;
+        weapon.flags |= F_DIRECT_FIRE;
+        weapon.bv = 118;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        weapon.setModes(modes);
+        
+        return weapon;
+    }
+    
+    public static WeaponType createISRAC5() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Rotary AC/5";
+        weapon.internalName = "ISRotaryAC5";
+        weapon.mepName = weapon.internalName;
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 1;
+        weapon.damage = 5;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_AC_ROTARY;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 6;
+        weapon.flags |= F_DIRECT_FIRE;
+        weapon.bv = 247;
+        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
         
         return weapon;

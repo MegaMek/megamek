@@ -37,6 +37,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean jammed = false;
     private boolean useless = false;
     private boolean fired = false; //Only true for used OS stuff.
+    private boolean rapidfire = false; //MGs in rapid-fire mode
 
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
@@ -295,6 +296,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setDumping(boolean b) {
         m_bDumping = b;
+    }
+    
+    public boolean isRapidfire() {
+        return rapidfire;
+    }
+    
+    public void setRapidfire(boolean rapidfire) {
+        this.rapidfire = rapidfire;
     }
 
 

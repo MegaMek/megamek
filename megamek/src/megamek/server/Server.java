@@ -5589,7 +5589,7 @@ implements Runnable, ConnectionHandler {
           wtype.getAmmoType() != AmmoType.T_BA_MG &&
           wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
           !isWeaponInfantry;
-      final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+      Mounted ammo = usesAmmo ? weapon.getLinked() : null;
       final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
       Infantry platoon = null;
       final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
@@ -6484,6 +6484,24 @@ implements Runnable, ConnectionHandler {
                     nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
                 }
             }
+        } else if (weapon.isRapidfire() &&
+                   !(target instanceof Infantry &&
+                     !(target instanceof BattleArmor)) ){
+            // Check for rapid fire Option. Only MGs can be rapidfire.
+            int ammoUsage;
+            nDamPerHit = Compute.d6();
+            ammoUsage = 3*nDamPerHit;
+            for (int i=0; i<ammoUsage; i++) {
+                if (ammo.getShotsLeft() <= 0) {
+                    ae.loadWeapon(weapon);
+                    ammo = weapon.getLinked();
+                }
+                ammo.setShotsLeft(ammo.getShotsLeft()-1);
+            }
+            if (ae instanceof Mech) {
+                // Apply heat
+                ae.heatBuildup += nDamPerHit;
+            }
         }
         if (glancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS) ) {
             nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
@@ -6595,7 +6613,7 @@ implements Runnable, ConnectionHandler {
         // Mech and Vehicle MGs do *DICE* of damage to PBI.
         else if (usesAmmo && atype.hasFlag(AmmoType.F_MG) &&
                   !isWeaponInfantry && (target instanceof Infantry) &&
-                  !(target instanceof BattleArmor) ) {
+                  !(target instanceof BattleArmor) && !weapon.isRapidfire()) {
 
             int dice = wtype.getDamage();
 

@@ -689,6 +689,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
      *          as constants in the <code>Game</code> class).
      */
     public synchronized void setPhase( int current ) {
+    	this.entity = null;
         this.phase = current;
         manageMenu();
     }

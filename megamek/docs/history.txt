@@ -5,6 +5,7 @@ v0.29.68 (CVS)
 + MGs in burst fire mode didn't use ammo when missing.
 + Bug 1145944, Patch 1156358: "client options" windows larger than screen size
 + Bi-Monthly update on Batchall.de-Mechs
++ Patch 1156501: move setting dialog sizes to a common base class.
 
 v0.29.67 (2005-02-27 9:40am)
 + Added an interface, so external programs can be notified when the client is closed

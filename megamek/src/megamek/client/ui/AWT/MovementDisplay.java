@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -317,7 +316,7 @@ public class MovementDisplay
         updateLoadButtons();
 
         butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
-        butEject.setEnabled(isMech);
+        butEject.setEnabled(isMech && ce().isActive());
         
     }
 
@@ -1182,7 +1181,7 @@ public class MovementDisplay
         }
     }
     public void keyReleased(KeyEvent ev) {
-        if (ev.getKeyCode() == ev.VK_SHIFT && shiftheld) {
+        if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
                 // switch to movement

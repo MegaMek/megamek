@@ -1546,9 +1546,15 @@ public class BoardView1
                     message.append( le.getLightWoods() )
                         .append( " light wood hex(es) in line of sight.\n" );
                 }
-                if (le.getSmoke() > 0) {
-                    message.append( le.getSmoke() )
-                        .append( " smoke hex(es) in line of sight.\n" );
+                if (le.getLightSmoke() > 0) {
+                    message.append( le.getLightSmoke() )
+                        .append( " light smoke hex(es) in line of sight.\n" );
+                }
+                if (le.getHeavySmoke() > 0) {
+                    message.append( le.getHeavySmoke() );
+                    if (game.getOptions().booleanOption("maxtech_fire"))
+                        message.append( " heavy");
+                    message.append( " smoke hex(es) in line of sight.\n" );
                 }
                 if (le.isTargetCover()) {
                     message.append("Target has partial cover.\n");
@@ -1566,7 +1572,6 @@ public class BoardView1
     public void boardChangedHex(BoardEvent b) {
         tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
         if (boardGraph != null) {
-            boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
             redrawAround(b.getCoords());
         }
     }
@@ -1893,7 +1898,7 @@ public class BoardView1
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if ( !Settings.alwaysScrollOnRightClick &&
-             game.getPhase() == Game.PHASE_FIRING) {
+             game.getPhase() == Game.PHASE_FIRING ) {
             // In the firing phase, also disable scrolling if
             //  the right or middle buttons are clicked, since
             //  this means the user wants to activate the

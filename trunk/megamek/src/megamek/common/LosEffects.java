@@ -48,7 +48,8 @@ public class LosEffects {
     boolean blocked = false;
     int lightWoods = 0;
     int heavyWoods = 0;
-    int smoke = 0;
+    int lightSmoke = 0;
+    int heavySmoke = 0; // heavySmoke is also standard for normal L2 smoke
     boolean targetCover = false;  // that means partial cover
     boolean attackerCover = false;  // ditto
     Building thruBldg = null;
@@ -62,7 +63,8 @@ public class LosEffects {
         this.blocked |= other.blocked;
         this.lightWoods += other.lightWoods;
         this.heavyWoods += other.heavyWoods;
-        this.smoke += other.smoke;
+        this.lightSmoke += other.lightSmoke;
+        this.heavySmoke += other.heavySmoke;
         this.targetCover |= other.targetCover;
         this.attackerCover |= other.attackerCover;
         if ( null != this.thruBldg &&
@@ -78,11 +80,15 @@ public class LosEffects {
     public int getHeavyWoods() {
     	return heavyWoods;
     }
-    
-    public int getSmoke() {
-    	return smoke;
+
+    public int getLightSmoke() {
+    	return lightSmoke;
     }
     
+    public int getHeavySmoke() {
+    	return heavySmoke;
+    }
+
     public boolean isBlocked() {
     	return blocked;
     }
@@ -132,7 +138,7 @@ public class LosEffects {
 	 * LOS check from ae to te.
 	 */
 	public boolean canSee() {
-		return !blocked && lightWoods + ((heavyWoods + smoke) * 2) < 3;
+		return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
 	}
 
     /**
@@ -229,7 +235,7 @@ public class LosEffects {
      * Returns ToHitData indicating the modifiers to fire for the specified
      * LOS effects data.
      */
-    public ToHitData losModifiers() {
+    public ToHitData losModifiers(Game game) {
         ToHitData modifiers = new ToHitData();
         if (blocked) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
@@ -238,17 +244,15 @@ public class LosEffects {
         if (lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods.");
         }
-        
-        if (smoke > 1) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
+
+        if (lightSmoke + (heavySmoke * 2) > 2) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
         }
-        
-        if (smoke == 1) {
-            if (lightWoods + heavyWoods > 0) {
+
+        if (lightSmoke > 1 || heavySmoke > 0) {
+            if (lightWoods > 1 || heavyWoods > 0) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods.");
-            } else {
-                modifiers.addModifier(2, "intervening smoke");
-            }
+            } 
         }
         
         if (lightWoods > 0) {
@@ -258,7 +262,20 @@ public class LosEffects {
         if (heavyWoods > 0) {
             modifiers.addModifier(heavyWoods * 2, heavyWoods + " intervening heavy woods");
         }
+     
+        if (lightSmoke > 0) {
+        	modifiers.addModifier(lightSmoke, lightSmoke + " intervening light smoke");
+        }
         
+        if (heavySmoke > 0) {
+            StringBuffer text = new StringBuffer(heavySmoke);
+            text.append(" intervening");
+            if (game.getOptions().booleanOption("maxtech_fire"))
+                text.append(" heavy");
+            text.append(" smoke");
+            modifiers.addModifier(heavySmoke * 2, text.toString());
+        }
+
         if (targetCover) {
             modifiers.addModifier(3, "target has partial cover");
         }
@@ -353,7 +370,7 @@ public class LosEffects {
         }
         
         // if blocked already, return that
-        if (los.losModifiers().getValue() == ToHitData.IMPOSSIBLE) {
+        if (los.losModifiers(game).getValue() == ToHitData.IMPOSSIBLE) {
             return los;
         }
         
@@ -393,8 +410,8 @@ public class LosEffects {
             }
     
             // which is better?
-            int lVal = left.losModifiers().getValue();
-            int rVal = right.losModifiers().getValue();
+            int lVal = left.losModifiers(game).getValue();
+            int rVal = right.losModifiers(game).getValue();
             if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
                 los = left;
             } else {
@@ -460,13 +477,36 @@ public class LosEffects {
             if ((hexEl + 2 > ai.attackAbsHeight && hexEl + 2 > ai.targetAbsHeight)
             || (hexEl + 2 > ai.attackAbsHeight && ai.attackPos.distance(coords) == 1)
             || (hexEl + 2 > ai.targetAbsHeight && ai.targetPos.distance(coords) == 1)) {
-                // smoke overrides any woods in the hex
-                if (hex.contains(Terrain.SMOKE)) {
-                    los.smoke++;
-                } else if (hex.levelOf(Terrain.WOODS) == 1) {
+                // smoke overrides any woods in the hex if L3 smoke rule is off
+                if (!game.getOptions().booleanOption("maxtech_fire")) {
+                  if (hex.contains(Terrain.SMOKE)) {
+                    los.heavySmoke++;
+                  }
+                  else if (hex.levelOf(Terrain.WOODS) == 1) {
                     los.lightWoods++;
-                } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                  }
+                  else if (hex.levelOf(Terrain.WOODS) > 1) {
                     los.heavyWoods++;
+                  }
+                }
+                // if the L3 fire/smoke rule is on, smoke and woods stack for LOS
+                // so check them both
+                else {
+                  if (hex.contains(Terrain.SMOKE)) {
+                    if (hex.levelOf(Terrain.SMOKE) == 1) {
+                      los.lightSmoke++;
+                    }
+                    else if (hex.levelOf(Terrain.SMOKE) > 1) {
+                      los.heavySmoke++;
+                    }
+                  }
+
+                  if (hex.levelOf(Terrain.WOODS) == 1) {
+                    los.lightWoods++;
+                  }
+                  else if (hex.levelOf(Terrain.WOODS) > 1) {
+                    los.heavyWoods++;
+                  }
                 }
             }
         }

@@ -3064,6 +3064,16 @@ public class Compute
             return false;
         }
 
+        // Is the entity active?
+        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+            return false;
+        }
+
+        // Can't find clubs while spotting.
+        if ( entity.isSpotting() ) {
+            return false;
+        }
+
         //Check game options
         if (game.getOptions().booleanOption("no_clan_physical") &&
             entity.isClan()) {

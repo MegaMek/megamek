@@ -6,6 +6,8 @@ v 0.29.27 (CVS)
 	(no PSRs from crits sustained falling down).
 + Bug 898870: nagForPSR and nagForNoAction were cross-tied
 + RFE 889959: configuration file for the MiniMap
++ Bug 898207: players should have to enter in a non-blank, non-whitespace name
++ Bug 899181: unconcious and shut down meks can't find clubs.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.
@@ -218,7 +220,7 @@ v 0.29.14 (10-13-03, 5pm)
 + Bug 821063: Fixed BV of some precision AC ammo
 + In-game unit list/selector/overview.
 + Larger, bold font in chat.
-+ Patch 819951: MaxTech Crunchy Hip Rule by Alexander Schlling.
++ Patch 819951: MaxTech Crunchy Hip Rule by Alexander Schölling.
 + Moved phase action buttons around
 + Made "Turn Report" menu item work
 + Removed little one-letter buttons in favor of menu and hotkeys
@@ -256,7 +258,7 @@ v 0.29.10 (09-08-03, 2pm)
 + Fixed bug with Mech preview image.
 + RFE 799511: defined images for Enforcer III and Grand Dragon
 + Data 796980: added Hauptmann image by brandfuchs
-+ Patch 794111 MaxTech Target Movement Modifiers by Alexander Schlling.
++ Patch 794111 MaxTech Target Movement Modifiers by Alexander Schölling.
 + Bug 787486, 789749: LOS bug over water, also fixed bug with smoke on water.
 
 v 0.29.9 (08-31-03, 10pm)
@@ -349,7 +351,7 @@ v 0.29.4 (07-20-03, 7pm)
 + Added files for 'camo' schemes from nalleolsson (no code changes)
 + Patch 768978: Allow selection of camo schemes instead of colors. Camo schemes
   take precedence but default to 'No Camo'. Patch originally submitted by 
-  nalleolsson (Bjrn Olsson). Tweaks and additional code by kipsta.
+  nalleolsson (Björn Olsson). Tweaks and additional code by kipsta.
 + Bug 769106: Fixed bug that was messing up "go prone to dislodge swarmers."
 + Data 762795: Added BH-21's Avatar image.
 + Data 764066: Added BH-21's updated images.

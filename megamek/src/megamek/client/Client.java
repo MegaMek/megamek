@@ -342,6 +342,7 @@ public class Client extends Panel
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
+            bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
             curPanel = new ReportDisplay(this);
             this.add(curPanel);
             curPanel.requestFocus();

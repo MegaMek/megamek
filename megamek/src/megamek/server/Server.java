@@ -4079,7 +4079,9 @@ implements Runnable {
         }
         
         // special case NARC hits.  No damage, but a beacon is appended
-        if (!bMissed && wtype.getAmmoType() == AmmoType.T_NARC) {
+        if (!bMissed && 
+        	wtype.getAmmoType() == AmmoType.T_NARC && 
+        	atype.getMunitionType() != AmmoType.M_NARC_EX) {
 
             // TODO: AMS can shoot down NARC pods too.
             if (entityTarget == null) {
@@ -4105,6 +4107,7 @@ implements Runnable {
         // All shots fired by a Streak SRM weapon, during
         // a Mech Swarm hit, or at an adjacent building.
         if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ||
+             wtype.getAmmoType() == AmmoType.T_NARC ||
              ae.getSwarmTargetId() == wr.waa.getTargetId() ||
              ( ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
                  target.getTargetType() == Targetable.TYPE_BUILDING ) &&
@@ -4703,7 +4706,10 @@ implements Runnable {
                 hits = 0;
             }
             else if (entityTarget != null) {
-                HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                 HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                 											toHit.getSideTable(), 
+                 											wr.waa.getAimedLocation(), 
+                 											wr.waa.getAimingMode());
 
                 // If a leg attacks hit a leg that isn't
                 // there, then hit the other leg.
@@ -4733,6 +4739,9 @@ implements Runnable {
                 if (!bSalvo) {
                     phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).
                             append( entityTarget.getLocationAbbr(hit));
+                    if (hit.hitAimedLocation()) {
+                    	phaseReport.append("(hit aimed location)");
+                    }
                 }
 
                 // Special weapons do criticals instead of damage.

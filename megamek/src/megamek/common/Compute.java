@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.*;
 
 import megamek.common.actions.*;
+import megamek.client.*;
 
 /**
  * The compute class is designed to provide static methods for mechs
@@ -1314,7 +1315,9 @@ public class Compute
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
         return toHitWeapon(game, waa.getEntityId(), 
                            game.getTarget(waa.getTargetType(), waa.getTargetId()),
-                           waa.getWeaponId());
+                           waa.getWeaponId(),
+                           waa.getAimedLocation(),
+                           waa.getAimingMode());
     }
     
     /**
@@ -1324,13 +1327,16 @@ public class Compute
      */
     public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, Vector prevAttacks) {
          // ignore prevAttacks
-         return toHitWeapon(game, attackerId, target, weaponId);
-    }
-    
+		return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+	}
+
+    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
+		return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+	}
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
+    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1679,7 +1685,7 @@ public class Compute
 		toHit.append(getDamageWeaponMods(ae, weapon));
         
         // target immobile
-		toHit.append(getImmobileMod(target));
+		toHit.append(getImmobileMod(target, aimingAt, aimingMode));
         
         // attacker prone
 		toHit.append(getProneMods(game, ae, weaponId));
@@ -1717,10 +1723,15 @@ public class Compute
         }        
         
         // add targeting computer (except with LBX cluster ammo)
-        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-             (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
-            toHit.addModifier(-1, "targeting computer");
-        }
+        if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
+        	aimingAt != Mech.LOC_NONE) {
+        	toHit.addModifier(3, "aiming with targeting computer");
+        } else {
+	        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+    	         (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+        	    toHit.addModifier(-1, "targeting computer");
+        	}
+	    }
 
         // Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {
@@ -1792,13 +1803,22 @@ public class Compute
         return spotter;
     }
 	
-    private static ToHitData getImmobileMod(Targetable target) {
-        if (target.isImmobile()) {
+	private static ToHitData getImmobileMod(Targetable target) {
+		return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+	}
+
+	private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
+		if (target.isImmobile()) {
+			if ((aimingAt == Mech.LOC_HEAD) && 
+				(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+            	return new ToHitData(3, "aiming at head");
+			} else {
             return new ToHitData(-4, "target immobile");
+            }
         } else {
-            return null;
+			return null;
         }
-    }
+	}
 
     /**
      * Determines the to-hit modifier due to range for an attack with the 

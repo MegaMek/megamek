@@ -86,6 +86,7 @@ public class AmmoType extends EquipmentType {
     public static final int     M_ECM               = 20;
     public static final int     M_HAYWIRE           = 21;
     public static final int     M_NEMESIS           = 22;
+    public static final int     M_NARC_EX           = 23;
     
     /*public static final String[] MUNITION_NAMES = { "Standard", 
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision", 
@@ -247,6 +248,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM40Ammo());
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
+        EquipmentType.addType(createISNarcExplosiveAmmo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -283,6 +285,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM6Ammo());
         EquipmentType.addType(createCLAMSAmmo());
         EquipmentType.addType(createCLNarcAmmo());
+        EquipmentType.addType(createCLNarcExplosiveAmmo());
         EquipmentType.addType(createCLATM3Ammo());
         EquipmentType.addType(createCLATM3ERAmmo());
         EquipmentType.addType(createCLATM3HEAmmo());
@@ -1177,6 +1180,24 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createISNarcExplosiveAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Narc Explosive Pods";
+        ammo.internalName = "ISNarc ExpolsivePods";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 4;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NARC;
+        ammo.munitionType = M_NARC_EX;
+        ammo.shots = 6;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLGaussAmmo() {
         AmmoType ammo = new AmmoType();
         
@@ -1829,6 +1850,24 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
  
+    public static AmmoType createCLNarcExplosiveAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Narc Explosive Pods";
+        ammo.internalName = "CLNarc Explosive Pods";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 4;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_NARC;
+        ammo.munitionType = AmmoType.M_NARC_EX;
+        ammo.shots = 6;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
     public static AmmoType createCLATM3Ammo() {
         AmmoType ammo = new AmmoType();
          

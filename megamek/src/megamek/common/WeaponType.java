@@ -1430,6 +1430,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = weapon.internalName;
         weapon.tdbName = "IS Narc Missle Beacon";
         weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;
@@ -2635,6 +2636,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = weapon.internalName;
         weapon.tdbName = "Clan Narc Missle Beacon";
         weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;

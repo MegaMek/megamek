@@ -310,7 +310,7 @@ public class MtfFile implements MechLoader {
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = (Mounted)vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == getInnerLocation(nLoc)) 
+                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc)) 
                                         && m.getType() == etype) {
                                 bFound = true;
                                 break;
@@ -322,7 +322,7 @@ public class MtfFile implements MechLoader {
                                 vSplitWeapons.removeElement(m);
                             }
                             // give the most restrictive location for arcs
-                            m.setLocation(mostRestrictiveLoc(loc, m.getLocation()));
+                            m.setLocation(Mech.mostRestrictiveLoc(loc, m.getLocation()));
                         }
                         else {
                             // make a new one
@@ -342,52 +342,6 @@ public class MtfFile implements MechLoader {
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
-        }
-    }
-    
-    private int getInnerLocation(int n)
-    {
-        switch(n) {
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
-                return Mech.LOC_CT;
-            case Mech.LOC_LLEG :
-            case Mech.LOC_LARM :
-                return Mech.LOC_LT;
-            case Mech.LOC_RLEG :
-            case Mech.LOC_RARM :
-                return Mech.LOC_RT;
-            default:
-                return n;
-        }
-    }
-    
-    private int mostRestrictiveLoc(int n1, int n2)
-    {
-        if (n1 == n2) {
-            return n1;
-        }
-        else if (restrictScore(n1) >= restrictScore(n2)) {
-            return n1;
-        }
-        else {
-            return n2;
-        }
-    }
-    
-    private int restrictScore(int n)
-    {
-        switch(n) {
-            case Mech.LOC_RARM :
-            case Mech.LOC_LARM :
-                return 0;
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
-                return 1;
-            case Mech.LOC_CT :
-                return 2;
-            default :
-                return 3;
         }
     }
 }

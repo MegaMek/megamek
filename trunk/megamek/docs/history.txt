@@ -30,6 +30,7 @@ board display:
 ? some way to resize chat to be bigger or smaller
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
 - zooming and/or scrollbars
+- display blown off limbs, and make available for clubs
 
 mechs:
 - allow split criticals for large weapons in MEP files (or in general)
@@ -71,6 +72,12 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS (10-20-02, 10pm)
++ 625838: only infantry shoot in the same hex
++ 625838: non-inf MGs do *dice* of damage to infantry
++ 625838: flamer infantry can do heat instead of damage too
++ 621346: mechs that "stomp" infantry in same hex have +3 to-hit mod
+
 v 0.27.3 (10-18-02, 4pm)
 + Abstracted equipment mode system
 + AMS can be turned off

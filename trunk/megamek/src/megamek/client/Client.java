@@ -397,7 +397,7 @@ public class Client extends Panel
     
     protected void fillPopup(Coords coords) {
         popup.removeAll();
-        
+        System.out.println( "Filling popup for " + coords.getBoardNum() );
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             popup.add(new ViewMenuItem(entity));

@@ -9681,6 +9681,11 @@ implements Runnable, ConnectionHandler {
                                                   currentYCoord);
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
                 boolean infernoBurning = board.burnInferno( currentCoords );
+                
+                // optional rule, woods burn down
+                if (currentHex.contains(Terrain.WOODS) && currentHex.levelOf(Terrain.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
+                    burnDownWoods(currentCoords);
+                }                
 
                 // If the woods has been cleared, or the building
                 // has collapsed put non-inferno fires out.
@@ -9756,6 +9761,28 @@ implements Runnable, ConnectionHandler {
         }
 
     }  // End the ResolveFire() method
+
+    public void burnDownWoods(Coords coords) {
+        Hex hex = game.board.getHex(coords);
+        int roll = Compute.d6(2);
+        if(roll >= 11) {
+            if(hex.levelOf(Terrain.WOODS) > 1) {
+                hex.removeTerrain(Terrain.WOODS);
+                hex.addTerrain(new Terrain(Terrain.WOODS, 1));
+                phaseReport.append( "Heavy woods at ")
+                           .append( coords.getBoardNum() )
+                           .append( " burns down to Light Woods!\n" );
+            }
+            else if(hex.levelOf(Terrain.WOODS) == 1) {
+                hex.removeTerrain(Terrain.WOODS);
+                hex.addTerrain(new Terrain(Terrain.ROUGH, 1));
+                phaseReport.append( "Light woods at ")
+                           .append( coords.getBoardNum() )
+                           .append( " burns down to Rough and goes out!!\n" );
+            }
+            sendChangedHex(coords);
+        }
+    }
 
     /**
      * Spreads the fire around the specified coordinates.

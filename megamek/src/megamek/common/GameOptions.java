@@ -86,6 +86,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("clan_ignore_eq_limits", "Ignore Clan Ammo Limitations", "If checked, Clan units can use ammo normally limited to IS units only; for example, Thunder-Augmented, Thunder-Inferno, and Thunder-Active LRM rounds.", false));
         addOption(ruleBreakers, new GameOption("no_clan_physical", "No physical attacks for the clans", "If checked, clan Meks may not make physical attacks.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_hover_charge", "No charge attacks for Hover vehicles", "If checked, Hover vehicles may not make rams/charges.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("woods_burn_down", "Woods have a chance to burn down", "If checked, woods will burn down as if cleared on a roll of 11+.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

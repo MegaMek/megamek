@@ -241,7 +241,6 @@ public class CEntity {
         for (int r = 1; r < this.MinRanges.length; r++) {
             if (num_weapons > 0)
                 this.MinRanges[r] = (int) Math.round(((double) this.MinRanges[r]) / (double) num_weapons);
-            //System.out.println(this.MinRanges[r]);
         }
         //what type of overheater am I
         int heat = heat_total - capacity;

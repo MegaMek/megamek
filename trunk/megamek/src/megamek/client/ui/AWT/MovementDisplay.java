@@ -389,6 +389,16 @@ public class MovementDisplay
         updateLoadButtons();
     }
 
+    private void removeLastStep() {
+        md.removeLastStep();
+        
+        if (cmd.length() == 0) {
+	        clearAllMoves();
+        } else {
+	        client.bv.drawMovementData(ce(), md);
+        }
+    }
+
     /**
      * Sends a data packet indicating the chosen movement.
      */
@@ -1140,6 +1150,11 @@ public class MovementDisplay
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAllMoves();
+        }
+        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (client.isMyTurn()) {
+	            removeLastStep();
+            }
         }
         if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {

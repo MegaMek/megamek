@@ -29,6 +29,7 @@ public class ToHitData
     public static final int SIDE_RIGHT      = 3;
   
     public final static int IMPOSSIBLE      = Integer.MAX_VALUE;
+    public final static int AUTOMATIC_MISS  = Integer.MAX_VALUE - 1;
     
     private int             value;
     private StringBuffer    desc;

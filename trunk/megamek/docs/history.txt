@@ -130,6 +130,7 @@ v 0.29 release candidate 2 (CVS)
 + Bug 754614: A tank that dies by critical should have dead crew.
 + Bug 755991: Fix reported NPE during disconnections
 + Bug 759464: No longer allow mechs to use Battle Armor LRM 5 ammo.
++ Changed syntax of MegaMek.bat to avoid errors on older Windows versions.
 
 v 0.29 release candidate 1 (06-16-03, 11pm)
 + Bug 748959: fixed bug with moved units not updating

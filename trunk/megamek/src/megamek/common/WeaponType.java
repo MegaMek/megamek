@@ -202,14 +202,29 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRAC2());
         EquipmentType.addType(createISRAC5());
         EquipmentType.addType(createISStreakSRM2());
+        EquipmentType.addType(createISSRM2OS());
+        EquipmentType.addType(createISStreakSRM2OS());
         EquipmentType.addType(createISStreakSRM4());
+        EquipmentType.addType(createISSRM4OS());
+        EquipmentType.addType(createISStreakSRM4OS());
         EquipmentType.addType(createISStreakSRM6());
+        EquipmentType.addType(createISSRM6OS());
+        EquipmentType.addType(createISStreakSRM6OS());
         EquipmentType.addType(createISMRM10());
         EquipmentType.addType(createISMRM20());
         EquipmentType.addType(createISMRM30());
         EquipmentType.addType(createISMRM40());
+        EquipmentType.addType(createISMRM10OS());
+        EquipmentType.addType(createISMRM20OS());
+        EquipmentType.addType(createISMRM30OS());
+        EquipmentType.addType(createISMRM40OS());
+        EquipmentType.addType(createISLRM5OS());
+        EquipmentType.addType(createISLRM10OS());
+        EquipmentType.addType(createISLRM15OS());
+        EquipmentType.addType(createISLRM20OS());
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
+        EquipmentType.addType(createISNarcOS());
         EquipmentType.addType(createISRL10());
         EquipmentType.addType(createISRL15());
         EquipmentType.addType(createISRL20());
@@ -244,9 +259,16 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLRM10());
         EquipmentType.addType(createCLLRM15());
         EquipmentType.addType(createCLLRM20());
+        EquipmentType.addType(createCLLRM5OS());
+        EquipmentType.addType(createCLLRM10OS());
+        EquipmentType.addType(createCLLRM15OS());
+        EquipmentType.addType(createCLLRM20OS());
         EquipmentType.addType(createCLSRM2());
         EquipmentType.addType(createCLSRM4());
         EquipmentType.addType(createCLSRM6());
+        EquipmentType.addType(createCLSRM2OS());
+        EquipmentType.addType(createCLSRM4OS());
+        EquipmentType.addType(createCLSRM6OS());
         EquipmentType.addType(createCLGaussRifle());
         EquipmentType.addType(createCLUltraAC2());
         EquipmentType.addType(createCLUltraAC5());
@@ -255,12 +277,16 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM2());
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
+        EquipmentType.addType(createCLStreakSRM2OS());
+        EquipmentType.addType(createCLStreakSRM4OS());
+        EquipmentType.addType(createCLStreakSRM6OS());
         EquipmentType.addType(createCLATM3());
         EquipmentType.addType(createCLATM6());
         EquipmentType.addType(createCLATM9());
         EquipmentType.addType(createCLATM12());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
+        EquipmentType.addType(createCLNarcOS());
         EquipmentType.addType(createCLArrowIVSystem());
         EquipmentType.addType(createCLLongTom());
         EquipmentType.addType(createCLSniper());
@@ -636,8 +662,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -662,8 +688,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -688,8 +714,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
 
         return weapon;
     }
@@ -714,8 +740,112 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
-		weapon.setModes(new String[] {"", "Indirect"});
-		weapon.flags |= F_MISSILE;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRM5OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 5 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRM-5");
+        weapon.addLookupName("ISLRM5 (OS)");
+        weapon.addLookupName("IS LRM 5 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 9;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRM10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 10 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRM-10");
+        weapon.addLookupName("ISLRM10 (OS)");
+        weapon.addLookupName("IS LRM 10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 2;
+        weapon.bv = 18;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRM15OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 15 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRM-15");
+        weapon.addLookupName("ISLRM15 (OS)");
+        weapon.addLookupName("IS LRM 15 (OS)");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 7.5f;
+        weapon.criticals = 3;
+        weapon.bv = 27;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISLRM20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 20 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("IS OS LRM-20");
+        weapon.addLookupName("ISLRM20 (OS)");
+        weapon.addLookupName("IS LRM 20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = 6;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 10.5f;
+        weapon.criticals = 5;
+        weapon.bv = 36;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
 
         return weapon;
     }
@@ -724,9 +854,9 @@ public class WeaponType extends EquipmentType {
       WeaponType weapon = new WeaponType();
 
       weapon.name = "RL 10";
-        weapon.setInternalName("RL10");
-        weapon.addLookupName("ISRocketLauncher10");
-        weapon.addLookupName("IS RLauncher-10");
+      weapon.setInternalName("RL10");
+      weapon.addLookupName("ISRocketLauncher10");
+      weapon.addLookupName("IS RLauncher-10");
       weapon.heat = 3;
       weapon.damage= DAMAGE_MISSILE;
       weapon.rackSize= 10;
@@ -748,9 +878,9 @@ public class WeaponType extends EquipmentType {
       WeaponType weapon = new WeaponType();
 
       weapon.name = "RL 15";
-        weapon.setInternalName("RL15");
-        weapon.addLookupName("ISRocketLauncher15");
-        weapon.addLookupName("IS RLauncher-15");
+      weapon.setInternalName("RL15");
+      weapon.addLookupName("ISRocketLauncher15");
+      weapon.addLookupName("IS RLauncher-15");
       weapon.heat = 4;
       weapon.damage= DAMAGE_MISSILE;
       weapon.rackSize= 15;
@@ -772,9 +902,9 @@ public class WeaponType extends EquipmentType {
      WeaponType weapon = new WeaponType();
 
      weapon.name = "RL 20";
-        weapon.setInternalName("RL20");
-        weapon.addLookupName("ISRocketLauncher20");
-        weapon.addLookupName("IS RLauncher-20");
+     weapon.setInternalName("RL20");
+     weapon.addLookupName("ISRocketLauncher20");
+     weapon.addLookupName("IS RLauncher-20");
      weapon.heat = 5;
      weapon.damage= DAMAGE_MISSILE;
      weapon.rackSize= 20;
@@ -1400,6 +1530,56 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createISSRM2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 2 (OS)";
+        weapon.setInternalName("ISSRM2OS");
+        weapon.addLookupName("ISSRM2 (OS)"); //mtf
+        weapon.addLookupName("IS SRM 2 (OS)");  //tdb
+        weapon.addLookupName("OS SRM-2");  //mep
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
+        weapon.bv = 4;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakSRM2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 2 (OS)";
+        weapon.setInternalName("ISStreakSRM2OS");
+        weapon.addLookupName("ISStreakSRM2 (OS)"); //mtf
+        weapon.addLookupName("IS Streak SRM 2 (OS)");  //tdb
+        weapon.addLookupName("OS Streak SRM-2");  //mep
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_ONESHOT | F_MISSILE;
+        weapon.bv = 6;
+
+        return weapon;
+    }
+
     public static WeaponType createISStreakSRM4() {
         WeaponType weapon = new WeaponType();
 
@@ -1418,8 +1598,58 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 12;
         weapon.tonnage = 3.0f;
         weapon.criticals = 1;
-        weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+        weapon.bv = 59;
+
+        return weapon;
+    }
+
+    public static WeaponType createISSRM4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 4 (OS)";
+        weapon.setInternalName("ISSRM4OS");
+        weapon.addLookupName("ISSRM4 (OS)"); //mtf
+        weapon.addLookupName("IS SRM 4 (OS)");  //tdb
+        weapon.addLookupName("OS SRM-4");  //mep
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_ONESHOT | F_MISSILE;
+        weapon.bv = 8;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakSRM4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 4 (OS)";
+        weapon.setInternalName("ISStreakSRM4OS");
+        weapon.addLookupName("ISStreakSRM4 (OS)"); //mtf
+        weapon.addLookupName("IS Streak SRM 4 (OS)");  //tdb
+        weapon.addLookupName("OS Streak SRM-4");  //mep
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+        weapon.bv = 12;
 
         return weapon;
     }
@@ -1448,6 +1678,55 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createISSRM6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 6 (OS)";
+        weapon.setInternalName("ISSRM6OS");
+        weapon.addLookupName("ISSRM6 (OS)"); //mtf
+        weapon.addLookupName("IS SRM 6 (OS)");  //tdb
+        weapon.addLookupName("OS SRM-6");  //mep
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 12;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISStreakSRM6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 6 (OS)";
+        weapon.setInternalName("ISStreakSRM6OS");
+        weapon.addLookupName("ISStreakSRM6 (OS)"); //mtf
+        weapon.addLookupName("IS Streak SRM 6 (OS)");  //tdb
+        weapon.addLookupName("OS Streak SRM-6");  //mep
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 2;
+        weapon.bv = 18;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
 
     public static WeaponType createISMRM10() {
         WeaponType weapon = new WeaponType();
@@ -1475,7 +1754,6 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-
     public static WeaponType createISMRM20() {
         WeaponType weapon = new WeaponType();
 
@@ -1502,15 +1780,12 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-
-
     public static WeaponType createISMRM30() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "MRM 30";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("MRM-30");
-
         weapon.addLookupName("ISMRM30");
         weapon.addLookupName("IS MRM 30");
         weapon.heat = 10;
@@ -1530,8 +1805,6 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-
-
 
     public static WeaponType createISMRM40() {
         WeaponType weapon = new WeaponType();
@@ -1555,6 +1828,110 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.bv = 224;
         weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "MRM 10 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("OS MRM-10");
+        weapon.addLookupName("ISMRM10 (OS)");
+        weapon.addLookupName("IS MRM 10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 11;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "MRM 20 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("OS MRM-20");
+        weapon.addLookupName("ISMRM20 (OS)");
+        weapon.addLookupName("IS MRM 20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 7.5f;
+        weapon.criticals = 3;
+        weapon.bv = 22;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM30OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "MRM 30 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("OS MRM-30");
+        weapon.addLookupName("ISMRM30 (OS)");
+        weapon.addLookupName("IS MRM 30 (OS)");
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 30;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 10.5f;
+        weapon.criticals = 5;
+        weapon.bv = 34;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMRM40OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "MRM 40 (OS)";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("OS MRM-40");
+        weapon.addLookupName("ISMRM40 (OS)");
+        weapon.addLookupName("IS MRM 40 (OS)");
+        weapon.heat = 12;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.toHitModifier = 1;
+        weapon.rackSize = 40;
+        weapon.ammoType = AmmoType.T_MRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 8;
+        weapon.longRange = 15;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 12.5f;
+        weapon.criticals = 7;
+        weapon.bv = 45;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
 
         return weapon;
     }
@@ -1601,6 +1978,30 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createISNarcOS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Narc (OS)";
+        weapon.setInternalName("ISNarcBeacon (OS)");
+        weapon.addLookupName("IS OS Narc Beacon");
+        weapon.addLookupName("IS Narc Missile Beacon (OS)");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 6;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
 
         return weapon;
     }
@@ -2038,6 +2439,106 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createCLLRM5OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 5 (OS)";
+        weapon.setInternalName("CLLRM5 (OS)");
+        weapon.addLookupName("Clan OS LRM-5");
+        weapon.addLookupName("Clan LRM 5 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.bv = 11;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRM10OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 10 (OS)";
+        weapon.setInternalName("CLLRM10 (OS)");
+        weapon.addLookupName("Clan OS LRM-10");
+        weapon.addLookupName("Clan LRM 10 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 1;
+        weapon.bv = 22;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRM15OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 15 (OS)";
+        weapon.setInternalName("CLLRM15 (OS)");
+        weapon.addLookupName("Clan OS LRM-15");
+        weapon.addLookupName("Clan LRM 15 (OS)");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 4.0f;
+        weapon.criticals = 2;
+        weapon.bv = 33;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLLRM20OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "LRM 20 (OS)";
+        weapon.setInternalName("CLLRM20 (OS)");
+        weapon.addLookupName("Clan OS LRM-20");
+        weapon.addLookupName("Clan LRM 20 (OS)");
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 14;
+        weapon.longRange = 21;
+        weapon.extremeRange = 28;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 4;
+        weapon.bv = 44;
+        weapon.setModes(new String[] {"", "Indirect"});
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
     public static WeaponType createCLSRM2() {
         WeaponType weapon = new WeaponType();
 
@@ -2106,6 +2607,78 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 59;
         weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRM2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 2 (OS)";
+        weapon.setInternalName("CLSRM2 (OS)");
+        weapon.addLookupName("Clan OS SRM-2");
+        weapon.addLookupName("Clan SRM 2 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.bv = 4;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRM4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 4 (OS)";
+        weapon.setInternalName("CLSRM4 (OS)");
+        weapon.addLookupName("Clan OS SRM-4");
+        weapon.addLookupName("Clan SRM 4 (OS)");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.bv = 8;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLSRM6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "SRM 6 (OS)";
+        weapon.setInternalName("CLSRM6 (OS)");
+        weapon.addLookupName("Clan OS SRM-6");
+        weapon.addLookupName("Clan SRM 6 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 12;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
 
         return weapon;
     }
@@ -2508,6 +3081,78 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createCLStreakSRM2OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 2 (OS)";
+        weapon.setInternalName("CLStreakSRM2 (OS)");
+        weapon.addLookupName("Clan OS Streak SRM-2");
+        weapon.addLookupName("Clan Streak SRM 2 (OS)");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+        weapon.bv = 8;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakSRM4OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 4 (OS)";
+        weapon.setInternalName("CLStreakSRM4 (OS)");
+        weapon.addLookupName("Clan OS Streak SRM-4");
+        weapon.addLookupName("Clan Streak SRM 4 (OS)");
+        weapon.heat = 3;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 16;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLStreakSRM6OS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Streak SRM 6 (OS)";
+        weapon.setInternalName("CLStreakSRM6 (OS)");
+        weapon.addLookupName("Clan OS Streak SRM-6");
+        weapon.addLookupName("Clan Streak SRM 6 (OS)");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_SRM_STREAK;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 2;
+        weapon.bv = 24;
+        weapon.flags |= F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
+
     public static WeaponType createCLATM3() {
         WeaponType weapon = new WeaponType();
 
@@ -2799,6 +3444,30 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES | F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLNarcOS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Narc (OS)";
+        weapon.setInternalName("CLNarcBeacon (OS)");
+        weapon.addLookupName("Clan OS Narc Beacon");
+        weapon.addLookupName("Clan Narc Missile Beacon (OS)");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.tonnage = 2.5f;
+        weapon.criticals = 1;
+        weapon.bv = 6;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
 
         return weapon;
     }

@@ -5061,9 +5061,7 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !wtype.hasFlag(WeaponType.F_INFANTRY) &&
-            !wtype.hasFlag(WeaponType.F_ONESHOT);
-        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
+            !wtype.hasFlag(WeaponType.F_INFANTRY);
 
         Mounted ammo = null;
         if (usesAmmo) {
@@ -5094,11 +5092,6 @@ implements Runnable, ConnectionHandler {
             wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
             return wr;
         }
-        //If Oneshot, has it been fired?
-        if (isOneShot && weapon.isFired()) {
-           wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "One-shot weapon already fired.");
-        }
-
         // make sure ammo is loaded
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
             ae.loadWeapon(weapon);
@@ -5142,8 +5135,8 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !wtype.hasFlag(WeaponType.F_INFANTRY) && !wtype.hasFlag(WeaponType.F_ONESHOT);
-        final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
+            !wtype.hasFlag(WeaponType.F_INFANTRY);
+
         Mounted ammo = weapon.getLinked();
 
         // how many shots are we firing?
@@ -5168,10 +5161,6 @@ implements Runnable, ConnectionHandler {
                 ammo.setShotsLeft(ammo.getShotsLeft() - 1);
             }
         }
-        if(isOneShot) {
-          weapon.setFired(true);
-        }
-
 
         // build up some heat
         ae.heatBuildup += (wtype.getHeat() * nShots);
@@ -5332,7 +5321,7 @@ implements Runnable, ConnectionHandler {
       final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
           wtype.getAmmoType() != AmmoType.T_BA_MG &&
           wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-          !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
+          !isWeaponInfantry;
       final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
       final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
       Infantry platoon = null;
@@ -5910,25 +5899,8 @@ implements Runnable, ConnectionHandler {
                 nDamPerHit = Math.abs( wtype.getAmmoType() );
             } else {
                 sSalvoType = " missile(s) ";
-                // Is this a one-shot weapon system?
-                if( !wtype.hasFlag(WeaponType.F_ONESHOT) ) {
-                    // Nope, get the damage from the linked ammo.
-                    nDamPerHit = atype.getDamagePerShot();
-                } else {
-                    // Yup.  Hard code in weapon types.
-                    switch(wtype.getAmmoType()) {
-                    case AmmoType.T_LRM:
-                    case AmmoType.T_MRM:
-                    case AmmoType.T_ROCKET_LAUNCHER:
-                        nDamPerHit=1;
-                        break;
-                    case AmmoType.T_SRM:
-                    case AmmoType.T_SRM_STREAK:
-                        nDamPerHit=2;
-                        break;
-                    }
-                }
-
+                // Get the damage from the linked ammo.
+                nDamPerHit = atype.getDamagePerShot();
             }
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
@@ -10899,6 +10871,17 @@ implements Runnable, ConnectionHandler {
             System.err.print( " is a " );
             System.err.print( mWeap.getName() );
             System.err.println( " and does not use ammo." );
+            return;
+        }
+        if ( ((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: item # " );
+            System.err.print( weaponId );
+            System.err.print( " of entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " is a " );
+            System.err.print( mWeap.getName() );
+            System.err.println( " and cannot use external ammo." );
             return;
         }
 

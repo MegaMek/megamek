@@ -1354,6 +1354,15 @@ public abstract class Entity
             if(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
+            // one-shot launchers need their single shot of ammo added.
+            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)) {
+                Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                m.setShotsLeft(1);
+                mounted.setLinked(m);
+                //Oneshot ammo will be identified by having a location
+                // of null.  Other areas in the code will rely on this.
+                addEquipment(m, Entity.LOC_NONE, false);
+            }
         }
         if (mounted.getType() instanceof AmmoType) {
             ammoList.addElement(mounted);
@@ -1489,7 +1498,7 @@ public abstract class Entity
     }
 
     /**
-     * Loads all weapons with ammo
+     * Attempts to load all weapons with ammo
      */
     public void loadAllWeapons() {
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
@@ -1508,31 +1517,30 @@ public abstract class Entity
         WeaponType wtype = (WeaponType)mounted.getType();
         for (Enumeration i = getAmmo(); i.hasMoreElements();) {
             Mounted mountedAmmo = (Mounted)i.nextElement();
-            AmmoType atype = (AmmoType)mountedAmmo.getType();
-            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
-                continue;
-            }
-            if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
-                mounted.setLinked(mountedAmmo);
+            if (loadWeapon(mounted, mountedAmmo))
                 break;
-            }
         }
     }
 
     /**
-     * Sets the ammo load to a specific ton
+     * Tries to load the specified weapon with the specified ammo.
+     * Returns true if successful, false otherwise.
      */
-    public void loadWeapon(Mounted mounted, Mounted mountedAmmo)
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo)
     {
-        if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping() || mountedAmmo.isBreached()) {
-            return;
-        }
-
+        boolean success = false;
         WeaponType wtype = (WeaponType)mounted.getType();
         AmmoType atype = (AmmoType)mountedAmmo.getType();
-        if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+
+        if (mountedAmmo.isAmmoUsable() &&
+            !wtype.hasFlag(WeaponType.F_ONESHOT) &&
+            atype.getAmmoType() == wtype.getAmmoType() &&
+            atype.getRackSize() == wtype.getRackSize()) {
             mounted.setLinked(mountedAmmo);
+            success = true;
         }
+
+        return success;
     }
 
 

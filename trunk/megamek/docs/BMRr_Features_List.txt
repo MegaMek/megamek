@@ -330,7 +330,7 @@ Equipment
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
 - Missile Lanchers		Yes		None
-- Missile Munitions		Partial		One Shot, Incendiary, Semiguided, Swarm, and Swarm-I not implemented
+- Missile Munitions		Partial		Incendiary, Semiguided, Swarm, and Swarm-I not implemented
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Partial		iNarc not yet implemented.

@@ -39,7 +39,7 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public boolean removeArea(PMElement ag){
-        return gr.remove(ag);
+        return gr.removeElement(ag);
     }
     
     /**
@@ -47,7 +47,7 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public void removeAll(){
-    	gr.clear();
+    	gr.removeAllElements();
     }
     
      /**

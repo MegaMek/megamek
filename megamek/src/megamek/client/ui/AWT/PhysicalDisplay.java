@@ -542,7 +542,7 @@ public class PhysicalDisplay
      */
     private void thrash() {
         ThrashAttackAction act = new ThrashAttackAction( cen, target.getTargetType(), target.getTargetId() );
-        ToHitData toHit = Compute.toHitThrash( client.game, act );
+        ToHitData toHit = act.toHit(client.game);
         StringBuffer at = new StringBuffer();
         StringBuffer damage = new StringBuffer();
 
@@ -637,7 +637,7 @@ public class PhysicalDisplay
             setBrushOffEnabled( canBrush );
 
             // Thrash at infantry?
-            ToHitData thrash = Compute.toHitThrash( client.game, cen, target );
+            ToHitData thrash = new ThrashAttackAction(cen, target).toHit(client.game);
             setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
         } else {
             setPunchEnabled(false);

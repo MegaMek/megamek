@@ -104,7 +104,7 @@ public class CEntity  {
   }
   
   public boolean canMove() {
-    return (entity.isSelectable() && !(entity.isProne() && base_psr_odds < .2));
+    return (entity.isSelectable() && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
   }
   
   public void reset() {
@@ -150,6 +150,8 @@ public class CEntity  {
     }
   }
   
+   int[] MinRanges = new int[7];
+  
   public void characterize() {
     this.entity = game.getEntity(this.entity.getId());
     this.old = new EntityState(this);
@@ -168,7 +170,10 @@ public class CEntity  {
     int capacity = entity.getHeatCapacity();
     int heat_total = 0;
     Enumeration weapons = entity.getWeapons();
+    int num_weapons = 0;
+    this.MinRanges = new int[7];
     while (weapons.hasMoreElements()) {
+      num_weapons++;
       Mounted m = (Mounted)weapons.nextElement();
       int arc = entity.getWeaponArc(entity.getEquipmentNum(m));
       WeaponType weapon = (WeaponType)m.getType();
@@ -184,8 +189,10 @@ public class CEntity  {
       int lr = weapon.getLongRange();
       double ed = Compute.getExpectedDamage(weapon);
       double odds = 0;
+      double min_total = 0;
       for (int range = 1; range <= lr && range <= MAX_RANGE; range++) {
         if (range <= min) {
+          if (range < 7) this.MinRanges[range] += 1 + min - range;
           odds = Compute.oddsAbove(this.gunnery + 1 + min - range)/100.0;
         } else if (range <= sr) {
           odds = Compute.oddsAbove(this.gunnery)/100.0;
@@ -198,6 +205,10 @@ public class CEntity  {
         this.addDamage(arc, entity.isSecondaryArcWeapon(entity.getEquipmentNum(m)), range, ed*odds*((weapon.getHeat() > 0)?heat_mod:1));
         this.long_range = Math.max(this.long_range,range);
       }
+    }
+    for (int r = 1; r < this.MinRanges.length; r++) {
+      if (num_weapons > 0) this.MinRanges[r] = (int)Math.round(((double)this.MinRanges[r])/(double)num_weapons);
+      //System.out.println(this.MinRanges[r]);
     }
     /*for (int a = this.FIRST_ARC; a <= this.LAST_ARC; a++) {
       for (int r = 1; r <= this.MAX_RANGE; r++) {
@@ -409,8 +420,10 @@ public class CEntity  {
       ) {
         if (this.tb.NumEnemies == 1) {
           return t2 *= 2;
+          //check and make sure this is an enemy
+        } else if (this.entity.isEnemyOf((Entity)this.tb.getEntitiesOwned().elementAt(0))) {
+          return Math.sqrt(t2)*this.strategy.target;
         }
-        return Math.sqrt(t2)*this.strategy.target;
       }
       t2 *= 1.5;
     } else if (this.expected_damage[arc] > 0) {
@@ -829,7 +842,7 @@ public class CEntity  {
     int base = this.gunnery;
     int dist_mod = 0;
     if (range < 7) {
-      dist_mod = 0;
+      dist_mod = this.MinRanges[range];
     } else if (range < 13) {
       dist_mod = 2;
     } else if (range < this.MAX_RANGE) {

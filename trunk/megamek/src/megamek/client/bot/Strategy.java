@@ -33,9 +33,9 @@ public class Strategy {
   //where should I go?
   Coords target_coords = null;
   
-  /** Creates a new instance of Class */
-  public Strategy() {
-  }
+  static CEntity MainTarget;
+  
+  static int Turns = 0;
   
 }
 

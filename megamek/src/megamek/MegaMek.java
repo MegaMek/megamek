@@ -68,6 +68,7 @@ public class MegaMek
         System.out.println("Timestamp " + new Date(TIMESTAMP).toString());
         System.out.println("Java vendor " + System.getProperty("java.vendor"));
         System.out.println("Java version " + System.getProperty("java.version"));
+        System.out.println("Platform " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")\n");
 
         // set visible on middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();

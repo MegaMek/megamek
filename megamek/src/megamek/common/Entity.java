@@ -3591,4 +3591,90 @@ public abstract class Entity
     public boolean getGaveKillCredit() {
         return this.killerId != Entity.NONE;
     }
+
+    /**
+     * Check if the entity has any valid targets for physical attacks.
+     */
+    public boolean isEligibleForPhysical() {
+        boolean canHit = false;
+        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
+
+        // only mechs and protos have physical attacks (except tank charges)
+        if (!(this instanceof Mech || this instanceof Protomech)) {
+            return false;
+        }
+
+        // if you're charging or finding a club, it's already declared
+        if (isUnjammingRAC()
+            || isCharging()
+            || isMakingDfa()
+            || isFindingClub()
+            || isSpotting()) {
+            return false;
+        }
+
+        // check game options
+        if (game.getOptions().booleanOption("no_clan_physical") &&
+            isClan()) {
+            return false;
+        }
+        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
+            return true;
+        }
+
+        // dead mek walking
+        if (!isActive()) {
+            return false;
+        }
+
+        // Try to find a valid entity target.
+        Enumeration e = game.getEntities();
+        while ( !canHit && e.hasMoreElements() ) {
+            Entity target = (Entity)e.nextElement();
+
+            // don't shoot at friendlies unless you are into that sort of thing
+            // and do not shoot yourself even then
+            if (!(isEnemyOf(target) || (friendlyFire && getId() != target.getId() ))) {
+                continue;
+            }
+
+            // No physical attack works at distances > 1.
+            if ( target.getPosition() == null ||
+                 getPosition().distance(target.getPosition()) > 1 ) {
+                continue;
+            }
+
+            canHit |= Compute.canPhysicalTarget(game, getId(), target);
+
+        }
+
+        // If there are no valid Entity targets, check for add valid buildings.
+        Enumeration bldgs = game.board.getBuildings();
+        while ( !canHit && bldgs.hasMoreElements() ) {
+            final Building bldg = (Building) bldgs.nextElement();
+
+            // Walk through the hexes of the building.
+            Enumeration hexes = bldg.getCoords();
+            while ( !canHit && hexes.hasMoreElements() ) {
+                final Coords coords = (Coords) hexes.nextElement();
+
+                // No physical attack works at distances > 1.
+                if ( getPosition().distance(coords) > 1 ) {
+                    continue;
+                }
+
+                // Can the entity target *this* hex of the building?
+                final BuildingTarget target = new BuildingTarget( coords,
+                                                                  game.board,
+                                                                  false );
+
+                canHit |= Compute.canPhysicalTarget(game, getId(), target);
+
+            } // Check the next hex of the building
+
+        } // Check the next building
+
+        return canHit;
+    }
+
 }

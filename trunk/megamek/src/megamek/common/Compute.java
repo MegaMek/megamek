@@ -1396,6 +1396,11 @@ public class Compute
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
         }        
         
+        // targeting computer
+        if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+            toHit.addModifier(-1, "targeting computer");
+        }
+        
         // change hit table for partial cover
         if (los.targetCover) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);

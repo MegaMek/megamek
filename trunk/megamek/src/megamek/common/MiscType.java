@@ -20,6 +20,8 @@
 
 package megamek.common;
 
+import java.util.Enumeration;
+
 /**
  *
  * @author  Ben
@@ -42,6 +44,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_C3I               = 0x0800;
     public static final int     F_ARTEMIS           = 0x1000;
     public static final int     F_ECM               = 0x2000;
+    public static final int     F_TARGCOMP          = 0x4000;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -71,7 +74,19 @@ public class MiscType extends EquipmentType {
             else {
                 return (float)Math.round(entity.getWeight() / 20.0f);
             }
+        } else if (hasFlag(F_TARGCOMP)) {
+            // 1 ton for every 5 tons of direct_fire weaponry
+            double fTons = 0.0;
+            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
+                Mounted m = (Mounted)e.nextElement();
+                WeaponType wt = (WeaponType)m.getType();
+                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    fTons += wt.getTonnage(entity);
+                }
+            }
+            return (float)Math.ceil(fTons / 5.0);
         }
+        
         // okay, I'm out of ideas
         return 1.0f;
     }
@@ -94,6 +109,17 @@ public class MiscType extends EquipmentType {
             else {
                 return Math.round(entity.getWeight() / 20.0f);
             }
+        } else if (hasFlag(F_TARGCOMP)) {
+            // 1 slot for every 5 tons of direct_fire weaponry
+            double fTons = 0.0;
+            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
+                Mounted m = (Mounted)e.nextElement();
+                WeaponType wt = (WeaponType)m.getType();
+                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    fTons += wt.getTonnage(entity);
+                }
+            }
+            return (int)Math.ceil(fTons / 5.0);
         }
         // right, well I'll just guess then
         return 1;
@@ -106,6 +132,25 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
             return (float)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_TARGCOMP)) {
+            // 20% of direct_fire weaponry BV (half for rear-facing)
+            double fFrontBV = 0.0, fRearBV = 0.0;
+            for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
+                Mounted m = (Mounted)e.nextElement();
+                WeaponType wt = (WeaponType)m.getType();
+                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    if (m.isRearMounted()) {
+                        fRearBV += wt.getBV(entity);
+                    } else {
+                        fFrontBV += wt.getBV(entity);
+                    }
+                }
+            }
+            if (fFrontBV > fRearBV) {
+                return (float)(fFrontBV * 0.2 + fRearBV * 0.1);
+            } else {
+                return (float)(fRearBV * 0.2 + fFrontBV * 0.1);
+            }
         }
         // maybe it's 0
         return 0;
@@ -140,6 +185,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLArtemis());
         EquipmentType.addType(createGECM());
         EquipmentType.addType(createCLECM());
+        EquipmentType.addType(createCLTargComp());
     }
     
     public static MiscType createHeatSink() {
@@ -474,6 +520,21 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_ECM;
         misc.bv = 61;
+        
+        return misc;
+    }
+    
+    public static MiscType createCLTargComp() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Targeting Computer";
+        misc.internalName = "CLTargeting Computer";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.bv = BV_VARIABLE;
+        misc.flags |= F_TARGCOMP;
         
         return misc;
     }

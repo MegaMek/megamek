@@ -566,7 +566,7 @@ implements Runnable, ConnectionHandler {
         // remove all entities
         game.reset();
         send(createEntitiesPacket());
-		send(new Packet(Packet.COMMAND_SENDING_MINEFIELDS, new Vector()));
+        send(new Packet(Packet.COMMAND_SENDING_MINEFIELDS, new Vector()));
 
         //TODO: remove ghosts
 
@@ -1239,6 +1239,7 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_OFFBOARD_REPORT :
                 resetActivePlayersDone();
                 send(createReportPacket());
+                if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
             case Game.PHASE_VICTORY :
                 prepareVictoryReport();
@@ -1298,6 +1299,7 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_PHYSICAL :
             case Game.PHASE_TARGETING :
                 changeToNextTurn();
+                if (game.getOptions().booleanOption("paranoid_autosave")) autoSave();
                 break;
         }
     }

@@ -755,7 +755,7 @@ public class Compute
     }
     
     /**
-     * Returns true if there is a mech that is an enemy of the specified unit
+     * Returns true if there is any unit that is an enemy of the specified unit
      * in the specified hex
      */
     public static boolean isEnemyUnitIn(Game game, int entityId, Coords coords) {

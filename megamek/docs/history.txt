@@ -90,6 +90,7 @@ v CVS
 + updated AMS reporting
 + no more NullPointerExceptions in UpdateRACButton
 + show label for Unjam RAC button all the time
++ Fix bug in MovementDisplay that prevents Charges and DFAs from working.
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

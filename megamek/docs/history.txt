@@ -7,6 +7,8 @@ v 0.29.14-dev
 + Data 809664: Added Brandfuchs Mech images.
 + Data 806313: Added Ploppys Mech images.
 + Bug 821063: Fixed BV of some precision AC ammo
++ In-game unit list/selector/overview.
++ Larger, bold font in chat.
 
 v 0.29.13 (10-05-03, 11pm)
 + RFE 814576: Show PlayerColor when Camo is missing.

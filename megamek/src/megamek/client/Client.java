@@ -1420,4 +1420,14 @@ public class Client extends Panel
         return frame;
     }
 
+    // Shows a dialg where the player can select the entity types 
+    // used in the LOS tool.
+    public void showLOSSettingDialog() {
+      	LOSDialog ld = new LOSDialog(frame, game.getMechInFirst(), game.getMechInSecond());
+      	ld.show();
+      	
+      	game.setMechInFirst(ld.getMechInFirst());
+      	game.setMechInSecond(ld.getMechInSecond());
+    }    
+
 }

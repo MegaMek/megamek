@@ -963,15 +963,20 @@ public class BoardView1
         Coords c2 = b.getCoords();
         moveCursor(secondLOSSprite, c2);
         
-        LosEffects le = Compute.calculateLos(game, c1, c2);
-        StringBuffer message = new StringBuffer();
+        LosEffects le = Compute.calculateLos(game, c1, c2, 
+        						game.getMechInFirst(), 
+        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
         int blocking = le.getHeavyWoods() * 2 +
             le.getLightWoods() +
             le.getSmoke() * 2;
-        message.append( "Attacker hex is " )
+        message.append( "Attacker(")
+         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
+         	.append(") hex is " )
             .append( c1.getBoardNum() )
             .append( ".\n" );
-        message.append( "Target hex is " )
+        message.append( "Target(")
+         	.append(game.getMechInSecond() ? "Mech" : "non Mech")
+         	.append(") hex is " )
             .append( c2.getBoardNum() )
             .append( ".\n" );
         if (le.isBlocked() || blocking > 2) {

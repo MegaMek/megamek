@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v0.29.59 (CVS)
++ Bug 762436, 839980: Domino Effect not able to displace off the board
+
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.
 + Patch 1087661: Show BV when real_blind_drop option is enabled
@@ -40,8 +43,7 @@ v0.29.58 (2004-12-26 9:00pm)
 + Data 1083453: Pictures for Akuma and Bloodkite
 + Data 870515: MTF Equipment List
 + Bug 1089323: entity may be dead when resolving arty attack; don't check it
-+ Bug 762436, 839980: Domino Effect not able to displace off the board
-  
+
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.
 + Game option: Night Battle (Partly implementated: Modifier is there, but

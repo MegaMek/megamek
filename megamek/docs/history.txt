@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 v0.29.51 (CVS)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs
++ Bug 1029620: Mackie mechfile should be in mechs.zip, not unofficial.zip
+    Pike Support Vehicle (RAC) datafile should be in vehicles.zip,
+    not in unofficial.zip
 
 v0.29.50 (2004-09-26 1:15pm)
 + Bug 1031414: location exposure should be checked after each fall

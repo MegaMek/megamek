@@ -16,11 +16,13 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+
+import java.applet.Applet;
+import java.applet.AudioClip;
+import sun.audio.*; //undocumented audio class used for older JVMs.
 
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -98,7 +100,7 @@ public class Client extends Panel
     private FileDialog dlgSaveList = null;
 
     /**
-     * Cache the "bing" soundclip.
+     * Cache for the "bing" soundclip.
      */
     AudioClip bingClip = null;
 
@@ -151,16 +153,7 @@ public class Client extends Panel
         // wait for full connection
         retrieveServerInfo();
 
-        // Try to load the "bing" sound clip.
-        if (Settings.soundBingFilename == null) return;
-        try {
-            File file = new File( Settings.soundBingFilename );
-            bingClip = Applet.newAudioClip(file.toURL());
-        }
-        catch (Throwable ex) {
-            ex.printStackTrace();
-        }
-
+        loadSoundClip();
     }
 
     /**
@@ -182,15 +175,7 @@ public class Client extends Panel
 
         Settings.load();
 
-        // Try to load the "bing" sound clip.
-        if (Settings.soundBingFilename == null) return;
-        try {
-            File file = new File( Settings.soundBingFilename );
-            bingClip = Applet.newAudioClip(file.toURL());
-        }
-        catch (Throwable ex) {
-            ex.printStackTrace();
-        }
+        loadSoundClip();
 
         initializeFrame();
         initializeDialogs();
@@ -199,6 +184,33 @@ public class Client extends Panel
         layoutFrame();
 
         frame.setVisible(true);
+    }
+
+    /*
+     * Try to load the "bing" sound clip.
+     */
+    public void loadSoundClip() {
+        if (Settings.soundBingFilename == null) return;
+        try {
+            File file = new File( Settings.soundBingFilename );
+            if (!file.exists()) {
+                System.err.println("Failed to load audio file: " + Settings.soundBingFilename);
+                return;
+            }
+            bingClip = Applet.newAudioClip(file.toURL());
+        }
+        catch (NoSuchMethodError e) {
+            //Ok, that didn't work.  We will fall back on our other
+            // sound class.
+            System.out.println("Failed to find AudioClip class, using AudioPlayer instead.");
+            if (!Settings.soundBingFilename.endsWith(".au")) {
+                //The older sound class only understands .au files
+                Settings.soundBingFilename = new String(Settings.soundBingFilename.substring(0,Settings.soundBingFilename.lastIndexOf(".")) + ".au");
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -2116,10 +2128,23 @@ public class Client extends Panel
 
     /**
      * Make a "bing" sound.
+     * This tries to use the newer AudioClip class first, then falls
+     * back on a Java 1.1 friendly (but undocumented!) class.
      */
     public void bing() {
-        if ( !Settings.soundMute && null != bingClip ) {
-            bingClip.play();
+        if ( !Settings.soundMute ) {
+            if ( null != bingClip ) {
+                bingClip.play();
+            } else {
+                try{
+                    File file = new File( Settings.soundBingFilename );
+                    InputStream in = new FileInputStream(file);
+                    AudioStream bingClip = new AudioStream(in);
+                    AudioPlayer.player.start(bingClip);
+                } catch (Exception err){
+                    err.printStackTrace();
+                }
+            }
         }
     }
 

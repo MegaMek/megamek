@@ -129,6 +129,7 @@ v 0.28.17 CVS
 + Bug 693885: Ignite choice not displayed if fire option turned off
 + Bug 724533: Displaced DFA'd units can't displace their own attacker
 + Added swords
++ Reordered "data/hexes/defaulthexset.txt" to better support rooftop fluff.
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

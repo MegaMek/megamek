@@ -299,7 +299,16 @@ public class MoveStep implements Serializable {
         }
     }
 
-    public boolean checkIllegal(final Game game, final Entity entity) {
+    /**
+     * Check the step for stacking violations, jumping into illegal
+     * terrain, and jumping into the same hex you started in.
+     * 
+     * @param game - The <code>Game</code> object.
+     * @param entity - The <code>Entity</code> object.
+     * @return True if the step was already illegal or has now been
+     *         determined to be illegal by this method.
+     */
+    public boolean checkAndSetIllegal(final Game game, final Entity entity) {
         final Hex destHex = game.board.getHex(getPosition());
 
         // skip steps that are not the last step
@@ -709,6 +718,11 @@ public class MoveStep implements Serializable {
 
         // guilty until proven innocent
         movementType = Entity.MOVE_ILLEGAL;
+
+        // check for ejection (always legal?)
+        if (type == MovePath.STEP_EJECT) {
+            movementType = Entity.MOVE_NONE;
+        }
 
         // check for valid jump mp
         if (parent.isJumping() && getMpUsed() <= entity.getJumpMPWithTerrain() && !isProne()) {

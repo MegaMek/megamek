@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.29.32 (CVS)
++ Bug 933545: Mech stacking violation bug fixed.
++ Bug 933550: Prone mechs can eject again.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

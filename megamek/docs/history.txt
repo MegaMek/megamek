@@ -87,6 +87,9 @@ VERSION HISTORY:
 ----------------
 v next
 + big horkin' vehicle patch.  Ground vehicles are mostly implemented
++ hovercrafts behave correctly on water
++ vehicles don't roll PSR after 20 damage
++ 592462: mechcache correctly reflects deleted mechfiles
 
 v 0.26.9 (08-09-2002, 11:30pm)
 + detailed end-of-game unit status exported to a text file

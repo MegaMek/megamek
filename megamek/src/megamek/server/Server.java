@@ -1435,7 +1435,8 @@ public boolean isPassworded() {
             // check if we've moved into water
             if (!lastPos.equals(curPos)
                     && step.getMovementType() != Entity.MOVE_JUMP
-                    && curHex.levelOf(Terrain.WATER) > 0) {
+                    && curHex.levelOf(Terrain.WATER) > 0
+                    && entity.getMovementType() != Entity.MovementType.HOVER) {
                 if (curHex.levelOf(Terrain.WATER) == 1) {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
                 } else if (curHex.levelOf(Terrain.WATER) == 2) {
@@ -2594,9 +2595,12 @@ public boolean isPassworded() {
     private void checkFor20Damage() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            // if this mech has 20+ damage, add another roll to the list.
-            if (entity.damageThisPhase >= 20) {
-                pilotRolls.addElement(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+            if (entity.getMovementType() == Entity.MovementType.BIPED ||
+                    entity.getMovementType() == Entity.MovementType.QUAD) {
+                // if this mech has 20+ damage, add another roll to the list.
+                if (entity.damageThisPhase >= 20) {
+                    pilotRolls.addElement(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+                }
             }
         }
     }

@@ -73,8 +73,12 @@ public class MechSummaryCache
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
                     ms.setBV(Integer.parseInt(s.substring(nIndex2 + 1)));
-                    vMechs.addElement(ms);
-                    sKnownFiles.add(ms.getSourceFile().toString());
+                    
+                    // verify that this file still exists
+                    if (ms.getSourceFile().exists()) {
+                        vMechs.addElement(ms);
+                        sKnownFiles.add(ms.getSourceFile().toString());
+                    }
                 }
             }
         }
@@ -82,6 +86,7 @@ public class MechSummaryCache
             System.out.println("Unable to load mechcache: " + e.getMessage());
             e.printStackTrace();
         }
+        
         
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, ROOT);

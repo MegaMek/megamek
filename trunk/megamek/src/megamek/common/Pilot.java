@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -82,6 +82,10 @@ public class Pilot
     
     public void setDead(boolean dead) {
         this.dead = dead;
+        if (dead) {
+            rollsNeeded = 0;
+            hits = 6;
+        }
     }
     
     public boolean isDoomed() { 
@@ -90,6 +94,10 @@ public class Pilot
     
     public void setDoomed(boolean b) {
         doomed = b;
+        if (doomed) {
+            rollsNeeded = 0;
+            hits = 6;
+        }
     }
     
     public boolean isActive() {

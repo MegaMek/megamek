@@ -204,7 +204,7 @@ public class PhysicalDisplay
         moveMechDisplay();
         client.game.board.select(null);
         client.game.board.highlight(null);
-        selectEntity(client.game.getFirstEntityNum(client.getLocalPlayer()));
+        selectEntity(client.getFirstEntityNum());
     }
     
     /**
@@ -495,7 +495,7 @@ public class PhysicalDisplay
         } else if (ev.getSource() == butClub) {
             club();
         } else if (ev.getSource() == butNext) {
-            selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
+            selectEntity(client.getNextEntityNum(cen));
         }
     }
     

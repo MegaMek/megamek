@@ -255,7 +255,7 @@ public class FiringDisplay
         moveMechDisplay();
         client.game.board.select(null);
         client.game.board.highlight(null);
-        selectEntity(client.game.getFirstEntityNum(client.getLocalPlayer()));
+        selectEntity(client.getFirstEntityNum());
     }
     
     /**
@@ -665,7 +665,7 @@ public class FiringDisplay
         } else if (ev.getSource() == butNext) {
             clearAttacks();
             refreshAll();
-            selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
+            selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;

@@ -31,14 +31,10 @@ board display:
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
 - zooming and/or scrollbars
 
-mech display:
-- extra heat capacity due to underwater heat sinks doesn't show up
-
 mechs:
 - allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
-- treat gauss rifles as explosive ammo
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
@@ -46,15 +42,10 @@ initiative:
 ? might show whole initiative sequence somewhere
 
 movement:
-? mech can try moving again if failed getting up
-- jump jets above water should work when jumping out of water
 - pavement movement and skidding
 - go prone action
-- jump into level 1 water should need roll (bdee)
-- jumps should be forced to take the most direct path
 
 weapon attacks:
-- "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
 - eliminate leg weapons & kicks in level 1 water under level 1 rules
 
@@ -78,14 +69,9 @@ FUTURE VERSION PLANS:
 - level 2!
 - more interface improvements, particularly in the lobby
 
-v 0.27
-- (maybe) buildings, at least as obstacles
-- ammo switching
-- level 2 tech
-
 VERSION HISTORY:
 ----------------
-v (next)
+v 0.26.12 (09-07-02, 10am)
 + fixed crashbug when no ammo was available to a weapon
 + mech selector now additionally looks inside .zip files
 + fixed crash bug with new ammo selector under MS Java
@@ -95,6 +81,7 @@ v (next)
 + vehicle side-firing arcs setup
 + vehicles don't break the ammo-selector anymore
 + vehicle critical hits and special hits implemented
++ mechs that have fallen during movement can try to stand up
 
 v 0.26.11 (08-30-02, 10pm)
 + 598824: a few more hovercraft movement fixes

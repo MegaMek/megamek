@@ -68,9 +68,7 @@ public class MovementDisplay
 		shiftheld = false;
 		
 		client.game.board.addBoardListener(this);
-		client.bv.addKeyListener(this);
-		
-		
+        
 		statusL = new Label("Waiting to begin Movement phase...", Label.CENTER);
 		
 		butWalk = new Button("Walk");
@@ -135,6 +133,8 @@ public class MovementDisplay
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.weightx = 0.0;	c.weighty = 0.0;
 		addBag(panButtons, gridbag, c);
+        
+        addKeyListener(this);
 
 		// mech display.
 		client.mechD.addMouseListener(this);
@@ -145,6 +145,7 @@ public class MovementDisplay
 	private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
 		gridbag.setConstraints(comp, c);
 		add(comp);
+		comp.addKeyListener(this);
 	}
 	
 	/**

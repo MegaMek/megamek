@@ -68,6 +68,7 @@ weapon attacks:
 - multiple targets modifier
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
+? option to step thru roll by roll
 
 physical attacks:
 - clubbing
@@ -93,7 +94,12 @@ v 0.25
 
 v 0.24
 - new display system
+ - edges cleared
+ - handle where screen is bigger than map
+ - redo movement path display to avoid memory thrashing
 - map selection
+- charging, dfa
+- intiative ties re-rolled
 
 VERSION HISTORY:
 ----------------

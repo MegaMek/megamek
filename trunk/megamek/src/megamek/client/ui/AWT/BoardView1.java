@@ -119,6 +119,11 @@ public class BoardView1
     // wreck sprites
     private Vector wreckSprites = new Vector();
 
+    private Coords rulerStart; // added by kenn
+    private Coords rulerEnd; // added by kenn
+    private Color rulerStartColor; // added by kenn
+    private Color rulerEndColor; // added by kenn
+
     /**
      * Construct a new board view for the specified game
      */
@@ -285,6 +290,24 @@ public class BoardView1
 			disp.draw(backGraph, backSize);
 		}
 		
+        // added by kenn
+        // draw the ruler line
+        if (rulerStart != null) {
+            Point start =  getCentreHexLocation(rulerStart);
+            if (rulerEnd != null) {
+               Point end = getCentreHexLocation(rulerEnd);
+               backGraph.setColor(Color.yellow);
+               backGraph.drawLine(start.x - boardRect.x, start.y - boardRect.y, end.x - boardRect.x, end.y - boardRect.y);
+
+               backGraph.setColor(rulerEndColor);
+               backGraph.fillRect(end.x - boardRect.x - 1, end.y - boardRect.y - 1, 2, 2);
+            }
+
+            backGraph.setColor(rulerStartColor);
+            backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y - 1, 2, 2);
+        }
+        // end kenn
+
         // draw the back buffer onto the screen
         g.drawImage(backImage, offset.x, offset.y, this);
 
@@ -632,6 +655,22 @@ public class BoardView1
     private Point getHexLocation(Coords c) {
         return getHexLocation(c.x, c.y);
     }
+
+    // added by kenn
+    /**
+     * Returns the absolute position of the centre
+     * of the hex graphic
+     */
+    private Point getCentreHexLocation(int x, int y) {
+        Point p = getHexLocation(x, y);
+        p.x += 42;
+        p.y += 36;
+        return p;
+    }
+    private Point getCentreHexLocation(Coords c) {
+        return getCentreHexLocation(c.x, c.y);
+    }
+    // end kenn
 
     /**
      * Returns the coords at the specified point
@@ -2736,5 +2775,16 @@ public class BoardView1
 	public TilesetManager getTilesetManager() {
     	return tileManager;
     }
+    
+    // added by kenn
+    public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
+      rulerStart = s;
+      rulerEnd = e;
+      rulerStartColor = sc;
+      rulerEndColor = ec;
+
+      repaint();
+    }
+    // end kenn
 
 }

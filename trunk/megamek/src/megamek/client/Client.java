@@ -71,6 +71,7 @@ public class Client extends Panel
     public MiniMap              minimap;
     public PopupMenu            popup = new PopupMenu("Board Popup...");
     private UnitOverview 		uo;
+    public Ruler                ruler; // added by kenn
         
     protected Component         curPanel;
     
@@ -351,6 +352,15 @@ public class Client extends Panel
         mechW.addWindowListener(this);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
+        
+        // added by kenn
+        Ruler.color1 = Settings.rulerColor1;
+        Ruler.color2 = Settings.rulerColor2;
+        ruler = new Ruler(frame, this, bv);
+        ruler.setLocation(Settings.rulerPosX, Settings.rulerPosY);
+        ruler.setSize(Settings.rulerSizeWidth, Settings.rulerSizeHeight);
+        // end kenn
+
         // minimap
         minimapW = new Dialog(frame, "MiniMap", false);
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
@@ -410,6 +420,16 @@ public class Client extends Panel
             Settings.displaySizeWidth = mechW.getSize().width;
             Settings.displaySizeHeight = mechW.getSize().height;
         }
+
+        // added by kenn
+        // also ruler display
+        if (ruler != null && ruler.getSize().width != 0 && ruler.getSize().height != 0) {
+            Settings.rulerPosX = ruler.getLocation().x;
+            Settings.rulerPosY = ruler.getLocation().y;
+            Settings.rulerSizeWidth = ruler.getSize().width;
+            Settings.rulerSizeHeight = ruler.getSize().height;
+        }
+        // end kenn
 
         // save settings to disk
         Settings.save();

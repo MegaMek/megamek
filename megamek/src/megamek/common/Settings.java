@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Properties;
+import java.util.Enumeration;
 
 public class Settings
 {
@@ -142,6 +144,53 @@ public class Settings
     /** The starting character for unit designations. */
     public static char      unitStartChar            = 'A'; // == '\u0041'
 
+    /** The system defaults for MegaMek settings. */
+    private static Properties system = null;
+
+    /**
+     * The player's saved values for MegaMek settings.
+     * <p/>
+     * Under v0.29.x, this list does <strong>not</strong> contain the
+     * values of "standard" MegaMek settings.
+     */
+    private static Properties saved = null;
+
+    /** Any runtime overrides of MegaMek settings. */
+    private static Properties runtime = null;
+
+    /** The singleton <code>Settings</code> object. */
+    private static final Settings instance = new Settings();
+
+    /**
+     * Create and initialize the singleton instance.
+     */
+    private Settings() {
+
+        // Load any runtime overrides.
+        Settings.runtime = System.getProperties();
+
+        // Remember the location of the default settings.
+        String defaultSettings = Settings.cfgFileName;
+
+        // Load the system default settings.
+        saved = new Properties();
+        Settings.load();
+
+        // Has the player saved settings to a file of their own?
+        String playerSettings = Settings.runtime.getProperty
+            ( "cfgfilename", 
+              Settings.saved.getProperty( "cfgfilename", 
+                                          Settings.cfgFileName ) );
+        if ( !defaultSettings.equals( playerSettings ) ) {
+            // Yup.  Load the player's values and keep the system defaults.
+            system = saved;
+            Settings.cfgFileName = playerSettings;
+            saved = new Properties( system );
+            Settings.load();
+        }
+
+    }
+        
     /**
      * Loads the settings from disk
      */
@@ -340,13 +389,22 @@ scan:
                         st.nextToken();
                         shiftScrollSensitivity = (int)st.nval;
                     }
+                    else {
+                        // Store the key and value in our saved settings.
+                        st.nextToken();
+                        String value = st.sval;
+                        if ( null != value ) {
+                            saved.put( key, new String(value) );
+                        }
+                    }
                 }
             }
             
             cr.close();
         } catch(Exception e) {
             System.err.println("error reading settings file:");
-            System.err.println(e.getMessage());
+//             System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -428,6 +486,23 @@ scan:
             cw.write("tooltipdelay " + tooltipDelay + "\r\n");
             cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
             cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
+
+            // Store all of our "saved" settings.
+            // Need to enclose "/" and "." in quotes
+            Enumeration keys = Settings.saved.propertyNames();
+            while ( keys.hasMoreElements() ) {
+                final String key = keys.nextElement().toString();
+                final String value = Settings.saved.getProperty( key );
+                boolean escapeValue = ( value.indexOf('/') > -1 ||
+                                        value.indexOf('.') > -1 );
+                cw.write( key );
+                cw.write( " " );
+                if ( escapeValue ) cw.write( "\"" );
+                cw.write( Settings.saved.getProperty(key) );
+                if ( escapeValue ) cw.write( "\"" );
+                cw.write( "\r\n" );
+            }
+
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());
@@ -442,4 +517,96 @@ scan:
         }
         return c.getRed() + " " + c.getGreen() + " " + c.getBlue();
     }
+
+    /**
+     * Get the singleton <code>Settings</code> object.
+     *
+     * @return  The singleton <code>Settings</code> object.
+     */
+    public static Settings getInstance() {
+        return Settings.instance;
+    }
+
+    /**
+     * Get the value for the named setting.
+     *
+     * @param   name the <code>String</code> name of the setting whose
+     *          value is needed.  This value may be <code>null</code>.
+     * @return  the <code>String</code> value for the named setting.
+     *          This value may be <code>null</code>.
+     */
+    public String get( String name ) {
+        String value = null;
+
+        // null in, null out.
+        if ( null != name ) {
+            // If we have a runtime override for the named setting, use it;
+            // otherwise use the saved value (which may have a system default).
+            value = Settings.runtime.getProperty( name, null );
+            if ( null == value ) {
+                value = Settings.saved.getProperty( name );
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Get the value for the named setting.
+     *
+     * @param   name the <code>String</code> name of the setting whose
+     *          value is needed.  This value may be <code>null</code>.
+     * @param   defaultValue the default <code>String</code> value of the
+     *          named setting.  This value will be returned if no other
+     *          value is available.  This value may be <code>null</code>.
+     * @return  the <code>String</code> value for the named setting.
+     *          This value may be <code>null</code>.
+     */
+    public String get( String name, String defaultValue ) {
+        String value = null;
+
+        // Try to get the setting.  Use the default if we can't.
+        value = this.get( name );
+        if ( null != name ) {
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    /**
+     * Set a value for the named setting.  Setting names should include the
+     * name of the class (or at least package) that they are used in.  If
+     * a setting name does not include a class or package name, then it is
+     * assumed to be global to the MegaMek system, and may be set or used by
+     * any component in the system.
+     * <p/>
+     * Values set at runtime will override any saved value for a setting.  All
+     * values set by this method will be included in the next save.
+     *
+     * @param   name the <code>String</code> name of the setting whose
+     *          value is needed.  This value may not be <code>null</code>.
+     * @param   value the <code>String</code> value to set for the named
+     *          setting.  This value may not be <code>null</code>.
+     * @throws  <code>IllegalArgumentException</code> is thrown if a
+     *          <code>null</code> setting name or value is passed.
+     */
+    public void set( String name, String value ) {
+        // Validate input.
+        if ( null == name ) {
+            throw new IllegalArgumentException
+                ( "Settings passed a null name." );
+        }
+        if ( null == value ) {
+            throw new IllegalArgumentException
+                ( "Settings passed a null value." );
+        }
+
+        // Update the value of any runtime override for the named setting.
+        if ( Settings.runtime.contains( name ) ) {
+            Settings.runtime.put( name, value );
+        }
+
+        // Update the value to be saved for the named setting.
+        Settings.saved.put( name, value );
+    }
+
 }

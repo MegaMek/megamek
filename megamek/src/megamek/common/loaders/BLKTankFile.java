@@ -23,37 +23,22 @@
  * @author  njrkrynn
  * @version 
  */
-package megamek.common;
+package megamek.common.loaders;
 
-import java.io.*;
-
+import megamek.common.Entity;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.TroopSpace;
 import megamek.common.util.*;
 
-public class BLKTankFile implements MechLoader {    
+public class BLKTankFile extends BLKFile implements MechLoader {    
     
-    BuildingBlock dataFile;
     private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover" };
-    
-    /** Creates new BLkFile */
-    public BLKTankFile(InputStream is) {
-        
-        dataFile = new BuildingBlock(is);
-        
-    }
     
     public BLKTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
       
-    //if it's a block file it should have this...
-    public boolean isMine() {
-     
-        if (dataFile.exists("blockversion") ) return true;
-        
-        return false;
-        
-    }
-
     public Entity getEntity() throws EntityLoadingException {
     
         Tank t = new Tank();
@@ -83,7 +68,7 @@ public class BLKTankFile implements MechLoader {
         }
         
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
-        t.weight = dataFile.getDataAsFloat("tonnage")[0];
+        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
             
         if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
@@ -150,42 +135,4 @@ public class BLKTankFile implements MechLoader {
         loadEquipment(t, "Body", Tank.LOC_BODY);
         return t;        
     }
-    
-    private void loadEquipment(Tank t, String sName, int nLoc) 
-            throws EntityLoadingException
-    {            
-        String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
-        if (saEquip == null) return;
-        
-        // prefix is "Clan " or "IS "
-        String prefix;
-        if (t.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
-            prefix = "Clan ";
-        } else {
-            prefix = "IS ";
-        }
-
-        for (int x = 0; x < saEquip.length; x++) {
-            String equipName = saEquip[x].trim();
-            EquipmentType etype = EquipmentType.getByMtfName(equipName);
-            
-            if (etype == null) {
-                etype = EquipmentType.getByMepName(equipName);
-            }
-            
-            if (etype == null) {
-                // try w/ prefix
-                etype = EquipmentType.getByMepName(prefix + equipName);
-            }
-            
-            if (etype != null) {
-                try {
-                    t.addEquipment(etype, nLoc);
-                } catch (LocationFullException ex) {
-                    throw new EntityLoadingException(ex.getMessage());
-                }
-            }
-        }
-    }
 }
-

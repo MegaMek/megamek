@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -19,46 +19,29 @@
  */
 
 /**
- * This class loads BattleArmor BLK files.
+ * This class loads 'Proto BLK files.
  *
- * @author  Suvarov454@sourceforge.net (James A. Damour )
+ * @author  Suvarov454@sourceforge.net (James A. Damour)
  * @version $revision:$
  */
-package megamek.common;
+package megamek.common.loaders;
 
-import java.io.*;
-
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Protomech;
+import megamek.common.TechConstants;
 import megamek.common.util.*;
 
-public class BLKBattleArmorFile implements MechLoader {
+public class BLKProtoFile extends BLKFile implements MechLoader {
 
-    BuildingBlock dataFile;
-    // HACK!!!  BattleArmor movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "", "Leg", "", "", "", "Jump" };
-
-    /** Creates new BLkFile */
-    public BLKBattleArmorFile(InputStream is) {
-
-        dataFile = new BuildingBlock(is);
-
-    }
-
-    public BLKBattleArmorFile(BuildingBlock bb) {
+    public BLKProtoFile(BuildingBlock bb) {
         dataFile = bb;
-    }
-
-    //if it's a block file it should have this...
-    public boolean isMine() {
-
-        if (dataFile.exists("blockversion") ) return true;
-
-        return false;
-
     }
 
     public Entity getEntity() throws EntityLoadingException {
 
-        BattleArmor t = new BattleArmor();
+        Protomech t = new Protomech();
 
         if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
@@ -86,11 +69,12 @@ public class BLKBattleArmorFile implements MechLoader {
         }
 
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
-        t.weight = dataFile.getDataAsFloat("tonnage")[0];
+        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
         if (!dataFile.exists("BV")) throw new EntityLoadingException("Could not find BV block.");
         t.setBattleValue( dataFile.getDataAsInt("BV")[0] );
 
+        /* 'Protos have only one motion type. **
         if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
@@ -102,6 +86,7 @@ public class BLKBattleArmorFile implements MechLoader {
         }
         if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementType(nMotion);
+        ** 'Protos have only one motion type. */
 
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
@@ -113,27 +98,34 @@ public class BLKBattleArmorFile implements MechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        // Each trooper has the same amount of armor
-        if (armor.length != 1) {
+        boolean hasMainGun = false;
+        if ( Protomech.NUM_PMECH_LOCATIONS == armor.length ) {
+            hasMainGun = true;
+        }
+        else if ( Protomech.NUM_PMECH_LOCATIONS - 1 == armor.length ) {
+            hasMainGun = false;
+        }
+        else {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
+        t.setHasMainGun( hasMainGun );
+
         // add the body to the armor array
-        for (int x = 1; x < t.locations(); x++) {
-            t.initializeArmor(armor[0], x);
+        for (int x = 0; x < armor.length; x++) {
+            t.initializeArmor(armor[x], x);
         }
 
         t.autoSetInternal();
 
-        loadEquipment(t, "Squad", BattleArmor.LOC_SQUAD);
-        String[] abbrs = t.getLocationAbbrs();
-        for ( int loop = 1; loop < t.locations(); loop++ ) {
+        String[] abbrs = t.getLocationNames();
+        for ( int loop = 0; loop < t.locations(); loop++ ) {
             loadEquipment( t, abbrs[loop], loop );
         }
         return t;
     }
 
-    private void loadEquipment(BattleArmor t, String sName, int nLoc)
+    private void loadEquipment(Protomech t, String sName, int nLoc)
             throws EntityLoadingException
     {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
@@ -149,6 +141,31 @@ public class BLKBattleArmorFile implements MechLoader {
 
         for (int x = 0; x < saEquip.length; x++) {
             String equipName = saEquip[x].trim();
+
+            // ProtoMech Ammo comes in non-standard amounts.
+            int ammoIndex = equipName.indexOf( "Ammo (" );
+            int shotsCount = 0;
+            if ( ammoIndex > 0 ) {
+                // Try to get the number of shots.
+                try {
+                    String shots = equipName.substring
+                        ( ammoIndex + 6, equipName.length() - 1 );
+                    shotsCount = Integer.parseInt( shots );
+                    if ( shotsCount < 0 ) {
+                        throw new EntityLoadingException
+                            ( "Invalid number of shots in: " +
+                              equipName + "." );
+                    }
+                }
+                catch ( NumberFormatException badShots ) {
+                    throw new EntityLoadingException
+                        ( "Could not determine the number of shots in: " +
+                          equipName + "." );
+                }
+
+                // Strip the shots out of the ammo name.
+                equipName = equipName.substring( 0, ammoIndex + 4 );
+            }
             EquipmentType etype = EquipmentType.getByMtfName(equipName);
 
             if (etype == null) {
@@ -162,7 +179,13 @@ public class BLKBattleArmorFile implements MechLoader {
 
             if (etype != null) {
                 try {
-                    t.addEquipment(etype, nLoc);
+                    // If this is an Ammo slot, only add
+                    // the indicated number of shots.
+                    if ( ammoIndex > 0 ) {
+                        t.addEquipment( etype, nLoc, false, shotsCount );
+                    } else {
+                        t.addEquipment(etype, nLoc);
+                    }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }

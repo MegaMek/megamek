@@ -18,11 +18,21 @@
  * Created on April 7, 2002, 8:47 PM
  */
 
-package megamek.common;
+package megamek.common.loaders;
 
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import megamek.common.BipedMech;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.QuadMech;
+import megamek.common.TechConstants;
 
 /**
  *
@@ -208,7 +218,7 @@ public class MtfFile implements MechLoader {
                     throw new EntityLoadingException("Unsupported tech base and/or level: " + this.techBase.substring(9) + " (level " + this.rulesLevel.substring(12) + ")");
             }
 
-            mech.weight = (float)Integer.parseInt(tonnage.substring(5));
+            mech.setWeight((float)Integer.parseInt(tonnage.substring(5)));
 
             mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));

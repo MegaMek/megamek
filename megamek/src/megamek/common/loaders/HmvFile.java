@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.common;
+package megamek.common.loaders;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -21,6 +21,15 @@ import java.io.IOException;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.TroopSpace;
+import megamek.common.Entity.MovementType;
+import megamek.common.loaders.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -294,24 +303,7 @@ public class HmvFile
     return b1 + b2;
   }
 
-  private long readUnsignedInt(DataInputStream dis)
-    throws IOException
-  {
-    long b4 = readUnsignedByte(dis);
-
-    long b3 = readUnsignedByte(dis);
-    b3 <<= 8;
-
-    long b2 = readUnsignedByte(dis);
-    b2 <<= 16;
-
-    long b1 = readUnsignedByte(dis);
-    b1 <<= 32;
-
-    return b1 + b2 + b3 + b4;
-  }
-
-    /**
+  /**
      * Determine if the buffer contains the "is omni" flag.
      *
      * @param   buffer the array of <code>byte</code>s to be scanned.
@@ -359,7 +351,7 @@ public class HmvFile
 
                   int suspensionFactor =
                       getSuspensionFactor(roundedInternalStructure, movementType);
-                  tank.weight = (engineRating + suspensionFactor) / cruiseMP;
+                  tank.setWeight((engineRating + suspensionFactor) / cruiseMP);
 
                   tank.setMovementType(
                                        movementType == HMVMovementType.HOVER ? Entity.MovementType.HOVER :

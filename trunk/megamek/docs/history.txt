@@ -6,7 +6,8 @@ v0.29.42 (CVS)
 + Bug 994182: customize mechdialog allows ammochoice for lvl1 mechs
 + New game options for keeping Vehicles and/or Protomechs safe from Infernos.
 + Omit jumping movement from units that don't jump in Mech Viewer.
-+ Bug 992675,974358,877943: characterize Protomech armor to the AI bot.
++ Bug 992675,974358,877943: characterize Protomech armor to the AI bot
++ Bug 994206: not all targets are Entities
 
 v0.29.41 (2004-07-18 5:30pm)
 + Bug 985884: Attempt #2 at fixing this bug.

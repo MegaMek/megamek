@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -919,7 +920,8 @@ implements Runnable, ConnectionHandler {
             Player p = (Player)i.nextElement();
             sb.append("++++++++++ " )
                 .append( p.getName() )
-                .append( " ++++++++++\n");
+                .append( " ++++++++++");
+            sb.append( Settings.NL );
 
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
@@ -932,8 +934,10 @@ implements Runnable, ConnectionHandler {
             // Record the player's devastated units.
             Enumeration devastated = game.getDevastatedEntities();
             if ( devastated.hasMoreElements() ) {
-                sb.append("=============================================================\n");
-                sb.append("The following utterly destroyed units are not available for salvage:\n");
+                sb.append("=============================================================");
+                sb.append( Settings.NL );
+                sb.append("The following utterly destroyed units are not available for salvage:");
+                sb.append( Settings.NL );
                 while ( devastated.hasMoreElements() ) {
                     Entity e = (Entity) devastated.nextElement();
                     if (e.getOwner() == p) {
@@ -944,10 +948,12 @@ implements Runnable, ConnectionHandler {
                             .append( e.getCrew().getGunnery() )
                             .append( "/" )
                             .append( e.getCrew().getPiloting() )
-                            .append( ")\n" );
+                            .append( ")" );
+                        sb.append( Settings.NL );
                     }
                 } // Handle the next unsalvageable unit for the player
-                sb.append("=============================================================\n");
+                sb.append("=============================================================");
+                sb.append( Settings.NL );
             }
 
         } // Handle the next player

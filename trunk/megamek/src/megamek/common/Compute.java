@@ -1415,6 +1415,10 @@ public class Compute
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
                 Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
+                // When targeting a stealthed Mech, you can _only_ target it, not anything else (BMRr, pg. 147)
+                if (pte instanceof Entity && ((Entity)pte).isStealthActive() && pte != target ) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "When targeting a stealthed Mech, can not attack secondary targets");
+                }
                 if (isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
                     primaryTarget = prevAttack.getTargetId();
                     break;
@@ -1435,7 +1439,12 @@ public class Compute
         if (attacker instanceof Infantry) {
           return new ToHitData(ToHitData.IMPOSSIBLE, "Can't have multiple targets.");
         }
-
+        
+        // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
+        if ((target instanceof Entity) && ((Entity)target).isStealthActive() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can't target Mech with active stealth armor as secondary target");
+        }
+        
         if (curInFrontArc) {
       return new ToHitData(1, "secondary target modifier");
         } else {

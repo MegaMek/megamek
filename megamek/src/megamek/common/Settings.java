@@ -55,6 +55,8 @@ public class Settings
     public static boolean   nagForPSR               = true;
     public static boolean   nagForNoAction          = true;
     
+    public static boolean   nagForReadme            = true;
+
     public static boolean   showMoveStep            = true;
     public static int       moveStepDelay           = 500;
     public static boolean   showWrecks              = true;
@@ -310,6 +312,10 @@ scan:
                         st.nextToken();
                         nagForNoAction = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("nagforreadme")) {
+                        st.nextToken();
+                        nagForReadme = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -483,6 +489,7 @@ scan:
             cw.write("nagformasc " + nagForMASC + "\r\n");
             cw.write("nagforpsr " + nagForPSR + "\r\n");
             cw.write("nagfornoaction " + nagForNoAction + "\r\n");
+            cw.write("nagforreadme " + nagForReadme + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

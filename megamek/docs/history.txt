@@ -131,6 +131,7 @@ v 0.29.8-dev
 + RFE 700190: unconscious units count for initiative (option disables)
 + Bug 793574: TDB uses the "Missile" spelling, not "Missle".
 + Bug 783641: Unloaded infantry are deployed.
++ Removed opportunity for unconscious units to move or attack
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

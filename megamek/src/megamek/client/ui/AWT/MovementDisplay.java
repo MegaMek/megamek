@@ -283,9 +283,9 @@ public class MovementDisplay
         boolean isMech = (ce() instanceof Mech);
         boolean isInfantry = (ce() instanceof Infantry);
         
-        butWalk.setEnabled(ce().getWalkMP() > 0);
-        butJump.setEnabled(ce().getJumpMP() > 0);
-        butBackup.setEnabled(ce().getWalkMP() > 0);
+        butWalk.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
+        butJump.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
+        butBackup.setEnabled(butWalk.isEnabled());
         
         // Infantry can't charge or DFA.
         if ( isInfantry ) {
@@ -297,19 +297,19 @@ public class MovementDisplay
             	butClear.setEnabled(false);
         	}
         } else {
-            butCharge.setEnabled(ce().getWalkMP() > 0);
-            butDfa.setEnabled(ce().getJumpMP() > 0);
+            butCharge.setEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
+            butDfa.setEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
             butClear.setEnabled(false);
         }
         
-        butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
+        butTurn.setEnabled(!ce().isImmobile() && (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
 
         if (ce().isProne()) {
-            butUp.setEnabled(true);
+            butUp.setEnabled(!ce().isImmobile());
             butDown.setEnabled(false);
         } else {
             butUp.setEnabled(false);
-            butDown.setEnabled(isMech);
+            butDown.setEnabled(!ce().isImmobile() && isMech);
         }
 
         updateProneButtons();
@@ -781,7 +781,7 @@ public class MovementDisplay
     }
 
     private void updateProneButtons() {
-        if (ce() != null && md != null) {
+        if (ce() != null && md != null && !ce().isImmobile()) {
             butUp.setEnabled(md.getFinalProne(ce().isProne()));
             butDown.setEnabled(!(butUp.isEnabled()) && ce() instanceof Mech);
         } else {

@@ -19,6 +19,8 @@ v 0.29.25 (CVS)
 + Added option to disallow clan meks from using physical attacks.
 + Load game, scenario, and unit list dialogs filter by extension on Windows
 + Line number debug info added to stacktraces for all the bugfixers out there
++ Added text to MegaMek.bat to guide users when wjview isn't there.
++ McWizard's C3 update to calculateBattleValue allows a TODO to close.
 
 v 0.29.24 (2004-01-31 12:45pm)
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)

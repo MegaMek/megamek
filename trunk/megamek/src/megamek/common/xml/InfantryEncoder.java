@@ -44,9 +44,8 @@ public class InfantryEncoder {
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
-        Coords coords;
-        int turns;
-        String substr;
+        int value;
+        Infantry inf = (Infantry) entity;
 
         // First, validate our input.
         if ( null == entity ) {
@@ -57,7 +56,9 @@ public class InfantryEncoder {
         }
 
         // Our EntityEncoder already gave us our root element.
-        // TODO : write Infantry-specific elements.
+        out.write( "<shootingStrength value=\"" );
+        value = inf.getShootingStrength();
+        out.write( "\" />" );
     }
 
     /**

@@ -44,9 +44,8 @@ public class ProtomechEncoder {
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
-        Coords coords;
-        int turns;
-        String substr;
+        int value;
+        Protomech proto = (Protomech) entity;
 
         // First, validate our input.
         if ( null == entity ) {
@@ -57,7 +56,21 @@ public class ProtomechEncoder {
         }
 
         // Our EntityEncoder already gave us our root element.
-        // TODO : write Protomech-specific elements.
+        out.write( "<bv value=\"");
+        value = (int) ( (double) proto.calculateBattleValue() /
+                        proto.getCrew().getBVSkillMultiplier() );
+        out.write( value );
+        out.write( "\" /><hasMainGun value=\"" );
+        out.write( proto.hasMainGun() ? "true" : "false" );
+        for ( int loc = 0; loc < proto.locations(); loc++ ) {
+            out.write( "\" /><pilotDamageTaken loc=\"" );
+            out.write( loc );
+            out.write( "\" value=\"" );
+            value = proto.getPilotDamageTaken( loc );
+            out.write( value );
+        } // Handle the next location
+        out.write( "\" />" );
+
     }
 
     /**

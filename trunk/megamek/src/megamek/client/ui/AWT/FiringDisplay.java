@@ -208,6 +208,9 @@ public class FiringDisplay
      * Called when the current entity is done firing.
      */
     private void ready() {
+        if (cen == Entity.NONE) {
+            return;
+        }
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();

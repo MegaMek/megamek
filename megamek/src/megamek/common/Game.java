@@ -812,7 +812,7 @@ public class Game implements Serializable
         toRemove.setRemovalCondition(condition);
         
         // do not keep never-joined entities
-        if (condition != Entity.REMOVE_NEVER_JOINED) {
+        if (vOutOfGame != null && condition != Entity.REMOVE_NEVER_JOINED) {
             vOutOfGame.addElement(toRemove);
         }
         

@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.io.*;
+import megamek.client.util.widget.*;
 
 import megamek.common.*;
 
@@ -1015,9 +1016,18 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
         });
         dialog.add("Center", ta);
+        
+        // Preview image of the Mech...
+		BufferedPanel panPreview = new BufferedPanel();
+		panPreview.setPreferredSize(84, 72);
+		client.loadPreviewImage(panPreview, entity);
+        dialog.add("North", panPreview);
+
         dialog.setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - dialog.getSize().width/2,
                     client.frame.getLocation().y + client.frame.getSize().height/5 - dialog.getSize().height/2);
         dialog.setSize(300, 450);
+
+		dialog.validate();
         dialog.show();
     }
     

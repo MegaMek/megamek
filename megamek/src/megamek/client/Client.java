@@ -22,6 +22,7 @@ import java.io.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.client.util.widget.*;
 
 public class Client extends Panel
     implements Runnable, MouseListener, WindowListener
@@ -1519,6 +1520,13 @@ public class Client extends Panel
       	
       	game.setMechInFirst(ld.getMechInFirst());
       	game.setMechInSecond(ld.getMechInSecond());
-    }    
-
+    }
+    
+    // Loads a preview image of the unit into the BufferedPanel.
+    public void loadPreviewImage(BufferedPanel bp, Entity entity) {
+		Player player = game.getPlayer(entity.getOwnerId());
+		String camo = player.getCamoFileName();
+		int tint = player.getColorRGB();
+		bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
+    }
 }

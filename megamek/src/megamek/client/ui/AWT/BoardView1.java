@@ -2276,4 +2276,9 @@ public class BoardView1
     public void setUseLOSTool(boolean use) {
     	useLOSTool = use;
     }
+    
+	public TilesetManager getTilesetManager() {
+    	return tileManager;
+    }
+
 }

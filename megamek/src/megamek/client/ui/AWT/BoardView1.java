@@ -1613,25 +1613,27 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // draw box with shortName
-            Color col;
-            Color bcol;
-            if (entity.isImmobile()) {
-                col = Color.black;
-                bcol = Color.lightGray;
-            } else if (entity.isDone()) {
-                col = Color.darkGray;
-                bcol = Color.black;
+            Color text, bkgd, bord;
+            if (entity.isDone()) {
+                text = Color.lightGray;
+                bkgd = Color.darkGray;
+                bord = Color.black;
+            } else if (entity.isImmobile()) {
+                text = Color.darkGray;
+                bkgd = Color.black;
+                bord = Color.lightGray;
             } else {
-                col = Color.lightGray;
-                bcol = Color.darkGray;
+                text = Color.black;
+                bkgd = Color.lightGray;
+                bord = Color.darkGray;
             }
             graph.setFont(font);
-            graph.setColor(bcol);
+            graph.setColor(bord);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             modelRect.translate(-1, -1);
-            graph.setColor(col);
+            graph.setColor(bkgd);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            graph.setColor(entity.isDone() ? Color.lightGray : Color.black);
+            graph.setColor(text);
             graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
 
             // draw facing

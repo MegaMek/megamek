@@ -128,6 +128,7 @@ v 0.29.8-dev
 + RFE 730457: Added a "Delete All" to compensate.
 + Bug 735499: Delay RNG start until beginning to host.
 + Updated BMRr Feature List.
++ RFE 700190: unconscious units count for initiative (option disables)
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

@@ -258,7 +258,6 @@ public class Client extends Panel
         }
         
         frame.setVisible(false);
-        frame.dispose();
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.29-stable-7";
+    public static String    VERSION = "0.29-stable-8";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;
@@ -177,9 +177,24 @@ public class MegaMek
         hd = new HostDialog(frame);
         hd.show();
         // verify dialog data
-        if(hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if ( hd.name == null || hd.serverPass == null || hd.port == 0 ) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Host a Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // start server
         server = new Server(hd.serverPass, hd.port);
         // initialize game
@@ -209,6 +224,21 @@ public class MegaMek
         if (hd.name == null || hd.serverPass == null || hd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Load a Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         server = new Server(hd.serverPass, hd.port);
         if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
             new AlertDialog(frame, "Load a Game", "Error: unable to load game file.").show();
@@ -273,6 +303,20 @@ public class MegaMek
             return;
         }
 
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = hd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Host a Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // start server
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
@@ -327,13 +371,28 @@ public class MegaMek
         if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = cd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Connect to Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // initialize game
         client = new Client(frame, cd.name);
         // verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;
-            new AlertDialog(frame, "Connect to a Game", "Error: could not connect.").show();
+            new AlertDialog(frame, "Connect to Game", "Error: could not connect.").show();
             return;
         }
         // wait for full connection
@@ -349,6 +408,21 @@ public class MegaMek
         if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
             return;
         }
+
+        // Players should have to enter a non-blank, non-whitespace name.
+        boolean foundValid = false;
+        char[] nameChars = cd.name.toCharArray();
+        for ( int loop = 0; !foundValid && loop < nameChars.length; loop++ ) {
+            if ( !Character.isWhitespace( nameChars[loop] ) ) {
+                foundValid = true;
+            }
+        }
+        if ( !foundValid ) {
+            new AlertDialog( frame, "Connect to Game",
+                             "Error: enter a player name." ).show();
+            return;
+        }
+
         // initialize game
         client = BotFactory.getBot(BotFactory.TEST, frame, cd.name);
         //client = new BotClient(frame, cd.name);
@@ -357,7 +431,7 @@ public class MegaMek
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;
-            new AlertDialog(frame, "Connect to a Game", "Error: could not connect.").show();
+            new AlertDialog(frame, "Connect to Game", "Error: could not connect.").show();
             return;
         }
         // wait for full connection

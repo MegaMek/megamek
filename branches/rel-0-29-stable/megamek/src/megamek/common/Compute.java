@@ -4273,6 +4273,11 @@ public class Compute
             return false;
         }
 
+        // Is the entity active?
+        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+            return false;
+        }
+
         // The hex must contain woods or rubble from
         // a medium, heavy, or hardened building.
         //TODO: missing limbs are clubs.

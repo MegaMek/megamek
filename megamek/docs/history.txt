@@ -116,6 +116,11 @@ VERSION HISTORY:
 v 0.29.8-dev
 + Bug 786735: Vibrabombs now works correctly.
 + Added minefield option under Game Options.
++ Splash screen image code now uses natural image size
++ Vehicles now use red secondary arrow to indicate turret direction
++ Fixed bug where locked turrets wouldn't show a direction
++ Bug 780962: tree clubs work again
++ Bug 760256: mechs dumping ammo try to reload weapons using that ammo
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

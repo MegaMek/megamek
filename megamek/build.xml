@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is an ant build file. See: "http://jakarta.apache.org/ant"-->
-<project default="compile" name="MegaMek">
+<project default="all" name="MegaMek">
 
   <!-- Global properties for this build -->
   <property name="src" value="${basedir}"/>

@@ -159,8 +159,7 @@ public class MegaMek
 		HostDialog hd;
 		
 		hd = new HostDialog(frame);
-		hd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-		hd.setVisible(true);
+		hd.show();
 		// verify dialog data
 		if(hd.name == null || hd.serverName == null || hd.port == 0) {
 			return;
@@ -189,8 +188,7 @@ public class MegaMek
 		ConnectDialog cd;
 		
 		cd = new ConnectDialog(frame);
-		cd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-		cd.setVisible(true);
+		cd.show();
 		// verify dialog data
 		if(cd.name == null || cd.serverAddr == null || cd.port == 0) {
 			return;
@@ -216,8 +214,7 @@ public class MegaMek
 		HostDialog hd;
 		
 		hd = new HostDialog(frame);
-		hd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-		hd.setVisible(true);
+		hd.show();
 		// verify dialog data
 		if(hd.name == null || hd.serverName == null || hd.port == 0) {
 			return;
@@ -328,7 +325,7 @@ class HostDialog extends Dialog implements ActionListener {
 
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;	c.weighty = 0.0;
-		c.insets = new Insets(5, 5, 1, 1);
+		c.insets = new Insets(5, 5, 5, 5);
 		
 		c.gridwidth = 1;
 		gridbag.setConstraints(yourNameL, c);
@@ -364,7 +361,9 @@ class HostDialog extends Dialog implements ActionListener {
 		gridbag.setConstraints(cancelB, c);
 		add(cancelB);
 		
-		setSize(250, 160);
+		pack();
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -428,7 +427,7 @@ class ConnectDialog extends Dialog implements ActionListener {
 
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;	c.weighty = 0.0;
-		c.insets = new Insets(5, 5, 1, 1);
+		c.insets = new Insets(5, 5, 5, 5);
 		
 		c.gridwidth = 1;
 		gridbag.setConstraints(yourNameL, c);
@@ -464,7 +463,9 @@ class ConnectDialog extends Dialog implements ActionListener {
 		gridbag.setConstraints(cancelB, c);
 		add(cancelB);
 		
-		setSize(250, 160);
+		pack();
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 	}
 	
 	public void actionPerformed(ActionEvent e) {

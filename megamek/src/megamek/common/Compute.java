@@ -590,12 +590,55 @@ public class Compute
             return null;
         }
     }
-	
-	public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
-		return toHitWeapon(game, waa.getEntityId(), waa.getTargetId(), 
-                           waa.getWeaponId());
-	}
     
+    /**
+     * Can we do a valid DFA with this movement?
+     */
+    public static boolean isValidDFA(Game game, int entityId, MovementData md) {
+        final Entity entity = game.getEntity(entityId);
+        Coords targetCoords;
+        Entity target;
+        MovementData.Step lastValid = null;
+        Hex srcHex;
+        Hex destHex;
+        // need to have jumped (duh)
+        if (!md.contains(MovementData.STEP_START_JUMP)) { 
+            return false;
+        }
+        
+        // determine last valid step
+        compile(game, entityId, md);
+        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                break;
+            } else {
+                lastValid = step;
+            }
+        }
+        
+        // check target
+        targetCoords = lastValid.getPosition().translated(lastValid.getFacing());
+        target = game.getEntity(targetCoords);
+
+        // do you have enough mp?   
+    
+        return true;
+    }
+	
+    /**
+     * Can we do a valid charge with this movement?
+     */
+    public static boolean isValidCharge(Game game, MovementData md) {
+        // no jumping or backwards
+        if (md.contains(MovementData.STEP_START_JUMP)
+            || md.contains(MovementData.STEP_BACKWARDS)) {
+            return false;
+        }
+        
+        return true;
+    }
+	
     /**
      * Returns an entity's base piloting skill roll needed
      */
@@ -633,7 +676,11 @@ public class Compute
 			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0) {
 			    roll.addModifier(2, "Right Hip Actuator destroyed");
 			}
-			// leg actuators?
+			// upper leg actuators?
+			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0) {
+			    roll.addModifier(1, "Right Upper Leg Actuator destroyed");
+			}
+			// lower leg actuators?
 			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0) {
 			    roll.addModifier(1, "Right Lower Leg Actuator destroyed");
 			}
@@ -650,7 +697,11 @@ public class Compute
 			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0) {
 			    roll.addModifier(2, "Left Hip Actuator destroyed");
 			}
-			// leg actuators?
+			// upper leg actuators?
+			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0) {
+			    roll.addModifier(1, "Left Upper Leg Actuator destroyed");
+			}
+			// lower leg actuators?
 			if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0) {
 			    roll.addModifier(1, "Left Lower Leg Actuator destroyed");
 			}
@@ -666,6 +717,11 @@ public class Compute
         
         return roll;
     }
+    
+	public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
+		return toHitWeapon(game, waa.getEntityId(), waa.getTargetId(), 
+                           waa.getWeaponId());
+	}
     
 	/**
 	 * To-hit number for attacker firing a weapon at the target.
@@ -838,7 +894,7 @@ public class Compute
 		}
         
         // target immobile
-		if (te.isShutDown()) {
+		if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
 		}
         
@@ -987,7 +1043,7 @@ public class Compute
 		}
 
         // target immobile
-		if (te.isShutDown()) {
+		if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
 		}
         
@@ -1142,7 +1198,7 @@ public class Compute
 		}
 
         // target immobile
-		if (te.isShutDown()) {
+		if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
 		}
         
@@ -1253,7 +1309,7 @@ public class Compute
 		}
 
         // target immobile
-		if (te.isShutDown()) {
+		if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
 		}
         

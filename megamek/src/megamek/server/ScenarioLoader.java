@@ -242,6 +242,13 @@ public class ScenarioLoader
                 }
                 System.out.println("(" + x + "," + y + ")" + sBoard);
                 
+                boolean isRotated = false;
+                if ( sBoard.startsWith( Board.BOARD_REQUEST_ROTATION ) ) {
+                    isRotated = true;
+                    sBoard = sBoard.substring
+                        ( Board.BOARD_REQUEST_ROTATION.length() );
+                }
+
                 String sBoardFile;
                 if (sBoard.equals("RANDOM")) {
                     sBoardFile = (String)(vBoards.elementAt(Compute.randomInt(vBoards.size()))) + ".board";
@@ -255,6 +262,7 @@ public class ScenarioLoader
                 }
                 ba[n] = new Board();
                 ba[n].load(sBoardFile);
+                ba[n].flip( isRotated, isRotated );
             }
         }
         

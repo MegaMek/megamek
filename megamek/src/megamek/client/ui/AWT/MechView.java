@@ -31,61 +31,110 @@ import megamek.common.*;
  */
 public class MechView {
 
-    private boolean isValid = true;
-    private Mech mech;
+    private Entity mech;
+    private boolean isMech;
+    private boolean isInf;
     
     public MechView(Entity entity) {
-        String objectClass = "" + entity.getClass();
-        if (!(entity instanceof Mech)) {
-            //Can only display mechs right now, future upgrade for vehicles?
-            isValid = false;
-            return;
-        }
-        mech = (Mech)entity;
+        mech = entity;
+        isMech = entity instanceof Mech;
+        isInf = entity instanceof Infantry;
     }
 
     public boolean isValid() {
-        return isValid;
+        return true;
     }
 
     public String getMechReadout() {
-        String sMech = new String();
-        sMech = mech.getChassis() + "  " + mech.getModel() + "    " + Math.round(mech.getWeight()) + " tons    ";
+        StringBuffer sMech = new StringBuffer( mech.getShortName() );
+        if ( !isInf ) {
+            sMech.append( "    " )
+                .append( Math.round(mech.getWeight()) )
+                .append(" tons   " );
+        }
         if (mech.isClan()) {
-            sMech += "Clan\n";
+            sMech.append( " Clan\n" );
         } else {
-            sMech += "Inner Sphere\n";
+            sMech.append( " Inner Sphere\n" );
         }
-        sMech += "Movement: " + mech.getWalkMP() + "/" + mech.getRunMP() + "/" + mech.getJumpMP() + "     ";
-        sMech += "Engine: " + mech.engineRating();
-        if (mech.hasXL()) {
-            sMech += " XL";
+        sMech.append( "Movement: " )
+            .append( mech.getWalkMP() )
+            .append( "/" )
+            .append( mech.getRunMP() )
+            .append( "/" )
+            .append( mech.getJumpMP() )
+            .append( "    " );
+        if ( isMech ) {
+            Mech aMech = (Mech) mech;
+            sMech.append( "Engine: " )
+                .append( aMech.engineRating() );
+            if (aMech.hasXL()) {
+                sMech.append( " XL" );
+            }
+            sMech.append( "   Heat Sinks: " )
+                .append( aMech.heatSinks() );
+            if (aMech.getHeatCapacity() > aMech.heatSinks()) {
+                sMech.append( " [" )
+                    .append( aMech.getHeatCapacity() )
+                    .append( "]" );
+            }
         }
-        sMech += "    Heat Sinks: " + mech.heatSinks();
-        if (mech.getHeatCapacity() > mech.heatSinks()) {
-            sMech += " [" + mech.getHeatCapacity() + "]";
-        }
-        return sMech + formatArmor() + formatWeapons() + formatAmmo() + formatMisc();
+        sMech.append( formatArmor() )
+            .append( formatWeapons() )
+            .append( formatAmmo() )
+            .append( formatMisc() );
+        return sMech.toString();
     }
     
     private String formatArmor() {
-        int maxArmor = mech.getTotalOInternal() * 2 + 3;
-        String sArmor = "\nArmor:  " + mech.getTotalOArmor() + "/" + maxArmor + "\n";
-        sArmor += "H: " + mech.getOArmor(0) + "\n";
-        sArmor += "LT: " + mech.getOArmor(3) + " (" + mech.getOArmor(3,true) + ")    " + "CT: " + mech.getOArmor(1) + " (" + mech.getOArmor(1,true) + ")    " + "RT: " + mech.getOArmor(2) + " (" + mech.getOArmor(2,true) + ")\n";
-        sArmor += "LA: " + mech.getOArmor(5) + "    RA: " + mech.getOArmor(4) + "\n";
-        sArmor += "LL: " + mech.getOArmor(7) + "    RL: " + mech.getOArmor(6) + "\n";
-        return sArmor;
+        int maxArmor = mech.getTotalInternal() * 2 + 3;
+        StringBuffer sArmor = new StringBuffer( "\nArmor:  " );
+        sArmor.append( mech.getTotalArmor() );
+        if ( isMech ) {
+            sArmor.append( "/" )
+                .append( maxArmor );
+        }
+        sArmor.append( " IS: " )
+            .append( mech.getTotalInternal() )
+            .append( "\n" );
+        // Walk through the entity's locations.
+        for ( int loc = 0; loc < mech.locations(); loc++ ) {
+
+            // Skip empty sections.
+            if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
+                 (!isMech && !isInf && (( loc == Tank.LOC_TURRET &&
+                                          !((Tank)mech).hasTurret() ) ||
+                                        (loc == Tank.LOC_BODY))) ) {
+                continue;
+            }
+            sArmor.append( mech.getLocationAbbr(loc) )
+                .append( ": " );
+            if ( Entity.ARMOR_NA != mech.getArmor(loc) ) {
+                sArmor.append( renderArmor(mech.getArmor(loc)) )
+                    .append( " " );
+            }
+            sArmor.append( renderArmor(mech.getInternal(loc)) );
+            if ( mech.hasRearArmor(loc) ) {
+                sArmor.append( " (" )
+                    .append( renderArmor(mech.getArmor(loc, true)) )
+                    .append( ")" );
+            }
+            sArmor.append( "\n" );
+        }
+        return sArmor.toString();
     }
 
     private String formatWeapons() {
-        String sWeapons = "\nWeapons:\n";
+        StringBuffer sWeapons = new StringBuffer( "\nWeapons:\n" );
         Vector vWeapons = mech.getWeaponList();
         for (int j = 0; j < vWeapons.size(); j++)       {
-            Mounted mounted = (Mounted)vWeapons.elementAt(j);
-            sWeapons += mounted.getDesc() + "  [" + mech.getLocationAbbr(mounted.getLocation()) + "]\n";
+            Mounted mounted = (Mounted) vWeapons.elementAt(j);
+            sWeapons.append( mounted.getDesc() )
+                .append( "  [" )
+                .append( mech.getLocationAbbr(mounted.getLocation()) )
+                .append( "]\n" );
         }
-        return sWeapons;
+        return sWeapons.toString();
     }
     
     private String formatAmmo() {
@@ -94,28 +143,74 @@ public class MechView {
             return "";
 
         }
-        String sAmmo = "Ammo:\n";
+        StringBuffer sAmmo = new StringBuffer( "Ammo:\n" );
         while (eAmmo.hasMoreElements()) {
             Mounted mounted = (Mounted)eAmmo.nextElement();
-            sAmmo += mounted.getDesc() + "  [" + mech.getLocationAbbr(mounted.getLocation()) + "]\n";
+            sAmmo.append( mounted.getDesc() )
+                .append( "  [" )
+                .append( mech.getLocationAbbr(mounted.getLocation()) )
+                .append( "]\n" );
         }
-        return sAmmo;
+        return sAmmo.toString();
     }
 
     private String formatMisc() {
-        String sMisc = "";
+        StringBuffer sMisc = new StringBuffer
+            ("\nOther (Heat Sinks, JJ, and clan CASE excluded):\n");
         Enumeration eMisc = mech.getMisc();
+        boolean itemFound = false;
         while (eMisc.hasMoreElements()) {
             Mounted mounted = (Mounted)eMisc.nextElement();
-            if (mounted.getDesc().indexOf("Jump Jet") == -1 && (mounted.getDesc().indexOf("CASE") == -1 || !mech.isClan()) && mounted.getDesc().indexOf("Heat Sink") == -1) {
+            if ( mounted.getDesc().indexOf("Jump Jet") == -1 &&
+                 ( mounted.getDesc().indexOf("CASE") == -1 ||
+                   !mech.isClan() ) &&
+                 mounted.getDesc().indexOf("Heat Sink") == -1 ) {
 
-                sMisc += mounted.getDesc() + "  [" + mech.getLocationAbbr(mounted.getLocation()) + "]\n";
+                sMisc.append( mounted.getDesc() )
+                    .append( "  [" )
+                    .append( mech.getLocationAbbr(mounted.getLocation()) )
+                    .append( "]\n" );
+                itemFound = true;
             }
         }
-        if (sMisc != "") {
-            sMisc = "\nOther (Heat Sinks, JJ, and clan CASE excluded):\n" + sMisc;
+        if ( !itemFound ) {
+            return "";
         }
-        return sMisc;
+        return sMisc.toString();
+    }
+    
+    private static String renderArmor(int nArmor)
+    {
+        if (nArmor <= 0) {
+            return "xx";
+        }
+        else {
+            return makeLength(String.valueOf(nArmor), 2, true);
+        }
+    }
+
+    private static final String SPACES = "                                   ";
+    private static String makeLength(String s, int n) {
+        return makeLength(s, n, false);
+    }
+
+    private static String makeLength(String s, int n, boolean bRightJustify)
+    {
+        int l = s.length();
+        if (l == n) {
+            return s;
+        }
+        else if (l < n) {
+            if (bRightJustify) {
+                return SPACES.substring(0, n - l) + s;
+            }
+            else {
+                return s + SPACES.substring(0, n - l);
+            }
+        }
+        else {
+            return s.substring(0, n - 2) + "..";
+        }
     }
 
 }

@@ -6,6 +6,7 @@ v 0.29.14-dev
 + Moved to-do list out of history.txt and into its own file
 + Data 809664: Added Brandfuchs Mech images.
 + Data 806313: Added Ploppys Mech images.
++ Bug 821063: Fixed BV of some precision AC ammo
 
 v 0.29.13 (10-05-03, 11pm)
 + RFE 814576: Show PlayerColor when Camo is missing.

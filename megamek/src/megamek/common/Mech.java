@@ -268,7 +268,11 @@ public abstract class Mech
         }
         
         for (int i = 0; i < toAllocate; i++) {
-            addEquipment(new Mounted(this, sinkType), Mech.LOC_NONE, false);
+            try {
+                addEquipment(new Mounted(this, sinkType), Mech.LOC_NONE, false);
+            } catch (LocationFullException ex) {
+                // um, that's impossible.
+            }
         }
     }
     
@@ -792,16 +796,20 @@ public abstract class Mech
     public void addClanCase() {
         EquipmentType clCase = EquipmentType.getByInternalName("CLCASE");
         for (int i = 0; i < locations(); i++) {
-            addEquipment(new Mounted(this, clCase), i, false);
+            try {
+                addEquipment(new Mounted(this, clCase), i, false);
+            } catch (LocationFullException ex) {
+                // um, that's impossible.
+            }
         }
     }
     
     /**
      * Mounts the specified weapon in the specified location.
-     * 
-     * Throw exception if full, maybe?
      */
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+        throws LocationFullException 
+    {
         // if there's no actual location, then don't add criticals
         if (loc == LOC_NONE) {
             super.addEquipment(mounted, loc, rearMounted);
@@ -810,8 +818,7 @@ public abstract class Mech
         
         // check criticals for space
         if(getEmptyCriticals(loc) < mounted.getType().getCriticals(this)) {
-            System.err.println("mech: tried to add equipment (" + mounted.getName() + ") to full location (" + getLocationAbbr(loc) + ") on "  + getDisplayName());
-            return;
+            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName());
         }
         
         // add it

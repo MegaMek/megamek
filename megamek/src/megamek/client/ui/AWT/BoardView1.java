@@ -1099,10 +1099,10 @@ public class BoardView1
         public EntitySprite(Entity entity) {
             this.entity = entity;
 
-            String model = entity.getModel();
+            String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
             Rectangle modelRect = new Rectangle(47, 55,  
-                                 getFontMetrics(font).stringWidth(model) + 1, 
+                                 getFontMetrics(font).stringWidth(shortName) + 1, 
                                  getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
@@ -1118,10 +1118,10 @@ public class BoardView1
          */
         public void draw() {
             // figure out size
-            String model = entity.getModel();
+            String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
             Rectangle modelRect = new Rectangle(47, 55,  
-                                 getFontMetrics(font).stringWidth(model) + 1, 
+                                 getFontMetrics(font).stringWidth(shortName) + 1, 
                                  getFontMetrics(font).getAscent());
             Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
             
@@ -1143,7 +1143,7 @@ public class BoardView1
             // draw entity image
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
             
-            // draw box with model
+            // draw box with shortName
             Color col;
             Color bcol;
             if (entity.isImmobile()) {
@@ -1163,7 +1163,7 @@ public class BoardView1
             graph.setColor(col);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             graph.setColor(entity.ready ? Color.black : Color.lightGray);
-            graph.drawString(model, modelRect.x + 1, modelRect.y + modelRect.height - 1);
+            graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
             
             // draw facing
             graph.setColor(Color.white);

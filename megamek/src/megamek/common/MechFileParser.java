@@ -19,34 +19,32 @@ import megamek.common.util.BuildingBlock;
 
  /*
   * Switches between the various type-specific parsers depending on suffix
-  * It also contains info not currently stored in the mech object, including
-  * year and techtype
   */
 
 public class MechFileParser {
     private File m_file;
     private Mech m_mech = null;
     
-    public MechFileParser(File f) {
+    public MechFileParser(File f) throws EntityLoadingException {
         parse(f);
     }
     
     public Mech getMech() { return m_mech; }
     
-    private void parse(File f) {
+    private void parse(File f) throws EntityLoadingException {
         m_file = f;
+        MechLoader loader;
+        
         if (f.getName().toLowerCase().endsWith(".mep")) {
-            MepFile mf = new MepFile(f);
-            m_mech = mf.getMech();
+            loader = new MepFile(f);
+        } else if (f.getName().toLowerCase().endsWith(".mtf")) {
+            loader = new MtfFile(f);
+        } else if (f.getName().toLowerCase().endsWith(".blk")) {
+            loader = new BLKMechFile(f);
+        } else {
+            throw new EntityLoadingException("Unsupported file suffix");
         }
-        else if (f.getName().toLowerCase().endsWith(".mtf")) {
-            MtfFile mf = new MtfFile(f);
-            m_mech = mf.getMech();
-        }
-        else if (f.getName().toLowerCase().endsWith(".blk")) {
-            BLKMechFile mf = new BLKMechFile(f);
-            m_mech = mf.getMech();
-            BuildingBlock bb = mf.dataFile;
-        }
+        
+        m_mech = loader.getMech();
     }
 }

@@ -86,7 +86,7 @@ v CVS
 + gauss rifles count as explosive ammo for BV calculations
 + ultra ACs and streak SRMs affect BV correctly
 + 660514: Clan AMS has 24 shots
-
++ fixed a few equipment name problems when loading MEP files
 
 v 0.27.13 (12-20-02, 5pm)
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.

@@ -1088,12 +1088,12 @@ public abstract class Mech
         
         
         // total up maximum heat generated
-        int maxumumHeatFront = 0;
-        int maxumumHeatRear = 0;
+        double maxumumHeatFront = 0;
+        double maxumumHeatRear = 0;
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
-            float weaponHeat = wtype.getHeat();
+            double weaponHeat = wtype.getHeat();
             
             // double heat for ultras
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
@@ -1110,7 +1110,7 @@ public abstract class Mech
                 maxumumHeatFront += weaponHeat;
             }
         }
-        int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
+        double maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
         if (getJumpMP() > 0) {
             maximumHeat += Math.max(3, getJumpMP());
         } else {

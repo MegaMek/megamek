@@ -292,7 +292,7 @@ public class FiringDisplay
     /**
      * Torso twist in the proper direction.
      */
-    private void doTorsoTwist(Coords target) {
+    private void torsoTwist(Coords target) {
         int direction = ce().clipSecondaryFacing(ce().getPosition().direction(target));
         //System.out.println("firingDisplay: removed all pending fire due to torso twist");
         if (direction != ce().getSecondaryFacing()) {
@@ -338,8 +338,7 @@ public class FiringDisplay
             if (b.getType() == b.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(client.game.board.lastCursor)) {
                     if (shiftheld) {
-                        // consider torso twist towards selected hex
-                        doTorsoTwist(b.getCoords());
+                        torsoTwist(b.getCoords());
                     }
                     client.game.board.cursor(b.getCoords());
                 }
@@ -352,8 +351,7 @@ public class FiringDisplay
         if (client.isMyTurn() && b.getCoords() != null && ce() != null
             && !b.getCoords().equals(ce().getPosition())) {
           if (shiftheld) {
-            // commit torso twist towards selected hex
-            doTorsoTwist(b.getCoords());
+            torsoTwist(b.getCoords());
           } else if (client.game.getEntity(b.getCoords()) != null 
                      && client.game.getEntity(b.getCoords()).isTargetable()) {
                   target(client.game.getEntity(b.getCoords()).getId());
@@ -425,8 +423,7 @@ public class FiringDisplay
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {
             shiftheld = true;
             if (client.isMyTurn() && client.game.board.lastCursor != null) {
-                // torso twist towards cursor
-                doTorsoTwist(client.game.board.lastCursor);
+                torsoTwist(client.game.board.lastCursor);
             }
         }
     }

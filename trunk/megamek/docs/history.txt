@@ -91,6 +91,13 @@ v 0.28.10-dev
 + 668491: pop-up "view" menu item works any time
 + unit display position, size saved to MegaMek.cfg
 + "D", "M" buttons toggle unit display, minimap
++ 662477 and 664446 and 705062: applied data item 705355 and patch 705169
++ The new file, vehicles.zip, includes and supercedes the files,
+  vehicles3025.zip and vehicles3058.zip.
++ 702762: applied submitted file
++ 705358: read TroopSpace as a Double, and drop fractions.
++ Handle chassis-only vehicles correctly in the XML unit file parser.
++ Internal structure for tanks should round all fractions up.
 
 v 0.28.9 (03-15-03, 5pm)
 + Added XML parsing to MegaMek.

@@ -471,7 +471,7 @@ public class MovementDisplay
         MovementData.Step prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
-            boolean isPavementStep = step.isOnPavement();
+            boolean isPavementStep = step.isPavementStep();
             
             // stop for illegal movement
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {

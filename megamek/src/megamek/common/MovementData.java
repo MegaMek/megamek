@@ -163,7 +163,7 @@ public class MovementData
     public boolean hasActiveMASC() {
         for (final Enumeration i = getSteps(); i.hasMoreElements();) {
             Step step = (Step)i.nextElement();
-            if (step.isUsingMASC()) {
+            if (step.getState().isUsingMASC()) {
                 return true;
             }
         }
@@ -255,10 +255,10 @@ public class MovementData
         int lastStepMoveType = Entity.MOVE_NONE;
         for (final Enumeration i = getSteps(); i.hasMoreElements();) {
             final Step step = (Step)i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            if (step.getState().getMovementType() == Entity.MOVE_ILLEGAL) {
                 break;
             } else {
-                lastStepMoveType = step.getMovementType();
+                lastStepMoveType = step.getState().getMovementType();
             }
         }
         return lastStepMoveType;
@@ -275,7 +275,7 @@ public class MovementData
         Vector goodSteps = new Vector();
         for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
             final Step step = (Step)i.nextElement();
-            if (step.getMovementType() != Entity.MOVE_ILLEGAL) {
+            if (step.getState().getMovementType() != Entity.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             }
         }
@@ -453,7 +453,7 @@ public class MovementData
         
         for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
             final Step step = (Step)i.nextElement();
-            mpUsed =+ step.getMpUsed();
+            mpUsed =+ step.getState().getMpUsed();
         };
         
         return mpUsed;
@@ -480,6 +480,419 @@ public class MovementData
         return hexes;
     };
     
+    public class MovementState {
+        Coords position;
+        int facing;
+        int elevation;
+        //
+        int mpUsed;
+        int distance;
+        int movementType;
+        //
+        boolean legal;
+        boolean danger; // keep psr
+        boolean pastDanger;
+        boolean isUsingMASC;
+        int targetNumberMASC; // psr
+        //
+        boolean firstStep; // check if no previous
+        boolean isInfantry; // method
+        boolean isTurning; // method
+        boolean isUnloaded;
+        boolean prevStepOnPavement; // prev
+        boolean isProne;
+        //
+        Coords lastPos; // prev
+        boolean hasJustStood;
+        boolean lastWasBackwards; // prev
+        boolean thisStepBackwards;
+        int overallMoveType;
+        boolean isJumping;
+        boolean isRunProhibited;
+        boolean onlyPavement; // additive
+        boolean isPavementStep;
+        boolean isUsingManAce; // method
+
+        /**
+         * @return
+         */
+        public boolean isDanger() {
+            return danger;
+        }
+
+        /**
+         * @return
+         */
+        public int getDistance() {
+            return distance;
+        }
+
+        /**
+         * @return
+         */
+        public int getElevation() {
+            return elevation;
+        }
+
+        /**
+         * @return
+         */
+        public int getFacing() {
+            return facing;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isFirstStep() {
+            return firstStep;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isHasJustStood() {
+            return hasJustStood;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isInfantry() {
+            return isInfantry;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isJumping() {
+            return isJumping;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPavementStep() {
+            return isPavementStep;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isProne() {
+            return isProne;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isRunProhibited() {
+            return isRunProhibited;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isTurning() {
+            return isTurning;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUnloaded() {
+            return isUnloaded;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUsingManAce() {
+            return isUsingManAce;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUsingMASC() {
+            return isUsingMASC;
+        }
+
+        /**
+         * @return
+         */
+        public Coords getLastPos() {
+            return lastPos;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isLastWasBackwards() {
+            return lastWasBackwards;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isLegal() {
+            return legal;
+        }
+
+        /**
+         * @return
+         */
+        public int getMovementType() {
+            return movementType;
+        }
+
+        /**
+         * @return
+         */
+        public int getMpUsed() {
+            return mpUsed;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isOnlyPavement() {
+            return onlyPavement;
+        }
+
+        /**
+         * @return
+         */
+        public int getOverallMoveType() {
+            return overallMoveType;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPastDanger() {
+            return pastDanger;
+        }
+
+        /**
+         * @return
+         */
+        public Coords getPosition() {
+            return position;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPrevStepOnPavement() {
+            return prevStepOnPavement;
+        }
+
+        /**
+         * @return
+         */
+        public int getTargetNumberMASC() {
+            return targetNumberMASC;
+        }
+
+        /**
+         * @return
+         */
+        public boolean isThisStepBackwards() {
+            return thisStepBackwards;
+        }
+
+        /**
+         * @param b
+         */
+        public void setDanger(boolean b) {
+            danger = b;
+        }
+
+        /**
+         * @param i
+         */
+        public void setDistance(int i) {
+            distance = i;
+        }
+
+        /**
+         * @param i
+         */
+        public void setElevation(int i) {
+            elevation = i;
+        }
+
+        /**
+         * @param i
+         */
+        public void setFacing(int i) {
+            facing = i;
+        }
+
+        /**
+         * @param b
+         */
+        public void setFirstStep(boolean b) {
+            firstStep = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setHasJustStood(boolean b) {
+            hasJustStood = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setInfantry(boolean b) {
+            isInfantry = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setJumping(boolean b) {
+            isJumping = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setPavementStep(boolean b) {
+            isPavementStep = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setProne(boolean b) {
+            isProne = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setRunProhibited(boolean b) {
+            isRunProhibited = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setTurning(boolean b) {
+            isTurning = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setUnloaded(boolean b) {
+            isUnloaded = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setUsingManAce(boolean b) {
+            isUsingManAce = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setUsingMASC(boolean b) {
+            isUsingMASC = b;
+        }
+
+        /**
+         * @param coords
+         */
+        public void setLastPos(Coords coords) {
+            lastPos = coords;
+        }
+
+        /**
+         * @param b
+         */
+        public void setLastWasBackwards(boolean b) {
+            lastWasBackwards = b;
+        }
+
+        /**
+         * @param b
+         */
+        public void setLegal(boolean b) {
+            legal = b;
+        }
+
+        /**
+         * @param i
+         */
+        public void setMovementType(int i) {
+            movementType = i;
+        }
+
+        /**
+         * @param i
+         */
+        public void setMpUsed(int i) {
+            mpUsed = i;
+        }
+
+        /**
+         * @param b
+         */
+        public void setOnlyPavement(boolean b) {
+            onlyPavement = b;
+        }
+
+        /**
+         * @param i
+         */
+        public void setOverallMoveType(int i) {
+            overallMoveType = i;
+        }
+
+        /**
+         * @param b
+         */
+        public void setPastDanger(boolean b) {
+            pastDanger = b;
+        }
+
+        /**
+         * @param coords
+         */
+        public void setPosition(Coords coords) {
+            position = coords;
+        }
+
+        /**
+         * @param b
+         */
+        public void setPrevStepOnPavement(boolean b) {
+            prevStepOnPavement = b;
+        }
+
+        /**
+         * @param i
+         */
+        public void setTargetNumberMASC(int i) {
+            targetNumberMASC = i;
+        }
+
+        /**
+         * @param b
+         */
+        public void setThisStepBackwards(boolean b) {
+            thisStepBackwards = b;
+        }
+
+    }
+    
     /**
      * A single step in the entity's movment.
      */
@@ -487,20 +900,10 @@ public class MovementData
         implements Serializable
     {
         private int type;
-	private int targetId;
-	private int targetType;
-        private boolean onPavement;
-
-        // these are all set using Compute.compile:
-        private transient Coords position;
-        private transient int facing;
-        private transient int mpUsed;
-        private transient int distance;
-        private transient int movementType;
-        private transient boolean danger;
-        private transient boolean pastDanger;
-        private transient boolean isUsingMASC;
-        private transient int targetNumberMASC;
+    	private int targetId;
+    	private int targetType;
+        
+        MovementState state;
 
         /**
          * Create a step of the given type.
@@ -512,8 +915,7 @@ public class MovementData
             this.type = type;
             this.targetId = Entity.NONE;
             this.targetType = Targetable.TYPE_ENTITY;
-            this.onPavement = false;
-            this.isUsingMASC = false;
+            this.state = new MovementState();
         }
 
         /**
@@ -525,33 +927,11 @@ public class MovementData
          *              of this step. For example, the enemy being charged.
          */
         public Step( int type, Targetable target ) {
-            this.type = type;
+            this(type);
             this.targetId = target.getTargetId();
             this.targetType = target.getTargetType();
-            this.onPavement = false;
-            this.isUsingMASC = false;
         }
 
-        /**
-         * Create an exact duplicate of another step.
-         *
-         * @param       other - the <code>Step</code> to be duplicated.
-         */
-        public Step(Step other) {
-            this.type = other.type;
-            this.targetId = other.targetId;
-            this.targetType = other.targetType;
-            this.onPavement = other.onPavement;
-            this.position = new Coords(other.position);
-            this.facing = other.facing;
-            this.mpUsed = other.mpUsed;
-            this.distance = other.distance;
-            this.movementType = other.movementType;
-            this.danger = other.danger;
-            this.pastDanger = other.pastDanger;
-            this.isUsingMASC = other.isUsingMASC;
-            this.targetNumberMASC = other.targetNumberMASC;
-        }
 
         public String toString() {
             switch (type) {
@@ -612,117 +992,12 @@ public class MovementData
             return game.getTarget( this.targetType, this.targetId );
         }
 
-        /**
-         * Specify that the step is from one pavement hex to another.  This
-         * includes movement along roads and bridges.
-         *
-         * @param       pavement - this <code>boolean</code> value should be
-         *              <code>true</code> if this step is from one pavement
-         *              (or road or bridge) hex to another, <code>false</code>
-         *              otherwise.
-         */
-        public void setOnPavement( boolean pavement ) {
-            this.onPavement = pavement;
-        }
 
-        /**
-         * Determine if the step is from one pavement hex to another.  This
-         * includes movement along roads and bridges.
-         *
-         * @return      <code>true</code> if this step is from one pavement
-         *              (or road or bridge) hex to another, <code>false</code>
-         *              otherwise.
-         */
-        public boolean isOnPavement() {
-            return this.onPavement;
-        }
-
-        public Coords getPosition() {
-            return position;
-        }
-        
-        public void setPosition(Coords position) {
-            this.position = position;
-        }
-        
-        public int getFacing() {
-            return facing;
-        }
-        
-        public void setFacing(int facing) {
-            this.facing = facing;
-        }
-        
-        public int getMpUsed() {
-            return mpUsed;
-        }
-        
-        public void setMpUsed(int mpUsed) {
-            this.mpUsed = mpUsed;
-        }
-        
-        public int getDistance() {
-            return distance;
-        }
-        
-        public void setDistance(int distance) {
-            this.distance = distance;
-        }
-        
-        public int getMovementType() {
-            return movementType;
-        }
-        
-        public void setMovementType(int movementType) {
-            this.movementType = movementType;
-        }
-        
-        public boolean isDanger() {
-            return danger;
-        }
-        
-        public void setDanger(boolean danger) {
-            this.danger = danger;
-        }
-        
-        public boolean isPastDanger() {
-            return pastDanger;
-        }
-        
-        public void setPastDanger(boolean pastDanger) {
-            this.pastDanger = pastDanger;
-        }
-
-        public boolean isUsingMASC() {
-            return isUsingMASC;
-        }
-        
-        public void setUsingMASC(boolean usingMASC) {
-            this.isUsingMASC = usingMASC;
-        }
-
-        public void setMASCNumber(int n) {
-            this.targetNumberMASC = n;
-        }
-
-        public int getMASCNumber() {
-            return targetNumberMASC;
-        }
         
         public void clearAllFlags() {
-            this.position = null;
-            this.facing = 0;
-            this.mpUsed = 0;
-            this.distance = 0;
-            this.movementType = 0;
-            this.danger = false;
-            this.pastDanger = false;
-            this.isUsingMASC = false;
+            this.state = new MovementState();
         }
         
-        public Object clone() {
-            return new Step(this);
-        }
         
         /**
          * Steps are equal if everything about them is equal
@@ -734,15 +1009,406 @@ public class MovementData
                 return false;
             }
             Step other = (Step)object;
-            return other.type == this.type
-                && other.position.equals(this.position)
-                && other.facing == this.facing
-                && other.mpUsed == this.mpUsed
-                && other.distance == this.distance
-                && other.movementType == this.movementType
-                && other.danger == this.danger
-                && other.pastDanger == this.pastDanger
-                && other.isUsingMASC == this.isUsingMASC;
+            return other.type == this.type;
         }
+        /**
+         * @return
+         */
+        public MovementState getState() {
+            return state;
+        }
+
+        /**
+         * @param state
+         */
+        public void setState(MovementState state) {
+            this.state = state;
+        }
+
+        /**
+         * @return
+         */
+        public int getDistance() {
+            return state.getDistance();
+        }
+
+        /**
+         * @return
+         */
+        public int getElevation() {
+            return state.getElevation();
+        }
+
+        /**
+         * @return
+         */
+        public int getFacing() {
+            return state.getFacing();
+        }
+
+        /**
+         * @return
+         */
+        public Coords getLastPos() {
+            return state.getLastPos();
+        }
+
+        /**
+         * @return
+         */
+        public int getMovementType() {
+            return state.getMovementType();
+        }
+
+        /**
+         * @return
+         */
+        public int getMpUsed() {
+            return state.getMpUsed();
+        }
+
+        /**
+         * @return
+         */
+        public int getOverallMoveType() {
+            return state.getOverallMoveType();
+        }
+
+        /**
+         * @return
+         */
+        public Coords getPosition() {
+            return state.getPosition();
+        }
+
+        /**
+         * @return
+         */
+        public int getTargetNumberMASC() {
+            return state.getTargetNumberMASC();
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode() {
+            return state.hashCode();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isDanger() {
+            return state.isDanger();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isFirstStep() {
+            return state.isFirstStep();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isHasJustStood() {
+            return state.isHasJustStood();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isInfantry() {
+            return state.isInfantry();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isJumping() {
+            return state.isJumping();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isLastWasBackwards() {
+            return state.isLastWasBackwards();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isLegal() {
+            return state.isLegal();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isOnlyPavement() {
+            return state.isOnlyPavement();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPastDanger() {
+            return state.isPastDanger();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPavementStep() {
+            return state.isPavementStep();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isPrevStepOnPavement() {
+            return state.isPrevStepOnPavement();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isProne() {
+            return state.isProne();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isRunProhibited() {
+            return state.isRunProhibited();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isThisStepBackwards() {
+            return state.isThisStepBackwards();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isTurning() {
+            return state.isTurning();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUnloaded() {
+            return state.isUnloaded();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUsingManAce() {
+            return state.isUsingManAce();
+        }
+
+        /**
+         * @return
+         */
+        public boolean isUsingMASC() {
+            return state.isUsingMASC();
+        }
+
+        /**
+         * @param b
+         */
+        public void setDanger(boolean b) {
+            state.setDanger(b);
+        }
+
+        /**
+         * @param i
+         */
+        public void setDistance(int i) {
+            state.setDistance(i);
+        }
+
+        /**
+         * @param i
+         */
+        public void setElevation(int i) {
+            state.setElevation(i);
+        }
+
+        /**
+         * @param i
+         */
+        public void setFacing(int i) {
+            state.setFacing(i);
+        }
+
+        /**
+         * @param b
+         */
+        public void setFirstStep(boolean b) {
+            state.setFirstStep(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setHasJustStood(boolean b) {
+            state.setHasJustStood(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setInfantry(boolean b) {
+            state.setInfantry(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setJumping(boolean b) {
+            state.setJumping(b);
+        }
+
+        /**
+         * @param coords
+         */
+        public void setLastPos(Coords coords) {
+            state.setLastPos(coords);
+        }
+
+        /**
+         * @param b
+         */
+        public void setLastWasBackwards(boolean b) {
+            state.setLastWasBackwards(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setLegal(boolean b) {
+            state.setLegal(b);
+        }
+
+        /**
+         * @param i
+         */
+        public void setMovementType(int i) {
+            state.setMovementType(i);
+        }
+
+        /**
+         * @param i
+         */
+        public void setMpUsed(int i) {
+            state.setMpUsed(i);
+        }
+
+        /**
+         * @param b
+         */
+        public void setOnlyPavement(boolean b) {
+            state.setOnlyPavement(b);
+        }
+
+        /**
+         * @param i
+         */
+        public void setOverallMoveType(int i) {
+            state.setOverallMoveType(i);
+        }
+
+        /**
+         * @param b
+         */
+        public void setPastDanger(boolean b) {
+            state.setPastDanger(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setPavementStep(boolean b) {
+            state.setPavementStep(b);
+        }
+
+        /**
+         * @param coords
+         */
+        public void setPosition(Coords coords) {
+            state.setPosition(coords);
+        }
+
+        /**
+         * @param b
+         */
+        public void setPrevStepOnPavement(boolean b) {
+            state.setPrevStepOnPavement(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setProne(boolean b) {
+            state.setProne(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setRunProhibited(boolean b) {
+            state.setRunProhibited(b);
+        }
+
+        /**
+         * @param i
+         */
+        public void setTargetNumberMASC(int i) {
+            state.setTargetNumberMASC(i);
+        }
+
+        /**
+         * @param b
+         */
+        public void setThisStepBackwards(boolean b) {
+            state.setThisStepBackwards(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setTurning(boolean b) {
+            state.setTurning(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setUnloaded(boolean b) {
+            state.setUnloaded(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setUsingManAce(boolean b) {
+            state.setUsingManAce(b);
+        }
+
+        /**
+         * @param b
+         */
+        public void setUsingMASC(boolean b) {
+            state.setUsingMASC(b);
+        }
+
     }
 }

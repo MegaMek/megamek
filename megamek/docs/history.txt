@@ -127,6 +127,7 @@ v 0.29.6 (CVS)
 + Added a LOS tool setting dialog.
 + Added delayed deployment code
 + Patch 781242: Applied BobTheDull's patch, fixing a few water issues
++ Movement code refactoring step 1: MovementState object made
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay

@@ -778,7 +778,9 @@ public class Infantry
         
         report.append(getDisplayName());
         report.append('\n');
-        report.append("Gunnery skil : " + crew.getGunnery());
+        report.append("Gunnery skill : " + crew.getGunnery());
+        report.append('\n');
+        report.append("Kills: " + getKillNumber());
         report.append('\n');
         
         return report.toString();

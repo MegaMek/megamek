@@ -6407,6 +6407,7 @@ implements Runnable, ConnectionHandler {
                     }
                 }
                 hits -= nCluster;
+                creditKill(entityTarget, ae);
             }
         } // Handle the next cluster.
 
@@ -6535,6 +6536,7 @@ implements Runnable, ConnectionHandler {
             } else {
                 // hmm, error.
             }
+            creditKill(game.getEntity(aa.getTargetId()), game.getEntity(cen));
         }
     }
 
@@ -12131,5 +12133,17 @@ implements Runnable, ConnectionHandler {
             }
         }
         game.resetActions();
+    }
+    /**
+     * Credits a Kill for an entity, if the target got killed.
+     * 
+     * @param target   The <code>Entity</code> that got killed. 
+     * @param attacker The <code>Entity</code> that did the killing.
+     */
+    private void creditKill(Entity target, Entity attacker) {
+    	if (target.isDoomed() && !target.getGaveKillCredit()) {
+    		attacker.addKill(target);
+    		target.setGaveKillCredit(true);
+    	}
     }
 }

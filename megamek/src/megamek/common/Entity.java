@@ -89,7 +89,7 @@ public abstract class Entity
     protected String            chassis;
     protected String            model;
     protected int               year;
-    protected int   techLevel;
+    protected int               techLevel;
 
     protected String            displayName = null;
     protected String            shortName = null;
@@ -140,6 +140,8 @@ public abstract class Entity
     public boolean              spotting;
     private boolean             clearingMinefield = false;
     private boolean             selected = false;
+    private boolean             gaveKillCredit = false;
+    private Vector              kills = new Vector(); //tracks how many entities this entity has destroyed
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -3560,5 +3562,25 @@ public abstract class Entity
     
     boolean isUsingManAce() {
         return getCrew().getOptions().booleanOption("maneuvering_ace");
+    }
+    
+    public Vector getKills() {
+    	return kills;
+    }
+    
+    public int getKillNumber() {
+    	return kills.size();
+    }
+    
+    public void addKill(Entity kill) {
+    	kills.add(kill);
+    }
+    
+    public void setGaveKillCredit(boolean credit) {
+    	gaveKillCredit = credit;
+    }
+    
+    public boolean getGaveKillCredit() {
+    	return gaveKillCredit;
     }
 }

@@ -107,8 +107,8 @@ public class Infantry
             men_per_point = 2.0;
             break;
         case INF_LRM:
-            throw new IllegalArgumentException
-                ( "LRM infantry not yet implemented." );
+            men_per_point = 4.0;
+            break;
         default:
             throw new IllegalArgumentException
                 ( "Unknown infantry weapon: " + weapon );
@@ -185,8 +185,16 @@ public class Infantry
                     ( "Unknown movement type: " + type );
             break;
         case INF_LRM:
-            throw new IllegalArgumentException
-                ( "LRM infantry not yet implemented." );
+            if ( INF_LEG == type )
+                this.movePoints= 1;
+            else if ( INF_MOTORIZED == type )
+                this.movePoints= 2;
+            else if ( INF_JUMP == type )
+                this.movePoints= 2;
+            else
+                throw new IllegalArgumentException
+                    ( "Unknown movement type: " + type );
+            break;
         default:
             throw new IllegalArgumentException
                 ( "Unknown infantry weapon: " + weapon );
@@ -652,7 +660,6 @@ public class Infantry
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
         case INF_LRM:
-            /*
             if ( INF_LEG == this.getMovementType() )
                 return 56;
             else if ( INF_MOTORIZED == this.getMovementType() )
@@ -662,9 +669,6 @@ public class Infantry
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + this.getMovementType() );
-            */
-            throw new IllegalArgumentException
-                ( "LRM infantry not yet implemented." );
         default:
             throw new IllegalArgumentException
                 ( "Unknown infantry weapon: " + this.weapons );

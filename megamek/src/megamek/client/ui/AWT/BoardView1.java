@@ -31,12 +31,13 @@ public class BoardView1
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
     Runnable
 {
-    private static final int        PIC_MAX                = 4;
-    private static final int        PIC_MECH_LIGHT        = 0;
-    private static final int        PIC_MECH_MEDIUM        = 1;
-    private static final int        PIC_MECH_HEAVY        = 2;
+    private static final int        PIC_MAX             = 4;
+    private static final int        PIC_MECH_LIGHT      = 0;
+    private static final int        PIC_MECH_MEDIUM     = 1;
+    private static final int        PIC_MECH_HEAVY      = 2;
     private static final int        PIC_MECH_ASSAULT    = 3;
     
+    private static final int        TIP_DELAY = 1000;
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
 
@@ -450,7 +451,7 @@ public class BoardView1
     private String[] getTipText(Point point) {
         // check if it's on an attack
         for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
-            final Sprite sprite = (Sprite)i.nextElement();
+            final AttackSprite sprite = (AttackSprite)i.nextElement();
             if (sprite.isInside(point)) {
                 return sprite.getTooltip();
             }
@@ -458,7 +459,7 @@ public class BoardView1
         
         // check if it's on an entity
         for (final Enumeration i = entitySprites.elements(); i.hasMoreElements();) {
-            final Sprite sprite = (Sprite)i.nextElement();
+            final EntitySprite sprite = (EntitySprite)i.nextElement();
             if (sprite.isInside(point)) {
                 return sprite.getTooltip();
             }
@@ -500,7 +501,7 @@ public class BoardView1
             if (!isTipPossible) {
                 hideTooltip();
             }
-        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > 1000) {
+        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > TIP_DELAY) {
             showTooltip();
         }
     }
@@ -548,7 +549,7 @@ public class BoardView1
         } else {
             cursor.setLocation(-100, -100);
         }
-        // experimental only-repaint-affected-area technique
+        // repaint affected area
         repaintBounds(oldBounds);
         repaintBounds(cursor.getBounds());
     }
@@ -1353,6 +1354,9 @@ public class BoardView1
         public void draw() {
             // create image for buffer
             Image tempImage = createImage(bounds.width, bounds.height);
+            if (tempImage == null) {
+                return;
+            }
             Graphics graph = tempImage.getGraphics();
             
             // fill with key color

@@ -522,7 +522,7 @@ public class Mech
                 // normal rear hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_CTR, HitData.EFFECT_CRITICAL);
                 case 3:
                 case 4:
                     return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);

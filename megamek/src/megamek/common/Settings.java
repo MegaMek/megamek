@@ -719,7 +719,7 @@ scan:
 
         // Try to get the setting.  Use the default if we can't.
         value = this.get( name );
-        if ( null != name ) {
+        if ( null == value ) {
             value = defaultValue;
         }
         return value;

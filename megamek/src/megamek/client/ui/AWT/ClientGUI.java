@@ -240,11 +240,15 @@ public class ClientGUI
             Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
             Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
             scroller.add (bv, BorderLayout.CENTER);
-            scroller.add (vertical, BorderLayout.EAST);
-            scroller.add (horizontal, BorderLayout.SOUTH);
-
-            // Assign the scrollbars to the board viewer.
-            bv.setScrollbars (vertical, horizontal);
+            // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
+            if (Settings.getInstance().get
+                ("megamek.client.clientgui.hidescrollbars", "false").equals
+                ("false")) {
+                // Assign the scrollbars to the board viewer.
+                scroller.add (vertical, BorderLayout.EAST);
+                scroller.add (horizontal, BorderLayout.SOUTH);
+                bv.setScrollbars (vertical, horizontal);
+            }
 
         } catch (IOException e) {
             doAlertDialog("Fatal Error", "Could not initialise:\n" + e);

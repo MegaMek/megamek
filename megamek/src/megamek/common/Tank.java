@@ -81,9 +81,11 @@ public class Tank
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        if (canChangeSecondaryFacing()) {
+        if (!m_bTurretLocked) {
             super.setSecondaryFacing(sec_facing);
-            m_nTurretOffset = sec_facing - getFacing();
+            if (m_bHasTurret) {
+                m_nTurretOffset = sec_facing - getFacing();
+            }
         }
     }
     

@@ -228,6 +228,10 @@ public class GALance extends GA {
   
   protected void doRandomMutation(int iChromIndex) {
     ChromVector c1 = (ChromVector)this.chromosomes[iChromIndex];
+    // I don't think we need to mutate an empty chromosome
+    if (c1.genes.length < 1) {
+        return;
+    }
     int r1 = Compute.randomInt(c1.genes.length - 1);
     boolean done = false;
     if (r1%2 == 1) {

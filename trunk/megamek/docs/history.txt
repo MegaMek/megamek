@@ -95,6 +95,8 @@ v 0.28.7 (CVS)
 + fixed null exception in boardview
 + replaced old bot LOS evaluation
 + unit list file save & load now includes & obeys a file path
++ fixed divide by zero in Coords.radian()
++ fixed bot feeding negative values to randomInt
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

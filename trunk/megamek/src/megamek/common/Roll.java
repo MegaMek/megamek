@@ -20,8 +20,6 @@
 
 package megamek.common;
 
-import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * Encapsulate all information known about a requested roll.  This information

@@ -114,7 +114,7 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 
-v 0.29.13-dev
+v 0.29.13 (10-05-03, 11pm)
 + RFE 814576: Show PlayerColor when Camo is missing.
 + Added common client settings dialog.
 + Game Options works from the menu.

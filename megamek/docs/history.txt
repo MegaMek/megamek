@@ -16,6 +16,8 @@ v0.29.33 (CVS)
 + Brought ChatterBox2.java up-to-date with recent commits
 + Corrected some more stray references to client.bv
 + Refinement to the earlier fix for Bug 937734
++ Bug 940811: MM menu still visible fixed
++ Bug 938300: Bot is now able to stand
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

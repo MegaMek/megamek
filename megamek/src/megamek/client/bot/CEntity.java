@@ -98,6 +98,8 @@ public class CEntity  {
   
   boolean engaged = false; //can I fight
   
+  EntityState last; // set only after movement
+  
   public CEntity(Entity en) {
     this.entity = en;
     this.reset();

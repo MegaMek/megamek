@@ -144,6 +144,10 @@ public class Settings
     /** The starting character for unit designations. */
     public static char      unitStartChar            = 'A'; // == '\u0041'
 
+    /** The number of milliseconds to search for an optimum path. */
+    public static int       maxPathfinderTime        = 0;
+//     public static int       maxPathfinderTime        = MovePath.DEFAULT_PATHFINDER_TIME_LIMIT;
+
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;
 
@@ -389,6 +393,10 @@ scan:
                         st.nextToken();
                         shiftScrollSensitivity = (int)st.nval;
                     }
+                    else if(key.equals("maxpathfindertime")) {
+                        st.nextToken();
+                        maxPathfinderTime = (int)st.nval;
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -486,6 +494,7 @@ scan:
             cw.write("tooltipdelay " + tooltipDelay + "\r\n");
             cw.write("unitstartchar " + (int) unitStartChar + "\r\n");
             cw.write("shiftscrollsensitivity " + shiftScrollSensitivity + "\r\n");
+            cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

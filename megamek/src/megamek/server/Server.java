@@ -10290,6 +10290,12 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    // Easter eggs.  Happy April Fool's Day!!
+    private static final String DUNE_CALL = "They tried and failed?";
+    private static final String DUNE_RESPONSE = "They tried and died!";
+    private static final String STAR_WARS_CALL = "I'd rather kiss a Wookie.";
+    private static final String STAR_WARS_RESPONSE = "That can be arranged!";
+
     /**
      * Process a packet from a connection.
      *
@@ -10341,6 +10347,13 @@ implements Runnable, ConnectionHandler {
                     processCommand(connId, chat);
                 } else {
                     sendChat(player.getName(), chat);
+                }
+                // Easter eggs.  Happy April Fool's Day!!
+                if ( DUNE_CALL.equals(chat) ) {
+                    sendServerChat( DUNE_RESPONSE );
+                }
+                else if ( STAR_WARS_CALL.equals(chat) ) {
+                    sendServerChat( STAR_WARS_RESPONSE );
                 }
                 break;
             case Packet.COMMAND_ENTITY_MOVE :

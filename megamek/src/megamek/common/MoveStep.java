@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -799,7 +799,7 @@ public class MoveStep implements Serializable {
         }
 
         // check if this movement is illegal for reasons other than points
-        if (!isMovementPossible(game, lastPos, curPos) || isUnloaded) {
+        if (!isMovementPossible(game, lastPos) || isUnloaded) {
             movementType = Entity.MOVE_ILLEGAL;
         }
 
@@ -934,20 +934,27 @@ public class MoveStep implements Serializable {
     }
 
     /**
-	 * Is movement possible from start to dest?
-	 */
-    public boolean isMovementPossible(Game game, Coords src, Coords dest) {
+     * Is movement possible from a previous position to this one?
+     * <p/>
+     * This function does not comment on whether an overall movement path
+     * is possible, just whether the <em>current</em> step is possible.
+     */
+    public boolean isMovementPossible(Game game, Coords src) {
         final Hex srcHex = game.board.getHex(src);
+        final Coords dest = this.getPosition();
         final Hex destHex = game.board.getHex(dest);
 
         if (src.distance(dest) > 1) {
             throw new IllegalArgumentException("Coordinates must be adjacent.");
         }
 
+        /* 2004-03-31 : don't look at overall movement, just this step. **
         if (movementType == Entity.MOVE_ILLEGAL) {
             // that was easy
             return false;
         }
+        /* 2004-03-31 : don't look at overall movement, just this step. */
+
         // super-easy
         if (parent.getEntity().isImmobile()) {
             return false;

@@ -708,13 +708,13 @@ public class MovementDisplay
         if (shiftheld || gear == GEAR_TURN) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest));
         } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
-            cmd.lazyPathfinder(dest, MovePath.STEP_FORWARDS);
+            cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
         } else if (gear == GEAR_BACKUP) {
-            cmd.lazyPathfinder(dest, MovePath.STEP_BACKWARDS);
+            cmd.findPathTo(dest, MovePath.STEP_BACKWARDS);
         } else if (gear == GEAR_CHARGE) {
-            cmd.lazyPathfinder(dest, MovePath.STEP_CHARGE);
+            cmd.findPathTo(dest, MovePath.STEP_CHARGE);
         } else if (gear == GEAR_DFA) {
-            cmd.lazyPathfinder(dest, MovePath.STEP_DFA);
+            cmd.findPathTo(dest, MovePath.STEP_DFA);
         }
     }
 

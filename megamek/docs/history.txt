@@ -85,7 +85,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.12-dev
+v 0.28.12 (04-05-03, 1pm)
 + Stealth Armor should affect the BV calculation.
 + The +2 skid modifier is *in addition to* the movement modifiers.
 + 709127 and 712227: Incorporated changes into vehicles.zip; note that I

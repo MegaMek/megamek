@@ -22,7 +22,7 @@ import java.io.*;
  * Both the Client and the Server should have one of these objects and it
  * is their job to keep it synched.
  */
-public class Game
+public class Game implements Serializable
 {
     public static final int PHASE_UNKNOWN           = -1;
     public static final int PHASE_LOUNGE            = 1;

@@ -409,6 +409,55 @@ implements Runnable {
         changePhase(Game.PHASE_LOUNGE);
     }
     
+    public void autoSave()
+    {
+        saveGame("autosave");
+    }
+    
+    public void saveGame(String sFile) {
+        String sFinalFile = sFile + ".sav";
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(
+                    new FileOutputStream(sFinalFile));
+            oos.writeObject(game);
+            oos.flush();
+            oos.close();
+        } catch (Exception e) {
+            System.err.println("Unable to save file: " + sFinalFile);
+            e.printStackTrace();
+        }
+        sendChat("MegaMek", "Game saved to " + sFinalFile);
+    }
+    
+    public boolean loadGame(File f) {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(
+                    new FileInputStream(f));
+            game = (Game)ois.readObject();
+            ois.close();
+        } catch (Exception e) {
+            System.err.println("Unable to load file: " + f);
+            e.printStackTrace();
+            return false;
+        }
+        
+        // reattach the transient fields and ghost the players
+        for (Enumeration e = game.getEntities(); e.hasMoreElements(); ) {
+            Entity ent = (Entity)e.nextElement();
+            ent.setOwner(game.getPlayer(ent.getOwnerId()));
+            ent.setGame(game);
+            ent.restore();
+        }
+        
+        for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player p = (Player)e.nextElement();
+            p.setGame(game);
+            p.setGhost(true);
+        }
+        
+        return true;
+    }
+    
     /**
      * Shortcut to game.getPlayer(id)
      */
@@ -753,6 +802,7 @@ implements Runnable {
                 checkForSuffocation();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
+                autoSave();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                 }

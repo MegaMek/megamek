@@ -1351,7 +1351,7 @@ public class BoardView1
         Enumeration e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = (Entity) e.nextElement();
-            if (!(entity instanceof Infantry)) {
+            if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
                 WreckSprite ws = new WreckSprite(entity);
                 newWrecks.addElement(ws);
             }

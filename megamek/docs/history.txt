@@ -2,6 +2,9 @@ VERSION HISTORY:
 ----------------
 v0.29.70 (CVS)
 + Bug 1163060: Warhawk variant images not showing.
++ Bug 1098838: unconscious mechs always make a PSR.
++ Bug 1157814: Freeze when 2 mechs with dodge skill next to each other.
++ Bug 1123395: NPE when unit dies in scenario initial damage.
 
 v0.29.69 (2005-03-14 7:45am)
 + Data 1157247: New pictures for Burrock, Great Wyrm, Highlander IIC, Scylla.

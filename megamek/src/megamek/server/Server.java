@@ -581,16 +581,6 @@ public boolean isPassworded() {
     }
 
     /**
-     * Resets an entity's secondary facing to face forwards
-     */
-    private void resetEntityFacing() {
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            Entity entity = (Entity)e.nextElement();
-            entity.setSecondaryFacing(entity.getFacing());
-        }
-    }
-
-    /**
      * Called at the beginning of certain phases to make
      * every player not ready.
      */
@@ -779,7 +769,6 @@ public boolean isPassworded() {
             break;
         case Game.PHASE_MOVEMENT :
         case Game.PHASE_FIRING :
-            resetEntityFacing();
         case Game.PHASE_PHYSICAL :
             resetEntityPhase();
             setIneligible(phase);

@@ -25,18 +25,19 @@ public class Ammo
     public static final int    TYPE_LRM = 3;
     public static final int    TYPE_SRM = 4;
   
-  private String name;
-  
-  public int damagePerShot;
-  public int rackSize;
-  public int type;
-  public int shots;
-  public float weight = 1.0f;
-  public int location;
-  
-  public int bv; // batle value
-  
-  public transient boolean exploded = false; // server only
+    private String name;
+
+    public int damagePerShot;
+    public int rackSize;
+    public int type;
+    public int shots;
+    public float weight = 1.0f;
+    public int location;
+
+    public int bv; // batle value
+
+    public transient boolean exploded = false; // server only
+    public transient boolean missing = false; // server only
   
   public Ammo() {
     ;

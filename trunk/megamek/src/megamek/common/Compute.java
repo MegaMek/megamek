@@ -1900,14 +1900,14 @@ public class Compute
     
     /**
      * Returns true if the target is in the specified arc.
-     * @param ac the attacker coordinate
-     * @param af the attacker facing
-     * @param tc the target coordinate
+     * @param src the attacker coordinate
+     * @param facing the appropriate attacker sfacing
+     * @param dest the target coordinate
      * @param arc the arc
      */
-    public static boolean isInArc(Coords ac, int af, Coords tc, int arc) {
+    public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
         // calculate firing angle
-        int fa = ac.degree(tc) - af * 60;
+        int fa = src.degree(dest) - facing * 60;
         if (fa < 0) {
             fa += 360;
         }

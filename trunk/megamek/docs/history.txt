@@ -93,7 +93,11 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
-v next 
+v next
++ hitting back up should not clear movement if you are not jumping
++ some display glitches with movement paths
+
+v 0.24.3 (03-24-02, 9:30pm) 
 + 532083: transfer damage no longer counts double towards damage this phase
 + prone mechs can make facing changes at the normal cost
 + 531143: prone mechs can't make torso twists

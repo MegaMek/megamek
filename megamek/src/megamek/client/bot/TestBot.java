@@ -450,26 +450,35 @@ public class TestBot extends BotClientWrapper {
                 double self_threat = 0;
                 double damage = 0;
                 if (option.isJumping) {
-                  toHit = Compute.toHitDfa(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), option.curPos);
+                  self.old.setState();
+                  MovementData md = option.getMovementData();
+                  toHit = Compute.toHitDfa(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = 2*Compute.getDfaDamageFor(option.entity);
                   self_threat = option.centity.getThreatUtility(Compute.getDfaDamageTakenBy(option.entity), CEntity.SIDE_REAR)*Compute.oddsAbove(toHit.getValue())/100;
                   self_threat += option.centity.getThreatUtility(.1*self.entity.getWeight(), CEntity.SIDE_REAR);
-                  self_threat *= 100/option.centity.entity.getWeight();
+                  self_threat *= 100/option.centity.entity.getWeight(); //small mechs shouldn't do this...
                 } else {
                   self.old.setState();
                   MovementData md = option.getMovementData();
                   toHit = Compute.toHitCharge(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = Compute.getChargeDamageFor(option.entity, md.getHexesMoved());
-                  self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(1-Compute.oddsAbove(toHit.getValue())/100);
+                  self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(Compute.oddsAbove(toHit.getValue())/100);
                   option.setState();
                 }
                 damage = option.PhysicalTarget.getThreatUtility(damage, toHit.getSideTable())*Compute.oddsAbove(toHit.getValue())/100;
-                //these are always risky...
+                //charging is a good tactic against larger mechs
+                if (!option.isJumping) damage *= Math.sqrt((double)enemy.bv/(double)self.bv);
+                //these are always risky, just don't on 11 or 12
                 if (toHit.getValue() > 10) damage = 0;
+                //7 or less is good
+                if (toHit.getValue() < 8) damage *= 1.5;
+                //this is all you are good for
+                if (self.RangeDamages[self.RANGE_SHORT] < 5) damage *= 2;
+                //System.out.println(option + " " + damage + " "+ self_threat + " " + toHit.getValue());
                 option.damages[e] = damage;
                 option.min_damages[e] = damage;
                 option.damage = damage;
-                option.self_threat += self_threat;
+                option.movement_threat += self_threat;
               } else {
                 option.threat += Integer.MAX_VALUE;
               }
@@ -604,7 +613,9 @@ public class TestBot extends BotClientWrapper {
             int distance = option.curPos.distance(enemy.old.curPos);
             double mod = 1;
             if (fa > 130 && fa < 240) mod = 2;
-            mod *= (Math.max(self.jumpMP, .8*self.runMP) < 5)?4:2*Math.sqrt(((double)self.bv)/enemy.bv)/((double)distance/6 + 1);
+            //big formula that says don't do it
+            mod *= ((Math.max(self.jumpMP, .8*self.runMP) < 5)?2:1)*
+                    ((double)self.bv/(double)50)*Math.sqrt(((double)self.bv)/enemy.bv)/((double)distance/6 + 1);
             option.self_threat += mod;
             option.tv.add(mod + " " + fa + " Back to enemy\n");
           }
@@ -625,21 +636,22 @@ public class TestBot extends BotClientWrapper {
       }
       
       //close the range if nothing else and healthy
-      if (option.damage < .25*self.RangeDamages[self.Range] && adjustment < .25*self.RangeDamages[self.Range] && self.overall_armor_percent > .25) {
+      if (option.damage < .25*self.RangeDamages[self.Range] && adjustment < self.RangeDamages[self.Range]) {
         for (int e = 0; e < enemy_array.length; e++) { // for each enemy
           Entity en = (Entity)enemy_array[e];
           CEntity enemy = this.enemies.get(en);
           int range = option.curPos.distance(enemy.old.curPos);
-          adjustment += Math.sqrt((double)range*enemy.bv/(double)self.bv)/enemy_array.length;  
+          if (range > 5)
+          adjustment += Math.pow(self.overall_armor_percent, 2)*Math.sqrt((double)(range-4)*enemy.bv/(double)self.bv)/enemy_array.length;  
         }
       } 
         
       if (option.damage < .25*(1+self.RangeDamages[self.Range])) {
-        option.self_damage = -2*adjustment;
+        option.self_threat += 2*adjustment;
       } else if (option.damage < .5*(1+self.RangeDamages[self.Range])) {
-        option.self_damage = -adjustment;
+        option.self_threat += adjustment;
       }
-      option.tv.add(option.self_damage+" Initial Damage Adjustment " +"\n");
+      option.tv.add(option.self_threat+" Initial Damage Adjustment " +"\n");
     }
     Arrays.sort(move_array);
     
@@ -667,7 +679,7 @@ public class TestBot extends BotClientWrapper {
     for (com.sun.java.util.collections.Iterator i = pass.values().iterator(); i.hasNext();) {
       EntityState option = (EntityState)i.next();
       option.setState();
-      option.self_damage *= .25;
+      option.self_damage *= .5;
       option.self_threat *= .5;
       double terrain = 2*((double)Compute.getTargetTerrainModifier(game, option.entity.getId()).getValue());
       option.tv.add(terrain+" Terrain Adjusment " +"\n");  
@@ -781,7 +793,12 @@ public class TestBot extends BotClientWrapper {
           option.threat = 0;
           for (int d = 0; d < option.damages.length; d++) {
             //my damage is the average of expected and min
+            CEntity cen = this.enemies.get((Entity)enemy_array[e]);
+            //rescale
+            option.min_damages[e] /= cen.strategy.target;
+            option.damages[e] /= cen.strategy.target;
             option.damage += (option.min_damages[e] + option.damages[e])/2;
+            
             //my threat is average of absolute worst, and expected
             option.threat = Math.max(option.threat, option.max_threats[e] + option.threats[e])/2;
             option.threats[e] = (option.max_threats[e] + 2*option.threats[e])/3;
@@ -795,12 +812,12 @@ public class TestBot extends BotClientWrapper {
     
     Arrays.sort(move_array);
     
-    //top 40 utility
-    for (int i = 0; i < 20 && i < move_array.length ; i++) {
+    //top 30 utility
+    for (int i = 0; i < 30 && i < move_array.length ; i++) {
       pass.put((EntityState)move_array[i]);
     }
-    
-    /*Arrays.sort(move_array, new Comparator() {
+/*    
+    Arrays.sort(move_array, new Comparator() {
       public int compare(Object obj, Object obj1) {
         if (((EntityState)obj).damage*.5 - ((EntityState)obj).getUtility() >
         ((EntityState)obj1).damage*.5 - ((EntityState)obj1).getUtility()) {
@@ -810,11 +827,11 @@ public class TestBot extends BotClientWrapper {
       }
     });
     
-    //top 20 damage
-    for (int i = 0; i < 20 && i < move_array.length ; i++) {
+    //top 10 damage
+    for (int i = 0; i < 10 && i < move_array.length ; i++) {
       pass.put((EntityState)move_array[i]);
-    }*/
-    
+    }
+*/    
     for (com.sun.java.util.collections.Iterator i = pass.values().iterator(); i.hasNext();) {
       EntityState option = (EntityState)i.next();
       option.self_threat *= .5;
@@ -848,7 +865,7 @@ public class TestBot extends BotClientWrapper {
             Entity en = (Entity)enemy_array[e];
             CEntity enemy = this.enemies.get(en);
             if (!enemy.canMove()) {
-              option.threats[e] = (option.threats[e] + this.attackUtility(enemy.old, self))/2;
+              option.threats[e] = (2*option.threats[e] + this.attackUtility(enemy.old, self))/3;
               option.tv.add(option.threats[e]+" Revised Threat "+e+" \n");
               if (!option.isPhysical) {
                 if (temp != null) {
@@ -859,6 +876,7 @@ public class TestBot extends BotClientWrapper {
                   option.damages[e] = option.min_damages[e];
                   option.tv.add(option.damages[e]+" Revised Damage "+e+" \n");
                 }
+                //this needs to be reworked
                 if (option.curPos.distance(enemy.old.curPos) == 1) {
                   PhysicalOption p = this.getBestPhysicalAttack(option.entity.getId(), enemy.entity.getId());
                   if (p != null) {
@@ -874,10 +892,14 @@ public class TestBot extends BotClientWrapper {
               }
             } else if (!option.isPhysical) { //enemy can move (not physical check just in case)
               if (temp != null) {
-                option.damages[e] = (option.damages[e] + temp.getDamageUtility(enemy))/2;
+                option.damages[e] = (2*option.damages[e] + temp.getDamageUtility(enemy))/3;
               } else {
                 option.damages[e] = option.min_damages[e];
               }
+            } else {
+              //get a more accurate estimate
+              option.damages[e] /= Math.sqrt((double)enemy.bv/(double)self.bv);
+              option.damage = option.damages[e];
             }
           }
           option.threat = 0;
@@ -899,7 +921,7 @@ public class TestBot extends BotClientWrapper {
     EntityState[] result = new EntityState[Math.min(move_array.length,20)];
     for (int i = 0; i < Math.min(move_array.length,20); i++) {
       result[i] = (EntityState)move_array[i];
-      //if (i < 10) System.out.println(result[i] + " " + result[i].getUtility());
+      //System.out.println(result[i] + " " + result[i].getUtility());
     }
     return result;
   }
@@ -1235,6 +1257,7 @@ public class TestBot extends BotClientWrapper {
     double friend_sum = 0;
     double foe_sum = 0;
     double max_foe_bv = 0;
+    CEntity max_foe = null;
     for (int i = 0; i < entities.length; i++) {
       Entity entity = (Entity)entities[i];
       CEntity centity = this.enemies.get(entity);
@@ -1267,36 +1290,33 @@ public class TestBot extends BotClientWrapper {
       } else {
         foes.add(centity);
         foe_sum += new_value;
-        max_foe_bv = Math.max(new_value, max_foe_bv);
-        if (centity.strategy.target > 2) {
-          centity.strategy.target = 1 + .5*Math.pow((centity.strategy.target - 2),2);
+        if (new_value > max_foe_bv) {
+          max_foe_bv = new_value;
+          max_foe = centity;
         }
-        if (percent < .85 && centity.strategy.target < max_modifier) {
-          centity.strategy.target *= (1.0 + 6*num_entities);
-        } else if (percent < .95 && centity.strategy.target < max_modifier) {
-          centity.strategy.target *= (1.0 + 4*num_entities);
-        } else if (percent <= 1) {
-          if (percent == 1) {
-            centity.strategy.target /= (1.0 + 2*num_entities);
-          } else {
-            centity.strategy.target /= (1.0 + num_entities);
+        if (this.getEntitiesOwned().size() > 2) {
+          if (centity.strategy.target > 2) {
+            centity.strategy.target = 1 + .5*(centity.strategy.target - 2);
           }
+          if (percent < .85 && centity.strategy.target < max_modifier) {
+            centity.strategy.target *= (1.0 + 6*num_entities);
+          } else if (percent < .95 && centity.strategy.target < max_modifier) {
+            centity.strategy.target *= (1.0 + 4*num_entities);
+          } else if (percent <= 1) {
+            if (percent == 1) {
+              centity.strategy.target /= (1.0 + 2*num_entities);
+            } else {
+              centity.strategy.target /= (1.0 + num_entities);
+            }
+          }
+          //don't go below one
+          if (centity.strategy.target < 1) centity.strategy.target = 1;
+          //go after good pilots
+          //if (centity.gunnery + centity.piloting < 8) centity.strategy.target += 1;
         }
-        //don't go below one
-        if (centity.strategy.target < 1) centity.strategy.target = 1;
       }
     }
-    this.NumFriends = friends.size();
-    Iterator i = foes.iterator();
-    //prefer to hit the most valuable mechs -- this was wrong
-    //when indifferent, not in general... 
-    while(i.hasNext()) {
-      CEntity centity = (CEntity)i.next();
-      //double ratio = centity.bv*(centity.overall_armor_percent + 1)/max_foe_bv;
-      //centity.strategy.target = Math.max(1, .8*centity.strategy.target) + .2*ratio;
-      //System.out.println(centity.entity.getName() + " " + centity.strategy.target);
-    }
-    
+    this.NumFriends = friends.size();    
     this.NumEnemies = foes.size();
     System.out.println("Us "+friend_sum+" Them "+foe_sum);
     //do some more reasoning...
@@ -1305,6 +1325,34 @@ public class TestBot extends BotClientWrapper {
       this.enemy_values.add(new Double(foe_sum));
       return;
     }
+    Iterator i = foes.iterator();
+
+    if (this.NumFriends > 1) {
+      if (Strategy.MainTarget == null || null == game.getEntity(Strategy.MainTarget.entity.getId())) {
+        Strategy.MainTarget = max_foe;
+      }
+      Strategy.MainTarget.strategy.target += .2;
+      while(i.hasNext()) {
+        CEntity centity = (CEntity)i.next();
+        // good turn, keep up the work, but randomize to reduce predictability
+        if (friend_sum - foe_sum >=
+        .9*(((Double)this.unit_values.getLast()).doubleValue() -
+        ((Double)this.enemy_values.getLast()).doubleValue())) {
+          if (Compute.random.nextInt(2) == 1) {
+            centity.strategy.target += .3;
+          }
+        //lost that turn, but still in the fight, just get a little more aggressive
+        } else if (friend_sum > .9*foe_sum) {
+          centity.strategy.target += .15;
+        //lost that turn and loosing
+        } else if (centity.strategy.target < 2) { //go for the gusto
+          centity.strategy.target += .3;  
+        }
+        System.out.println(centity.entity.getName() + " " + centity.strategy.target);
+      }
+    }
+        
+        
     double ratio = friend_sum/foe_sum;
     double mod = 1;
     if (ratio < .9) {
@@ -1319,7 +1367,7 @@ public class TestBot extends BotClientWrapper {
       CEntity centity = (CEntity)i.next();
       if (!(mod < 1 && centity.strategy.attack < .6) && !(mod > 1 && centity.strategy.attack >= max_modifier))
         centity.strategy.attack *= mod;
-      //System.out.println(centity.strategy.attack);
+      System.out.println(centity.strategy.attack);
     }
     System.gc(); //just to make sure
   }
@@ -1342,6 +1390,7 @@ public class TestBot extends BotClientWrapper {
         }
       }
       if (found) {
+        try {
         if (st.hasMoreTokens() && st.nextToken().trim().equalsIgnoreCase(this.getLocalPlayer().getName())) {
           if (!p.isEnemyOf(this.getLocalPlayer())) {
             if (st.hasMoreTokens()) {
@@ -1366,12 +1415,27 @@ public class TestBot extends BotClientWrapper {
                   cen.strategy.attack = Math.min(cen.strategy.attack*1.2, 1.5);
                 }
                 understood = true;
+              } else if (command.equalsIgnoreCase("attack")) {
+                int x = Integer.parseInt(st.nextToken().trim());
+                int y = Integer.parseInt(st.nextToken().trim());
+                Entity en = game.getEntity(new Coords(x - 1, y - 1));
+                if (en != null) {
+                  if (en.isEnemyOf((Entity)this.getEntitiesOwned().elementAt(0))) {
+                    CEntity cen = this.enemies.get(en);
+                    cen.strategy.target += 3;
+                    System.out.println(cen.entity.getName() + " " +  cen.strategy.target);
+                    understood = true;
+                  }
+                }
               }
               if (understood) sendChat("Understood "+p.getName());
             }
           } else {
             sendChat("I can't do that, "+p.getName());
           }
+        }
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
       }
     }

@@ -317,10 +317,11 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   public boolean isMoveLegal() {
     // third pass (sigh) : avoid stacking violations
     this.isMovementLegal = false;
-    if (this.getLastStep() != null) {
+    //seems to have been a change, can't stack and do dfa/charge
+    /*if (this.getLastStep() != null) {
       if (this.getLastStep().getType() == STEP_DFA || this.getLastStep().getType() == STEP_CHARGE)
         return true;
-    }
+    }*/
     if (this.overallMoveType != Entity.MOVE_ILLEGAL) {
       boolean found = false;
       for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -546,17 +547,17 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     //self threat and self damage are considered transient
     double temp_threat = (this.threat + this.movement_threat + this.self_threat + (double)this.getMovementheatBuildup()/20)/this.centity.strategy.attack;
     double temp_damage = (this.damage + this.self_damage)*this.centity.strategy.attack;
-    double ratio = (this.threat + this.movement_threat)/(this.centity.avg_armor + .5*this.centity.avg_iarmor);
-    if (ratio > .4) {
+    double ratio = (this.threat + this.movement_threat)/(this.centity.avg_armor + .25*this.centity.avg_iarmor);
+    if (this.threat + this.movement_threat > 4*this.centity.avg_armor) {
       if (ratio > 2) {
         temp_threat += this.centity.bv/15.0; //likely to die
         this.Doomed = true;
         this.inDanger = true;
       } else if (ratio > 1) {
-        temp_threat += this.centity.bv/50.0; //in danger
+        temp_threat += this.centity.bv/25.0; //in danger
         this.inDanger = true;
       } else {
-        temp_threat += this.centity.bv/100.0; //in danger
+        temp_threat += this.centity.bv/70.0; //in danger
         this.inDanger = true;        
       }
     } else if (this.threat + this.movement_threat > 30) {
@@ -618,7 +619,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       Hex h = game.board.getHex(this.curPos);
       Hex h1 = game.board.getHex(enemy.curPos);
       if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?2:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.1:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100
+        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?2:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.2:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100
             + (1 - enemy.centity.base_psr_odds)*enemy.entity.getWeight()/10.0;
       }
     }

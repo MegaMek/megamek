@@ -1889,21 +1889,9 @@ implements Runnable, ConnectionHandler {
         // Generate the turn order for the Players *within*
         // each Team.  Map the teams to their turn orders.
         Hashtable allTeamTurns = new Hashtable( game.getTeamsVector().size() );
-/* *** Rename "last" to "even" *** */
-        Hashtable lastTrackers = new Hashtable( game.getTeamsVector().size() );
-/* *** Rename "last" to "even" *** */
         for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
             final Team team = (Team) loop.nextElement();
             allTeamTurns.put( team, team.determineTeamOrder() );
-/* *** Rename "last" to "even" *** */
-
-            // Track both the number of times we've checked the team for
-            // "leftover" turns, and the number of "leftover" turns placed.
-            int[] lastTracker = new int[2];
-            lastTracker[0] = 0;
-            lastTracker[1] = 0;
-            lastTrackers.put (team, lastTracker);
-/* *** Rename "last" to "even" *** */
         }
 
         // Now, generate the global order of all teams' turns.
@@ -1939,60 +1927,10 @@ implements Runnable, ConnectionHandler {
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
         // Keep track of how many turns we've added to the vector.
-/* *** Rename "last" to "even" *** */
-        Team prevTeam = null;
-        int min = team_order.getMin();
-/* *** Rename "last" to "even" *** */
         for ( int numTurn = 0; team_order.hasMoreElements(); numTurn++ ) {
             Team team = (Team) team_order.nextElement();
             TurnVectors withinTeamTurns = (TurnVectors) allTeamTurns.get(team);
             Player player = (Player) withinTeamTurns.nextElement();
-/* *** Rename "last" to "even" *** */
-            int[] lastTracker = (int[]) lastTrackers.get (team);
-            float teamLastTurns = (float) team.getLastTurns();
-
-            // Calculate the number of "last" turns to add for this team.
-            int numLast = 0;
-            if (prevTeam == null) {
-                // Increment the number of times we've checked for "leftovers".
-                lastTracker[0]++;
-
-                // The first team to move just adds the "baseline" turns.
-                numLast += teamLastTurns / min;
-            }
-            else if (!team.equals(prevTeam)) {
-                // Increment the number of times we've checked for "leftovers".
-                lastTracker[0]++;
-
-                // This wierd equation attempts to spread the "leftover"
-                // turns accross the turn's moves in a "fair" manner.
-                // It's based on the number of times we've checked for
-                // "leftovers" the number of "leftovers" we started with,
-                // the number of times we've added a turn for a "leftover",
-                // and the total number of times we're going to check.
-                numLast += Math.round (lastTracker[0] * (teamLastTurns % min)
-                                       / min) - lastTracker[1];
-
-                // Update the number of turns actually added for "leftovers".
-                lastTracker[1] += numLast;
-
-                // Add the "baseline" number of turns.
-                numLast += teamLastTurns / min;
-            }
-
-            // Add the calculated number of "last" turns.
-            while (numLast > 0 && withinTeamTurns.hasMoreLastElements()) {
-                Player lastPlayer = (Player) withinTeamTurns.nextLastElement();
-                turns.addElement
-                    (new GameTurn.EntityClassTurn (lastPlayer.getId(),
-                                                   lastMask));
-                numLast--;
-            }
-            
-            // Record this team for the next move.
-            prevTeam = team;
-/* *** Rename "last" to "even" *** */
-
             // If we've added all "normal" turns, allocate turns
             // for the infantry and/or protomechs moving last.
             GameTurn turn = null;
@@ -12891,6 +12829,24 @@ implements Runnable, ConnectionHandler {
         }
     }
     public void ejectEntity(Entity entity, boolean autoEject) {
+      // check if there is already a MechWarrior
+      // on the field that ejected from this entity
+      Enumeration doubleMechWarriors =
+            game.getSelectedEntities( new EntitySelector() {
+                public boolean accept(Entity entity) {
+                    if (entity instanceof MechWarrior) {
+                        MechWarrior mw = (MechWarrior)entity;
+                        if (mw.getOriginalRideId() == entity.getId()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            } );
+      if (doubleMechWarriors.hasMoreElements()) {
+        //if there are any ejected MechWarriors from this Entity, return
+        return;
+      } else {
         if (entity instanceof Mech) {
             PilotingRollData rollTarget = new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
             if (entity.isProne()) {
@@ -12977,6 +12933,7 @@ implements Runnable, ConnectionHandler {
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
             send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
         }
+      }
     }
     
     private void resolveMechWarriorPickUp() {

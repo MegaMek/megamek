@@ -21,6 +21,7 @@
 package megamek.client;
 
 import java.awt.*;
+
 import megamek.common.*;
 
 import java.awt.event.ActionListener;
@@ -40,7 +41,7 @@ import megamek.common.options.GameOption;
  * @version 
  */
 public class CustomMechDialog 
-extends Dialog implements ActionListener, DialogOptionListener { 
+extends ClientDialog implements ActionListener, DialogOptionListener { 
     
     private Label labName = new Label("Name: ", Label.RIGHT);
     private TextField fldName = new TextField(20);
@@ -87,6 +88,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
     
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
+    
+    private ScrollPane scrAll = new ScrollPane();
 
     private TextArea texDesc = new TextArea("Mouse over an option to see a description.", 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY);
 
@@ -96,6 +99,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     public CustomMechDialog(ClientGUI clientgui, Client client, Entity entity, boolean editable) {
         super(clientgui.frame, "Customize pilot/mech stats...", true);
         
+        Panel tempPanel = new Panel();
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;
@@ -107,7 +111,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        tempPanel.setLayout(gridbag);
             
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(5, 5, 5, 5);
@@ -116,56 +120,56 @@ extends Dialog implements ActionListener, DialogOptionListener {
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labName, c);
-        add(labName);
+        tempPanel.add(labName);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldName, c);
-        add(fldName);
+        tempPanel.add(fldName);
         
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labGunnery, c);
-        add(labGunnery);
+        tempPanel.add(labGunnery);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldGunnery, c);
-        add(fldGunnery);
+        tempPanel.add(fldGunnery);
         
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labPiloting, c);
-        add(labPiloting);
+        tempPanel.add(labPiloting);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(fldPiloting, c);
-        add(fldPiloting);
+        tempPanel.add(fldPiloting);
         
         if (entity instanceof Mech) {
             Mech mech = (Mech)entity;
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labAutoEject, c);
-            add(labAutoEject);
+            tempPanel.add(labAutoEject);
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(chAutoEject, c);
-            add(chAutoEject);
+            tempPanel.add(chAutoEject);
             chAutoEject.setState(!mech.isAutoEject());
         }
         
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labDeployment, c);
-        add(labDeployment);
+        tempPanel.add(labDeployment);
       
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(choDeployment, c);
-        add(choDeployment);
+        tempPanel.add(choDeployment);
         refreshDeployment();
 
         if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") ) {
@@ -175,24 +179,23 @@ extends Dialog implements ActionListener, DialogOptionListener {
           c.fill = GridBagConstraints.BOTH;
           c.gridwidth = GridBagConstraints.REMAINDER;
           gridbag.setConstraints(scrOptions, c);
-          add(scrOptions);
+          tempPanel.add(scrOptions);
   
           c.weightx = 1.0;    c.weighty = 0.0;
           gridbag.setConstraints(texDesc, c);
-          add(texDesc);
+          tempPanel.add(texDesc);
         }
         
-        if(entity.hasC3() || entity.hasC3i())
-        {        
+        if (entity.hasC3() || entity.hasC3i()) {        
           c.gridwidth = 1;
           c.anchor = GridBagConstraints.EAST;
           gridbag.setConstraints(labC3, c);
-          add(labC3);
+          tempPanel.add(labC3);
         
           c.gridwidth = GridBagConstraints.REMAINDER;
           c.anchor = GridBagConstraints.WEST;
           gridbag.setConstraints(choC3, c);
-          add(choC3);
+          tempPanel.add(choC3);
           refreshC3();
         }
         boolean eligibleForOffBoard = false;
@@ -207,18 +210,18 @@ extends Dialog implements ActionListener, DialogOptionListener {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labOffBoard, c);
-            add(labOffBoard);
+            tempPanel.add(labOffBoard);
           
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(chOffBoard, c);
-            add(chOffBoard);
+            tempPanel.add(chOffBoard);
             chOffBoard.setState(entity.isOffBoard());
             
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labOffBoardDirection, c);
-            add(labOffBoardDirection);
+            tempPanel.add(labOffBoardDirection);
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
@@ -232,22 +235,21 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 direction = Entity.NORTH;
             }
             choOffBoardDirection.select( direction );
-            add(choOffBoardDirection);
+            tempPanel.add(choOffBoardDirection);
             
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labOffBoardDistance, c);
-            add(labOffBoardDistance);
+            tempPanel.add(labOffBoardDistance);
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(fldOffBoardDistance, c);
             fldOffBoardDistance.setText(Integer.toString(entity.getOffBoardDistance()));
-            add(fldOffBoardDistance);
+            tempPanel.add(fldOffBoardDistance);
         }
 
-        if ( entity instanceof Protomech )
-        {
+        if ( entity instanceof Protomech ) {
             // All Protomechs have a callsign.
             StringBuffer callsign = new StringBuffer( "Callsign: " );
             callsign.append( (char) (this.entity.getUnitNumber() +
@@ -258,7 +260,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(labCallsign, c);
-            add(labCallsign);
+            tempPanel.add(labCallsign);
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
@@ -282,12 +284,12 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 c.gridwidth = 1;
                 c.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(labUnitNum, c);
-                add(labUnitNum);
+                tempPanel.add(labUnitNum);
 
                 c.gridwidth = GridBagConstraints.REMAINDER;
                 c.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(choUnitNum, c);
-                add(choUnitNum);
+                tempPanel.add(choUnitNum);
                 refreshUnitNum(otherUnitEntities);
             }
         }
@@ -297,7 +299,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             setupMunitions();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panMunitions, c);
-            add(panMunitions);
+            tempPanel.add(panMunitions);
         }
         
         // Set up rapidfire mg
@@ -305,15 +307,15 @@ extends Dialog implements ActionListener, DialogOptionListener {
             setupRapidfireMGs();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panRapidfireMGs, c);
-            add(panRapidfireMGs);
+            tempPanel.add(panRapidfireMGs);
         }
-
+        
         setupButtons();
         
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(panButtons, c);
-        add(panButtons);
+        tempPanel.add(panButtons);
         
         fldName.setText(entity.getCrew().getName());
         fldName.addActionListener(this);
@@ -334,15 +336,17 @@ extends Dialog implements ActionListener, DialogOptionListener {
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
         }
+        scrAll.add(tempPanel);
+
+        // add the scrollable panel
+        this.add(scrAll);
         
         addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false); }
-  });
+            public void windowClosing(WindowEvent e) { setVisible(false); }
+        });
 
         pack();
-        setResizable(false);
-        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width/2 - getSize().width/2,
-                    clientgui.frame.getLocation().y + clientgui.frame.getSize().height/2 - getSize().height/2);
+        setLocationAndSize(tempPanel.getSize());
     }
     
     private void setupButtons() {

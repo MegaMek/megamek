@@ -165,7 +165,7 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add( new Label("Maximum game log size (MB).") );
         tempPanel.add( panSetting );
 
-// scrolling options
+        // scrolling options
         tempPanel.add( new Label("Clicking on the MiniMap and using the numpad arrow keys always scrolls the main display.") );
         tempPanel.add( new Label("Additionaly, you may choose to scroll:") );
 
@@ -195,7 +195,6 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add( scrollSensitivity );
         panSetting.add( new Label("Scroll sensitivity.") );
         tempPanel.add( panSetting );
-// scrolling options
 
         scrOptions.add(tempPanel);
 

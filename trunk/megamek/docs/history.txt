@@ -16,6 +16,7 @@ v0.29.58 (CVS)
 + Corrected a spelling mistake in conjunction with extreme G's.
 + Bug 1040858: breaching a leg results only in one PSR, should do more
 + Bug 1021324: Hull breached on the beach
++ Bug 1069709: Display Bug with Auto Eject and Pilot Skills
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

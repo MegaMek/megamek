@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.32 (CVS)
+
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.
 + Bug 913240: clear deployment on every phase change.  This needs a cleanup.

@@ -4334,18 +4334,21 @@ implements Runnable {
     }
     
     /**
-     * Returns true if the hex is flammable, and the roll is made.  Also adds
-     * the fire to that hex.
+     * Returns true if the hex is set on fire with the specified roll.  Of
+     * course, also checks to see that fire is possible in the specified hex.
      */
     public boolean burn(Hex hex, int roll) {
-        if (null != hex && !(hex.contains(Terrain.FIRE)) && (hex.contains(Terrain.WOODS))) {
-            int fireRoll = Compute.d6(2);
-            if (fireRoll >= roll) {
-                hex.addTerrain(new Terrain(Terrain.FIRE, 1));
-                return true;
-            }
+        if (!game.getOptions().booleanOption("fire") || null == hex 
+        || hex.contains(Terrain.FIRE) || !(hex.contains(Terrain.WOODS))) {
+            return false;
         }
-        return false;
+        int fireRoll = Compute.d6(2);
+        if (fireRoll >= roll) {
+            hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+            return true;
+        } else {
+            return false;
+        }
     }
     
     

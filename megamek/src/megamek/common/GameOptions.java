@@ -47,6 +47,7 @@ public class GameOptions implements Serializable {
         OptionGroup level2 = new OptionGroup("Optional Rules (Level 2)");
         addGroup(level2);
         addOption(level2, new GameOption("flamer_heat", "Flamers deal heat instead of damage", "If checked, flamers increase the heat of their target by 2 instead of dealing 2 damage.\n\nUnchecked by default.", false));
+        addOption(level2, new GameOption("fire", "Fire and smoke", "If checked, fires may be set accidentally or intentionally.\n\nChecked by default.", true));
 
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);

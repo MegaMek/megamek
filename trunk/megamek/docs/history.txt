@@ -115,7 +115,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.17 CVS
+v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move
 + Bug 731933 fixed, mostly.
 + Bug 732001: Infantry weapons should not be IS-only.

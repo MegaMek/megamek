@@ -2773,7 +2773,7 @@ implements Runnable {
         Vector loadVector = new Vector();
         for ( int i = 0; i < loadedCount; i++ ){
             int loadedId = packet.getIntValue( 4 + i );
-            loadVector.add(game.getEntity( loadedId ));
+            loadVector.addElement(game.getEntity( loadedId ));
         }
         
         // is this the right phase?

@@ -858,7 +858,6 @@ public class Client extends Panel
 
             // nemchenk, 2004-01-01 -- hide MechDisplay at the end
             mechW.setVisible(false);
-
             break;
         }
 
@@ -966,6 +965,7 @@ public class Client extends Panel
             break;
         case Game.PHASE_TARGETING:
             component = new TargetingPhaseDisplay(this);
+            ( (TargetingPhaseDisplay) component ).initializeListeners();
             main = "BoardView";
             secondary = "TargetingPhaseDisplay";
             if ( !mainNames.contains( main ) ) {
@@ -984,6 +984,7 @@ public class Client extends Panel
             break;
         case Game.PHASE_OFFBOARD:
             component = new OffboardAttackPhaseDisplay(this);
+            ( (OffboardAttackPhaseDisplay) component ).initializeListeners();
             main = "BoardView";
             secondary = "OffboardDisplay";
             if ( !mainNames.contains(main) ) {
@@ -1083,14 +1084,14 @@ public class Client extends Panel
     public void setDisplayVisible(boolean visible) {
         mechW.setVisible(visible);
         if (visible) {
-        	frame.requestFocus();
+            frame.requestFocus();
         }
     }
 
-	public void toggleUnitOverview() {
-		uo.setVisible(!uo.isVisible());
-		bv.repaint();
-	}
+    public void toggleUnitOverview() {
+        uo.setVisible(!uo.isVisible());
+        bv.repaint();
+    }
 
     /** Toggles the minimap window
          Also, toggles the minimap enabled setting
@@ -1112,7 +1113,7 @@ public class Client extends Panel
     public void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
         if (visible) {
-        	frame.requestFocus();
+            frame.requestFocus();
         }
     }
 

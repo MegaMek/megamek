@@ -37,18 +37,18 @@ public class Game implements Serializable
     public static final int PHASE_LOUNGE            = 1;
     public static final int PHASE_SELECTION         = 2;
     public static final int PHASE_EXCHANGE          = 3;
-    public static final int PHASE_DEPLOYMENT        = 15;  // reorder someday
-    public static final int PHASE_INITIATIVE        = 4;
-    public static final int PHASE_TARGETING         = 5;
-    public static final int PHASE_MOVEMENT          = 6;
-    public static final int PHASE_MOVEMENT_REPORT   = 7;
-    public static final int PHASE_OFFBOARD          = 8;
-    public static final int PHASE_OFFBOARD_REPORT   = 9;
-    public static final int PHASE_FIRING            = 10;
-    public static final int PHASE_FIRING_REPORT     = 11;
-    public static final int PHASE_PHYSICAL          = 12;
-    public static final int PHASE_END               = 13;
-    public static final int PHASE_VICTORY           = 14;
+    public static final int PHASE_DEPLOYMENT        = 4;
+    public static final int PHASE_INITIATIVE        = 5;
+    public static final int PHASE_TARGETING         = 6; 
+    public static final int PHASE_MOVEMENT          = 7; 
+    public static final int PHASE_MOVEMENT_REPORT   = 8; 
+    public static final int PHASE_OFFBOARD          = 9; 
+    public static final int PHASE_OFFBOARD_REPORT   = 10;
+    public static final int PHASE_FIRING            = 11;
+    public static final int PHASE_FIRING_REPORT     = 12;
+    public static final int PHASE_PHYSICAL          = 13;
+    public static final int PHASE_END               = 14;
+    public static final int PHASE_VICTORY           = 15;
     public static final int PHASE_DEPLOY_MINEFIELDS = 16;
     public static final int PHASE_STARTING_SCENARIO = 17;
     /**
@@ -1385,6 +1385,9 @@ public class Game implements Serializable
     }
     public void addArtilleryAttack(ArtilleryAttackAction aaa) {
         offboardArtilleryAttacks.addElement(aaa);
+    }
+    public void removeArtilleryAttack(ArtilleryAttackAction aaa) {
+        offboardArtilleryAttacks.removeElement(aaa);
     }
     public Vector getArtilleryVector() {
         return offboardArtilleryAttacks;

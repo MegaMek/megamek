@@ -29,6 +29,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
     public static final int     F_PPC           = 0x0008; //              "
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
+    public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
     
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
@@ -53,14 +54,15 @@ public class WeaponType extends EquipmentType {
     }
     
     public int getFireTN() {
-        if(hasFlag(F_FLAMER))
-          return 4;
-        else if(hasFlag(F_PPC) || hasFlag(F_LASER))
-          return 7;
-        else if(ammoType == AmmoType.T_MG || ammoType == AmmoType.T_GAUSS_LIGHT || ammoType == AmmoType.T_GAUSS || ammoType == AmmoType.T_GAUSS_HEAVY )
-          return TargetRoll.IMPOSSIBLE;
-        else
-          return 9;
+        if (hasFlag(F_NO_FIRES)) {
+            return TargetRoll.IMPOSSIBLE;
+        } else if (hasFlag(F_FLAMER)) {
+            return 4;
+        } else if (hasFlag(F_PPC) || hasFlag(F_LASER)) {
+            return 7;
+        } else {
+            return 9;
+        }
     }
  
     public int getDamage() {
@@ -273,7 +275,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 9;
         
         return weapon;
@@ -520,6 +522,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES;
         weapon.bv = 21;
         
         return weapon;
@@ -654,7 +657,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 5;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 17;
         
         return weapon;
@@ -837,7 +840,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 22;
         weapon.tonnage = 15.0f;
         weapon.criticals = 7;
-        weapon.flags |= F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 321;
         
@@ -860,7 +863,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 25;
         weapon.tonnage = 12.0f;
         weapon.criticals = 5;
-        weapon.flags |= F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 159;
         
@@ -883,7 +886,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 20;
         weapon.tonnage = 18.0f;
         weapon.criticals = 11;
-        weapon.flags |= F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 346;
         
@@ -1063,6 +1066,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES;
         weapon.bv = 30;
         
         return weapon;
@@ -1317,7 +1321,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 6;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 31;
         
         return weapon;
@@ -1339,7 +1343,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 4;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 7;
         
         return weapon;
@@ -1607,6 +1611,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 9;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES;
         weapon.bv = 21;
         
         return weapon;
@@ -1742,7 +1747,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
-        weapon.flags |= F_LASER | F_DIRECT_FIRE;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 12;
         
         return weapon;
@@ -1856,7 +1861,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 22;
         weapon.tonnage = 12.0f;
         weapon.criticals = 6;
-        weapon.flags |= F_DIRECT_FIRE;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 321;
         
@@ -1980,6 +1985,7 @@ public class WeaponType extends EquipmentType {
         weapon.longRange = 12;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
+        weapon.flags |= F_NO_FIRES;
         weapon.bv = 40;
         
         return weapon;

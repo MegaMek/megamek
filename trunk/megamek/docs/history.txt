@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.67 (CVS)
+
 v0.29.66 (2005-02-21 7:45am)
 + Data 1100263: HMPRead Mixed Tech RAC Codes
 + Data 1122339: New pics for Huntsman (Nobiri-Nin), Black Python, Mist Lynx,

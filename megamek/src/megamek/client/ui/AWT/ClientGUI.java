@@ -634,6 +634,9 @@ public class ClientGUI
                     panMain.add(main, this.bv);
                 }
                 panSecondary.add(secondary, component);
+                //Should have a local player by now.  Surely there
+                // is a better place to put this though...
+                bv.setLocalPlayer(client.getLocalPlayer());
                 break;
             case Game.PHASE_TARGETING :
                 component = new TargetingPhaseDisplay(this, false);

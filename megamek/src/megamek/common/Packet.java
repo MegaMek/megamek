@@ -34,6 +34,8 @@ implements Serializable {
     public static final int        COMMAND_PLAYER_REMOVE        = 5;
     public static final int        COMMAND_PLAYER_UPDATE        = 6;
     public static final int        COMMAND_PLAYER_READY         = 7;
+    // This next one not currently used, and has same number as
+    //  unload stranded?
     public static final int        COMMAND_PLAYER_DISMOUNT      = 40;  // reorder me
     
     public static final int        COMMAND_CHAT                 = 8;
@@ -48,6 +50,7 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_MODECHANGE    = 26;  // reorder me
     public static final int        COMMAND_ENTITY_AMMOCHANGE    = 33;  // reorder me
     
+    public static final int        COMMAND_ENTITY_VISIBILITY_INDICATOR = 41;  // reorder me
     public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me
 
     public static final int        COMMAND_BLDG_ADD             = 29; // reorder me
@@ -80,6 +83,7 @@ implements Serializable {
     private int command;
     private Object[] data;
     private boolean zipped = false;
+    public int byteLength = 0;
     
     /**
      * Contructs a new Packet with just the command and no
@@ -167,7 +171,7 @@ implements Serializable {
             
             data = new Object[1];
             byte[] bytes = baos.toByteArray();
-            
+            this.byteLength = bytes.length;
 //            System.out.println("zipData: data is " + bytes.length + " total bytes in data.");
 //            System.out.println("zipData: data is " + zipEntry.getSize() + " bytes uncompressed, " + zipEntry.getCompressedSize() + " bytes compressed, " + bytes.length + " total bytes in data.");
             
@@ -197,13 +201,13 @@ implements Serializable {
         // unzip
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[])data[0]);
-
             GZIPInputStream zis = new GZIPInputStream(bais);
-
             ObjectInputStream ois = new ObjectInputStream(zis);
+
             data = (Object[])ois.readObject();
+
             ois.close();
-        
+
             // reset the flag
             zipped = false;
         } catch (IOException ex) {

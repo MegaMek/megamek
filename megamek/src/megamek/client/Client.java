@@ -607,6 +607,17 @@ public class Client implements Runnable {
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
     }
 
+    protected void receiveEntityVisibilityIndicator(Packet packet) {
+        Entity e = game.getEntity(packet.getIntValue(0));
+        if (e != null) { // we may not have this entity due to double blind
+            e.setSeenByEnemy(packet.getBooleanValue(1));
+            e.setVisibleToEnemy(packet.getBooleanValue(2));
+            //this next call is only needed sometimes, but we'll just
+            // call it everytime
+            game.board.processBoardEvent(new BoardEvent(game.board, e.getPosition(), e, BoardEvent.BOARD_CHANGED_ENTITY, 0));
+        }
+    }
+
     protected void receiveDeployMinefields(Packet packet) {
         Vector minefields = (Vector) packet.getObject(0);
 
@@ -720,8 +731,17 @@ public class Client implements Runnable {
             if (in == null) {
                 in = new ObjectInputStream(socket.getInputStream());
             }
-            Packet packet = (Packet) in.readObject();
-            //            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
+
+            Packet packet = (Packet)in.readObject();
+
+            /* Packet debug code
+            if (packet == null) {
+                System.out.println("c: received null packet");
+            } else if (packet.getData() == null) {
+                System.out.println("c: received empty packet");
+            } else {
+                System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " zipped entries totaling " + packet.byteLength + " bytes in size");
+            } */
 
             // All went well.  Reset the failure count.
             this.connFailures = 0;
@@ -815,6 +835,9 @@ public class Client implements Runnable {
                     break;
                 case Packet.COMMAND_ENTITY_REMOVE :
                     receiveEntityRemove(c);
+                    break;
+                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
+                    receiveEntityVisibilityIndicator(c);
                     break;
                 case Packet.COMMAND_SENDING_MINEFIELDS :
                     receiveSendingMinefields(c);

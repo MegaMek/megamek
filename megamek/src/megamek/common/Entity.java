@@ -222,6 +222,16 @@ public abstract class Entity
      */
     private char unitNumber     = (char) Entity.NONE;
 
+    /** Indicates whether this entity has been seen by the enemy
+     *  during the course of this game.  Used in double-blind.
+     */
+    private boolean seenByEnemy = false;
+
+    /** Indicates whether this entity can currently be seen by
+     *  the enemy.  Used in double-blind.
+     */
+    private boolean visibleToEnemy = false;
+
     /**
      * Generates a new, blank, entity.
      */
@@ -2432,7 +2442,7 @@ public abstract class Entity
      * This should be overwritten if necessary
      */
     public int calculateBattleValue(boolean assumeLinkedC3){
-    	return calculateBattleValue();
+        return calculateBattleValue();
     }
 
     /**
@@ -3416,11 +3426,11 @@ public abstract class Entity
     }
 
     public void setSelected(boolean selected) {
-    	this.selected = selected;
+        this.selected = selected;
     }
 
     public boolean isSelected() {
-    	return selected;
+        return selected;
     }
 
     /**
@@ -3456,5 +3466,21 @@ public abstract class Entity
 			&& (pos.x == 0 || pos.x == game.board.width - 1
 				|| pos.y == 0 || pos.y == game.board.height - 1);
 	}
+
+    public void setSeenByEnemy(boolean b) {
+        this.seenByEnemy = b;
+    }
+
+    public boolean isSeenByEnemy() {
+        return this.seenByEnemy;
+    }
+
+    public void setVisibleToEnemy(boolean b) {
+        this.visibleToEnemy = b;
+    }
+
+    public boolean isVisibleToEnemy() {
+        return this.visibleToEnemy;
+    }
 
 }

@@ -2391,6 +2391,11 @@ implements Runnable, ConnectionHandler {
         // Notify the clients about any building updates.
         applyAffectedBldgs();
 
+        // Update visibility indications if using double blind.
+        if (doBlind()) {
+            updateVisibilityIndicator();
+        }
+
         // This entity's turn is over.
         // N.B. if the entity fell, a *new* turn has already been added.
         endCurrentTurn(entity);
@@ -4340,6 +4345,12 @@ implements Runnable, ConnectionHandler {
 
         // looks like mostly everything's okay
         processAttack(entity, vector);
+
+        // Update visibility indications if using double blind.
+        if (doBlind()) {
+            updateVisibilityIndicator();
+        }
+
         endCurrentTurn(entity);
     }
 
@@ -10137,6 +10148,32 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
+     * Updates entities graphical "visibility indications" which are used
+     *  in double-blind games.
+     */
+    private void updateVisibilityIndicator() {
+        Vector vAllEntities = game.getEntitiesVector();
+        for (int x = 0; x < vAllEntities.size(); x++) {
+            Entity e = (Entity)vAllEntities.elementAt(x);
+            boolean previousVisibleValue = e.isVisibleToEnemy();
+            boolean previousSeenValue = e.isSeenByEnemy();
+            e.setVisibleToEnemy(false);
+            Vector vCanSee = whoCanSee(e);
+            for (int y = 0; y < vCanSee.size(); y++) {
+                Player p = (Player)vCanSee.elementAt(y);
+                if (e.getOwner().isEnemyOf(p)) {
+                    e.setVisibleToEnemy(true);
+                    e.setSeenByEnemy(true);
+                }
+            }
+            if (previousVisibleValue != e.isVisibleToEnemy()
+                || previousSeenValue != e.isSeenByEnemy()) {
+                sendVisibilityIndicator(e);
+            }
+        }
+    }
+
+    /**
      * Checks if an entity added by the client is valid and if so, adds it to the list
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
@@ -10692,6 +10729,14 @@ implements Runnable, ConnectionHandler {
      */
     public void sendChangedHex(Coords coords) {
         send(createHexChangePacket(coords, game.board.getHex(coords)));
+    }
+
+    public void sendVisibilityIndicator(Entity e) {
+        final Object[] data = new Object[3];
+        data[0] = new Integer(e.getId());
+        data[1] = new Boolean(e.isSeenByEnemy());
+        data[2] = new Boolean(e.isVisibleToEnemy());
+        send(new Packet(Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR, data));
     }
 
     /**

@@ -186,7 +186,13 @@ public class MovePath implements Cloneable, Serializable {
             }
             this.addStep(step);
         }
-        compileLastStep();
+
+        /* The compileLastStep() method doesn't do anything!  I am therefore
+         * commenting it out and calling clipToPossible() instead.  Hope this
+         * doesn't break anything...
+         */
+        //compileLastStep();
+        clipToPossible();
     }
 
     public void removeLastStep() {
@@ -280,8 +286,16 @@ public class MovePath implements Cloneable, Serializable {
         return getStep(steps.size() - 1);
     }
 
+    /* Debug method */
+    public void printAllSteps() {
+        System.out.println("*Steps*");
+        for (int i = 0;i < steps.size();i++) {
+            System.out.println("  " + i + ": " + getStep(i).getMovementType());
+        }
+    }
+
     /**
-     * Removes impossible steps, if compiled. If not compiled, does nothing.
+     * Removes impossible steps.
      */
     public void clipToPossible() {
         // hopefully there's no impossible steps in the middle of possible ones

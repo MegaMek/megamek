@@ -26,6 +26,7 @@ v0.29.32 (CVS)
 	the radmes)
 + Bug 934527: "Board" menu no longer enabled in Client. Also tidied up some
 	other menu items.
++ RFE 933543: Right/middle-click scrolling in fire phase restored as option.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

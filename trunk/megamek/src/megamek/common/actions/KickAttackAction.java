@@ -89,10 +89,12 @@ public class KickAttackAction
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
+        int toReturn = (int)Math.floor(damage * multiplier) + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == Entity.LOC_WET) {
-            multiplier /= 2.0f;
+            toReturn = (int)Math.ceil(toReturn * 0.5f);
         }
-        return (int)Math.floor(damage * multiplier) + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        return toReturn;
     }
     
     public ToHitData toHit(Game game) {

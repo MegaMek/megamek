@@ -38,7 +38,7 @@ public class GAAttack extends GA {
     protected int firing_arc = 0;
 
     public GAAttack(TestBot tb, CEntity attacker, Vector attack, int population, int generations, boolean isEnemy) {
-        super(attack.size() + 1, population, .7, 5, generations, .4);
+        super(attack.size() + 1, population, .7, .05, generations, .4);
         this.attack = attack;
         this.attacker = attacker;
         this.game = tb.game;
@@ -58,7 +58,7 @@ public class GAAttack extends GA {
     }
 
     public int[] getResultChromosome() {
-        return ((chromosomes[bestFitnessChromIndex]).genes);
+        return ((chromosomes[populationDim - 1]).genes);
     }
 
     double[] damages = null;
@@ -76,10 +76,7 @@ public class GAAttack extends GA {
     }
 
     public double[] getDamageUtilities() {
-        return this.getDamageUtilities(this.bestFitnessChromIndex);
-    }
-
-    public double[] getDamageUtilities(int iChromIndex) {
+        int iChromIndex = populationDim - 1;
         targets.clear(); //could use vector and not hashtable
         double[] result = new double[this.target_array.size()];
         Chromosome chromVector = this.chromosomes[iChromIndex];

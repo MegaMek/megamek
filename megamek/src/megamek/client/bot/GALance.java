@@ -29,7 +29,7 @@ public class GALance extends GA {
     protected Object[] enemy_array;
 
     public GALance(TestBot tb, Vector moves, int population, int generations) {
-        super(moves.size(), population, .7, 5, generations, .5);
+        super(moves.size(), population, .7, .05, generations, .5);
         this.tb = tb;
         this.moves = moves;
         this.enemy_array = tb.getEnemyEntities().toArray();
@@ -214,7 +214,7 @@ public class GALance extends GA {
     }
 
     public MoveOption getResult() {
-        Chromosome r = this.chromosomes[bestFitnessChromIndex];
+        Chromosome r = this.chromosomes[best];
         Vector possible = new Vector();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(((MoveOption[]) this.moves.elementAt(iGene))[r.genes[iGene]]));

@@ -103,4 +103,20 @@ public class GameTurn implements Serializable {
             return super.isValidEntity(entity) && entity instanceof Infantry;
         }
     }
+    
+    /**
+     * A type of game turn that allows anything except infantry to move
+     */
+    public static class NotInfantryTurn extends GameTurn {
+        public NotInfantryTurn(int playerId) {
+            super(playerId);
+        }
+        
+        /**
+         * Returns true if the entity is normally valid and it is not infantry.
+         */
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && !(entity instanceof Infantry);
+        }
+    }
 }

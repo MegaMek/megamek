@@ -72,9 +72,6 @@ public class FiringDisplay
 
     private Entity[]            visibleTargets  = null;
     private int                 lastTargetID    = -1;
-    
-    // stuff for the current turn
-    private int			turnInfMoved = 0;
 
     /**
      * Creates and lays out a new movement phase display 
@@ -223,11 +220,7 @@ public class FiringDisplay
      */
     public void selectEntity(int en) {
 	boolean isInfantry;
-	boolean infMoveLast =
-	    client.game.getOptions().booleanOption("inf_move_last");
-	boolean infMoveMulti =
-	    client.game.getOptions().booleanOption("inf_move_multi");
-
+        
         if (client.game.getEntity(en) != null) {
             this.cen = en;
 
@@ -240,8 +233,6 @@ public class FiringDisplay
 		      nextId != en;
 		      nextId = client.getNextEntityNum(nextId) ) {
 
-		    // If we find an Infantry platoon, make the
-		    // player move it instead, and stop looping.
 		    if (null != client.game.getEntity(nextId).getPosition()) {
 			this.cen = nextId;
 			break;
@@ -259,35 +250,7 @@ public class FiringDisplay
 
             } // End ce()-not-on-board
 
-	    // If the current entity is not infantry, and we're in a middle
-	    // of an infantry fire block, make sure that the player has no
-	    // other infantry.
 	    isInfantry = (ce() instanceof Infantry);
-	    if ( !isInfantry && infMoveMulti && 
-		 (turnInfMoved % Game.INF_MOVE_MULTI) > 0 ) {
-
-		// Walk through the list of entities for this player.
-		for ( int nextId = client.getNextEntityNum(en);
-		      nextId != en;
-		      nextId = client.getNextEntityNum(nextId) ) {
-
-		    // If we find an Infantry platoon, make the
-		    // player move it instead, and stop looping.
-		    if ( client.game.getEntity(nextId) instanceof Infantry ) {
-			this.cen = nextId;
-			isInfantry = true;
-			break;
-		    }
-
-		} // Check the player's next entity.
-
-		// If the current entity isn't infantry, all player's infantry
-		// have been moved; reset the counter so we never check again.
-		if ( !isInfantry ) {
-		    turnInfMoved = 0;
-		}
-
-	    } // End check-inf_move_multi
 
             target(null);
             client.game.board.highlight(ce().getPosition());
@@ -463,10 +426,6 @@ public class FiringDisplay
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
-	// If we've moved an Infantry platoon, increment our turn counter.
-	if (ce() instanceof Infantry) {
-	    turnInfMoved++;
-	}
     }
     
     /**
@@ -716,8 +675,7 @@ public class FiringDisplay
             client.frame.removeComponentListener(this);
             client.bv.removeKeyListener(this);
             client.cb.getComponent().removeKeyListener(this);
-	    // Reset the infantry move counter;
-	    turnInfMoved = 0;
+
         }
     }
 

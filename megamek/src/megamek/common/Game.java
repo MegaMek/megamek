@@ -628,6 +628,25 @@ public class Game implements Serializable
         }
         return false;
     }
+    
+    /**
+     * Returns the number of remaining selectable infantry owned by a player.
+     */
+    public int infantryLeft(int playerId) {
+	Player player = this.getPlayer( playerId );
+        int remaining = 0;
+
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if ( player.equals(entity.getOwner()) &&
+		 entity.isSelectable() &&
+		 entity instanceof Infantry ) {
+                remaining++;
+            }          
+        }
+        
+        return remaining;
+    }
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped

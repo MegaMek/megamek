@@ -2944,7 +2944,7 @@ public boolean isPassworded() {
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 desc += "\n            Movement system damaged!";
-                te.setOriginalWalkMP(Math.min(0, te.getOriginalWalkMP() - 1));
+                te.setOriginalWalkMP(Math.max(0, te.getOriginalWalkMP() - 1));
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc += "\n            Movement system destroyed!";

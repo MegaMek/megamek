@@ -156,6 +156,8 @@ public abstract class Entity
     protected Vector            ammoList = new Vector();
     protected Vector            miscList = new Vector();
 
+    protected Vector            failedEquipmentList = new Vector();
+
     // which teams have NARCd us?  a long allows for 64 teams.
     protected long              m_lNarcedBy = 0;
     protected long              m_lPendingNarc = 0;
@@ -325,7 +327,8 @@ public abstract class Entity
     }
 
     public boolean isClan() {
-        return techLevel == TechConstants.T_CLAN_LEVEL_2;
+        return ( techLevel == TechConstants.T_CLAN_LEVEL_2 ||
+                 techLevel == TechConstants.T_MIXED_BASE_CLAN_LEVEL_2 );
     }
 
     public int getYear() {
@@ -1324,6 +1327,10 @@ public abstract class Entity
         }
     }
 
+    public void addFailedEquipment(String s) {
+        failedEquipmentList.addElement(s);
+    }
+
     /**
      * Returns the equipment number of the specified equipment, or
      * -1 if equipment is not present.
@@ -1352,6 +1359,12 @@ public abstract class Entity
         } catch (ArrayIndexOutOfBoundsException ex) {
             return null;
         }
+    }
+
+    // Returns an enumeration which contains the name of each
+    //  piece of equipment that failed to load.
+    public Enumeration getFailedEquipment() {
+        return failedEquipmentList.elements();
     }
 
     public int getTotalAmmoOfType(EquipmentType et) {

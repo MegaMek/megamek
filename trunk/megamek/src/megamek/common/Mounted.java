@@ -92,7 +92,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * Restores the equipment from the name
      */
     public void restore() {
-        this.type = EquipmentType.getByInternalName(typeName);
+        this.type = EquipmentType.get(typeName);
 
         if (this.type == null) {
             System.err.println("Mounted.restore: could not restore equipment type \"" + typeName + "\"");

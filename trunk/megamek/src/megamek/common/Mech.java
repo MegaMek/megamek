@@ -602,9 +602,9 @@ public abstract class Mech
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType;
         if (dblSinks) {
-            sinkType = EquipmentType.getByInternalName(clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
+            sinkType = EquipmentType.get(clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
         } else {
-            sinkType = EquipmentType.getByInternalName("Heat Sink");
+            sinkType = EquipmentType.get("Heat Sink");
         }
         
         if (sinkType == null) {
@@ -1378,7 +1378,7 @@ public abstract class Mech
      * Adds clan CASE in every location
      */
     public void addClanCase() {
-        EquipmentType clCase = EquipmentType.getByInternalName("CLCASE");
+        EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
             try {
                 addEquipment(new Mounted(this, clCase), i, false);

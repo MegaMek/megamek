@@ -3053,12 +3053,19 @@ public boolean isPassworded() {
                         break;
                     case 4 :
                         desc += "\n            <<<CRITICAL HIT>>> Crew killed";
+                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
+                        tank.setDoomed(true);
+                        break;
                     case 5 :
                         desc += "\n            <<<CRITICAL HIT>>> Fuel tank hit.  BOOM!";
+                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
+                        tank.setDoomed(true);
+                        break;
                     case 6 :
                         desc += "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!";
                         desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
                         tank.setDoomed(true);
+                        break;
                 }
             }
         }

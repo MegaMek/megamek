@@ -14,11 +14,9 @@
 
 package megamek.common;
 
-import java.awt.Polygon;
 import java.util.*;
 
 import megamek.common.actions.*;
-import megamek.common.util.*;
 
 /**
  * The compute class is designed to provide static methods for mechs
@@ -1789,42 +1787,7 @@ public class Compute
         toHit.append(losMods);
         
         // secondary targets modifier...
-        int primaryTarget = Entity.NONE;
-        boolean curInFrontArc = isInArc(ae.getPosition(), ae.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            Object o = i.nextElement();
-            if (!(o instanceof WeaponAttackAction)) {
-                continue;
-            }
-            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-            if (prevAttack.getEntityId() == attackerId) {
-                // first front arc target is our primary.
-                // if first target is non-front, and either a later target or
-                // the current one is in front, use that instead.
-                Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
-                if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
-                    primaryTarget = prevAttack.getTargetId();
-                    break;
-                } else if (primaryTarget == Entity.NONE && !curInFrontArc) {
-                    primaryTarget = prevAttack.getTargetId();
-                }
-            }
-        }
-        
-        if (primaryTarget != Entity.NONE && primaryTarget != target.getTargetId()) {
-
-            // Infantry can't attack secondary targets (BMRr, pg. 32).
-            if ( isAttackerInfantry ) {
-                return new ToHitData( ToHitData.IMPOSSIBLE, 
-                                      "Can't have multiple targets." );
-            }
-
-            if (curInFrontArc) {
-                toHit.addModifier(1, "secondary target modifier");
-            } else {
-                toHit.addModifier(2, "secondary target modifier");
-            }
-        }
+		toHit.append(getSecondaryTargetMod(game, ae, target));
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -1832,25 +1795,7 @@ public class Compute
         }
 
         // arm critical hits to attacker
-        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
-            toHit.addModifier(4, "shoulder actuator destroyed");
-        } else {
-            int actuatorHits = 0;
-            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
-                actuatorHits++;
-            }
-            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
-                actuatorHits++;
-            }
-            if (actuatorHits > 0) {
-                toHit.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
-            }
-        }
-        
-        // sensors critical hit to attacker
-        if (sensorHits > 0) {
-            toHit.addModifier(2, "attacker sensors damaged");
-        }
+		toHit.append(getDamageWeaponMods(ae, weapon));
         
         // target immobile
         if (target.isImmobile()) {
@@ -1858,96 +1803,7 @@ public class Compute
         }
         
         // attacker prone
-        if (ae.isProne()) {
-            if ( ae.entityIsQuad() ) {
-                int legsDead = ((Mech)ae).countDestroyedLegs();
-                
-                //No legs destroyed: no penalty and can fire all weapons
-                if ( (legsDead == 1) || (legsDead == 2) ) {
-                    // Need an intact front leg
-                    if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
-                    }
-                    
-                    // arm-mounted weapons have addidional trouble
-                    if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
-                        int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-                        // check previous attacks for weapons fire from the other arm
-                        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-                            Object o = i.nextElement();
-                            if (!(o instanceof WeaponAttackAction)) {
-                                continue;
-                            }
-                            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-                            // stop when we get to this weaponattack (does this always work?)
-                            if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
-                                break;
-                            }
-                            if (prevAttack.getEntityId() == attackerId && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
-                                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
-                            }
-                        }
-                    }
-                    // can't fire leg weapons
-                    if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
-                    }
-                    toHit.addModifier(2, "attacker prone");
-                } else if ( legsDead >= 3 ) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
-                }
-            } else {
-                int l3ProneFiringArm = -1;
-                
-                if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                  if ( game.getOptions().booleanOption("maxtech_prone_fire") ) {
-                    //Can fire with only one arm
-                    if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both arms destroyed.");
-                    }
-                    
-                    l3ProneFiringArm = ae.isLocationDestroyed(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
-                  } else {
-                    // must have an arm intact
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
-                  }
-                }
-
-                // arm-mounted weapons have addidional trouble
-                if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
-                  if ( l3ProneFiringArm == weapon.getLocation() ) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
-                  }
-                  
-                    int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-                    // check previous attacks for weapons fire from the other arm
-                    for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-                        Object o = i.nextElement();
-                        if (!(o instanceof WeaponAttackAction)) {
-                            continue;
-                        }
-                        WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-                        // stop when we get to this weaponattack (does this always work?)
-                        if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
-                            break;
-                        }
-                        if (prevAttack.getEntityId() == attackerId
-                        && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
-                            return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
-                        }
-                    }
-                }
-                // can't fire leg weapons
-                if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
-                }
-                toHit.addModifier(2, "attacker prone");
-                
-                if ( l3ProneFiringArm != -1 ) {
-                  toHit.addModifier(1, "attacker propping on single arm");
-                }
-            }
-        }
+		toHit.append(getProneMods(game, ae, weaponId));
 
         // target prone
         if (te != null && te.isProne()) {
@@ -2024,6 +1880,192 @@ public class Compute
     }
     
     /**
+     * Gets the modifiers, if any, that the mech receives from being prone.
+     * @return any applicable modifiers due to being prone
+     */
+    private static ToHitData getProneMods(Game game, final Entity attacker, int weaponId) {
+		if (!attacker.isProne()) {
+			return new ToHitData(); // no modifier
+		}
+
+		ToHitData mods = new ToHitData();
+		Mounted weapon = attacker.getEquipment(weaponId);
+        if ( attacker.entityIsQuad() ) {
+            int legsDead = ((Mech)attacker).countDestroyedLegs();
+            if (legsDead == 0) {
+				// No legs destroyed: no penalty and can fire all weapons
+            	return new ToHitData(); // no modifier
+            } else if ( legsDead >= 3 ) {
+				return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+			}
+			// we have one or two dead legs...
+			
+            // Need an intact front leg
+            if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
+            }
+            
+            // front leg-mounted weapons have addidional trouble
+            if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+                // check previous attacks for weapons fire from the other arm
+                if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
+					return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
+                }
+            }
+            // can't fire rear leg weapons
+            if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
+            }
+            mods.addModifier(2, "attacker prone");
+        } else {
+            int l3ProneFiringArm = Entity.LOC_NONE;
+            
+            if (attacker.isLocationDestroyed(Mech.LOC_RARM) || attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+              if ( game.getOptions().booleanOption("maxtech_prone_fire") ) {
+                //Can fire with only one arm
+                if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both arms destroyed.");
+                }
+                
+                l3ProneFiringArm = attacker.isLocationDestroyed(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
+              } else {
+                // must have an arm intact
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
+              }
+            }
+
+            // arm-mounted weapons have addidional trouble
+            if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+	            if ( l3ProneFiringArm == weapon.getLocation() ) {
+	              return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
+	            }
+              
+                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+				// check previous attacks for weapons fire from the other arm
+				if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
+					return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
+				}
+            }
+            // can't fire leg weapons
+            if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
+            }
+            mods.addModifier(2, "attacker prone");
+            
+            if ( l3ProneFiringArm != Entity.LOC_NONE ) {
+              mods.addModifier(1, "attacker propping on single arm");
+            }
+        }
+        return mods;
+	}
+
+	/**
+	 * Checks to see if there is an attack previous to the one with this
+	 * weapon from the specified arm.
+	 * @return true if there is a previous attack from this arm
+	 */
+	private static boolean isFiringFromArmAlready(Game game, int weaponId, final Entity attacker, int armLoc) {
+		for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+		    Object o = i.nextElement();
+		    if (!(o instanceof WeaponAttackAction)) {
+		        continue;
+		    }
+		    WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+		    // stop when we get to this weaponattack (does this always work?)
+		    if (prevAttack.getEntityId() == attacker.getId() && prevAttack.getWeaponId() == weaponId) {
+		        break;
+		    }
+		    if (prevAttack.getEntityId() == attacker.getId() && attacker.getEquipment(prevAttack.getWeaponId()).getLocation() == armLoc) {
+		    	return true;
+		    }
+		}
+		return false;
+	}
+
+	/**
+     * Adds any damage modifiers from arm critical hits or sensor damage.
+	 * @return Any applicable damage modifiers
+	 */
+	private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
+		ToHitData mods = new ToHitData();
+		
+		if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
+            mods.addModifier(4, "shoulder actuator destroyed");
+        } else {
+	        // no shoulder hits, add other arm hits
+	        int actuatorHits = 0;
+	        if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
+	            actuatorHits++;
+	        }
+	        if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
+	            actuatorHits++;
+	        }
+	        if (actuatorHits > 0) {
+				mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
+	        }
+		}
+        
+		// sensors critical hit to attacker
+		int sensorHits = attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+		if (sensorHits > 0) {
+			mods.addModifier(2, "attacker sensors damaged");
+		}
+		
+        return mods;
+	}
+
+	/**
+     * Determines if the current target is a secondary target, and if so,
+     * returns the appropriate modifier.
+     * 
+     * @return The secondary target modifier.
+     * @author Ben
+     */
+    private static ToHitData getSecondaryTargetMod(Game game, Entity attacker, Targetable target) {
+		boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
+
+		int primaryTarget = Entity.NONE;
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+            Object o = i.nextElement();
+            if (!(o instanceof WeaponAttackAction)) {
+                continue;
+            }
+            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+            if (prevAttack.getEntityId() == attacker.getId()) {
+                // first front arc target is our primary.
+                // if first target is non-front, and either a later target or
+                // the current one is in front, use that instead.
+                Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
+                if (isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
+                    primaryTarget = prevAttack.getTargetId();
+                    break;
+                } else if (primaryTarget == Entity.NONE && !curInFrontArc) {
+                    primaryTarget = prevAttack.getTargetId();
+                }
+            }
+        }
+        
+        if (primaryTarget == Entity.NONE || primaryTarget == target.getTargetId()) {
+        	// current target is primary target
+        	return new ToHitData(); // no modifier
+        }
+        
+        // current target is secondary
+
+        // Infantry can't attack secondary targets (BMRr, pg. 32).
+        if (attacker instanceof Infantry) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Can't have multiple targets.");
+        }
+
+        if (curInFrontArc) {
+			return new ToHitData(1, "secondary target modifier");
+        } else {
+			return new ToHitData(2, "secondary target modifier");
+        }
+	}
+
+	/**
      * Returns ToHitData indicating the modifiers to fire for the specified
      * LOS effects data.
      */
@@ -4130,7 +4172,7 @@ public class Compute
         
         float fDamage = 0.0f;
         WeaponType wt = (WeaponType)weapon.getType();
-        if (wt.getDamage() == wt.DAMAGE_MISSILE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
             if (weapon.getLinked() == null) return 0.0f;
             AmmoType at = (AmmoType)weapon.getLinked().getType();
             

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -108,6 +108,15 @@ public class Server
     }
 
     /**
+     * Allow the player to set whatever parameters he is able to
+     */
+    private void receivePlayerInfo(Packet packet, int connId) {
+        Player player = (Player)packet.getObject(0);
+        game.getPlayer(connId).setColorIndex(player.getColorIndex());
+        game.getPlayer(connId).setStartingPos(player.getStartingPos());
+    }
+        
+    /**
      * Recieves a client name, sent from a pending connection as a signal to
      * connect.
      */
@@ -143,10 +152,12 @@ public class Server
 
         System.out.println("s: player " + connId
                            + " (" + getPlayer(connId).getName() + ") connected from "
-                           + getClient(connId).socket.getInetAddress());
+                           + getClient(connId).getSocket().getInetAddress());
         sendChatToAll("***Server", getPlayer(connId).getName() + " connected from "
-                           + getClient(connId).socket.getInetAddress());
+                           + getClient(connId).getSocket().getInetAddress());
     }
+    
+    
 
     /**
      * Validates the player info.
@@ -177,7 +188,7 @@ public class Server
     /**
      * Called when it is sensed that a connection has terminated.
      */
-    private void disconnected(int connId) {
+    void disconnected(int connId) {
         final Connection conn = getClient(connId);
         final Player player = getPlayer(connId);
 
@@ -195,7 +206,9 @@ public class Server
         // if a player has active entities, he becomes a ghost
         if (game.getEntitiesOwnedBy(player) > 0) {
             player.setGhost(true);
+            player.setReady(true);
             send(createPlayerUpdatePacket(player.getId()));
+            checkReady();
         } else {
             game.removePlayer(player.getId());
             send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
@@ -204,6 +217,7 @@ public class Server
         System.out.println("s: player " + connId + " disconnected");
         sendChatToAll("***Server", player.getName() + " disconnected.");
     }
+    
 
     /**
      * Shortcut to game.getPlayer(id)
@@ -455,7 +469,7 @@ public class Server
         // check if all active players are ready
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (!player.isReady()) {
+            if (!player.isGhost() && !player.isReady()) {
                 allAboard = false;
             }
         }
@@ -474,10 +488,8 @@ public class Server
         case Game.PHASE_MOVEMENT :
         case Game.PHASE_FIRING :
         case Game.PHASE_PHYSICAL :
-            if (!areMoreTurns()) {
-                endCurrentPhase();
-            } else if (getPlayer(game.getTurn()).isReady()) {
-                changeTurn(nextTurn());
+            if(getPlayer(game.getTurn()).isReady()) {
+                changeToNextTurn();
             }
             break;
         }
@@ -602,7 +614,7 @@ public class Server
         case Game.PHASE_PHYSICAL :
             // set turn
             ti = 0;
-            changeTurn(nextTurn());
+            changeToNextTurn();
             break;
         }
     }
@@ -673,13 +685,30 @@ public class Server
             break;
         }
     }
+    
+    /**
+     * Changes to the next turn, if that player is connected
+     */
+    private void changeToNextTurn() {
+        // if there aren't any more turns, end the phase
+        if (!areMoreTurns()) {
+            endCurrentPhase();
+            return;
+        }
+        int nextTurn = nextTurn();
+        if (getPlayer(nextTurn).isGhost()) {
+            changeToNextTurn();
+            return;
+        }
+        changeTurn(nextTurn);
+    }
 
     /**
      * Changes it to make it the specified player's turn.
      */
     private void changeTurn(int turn) {
         final Player player = getPlayer(game.getTurn());
-
+        
         game.setTurn(turn);
         player.setReady(false);
         send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
@@ -2762,6 +2791,7 @@ public class Server
         data[1] = new Boolean(getPlayer(playerId).isReady());
         return new Packet(Packet.COMMAND_PLAYER_READY, data);
     }
+    
     /**
      * Creates a packet containing the game settingss
      */
@@ -2820,9 +2850,9 @@ public class Server
      * Send a packet to all connected clients.
      */
     private void send(Packet packet) {
-    for (Enumeration i = connections.elements(); i.hasMoreElements();) {
-        final Connection conn = (Connection)i.nextElement();
-            conn.connSend(packet);
+        for (Enumeration i = connections.elements(); i.hasMoreElements();) {
+            final Connection conn = (Connection)i.nextElement();
+            conn.send(packet);
         }
     }
 
@@ -2830,15 +2860,78 @@ public class Server
      * Send a packet to a specific connection.
      */
     private void send(int connId, Packet packet) {
-        getClient(connId).connSend(packet);
+        getClient(connId).send(packet);
     }
 
     /**
      * Send a packet to a pending connection
      */
     private void sendToPending(int connId, Packet packet) {
-        getPendingConnection(connId).connSend(packet);
+        getPendingConnection(connId).send(packet);
     }
+    
+    /**
+     * Process a packet
+     */
+    void handle(int connId, Packet packet) {
+        //System.out.println("s(" + cn + "): received command");
+        if (packet == null) {
+            System.out.println("server.connection.handle: got null packet");
+            return;
+        }
+        // act on it
+        switch(packet.getCommand()) {
+        case Packet.COMMAND_CLIENT_NAME :
+            receiveClientName(packet, connId);
+            break;
+        case Packet.COMMAND_PLAYER_UPDATE :
+            receivePlayerInfo(packet, connId);
+            validatePlayerInfo(connId);
+            send(createPlayerUpdatePacket(connId));
+            break;
+        case Packet.COMMAND_ENTITY_READY :
+            receiveEntityReady(packet, connId);
+            send(createEntityPacket(packet.getIntValue(0)));
+            break;
+        case Packet.COMMAND_PLAYER_READY :
+            receivePlayerReady(packet, connId);
+            send(createPlayerReadyPacket(connId));
+            checkReady();
+            break;
+        case Packet.COMMAND_CHAT :
+            String chat = (String)packet.getObject(0);
+            sendChatToAll(getPlayer(connId).getName(), chat);
+            break;
+        case Packet.COMMAND_ENTITY_MOVE :
+            doEntityMovement(packet, connId);
+            break;
+        case Packet.COMMAND_ENTITY_ATTACK :
+            receiveAttack(packet);
+            break;
+        case Packet.COMMAND_ENTITY_ADD :
+            receiveEntityAdd(packet, connId);
+            resetPlayerReady();
+            transmitAllPlayerReadys();
+            break;
+        case Packet.COMMAND_ENTITY_UPDATE :
+            receiveEntityUpdate(packet, connId);
+            resetPlayerReady();
+            transmitAllPlayerReadys();
+            break;
+        case Packet.COMMAND_ENTITY_REMOVE :
+            receiveEntityDelete(packet, connId);
+            resetPlayerReady();
+            transmitAllPlayerReadys();
+            break;
+        case Packet.COMMAND_SENDING_GAME_SETTINGS :
+            gameSettings = (GameSettings)packet.getObject(0);
+            resetPlayerReady();
+            transmitAllPlayerReadys();
+            send(createSettingsPacket());
+            break;
+        }
+    }
+
 
     /**
      * Listen for incoming clients.
@@ -2853,162 +2946,11 @@ public class Server
                 int id = connectionCounter++;
                 System.out.println("s: accepting player connection #" + id + " ...");
 
-                connectionsPending.addElement(new Connection(s, id));
+                connectionsPending.addElement(new Connection(this, s, id));
 
                 greeting(id);
             } catch(IOException ex) {
                 ;
-            }
-        }
-    }
-
-    /**
-    * Listens for player messages and calls the appropriate
-    * server functions.
-    */
-    class Connection implements Runnable {
-        public Socket     socket;
-        //public Player     player;
-
-        public int                id;
-
-        public Thread            receiver;
-
-
-        public Connection(Socket socket, int id) {
-            this.socket = socket;
-            this.id = id;
-
-            // start pump thread
-            receiver = new Thread(this);
-            receiver.start();
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        /**
-         * Kill off the thread
-         */
-        public void die() {
-            receiver = null;
-        }
-
-
-        /**
-         * Allow the player to set whatever parameters he is able to
-         */
-        private void receivePlayerInfo(Packet c) {
-            Player player = (Player)c.getObject(0);
-            game.getPlayer(id).setColorIndex(player.getColorIndex());
-            game.getPlayer(id).setStartingPos(player.getStartingPos());
-        }
-
-        /**
-         * Reads a complete net command from the given socket
-         */
-        private Packet readCommand() {
-            try {
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                Packet packet = (Packet)ois.readObject();
-                return packet;
-            } catch (IOException ex) {
-                System.err.println("s(" + id + "): IO error reading command");
-                disconnected(id);
-                return null;
-            } catch (ClassNotFoundException ex) {
-                System.err.println("s(" + id + "): curPosass not found error reading command");
-                disconnected(id);
-                return null;
-            }
-        }
-
-        /**
-         * Sends a packet!
-         *
-         * synchronized seems to keep this from getting munged.
-         */
-        public synchronized void connSend(Packet packet) {
-            try {
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.flush();
-                oos.writeObject(packet);
-                oos.flush();
-                //System.out.println("s(" + cn + "): command #" + c.getCommand() + " sent");
-            } catch(IOException ex) {
-                System.err.println("s(" + id + "): error sending command.  dropping player");
-                System.err.println(ex);
-                System.err.println(ex.getMessage());
-                disconnected(id);
-            }
-        }
-
-        /**
-         * Process a packet
-         */
-        private void handle(Packet c) {
-            //System.out.println("s(" + cn + "): received command");
-            // act on it
-            switch(c.getCommand()) {
-            case Packet.COMMAND_CLIENT_NAME :
-                receiveClientName(c, id);
-                break;
-            case Packet.COMMAND_PLAYER_UPDATE :
-                receivePlayerInfo(c);
-                validatePlayerInfo(id);
-                send(createPlayerUpdatePacket(id));
-                break;
-            case Packet.COMMAND_ENTITY_READY :
-                receiveEntityReady(c, id);
-                send(createEntityPacket(c.getIntValue(0)));
-                break;
-            case Packet.COMMAND_PLAYER_READY :
-                receivePlayerReady(c, id);
-                send(createPlayerReadyPacket(id));
-                checkReady();
-                break;
-            case Packet.COMMAND_CHAT :
-                String chat = (String)c.getObject(0);
-                sendChatToAll(getPlayer(id).getName(), chat);
-                break;
-            case Packet.COMMAND_ENTITY_MOVE :
-                doEntityMovement(c, id);
-                break;
-            case Packet.COMMAND_ENTITY_ATTACK :
-                receiveAttack(c);
-                break;
-            case Packet.COMMAND_ENTITY_ADD :
-                receiveEntityAdd(c, id);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
-                break;
-            case Packet.COMMAND_ENTITY_UPDATE :
-                receiveEntityUpdate(c, id);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
-                break;
-            case Packet.COMMAND_ENTITY_REMOVE :
-                receiveEntityDelete(c, id);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
-                break;
-            case Packet.COMMAND_SENDING_GAME_SETTINGS :
-                gameSettings = (GameSettings)c.getObject(0);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
-                send(createSettingsPacket());
-                break;
-            }
-        }
-
-
-        /**
-         * listen for packets & handle them
-         */
-        public void run() {
-            while (receiver == Thread.currentThread()) {
-                handle(readCommand());
             }
         }
     }

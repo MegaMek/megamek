@@ -33,7 +33,9 @@ public class Client extends Panel
         
     // we need these to communicate with the server
     private String              name;
-    Socket                      socket;
+    Socket              socket;
+    private ObjectInputStream   in = null;
+    private ObjectOutputStream  out = null;
 
     // some info about us and the server
     public String                serverName;
@@ -105,10 +107,8 @@ public class Client extends Panel
         try {
             socket = new Socket(hostname, port);
         } catch(UnknownHostException ex) {
-            socket = null;
             return false;
         } catch(IOException ex) {
-            socket = null;
             return false;
         }
         
@@ -123,9 +123,7 @@ public class Client extends Panel
      */
     private void disconnected() {
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
-        
         alert.show();
-        
         System.exit(0);
     }
     
@@ -514,11 +512,11 @@ public class Client extends Panel
      */
     private Packet readPacket() {
         try {
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                  
-            Packet packet = (Packet)ois.readObject();
-
-            //System.out.println("c: received command #" + packet.getCommand());
+            if (in == null) {
+                in = new ObjectInputStream(socket.getInputStream());
+            }
+            Packet packet = (Packet)in.readObject();
+//            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
             return packet;
         } catch (IOException ex) {
             System.err.println("client: IO error reading command:");
@@ -526,7 +524,7 @@ public class Client extends Panel
             System.err.println(ex.getMessage());
             disconnected();
             return null;
-            } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ex) {
             System.err.println("client: class not found error reading command:");
             System.err.println(ex);
             System.err.println(ex.getMessage());
@@ -538,13 +536,16 @@ public class Client extends Panel
     /**
      * send the message to the server
      */
-    private void send(Packet c) {
+    private void send(Packet packet) {
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.flush();
-            oos.writeObject(c);
-            oos.flush();
-            //System.out.println("c: command sent");
+            if (out == null) {
+                out = new ObjectOutputStream(socket.getOutputStream());
+                out.flush();
+            }
+            out.reset(); // write each packet fresh; a lot changes
+            out.writeObject(packet);
+            out.flush();
+//            System.out.println("c: packet #" + packet.getCommand() + " sent");
         } catch(IOException ex) {
             System.err.println("client: error sending command.");
         }

@@ -25,17 +25,20 @@ mech "default_tank" "default_tank.gif"
 
 # put custom pictures here:
 
+# by Ben Mazur
 mech "LCT-*" "default_light.gif"
 mech "HBK-*" "default_medium.gif"
 mech "SCP-*" "default_quad.gif"
 mech "RFL-*" "default_heavy.gif"
 mech "AS7-*" "default_assault.gif"
+mech "JR7-*" "jenner0.gif"
+mech "SDR-*" "spider.gif"
 
 # by Dima Nemchenko (nemchenk)
 mech "MAD-*" "marauder.gif"
 
 # these pics by vestifex
-mech "JR7-*" "jenner.gif"
+#mech "JR7-*" "jenner.gif"
 mech "UM-*" "urbanmech.gif"
 mech "JM6-*" "jagermech.gif"
 mech "FS9-*" "firestarter.gif"
@@ -51,6 +54,13 @@ mech "TBT-*" "trebuchet.gif"
 mech "HCT-*" "hatchetman.gif"
 mech "WVR-*" "wolverine.gif"
 mech "ASN-*" "assasin.gif"
+mech "STK-*" "stalker.gif"
+mech "AWS-*" "awesome.gif"
+mech "PHX-*" "phoenixhawk.gif"
+mech "GRF-*" "griffin.gif"
+mech "ZEU-*" "zeus.gif"
+mech "VTR-*" "victor.gif"
+mech "DRG-*" "dragon.gif"
 
 # by grfx_slade
 mech "STG-*" "stinger.gif"

@@ -184,6 +184,7 @@ public class MegaMek
         server = new Server(hd.serverPass, hd.port);
         // initialize game
         client = new Client(frame, hd.name);
+
         // verify connection
         if(!client.connect("localhost", hd.port)) {
             server = null;
@@ -193,6 +194,8 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
+
+        server.getGame().getOptions().loadOptions(client, hd.serverPass);
     }
 
     public void loadGame() {
@@ -353,7 +356,7 @@ public class MegaMek
         client = BotFactory.getBot(BotFactory.TEST, frame, cd.name);
         //client = new BotClient(frame, cd.name);
 
-	// verify connection
+  // verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;

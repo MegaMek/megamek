@@ -12,6 +12,7 @@ v0.29.54 (CVS)
 + Bug 1052073: BattleArmor Fire Protection
 + Bug 1052069: Bot dies
 + RFE 727927: turning off heat sinks
++ Bug 1052947: Special Arrow IV munitions doing damage
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

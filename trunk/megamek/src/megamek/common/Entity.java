@@ -68,6 +68,8 @@ public abstract class Entity
     public static final int        LOC_VACUUM          = 1;
     public static final int        LOC_WET             = 2;
 
+    public static final int        MAX_C3_NODES        = 12;
+
     protected transient Game    game;
 
     protected int               id = Entity.NONE;
@@ -137,6 +139,7 @@ public abstract class Entity
 
     protected String            C3NetIdString = null;
     protected int               C3Master = NONE;
+    protected int               C3CompanyMasterIndex = LOC_DESTROYED;
 
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
@@ -1764,14 +1767,63 @@ public abstract class Entity
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_C3M) 
                     && !m.isDestroyed() && !m.isBreached()) {
+                // If this unit is configured as a company commander,
+                // and if this computer is the company master, then
+                // this unit does not have a lance master computer.
+                if ( this.C3MasterIs(this) &&
+                     this.C3CompanyMasterIndex == getEquipmentNum( m ) ) {
+                    return false;
+                }
                 return true;
             }
         }
         return false;
     }
 
+    public boolean hasC3MM() {
+        if (isShutDown()) return false;
+
+        // Have we already determined that there's no company command master?
+        if ( C3CompanyMasterIndex == LOC_NONE ) return false;
+
+        // Do we need to determine that there's no company command master?
+        if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
+            Enumeration e = getEquipment();
+            while ( C3CompanyMasterIndex == LOC_DESTROYED &&
+                    e.hasMoreElements() ) {
+                Mounted m = (Mounted)e.nextElement();
+                if ( m.getType() instanceof MiscType &&
+                     m.getType().hasFlag(MiscType.F_C3M) &&
+                     !m.isDestroyed() && !m.isBreached() ) {
+                    // Now look for the company command master.
+                    while ( C3CompanyMasterIndex == LOC_DESTROYED &&
+                            e.hasMoreElements() ) {
+                        m = (Mounted)e.nextElement();
+                        if ( m.getType() instanceof MiscType && 
+                             m.getType().hasFlag(MiscType.F_C3M) &&
+                             !m.isDestroyed() && !m.isBreached() ) {
+                            // Found the comany command master
+                            this.C3CompanyMasterIndex = getEquipmentNum( m );
+                        }
+                    }
+                }
+            }
+            // If we haven't found the company command master, there is none.
+            if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
+                this.C3CompanyMasterIndex = LOC_NONE;
+                return false;
+            }
+        }
+
+        Mounted m = getEquipment( this.C3CompanyMasterIndex );
+        if ( !m.isDestroyed() && !m.isBreached() ) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean hasC3() {
-      return hasC3S() | hasC3M();
+      return hasC3S() | hasC3M() | hasC3MM();
     }
 
     public boolean hasC3i() {
@@ -1787,7 +1839,14 @@ public abstract class Entity
     }
 
     public String getC3NetId() {
-        if(C3NetIdString == null) C3NetIdString = "C3." + getId() + "." + Compute.randomInt(1000);
+        if (C3NetIdString == null) {
+            if ( hasC3() ) {
+                C3NetIdString = "C3." + getId();
+            }
+            else if ( hasC3i() ) {
+                C3NetIdString = "C3i." + getId();
+            }
+        }
         return C3NetIdString;
     }
 
@@ -1796,6 +1855,55 @@ public abstract class Entity
         C3NetIdString = e.C3NetIdString;
     }
 
+    /**
+     * Determine the remaining number of other C3 Master computers that
+     * can connect to this <code>Entity</code>.
+     *<p>Please note, if this <code>Entity</code> does not have two C3
+     * Master computers, then it must first be identified as a company
+     * commander; otherwise the number of free nodes will be zero.
+     *
+     * @return  a non-negative <code>int</code> value.
+     */
+    public int calculateFreeC3MNodes() {
+        int nodes = 0;
+        if ( hasC3MM() ) {
+            nodes = 2;
+            if (game != null) {
+                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = (Entity)i.nextElement();
+                    if (e.hasC3M() && e != this ) {
+                        final Entity m = e.getC3Master();
+                        if (equals(m)) nodes--;
+                        if(nodes <= 0) return 0;
+                    }
+                }
+            }
+        }
+        else if ( hasC3M() && this.C3MasterIs(this) )  {
+            nodes = 3;
+            if (game != null) {
+                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = (Entity)i.nextElement();
+                    if (e.hasC3() && e != this ) {
+                        final Entity m = e.getC3Master();
+                        if (equals(m)) nodes--;
+                        if(nodes <= 0) return 0;
+                    }
+                }
+            }
+        }
+        return nodes;
+    }
+
+    /**
+     * Determine the remaining number of other C3 computers that can
+     * connect to this <code>Entity</code>.
+     *<p>Please note, if this <code>Entity</code> has two C3 Master
+     * computers, then this function only returns the remaining number
+     * of <b>C3 Slave</b> computers that can connect.
+     *
+     * @return  a non-negative <code>int</code> value.
+     */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
         if (hasC3i())  {
@@ -1809,23 +1917,27 @@ public abstract class Entity
                     }
                 }
             }
-            return nodes;
         }
-        if (hasC3M())  {
+        else if (hasC3M())  {
             nodes = 3;
             if (game != null) {
                 for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     final Entity e = (Entity)i.nextElement();
-                    if (e.hasC3() && e != this ) {
+                    if (e.hasC3() && !equals(e) ) {
                         final Entity m = e.getC3Master();
-                        if (equals(m)) nodes--;
+                        if (equals(m)) {
+                            // If this unit is a company commander, and has two
+                            // C3 Master computers, only count C3 Slaves here.
+                            if ( !this.C3MasterIs(this) ||
+                                 !this.hasC3MM() || e.hasC3S() )
+                                nodes--;
+                        }
                         if(nodes <= 0) return 0;
                     }
                 }
             }
-            return nodes;
         }
-        return 0;
+        return nodes;
     }
     
     public Entity getC3Top() {
@@ -1842,15 +1954,49 @@ public abstract class Entity
       if(hasC3S() && C3Master > NONE) { 
           // since we can't seem to get the check working in setC3Master(), I'll just do it here, every time. This sucks.
           Entity eMaster = game.getEntity(C3Master);
-          if (eMaster == null || eMaster.C3MasterIs(eMaster)) {
+          // Have we lost our C3Master?
+          if (eMaster == null ) {
+              C3Master = NONE;
+          }
+          // If our master is shut down, don't clear this slave's setting.
+          else if ( eMaster.isShutDown() ) {
+              return null;
+          }
+          // Slave computers can't connect to single-computer company masters.
+          else if ( eMaster.C3MasterIs(eMaster) && !eMaster.hasC3MM() ) {
+              C3Master = NONE;
+          }
+          // Has our lance master lost its computer?
+          else if ( !eMaster.hasC3M() ) {
               C3Master = NONE;
           }
       }
       else if(hasC3M() && C3Master > NONE) {
           Entity eMaster = game.getEntity(C3Master);
-          if (eMaster == null || !eMaster.C3MasterIs(eMaster)) {
+          // Have we lost our C3Master?
+          if (eMaster == null ) {
               C3Master = NONE;
           }
+          // If our master is shut down, don't clear this slave's setting.
+          else if ( eMaster.isShutDown() ) {
+              return null;
+          }
+          // Lance commanders can't connect to non-company commanders.
+          else if (!eMaster.C3MasterIs(eMaster)) {
+              C3Master = NONE;
+          }
+          // Has our company commander lost his company command computer?
+          else if ( ( eMaster.C3CompanyMasterIndex > LOC_NONE &&
+                      !eMaster.hasC3MM() ) ||
+                    ( eMaster.C3CompanyMasterIndex <= LOC_NONE &&
+                      !eMaster.hasC3M() ) ) {
+              C3Master = NONE;
+          }
+      }
+      // If we aren't shut down, and if we don't have a company master
+      // computer, but have a C3Master, then we must have lost our network.
+      else if ( !isShutDown() && !hasC3MM() && C3Master > NONE ) {
+          C3Master = NONE;
       }
       if (C3Master == NONE) {
           return null;
@@ -1859,6 +2005,20 @@ public abstract class Entity
       }
     }
 
+    /**
+     * Determines if the passed <code>Entity</code> is the C3 Master of this
+     * unit.
+     * <p>Please note, that when an <code>Entity</code> is it's own C3 Master,
+     * then it is a company commander.
+     * <p>Also note that when <code>null</code> is the master for this
+     * <code>Entity</code>, then it is an independant master.
+     *
+     * @param   e - the <code>Entity</code> that may be this unit's C3 Master.
+     * @return  a <code>boolean</code> that is <code>true</code> when the
+     *          passed <code>Entity</code> is this unit's commander.  If
+     *          the passed unit isn't this unit's commander, this routine
+     *          returns <code>false</code>.
+     */
     public boolean C3MasterIs(Entity e)
     {
         if(e == null && C3Master == NONE) return true;
@@ -1883,26 +2043,29 @@ public abstract class Entity
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity e = (Entity)i.nextElement();                
                 if(e.C3MasterIs(this) && !equals(e)) {
-                   e.setC3Master(NONE); // this doesn't work - I have no idea why.
+                   e.setC3Master(NONE);
                 }
             }
         }
         if(hasC3()) C3Master = entityId;
         if(hasC3() && entityId == NONE) {
-            C3NetIdString = "C3." + id + "." +  Compute.randomInt(1000);
+            C3NetIdString = "C3." + id;
+
         }
-        else if(hasC3i() && entityId == NONE) 
-        {
-            C3NetIdString = "C3i." + id + "." +  Compute.randomInt(1000);
+        else if(hasC3i() && entityId == NONE) {
+            C3NetIdString = "C3i." + id;
         }
-        else if((hasC3() || hasC3i())) 
+        else if ( hasC3() || hasC3i() ) {
             C3NetIdString = game.getEntity(entityId).getC3NetId();
+        }
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            if(e.C3MasterIs(this) && !equals(e)) e.C3NetIdString = C3NetIdString;
-        }
+            if ( e.C3MasterIs(this) && !equals(e) ) {
+                e.C3NetIdString = C3NetIdString;
+            }
 
+        }
 
     }
 

@@ -20,6 +20,7 @@ v0.29.48 (2004-09-06 2:45pm)
 + Fixed Settings#get(String, String) where defaults weren't appling correctly.
 + RFE 1022891, Patch 1023125: Altered Energy Weapons Damage, MaxTech revised page 22.
 + RFE 999917, Patch 1019888: Drastic Blind Drop option added
++ RFE 1022892, Patch 1023640: Maxtech Missile Hit Penalties, MaxTech revised page 23.
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

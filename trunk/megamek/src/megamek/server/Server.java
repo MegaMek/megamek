@@ -1099,8 +1099,9 @@ implements Runnable {
                 changePhase(Game.PHASE_FIRING);
                 break;
             case Game.PHASE_FIRING :
+                resolveAllButWeaponAttacks();
                 assignAMS();
-                resolveWeaponAttacks();
+                resolveOnlyWeaponAttacks();
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls();
@@ -3503,94 +3504,45 @@ implements Runnable {
             e.assignAMS(vAttacks);
         }
     }
-
-        
     
-    /**
-     * Resolve all fire for the round
+    /** Called during the weapons fire phase.  Resolves anything other than
+     * weapons fire that happens.  Torso twists, for example.
      */
-    private void resolveWeaponAttacks() {
+    private void resolveAllButWeaponAttacks() {
         roundReport.append("\nWeapon Attack Phase\n-------------------\n");
         
+        // loop thru actions and handle everything we expect except attacks
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction)i.nextElement();
+            Entity entity = game.getEntity(ea.getEntityId());
+            if (ea instanceof TorsoTwistAction) {
+                TorsoTwistAction tta = (TorsoTwistAction)ea;
+                entity.setSecondaryFacing(tta.getFacing());
+            } 
+            else if (ea instanceof FlipArmsAction) {
+                FlipArmsAction faa = (FlipArmsAction)ea;
+                entity.setArmsFlipped(faa.getIsFlipped());
+            } 
+            else if (ea instanceof FindClubAction) {
+                resolveFindClub(entity);
+            } 
+            else if (ea instanceof UnjamAction) {
+                resolveUnjam(entity);
+            } 
+        }
+    }
+    
+    /** Called during the fire phase to resolve all (and only) weapon attacks 
+     */
+    private void resolveOnlyWeaponAttacks() {
         Vector results = new Vector(game.actionsSize());
         
-        // loop thru received attack actions
+        // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
-            Entity entity = game.getEntity(((EntityAction)o).getEntityId());
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
                 results.addElement(preTreatWeaponAttack(waa));
-                //resolveWeaponAttack(waa, cen);
-            } else if (o instanceof TorsoTwistAction) {
-                TorsoTwistAction tta = (TorsoTwistAction)o;
-                game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
-            } else if (o instanceof FlipArmsAction) {
-                FlipArmsAction faa = (FlipArmsAction)o;
-                game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
-            } else if (o instanceof FindClubAction) {
-                // FindClubAction fca = (FindClubAction)o; // not read
-                entity.setFindingClub(true);
-                try {
-                    // Get the entity's current hex.
-                    Coords coords = entity.getPosition();
-                    Hex curHex = game.board.getHex( coords );
-
-                    // Is there the rubble of a medium, heavy,
-                    // or hardened building in the hex?
-                    if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
-
-                        // Finding a club is not guaranteed.  The chances are
-                        // based on the type of building that produced the
-                        // rubble.
-                        boolean found = false;
-                        int roll = Compute.d6(2);
-                        switch ( curHex.levelOf( Terrain.RUBBLE ) ) {
-                        case Building.MEDIUM:
-                            if ( roll >= 7 ) {
-                                found = true;
-                            }
-                            break;
-                        case Building.HEAVY:
-                            if ( roll >= 6 ) {
-                                found = true;
-                            }
-                            break;
-                        case Building.HARDENED:
-                            if ( roll >= 5 ) {
-                                found = true;
-                            }
-                            break;
-                        }
-
-                        // Let the player know if they found a club.
-                        if ( found ) {
-                            entity.addEquipment(EquipmentType.getByInternalName("Girder Club"), Mech.LOC_NONE);
-                            phaseReport.append( "\n" )
-                                .append( entity.getDisplayName() )
-                                .append( " found a girder to use as a club.\n" );
-                        } else {
-                            phaseReport.append( "\n" )
-                                .append( entity.getDisplayName() )
-                                .append( " did not find a club, but may have better luck next turn.\n" );
-                        }
-                    }
-
-                    // Are there woods in the hex?
-                    else if ( 1 <= curHex.levelOf( Terrain.WOODS ) ) {
-                        entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
-                        phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
-                    }
-                } catch (LocationFullException ex) {
-                    // unlikely...
-                    phaseReport.append("\n" )
-                        .append( entity.getDisplayName() )
-                        .append( " did not have room for a club.\n");
-                }
-            } else if (o instanceof UnjamAction) {
-                resolveUnjam(entity.getId());
-            } else {
-                // hmm, error
             }
         }
         
@@ -3609,11 +3561,10 @@ implements Runnable {
     /**
      * Resolve an Unjam Action object
      */
-    private void resolveUnjam(int EntityId) {
-        final Entity ae = game.getEntity(EntityId);
-        final int TN = ae.crew.getGunnery() + 3;
-        phaseReport.append("\nRAC unjam attempts for " ).append( ae.getDisplayName() ).append( "\n");
-        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
+    private void resolveUnjam(Entity entity) {
+        final int TN = entity.getCrew().getGunnery() + 3;
+        phaseReport.append("\nRAC unjam attempts for " ).append( entity.getDisplayName() ).append( "\n");
+        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if(mounted.isJammed()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
@@ -3630,6 +3581,75 @@ implements Runnable {
                     }
                 }
             }
+        }
+    }
+    
+    private void resolveFindClub(Entity entity) {
+        EquipmentType clubType = null;
+        
+        entity.setFindingClub(true);
+        
+        // Get the entity's current hex.
+        Coords coords = entity.getPosition();
+        Hex curHex = game.board.getHex( coords );
+
+        // Is there the rubble of a medium, heavy,
+        // or hardened building in the hex?
+        if ( Building.LIGHT < curHex.levelOf( Terrain.RUBBLE ) ) {
+
+            // Finding a club is not guaranteed.  The chances are
+            // based on the type of building that produced the
+            // rubble.
+            boolean found = false;
+            int roll = Compute.d6(2);
+            switch ( curHex.levelOf( Terrain.RUBBLE ) ) {
+            case Building.MEDIUM:
+                if ( roll >= 7 ) {
+                    found = true;
+                }
+                break;
+            case Building.HEAVY:
+                if ( roll >= 6 ) {
+                    found = true;
+                }
+                break;
+            case Building.HARDENED:
+                if ( roll >= 5 ) {
+                    found = true;
+                }
+                break;
+            }
+
+            // Let the player know if they found a club.
+            if ( found ) {
+                clubType = EquipmentType.getByInternalName("Girder Club");
+                phaseReport.append( "\n" )
+                    .append( entity.getDisplayName() )
+                    .append( " found a girder to use as a club.\n" );
+            } else {
+                clubType = null;
+                phaseReport.append( "\n" )
+                    .append( entity.getDisplayName() )
+                    .append( " did not find a club, but may have better luck next turn.\n" );
+            }
+        }
+
+        // Are there woods in the hex?
+        else if ( 1 <= curHex.levelOf( Terrain.WOODS ) ) {
+            clubType = EquipmentType.getByInternalName("Tree Club");
+            phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
+        }
+        
+        // add the club
+        try {
+            if (clubType != null) {
+                entity.addEquipment(clubType, Mech.LOC_NONE);
+            }
+        } catch (LocationFullException ex) {
+            // unlikely...
+            phaseReport.append("\n" )
+                .append( entity.getDisplayName() )
+                .append( " did not have room for a club.\n");
         }
     }
 

@@ -34,7 +34,8 @@ public class WeaponType extends EquipmentType {
 
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
-    public static final int	F_INFANTRY	= 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
+    public static final int     F_INFERNO       = 0x0400; // Inferno weapon
+    public static final int     F_INFANTRY      = 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
 
     // Flags for implementing the vast number of BattleArmor special rules.
     public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
@@ -130,6 +131,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createInfLRM());
         EquipmentType.addType(createInfLaser());
         EquipmentType.addType(createInfFlamer());
+        EquipmentType.addType(createInfInfernoSRM());
 
         // Start of Inner Sphere Level2 weapons
         EquipmentType.addType(createISERPPC());
@@ -2254,6 +2256,28 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createInfInfernoSRM() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Infantry Inferno SRM";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry Inferno SRM";
+        weapon.mtfName = "ISInfantryInfernoSRM";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_INFERNO;
+        weapon.bv = 4; // ???
+
+        return weapon;
+    }
+
     public static WeaponType createInfLRM() {
         WeaponType weapon = new WeaponType();
 
@@ -2573,7 +2597,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
-        weapon.rackSize = 2;
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_BA_INFERNO;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -2582,7 +2606,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        weapon.flags |= F_BATTLEARMOR;
+        weapon.flags |= F_BATTLEARMOR | F_INFERNO;
 
         return weapon;
     }

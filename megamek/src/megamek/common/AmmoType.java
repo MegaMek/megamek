@@ -70,29 +70,29 @@ public class AmmoType extends EquipmentType {
     private int rackSize;
     private int ammoType;
     private int shots;
-    
+
     public AmmoType() {
         criticals = 1;
         tonnage = 1.0f;
         explosive = true;
     }
-    
+
     public int getAmmoType() {
         return ammoType;
     }
-    
+
     public int getDamagePerShot() {
         return damagePerShot;
     }
-    
+
     public int getRackSize() {
         return rackSize;
     }
-    
+
     public int getShots() {
         return shots;
     }
-    
+
     public static void initializeTypes() {
         // all level 1 ammo
         EquipmentType.addType(createISAC2Ammo());
@@ -108,8 +108,11 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISSRM2Ammo());
         EquipmentType.addType(createISSRM4Ammo());
         EquipmentType.addType(createISSRM6Ammo());
-        
+
         // Start of Level2 Ammo
+        EquipmentType.addType(createISSRM2InfernoAmmo());
+        EquipmentType.addType(createISSRM4InfernoAmmo());
+        EquipmentType.addType(createISSRM6InfernoAmmo());
         EquipmentType.addType(createISLB2XAmmo());
         EquipmentType.addType(createISLB5XAmmo());
         EquipmentType.addType(createISLB10XAmmo());
@@ -136,7 +139,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISMRM40Ammo());
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
-        
+
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
         EquipmentType.addType(createCLLB10XAmmo());
@@ -150,6 +153,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLUltra10Ammo());
         EquipmentType.addType(createCLUltra20Ammo());
         EquipmentType.addType(createCLGaussAmmo());
+        EquipmentType.addType(createCLSRM2InfernoAmmo());
+        EquipmentType.addType(createCLSRM4InfernoAmmo());
+        EquipmentType.addType(createCLSRM6InfernoAmmo());
         EquipmentType.addType(createCLStreakSRM2Ammo());
         EquipmentType.addType(createCLStreakSRM4Ammo());
         EquipmentType.addType(createCLStreakSRM6Ammo());
@@ -401,9 +407,59 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
     // Start of Level2 Ammo
-    
+    public static AmmoType createISSRM2InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 2 Inferno Ammo";
+        ammo.internalName = "IS Ammo SRM-2 Inferno";
+        ammo.mepName = "IS Ammo SRM-2 Inferno";
+        ammo.mtfName = "ISSRM2 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 50;
+        ammo.bv = 3;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRM4InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Inferno Ammo";
+        ammo.internalName = "IS Ammo SRM-4 Inferno";
+        ammo.mepName = "IS Ammo SRM-4 Inferno";
+        ammo.mtfName = "ISSRM4 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 25;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRM6InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 6 Inferno Ammo";
+        ammo.internalName = "IS Ammo SRM-6 Inferno";
+        ammo.mepName = "IS Ammo SRM-6 Inferno";
+        ammo.mtfName = "ISSRM6 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 15;
+        ammo.bv = 7;
+
+        return ammo;
+    }
+
     public static AmmoType createISLB2XAmmo() {
         AmmoType ammo = new AmmoType();
         
@@ -1229,6 +1285,57 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM2InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 2 Inferno Ammo";
+        ammo.internalName = "Clan Ammo SRM-2 Inferno";
+        ammo.mepName = "Clan Ammo SRM-2 Inferno";
+        ammo.mtfName = "CLSRM2 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 50;
+        ammo.bv = 3;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM4InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Inferno Ammo";
+        ammo.internalName = "Clan Ammo SRM-4 Inferno";
+        ammo.mepName = "Clan Ammo SRM-4 Inferno";
+        ammo.mtfName = "CLSRM4 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 25;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM6InfernoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 6 Inferno Ammo";
+        ammo.internalName = "Clan Ammo SRM-6 Inferno";
+        ammo.mepName = "Clan Ammo SRM-6 Inferno";
+        ammo.mtfName = "CLSRM6 Inferno Ammo";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_INFERNO;
+        ammo.shots = 15;
+        ammo.bv = 7;
+
         return ammo;
     }
 

@@ -92,6 +92,10 @@ v 0.28.2 (01-22-03, 3pm)
 + Allowed Prone Meks to Punch Tanks in their hex (if both arms available).
 + The Unit status report generator should format BA & Inf locations in report.
 + 674198: SSRM Misses Setting Fires Again
++ Added ensign's Inferno patch.
++ Fixed bug in determining "most destructive" ammo slot in explodeAmmo.
++ Added inferno-equipped IS SRM infantry platoons.
++ Added Clan Salamander Elemental point.
 
 v 0.28.1 (01-20-03, 7:19pm)
 + COMPATABILITY BREAKER: allow Charges and DFAs to target *any* enemy in hex.

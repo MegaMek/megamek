@@ -510,8 +510,15 @@ public class Infantry
             }
             this.weapons = weaponType;
 
-                // Update our damage profile.
+            // Update our damage profile.
             this.setDamage( weaponType );
+
+            // Inferno SRMs do half damage (rounded down).
+            if ( weapon.hasFlag(WeaponType.F_INFERNO) ) {
+                for ( int loop = 1; loop < damage.length; loop++ ) {
+                    damage[loop] = (int) Math.floor( damage[loop] / 2.0 );
+                }
+            }
 
         }
         // Infantry platoons can't carry big equipment.

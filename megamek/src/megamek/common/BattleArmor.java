@@ -131,6 +131,11 @@ public class BattleArmor
     public static final String ASSAULT_CLAW = "BA-Assault Claws";
 
     /**
+     * The internal name for Fire Protection equipment.
+     */
+    public static final String FIRE_PROTECTION = "BA-Fire Protection";
+
+    /**
      * The internal name for Magnetic Clamp equipment.
      */
     public static final String MAGNETIC_CLAMP = "BA-Magnetic Clamp";

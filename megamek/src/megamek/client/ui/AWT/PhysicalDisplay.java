@@ -271,7 +271,6 @@ public class PhysicalDisplay
         butMore.setEnabled(true);
         clientgui.setDisplayVisible(true);
         client.game.board.select(null);
-        client.game.board.highlight(null);
     }
     
     /**

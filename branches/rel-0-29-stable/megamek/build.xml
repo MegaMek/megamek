@@ -73,7 +73,10 @@
   </target>
 
   <target depends="cvsrel-init" name="cvsrel-get">
-    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek" dest="${cvsdir}" command="checkout -P -r ${cvstag}" package="megamek"/>
+<!--
+    <cvs cvsRoot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/megamek" dest="${cvsdir}" command="checkout -P -r ${cvstag}" package="megamek"/>
+-->
+    <cvs dest="${cvsdir}" command="checkout -P -r ${cvstag}" package="megamek"/>
   </target>
 
   <target depends="cvsrel-init" name="cvsrel-build">
@@ -86,8 +89,8 @@
   </target>
 
   <target depends="cvsrel-init" name="cvsrel-package">
-    <delete dir="${basedir}/classes"/>
-    <zip basedir="${basedir}" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
+    <delete dir="${cvsdir}/megamek/classes"/>
+    <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-${cvstag}.zip"/>
   </target>
   
   <target name="cvsrel-clean">

@@ -3091,7 +3091,6 @@ implements Runnable {
         if (! (entity instanceof Mech) || entity.isProne()) {
             return;
         }
-        
         if (gettingUp && !entity.needsRollToStand() && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
             phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " does not need to make "
             ).append( "a piloting skill check to stand up because it has all four of its legs.");
@@ -3184,7 +3183,7 @@ implements Runnable {
                                              PilotingRollData reason,
                                              boolean isFallRoll ) {
         boolean result = true;
-        
+
         final PilotingRollData roll =
             Compute.getBasePilotingRoll(game, entity.getId());
         boolean fallsInPlace;

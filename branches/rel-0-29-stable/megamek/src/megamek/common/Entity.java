@@ -2178,14 +2178,14 @@ public abstract class Entity
      *  target roll for the piloting skill check to dislodge them.
      */
     public PilotingRollData checkDislodgeSwarmers() {
-        PilotingRollData roll = getBasePilotingRoll();
 
+        // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
-            return roll;
+            return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,"Check false");
         }
 
         // append the reason modifier
+        PilotingRollData roll = getBasePilotingRoll();
         roll.append(new PilotingRollData(getId(), 0, "attempting to dislodge swarmers by dropping prone"));
         
         return roll;

@@ -38,6 +38,8 @@ Lot of people have contributed to the MegaMek project.
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
      Pierre Savard <xsurrealx@users.sourceforge.net>
      shockmilk <shockmilk@users.sourceforge.net>
+     Jan Ferdinand Rehse
+     Thomas "DarkViper" Wehner
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

@@ -25,6 +25,7 @@ import megamek.client.util.AdvancedLabel;
 import megamek.client.util.widget.*;
 import megamek.client.bot.*;
 import megamek.server.*;
+import megamek.test.*;
 
 public class MegaMek implements ActionListener {
     public static String VERSION = "0.29.33-dev";
@@ -448,7 +449,7 @@ public class MegaMek implements ActionListener {
                 } catch (Exception e) {
                     ;
                 }
-                c.addGameListener(new BotGUI(gui, c));
+                c.addGameListener(new BotGUI(this, c));
                 c.retrieveServerInfo(); 
             }
         }
@@ -524,6 +525,7 @@ public class MegaMek implements ActionListener {
 
         // initialize game
         client = new TestBot(cd.name, cd.serverAddr, cd.port);
+        client.addGameListener(new BotGUI(this, (BotClient)client));
         try {
             client.connect();
         } catch (Exception e) {
@@ -560,14 +562,17 @@ public class MegaMek implements ActionListener {
      * Called when the user selects the "Help->Contents" menu item.
      */
     private void showHelp() {
-        // Do we need to create the "help" dialog?
+        showHelp("readme.txt");
+    }
+    
+    public void showHelp(String fileName) {
         if (this.help == null) {
-            help = showHelp(this.frame, "readme.txt");
+            help = showHelp(this.frame, fileName);
         }
-
+        this.help.setFile(new File(fileName));
         // Show the help dialog.
         this.help.show();
-    };
+    }
 
     /**
      * display the filename in a CommonHelpDialog

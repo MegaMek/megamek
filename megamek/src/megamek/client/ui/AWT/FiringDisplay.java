@@ -263,6 +263,7 @@ public class FiringDisplay
     private void disableButtons() {
         butFire.setEnabled(false);
         butSkip.setEnabled(false);
+        butTwist.setEnabled(false);
         butAim.setEnabled(false);
         butFindClub.setEnabled(false);
         butMore.setEnabled(false);

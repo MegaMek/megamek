@@ -99,6 +99,7 @@ public class BotClient extends Client
 
         switch(phase) {
         case Game.PHASE_LOUNGE :
+            notifyOfBot();
             // let the human set the bot up
             break;
 /*        case Game.PHASE_MOVEMENT :
@@ -127,8 +128,12 @@ public class BotClient extends Client
             break;
         }
     }
-
-     protected void processGameEvent(GameEvent ge) {
+    
+    private void notifyOfBot() {
+        sendChat("Hi, I'm a bot client!");
+    }
+    
+    protected void processGameEvent(GameEvent ge) {
         super.processGameEvent(ge);
         
         switch(ge.getType()) {
@@ -140,15 +145,15 @@ public class BotClient extends Client
                 break;
             case GameEvent.GAME_TURN_CHANGE :
                 if (isMyTurn()) {
-                    calculateMyTurn();    
+                    calculateMyTurn();
                 }
                 break;
             case GameEvent.GAME_NEW_ENTITIES :
                 break;
             case GameEvent.GAME_NEW_SETTINGS :
                 break;
-            }
         }
+    }
     
      protected void calculateMyTurn() {
          // gross hack: create a TurnCalculator object in changePhase instead

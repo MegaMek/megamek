@@ -510,6 +510,8 @@ public class Client extends Panel
                 else if ( h != null && h.contains( Terrain.BUILDING ) ) {
                     popup.add( new TargetMenuItem( new BuildingTarget
                         ( coords, game.board, false ) ) );
+                    popup.add( new TargetMenuItem( new BuildingTarget
+                        ( coords, game.board, true ) ) );
                 }
             }
         }

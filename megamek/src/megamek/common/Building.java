@@ -61,6 +61,11 @@ public class Building implements Serializable {
      */
     private String      name            = null;
 
+    /**
+     * Flag that indicates whether this building is burning
+     */
+    private boolean     burning         = false;
+
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -384,6 +389,25 @@ public class Building implements Serializable {
 
         // Return the string.
         return buf.toString();
+    }
+
+    /**
+     * Determine if this building is on fire.
+     *
+     * @return  <code>true</code> if the building is on fire.
+     */
+    public boolean isBurning() {
+        return burning;
+    }
+
+    /**
+     * Set the flag that indicates that this building is on fire.
+     *
+     * @param   onFire - a <code>boolean</code> value that indicates whether
+     *          this building is on fire.
+     */
+    public void setBurning( boolean onFire ) {
+        this.burning = onFire;
     }
 
 } // End public class Building implements Serializable

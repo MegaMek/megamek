@@ -1404,14 +1404,16 @@ public abstract class Mech
             weaponBV += (weaponsBVFront * 0.5);
         }
         
-        // add offensive misc. equipment BV (only really hatchets, BAP)
+        // add offensive misc. equipment BV (hatchets, BAP, AP pods, TAG)
         double oEquipmentBV = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             MiscType mtype = (MiscType)mounted.getType();
             
-            if (mtype.hasFlag(MiscType.F_HATCHET)) {
-                //TODO: || mtype.hasFlag(MiscType.F_BAP)
+            if ( mtype.hasFlag(MiscType.F_HATCHET) ||
+                 mtype.hasFlag(MiscType.F_BAP) ||
+                 mtype.hasFlag(MiscType.F_TAG) ||
+                 mtype.hasFlag(MiscType.F_AP_POD) ) {
                 oEquipmentBV += mtype.getBV(this);
             }
         }

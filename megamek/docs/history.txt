@@ -91,9 +91,6 @@ infantry:
 buildings:
 - Test all of my assumptions.
 - Where do I put the attacker when it charges or DFAs a building?!?
-- Buildings can be intentionally ignited:
--- Buildings can *not* be accidentally ignited.
--- Buildings auto-ignite when hex suffers inferno hit.
 -- Burning buildings lose 2 CF per heat phase (skip first round???).
 - Combat inside a multi-hex building is wierd:
 -- Targets get +3 cover bonus.
@@ -120,6 +117,18 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.15-dev
++ Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.
++ Target buildings for ignition.
++ 723043: Stop casting a Tank to a Mech to show C3 BV affects.
++ 724350: Updated mechset.txt for the new Infantry names.
++ 724351: Running away with someone else's Battle Armor squad shouldn't crash.
++ Add check for existing fires to Server#tryIgniteHex().
++ Renamed Server#burn() to Server#ignite(), to match Inferno naming convention.
++ Only shots that miss Entities accidentally ignite fires.
++ Tooltip for weapons fire should use text value.
++ "/skip" command should handle NULL entities.
+
 v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).
 + Infantry should be moving last again when the option is selected.

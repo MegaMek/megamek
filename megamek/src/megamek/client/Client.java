@@ -827,6 +827,7 @@ public class Client extends Panel
      */
     protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
+        Vector newOutOfGame = (Vector)c.getObject(1);
 
         // re-link player in each entity
         for (Enumeration i = newEntities.elements(); i.hasMoreElements();) {
@@ -834,8 +835,18 @@ public class Client extends Panel
             entity.restore();
             entity.setOwner(getPlayer(entity.getOwnerId()));
         }
-    
         game.setEntitiesVector(newEntities);
+        
+        if (newOutOfGame != null) {
+            // may as well relink these too
+            for (Enumeration i = newOutOfGame.elements(); i.hasMoreElements();) {
+                Entity entity = (Entity)i.nextElement();
+                entity.restore();
+                entity.setOwner(getPlayer(entity.getOwnerId()));
+            }
+            game.setOutOfGameEntitiesVector(newOutOfGame);
+        }
+        
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX

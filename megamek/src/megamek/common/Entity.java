@@ -34,6 +34,12 @@ public abstract class Entity
       public static final int WHEELED = 4;
       public static final int HOVER   = 5;
     }
+    
+    public static final int REMOVE_UNKNOWN        = 0x0000;
+    public static final int REMOVE_IN_RETREAT     = 0x0100;
+    public static final int REMOVE_SALVAGEABLE    = 0x0200;
+    public static final int REMOVE_DEVASTATED     = 0x0400;
+    
     // weight class limits
     public static final int        WEIGHT_LIGHT        = 35;
     public static final int        WEIGHT_MEDIUM       = 55;
@@ -171,6 +177,10 @@ public abstract class Entity
      * be salvaged (given enough time and parts).
      */
     private boolean             salvageable = true;
+    
+    /** The removal condition is set when the entitiy is removed from the game.
+     */
+    private int removalCondition = REMOVE_UNKNOWN;
 
     /**
      * Generates a new, blank, entity.
@@ -2475,8 +2485,23 @@ public abstract class Entity
         return this.salvageable;
     }
     
+    /** Getter for property removalCondition.
+     * @return Value of property removalCondition.
+     */
+    public int getRemovalCondition() {
+        return removalCondition;
+    }
+    
+    /** Setter for property removalCondition.
+     * @param removalCondition New value of property removalCondition.
+     */
+    public void setRemovalCondition(int removalCondition) {
+        this.removalCondition = removalCondition;
+    }
+
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";
     }
 
+    
 }

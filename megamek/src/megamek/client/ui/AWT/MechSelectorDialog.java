@@ -106,6 +106,7 @@ public class MechSelectorDialog
         for (int x = 0; x < oa.length; x++) {
             m_chYear.addItem((String)oa[x]);
         }
+        m_chYear.select("3025");
         
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);

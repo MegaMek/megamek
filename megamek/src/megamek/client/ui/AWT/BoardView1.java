@@ -445,6 +445,7 @@ public class BoardView1
      * Shows the tooltip thinger
      */
     private void showTooltip() {
+      try {
         final Point tipLoc = new Point(getLocationOnScreen());
         // retrieve tip text
         String[] tipText = getTipText(mousePos);
@@ -476,6 +477,9 @@ public class BoardView1
         tipWindow.setLocation(tipLoc);
 
         tipWindow.show();
+      } catch (Exception e) {
+        tipWindow = new Window(frame);
+      }
     }
     
     /**

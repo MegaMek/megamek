@@ -68,8 +68,14 @@ public class HexTarget implements Targetable
 		case (Targetable.TYPE_HEX_IGNITE) :
 			name = " (Ignite)";
 			break;
-                case (Targetable.TYPE_HEX_ARTILLERY) :
-                        name = " (Artillery)";
+		case (Targetable.TYPE_HEX_FASCAM) :
+            name = " (FASCAM)";
+            break;
+        case (Targetable.TYPE_HEX_INFERNO_IV) :
+            name = " (Inferno IV)";
+            break;
+        case (Targetable.TYPE_HEX_VIBRABOMB_IV) :
+            name = " (Vibrabomb IV)";
     	}
         return "Hex: " + m_coords.getBoardNum() + name;
     }

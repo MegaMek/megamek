@@ -2129,7 +2129,9 @@ public boolean isPassworded() {
         phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
 
-        pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
+        if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
+            pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
+        }
 
         phaseReport.append("\n");
     }

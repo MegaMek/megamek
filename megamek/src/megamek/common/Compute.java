@@ -315,7 +315,8 @@ public class Compute
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
                                             overallMoveType);
                 // check for water
-                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0) {
+                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 
+                        && entity.getMovementType() != Entity.MovementType.HOVER) {
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
@@ -540,6 +541,7 @@ public class Compute
                                              Coords src, Coords dest,
                                              int movementType) {
         final Entity entity = game.getEntity(entityId);
+        final int moveType = entity.getMovementType();
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         
@@ -573,11 +575,16 @@ public class Compute
         } else if (destHex.levelOf(Terrain.WOODS) > 1) {
             mp += 2;
         }
-        if (destHex.levelOf(Terrain.WATER) == 1) {
-            mp++;
-        } else if (destHex.levelOf(Terrain.WATER) > 1) {
-            mp += 3;
+        
+        // non-hovers check for water depth
+        if (moveType != Entity.MovementType.HOVER) {
+            if (destHex.levelOf(Terrain.WATER) == 1) {
+                mp++;
+            } else if (destHex.levelOf(Terrain.WATER) > 1) {
+                mp += 3;
+            }
         }
+        
         // account for elevation?
         int nSrcEl = srcHex.floor();
         int nDestEl = destHex.floor();

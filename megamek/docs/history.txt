@@ -90,6 +90,10 @@ v next
 + hovercrafts behave correctly on water
 + vehicles don't roll PSR after 20 damage
 + 592462: mechcache correctly reflects deleted mechfiles
++ vehicles don't roll PSR after being kicked
++ hovers move correctly over water
++ fixed bug in scenarioloader's map loading
+
 
 v 0.26.9 (08-09-2002, 11:30pm)
 + detailed end-of-game unit status exported to a text file

@@ -75,6 +75,8 @@ v next
 + added dialog about where to find help with the board editor
 + 561342: ammo decreased before damage is assigned
 + AMS owner, not launcher owner, gets AMS heat
++ during DFA, with prone attacker, dead target, attacker takes falling damage
++ 618373: DFA 3+ levels down can no longer result in automatic fall
 
 v 0.27.11 (12-13-02, 8:10pm)
 + killing a C3 network master no longer crashes the client

@@ -1252,11 +1252,11 @@ public abstract class Entity
     /**
      * Returns the number of operational critical slots remaining in a location
      */
-    public int getHitableCriticals(int loc) {
+    public int getHittableCriticals(int loc) {
         int empty = 0;
         
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            if (getCritical(loc, i) != null && getCritical(loc, i).isHitable()) {
+            if (getCritical(loc, i) != null && getCritical(loc, i).isHittable()) {
                 empty++;
             }
         }
@@ -1265,11 +1265,11 @@ public abstract class Entity
     }
     
     /**
-     * Slightly different from getHitableCriticals; returns true if this 
+     * Slightly different from getHittableCriticals; returns true if this 
      * location can be critically hit this phase, false if criticals should
      * transfer.
      */
-    public boolean hasHitableCriticals(int loc) {
+    public boolean hasHittableCriticals(int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             if (getCritical(loc, i) != null 
                && getCritical(loc, i).isDestroyed() == false) {

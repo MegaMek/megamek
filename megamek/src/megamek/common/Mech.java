@@ -875,7 +875,7 @@ public abstract class Mech
         // add criticals
         int num = getEquipmentNum(mounted);
         for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num));
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable()));
         }        
     }    
   

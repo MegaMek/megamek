@@ -2753,7 +2753,10 @@ public abstract class Entity
             && overallMoveType == Entity.MOVE_RUN
             && prevFacing != curFacing
             && !lastPos.equals(curPos)
-            && !isInfantry) {
+            && !isInfantry
+            // Bug 912127, a unit that just got up and changed facing
+            // on pavement in that getting up does not skid.
+            && !prevStep.isHasJustStood()) {
             // append the reason modifier
             if ( this instanceof Mech ) {
                 roll.append(new PilotingRollData(getId(),

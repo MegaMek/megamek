@@ -10,7 +10,7 @@ java -jar MegaMek.jar
 goto done
 
 :MicrosoftJRE
-start wjview /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek
+start wjview /vst /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek
 
 :done
 @echo on

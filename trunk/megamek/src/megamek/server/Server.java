@@ -1112,7 +1112,7 @@ public class Server
      /**
      * Does the domino effect of doom
      */
-    private void doDominoEffect(Entity ae, Entity te, int direction) {
+    private void doDominoEffect(Entity attacker, Entity target, Coords attackSrc) {
         
     }
 	

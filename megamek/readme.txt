@@ -41,6 +41,14 @@ another copy of the game for each connecting player, and in the "Server Address"
 field of the connect dialog, type "localhost".  Each player will need to switch
 to his/her copy of the game to play their turn.
 
+To start a dedicated server, use the -dedicated command line switch.  A 
+dedicated server just runs the server, in the console, without a "host" player
+in the game.  People, including yourself, can join it like a game with a host.
+The dedicated server reads the password and port options from the MegaMek.cfg
+file, or uses the default (no password and port 2346.)  To stop the server, you
+will need to tell the Java machine to halt execution, which is CTRL + C on most
+platforms.
+
 
 PLAYING THE GAME
 ----------------

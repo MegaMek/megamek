@@ -80,12 +80,14 @@ FUTURE VERSION PLANS:
 - interface cleaned up: reasonably intuitive & bug-free
 
 v 0.25
-- option to start dedicated server from command line
 ? go prone
 
 VERSION HISTORY:
 ----------------
 v next
++ fixed a bug where the server thought everybody was on the same team
+
+v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist
 + 537226: intact mechs with dead pilots are now removed from the map
 + locations can't be destroyed twice (preventing falls from destroyed leg hits)

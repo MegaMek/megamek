@@ -156,7 +156,7 @@ public final class Player
     }
     
     public boolean isEnemyOf(Player other) {
-        return id != other.getId() && team != TEAM_NONE && team != other.getTeam();
+        return id != other.getId() && (team == TEAM_NONE || team != other.getTeam());
     }
     
     /**

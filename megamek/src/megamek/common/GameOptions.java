@@ -58,6 +58,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level2, new GameOption("temperature", "Temperature", "The temperature the game takes place at, for use with the Extreme Temperatures rule.\n\nDefaults to 25 degrees Celsius, thus having no effect.", 25));
         addOption(level2, new GameOption("gravity", "Gravity", "The gravity of the world the game takes place at, for use with the High/Low Gravity rule.\n\nDefaults to 1 G, thus having no effect.", (float)1.0));
         addOption(level2, new GameOption("vacuum", "Vacuum", "If checked, the game takes place in Vacuum.\n\nUnchecked by default.", false));
+        addOption(level2, new GameOption("night_battle", "Night Battle", "If checked, the game takes place at night (+2 to-hit-modifier to all attacks unless attacker or attacked unit are using spotlights. Defaults to off.", false));
 
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);
@@ -79,7 +80,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_mslhitpen", "MaxTech Missile Hit Penalties", "If checked, apply the following penalties to the roll to determine number of missiles hit: +1 (Range <= 1 hex); 0 (Short range); -1 (Medium range); -2 (Long and Extreme range). Does not apply to Streak SRMs and cannot reduce the roll below 2 or raise above 12.", false));
         addOption(level3, new GameOption("maxtech_ppc_inhibitors", "MaxTech PPC Field Inhibitor Disengage", "If checked, the field inhibitor of a PPC can be disengaged to disregard the minimum range modifiers. However, after each shot, there is a chance that the PPC is destroyed in the process and the IS of the PPC's location takes 10 points of damage. The chance for this depends on range, roll 2d6 to avoid on: 3+ for >=3 hex range; 6+ for 2 hex range and 10+ for 1 hex range. Defaults to off.", false));
         addOption(level3, new GameOption("maxtech_charge_damage", "MaxTech Charge Damage", "If checked, the attacker in a charge will receive damage proportional to the distance of the charge. Defaults to off.", false));
-        
+
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);
         addOption(ruleBreakers, new GameOption("no_tac", "No through-armor criticals", "If checked, rolls of '2' on hit location will only result in a torso hit, and no critical roll.  Only applies to mechs.  Supercedes the floating criticals option.\n\nUnchecked by default.", false));

@@ -418,7 +418,8 @@ public class Compute
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
         boolean isPPCwithoutInhibitor = wtype.name.equals("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
-
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        
         ToHitData toHit = null;
 
         // make sure weapon can deliver minefield
@@ -745,6 +746,9 @@ public class Compute
         int tElev = target.getElevation();
         int distance = effectiveDistance(game, ae, target);
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
 
         // Handle direct artillery attacks.
         if(isArtilleryDirect) {

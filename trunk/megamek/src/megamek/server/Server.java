@@ -2977,7 +2977,8 @@ implements Runnable {
             
             // verify that the attacker is still active
             AttackAction aa = (AttackAction)o;
-            if (!(game.getEntity(aa.getEntityId()).isActive())) {
+            if (!(game.getEntity(aa.getEntityId()).isActive())
+            && !(o instanceof DfaAttackAction)) {
                 continue;
             }
             
@@ -3057,7 +3058,8 @@ implements Runnable {
     
     /**
      * Removes all attacks by any dead entities.  It does this by going through
-     * all the attacks and only keeping ones from active entities.
+     * all the attacks and only keeping ones from active entities.  DFAs are
+     * kept even if the pilot is unconcious, so that he can fail.
      */
     private void removeDeadAttacks() {
         Vector toKeep = new Vector(attacks.size());
@@ -3065,7 +3067,8 @@ implements Runnable {
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
             EntityAction action = (EntityAction)i.nextElement();
             Entity entity = game.getEntity(action.getEntityId());
-            if (entity != null && entity.isActive()) {
+            if (entity != null && !entity.isDestroyed()
+            && (entity.isActive() || action instanceof DfaAttackAction)) {
                 toKeep.addElement(action);
             }
         }
@@ -3472,11 +3475,11 @@ implements Runnable {
         // compute to-hit
         ToHitData toHit = Compute.toHitDfa(game, daa);
         
-        // hack: if the attacker's prone, fudge the roll
+        // hack: if the attacker's prone, or incapacitated, fudge the roll
         int roll;
-        if (ae.isProne()) {
+        if (ae.isProne() || !ae.isActive()) {
             roll = -12;
-            phaseReport.append(" but the attacker is prone : ");
+            phaseReport.append(" but the attacker is prone or incapacitated : ");
         } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
             phaseReport.append(" but the attack is impossible (" + toHit.getDesc() + ") : ");

@@ -6607,7 +6607,7 @@ implements Runnable, ConnectionHandler {
             resolvePhysicalAttack(pr, cen);
             cen = pr.aaa.getEntityId();
         }
-        physicalResults.clear();
+        physicalResults.removeAllElements();
     }
 
     /**

@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.4 (CVS)
+v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).
 + Bug 773000: Tank hit locations
 + Bug 773001: Tank locations on armor diagram

@@ -126,6 +126,9 @@ v 0.28.13-dev
         they have no basements, and multi-hex combat doesn't work correctly.
 + 705262: The EXE can't seem to handle UTF-8 output.  We'll restore UTF-8 when
   we can figure out the root cause of the problem.
++ 716051: Allow boards to disable auto-exiting roads into pavement hexes.
++ 711714: Added swamp hexes.
++ 712049: Added "snow" theme hexset.
 
 v 0.28.12 (04-05-03, 1pm)
 + Stealth Armor should affect the BV calculation.

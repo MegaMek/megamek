@@ -115,6 +115,8 @@ VERSION HISTORY:
 ----------------
 v 0.29-stable-9 (CVS)
 + Bug 931003: spelling fix in TestBot.java
++ Bug 845271, 876771, 917814: The offscreen buffer wasn't resizing with window.
++ MechDisplay.SystemPanel#getSelectedEquipment() didn't handle empty slots.
 
 v 0.29-stable-8 (2004-03-14 3:15 PM EST)
 + Bug 898207: players should have to enter in a non-blank, non-whitespace name

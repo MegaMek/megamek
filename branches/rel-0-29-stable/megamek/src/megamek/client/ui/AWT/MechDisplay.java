@@ -870,8 +870,6 @@ class SystemPanel
     public java.awt.List slotList;
     public java.awt.List locList;
     
-    private Vector vEquipment = new Vector(16);
-    
     public Choice m_chMode;
     public Button m_bDumpAmmo;
     //public Label modeLabel;
@@ -981,15 +979,19 @@ class SystemPanel
     }
     
     public Mounted getSelectedEquipment() {
-        int n = slotList.getSelectedIndex();
-        if (n == -1) {
+        int loc = locList.getSelectedIndex();
+        int slot = slotList.getSelectedIndex();
+        if (loc == -1 || slot == -1) {
             return null;
         }
-        Object o = vEquipment.elementAt(n);
-        if (o == SYSTEM) {
+        final CriticalSlot cs = en.getCritical(loc, slot);
+        if (null == cs) {
             return null;
         }
-        return (Mounted)o;
+        if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+            return null;
+        }
+        return en.getEquipment (cs.getIndex());
     }
 
     /**
@@ -1011,7 +1013,6 @@ class SystemPanel
     public void displaySlots() {
         int loc = locList.getSelectedIndex();
         slotList.removeAll();
-        vEquipment = new Vector(16);
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuffer sb = new StringBuffer(32);
@@ -1021,7 +1022,6 @@ class SystemPanel
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
                     sb.append(cs.isDestroyed() ? "*" : "").append(Mech.systemNames[cs.getIndex()]);
-                    vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
                     Mounted m = en.getEquipment(cs.getIndex());
@@ -1029,7 +1029,6 @@ class SystemPanel
                     if (m.getType().hasModes()) {
                         sb.append(" (").append(m.curMode()).append(")");
                     }
-                    vEquipment.addElement(m);
                     break;
                 }
             }

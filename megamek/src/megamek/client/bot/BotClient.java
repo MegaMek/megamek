@@ -14,6 +14,7 @@
 package megamek.client.bot;
 
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.GameEvent;
@@ -41,6 +42,7 @@ public abstract class BotClient extends Client {
     protected abstract void calculateDeployment();
     protected abstract PhysicalOption calculatePhysicalTurn();
     protected abstract MovePath continueMovementFor(Entity entity);
+    protected abstract Vector calculateMinefieldDeployment();
 
     public ArrayList getEntitiesOwned() {
         ArrayList result = new ArrayList();
@@ -152,6 +154,13 @@ public abstract class BotClient extends Client {
                 sendAttackData(po.attacker.getId(), po.getVector());
             } else if (game.getPhase() == Game.PHASE_DEPLOYMENT) {
                 calculateDeployment();
+            } else if (game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {
+                Vector mines = calculateMinefieldDeployment();
+                for (int i = 0; i < mines.size(); i++) {
+                    game.addMinefield((Minefield)mines.get(i));
+                }
+                sendDeployMinefields(mines);
+				sendPlayerInfo();
             }
         } catch (Throwable t) {
             t.printStackTrace();

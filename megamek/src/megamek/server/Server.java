@@ -2139,6 +2139,10 @@ public boolean isPassworded() {
             game.moveToGraveyard(te.getId());
             send(createRemoveEntityPacket(te.getId()));
             phaseReport.append("*** " + te.getDisplayName() + " has been forced from the field. ***\n");
+            // if push actually moved the target, attacker follows thru
+            if (game.getEntity(src) == null) {
+                ae.setPosition(src);
+            }
           } else {
             phaseReport.append("succeeds, but target can't be moved.\n");
             pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));

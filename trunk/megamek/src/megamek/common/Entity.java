@@ -64,7 +64,7 @@ public abstract class Entity
 
     protected transient Game    game;
 
-    protected int               id;
+    protected int               id = Entity.NONE;
 
     protected float             weight;
     protected boolean           omni = false;
@@ -85,7 +85,7 @@ public abstract class Entity
     protected boolean           doomed = false;
     protected boolean           destroyed = false;
 
-    private Coords              position;// = new Coords();
+    private Coords              position = null;
 
     protected int               facing = 0;
     protected int               sec_facing = 0;
@@ -161,6 +161,12 @@ public abstract class Entity
      * a swarm attack.
      */
     private int                 swarmAttackerId = Entity.NONE;
+
+    /**
+     * Flag that indicates that the unit can still
+     * be salvaged (given enough time and parts).
+     */
+    private boolean             salvageable = true;
 
     /**
      * Generates a new, blank, entity.
@@ -2393,6 +2399,30 @@ public abstract class Entity
             }
         }
         return found;
+    }
+
+    /**
+     * Record if the unit is just combat-lossed or if it has been utterly
+     * destroyed.
+     *
+     * @param   canSalvage - a <code>boolean</code> that is <code>true</code>
+     *          if the unit can be repaired (given time and parts); if this
+     *          value is <code>false</code>, the unit is utterly destroyed.
+     */
+    public void setSalvage( boolean canSalvage ) {
+        this.salvageable = canSalvage;
+    }
+
+    /**
+     * Determine if the unit is just combat-lossed or if it has been utterly
+     * destroyed.
+     *
+     * @return  A <code>boolean</code> that is <code>true</code> if the unit
+     *          can be repaired (given enough time and parts); if this value
+     *          is <code>false</code>, the unit is utterly destroyed.
+     */
+    public boolean isSalvage() {
+        return this.salvageable;
     }
 
 }

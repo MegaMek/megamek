@@ -714,6 +714,7 @@ public class Client extends Panel
      */
     protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
+
         // re-link player in each entity
         for (Enumeration i = newEntities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
@@ -765,7 +766,11 @@ public class Client extends Panel
     
     protected void receiveEntityRemove(Packet packet) {
         int entityId = packet.getIntValue(0);
-        game.removeEntity(entityId);
+        int condition = packet.getIntValue(1);
+
+        // Move the unit to its final resting place.
+        game.removeEntity(entityId, condition);
+
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX

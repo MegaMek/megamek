@@ -42,6 +42,15 @@ public class Game implements Serializable
      * or Vehicle, if the "inf_move_multi" option is selected.
      */
     public static final int INF_MOVE_MULTI     	    = 3;
+
+    /**
+     * Define constants to describe the condition a
+     * unit was in when it wass removed from the game.
+     */
+    public static final int UNIT_NEVER_JOINED   = 0x0000;
+    public static final int UNIT_IN_RETREAT     = 0x0100;
+    public static final int UNIT_SALVAGEABLE    = 0x0200;
+    public static final int UNIT_DEVESTATED     = 0x0400;
     
     public int phase = PHASE_UNKNOWN;
     private GameTurn turn;
@@ -54,7 +63,17 @@ public class Game implements Serializable
     private Hashtable entityIds = new Hashtable();
     
     private Vector graveyard = new Vector(); // for dead entities
-    
+
+    /**
+     * Track units that have been retreated.
+     */
+    private Vector sanctuary = new Vector();
+
+    /**
+     * Track units that have been utterly devestated.
+     */
+    private Vector smithereens = new Vector();
+
     private Vector players = new Vector();
     private Hashtable playerIds = new Hashtable();
     
@@ -229,6 +248,20 @@ public class Game implements Serializable
     public Enumeration getGraveyardEntities() {
         return graveyard.elements();
     }
+
+    /**
+     * Returns an enumeration of entities that have retreated
+     */
+    public Enumeration getRetreatedEntities() {
+        return sanctuary.elements();
+    }
+
+    /**
+     * Returns an enumeration of entities that were utterly destroyed
+     */
+    public Enumeration getDevestatedEntities() {
+        return smithereens.elements();
+    }
     
     /**
      * Return the current number of entities in the game.
@@ -289,13 +322,42 @@ public class Game implements Serializable
     /**
      * Remove an entity from the master list.  If we can't find that entity,
      * (probably due to double-blind) ignore it.
+     * Method kept for backwards compatability.
      */
     public void removeEntity(int id) {
+        this.removeEntity( id, UNIT_NEVER_JOINED );
+    }
+
+    /**
+     * Remove an entity from the master list.  If we can't find that entity,
+     * (probably due to double-blind) ignore it.
+     */
+    public void removeEntity( int id, int condition ) {
         Entity toRemove = getEntity(id);
         if (toRemove != null) {
             entities.removeElement(toRemove);
             entityIds.remove(new Integer(id));
+
+            // Where does it go from here?
+            switch ( condition ) {
+            case UNIT_NEVER_JOINED:
+                // Nothing further required.
+                break;
+            case UNIT_IN_RETREAT  :
+                // Move it to the rolls of those with dubious honor.
+                sanctuary.addElement( toRemove );
+                break;
+            case UNIT_SALVAGEABLE :
+                // Move it into the graveyard where it may be resurrected.
+                graveyard.addElement( toRemove );
+                break;
+            case UNIT_DEVESTATED  :
+                // Mark the unit as way gone.
+                smithereens.addElement( toRemove );
+                break;
+            }
         }
+    
     }
     
     /**
@@ -371,11 +433,7 @@ public class Game implements Serializable
      * out every phase.
      */
     public void moveToGraveyard(int id) {
-        final Entity entity = getEntity(id);
-        if (entity != null) {
-            removeEntity(id);
-            graveyard.addElement(entity);
-        }
+        this.removeEntity( id, UNIT_SALVAGEABLE );
     }
      
     /**

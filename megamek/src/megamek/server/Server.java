@@ -2155,6 +2155,7 @@ public class Server
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
             phaseReport.append("    Death from above cancelled as the target has been destroyed.\n");
+            doEntityDisplacement(ae, ae.getPosition(), daa.getTargetPos(), new PilotingRollData(ae.getId(), 4, "executed death from above"));
             return;
         }
 

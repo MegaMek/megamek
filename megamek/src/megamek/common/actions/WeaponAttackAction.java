@@ -157,7 +157,7 @@ public class WeaponAttackAction
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
-        boolean isIndirect = !(wtype.hasFlag(WeaponType.F_ONESHOT)) && wtype.getAmmoType() == AmmoType.T_LRM //For now, oneshot LRM launchers won't be able to indirect.  Sue me, until I can figure out a better fix.
+        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&

@@ -1257,7 +1257,7 @@ public class ClientGUI
     public void gamePhaseChange(GameEvent e) {
 
         boolean showRerollButton = false;
-        bv.hideTooltip();
+
         //This is a really lame place for this, but I couldn't find a
         //better one without making massive changes (which didn't seem
         //worth it for one little feature).
@@ -1268,6 +1268,9 @@ public class ClientGUI
         // Swap to this phase's panel.
         switchPanel(client.game.getPhase());
 
+        // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for helping test this! :)
+        bv.hideTooltip();
+        
         // Handle phase-specific items.
         switch (client.game.getPhase()) {
             case Game.PHASE_DEPLOY_MINEFIELDS :

@@ -126,7 +126,7 @@ public class BoardView1
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(Game game, Frame frame) {
+    public BoardView1(Game game, Frame frame) throws java.io.IOException {
         this.game = game;
         this.frame = frame;
 

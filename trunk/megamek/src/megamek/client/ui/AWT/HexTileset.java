@@ -126,47 +126,43 @@ public class HexTileset {
     // all but elevation & theme
     
     
-    public void loadFromFile(String filename) {
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader("data/hexes/" + filename));
-            // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
-            st.eolIsSignificant(true);
-            st.commentChar('#');
-            st.quoteChar('"');
-            st.wordChars('_', '_');
-            while(st.nextToken() != StreamTokenizer.TT_EOF) {
-                int elevation = 0;
-                String terrain = null;
-                String theme = null;
-                String imageName = null;
-                if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) {
-                    boolean base = st.sval.equals("base");
-                    
-                    if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
-                        elevation = (int)st.nval;
-                    } else {
-                        elevation = Terrain.WILDCARD;
-                    }
-                    st.nextToken();
-                    terrain = st.sval;
-                    st.nextToken();
-                    theme = st.sval;
-                    st.nextToken();
-                    imageName = st.sval;
-                    // add to list
-                    if (base) {
-                        bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
-                    } else {
-                        supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
-                    }
-                 }
+    public void loadFromFile(String filename) throws IOException {
+        // make inpustream for board
+        Reader r = new BufferedReader(new FileReader("data/hexes/" + filename));
+        // read board, looking for "size"
+        StreamTokenizer st = new StreamTokenizer(r);
+        st.eolIsSignificant(true);
+        st.commentChar('#');
+        st.quoteChar('"');
+        st.wordChars('_', '_');
+        while(st.nextToken() != StreamTokenizer.TT_EOF) {
+            int elevation = 0;
+            String terrain = null;
+            String theme = null;
+            String imageName = null;
+            if(st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super"))) {
+                boolean base = st.sval.equals("base");
+
+                if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
+                    elevation = (int)st.nval;
+                } else {
+                    elevation = Terrain.WILDCARD;
+                }
+                st.nextToken();
+                terrain = st.sval;
+                st.nextToken();
+                theme = st.sval;
+                st.nextToken();
+                imageName = st.sval;
+                // add to list
+                if (base) {
+                    bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+                } else {
+                    supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+                }
             }
-            r.close();
-        } catch (IOException ex) {
-            ;
         }
+        r.close();
         
         System.out.println("hexTileset: loaded " + bases.size() + " base images");
         System.out.println("hexTileset: loaded " + supers.size() + " super images");

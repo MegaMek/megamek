@@ -87,6 +87,6 @@
     <delete dir="${cvsdir}"/>
   </target>
 
-  <target depends="cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" name="cvsdev"/>
+  <target depends="cvsdev-init, cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" name="cvsdev"/>
 
 </project>

@@ -329,6 +329,12 @@ implements Runnable {
         
         // send current game info
         sendCurrentInfo(connId);
+
+        try {
+            sendServerChat("Host IP is " + InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException  e) {
+            // oh well.
+        }
         
         System.out.println("s: player " + connId
         + " (" + getPlayer(connId).getName() + ") connected from "

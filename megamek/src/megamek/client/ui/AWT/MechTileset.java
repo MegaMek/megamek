@@ -37,12 +37,14 @@ public class MechTileset {
     private String MEDIUM_STRING = "default_medium";
     private String HEAVY_STRING = "default_heavy";
     private String ASSAULT_STRING = "default_assault";
+    private String QUAD_STRING = "default_quad";
     
     
     private MechEntry default_light;
     private MechEntry default_medium;
     private MechEntry default_heavy;
     private MechEntry default_assault;
+    private MechEntry default_quad;
     
     private HashMap exact = new HashMap();
     private HashMap wildcard = new HashMap();
@@ -80,7 +82,11 @@ public class MechTileset {
             return (MechEntry)wildcard.get(beforeTheDash);
         }
         
-        // next, the generic model for that weight
+        // next, the generic model
+//        if (entity is a quad) {
+//            return default_quad;
+//        }
+        // weight?
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
             return default_light;
         } else if (entity.getWeight() <= Mech.WEIGHT_MEDIUM) {
@@ -126,6 +132,7 @@ public class MechTileset {
         default_medium = (MechEntry)exact.get(MEDIUM_STRING);
         default_heavy = (MechEntry)exact.get(HEAVY_STRING);
         default_assault = (MechEntry)exact.get(ASSAULT_STRING);
+        default_quad = (MechEntry)exact.get(QUAD_STRING);
     }
     
     private void addEntry(String model, String imageName) {

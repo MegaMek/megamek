@@ -102,6 +102,7 @@ v next
 + changed next target button to use Entity.isEnemyOf
 + fixed descriptions for base physical attack to-hit
 + fixed a bug that would stop wakeup rolls under certain circumstances
++ added a picture for quads (not used yet)
 
 v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels

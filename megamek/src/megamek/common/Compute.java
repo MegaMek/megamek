@@ -25,17 +25,19 @@ import megamek.common.actions.*;
  */
 public class Compute
 {
-    public static final int        ARC_360         = 0;
-    public static final int        ARC_FORWARD        = 1;
-    public static final int        ARC_LEFTARM        = 2;
-    public static final int        ARC_RIGHTARM    = 3;
-    public static final int        ARC_REAR        = 4;
-    public static final int        ARC_LEFTSIDE    = 5;
+    public static final int        ARC_360          = 0;
+    public static final int        ARC_FORWARD      = 1;
+    public static final int        ARC_LEFTARM      = 2;
+    public static final int        ARC_RIGHTARM     = 3;
+    public static final int        ARC_REAR         = 4;
+    public static final int        ARC_LEFTSIDE     = 5;
     public static final int        ARC_RIGHTSIDE    = 6;
     
-    public static final int        GEAR_LAND       = 0;
-    public static final int        GEAR_BACKUP       = 1;
-    public static final int        GEAR_JUMP       = 2;
+    public static final int        GEAR_LAND        = 0;
+    public static final int        GEAR_BACKUP      = 1;
+    public static final int        GEAR_JUMP        = 2;
+    public static final int        GEAR_CHARGE      = 3;
+    public static final int        GEAR_DFA         = 4;
     
     public static final Random random = new Random();
     
@@ -80,7 +82,7 @@ public class Compute
     }
     
     /**
-     * Generate a MovementData to rotate the entity to it's new facing
+     * Generates a MovementData to rotate the entity to it's new facing
      */
     public static MovementData rotatePathfinder(Game game, int entityId, 
                                                 int destFacing) {
@@ -89,7 +91,7 @@ public class Compute
     }
     
     /**
-     * Generate a MovementData object to rotate from the start facing to the
+     * Generates a MovementData object to rotate from the start facing to the
      * destination facing.
      */
     public static MovementData rotatePathfinder(int facing, int destFacing) {
@@ -167,7 +169,9 @@ public class Compute
     
     
     /**
-     * "Compiles" some movement data by setting all the flags.
+     * "Compiles" some movement data by setting all the flags.  Determines which
+     * steps are possible, how many movement points each uses, and where they
+     * occur.
      */
     public static void compile(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
@@ -220,10 +224,10 @@ public class Compute
             case MovementData.STEP_CHARGE :
             case MovementData.STEP_DFA :
                 // step forwards or backwards
-                if (step.getType() == MovementData.STEP_FORWARDS) {
-                    curPos = curPos.translated(curFacing);
-                } else {
+                if (step.getType() == MovementData.STEP_BACKWARDS) {
                     curPos = curPos.translated((curFacing + 3) % 6);
+                } else {
+                    curPos = curPos.translated(curFacing);
                 }
 
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
@@ -338,7 +342,9 @@ public class Compute
             // find the last legal step
             if (!isMovementLegal && step.getMovementType() != Entity.MOVE_ILLEGAL) {
                 final Entity entityInHex = game.getEntity(step.getPosition());
-                if (entityInHex != null && !entityInHex.equals(entity)) {
+                if (entityInHex != null && !entityInHex.equals(entity)
+                        && step.getType() != MovementData.STEP_CHARGE
+                        && step.getType() != MovementData.STEP_DFA) {
                     // can't move here
                     step.setMovementType(Entity.MOVE_ILLEGAL);
                 } else {
@@ -564,7 +570,7 @@ public class Compute
     }
     
     /**
-     * Get a valid displacement, preferably in the direction indicated.
+     * Gets a valid displacement, preferably in the direction indicated.
      * 
      * @return valid displacement coords, or null if none
      */
@@ -606,6 +612,7 @@ public class Compute
         MovementData.Step lastValid = null;
         Hex srcHex;
         Hex destHex;
+        
         // need to have jumped (duh)
         if (!md.contains(MovementData.STEP_START_JUMP)) { 
             return false;
@@ -634,15 +641,61 @@ public class Compute
     /**
      * Can we do a valid charge with this movement?
      */
-    public static boolean isValidCharge(Game game, MovementData md) {
+    public static boolean isValidCharge(Game game, int entityId, MovementData md) {
+        final Entity entity = game.getEntity(entityId);
+        Coords targetCoords;
+        Entity target;
+        MovementData.Step lastValid = null;
+        Hex srcHex;
+        Hex destHex;
+        
         // no jumping or backwards
         if (md.contains(MovementData.STEP_START_JUMP)
             || md.contains(MovementData.STEP_BACKWARDS)) {
             return false;
         }
         
+        // determine last valid step
+        compile(game, entityId, md);
+        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                break;
+            } else {
+                lastValid = step;
+            }
+        }
+        
+        if (lastValid == null) {
+            
+            System.out.println("compute.isvalidcharge: could not find last valid step");
+            
+            return false;
+        }
+        
+        // determine target
+        targetCoords = lastValid.getPosition().translated(lastValid.getFacing());
+        target = game.getEntity(targetCoords);
+        
+        if (target == null) {
+            
+            System.out.println("compute.isvalidcharge: could not find target");
+            
+            return false;
+        }
+        
+        // target must have moved already
+        if (target.ready) {
+            
+            System.out.println("compute.isvalidcharge: target has not moved yet");
+            
+            return false;
+        }
+
+        // do you have enough mp?   
+    
         return true;
-    }
+     }
     
     /**
      * Returns an entity's base piloting skill roll needed
@@ -731,10 +784,10 @@ public class Compute
     /**
      * To-hit number for attacker firing a weapon at the target.
      * 
-     * @param game          the game.
-     * @param attackerId    the attacker id number.
-     * @param targetId      the target id number.
-     * @param weaponId      the weapon id number.
+     * @param game          the game
+     * @param attackerId    the attacker id number
+     * @param targetId      the target id number
+     * @param weaponId      the weapon id number
      */
     public static ToHitData toHitWeapon(Game game, int attackerId, 
                                         int targetId, int weaponId) {
@@ -774,18 +827,18 @@ public class Compute
             final int hel = h.getElevation();
             
             // check for block by terrain
-            if ((hel > ael && hel > tel) || 
-                (hel > ael && ae.getPosition().distance(in[i]) <= 1) || 
-                (hel > tel && te.getPosition().distance(in[i]) <= 1)) {
+            if ((hel > ael && hel > tel) 
+                    || (hel > ael && ae.getPosition().distance(in[i]) <= 1)
+                    || (hel > tel && te.getPosition().distance(in[i]) <= 1)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
             }
             
             // determine number of woods hexes in the way
             if (h.getTerrainType() == Terrain.FOREST_LITE 
-                || h.getTerrainType() == Terrain.FOREST_HVY) {
+                    || h.getTerrainType() == Terrain.FOREST_HVY) {
                 if ((hel + 2 > ael && hel + 2 > tel) 
-                    || (hel + 2 > ael && ae.getPosition().distance(in[i]) <= 1) 
-                    || (hel + 2 > tel && te.getPosition().distance(in[i]) <= 1)) {
+                        || (hel + 2 > ael && ae.getPosition().distance(in[i]) <= 1) 
+                        || (hel + 2 > tel && te.getPosition().distance(in[i]) <= 1)) {
                     ilw += (h.getTerrainType() == Terrain.FOREST_LITE ? 1 : 0);
                     ihw += (h.getTerrainType() == Terrain.FOREST_HVY ? 1 : 0);
                 }

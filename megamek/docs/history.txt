@@ -118,6 +118,8 @@ VERSION HISTORY:
 v 0.28.18-dev (CVS)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.
 + Bug 732044: Use more intelligent hit locations on skids.
++ Bug 725946: Handle falls during skids.
++ Bug 725075: Handle infantry that is killed in same phase that it swarms.
 
 v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move

@@ -8469,7 +8469,7 @@ implements Runnable, ConnectionHandler {
             // loop to next location
             hit = nextHit;
         }
-
+        if (damageIS) desc.append( "\n" );
         return desc.toString();
     }
 

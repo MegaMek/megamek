@@ -509,11 +509,11 @@ public class TdbFile implements MechLoader {
                 EquipmentType etype = EquipmentType.get(critName);
                 if (etype == null) {
                     String hashPrefix;
-                    if (critName.substring(0,3).equals("(C)")) {
+                    if (critName.startsWith("(C)")) {
                         //equipment specifically marked as clan
                         hashPrefix = "Clan ";
                         critName = critName.substring(4);
-                    } else if (critName.substring(0,4).equals("(IS)")) {
+                    } else if (critName.startsWith("(IS)")) {
                         //equipment specifically marked as inner sphere
                         hashPrefix = "IS ";
                         critName = critName.substring(5);

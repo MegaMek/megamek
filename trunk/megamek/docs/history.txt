@@ -84,6 +84,7 @@ v next
 + 608156: broken scenario support fixed
 + fixed crash bug with DFA misses
 + 592466: impossible PSRs now say "impossible", not Integer.MAX_VALUE
++ 607206: fixed crash bug with vehicles charging a mech
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

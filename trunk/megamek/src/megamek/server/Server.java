@@ -2428,7 +2428,7 @@ public boolean isPassworded() {
         phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, toHit.SIDE_FRONT);
+            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, toHit.SIDE_FRONT);
             phaseReport.append(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }

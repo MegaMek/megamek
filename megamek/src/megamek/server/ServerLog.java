@@ -34,10 +34,10 @@ public class ServerLog {
     
     Writer writer;
 
-    /** Creates new ServerLog */
-    public ServerLog() {
+    /** Appends to/Creates ServerLog named @filename */
+    public ServerLog(String filename, boolean append) {
         try {
-            writer = new BufferedWriter(new FileWriter(LOG_FILE));
+            writer = new BufferedWriter(new FileWriter(filename, append));
             append("Log file opened " + new Date().toString());
         } catch (IOException ex) {
             //TODO: I dunno.  report this... to the log? ;)
@@ -45,6 +45,11 @@ public class ServerLog {
         }
     }
     
+    /** Creates new ServerLog */
+    public ServerLog() {
+        this(LOG_FILE,false);
+    }
+
     public void append(String toLog) {
         if (writer == null) {
             return;

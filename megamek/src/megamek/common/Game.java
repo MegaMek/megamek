@@ -791,7 +791,6 @@ public class Game implements Serializable
      */
     public Enumeration getWreckedEntities() {
         Vector wrecks = new Vector();
-
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             if ( entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE ||

@@ -229,7 +229,7 @@ public class BoardView1
         selectedSprite = new CursorSprite(Color.blue);
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
-	}
+    }
 
     public void addBoardViewListener(BoardViewListener l) {
         boardViewListeners.addElement(l);

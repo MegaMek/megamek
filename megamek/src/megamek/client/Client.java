@@ -59,6 +59,9 @@ public class Client implements Runnable {
     // I send out game events!
     private Vector gameListeners = new Vector();
 
+    // we might want to keep a server log...
+    private megamek.server.ServerLog serverlog;
+
     /**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
@@ -69,9 +72,14 @@ public class Client implements Runnable {
      */
     public Client(String name, String host, int port) {
         // construct new client
-		this.name = name;
+        this.name = name;
         this.host = host;
         this.port = port;
+
+        if (Settings.keepServerlog) {
+            // we need to keep a copy of the log
+            serverlog = new megamek.server.ServerLog(Settings.serverlogFilename,true);
+        };
     }
 
 
@@ -80,8 +88,8 @@ public class Client implements Runnable {
      */
     public void connect() throws UnknownHostException, IOException {
         socket = new Socket(host, port);
-		pump = new Thread(this);
-		pump.start();
+        pump = new Thread(this);
+        pump.start();
     }
 
     /**
@@ -93,7 +101,7 @@ public class Client implements Runnable {
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
         connected = false;
-		pump = null;
+        pump = null;
 
         // shut down threads & sockets
         try {
@@ -826,6 +834,9 @@ public class Client implements Runnable {
                         new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
                     break;
                 case Packet.COMMAND_CHAT :
+                    if (null!=serverlog && Settings.keepServerlog) {
+                        serverlog.append( (String) c.getObject(0) );
+                    };
                     processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String) c.getObject(0)));
                     break;
                 case Packet.COMMAND_ENTITY_ADD :
@@ -880,6 +891,15 @@ public class Client implements Runnable {
                     receiveEntities(c);
                     break;
                 case Packet.COMMAND_SENDING_REPORT :
+                    if (null!=serverlog && Settings.keepServerlog) {
+                        if (null==eotr || ((String) c.getObject(0)).length() < eotr.length() ) {
+                            // first report packet
+                            serverlog.append( (String) c.getObject(0) );
+                        } else {
+                            // append only the new part, not what's already in eotr
+                            serverlog.append( ((String) c.getObject(0)).substring(eotr.length()) );
+                        };
+                    };
                     eotr = (String) c.getObject(0);
                     processGameEvent(new GameEvent(this, GameEvent.GAME_REPORT, null, ""));
                     break;

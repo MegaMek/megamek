@@ -1136,7 +1136,6 @@ public class Compute
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
 
-// + HentaiZonga
         int c3range = range;
         Entity c3spotter = ae;
         if (ae.hasC3() || ae.hasC3i()) {
@@ -1178,7 +1177,6 @@ public class Compute
             // reduce range modifier back to short if a C3 spotter is at short range
             if (c3range <= wtype.getShortRange())
               toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() + " at short range");
-// - HentaiZonga
 	} else if ( 0 == range ) {
 	    // Only Infantry shoot at zero range.
 	    if ( !isAttackerInfantry ) {
@@ -2738,14 +2736,12 @@ public class Compute
         }
         
         ToHitData toHit = new ToHitData();
-// + HentaiZonga
         if (target instanceof HexEntity) {
             if (hex.contains(Terrain.SMOKE)) {
                 toHit.addModifier(2, "target in smoke");
             }
             return toHit; // terrain doesn't get target modifiers for itself
         }
-// - HentaiZonga
 
         if (hex.levelOf(Terrain.WATER) > 0
         && target.getMovementType() != Entity.MovementType.HOVER) {

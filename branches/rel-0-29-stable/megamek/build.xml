@@ -59,6 +59,12 @@
 
   <target depends="compile, jar" name="all"/>
 
+  <target depends="all" name="package">
+    <zip basedir="${basedir}" zipfile="${basedir}/megamek-stable.zip" 
+     excludes="classes/**,megamek-cvs-*.zip" 
+     />
+  </target>
+
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-init">
     <tstamp/>

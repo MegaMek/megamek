@@ -3,7 +3,8 @@ Lot of people have contributed to the MegaMek project.
   Original author and present maintainer:
      Ben Mazur <bmazur@sev.org>
 
-  Current Bot Code:
+  AI Coding:
+     Steven Hawkins <skh_mail@yahoo.com>
      Michael Hanson <hanson@cs.stanford.edu>
 
   More Code:
@@ -13,6 +14,7 @@ Lot of people have contributed to the MegaMek project.
      Brian Bucklew <brian.bucklew@scriptlogic.com>
      Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>
      Cord Awtry <kipsta@bs-interactive.com>
+     Joseph Tyx <spikezom@yahoo.com>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

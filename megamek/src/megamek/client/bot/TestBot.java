@@ -1,0 +1,1435 @@
+/*
+ * TestBot.java
+ *
+ * Created on April 30, 2002, 4:42 PM
+ */
+
+package megamek.client.bot;
+
+import java.awt.Frame;
+import com.sun.java.util.collections.*;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.io.*;
+
+import megamek.*;
+import megamek.common.*;
+import megamek.common.actions.*;
+import megamek.client.bot.ga.*;
+import megamek.client.*;
+
+/**
+ * Another Bot implementation
+ * @author  Steve Hawkins
+ */
+
+public class TestBot extends BotClientWrapper {
+  
+  public static class AttackOptionSorter implements Comparator {
+    CEntity primary = null;
+    
+    public AttackOptionSorter(CEntity primary_target) {
+      this.primary = primary_target;
+    }
+    //this is a fancy way of saying do all your primary damage first
+    //then do all your non-missle attacks, etc, etc.
+    public int compare(Object obj, Object obj1) {
+      AttackOption a = (AttackOption)obj;
+      AttackOption a1 = (AttackOption)obj1;
+      if (a.target.getKey().intValue() == a1.target.getKey().intValue()) {
+        WeaponType w = (WeaponType)a.weapon.getType();
+        WeaponType w1 = (WeaponType)a1.weapon.getType();
+        if (w.getDamage() == WeaponType.DAMAGE_MISSILE) {
+          if (w1.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            if (a.expected > a1.expected) {
+              return -1;
+            }
+            return 1;
+          }
+          return 1;
+        } else if (w.getDamage() == WeaponType.DAMAGE_MISSILE) {
+          return -1;
+        } else if (a.expected > a1.expected) {
+          return -1;
+        } else {
+          return 1;
+        }
+      } else if (a.target.getKey().equals(this.primary.getKey())) {
+        return -1;
+      }
+      return 1;
+    }
+  }
+  
+  public static class AttackOption extends ToHitData {
+    public CEntity target;
+    public double value;
+    public Mounted weapon;
+    public ToHitData toHit;
+    public double odds; // secondary odds
+    public double primary_odds; // primary odds
+    public int heat;
+    public double expected;
+    public double primary_expected;
+    public int ammoLeft = -1; //-1 doesn't use ammo
+    
+    public AttackOption(CEntity target, Mounted weapon, double value, ToHitData toHit) {
+      this.target = target;
+      this.weapon = weapon;
+      this.toHit = toHit;
+      this.value = value;
+      if (target != null) {
+        WeaponType w = (WeaponType)weapon.getType();
+        this.primary_odds = Compute.oddsAbove(toHit.getValue())/ 100.0;
+        this.odds = Compute.oddsAbove(toHit.getValue() + 1)/ 100.0;
+        this.heat = w.getHeat();
+        this.expected = this.odds*this.value;
+        this.primary_expected = this.primary_odds*this.value;
+        final boolean usesAmmo = w.getAmmoType() != AmmoType.T_NA;
+        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
+        if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
+          this.value = 0; //should have already been caught...
+        } else if (usesAmmo) {
+          this.ammoLeft = ammo.getShotsLeft();
+        }
+      }
+    }
+  }
+  
+  public static CEntity.Table enemies = new CEntity.Table();
+  public LinkedList unit_values = new LinkedList();
+  public LinkedList enemy_values = new LinkedList();
+  
+  /** Creates a new instance of TestBot */
+  public TestBot(Frame frame, String name) {
+    super(frame, name);
+  }
+  
+  protected void initialize() {
+    EntityState.game = this.game;
+    EntityState.tb = this;
+    CEntity.game = this.game;
+    CEntity.tb = this;
+  }
+  
+  public void calculatePhysicalTurn() {
+    int entNum = game.getFirstEntityNum(getLocalPlayer());
+    int first = entNum;
+    do {
+      // take the first entity that can do an attack
+      Entity en = game.getEntity(entNum);
+      CEntity cen = this.enemies.get(en);
+      PhysicalOption bestAttack = getBestPhysical(en);
+      if (bestAttack != null) {
+        if (bestAttack.type == PhysicalOption.KICK_LEFT || bestAttack.type == PhysicalOption.KICK_RIGHT) {
+          int side = Compute.getThreatHitArc(bestAttack.target.getPosition(), bestAttack.target.getFacing(), en.getPosition());
+          double odds = 1.0 - (double)Compute.oddsAbove(Compute.toHitKick(game, entNum, bestAttack.target.getId(), bestAttack.type - 3).getValue())/100;
+          double llarmor = bestAttack.target.getArmor(Mech.LOC_LLEG)/bestAttack.target.getOArmor(Mech.LOC_LLEG);
+          double rlarmor = bestAttack.target.getArmor(Mech.LOC_RLEG)/bestAttack.target.getOArmor(Mech.LOC_RLEG);
+          double mod = 1.0;
+          switch (side) {
+            case CEntity.SIDE_FRONT:
+              mod = (llarmor + rlarmor)/2;
+              break;
+            case CEntity.SIDE_LEFT:
+              mod = llarmor;
+              break;
+            case CEntity.SIDE_RIGHT:
+              mod = rlarmor;
+              break;
+          }
+          double damage = 2/(1 + mod)*bestAttack.expectedDmg;
+          double threat = .2*en.getWeight()*odds*(1-cen.base_psr_odds);
+          //check for head kick
+          Hex h = game.board.getHex(bestAttack.target.getPosition());
+          Hex h1 = game.board.getHex(en.getPosition());
+          if (h1.getElevation() > h.getElevation()) {
+            damage *= 2;
+          }
+          Enumeration e = game.getEntities();
+          double temp_threat = 0;
+          int number = 0;
+          while (e.hasMoreElements()) {
+            Entity enemy = (Entity)e.nextElement();
+            if (!enemy.isProne() && enemy.getPosition().distance(en.getPosition()) < 3) {
+              if (enemy.isEnemyOf(en)) {
+                number++;
+              } else {
+                number--;
+              }
+            }
+          }
+          if (number > 0) {
+            threat += number*temp_threat;
+          }
+          //take a kick if it is in your favor and you not healthy and it is risky
+          if (!((damage > threat && !(cen.overall_armor_percent > .8 && odds > .9)) || (odds < .5 && cen.base_psr_odds > .5))) {
+            boolean left = false;
+            boolean right = false;
+            ToHitData toHit = Compute.toHitPunch(game, en.getId(), bestAttack.target.getId(), PunchAttackAction.LEFT);
+            if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+              left = true;
+            }
+            toHit = Compute.toHitPunch(game, en.getId(), bestAttack.target.getId(), PunchAttackAction.RIGHT);
+            if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+              right  = true;
+            }
+            if (left) {
+              if (right) {
+                bestAttack.type = PhysicalOption.PUNCH_BOTH;
+              } else {
+                bestAttack.type = PhysicalOption.PUNCH_LEFT;
+              }
+            } else if (right) {
+              bestAttack.type = PhysicalOption.PUNCH_RIGHT;
+            } else {
+              sendReady(true);
+              return;
+            }
+          }
+        }
+        java.util.Vector v = new java.util.Vector();
+        v.addElement(bestAttack.toAction(game, entNum));
+        sendAttackData(entNum, v);
+        sendEntityReady(entNum);
+        sendReady(true);
+        return;
+      }
+      entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
+    } while (entNum != -1 && entNum != first);
+    sendReady(true);
+  }
+  
+  public Vector getEntitiesOwned() {
+    Vector result = new Vector();
+    for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+      Entity entity = (Entity)i.nextElement();
+      if (entity.getOwner().equals(this.getLocalPlayer())) {
+        result.add(entity);
+      }
+    }
+    return result;
+  }
+  
+  protected Vector getEnemyEntities() {
+    Vector result = new Vector();
+    Entity entity = null;
+    Entity mine = null;
+    Iterator i = this.getEntitiesOwned().iterator();
+    if (i.hasNext()) {
+      mine = (Entity)i.next();
+    } else {
+      return result;
+    }
+    java.util.Vector targets = game.getValidTargets(mine);
+    for (Enumeration j = targets.elements(); j.hasMoreElements();) {
+        result.add(j.nextElement());
+    }
+    return result;
+  }
+  
+  int enemies_moved = 0;
+  GALance old_moves = null;
+  int my_mechs_moved = 0;
+  
+  public void calculateMoveTurn() {
+    int initiative = 0;
+    EntityState min = null;
+    //first check and make sure that someone else has moved so that we don't replan
+    Object[] enemy_array = this.getEnemyEntities().toArray();
+    for (int j = 0; j < enemy_array.length; j++) {
+      if (!((Entity)enemy_array[j]).isSelectable()) {
+        initiative++;
+      }
+    }
+    
+    if (initiative == enemies_moved && old_moves != null) {
+      min = this.old_moves.getResult();
+      if (min == null) return;
+      if (!min.isMoveLegal() || (min.isPhysical && min.PhysicalTarget.isPhysicalTarget)) {
+        this.old_moves = null;
+        this.calculateMoveTurn();
+        return;
+      }
+    } else {
+      enemies_moved = initiative;
+      Vector possible = new Vector();
+      Iterator i = this.getEntitiesOwned().iterator();
+      int selectable = 0;
+      EntityState[] best = null;
+      
+      while(i.hasNext()) {
+        Entity entity = (Entity)i.next();
+        CEntity cen = this.enemies.get(entity);
+        MoveThread mt = new MoveThread(entity); //so things don't slow down too much, use a thread
+        System.out.println("Contimplating movement of "+entity.getName()+" "+entity.getId());
+        mt.start();
+        try {
+          mt.join();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        possible.add(mt.result);
+      }
+      //should ignore mechs that are not engaged
+      //and only do the below when there are 2 or mechs left to move
+      if (this.getEntitiesOwned().size() > 1) {
+        try {
+          GALance lance = new GALance(this, possible, 50, 80);
+          Thread lanceThread = new Thread(lance);
+          lanceThread.start();
+          lanceThread.join();
+          min = lance.getResult();
+          this.old_moves = lance;
+        } catch (GAException gae) {
+          System.out.println(gae.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      } else {
+        min = ((EntityState[])possible.elementAt(0))[0];
+      }
+    }
+    for (int d = 0; d < enemy_array.length; d++) {
+      Entity en = (Entity)enemy_array[d];
+      CEntity enemy = this.enemies.get(en);
+      int enemy_hit_arc = Compute.getThreatHitArc(enemy.old.curPos, enemy.old.curFacing, min.curPos);
+      enemy.expected_damage[enemy_hit_arc] += min.damages[d];
+      if (enemy.expected_damage[enemy_hit_arc] > 0) {
+        enemy.hasTakenDamage = true;
+      }
+    }
+    if (min.isPhysical) {
+      min.PhysicalTarget.isPhysicalTarget = true;
+    }
+    Iterator k = min.tv.iterator();
+    String threat = "";
+    while(k.hasNext()) threat += k.next()+" ";
+    System.out.println(min.entity.getName()+" "+min.entity.getId()+" to "+min.getKey()+" from "+this.enemies.get(min.entity).old.getKey()+" "+min+"\n Utility: "+min.getUtility()+" \n"+threat+"\n");
+ 
+    sendChat("Moved " + min.entity.getName()+" to "+min.curPos);
+    this.my_mechs_moved++;
+    moveEntity(min.entity.getId(), min.getMovementData());
+    min.centity.moved = true;
+    min.centity.old = min;
+    sendReady(true);
+  }
+  
+  class MoveThread extends Thread {
+    Entity myEntity;
+    EntityState[] result;
+    
+    public MoveThread(Entity entity) {
+      this.myEntity = entity;
+      this.setPriority(Thread.MIN_PRIORITY);
+    }
+    
+    public void run() {
+      result = calculateMove(myEntity);
+    }
+  }
+  
+  //calculate top moves!
+  public EntityState[] calculateMove(Entity entity) {
+    //Object[] enemy_array = game.getValidTargets(entity).toArray();
+    Object[] enemy_array = vectorToArray(game.getValidTargets(entity));
+    CEntity self = this.enemies.get(entity);
+    EntityState current = self.old;
+    Object[] move_array;
+    if (entity.isSelectable() && !self.moved) {
+      move_array = self.getAllMoves().toArray();
+    } else {
+      move_array = new Object[] {current};
+    }
+    Compute.randomize(move_array); //this helps produce a better mix of things to do
+    EntityState.Table pass = new EntityState.Table();
+    
+    Vector fm = new Vector();
+    for (Iterator i = this.getEntitiesOwned().iterator(); i.hasNext();){
+      Entity en = (Entity)i.next();
+      if (en.getId() != entity.getId()) {
+        fm.add(new EntityState((this.enemies.get(en)).old));
+      }
+    }
+    Object[] friend_move_array = fm.toArray();
+    
+    /***************************************************
+     * first pass, filter moves based upon present case
+     ****************************************************/
+    for (int i = 0; i < move_array.length + friend_move_array.length; i++) { // for each state (could some prefiltering be done?)
+      EntityState option = null;
+      if (i >= move_array.length) {
+        option = (EntityState)friend_move_array[i - move_array.length];
+      } else {
+        option = (EntityState)move_array[i];
+      }
+      option.setState();
+      if (option.damages == null) option.damages = new double[enemy_array.length];
+      if (option.threats == null) option.threats = new double[enemy_array.length];
+      if (option.max_threats == null) option.max_threats = new double[enemy_array.length];
+      if (option.min_damages == null) option.min_damages = new double[enemy_array.length];
+      
+      for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+        Entity en = (Entity)enemy_array[e];
+        CEntity enemy = this.enemies.get(en);
+        int enemy_hit_arc = Compute.getThreatHitArc(enemy.old.curPos, enemy.old.curFacing, option.curPos);
+        int self_hit_arc = Compute.getThreatHitArc(option.curPos, option.curFacing, enemy.old.curPos);
+        int[] modifiers = option.getModifiers(enemy.entity);
+        if (!enemy.entity.isImmobile() && modifiers[EntityState.DEFENCE_MOD] != ToHitData.IMPOSSIBLE) {
+          self.engaged = true;
+          int mod = modifiers[EntityState.DEFENCE_MOD];
+          double max = option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod, modifiers[EntityState.DEFENCE_PC]);
+          if (en.isSelectable()) { // let him turn a little
+            enemy.old.curFacing = (enemy.old.curFacing+1)%6;
+            max = Math.max(option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
+            enemy.old.curFacing = (enemy.old.curFacing+4)%6;
+            max = Math.max(option.getMaxModifiedDamage(enemy.old, this.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
+            //return to original facing
+            enemy.old.curFacing = (enemy.old.curFacing+1)%6;
+          }
+          max = self.getThreatUtility(max, self_hit_arc);
+          if (enemy.entity.isProne()) max *= .6;
+          option.threats[e] = max;
+          option.max_threats[e] = max;
+          option.threat += max;
+          option.tv.add(max+" Threat "+e+"\n");
+        }
+        //I would always like to face the opponent (the most open direction)
+        if (Compute.getThreatHitArc(option.curPos, option.curFacing, enemy.entity.getPosition()) != CEntity.SIDE_FRONT) {
+          int fa = Compute.getFiringAngle(option.curPos, option.curFacing, enemy.entity.getPosition());
+          option.movement_threat += (1-(double)Math.abs(180 - fa)/180); //need to also account for distance?
+          option.tv.add((1-(double)Math.abs(180 - fa)/180)+ " " +fa+" Back to enemy\n");
+        }
+        //damage reasoning
+        /* As a first approximation, take the maximum to a single target */
+        if (!option.isPhysical) {
+          if (modifiers[EntityState.ATTACK_MOD] != ToHitData.IMPOSSIBLE) {
+            self.engaged = true;
+            double max = enemy.old.getMaxModifiedDamage(option, self, modifiers[0], modifiers[EntityState.ATTACK_PC]);
+            max = enemy.getThreatUtility(max, enemy_hit_arc);
+            option.damages[e] = max;
+            option.min_damages[e] = max;
+            option.tv.add(max+" Damage "+e+"\n");
+            option.damage = Math.max(max, option.damage);
+          }
+        } else {
+          try {
+            if (option.PhysicalTarget.entity.getId() == enemy.entity.getId()) {
+              if (!option.PhysicalTarget.isPhysicalTarget) {
+                ToHitData toHit = null;
+                double self_threat = 0;
+                double damage = 0;
+                if (option.isJumping) {
+                  toHit = Compute.toHitDfa(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), option.curPos);
+                  damage = 2*Compute.getDfaDamageFor(option.entity);
+                  self_threat = option.centity.getThreatUtility(Compute.getDfaDamageTakenBy(option.entity), CEntity.SIDE_REAR)*Compute.oddsAbove(toHit.getValue())/100;
+                  self_threat += option.centity.getThreatUtility(.1*self.entity.getWeight(), CEntity.SIDE_REAR);
+                } else {
+                  self.old.setState();
+                  MovementData md = option.getMovementData();
+                  toHit = Compute.toHitCharge(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
+                  damage = Compute.getChargeDamageFor(option.entity, md.getHexesMoved());
+                  self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(1-Compute.oddsAbove(toHit.getValue())/100);
+                  option.setState();
+                }
+                damage = Math.sqrt(option.PhysicalTarget.bv/self.bv)*option.PhysicalTarget.getThreatUtility(damage, toHit.getSideTable())*Compute.oddsAbove(toHit.getValue())/100;
+                if ((((Double)this.unit_values.getLast()).doubleValue() <
+                ((Double)this.enemy_values.getLast()).doubleValue()
+                && (this.NumEnemies - this.NumFriends < 0)) || (this.NumFriends >= 2*this.NumEnemies)) {
+                } else {
+                  damage /=  (1 + self.overall_armor_percent);
+                }
+                //these are always risky...
+                damage *= Math.pow(Compute.oddsAbove(toHit.getValue())/100, 2);
+                option.damages[e] = damage;
+                option.min_damages[e] = damage;
+                option.damage = damage;
+              } else {
+                option.threat += Integer.MAX_VALUE;
+              }
+            }
+          } catch (Exception e1) {
+            e1.printStackTrace();
+            option.threat += Integer.MAX_VALUE;
+          }
+        }
+      } //-- end while of each enemy
+      self.old.setState();
+    } //-- end while of first pass
+    
+    Arrays.sort(move_array);
+    
+    int filter = 50;
+    if (friend_move_array.length > 1) {
+      filter = 100;
+    }
+    //top 100 utility, mostly conservative
+    for (int i = 0; i < filter && i < move_array.length ; i++) {
+      pass.put((EntityState)move_array[i]);
+    }
+    
+    Arrays.sort(move_array, new Comparator() {
+      public int compare(Object obj, Object obj1) {
+        if (((EntityState)obj).damage - .5*((EntityState)obj).getUtility() >
+        ((EntityState)obj1).damage - .5*((EntityState)obj1).getUtility()) {
+          return -1;
+        }
+        return 1;
+      }
+    });
+    
+    //top 100 damage
+    for (int i = 0; i < filter && i < move_array.length; i++) {
+      pass.put((EntityState)move_array[i]);
+    }
+    
+    //pass now contains 100 ~ 200 moves
+    /*********************************************************
+     *  New second pass, combination moves/firing
+     *    based only on the present case, since only one mech moves
+     *    at a time
+     ********************************************************/
+    if (friend_move_array.length > 1) {
+      move_array = pass.values().toArray();
+      pass.clear();
+      double[] combo = new double[enemy_array.length];
+      for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+        Entity en = (Entity)enemy_array[e];
+        CEntity enemy = this.enemies.get(en);
+        if (!enemy.canMove()) {
+          for (int i = 0; i < friend_move_array.length; i++) {
+            combo[e] += ((EntityState)friend_move_array[i]).damages[e];
+          }
+        } else {
+          for (int i = 0; i < friend_move_array.length; i++) {
+            combo[e] += .2*((EntityState)friend_move_array[i]).damages[e];
+          }
+        }
+      }
+      for (int j = 0; j < move_array.length; j++) {
+        EntityState option = (EntityState)move_array[j];
+        for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+          Entity en = (Entity)enemy_array[e];
+          CEntity enemy = this.enemies.get(en);
+          if (!enemy.canMove()) {
+            if (option.damages[e] > 0) {
+              option.damage += .1*option.damages[e];
+              option.threat -= option.threats[e];
+              option.threats[e] /= 1.4; //this is most important
+              option.threat += option.threats[e];
+              option.tv.add("Coordination bonus\n");
+            }
+          }
+        }
+      }
+      Arrays.sort(move_array);
+      
+      filter = 50;
+      
+      //top utility, mostly conservative
+      for (int i = 0; i < filter && i < move_array.length ; i++) {
+        pass.put((EntityState)move_array[i]);
+      }
+      
+      Arrays.sort(move_array, new Comparator() {
+        public int compare(Object obj, Object obj1) {
+          if (((EntityState)obj).damage - .5*((EntityState)obj).getUtility() >
+          ((EntityState)obj1).damage - .5*((EntityState)obj1).getUtility()) {
+            return -1;
+          }
+          return 1;
+        }
+      });
+      
+      //top 50 damage
+      for (int i = 0; i < filter && i < move_array.length; i++) {
+        pass.put((EntityState)move_array[i]);
+      }
+    }
+    
+    /**********************************************************
+     * second pass, bad oppurtunistic planner
+     * gives preference to good ranges/defensive positions
+     * based upon the mech characterization
+     ***********************************************************/
+    move_array = pass.values().toArray();
+    pass.clear();
+    
+    for (int j = 0; j < move_array.length; j++) {
+      EntityState option = (EntityState)move_array[j];
+      option.setState();
+      double adjustment = 0;
+      double temp_adjustment = 0;
+      for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+        Entity en = (Entity)enemy_array[e];
+        CEntity enemy = this.enemies.get(en);
+        int current_range = self.old.curPos.distance(enemy.old.curPos);
+        int range = option.curPos.distance(enemy.old.curPos);
+        if (range > self.long_range) {
+          temp_adjustment += (!(range < enemy.long_range)?.5:1)*(1+self.RangeDamages[self.Range])*(Math.max(range - self.long_range - .5*Math.max(self.jumpMP, .8*self.runMP),0));
+        }
+        //this is wrong on larger maps...
+        //a mech must choose which other mechs to be engaged with or stay in the middle
+        if ((self.Range == self.RANGE_SHORT && (current_range > 5 || range > 9)) || (self.RangeDamages[self.RANGE_SHORT] < 4 && current_range > 10)) {
+          temp_adjustment += ((enemy.Range > self.RANGE_SHORT)?.5:1)*(Math.max(1+self.RangeDamages[self.RANGE_SHORT], 5))*Math.max(range -.5*Math.max(self.jumpMP, .8*self.runMP),0);
+        } else if (self.Range == self.RANGE_MEDIUM) {
+          temp_adjustment += ((current_range < 6 || current_range > 12)?1:.25)*((enemy.Range > self.RANGE_SHORT)?.5:1)*(1+self.RangeDamages[self.RANGE_MEDIUM])*Math.abs(range - .5*Math.max(self.jumpMP, .8*self.runMP));
+        } else if (option.damage < .25*self.RangeDamages[self.RANGE_LONG]) {
+          temp_adjustment += ((range < 10)?.25:1)*(Math.max(1+self.RangeDamages[self.RANGE_LONG],3))*(1/(1+option.threat));
+        }
+        adjustment += Math.sqrt(temp_adjustment*enemy.bv/self.bv);
+      }
+      adjustment *= self.overall_armor_percent*self.strategy.attack/enemy_array.length;
+      adjustment -= (self.Range == self.RANGE_SHORT)?1:2*(double)Compute.getTargetTerrainModifier(game, option.entity.getId()).getValue();
+      //fix for hiding in level 2 water
+      //To a greedy bot, it always seems nice to stay in here...
+      Hex h = game.board.getHex(option.curPos);
+      if (h.contains(Terrain.WATER) && h.surface() > (self.entity.elevation() + ((option.isProne)?0:1))) {
+        double mod = (self.entity.heat + option.getMovementheatBuildup() <= 7)?100:30;
+        adjustment += self.bv/mod;
+      }
+      if (option.damage < .1*(1+self.RangeDamages[self.Range]) && adjustment > 0) {
+        option.self_threat = -2*adjustment;
+      } else if (option.damage < .25*(1+self.RangeDamages[self.Range]) && adjustment > 0) {
+        option.self_threat = -adjustment;
+      } else if (option.damage >= .25*(1+self.RangeDamages[self.Range]) && adjustment < 0) {
+        option.self_threat = -.5*adjustment;
+      }
+      option.tv.add(option.self_threat+" Damage Adjustment " +"\n");
+    }
+    Arrays.sort(move_array);
+    
+    //top 30 utility
+    for (int j = 0; j < 30 && j < move_array.length; j++) {
+      pass.put((EntityState)move_array[j]);
+    }
+    
+    Arrays.sort(move_array, new Comparator() {
+      public int compare(Object obj, Object obj1) {
+        if (((EntityState)obj).damage - ((EntityState)obj).getUtility() >
+        ((EntityState)obj1).damage - ((EntityState)obj1).getUtility()) {
+          return -1;
+        }
+        return 1;
+      }
+    });
+    
+    //top 30 damage
+    for (int i = 0; i < 30 && i < move_array.length ; i++) {
+      pass.put((EntityState)move_array[i]);
+    }
+    
+    //reduce self threat
+    for (com.sun.java.util.collections.Iterator i = pass.values().iterator(); i.hasNext();) {
+      EntityState option = (EntityState)i.next();
+      option.self_threat *= .25;
+    }
+    
+    move_array = pass.values().toArray();
+    pass.clear();
+    
+    //pass should contains 30 ~ 60
+    /******************************************
+     * second pass, speculation on top moves
+     * use averaging to filter
+     ********************************************/
+    for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+      Entity en = (Entity)enemy_array[e];
+      CEntity enemy = this.enemies.get(en);
+      //engage in speculation on "best choices" when you have lost the iniative
+      if (enemy.canMove()) {
+        Object[] enemy_move_array = enemy.calculateCounterMoves().toArray();
+        Vector to_check = new Vector();
+        //check some enemy moves
+        for (int j = 0; j < move_array.length; j++) {
+          EntityState option = null;
+          to_check.clear();
+          option = (EntityState)move_array[j];
+          option.setState();
+          //check for damning hexes specifically
+          //could also look at intervening defensive
+          Vector coord = new Vector();
+          Coords back = option.curPos.translated((option.curFacing + 3) % 6);
+          coord.add(back);
+          coord.add(back.translated((option.curFacing + 2) % 6));
+          coord.add(back.translated((option.curFacing + 4) % 6));
+          coord.add(option.curPos.translated((option.curFacing)));
+          coord.add(option.curPos.translated((option.curFacing + 1)%6));
+          coord.add(option.curPos.translated((option.curFacing + 2)%6));
+          coord.add(option.curPos.translated((option.curFacing + 4)%6));
+          coord.add(option.curPos.translated((option.curFacing + 5)%6));
+          Iterator ci = coord.iterator();
+          while (ci.hasNext()) {
+            Coords test = (Coords)ci.next();
+            Vector c = enemy.findMoves(test);
+            if (c.size() != 0) to_check.addAll(c);
+          }
+          int range = option.curPos.distance(enemy.old.curPos);
+          int compare=0;
+          if ((enemy.long_range) > range - Math.max(enemy.jumpMP, enemy.runMP)) {
+            compare = 30;
+          } else if (enemy.long_range > range) {
+            compare = 10;
+          }
+          double mod = this.enemies_moved/this.getEnemyEntities().size();
+          compare *= (1 + mod);
+          for (int k = 0; k <= compare && k < enemy_move_array.length; k++) {
+            if (enemy_move_array.length < compare) {
+              to_check.add(enemy_move_array[k]);
+            } else {
+              int value = Compute.random.nextInt(enemy_move_array.length);
+              if (value%2 == 1) {
+                to_check.add(enemy_move_array[value]);
+              } else {
+                to_check.add(enemy_move_array[k]);
+              }
+            }
+          }
+          Iterator eo = to_check.iterator();
+          while (eo.hasNext()) {
+            EntityState enemy_option = (EntityState)eo.next();
+            double max_threat = 0;
+            double max_damage = 0;
+            enemy_option.setState();
+            int enemy_hit_arc = Compute.getThreatHitArc(enemy_option.curPos, enemy_option.curFacing, option.curPos);
+            int self_hit_arc = Compute.getThreatHitArc(enemy_option.curPos, enemy_option.curFacing, option.curPos);
+            if (enemy_option.isJumping) {
+              enemy_hit_arc = Compute.ARC_FORWARD; //assume they will choose forward, but really should be the strongest
+            }
+            int[] modifiers = option.getModifiers(enemy_option.entity);
+            if (modifiers[1] != ToHitData.IMPOSSIBLE) {
+              self.engaged = true;
+              if (!enemy_option.isJumping) {
+                max_threat = option.getMaxModifiedDamage(enemy_option, this.enemies.get(en), modifiers[1], modifiers[EntityState.DEFENCE_PC]);
+              } else {
+                max_threat = .8*enemy.getModifiedDamage((modifiers[EntityState.DEFENCE_PC]==1)?CEntity.TT:CEntity.SIDE_FRONT, enemy_option.curPos.distance(option.curPos), modifiers[1]);
+              }
+              max_threat = self.getThreatUtility(max_threat, self_hit_arc);
+            }
+            if (modifiers[0] != ToHitData.IMPOSSIBLE) {
+              self.engaged = true;
+              max_damage = enemy_option.getMaxModifiedDamage(option, self, modifiers[0], modifiers[EntityState.ATTACK_PC]);
+              max_damage = enemy.getThreatUtility(max_damage, enemy_hit_arc);
+              if (option.isPhysical) {
+                if (option.PhysicalTarget.entity.getId() == enemy.entity.getId()) {
+                  max_damage = option.damages[e];
+                } else {
+                  max_damage = 0;
+                }
+              }
+            }
+            option.max_threats[e] = Math.max(max_threat, option.max_threats[e]);
+            option.min_damages[e] = Math.min(option.min_damages[e], max_damage);
+            if (max_threat - max_damage > option.threats[e] - option.damages[e]) {
+              option.threats[e] = max_threat;
+              option.damages[e] = max_damage;
+              option.tv.add(max_threat+" Spec Threat "+e+"\n");
+              option.tv.add(max_damage+" Spec Damage "+e+"\n");
+            }
+          }
+          //update estimates
+          option.damage = 0;
+          option.threat = 0;
+          for (int d = 0; d < option.damages.length; d++) {
+            //my damage is the average of expected and min
+            option.damage += (option.min_damages[e] + option.damages[e])/2;
+            //my threat is average of absolute worst, and expected
+            option.threat += (option.max_threats[e] + option.threats[e])/2;
+          }
+        }
+        //restore enemy
+        enemy.old.setState();
+      }
+      self.old.setState();
+    } //--end move speculation
+    
+    Arrays.sort(move_array);
+    
+    //top 20 utility
+    for (int i = 0; i < 20 && i < move_array.length ; i++) {
+      pass.put((EntityState)move_array[i]);
+    }
+    
+    Arrays.sort(move_array, new Comparator() {
+      public int compare(Object obj, Object obj1) {
+        if (((EntityState)obj).damage*.5 - ((EntityState)obj).getUtility() >
+        ((EntityState)obj1).damage*.5 - ((EntityState)obj1).getUtility()) {
+          return -1;
+        }
+        return 1;
+      }
+    });
+    
+    //top 20 damage
+    for (int i = 0; i < 20 && i < move_array.length ; i++) {
+      pass.put((EntityState)move_array[i]);
+    }
+    
+    for (com.sun.java.util.collections.Iterator i = pass.values().iterator(); i.hasNext();) {
+      EntityState option = (EntityState)i.next();
+      option.self_threat *= .25;
+    }
+    
+    move_array = pass.values().toArray();
+    pass.clear();
+    
+    //pass should now be 20 ~ 40
+    /**************************************************
+     * fourth pass, final damage and threat approximation
+     * for those who have moved
+     ************************************************/
+    if (self.engaged) {
+      int remaining = game.getNoOfEntities() - game.getEntitiesOwnedBy(getLocalPlayer());
+      //clear expected damages
+      for (int i = 0; i < 4; i++) {
+        self.expected_damage[i] = 0;
+      }
+      for (int j = 0; j < move_array.length; j++) {
+        EntityState option = (EntityState)move_array[j];
+        option.setState();
+        if (this.enemies_moved > 0) {
+          GAAttack temp = this.bestAttack(option);
+          double[] damages = null;
+          if (temp != null) {
+            damages = temp.getDamageUtilities();
+            option.damage = (option.damage + temp.getFittestChromosomesFitness())/2;
+          } else {
+            damages = new double[game.getNoOfEntities()];
+          }
+          for (int e = 0; e < enemy_array.length; e++) { // for each enemy
+            Entity en = (Entity)enemy_array[e];
+            CEntity enemy = this.enemies.get(en);
+            if (!enemy.canMove()) {
+              option.threats[e] = (option.threats[e] + this.attackUtility(enemy.old, self))/2;
+              option.tv.add(option.threats[e]+" Revised Threat "+e+" \n");
+              //slight hack to mark moved mechs with damage
+              if (move_array.length == 1) {
+                if (option.threats[e] < 6) {
+                  self.hasTakenDamage = true;
+                }
+                for (int i = 0; i < 4; i++) {
+                  self.expected_damage[i] += option.threats[e];
+                }
+              }
+              if (!option.isPhysical) {
+                if (temp != null) {
+                  option.damages[e] = temp.getDamageUtility(enemy);
+                  option.tv.add(option.damages[e]+" Revised Damage "+e+" \n");
+                }
+                if (option.curPos.distance(enemy.old.curPos) == 1) {
+                  PhysicalOption p = this.getBestPhysicalAttack(option.entity.getId(), enemy.entity.getId());
+                  if (p != null) {
+                    option.damages[e] += (self.entity.getWeight() <= 40)?1:.75*p.expectedDmg;
+                    option.tv.add(.75*p.expectedDmg+" Physical Damage "+e+" \n");
+                  }
+                  p = this.getBestPhysicalAttack(enemy.entity.getId(),option.entity.getId());
+                  if (p != null) {
+                    option.threats[e] += p.expectedDmg;
+                    option.tv.add(p.expectedDmg+" Physical Threat "+e+" \n");
+                  }
+                }
+              }
+            }
+            if (!option.isPhysical) {
+              if (temp != null) {
+                option.damages[e] = (option.damages[e] + temp.getDamageUtility(enemy) + option.min_damages[e])/3;
+              }
+            }
+          }
+          option.threat = 0;
+          for (int d = 0; d < option.damages.length; d++) {
+            option.threat += option.threats[d];
+          }
+          option.tv.add(option.threat+" Revised Threat Utility\n");
+          option.tv.add(option.damage+" Revised Damage Utility\n");
+        }
+      }
+    }
+    
+    Arrays.sort(move_array);
+    self.old.setState(); //just to make sure we are back to where we started
+    
+    /**********************************************
+     * Return top twenty moves to the lance algorithm
+     **********************************************/
+    EntityState[] result = new EntityState[Math.min(move_array.length,20)];
+    for (int i = 0; i < Math.min(move_array.length,20); i++) {
+      result[i] = (EntityState)move_array[i];
+      //if (i < 10) System.out.println(result[i] + " " + result[i].getUtility());
+    }
+    return result;
+  }
+  
+  protected Vector calculateWeaponAttacks(Entity en, Mounted mw) {
+    return this.calculateWeaponAttacks(en, mw, false);
+  }
+  
+  protected void initFiring() {
+    //Object[] entities = game.getEntitiesVector().toArray();
+    Object[] entities = vectorToArray(game.getEntitiesVector());
+    for (int i = 0; i < entities.length; i++) {
+      Entity entity = (Entity)entities[i];
+      CEntity centity = this.enemies.get(entity);
+      centity.reset();
+      centity.enemy_num = i;
+    }
+  }
+  
+  /* returns a collection of all possible destination hexes */
+  protected Vector calculateWeaponAttacks(Entity en, Mounted mw, boolean best_only) {
+    int from = en.getId();
+    int weaponID = en.getEquipmentNum(mw);
+    Vector result = new Vector();
+    Enumeration ents = game.getValidTargets(en).elements();
+    AttackOption a = null;
+    AttackOption max = new AttackOption(null,null,0,null);
+    java.util.Vector v = new java.util.Vector();
+    while (ents.hasMoreElements()) {
+      Entity e = (Entity)ents.nextElement();
+      CEntity enemy = enemies.get(e);
+      ToHitData th = Compute.toHitWeapon(game, from, e.getId(), weaponID, v);
+      if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
+        double expectedDmg = Compute.getExpectedDamage((WeaponType)mw.getType());
+        a = new AttackOption(enemy, mw, expectedDmg, th);
+        if (a.value > max.value) {
+          if (best_only) {
+            max = a;
+          } else {
+            result.add(0, a);
+          }
+        } else {
+          result.add(a);
+        }
+      }
+    }
+    if (best_only && max.target != null) {
+      result.add(max);
+    }
+    if (result.size() > 0) {
+      result.add(new AttackOption(null,mw,0,null));
+    }
+    return result;
+  }
+  
+  public double attackUtility(EntityState es) {
+    return this.attackUtility(es, null);
+  }
+  
+  public GAAttack bestAttack(EntityState es) {
+    int entNum = es.entity.getId();
+    Entity en = es.entity;
+    int attacks[] = new int[3];
+    Vector front = new Vector();
+    Vector left = new Vector();
+    Vector right = new Vector();
+    GAAttack result = null;
+    int o_facing = en.getFacing();
+    for (Enumeration i = en.getWeapons();i.hasMoreElements();) {
+      Mounted mw = (Mounted)i.nextElement();
+      Vector c = this.calculateWeaponAttacks(en, mw,true);
+      if (c.size() > 0) {
+        front.add(c);
+        attacks[0] = Math.max(attacks[0], c.size());
+      }
+      if (!en.isProne()) {
+        en.setSecondaryFacing((o_facing + 5)%6);
+        c = this.calculateWeaponAttacks(en, mw,true);
+        if (c.size() > 0) {
+          left.add(c);
+          attacks[1] = Math.max(attacks[1], c.size());
+        }
+        en.setSecondaryFacing((o_facing + 1)%6);
+        c = this.calculateWeaponAttacks(en, mw,true);
+        if (c.size() > 0) {
+          right.add(c);
+          attacks[2] = Math.max(attacks[2], c.size());
+        }
+      }
+      en.setSecondaryFacing(o_facing);
+    }
+    Vector arcs = new Vector();
+    arcs.add(front);
+    arcs.add(left);
+    arcs.add(right);
+    double max = 0;
+    int[] results = null;
+    int arc = 0;
+    for (int i = 0; i < arcs.size(); i++) {
+      Vector v = (Vector)arcs.elementAt(i);
+      if (v.size() > 0) {
+        try {
+          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 20),30);
+          Thread threadTest = new Thread(test);
+          threadTest.start();
+          threadTest.join();
+          if (test.getFittestChromosomesFitness() > max) {
+            max = test.getFittestChromosomesFitness();
+            results = test.getResultChromosome();
+            arc = i;
+            result = test;
+          }
+        } catch (GAException gae) {
+          System.out.println(gae.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return result;
+  }
+  
+  /* could use best of best strategy instead of expensive ga */
+  public double attackUtility(EntityState es, CEntity target) {
+    int entNum = es.entity.getId();
+    Entity en = es.entity;
+    int attacks[] = new int[3];
+    Vector front = new Vector();
+    Vector left = new Vector();
+    Vector right = new Vector();
+    
+    int o_facing = en.getFacing();
+    for (Enumeration i = en.getWeapons();i.hasMoreElements();) {
+      Mounted mw = (Mounted)i.nextElement();
+      Vector c = this.calculateWeaponAttacks(en, mw,true);
+      if (c.size() > 0) {
+        front.add(c);
+        attacks[0] = Math.max(attacks[0], c.size());
+      }
+      if (!en.isProne()) {
+        en.setSecondaryFacing((o_facing + 5)%6);
+        c = this.calculateWeaponAttacks(en, mw,true);
+        if (c.size() > 0) {
+          left.add(c);
+          attacks[1] = Math.max(attacks[1], c.size());
+        }
+        en.setSecondaryFacing((o_facing + 1)%6);
+        c = this.calculateWeaponAttacks(en, mw,true);
+        if (c.size() > 0) {
+          right.add(c);
+          attacks[2] = Math.max(attacks[2], c.size());
+        }
+      }
+      en.setSecondaryFacing(o_facing);
+    }
+    Vector arcs = new Vector();
+    arcs.add(front);
+    arcs.add(left);
+    arcs.add(right);
+    double max = 0;
+    int[] results = null;
+    int arc = 0;
+    for (int i = 0; i < arcs.size(); i++) {
+      Vector v = (Vector)arcs.elementAt(i);
+      if (v.size() > 0) {
+        try {
+          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 20),30);
+          Thread threadTest = new Thread(test);
+          threadTest.start();
+          threadTest.join();
+          if (target != null) {
+            max = Math.max(max, test.getDamageUtility(target));
+          } else if (test.getFittestChromosomesFitness() > max) {
+            max = test.getFittestChromosomesFitness();
+            results = test.getResultChromosome();
+            arc = i;
+          }
+        } catch (GAException gae) {
+          System.out.println(gae.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return max;
+  }
+  
+  public void calculateFiringTurn() {
+    int first_entity = game.getFirstEntityNum(getLocalPlayer());
+    int entity_num = first_entity;
+    int best_entity = first_entity;
+    double max = java.lang.Double.MIN_VALUE;
+    int[] results = null;
+    Vector winner = null;
+    int arc = 0;
+    
+    if (entity_num == -1) { return; }
+    
+    do {
+      Entity en = game.getEntity(entity_num);
+      CEntity cen = this.enemies.get(en);
+      
+      //if (en.canFlipArms())  //more logic
+      
+      int attacks[] = new int[3];
+      Vector front = new Vector();
+      Vector left = new Vector();
+      Vector right = new Vector();
+      
+      int o_facing = en.getFacing();
+      for (Enumeration i = en.getWeapons();i.hasMoreElements();) {
+        Mounted mw = (Mounted)i.nextElement();
+        Vector c = this.calculateWeaponAttacks(en, mw);
+        if (c.size() > 0) {
+          front.add(c);
+          attacks[0] = Math.max(attacks[0], c.size());
+        }
+        en.setSecondaryFacing((o_facing + 5)%6);
+        c = this.calculateWeaponAttacks(en, mw);
+        if (c.size() > 0) {
+          left.add(c);
+          attacks[1] = Math.max(attacks[1], c.size());
+        }
+        en.setSecondaryFacing((o_facing + 1)%6);
+        c = this.calculateWeaponAttacks(en, mw);
+        if (c.size() > 0) {
+          right.add(c);
+          attacks[2] = Math.max(attacks[2], c.size());
+        }
+        en.setSecondaryFacing(o_facing);
+      }
+      Vector arcs = new Vector();
+      arcs.add(front);
+      arcs.add(left);
+      arcs.add(right);
+      for (int i = 0; i < arcs.size(); i++) {
+        Vector v = (Vector)arcs.elementAt(i);
+        if (v.size() > 0) {
+          try {
+            GAAttack test = new GAAttack(game, this.enemies.get(en), v, Math.max((v.size()+attacks[i])*4,50), 100);
+            Thread threadTest = new Thread(test);
+            threadTest.start();
+            threadTest.join();
+            if (test.getFittestChromosomesFitness() > max) {
+              max = test.getFittestChromosomesFitness();
+              results = test.getResultChromosome();
+              arc = i;
+              best_entity = entity_num;
+              winner = (Vector)arcs.elementAt(arc);
+            }
+          } catch (GAException gae) {
+            System.out.println(gae.getMessage());
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      entity_num = game.getNextEntityNum(getLocalPlayer(), entity_num);
+    } while (entity_num != first_entity && entity_num != -1);
+    
+    java.util.Vector av = new java.util.Vector();
+    //maximum already selected (or default)
+    Entity en = game.getEntity(best_entity);
+    if (results != null) {
+      //Entity primary_target = (Entity)(game.getEntitiesVector().toArray())[results[results.length - 1]];
+      Entity primary_target = (Entity)(vectorToArray(game.getEntitiesVector()))[results[results.length - 1]];
+      TreeMap tm = new TreeMap(new TestBot.AttackOptionSorter(this.enemies.get(primary_target)));
+      for (int i = 0; i < results.length - 1; i++) {
+        AttackOption a = (AttackOption)((Vector)winner.elementAt(i)).elementAt(results[i]);
+        if (a.target != null) {
+          a.target.expected_damage[a.toHit.getSideTable()] += a.value;
+          a.target.hasTakenDamage = true;
+          tm.put(a, a);
+        }
+      }
+      com.sun.java.util.collections.Iterator i = tm.values().iterator();
+      while (i.hasNext()) {
+        AttackOption a = (AttackOption)i.next();
+        av.addElement(new WeaponAttackAction(en.getId(),a.target.entity.getId(), en.getEquipmentNum(a.weapon)));
+      }
+    }
+    switch (arc) {
+      case 1:
+        av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 5)%6),0);
+        break;
+      case 2:
+        av.insertElementAt(new TorsoTwistAction(en.getId(), (en.getFacing() + 1)%6),0);
+        break;
+    }
+    //System.out.println(max);
+    sendAttackData(best_entity, av);
+    sendEntityReady(best_entity);
+    sendReady(true);
+  }
+  
+  boolean initMovement = false;
+  
+  class InitMoveThread extends Thread {
+    public InitMoveThread() {
+      this.setPriority(Thread.MIN_PRIORITY);
+    }
+    public void run() {
+      preMovement();
+    }
+  }
+  
+  protected void initMovement() {
+    InitMoveThread imt = new InitMoveThread();
+    imt.start();
+    try {
+      imt.join();
+    } catch (Exception e) {}
+  }
+  
+  int NumEnemies = 0;
+  int NumFriends = 0;
+  
+  protected void preMovement() {
+    this.my_mechs_moved = 0;
+    this.old_moves = null;
+    this.enemies_moved = 0;
+    double max_modifier = 1.5;
+    //Object[] entities = game.getEntitiesVector().toArray();
+    Object[] entities = vectorToArray(game.getEntitiesVector());
+    double num_entities = Math.sqrt(entities.length)/100;
+    Vector friends = new Vector();
+    Vector foes = new Vector();
+    double friend_sum = 0;
+    double foe_sum = 0;
+    for (int i = 0; i < entities.length; i++) {
+      Entity entity = (Entity)entities[i];
+      CEntity centity = this.enemies.get(entity);
+      centity.enemy_num = i;
+      double old_value = centity.bv*(centity.overall_armor_percent + 1);
+      centity.reset(); //should get fresh values
+      double new_value = centity.bv*(centity.overall_armor_percent + 1);
+      double percent = 1 + (new_value - old_value)/old_value;
+      if (entity.getOwner().equals(getLocalPlayer())) {
+        friends.add(centity);
+        friend_sum += new_value;
+        if (percent < .85) {
+          //small retreat
+          centity.strategy.attack = .85;
+        } else if (percent < .95) {
+          centity.strategy.attack = 1;
+        } else if (percent <= 1 && centity.strategy.attack < max_modifier) {
+          if (percent == 1) {
+            if (centity.strategy.attack < 1) {
+              centity.strategy.attack = Math.min(1.4*centity.strategy.attack,1);
+            } else {
+              centity.strategy.attack *= (1.0 + num_entities);
+            }
+          } else {
+            centity.strategy.attack *= (1.0 + 2*num_entities);
+          }
+        }
+      } else if(!entity.getOwner().isEnemyOf(getLocalPlayer())) {
+        friend_sum += new_value;
+      } else {
+        foes.add(centity);
+        foe_sum += new_value;
+      }
+    }
+    this.NumFriends = friends.size();
+    this.NumEnemies = foes.size();
+    System.out.println("Us "+friend_sum+" Them "+foe_sum);
+    //do some more reasoning...
+    if (this.unit_values.size() == 0) {
+      this.unit_values.add(new Double(friend_sum));
+      this.enemy_values.add(new Double(foe_sum));
+      return;
+    }
+    double ratio = friend_sum/foe_sum;
+    double mod = 1;
+    if (ratio < .9) {
+      mod = .95;
+    } else if (ratio < 1) {
+      //no change
+    } else { //attack
+      mod = (1.0 + num_entities);
+    }
+    Iterator i = friends.iterator();
+    while (i.hasNext()) {
+      CEntity centity = (CEntity)i.next();
+      if (!(mod < 1 && centity.strategy.attack < .6) && !(mod > 1 && centity.strategy.attack >= max_modifier))
+        centity.strategy.attack *= mod;
+      System.out.println(centity.strategy.attack);
+    }
+    System.gc(); //just to make sure
+  }
+  
+  protected void processChat(GameEvent ge) {
+    //this should be in a thread...
+    if (ge.getType() != GameEvent.GAME_PLAYER_CHAT) return;
+    if (this.getLocalPlayer() == null) return;
+    StringTokenizer st = new StringTokenizer(ge.getMessage(), ":");
+    if (st.hasMoreTokens()) {
+      String name = st.nextToken().trim();
+      //who is the message from?
+      Enumeration e = game.getPlayers();
+      boolean found = false;
+      Player p = null;
+      while (e.hasMoreElements() && !found) {
+        p = (Player)e.nextElement();
+        if (name.equalsIgnoreCase(p.getName())) {
+          found = true;
+        }
+      }
+      if (found) {
+        if (st.hasMoreTokens() && st.nextToken().trim().equalsIgnoreCase(this.getLocalPlayer().getName())) {
+          if (!p.isEnemyOf(this.getLocalPlayer())) {
+            if (st.hasMoreTokens()) {
+              String command = st.nextToken().trim();
+              boolean understood = false;
+              //should create a command factory and a command object...
+              if (command.equalsIgnoreCase("echo")) {
+                understood = true;
+              } if (command.equalsIgnoreCase("calm down")) {
+                Iterator i = this.getEntitiesOwned().iterator();
+                while (i.hasNext()) {
+                  CEntity cen = this.enemies.get((Entity)i.next());
+                  if (cen.strategy.attack > 1) {
+                    cen.strategy.attack = 1;
+                  }
+                }
+                understood = true;
+              } else if (command.equalsIgnoreCase("be aggressive")) {
+                Iterator i = this.getEntitiesOwned().iterator();
+                while (i.hasNext()) {
+                  CEntity cen = this.enemies.get((Entity)i.next());
+                  cen.strategy.attack = Math.min(cen.strategy.attack*1.2, 1.5);
+                }
+                understood = true;
+              }
+              if (understood) sendChat("Understood "+p.getName());
+            }
+          } else {
+            sendChat("I can't do that, "+p.getName());
+          }
+        }
+      }
+    }
+  }
+  
+    private Object[] vectorToArray(java.util.Vector vector) {
+        Object[] array = new Object[vector.size()];
+        vector.copyInto(array);
+        return array;
+    }
+  
+  public static void main(String args[]) {
+   /* Frame frame1 = new Frame() {
+      public void paintAll(java.awt.Graphics g) {
+        return;
+      }
+      public void repaint() {
+        return;
+      }
+      public void update() {
+        return;
+      }
+      public void setVisible(boolean b) {
+        super.setVisible(false);
+      }
+    };
+    Frame frame2 = new Frame() {
+      public void paintAll(java.awt.Graphics g) {
+        return;
+      }
+      public void repaint() {
+        return;
+      }
+      public void update() {
+        return;
+      }
+      public void setVisible(boolean b) {
+        super.setVisible(false);
+      }
+    };*/
+    Frame frame1 = new Frame();
+    Frame frame2 = new Frame();
+    int total1 = 0;
+    int total2 = 0;
+    for (int run = 1; run <= 5; run++) {
+      megamek.server.Server s = new megamek.server.Server("hello", 2348);
+      ConnectionThread c1 = new ConnectionThread("Player 1", BotFactory.TEST, 0, frame1);
+      ConnectionThread c2 = new ConnectionThread("Player 2", BotFactory.HUMAN, 1, frame2);
+      System.gc();
+      c1.start();
+      c2.start();
+      try {
+        c2.join();
+        c1.join();
+      } catch (Exception e) {}
+      s.die();
+      total1 += ((BotClientWrapper)c1.result.client).winner;
+      total2 += ((BotClientWrapper)c2.result.client).winner;
+      System.out.println("Trial "+run+" "+total1+" "+total2);
+      System.gc();
+    }
+    System.out.println("Player 1: "+total1);
+    System.out.println("Player 2: "+total2);
+  }
+  
+}
+
+class PlayBot {
+  public static void main(String[] args) {
+    Frame frame1 = new Frame();
+    Frame frame2 = new Frame();
+    megamek.server.Server s = new megamek.server.Server("hello", 2348);
+    ConnectionThread c1 = new ConnectionThread("Player 0", BotFactory.TEST, 0, frame1);
+    ConnectionThread c2 = new ConnectionThread("Player 1", BotFactory.HUMAN, 2, frame2);
+    c1.start();
+    c2.start();
+  }
+}
+
+class ConnectionThread extends Thread {
+  String name;
+  int type;
+  int location;
+  MegaMek result;
+  Frame frame;
+  public ConnectionThread(String name,int type,int location, Frame frame) {
+    this.name = name;
+    this.type = type;
+    this.location = location;
+    this.frame = frame;
+  }
+  public void run() {
+    boolean die = false;
+    try {
+      MegaMek mm = new MegaMek(frame);
+      mm.client = BotFactory.getBot(type,frame, name);
+      if(!mm.client.connect("localhost", 2348)) {
+        return;
+      }
+      sleep(500);
+      mm.client.retrieveServerInfo();
+      /*File f = new java.io.File("d:/Projects/megamek/data/mep/");
+      File[] reqs = f.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".MEP");
+        }
+      });
+      f = reqs[Compute.random.nextInt(reqs.length)];
+      Mech mech = new MepFile(f.getAbsolutePath()).getMech();*/
+      //Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/more/EXT-4A Exterminator.MEP").getMech();
+      Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/more/WHM-6K Warhammer.MEP").getMech();
+      //Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/ASN-21 Assassin.MEP").getMech();
+      
+      mech.setOwner(mm.client.getLocalPlayer());
+      mm.client.sendAddEntity(mech);
+      mm.client.sendAddEntity(mech);
+      mm.client.sendAddEntity(mech);
+      sleep(500);
+      mm.client.getLocalPlayer().setStartingPos(location);
+      mm.client.sendPlayerInfo();
+      sleep(500);
+      this.result = mm;
+      //result.client.sendReady(true);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    while (!die) {
+      try {
+        sleep(2000);
+        if (((BotClientWrapper)result.client).winner == -1 || ((BotClientWrapper)result.client).winner == 1) {
+          die = true;
+        }
+      } catch (Exception e) {}
+    }
+  }
+}
+

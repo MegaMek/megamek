@@ -202,7 +202,8 @@ public class MegaMek
             return;
         }
         // initialize game
-        client = new BotClient(frame, cd.name);
+        client = BotFactory.getBot(BotFactory.TEST, frame, cd.name);
+        //client = new BotClient(frame, cd.name);
          
 	// verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
@@ -230,7 +231,7 @@ public class MegaMek
 
         long start = System.currentTimeMillis();
         for (long i = 0; i < rolls; i++) {
-            hits[Compute.d6(2)]++;
+            hits[megamek.common.Compute.d6(2)]++;
         }
         long end = System.currentTimeMillis();
         

@@ -92,7 +92,7 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v 0.26.0 
+v 0.26.0 (06-03-02, 12pm)
 + the words "level" & "depth" no longer display on top of each other on a hex
 + some more fixes to boards, added mountainlake
 

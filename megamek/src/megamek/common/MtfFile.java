@@ -165,17 +165,17 @@ public class MtfFile {
         
         mech.autoSetInternal();
         
-        mech.setArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM, false);
-        mech.setArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM, false);
-        mech.setArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT, false);
-        mech.setArmor(Integer.parseInt(rtArmor.substring(9)), Mech.LOC_RT, false);
-        mech.setArmor(Integer.parseInt(ctArmor.substring(9)), Mech.LOC_CT, false);
-        mech.setArmor(Integer.parseInt(headArmor.substring(9)), Mech.LOC_HEAD, false);
-        mech.setArmor(Integer.parseInt(llegArmor.substring(9)), Mech.LOC_LLEG, false);
-        mech.setArmor(Integer.parseInt(rlegArmor.substring(9)), Mech.LOC_RLEG, false);
-        mech.setArmor(Integer.parseInt(ltrArmor.substring(10)), Mech.LOC_LT, true);
-        mech.setArmor(Integer.parseInt(rtrArmor.substring(10)), Mech.LOC_RT, true);
-        mech.setArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT, true);
+        mech.initializeArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM);
+        mech.initializeArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM);
+        mech.initializeArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT);
+        mech.initializeArmor(Integer.parseInt(rtArmor.substring(9)), Mech.LOC_RT);
+        mech.initializeArmor(Integer.parseInt(ctArmor.substring(9)), Mech.LOC_CT);
+        mech.initializeArmor(Integer.parseInt(headArmor.substring(9)), Mech.LOC_HEAD);
+        mech.initializeArmor(Integer.parseInt(llegArmor.substring(9)), Mech.LOC_LLEG);
+        mech.initializeArmor(Integer.parseInt(rlegArmor.substring(9)), Mech.LOC_RLEG);
+        mech.initializeRearArmor(Integer.parseInt(ltrArmor.substring(10)), Mech.LOC_LT);
+        mech.initializeRearArmor(Integer.parseInt(rtrArmor.substring(10)), Mech.LOC_RT);
+        mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
         
         // oog, crits.
         for (int i = 0; i < mech.locations(); i++) {

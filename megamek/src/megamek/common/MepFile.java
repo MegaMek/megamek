@@ -219,15 +219,15 @@ public class MepFile
    * Decodes and sets the mech's armor and internal structure values
    */
   private void decodeArmorAndInternals(Mech mech, int loc, String s) {
-    mech.setArmor(Integer.parseInt(s.substring(2, 4)), loc, false);
-    mech.setInternal(Integer.parseInt(s.substring(12)), loc);
+    mech.initializeArmor(Integer.parseInt(s.substring(2, 4)), loc);
+    mech.initializeInternal(Integer.parseInt(s.substring(12)), loc);
   }
   
   /**
    * Decodes and sets the mech's rear armor values
    */
   private void decodeRearArmor(Mech mech, int loc, String string) {
-    mech.setArmor(Integer.parseInt(string.substring(2, 4)), loc, true);
+    mech.initializeRearArmor(Integer.parseInt(string.substring(2, 4)), loc);
   }
   
 }

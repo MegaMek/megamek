@@ -1169,9 +1169,43 @@ public class BoardView1
                 graph.drawString("PRONE", 25, 47);
             }    
             
+            //Lets draw our armor and internal status bars
+              int baseBarLength = 23;
+              int barLength = 0;
+              double percentRemaining = 0.00;
+              
+              percentRemaining = entity.getArmorRemainingPercent();
+              barLength = (int)(baseBarLength * percentRemaining);
+              
+              graph.setColor(Color.darkGray);
+              graph.fillRect(56, 7, 23, 3);
+              graph.setColor(Color.lightGray);
+              graph.fillRect(55, 6, 23, 3);
+              graph.setColor(getStatusBarColor(percentRemaining));
+              graph.fillRect(55, 6, barLength, 3);
+              
+              percentRemaining = entity.getInternalRemainingPercent();
+              barLength = (int)(baseBarLength * percentRemaining);
+              
+              graph.setColor(Color.darkGray);
+              graph.fillRect(56, 11, 23, 3);
+              graph.setColor(Color.lightGray);
+              graph.fillRect(55, 10, 23, 3);
+              graph.setColor(getStatusBarColor(percentRemaining));
+              graph.fillRect(55, 10, barLength, 3);
+              
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                     new KeyAlphaFilter(TRANSPARENT)));
+        }
+         
+        private Color getStatusBarColor(double percentRemaining) {
+          if ( percentRemaining <= .25 )
+            return Color.red;
+          else if ( percentRemaining <= .75 )
+            return Color.yellow;
+          else
+            return new Color(16, 196, 16);
         }
         
         /**

@@ -93,7 +93,7 @@ v CVS
 + 678789: starting position in scenarios made case-insensitive
 + 678789: wind direction set properly (randomly) in scenarios
 + players may enter the game as an observer
-+ message indicates game data transmission
++ message indicates initial game data transmission
 + Allow players to save and load lists of units in chat lounge.
 + Allow players to save lists of units (includes damage) at end-of-game.
 + 678795: Possible fix -- can't test

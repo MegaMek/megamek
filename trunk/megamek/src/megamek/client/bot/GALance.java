@@ -178,11 +178,21 @@ public class GALance extends GA {
     
     for(int m = 0; m < move_array.length; m++) {
       EntityState next = (EntityState)move_array[m];
-      if (next.Doomed) {
-        if (next.centity.entity.getWeight() <= 30) {
-          result += .5*next.getUtility() - next.damage;
+      if (next.inDanger) {
+        if (next.Doomed) {
+          if (next.centity.last != null && next.centity.last.Doomed) {
+            result -= next.damage - .5*next.getUtility(); //should be dead
+          } else if (next.centity.last != null && !next.centity.last.Doomed) {
+            result += next.getUtility() + 2*next.damage; //don't like this case
+          } else {
+            result += next.getUtility();
+          }
         } else {
-          result += next.getUtility();
+          if (next.centity.last != null && !next.centity.last.inDanger) {
+            result += next.getUtility() + next.damage; //not so good either
+          } else {
+            result += next.getUtility();
+          }
         }
       } else {
         result += next.getUtility();

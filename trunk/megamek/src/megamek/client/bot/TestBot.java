@@ -348,6 +348,7 @@ public class TestBot extends BotClientWrapper {
     moveEntity(min.entity.getId(), min.getMovementData());
     min.centity.moved = true;
     min.centity.old = min;
+    min.centity.last = min;
     sendReady(true);
   }
   
@@ -848,7 +849,7 @@ public class TestBot extends BotClientWrapper {
      *    cause the mech to die
      ************************************************/
     if (self.engaged) {
-      int remaining = game.getNoOfEntities() - game.getEntitiesOwnedBy(getLocalPlayer());
+      //int remaining = game.getNoOfEntities() - game.getEntitiesOwnedBy(getLocalPlayer());
       for (int j = 0; j < move_array.length; j++) {
         EntityState option = (EntityState)move_array[j];
         option.setState();
@@ -865,7 +866,7 @@ public class TestBot extends BotClientWrapper {
             Entity en = (Entity)enemy_array[e];
             CEntity enemy = this.enemies.get(en);
             if (!enemy.canMove()) {
-              option.threats[e] = (2*option.threats[e] + this.attackUtility(enemy.old, self))/3;
+              option.threats[e] = (option.threats[e] + this.attackUtility(enemy.old, self))/2;
               option.tv.add(option.threats[e]+" Revised Threat "+e+" \n");
               if (!option.isPhysical) {
                 if (temp != null) {
@@ -885,7 +886,7 @@ public class TestBot extends BotClientWrapper {
                   }
                   p = this.getBestPhysicalAttack(enemy.entity.getId(),option.entity.getId());
                   if (p != null) {
-                    option.threats[e] += .25*p.expectedDmg;
+                    option.threats[e] += .5*p.expectedDmg;
                     option.tv.add(.5*p.expectedDmg+" Physical Threat "+e+" \n");
                   }
                 }
@@ -919,9 +920,16 @@ public class TestBot extends BotClientWrapper {
      * Return top twenty moves to the lance algorithm
      **********************************************/
     EntityState[] result = new EntityState[Math.min(move_array.length,20)];
+    int offset = 0;
     for (int i = 0; i < Math.min(move_array.length,20); i++) {
-      result[i] = (EntityState)move_array[i];
-      //System.out.println(result[i] + " " + result[i].getUtility());
+      EntityState next = (EntityState)move_array[i];
+      if (next.isPhysical && self.RangeDamages[self.RANGE_SHORT] > 5 && next.Doomed) {
+        if (offset + 20 < move_array.length) {
+          next = (EntityState)move_array[offset + 20];
+          offset++;
+        }
+      }
+      result[i] = next;
     }
     return result;
   }
@@ -1031,7 +1039,7 @@ public class TestBot extends BotClientWrapper {
       Vector v = (Vector)arcs.elementAt(i);
       if (v.size() > 0) {
         try {
-          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 40),30);
+          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 40),30, en.isEnemyOf((Entity)getEntitiesOwned().elementAt(0)));
           Thread threadTest = new Thread(test);
           threadTest.start();
           threadTest.join();
@@ -1095,7 +1103,7 @@ public class TestBot extends BotClientWrapper {
       Vector v = (Vector)arcs.elementAt(i);
       if (v.size() > 0) {
         try {
-          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 20),30);
+          GAAttack test = new GAAttack(game, this.enemies.get(en), v,Math.max((v.size()+attacks[i])*2, 20),30, en.isEnemyOf((Entity)getEntitiesOwned().elementAt(0)));
           Thread threadTest = new Thread(test);
           threadTest.start();
           threadTest.join();
@@ -1162,13 +1170,15 @@ public class TestBot extends BotClientWrapper {
       }
       Vector arcs = new Vector();
       arcs.add(front);
-      arcs.add(left);
-      arcs.add(right);
+      if (!cen.entity.isProne()){
+        arcs.add(left);
+        arcs.add(right);
+      }
       for (int i = 0; i < arcs.size(); i++) {
         Vector v = (Vector)arcs.elementAt(i);
         if (v.size() > 0) {
           try {
-            GAAttack test = new GAAttack(game, this.enemies.get(en), v, Math.max((v.size()+attacks[i])*4,50), 100);
+            GAAttack test = new GAAttack(game, this.enemies.get(en), v, Math.max((v.size()+attacks[i])*4,50), 100, en.isEnemyOf((Entity)getEntitiesOwned().elementAt(0)));
             Thread threadTest = new Thread(test);
             threadTest.start();
             threadTest.join();

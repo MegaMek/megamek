@@ -19,8 +19,9 @@ public class GAAttack extends GA {
   protected CEntity.Table targets = new CEntity.Table();
   protected Object[] target_array = null;
   protected Vector valid_target_indexes = null;
+  protected boolean overheat_eligible = false;
   
-  public GAAttack(Game game, CEntity attacker, Vector attack, int population, int generations) throws GAException {
+  public GAAttack(Game game, CEntity attacker, Vector attack, int population, int generations, boolean isEnemy) throws GAException {
     super(attack.size()+1, population, .7, 5, generations, 0, 0, .4,
     Crossover.ctUniform, false, false);
     this.attack = attack;
@@ -36,43 +37,11 @@ public class GAAttack extends GA {
     }
     this.valid_target_indexes = temp;
     this.initPopulation();
+    if (isEnemy || (attacker.last != null && (!attacker.last.inDanger || attacker.last.Doomed))) {
+      this.overheat_eligible = true;
+    }
   }
   
-
-  //an expensive check to see if combining fire is a good idea
-  /*protected void doHeuristicPass() {
-    for (int i = 0; i < this.populationDim; i++) {
-      ChromVector c1 = (ChromVector)this.chromosomes[i];
-      ChromVector max = c1;
-      double maxfitness = this.getFitness(c1); 
-      for (Iterator val = this.valid_target_indexes.iterator(); val.hasNext();) {
-        ChromVector c2 = new ChromVector(c1.genes.length);
-        c2.copyChromGenes(c1);
-        int target = ((Integer)val.next()).intValue();
-        for (int j = 0; (j < c1.genes.length - 1); j++) {
-          TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(j))).elementAt(c1.genes[j]);
-          if (a.target != null) {
-            boolean done = false;
-            Object[] weapon = ((Vector)(attack.elementAt(j))).toArray();
-            for (int w = 0; (w < weapon.length - 1) && !done; w++) {
-              TestBot.AttackOption a1 = (TestBot.AttackOption)weapon[w];
-              if (a1.target.enemy_num == target) {
-                c2.genes[j] = w;
-                done = true;
-              }
-            }
-          }
-        }
-        double tempfitness = this.getFitness(c2);
-        if (tempfitness > maxfitness) {
-          maxfitness = tempfitness;
-          max = c2;
-        }
-      }
-      this.chromosomes[i] = max;
-    }
-  }*/
-   
   public int[] getResultChromosome() {
     return(((ChromVector)chromosomes[bestFitnessChromIndex]).genes);
   }
@@ -111,13 +80,6 @@ public class GAAttack extends GA {
         fired = true;
         targets.put(a.target);
         double mod = 1;
-        if (a.ammoLeft != -1) {
-          if (attacker.overall_armor_percent < .5) {
-            mod = 1.5; //get rid of it
-          } else if (a.ammoLeft < 8 && attacker.overall_armor_percent > .75) {
-            mod = a.primary_odds; //low percentage shots will be frowned upon
-          }
-        }
         if (a.target.entity.getId() == target.getId()) {
           a.target.possible_damage[a.toHit.getSideTable()] += mod*a.primary_expected;
         } else {
@@ -177,9 +139,9 @@ public class GAAttack extends GA {
           if (attacker.overall_armor_percent < .5) {
             mod = 1.5; //get rid of it
           } else if (a.ammoLeft < 12 && attacker.overall_armor_percent > .75) {
-            if (a.primary_odds < .05) {
+            if (a.primary_odds < .1) {
               mod = 0;
-            } else if (a.ammoLeft < 6 && a.primary_odds < .1) {
+            } else if (a.ammoLeft < 6 && a.primary_odds < .25) {
               mod = 0;
             } else {
               mod = a.primary_odds; //low percentage shots will be frowned upon
@@ -234,18 +196,18 @@ public class GAAttack extends GA {
       }
     } else if (overheat > 0) {
       if (overheat > 4) {
-        total_utility *= .85;
+        total_utility *= (this.overheat_eligible && attacker.jumpMP > 2)?.9:.85;
       }
       if (overheat > 7) {
+        double mod = this.overheat_eligible?+((attacker.jumpMP > 2)?0:10):40;
         if (this.attacker.overheat > CEntity.OVERHEAT_LOW) {
-          total_utility -= attacker.bv/40;        
+          total_utility -= attacker.bv/mod;        
         } else {
-          total_utility -= attacker.bv/50;          
+          total_utility -= attacker.bv/(mod + 10);          
         }
       }
-      //if (overheat > 9) {} need to determine if jumping is possible
       if (overheat > 12) {
-        total_utility -= attacker.bv/30;
+        total_utility -= attacker.bv/(this.overheat_eligible?45:30);
       }
       if (overheat > 16) {
         //only if I am going to die?

@@ -2460,7 +2460,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
 
-            /* this is done in destroyEntity()
+            /* this was done in destroyEntity() --^
             // Is the unit carrying passengers?
             final Vector passengers = entity.getLoadedUnits();
             if ( !passengers.isEmpty() ) {
@@ -2589,21 +2589,37 @@ implements Runnable, ConnectionHandler {
 
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
-                Targetable target = step.getTarget( game );
-                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
-                entity.setDisplacementAttack(caa);
-                game.addCharge(caa);
-                charge = caa;
+                if (entity.canCharge()) {
+                    Targetable target = step.getTarget( game );
+                    ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
+                    entity.setDisplacementAttack(caa);
+                    game.addCharge(caa);
+                    charge = caa;
+                } else {
+                    sendServerChat("Illegal charge!! I don't think "+entity.getDisplayName() +" should be allowed to charge,"+
+                                   " but the client of "+entity.getOwner().getName()+" disagrees.");
+                    sendServerChat("Please make sure "+entity.getOwner().getName()+" is running MegaMek "+MegaMek.VERSION+
+                                   ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
+                    return;
+                };
                 break;
             }
 
             // check for dfa
             if (step.getType() == MovePath.STEP_DFA) {
-                Targetable target = step.getTarget( game );
-                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
-                entity.setDisplacementAttack(daa);
-                game.addCharge(daa);
-                charge = daa;
+                if (entity.canDFA()) {
+                    Targetable target = step.getTarget( game );
+                    DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
+                    entity.setDisplacementAttack(daa);
+                    game.addCharge(daa);
+                    charge = daa;
+                } else {
+                    sendServerChat("Illegal DFA!! I don't think "+entity.getDisplayName() +" should be allowed to DFA,"+
+                                   " but the client of "+entity.getOwner().getName()+" disagrees.");
+                    sendServerChat("Please make sure "+entity.getOwner().getName()+" is running MegaMek "+MegaMek.VERSION+
+                                   ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
+                    return;
+                };
                 break;
             }
 

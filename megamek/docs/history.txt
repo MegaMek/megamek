@@ -97,6 +97,8 @@ v next
 + mech loading code handles .mtf files from "hmpread" now
 + some changes to the mech display panels
 + -testdice command line option prints RNG test info
++ -dedicated command line option starts dedicated server using last settings
++ removed dedicated server button, in favor of the command line option
 
 v 0.24.6 (04-07-02, 1:18pm)
 + refined command interface.  type "/help" for a list.

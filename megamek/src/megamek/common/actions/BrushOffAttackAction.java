@@ -107,7 +107,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 		// non-mechs can't BrushOff
 		if (!(ae instanceof Mech)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE,
-								 "Only mechs can brush off swarming infantry");
+								 "Only mechs can brush off swarming infantry or iNarc Pods");
 		}
 
 		// arguments legal?
@@ -118,10 +118,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 		if (ae == null || target == null) {
 			throw new IllegalArgumentException("Attacker or target not valid");
 		}
-		if ( targetId != ae.getSwarmAttackerId() ||
-			 te == null || !(te instanceof Infantry) ) {
+		if ( ( targetId != ae.getSwarmAttackerId() ||
+			   te == null || !(te instanceof Infantry) ) &&
+         target.getTargetType() != Targetable.TYPE_INARC_POD ) {
 			return new ToHitData(ToHitData.IMPOSSIBLE,
-								 "Can only brush off swarming infantry" );
+								 "Can only brush off swarming infantry or iNarc Pods" );
 		}
 
 		// Quads can't brush off.
@@ -186,15 +187,17 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 
 		// If the target has Assault claws, give a 1 modifier.
 		// We can stop looking when we find our first match.
-		for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
-			Mounted mount = (Mounted) iter.nextElement();
-			EquipmentType equip = mount.getType();
-			if ( BattleArmor.ASSAULT_CLAW.equals
-				 (equip.getInternalName()) ) {
-				toHit.addModifier( 1, "defender has assault claws" );
-				break;
-			}
-		}
+    if (te != null) {
+        for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
+            Mounted mount = (Mounted) iter.nextElement();
+            EquipmentType equip = mount.getType();
+            if ( BattleArmor.ASSAULT_CLAW.equals
+                    (equip.getInternalName()) ) {
+                toHit.addModifier( 1, "defender has assault claws" );
+                break;
+            }
+        }
+    }
 
 		// done!
 		return toHit;

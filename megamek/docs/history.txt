@@ -118,6 +118,8 @@ v 0.28.23-dev (CVS)
 + chat box may scroll to bottom properly on Linux (thanks Bluebird)
 + Only the xml file needed now to use The Drawing Board mechs.
 + Fixed 25 misnamed mech files (mostly capitalization errors)
++ Updated data/mex/mechset.txt to handle missed names.
++ Bug 751181: Code bot to handle null pointers.  Bot still doesn't handle BAs.
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly

@@ -1102,6 +1102,7 @@ public class Server
             if (step.getType() == MovementData.STEP_GET_UP) {
                 entity.heatBuildup += 1;
                 entity.setProne(false);
+                wasProne = false;
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"));
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
@@ -1836,16 +1837,19 @@ public class Server
             phaseReport.append(" but the target has moved.\n");
             return;
         }
+        
+        // attacker fell down?
+        if (ae.isProne()) {
+            phaseReport.append(" but attacker has fallen.\n");
+            return;
+        }
 
         // compute to-hit
         ToHitData toHit = Compute.toHitCharge(game, caa);
 
         // if the attacker's prone, fudge the roll
         int roll;
-        if (ae.isProne()) {
-            roll = -12;
-            phaseReport.append("; but the attacker is prone : ");
-        } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
             phaseReport.append(", but the charge is impossible (" + toHit.getDesc() + ") : ");
         } else {
@@ -2339,10 +2343,6 @@ public class Server
                 // is the internal structure gone?
                 if (te.getInternal(hit) <= 0) {
                     destroyLocation(te, hit.getLocation());
-                    if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
-                        pilotRolls.addElement(new PilotingRollData(te.getId(),
-                        PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
-                    }
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
@@ -2515,6 +2515,13 @@ public class Server
         if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
+        
+        // also, if that was your leg, you fall
+        if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
+            pilotRolls.addElement(new PilotingRollData(te.getId(),
+            PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
+        }
+
     }
 
     /**
@@ -2691,6 +2698,8 @@ public class Server
         boards.addElement("deserthills");
         boards.addElement("desertmountain1");
         boards.addElement("desertmountain2");
+        boards.addElement("desertsinkhole1");
+        boards.addElement("desertsinkhole2");
         boards.addElement("heavyforest1");
         boards.addElement("heavyforest2");
         boards.addElement("lakearea");

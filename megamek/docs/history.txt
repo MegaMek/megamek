@@ -89,7 +89,11 @@ VERSION HISTORY:
 v next
 + "esc" clears fire even when focus is not on the map
 + prone mechs are at the terrain elevation for LOS, not 1 higher
-+ hex graphics brighter, flatter, renamed; also reddish sinkhole hexes
++ hex graphics brighter, flatter, renamed; added reddish sinkhole hexes
++ some changes & fixes to maps
++ attacker being prone now cancels charge instead of auto-misses
++ fixed a bug where a mech would fail to get up but move anyhow
++ fixed a bug where a leg destroyed critical would not cause a mech to fall
 
 v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping

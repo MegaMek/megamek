@@ -1842,8 +1842,11 @@ implements Runnable, ConnectionHandler {
 
         // Now, we collect everything into a single vector.
         Vector turns;
-        if ( strandedUnits.hasMoreElements() ) {
-            // Add a game turn to unload stranded units.
+
+        if ( strandedUnits.hasMoreElements() &&
+             game.getPhase() == Game.PHASE_MOVEMENT ) {
+            // Add a game turn to unload stranded units, if this
+            //  is the movement phase.
             turns = new Vector( team_order.getNormalTurns() +
                                 team_order.getLastTurns() + 1);
             turns.addElement( new GameTurn.UnloadStrandedTurn(strandedUnits) );

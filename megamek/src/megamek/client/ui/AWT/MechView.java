@@ -71,12 +71,7 @@ public class MechView {
         sBasic.append("\n");
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( "Linked c3 BV: ");
-            // TODO: refactor this code.
-            if ( isMech ) {
-                sBasic.append( ((Mech)mech).calculateBattleValue(true) );
-            } else {
-                sBasic.append( ((Tank)mech).calculateBattleValue(true) );
-            }
+            sBasic.append( mech.calculateBattleValue(true) );
         }
         sBasic.append("\n");
         sBasic.append( "Movement: " )

@@ -117,6 +117,13 @@ public abstract class Mech
     public int locations() {
       return NUM_MECH_LOCATIONS;
     }
+    
+    /**
+     * Returns true if the location in question is a torso location
+     */
+    public boolean locationIsTorso(int loc) {
+        return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
+    }
                                     
     /**
      * Count the number of destroyed legs on the mech
@@ -206,6 +213,37 @@ public abstract class Mech
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()) {
+                jump++;
+            }
+        }
+        
+        return jump;
+    }
+    
+    /**
+     * Returns this mech's jumping MP, modified for missing & underwater jets.
+     */
+    public int getJumpMPWithTerrain() {
+        int waterLevel = game.board.getHex(getPosition()).levelOf(Terrain.WATER);
+        if (waterLevel <= 0) {
+            return getJumpMP();
+        } else if (waterLevel > 1) {
+            return 0;
+        } else { // waterLevel == 1
+            return torsoJumpJets();
+        }
+    }
+    
+    /**
+     * Returns the number of (working) jump jets mounted in the torsos.
+     */
+    public int torsoJumpJets() {
+        int jump = 0;
+        
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()
+            && locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
         }

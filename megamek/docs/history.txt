@@ -7,6 +7,7 @@ v 0.29.17 (CVS)
   Catch all Throwables when trying to get the "bing" sound.
 + Setting "memorydumpon" will track memory usage during a game in MegaMek.log.
 + Bug 829228: applied floio's patch
++ Bug 790019: use minimum sizes for alert, choice and multi-choice dialogs.
 
 v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.

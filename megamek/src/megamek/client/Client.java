@@ -653,7 +653,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
-            dumpMem( "entering deployment phase" );
+            memDump( "entering deployment phase" );
             break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));
@@ -661,7 +661,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
-            dumpMem( "entering movement phase" );
+            memDump( "entering movement phase" );
             break;
         case Game.PHASE_FIRING :
             switchPanel(new FiringDisplay(this));
@@ -669,7 +669,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
-            dumpMem( "entering firing phase" );
+            memDump( "entering firing phase" );
             break;
         case Game.PHASE_PHYSICAL :
             game.resetActions();
@@ -679,7 +679,7 @@ public class Client extends Panel
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
-            dumpMem( "entering physical phase" );
+            memDump( "entering physical phase" );
             break;
         case Game.PHASE_INITIATIVE :
             game.resetActions();
@@ -948,7 +948,7 @@ public class Client extends Panel
      * @returns true if yes
      */
     public boolean doYesNoDialog(String title, String question) {
-  ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
+        ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
         confirm.show();
         return confirm.getAnswer();
     };
@@ -1805,8 +1805,8 @@ public class Client extends Panel
      * @param   where - a <code>String</code> indicating which part of the
      *          game is making this call.
      *
-     * @see     Settings#memoryDumpOn
-     * @see     Client#changePhase(int)
+     * @see     megamek.common.Settings#memoryDumpOn
+     * @see     megamek.client.Client#changePhase(int)
      */
     private void memDump( String where ) {
         if ( Settings.memoryDumpOn ) {

@@ -38,12 +38,15 @@ public class Settings
     public static int       displaySizeWidth        = 235;
     public static int       displaySizeHeight       = 370;
     
-    public static int       rulerPosX             = 0; // added by kenn
-    public static int       rulerPosY             = 0; // added by kenn
-    public static int       rulerSizeWidth        = 350; // added by kenn
-    public static int       rulerSizeHeight       = 240; // added by kenn
-    public static Color     rulerColor1           = Color.cyan; // added by kenn
-    public static Color     rulerColor2           = Color.magenta; // added by kenn
+    public static int       rulerPosX             = 0;
+    public static int       rulerPosY             = 0;
+    public static int       rulerSizeWidth        = 350;
+    public static int       rulerSizeHeight       = 240;
+    public static Color     rulerColor1           = Color.cyan;
+    public static Color     rulerColor2           = Color.magenta;
+
+    public static int       minimumSizeWidth        = 120;
+    public static int       minimumSizeHeight       = 200;
 
     public static boolean   autoEndFiring           = true;
 
@@ -170,7 +173,6 @@ scan:
                         st.nextToken();
                         displaySizeHeight = (int)st.nval;
                     }
-                    // added by kenn
                     else if(key.equals("rulerpos")) {
                         st.nextToken();
                         rulerPosX = (int)st.nval;
@@ -187,7 +189,12 @@ scan:
                         rulerColor1 = loadColor(st, rulerColor1);
                         rulerColor2 = loadColor(st, rulerColor2);
                     }
-                    // end kenn
+                    else if(key.equals("minimumdialogsize")) {
+                        st.nextToken();
+                        minimumSizeWidth = (int)st.nval;
+                        st.nextToken();
+                        minimumSizeHeight = (int)st.nval;
+                    }
                     else if (key.equals("autoendfiring")) {
                         st.nextToken();
                         autoEndFiring = Boolean.valueOf(st.sval).booleanValue();
@@ -329,9 +336,9 @@ scan:
             cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
-            cw.write("rulerpos " + rulerPosX + " " + rulerPosY + "\r\n");  // added by kenn
-            cw.write("rulersize " + rulerSizeWidth + " " + rulerSizeHeight + "\r\n"); // added by kenn
-            cw.write("rulercolors " + writeColor(rulerColor1) + " " + writeColor(rulerColor2) + "\r\n"); // added by kenn
+            cw.write("rulerpos " + rulerPosX + " " + rulerPosY + "\r\n");
+            cw.write("rulersize " + rulerSizeWidth + " " + rulerSizeHeight + "\r\n");
+            cw.write("rulercolors " + writeColor(rulerColor1) + " " + writeColor(rulerColor2) + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
             cw.write("nagforpsr " + nagForPSR + "\r\n");
@@ -351,6 +358,7 @@ scan:
             cw.write("soundmute " + soundMute + "\r\n");
             cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
             cw.write("memorydumpon " + memoryDumpOn + "\r\n");
+            cw.write("minimumdialogsize " + minimumSizeWidth + " " + minimumSizeHeight + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

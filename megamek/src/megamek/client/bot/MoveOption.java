@@ -223,10 +223,17 @@ public class MoveOption extends MovePath implements Cloneable {
 
     public boolean changeToPhysical() {
         MoveStep last = getLastStep();
+        boolean isInfantry = (getEntity() instanceof Infantry);
+        boolean isProtomech = (getEntity() instanceof Protomech);
+        boolean isClan = getEntity().isClan();
         if (last == null || last.getMovementType() == Entity.MOVE_ILLEGAL) {
             return false;
         }
-        if (last.getType() != STEP_FORWARDS || isInfantry() || isProtomech() || (game.getOptions().booleanOption("no_clan_physical") && isClan())) {
+        if (last.getType() != STEP_FORWARDS
+            || isInfantry
+            || isProtomech
+            || ( isClan
+                 && game.getOptions().booleanOption("no_clan_physical") )) {
             return false;
         }
         Enumeration e = game.getEntities(last.getPosition());

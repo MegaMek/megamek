@@ -21,6 +21,7 @@ v0.29.65 (CVS)
     report.
 + Bug 1115608: Skidding into swamp or rubble, PSR missing.
 + Bug 1110692: underwater physical damage should be half, round up.
++ Bug 1099628: Twist with arrow keys on mapedge not working in firing phase
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

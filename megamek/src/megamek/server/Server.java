@@ -838,6 +838,11 @@ public class Server
      * This is only really an issue if friendly fire is turned off.
      */
     private boolean isEligibleForFiring(Entity entity, int phase) {
+        // if you're charging, no shooting
+        if (entity.isCharging()) {
+            return false;
+        }
+        
         return true;
     }
 
@@ -846,6 +851,11 @@ public class Server
      */
     private boolean isEligibleForPhysical(Entity entity, int phase) {
         boolean canHit = false;
+        
+        // if you're charging, it's already declared
+        if (entity.isCharging()) {
+            return false;
+        }
 
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity target = (Entity)e.nextElement();
@@ -858,6 +868,11 @@ public class Server
             // don't hit your own guys with friendly fire
             if (!gameSettings.friendlyFire
                 && target.getOwner().equals(entity.getOwner())) {
+                continue;
+            }
+            
+            // can't physically attack charging targets
+            if (target.isCharging()) {
                 continue;
             }
 
@@ -882,8 +897,7 @@ public class Server
     }
 
     /**
-     * Called when an entity movement data packet comes in.
-     *
+     * Steps thru an entity movement packet, executing it.
      */
     private void doEntityMovement(Packet c, int cn) {
         final MovementData md = (MovementData)c.getObject(1);
@@ -939,6 +953,16 @@ public class Server
             if (entity.isProne()) {
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
+                break;
+            }
+            
+            // check for charge
+            if (step.getType() == MovementData.STEP_CHARGE) {
+                
+                System.out.println("server: got charge step at hex " + curPos.getBoardNum());
+                
+                distance = step.getDistance();
+                entity.setCharging(true);
                 break;
             }
 

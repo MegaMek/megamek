@@ -25,12 +25,12 @@ public class MovementData
     implements Serializable 
 {
     public static final int        STEP_FORWARDS        = 1;
-    public static final int        STEP_BACKWARDS        = 2;
-    public static final int        STEP_TURN_LEFT        = 3;
-    public static final int        STEP_TURN_RIGHT        = 4;
-    public static final int        STEP_GET_UP            = 5;
+    public static final int        STEP_BACKWARDS       = 2;
+    public static final int        STEP_TURN_LEFT       = 3;
+    public static final int        STEP_TURN_RIGHT      = 4;
+    public static final int        STEP_GET_UP          = 5;
     public static final int        STEP_GO_PRONE        = 6;
-    public static final int        STEP_START_JUMP     = 7;
+    public static final int        STEP_START_JUMP      = 7;
     public static final int        STEP_CHARGE          = 8;
     public static final int        STEP_DFA             = 9;
     
@@ -169,8 +169,7 @@ public class MovementData
     }
     
     /**
-     * Removes impossible steps, if compiled.  If not compiled,
-     * does nothing.
+     * Removes impossible steps, if compiled.  If not compiled, does nothing.
      */
     public void clipToPossible() {
         if (!compiled) {
@@ -178,13 +177,13 @@ public class MovementData
         }
         // hopefully there's no impossible steps in the middle of possible ones
         Vector goodSteps = new Vector();
-        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+        for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
             final Step step = (Step)i.nextElement();
-            if (step.getType() != Entity.MOVE_ILLEGAL) {
+            if (step.getMovementType() != Entity.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             }
         }
-        
+        steps = goodSteps;
     }
     
     /**

@@ -39,6 +39,7 @@ public class BoardView1
     
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
+
     private Game game;
     private Frame frame;
     
@@ -1248,6 +1249,8 @@ public class BoardView1
                 switch (step.getType()) {
                 case MovementData.STEP_FORWARDS :
                 case MovementData.STEP_BACKWARDS :
+                case MovementData.STEP_CHARGE :
+                case MovementData.STEP_DFA :
                     // draw arrows showing them entering the next
                     myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
                                          movePoly.npoints);

@@ -919,6 +919,10 @@ public class Compute
             // that was easy
             return false;
         }
+        // super-easy
+        if (entity.isImmobile()) {
+            return false;
+        }
         // another easy check
         if (!game.board.contains(dest)) {
             return false;
@@ -1406,6 +1410,11 @@ public class Compute
                 return new ToHitData( ToHitData.IMPOSSIBLE,
                                       "Dumping remaining ammo." );
             }
+        }
+        
+        // is the attacker even active?
+        if (ae.isShutDown() || !ae.getCrew().isActive()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is in no condition to fire weapons.");
         }
 
         // sensors operational?

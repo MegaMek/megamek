@@ -360,7 +360,8 @@ implements Runnable {
         send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
         if (game.getPhase() == Game.PHASE_FIRING || game.getPhase() == Game.PHASE_PHYSICAL) {
             // can't go above, need board to have been sent
-            send(createAttackPacket(game.getActionsVector()));
+            send(createAttackPacket(game.getActionsVector(), false));
+            send(createAttackPacket(game.getChargesVector(), true));
         }
         if (game.phaseHasTurns(game.getPhase())) {
             send(connId, createTurnVectorPacket());
@@ -1744,6 +1745,7 @@ implements Runnable {
 	int prevFacing = curFacing;
 	Hex prevHex = null;
 	final boolean isInfantry = (entity instanceof Infantry);
+        AttackAction charge = null;
         
         // Compile the move
         Compute.compile(game, entity.getId(), md);
@@ -1816,6 +1818,7 @@ implements Runnable {
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
                 game.addCharge(caa);
+                charge = caa;
                 break;
             }
             
@@ -1825,6 +1828,7 @@ implements Runnable {
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
                 game.addCharge(daa);
+                charge = daa;
                 break;
             }
 
@@ -2483,6 +2487,11 @@ implements Runnable {
         if (doBlind()) {
             send(entity.getOwner().getId(), createFilteredEntitiesPacket(entity.getOwner()));
         }
+        
+        // if we generated a charge attack, report it now
+        if (charge != null) {
+            send(createAttackPacket(charge, true));
+        }
     }
 
     /**
@@ -2897,8 +2906,9 @@ implements Runnable {
         entity.setDone(true);
         entityUpdate(entity.getId());
         
-        // update all players on the attacks
-        send(createAttackPacket(vector));
+        // update all players on the attacks.  Don't worry about pushes being a
+        // "charge" attack.  It doesn't matter to the client.
+        send(createAttackPacket(vector, false));
     }
     
     /**
@@ -6689,8 +6699,23 @@ implements Runnable {
     /**
      * Creates a packet for an attack
      */
-    private Packet createAttackPacket(Vector vector) {
-        return new Packet(Packet.COMMAND_ENTITY_ATTACK, vector);
+    private Packet createAttackPacket(Vector vector, boolean charges) {
+        final Object[] data = new Object[2];
+        data[0] = vector;
+        data[1] = new Boolean(charges);
+        return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
+    }
+    
+    /**
+     * Creates a packet for an attack
+     */
+    private Packet createAttackPacket(EntityAction ea, boolean charge) {
+        Vector vector = new Vector(1);
+        vector.addElement(ea);
+        Object[] data = new Object[2];
+        data[0] = vector;
+        data[1] = new Boolean(charge);
+        return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
     }
     
     /**

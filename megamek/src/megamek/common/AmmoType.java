@@ -55,7 +55,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_MINE              = 28;
     public static final int     T_ATM               = 29; // Clan ATM missile systems
     public static final int     T_ROCKET_LAUNCHER   = 30;
-    public static final int     NUM_TYPES           = 31;
+    public static final int     T_INARC             = 31;
+    public static final int     NUM_TYPES           = 32;
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
@@ -317,6 +318,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
+        EquipmentType.addType(createISiNarcPods());
+        EquipmentType.addType(createISiNarcPods());
         base = createISLongTomAmmo();
         artyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -1332,12 +1335,28 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISNarcExplosiveAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Explosive Pods";
-        ammo.setInternalName("ISNarc ExpolsivePods");
+        ammo.setInternalName("ISNarc ExplosivePods");
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
         ammo.munitionType = M_NARC_EX;
         ammo.shots = 6;
+        ammo.bv = 0;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISiNarcPods() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "iNarc Pods";
+        ammo.setInternalName("ISiNarc Pods");
+        ammo.addLookupName("IS Ammo iNarc");
+        ammo.addLookupName("IS iNarc Missile Beacon Ammo");
+        ammo.damagePerShot = 3; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_INARC;
+        ammo.shots = 4;
         ammo.bv = 0;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
 

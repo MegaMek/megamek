@@ -120,6 +120,7 @@ v 0.28.23-dev (CVS)
 + Fixed 25 misnamed mech files (mostly capitalization errors)
 + Updated data/mex/mechset.txt to handle missed names.
 + Bug 751181: Code bot to handle null pointers.  Bot still doesn't handle BAs.
++ Bug 710309: bot now seems to be able to cope with fallen mechs 
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly

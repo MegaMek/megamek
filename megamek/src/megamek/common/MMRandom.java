@@ -45,11 +45,9 @@ public abstract class MMRandom {
         try {
             switch (type) {
                 case R_CRYPTO :
-                    /* killme **
                     return new MMRandom.CryptoRandom();
                 case R_POOL36 :
                     return new MMRandom.Pool36Random();
-                    ** killme */
                 case R_SUN :
                 default :
                     return new MMRandom.SunRandom();

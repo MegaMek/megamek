@@ -120,6 +120,9 @@ v 0.29.6 (CVS)
 + Changed main menu behavior (Client is now responsible for its own Frame)
 + Added aimed shots for targeting computers and against immobile targets.
 + Added explosive NARC pods.
++ Bug 775122: fixed NPE which broke map editor load button
++ Saved game load dialog starts in base directory
++ Bug 775472: wait for new hex images (like smoke) to load before drawing
 
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay

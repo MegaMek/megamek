@@ -195,9 +195,9 @@ public class MegaMek
     }
 
     public void loadGame() {
-        FileDialog fd = new FileDialog(frame,
-                "Select saved game...",
-                FileDialog.LOAD);
+        FileDialog fd =
+            new FileDialog(frame, "Select saved game...", FileDialog.LOAD);
+        fd.setDirectory(".");
         fd.show();
         if (fd.getFile() == null) {
             return;

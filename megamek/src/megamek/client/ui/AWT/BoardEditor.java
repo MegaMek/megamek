@@ -83,8 +83,7 @@ public class BoardEditor extends Container
 		this.addKeyListener(bv);
 		this.addKeyListener(this);
 		bv.addKeyListener(this);
-        
-        bv.setLoadAllHexes(true);
+        board.addBoardListener(this);
         
 		setupEditorPanel();
 		setupFrame();

@@ -73,7 +73,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
     private Vector m_vMunitions = new Vector();
     private Panel panMunitions = new Panel();
-    
+        
     private Entity entity;
     private boolean okay = false;
     private ClientGUI clientgui;
@@ -448,8 +448,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     vTypes.addElement(atCheck);
                 }
             }
-            
-            if (vTypes.size() < 2) {
+            if (vTypes.size() < 2 && !client.game.getOptions().booleanOption("lobby_ammo_dump")) {
                 continue;
             }
             
@@ -472,6 +471,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
         private Choice m_choice;
         private Mounted m_mounted;
         
+        protected Label labDump = new Label("Dump this ammobin");
+        protected Checkbox chDump = new Checkbox();
+                
         public MunitionChoicePanel(Mounted m, Vector vTypes) {
             m_vTypes = vTypes;
             m_mounted = m;
@@ -486,7 +488,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
             }
             int loc;
-            setLayout(new BorderLayout());
+            setLayout(new GridLayout(2, 2));
             if (m.getLocation() == Entity.LOC_NONE) {
                 // oneshot weapons don't have a location of their own
                 Mounted linkedBy = m.getLinkedBy();
@@ -495,14 +497,21 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 loc = m.getLocation();
             }
             String sDesc = "(" + entity.getLocationAbbr(loc) + ")";
-            add(new Label(sDesc), BorderLayout.WEST);
-            add(m_choice, BorderLayout.CENTER);
+            add(new Label(sDesc));
+            add(m_choice);
+            if (clientgui.getClient().game.getOptions().booleanOption("lobby_ammo_dump") ) {
+                add(labDump);
+                add(chDump);
+            }
         }
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
             AmmoType at = (AmmoType)m_vTypes.elementAt(n);
             m_mounted.changeAmmoType(at);
+            if (chDump.getState()) {
+                m_mounted.setShotsLeft(0);
+            }
         }
 
         public void setEnabled(boolean enabled) {
@@ -553,6 +562,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
             // so they have half the number of shots (rounded down).
             setShotsLeft( Math.round( getShotsLeft() * m_origShotsLeft /
                                       m_origAmmo.getShots() ) );
+            if (chDump.getState()) {
+                setShotsLeft(0);
+            }            
         }
     }
 

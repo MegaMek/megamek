@@ -1040,4 +1040,8 @@ public abstract class Mech
         
         return roll;
       }
+      
+    public int getMaxElevationChange() {
+        return 2;
+    }
 }

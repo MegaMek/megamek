@@ -138,7 +138,7 @@ public class MepFile implements MechLoader {
         }
     }
     
-    public Mech getMech() throws EntityLoadingException {
+    public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;
             

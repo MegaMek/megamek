@@ -1232,7 +1232,12 @@ public boolean isPassworded() {
         case Game.PHASE_FIRING :
             return isEligibleForFiring(entity, phase);
         case Game.PHASE_PHYSICAL :
-            return isEligibleForPhysical(entity, phase);
+            if (entity instanceof Mech) {
+                return isEligibleForPhysical(entity, phase);
+            }
+            else {
+                return false;
+            }
         default:
             return true;
         }
@@ -2856,7 +2861,7 @@ public boolean isPassworded() {
             }
             crits = 0;
 
-            if (hit.getLocation() == Mech.LOC_HEAD) {
+            if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
                 desc += "\n" + damageCrew(te, 1);
             }
 

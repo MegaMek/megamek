@@ -1540,6 +1540,7 @@ public class Compute
         if ( targetInBuilding ) {
             bldg = game.board.getBuildingAt( te.getPosition() );
         }
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit;
 
         // arguments legal?
@@ -1709,6 +1710,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
+        
     // target immobile
     toHit.append(getImmobileMod(te));
 
@@ -1796,6 +1801,7 @@ public class Compute
         }
         final int legLoc =
             (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         ToHitData toHit;
 
@@ -1965,6 +1971,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
+        
         // target immobile
         toHit.append(getImmobileMod(te));
 
@@ -2067,6 +2077,8 @@ public class Compute
         if ( targetInBuilding ) {
             bldg = game.board.getBuildingAt( te.getPosition() );
         }
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        
         ToHitData toHit;
 
         // can't target yourself
@@ -2261,6 +2273,10 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
+
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
@@ -2332,6 +2348,7 @@ public class Compute
         if ( targetInBuilding ) {
             bldg = game.board.getBuildingAt( te.getPosition() );
         }
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit = null;
 
         // arguments legal?
@@ -2502,6 +2519,9 @@ public class Compute
 
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
         // side and elevation shouldn't matter
 
         // done!
@@ -2538,7 +2558,7 @@ public class Compute
         if ( targetInBuilding ) {
             bldg = game.board.getBuildingAt( te.getPosition() );
         }
-        
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
         ToHitData toHit;
 
         // arguments legal?
@@ -2656,6 +2676,10 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
+        
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
@@ -2763,7 +2787,8 @@ public class Compute
      */
     public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
-
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
+        
         // arguments legal?
         if ( ae == null ) {
             throw new IllegalArgumentException("Attacker is null");
@@ -2886,6 +2911,10 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
+        if (nightModifier>0) {
+            toHit.addModifier(nightModifier, "Night Battle, no Spotlight");
+        }
+        
         modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         if (te instanceof Tank) {
@@ -3499,6 +3528,7 @@ public class Compute
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         // Can only attack a Mek's legs.
         if ( !(defender instanceof Mech) ) {
@@ -3550,6 +3580,11 @@ public class Compute
             reason.append( " men alive" );
         }
 
+        if (nightModifier>0) {
+            base += nightModifier;
+            reason.append ("Night Battle, no Spotlights");
+        }
+        
         // No one else can conduct leg attacks.
         else {
             reason.append( "Attacker is not infantry." );
@@ -3574,6 +3609,7 @@ public class Compute
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
+        final int nightModifier = (game.getOptions().booleanOption("night_battle")) ? +2 : 0;
 
         // Can only swarm a Mek.
         if ( !(defender instanceof Mech) ) {
@@ -3635,6 +3671,11 @@ public class Compute
         // No one else can conduct leg attacks.
         else {
             reason.append( "Attacker is not infantry." );
+        }
+
+        if (nightModifier>0) {
+            base += nightModifier;
+            reason.append ("Night Battle, no Spotlights");
         }
 
         // Return the ToHitData for this attack.

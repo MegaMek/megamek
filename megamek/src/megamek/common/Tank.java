@@ -103,6 +103,23 @@ public class Tank
        }
     }
     
+    /**
+     * Tanks have all sorts of prohibited terrain.
+     */
+    public boolean isHexProhibited(Hex hex) {
+        switch(movementType) {
+            case MovementType.TRACKED :
+                return hex.levelOf(Terrain.WOODS) > 1 || hex.levelOf(Terrain.WATER) > 0;
+            case MovementType.WHEELED :
+                return hex.contains(Terrain.WOODS) || hex.contains(Terrain.ROUGH) ||
+                    hex.levelOf(Terrain.WATER) > 0 || hex.contains(Terrain.RUBBLE);
+            case MovementType.HOVER :
+                return hex.contains(Terrain.WOODS);
+            default :
+                return false;
+        }
+    }
+    
     public void lockTurret()
     {
         m_bTurretLocked = true;

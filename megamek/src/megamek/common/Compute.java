@@ -671,23 +671,9 @@ public class Compute
         }
         
         // certain movement types have terrain restrictions
-        if (nMove == Entity.MovementType.WHEELED) {
-            if (destHex.contains(Terrain.WOODS) || destHex.contains(Terrain.ROUGH) ||
-                    destHex.levelOf(Terrain.WATER) > 0 || destHex.contains(Terrain.RUBBLE)) {
-                return false;
-            }
+        if (entity.isHexProhibited(destHex)) {
+            return false;
         }
-        else if (entity.getMovementType() == Entity.MovementType.TRACKED) {
-            if (destHex.levelOf(Terrain.WOODS) > 1 || destHex.levelOf(Terrain.WATER) > 0) {
-                return false;
-            }
-        }
-        else if (nMove == Entity.MovementType.HOVER) {
-            if (destHex.contains(Terrain.WOODS)) {
-                return false;
-            }
-        }
-              
         
         return true;
     }

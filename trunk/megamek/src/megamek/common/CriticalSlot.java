@@ -26,7 +26,8 @@ public class CriticalSlot
     
     private int                    type;
     private int                    index;
-    private boolean                doomed;
+    private boolean                doomed; // hit
+    private boolean                missing; // location destroyed
     private boolean                destroyed;
     
     public CriticalSlot(int type, int index) {
@@ -58,11 +59,19 @@ public class CriticalSlot
         this.destroyed = destroyed;
     }
     
+    public boolean isMissing() {
+        return missing;
+    }
+    
+    public void setMissing(boolean missing) {
+        this.missing = missing;
+    }
+    
     /**
      * Has this slot been damaged?
      */
     public boolean isHit() {
-        return doomed | destroyed;
+        return doomed | missing | destroyed;
     }
     
     /**

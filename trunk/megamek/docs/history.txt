@@ -100,6 +100,8 @@ v next
 + 531143: prone mechs can't make torso twists
 + impossible shots now show reason instead of 2147483647
 + 532908: fire button no longer enabled when it shouldn't be, AFAIK
++ 532066: limb destruction should not prevent physical attacks in the same phase
++ 532073: criticals should no longer transfer incorrectly
 
 v 0.24.2 (03-20-02, 10pm)
 + .mep files load weapons with no space between "(R)" and the weapon name now

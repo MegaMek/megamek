@@ -1014,9 +1014,12 @@ public class Compute
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
+        // attacker in water?
         Hex attackerHex = game.board.getHex(ae.getPosition());
         if (attackerHex.getTerrainType() == Terrain.WATER) {
-            if (attackerHex.getElevation() < -1) {
+            if (attackerHex.getElevation() == -1 && ae.isProne()) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker prone in depth 1 water");
+            } else if (attackerHex.getElevation() < -1) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
             }
         }
@@ -1024,6 +1027,7 @@ public class Compute
         // target terrain
         toHit.append(getTargetTerrainModifier(game, targetId));
         
+        // target in water?
         Hex targetHex = game.board.getHex(te.getPosition());
         if (targetHex.getTerrainType() == Terrain.WATER) {
             if (targetHex.getElevation() == -1) {

@@ -12889,23 +12889,24 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append("but the pilot does not survive!\n");
             }
             if (!entity.getCrew().isUnconscious()) {
+                MechWarrior pilot = new MechWarrior(entity);
+                pilot.setDeployed(true);
+                if ( Entity.NONE == pilot.getId() ) {
+                    pilot.setId(getFreeEntityId());
+                }
+                game.addEntity(pilot.getId(), pilot);
+                send(createAddEntityPacket(pilot.getId()));
                 if (game.board.contains(targetCoords)) {
                     phaseReport.append("and the pilot ejects safely!\n");
-                    MechWarrior pilot = new MechWarrior(entity);
-                    pilot.setPosition(targetCoords);
-                    pilot.setDeployed(true);
-                    if ( Entity.NONE == pilot.getId() ) {
-                        pilot.setId(getFreeEntityId());
-                    }
-                    game.addEntity(pilot.getId(), pilot);
-                    send(createAddEntityPacket(pilot.getId()));
+                    pilot.setPosition(targetCoords);                    
                 } else {
                     phaseReport.append("and the pilot ejects safely and lands far from the battle!");
+                    game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );
+                    send(createRemoveEntityPacket(pilot.getId(), Entity.REMOVE_IN_RETREAT) );                  
                 }
             }
         }
-        destroyEntity(entity, "ejection", true, true);
-        
+        destroyEntity(entity, "ejection", true, true);        
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == Game.PHASE_MOVEMENT) {
             game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );

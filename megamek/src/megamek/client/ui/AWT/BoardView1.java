@@ -263,6 +263,22 @@ public class BoardView1
         // draw highlight border
         drawSprite(highlightSprite);
 
+        // draw cursors
+        drawSprite(cursorSprite);
+        drawSprite(selectedSprite);
+        drawSprite(firstLOSSprite);
+        drawSprite(secondLOSSprite);
+
+        // draw deployment indicators
+        if (m_plDeployer != null) {
+            drawDeployment();
+        }
+
+        for (int i = 0; i < displayables.size(); i++) {
+            Displayable disp = (Displayable) displayables.elementAt(i);
+            disp.draw(backGraph, backSize);
+        }
+
         // draw C3 links
         drawSprites(C3Sprites);
 
@@ -280,22 +296,6 @@ public class BoardView1
 
         // draw movement, if valid
         drawSprites(pathSprites);
-
-        // draw cursors
-        drawSprite(cursorSprite);
-        drawSprite(selectedSprite);
-        drawSprite(firstLOSSprite);
-        drawSprite(secondLOSSprite);
-
-        // draw deployment indicators
-        if (m_plDeployer != null) {
-            drawDeployment();
-        }
-
-        for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
-            disp.draw(backGraph, backSize);
-        }
 
         // added by kenn
         // draw the ruler line

@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			Yes             Fire declaration *is* as a point (report a bug if it's not).
+- Protomechs			Yes 	Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -155,7 +155,7 @@ Buildings (Movement Effects)
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
-- Attacking Units inside Bldgs	Yes             None
+- Attacking Units inside Bldgs	Yes 	None
 - Combat Within Buildings	Partial		Needs to be debugged.
 - Collapse			Partial		Units may not climb buildings.
 
@@ -169,7 +169,7 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			Yes             None
+- ProtoMechs			Yes 	None
 
 ProtoMechs (Combat)
 
@@ -245,7 +245,7 @@ Special Case Rules (Miscellaneous)
 - Dropping Troops		No		None
 - Dumping Ammo			Yes		None
 - Ejecting			Partial		Ejected pilots can't be picked up by other units.
-- Improved Positions		No 		Waiting on Hidden Units rule.
+- Improved Positions		No		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None 
 

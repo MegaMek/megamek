@@ -59,8 +59,11 @@ implements GameListener, KeyListener {
      * Tries to scroll down to the end of the box
      */
     public void moveToEnd() {
-        int last = chatArea.getText().length() - 1;
-        chatArea.select(last, last);
+        if (chatArea.isShowing()) {
+            int last = chatArea.getText().length() - 1;
+            chatArea.select(last, last);
+            chatArea.setCaretPosition(last);
+        }
     }
     
     /**

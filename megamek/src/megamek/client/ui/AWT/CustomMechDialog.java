@@ -63,7 +63,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Label labOffBoardDirection = new Label("Offboard Direction:", Label.RIGHT);
     private Choice choOffBoardDirection = new Choice();
     private Label labOffBoardDistance = new Label("Offboard Distance in hexes:", Label.RIGHT);
-    private TextField fldOffBoardDistance = new TextField(2);
+    private TextField fldOffBoardDistance = new TextField(4);
     
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
@@ -209,13 +209,17 @@ extends Dialog implements ActionListener, DialogOptionListener {
             choOffBoardDirection.add("South");
             choOffBoardDirection.add("East");
             choOffBoardDirection.add("West");
+            int direction = entity.getOffBoardDirection();
+            if ( Entity.NONE == direction ) {
+                direction = Entity.NORTH;
+            }
+            choOffBoardDirection.select( direction );
             add(choOffBoardDirection);
             
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labOffBoardDistance, c);
             add(labOffBoardDistance);
-
             
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
@@ -816,14 +820,11 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     new AlertDialog(clientgui.frame, "Number Format Error", "Offboard units need to be at least one mapsheet (17 hexes) away.").show();
                     return;
                 }
-                entity.setOffBoardDistance(offBoardDistance);
-                entity.setOffBoardDirection(choOffBoardDirection.getSelectedIndex());
-                entity.setDeployed(true);
+                entity.setOffBoard( offBoardDistance,
+                                    choOffBoardDirection.getSelectedIndex() );
             }
             else {
-                entity.setOffBoardDistance(0);
-                entity.setOffBoardDirection(Entity.NONE);
-                entity.setDeployed(false);
+                entity.setOffBoard( 0, Entity.NONE );
             }
 
             // change entity

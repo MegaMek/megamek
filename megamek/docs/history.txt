@@ -23,6 +23,8 @@ v0.29.53 (CVS)
     to Ian Hamilton for all his help with this.
 + Off-Board artillery changes: allow Coords with negative values, eliminate an
     unneeded data member in Entity, and add some input checks.
++ Only select auto-hit hexes if the player has artillery.
++ Allow 30 boards in the Y direction (to handle southern off-board units).
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

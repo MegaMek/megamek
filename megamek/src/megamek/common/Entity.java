@@ -148,7 +148,7 @@ public abstract class Entity
     private boolean             selected = false;
     private int                 killerId = Entity.NONE;
     private int                 offBoardDistance = 0;
-    private int                 offBoardDirection = -1;
+    private int                 offBoardDirection = Entity.NONE;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -3719,51 +3719,120 @@ public abstract class Entity
     }
     
     /**
-     * @return Returns wether the unit is offboard.
+     * @return Returns whether the unit is offboard.
      */
     public boolean isOffBoard() {
         return offBoardDistance > 0;
     }
-    public void setOffBoardDistance(int distance) {
+
+    /**
+     * Set the unit as an offboard deployment.  If a non-zero distance is
+     * chosen, the direction must <b>not</b> be <code>Entity.NONE</code>.
+     * If a direction other than <code>Entity.NONE</code> is chosen, the
+     * distance must <b>not</b> be zero (0).
+     *
+     * @param   distance the <code>int</code> distance in hexes that the
+     *          unit will be deployed from the board; this value must not
+     *          be negative.
+     * @param   direction the <code>int</code> direction from the board
+     *          that the unit will be deployed; a valid value must be
+     *          selected from: NONE, NORTH, SOUTH, EAST, or WEST.
+     * @throws  <code>IllegalArgumentException</code> if a negative distance,
+     *          an invalid direction is selected, or the distance does not
+     *          match the direction.
+     */
+    public void setOffBoard(int distance, int direction){
         if (distance < 0) {
             throw new IllegalArgumentException
                 ( "negative number given for distance offboard" );
         }
-        offBoardDistance = distance;
-    }
-    
-    public int getOffBoardDistance() {
-        return offBoardDistance;
-    }
-    
-    public void setOffBoardDirection(int direction) {
         if (direction < Entity.NONE ||
             direction > Entity.WEST) {
             throw new IllegalArgumentException
                 ( "bad direction" );
         }
+        if (0 == distance && Entity.NONE != direction) {
+            throw new IllegalArgumentException
+                ( "onboard unit was given an offboard direction" );
+        }
+        if (0 != distance && Entity.NONE == direction) {
+            throw new IllegalArgumentException
+                ( "offboard unit was not given an offboard direction" );
+        }
+        offBoardDistance = distance;
         offBoardDirection = direction;
     }
+
+    /**
+     * Get the distance in hexes from the board that the unit will be deployed.
+     * If the unit is to be deployed onboard, the distance will be zero (0).
+     *
+     * @return  the <code>int</code> distance from the board the unit will
+     *          be deployed (in hexes); this value will never be negative.
+     */
+    public int getOffBoardDistance() {
+        return offBoardDistance;
+    }
     
-    public void checkPlaceOffBoard() {
+    /**
+     * Get the direction the board that the unit will be deployed.
+     * If the unit is to be deployed onboard, the distance will be
+     * <code>Entity.NONE</code>, otherwise it will be one of the
+     * values:<ul>
+     * <li><code>Entity.NORTH</code></li>
+     * <li><code>Entity.SOUTH</code></li>
+     * <li><code>Entity.EAST</code></li>
+     * <li><code>Entity.WEST</code></li>
+     * </ul>
+     *
+     * @return  the <code>int</code> direction from the board the unit will
+     *          be deployed.  Only valid values will be returned.
+     */
+    public int getOffBoardDirection() {
+        return offBoardDirection;
+    }
+
+    /**
+     * Deploy this offboard entity at the previously specified distance and
+     * direction.  This should only be invoked by the <code>Server</code>
+     * after the board has been selected and all the players are ready to
+     * start.  The side effects of this methods set the unit's position
+     * and facing as appropriate (as well as deploying the unit).
+     * <p/>
+     * Onboard units (units with an offboard distance of zero and a direction
+     * of <code>Entity.NONE</code>) will be unaffected by this method.
+     */
+    public void deployOffBoard() {
+        if (null == game) {
+            throw new IllegalStateException
+                ( "game not set; possible serialization error" );
+        }
         switch (offBoardDirection) {
         case Entity.NONE:
             break;
         case Entity.NORTH:
-            setPosition(new Coords (game.board.width/2, -getOffBoardDistance() ));
+            setPosition( new Coords( game.board.width / 2,
+                                     -getOffBoardDistance() ) );
             setFacing(3);
+            setDeployed( true );
             break;
         case Entity.SOUTH:
-            setPosition(new Coords (game.board.width/2, game.board.height + getOffBoardDistance() ));
+            setPosition( new Coords( game.board.width / 2,
+                                     game.board.height + getOffBoardDistance() ) );
             setFacing(0);
+            setDeployed( true );
             break;
         case Entity.EAST:
-            setPosition(new Coords (game.board.width + getOffBoardDistance(), game.board.height/2 ));
+            setPosition( new Coords( game.board.width + getOffBoardDistance(),
+                                     game.board.height / 2 ) );
             setFacing(5);
+            setDeployed( true );
             break;
         case Entity.WEST:
-            setPosition(new Coords ( -getOffBoardDistance(), game.board.height/2 ));
+            setPosition( new Coords( -getOffBoardDistance(),
+                                     game.board.height / 2 ) );
             setFacing(1);
+            setDeployed( true );
             break;
         }
     }

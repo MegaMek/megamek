@@ -123,6 +123,7 @@ v 0.29.12-dev (CVS)
 + When a transporter ejects, unload all passengers.
 PARTIAL IMPLEMENTATION:
 + RFE 555499, 702795, 726478, 783395: Added a menu bar.
++ Data 808992: added tallasia maps from German box set
 
 v 0.29.11 (09-15-03, 3pm)
 + All movement resets result in the "walk" gear being selected

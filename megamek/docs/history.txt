@@ -12,6 +12,8 @@ v0.29.36 (CVS)
 + Bug 948061: Tactical Genius pilot ability fixed.
 + Bug 960006: vehicles can go to 0MP with "move system damaged" crits
 + Bug 954269: A few mechset.txt errors fixed thanks to coralbeach
++ Bug 963241: Units that die in the Movement phase are shown as such in
+	clients
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

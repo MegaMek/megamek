@@ -3426,8 +3426,12 @@ implements Runnable, ConnectionHandler {
         // Update the entitiy's position,
         // unless it is off the game map.
         if (!game.isOutOfGame(entity)) {
-            entityUpdate( entity.getId(), movePath  );
-        }
+            if (entity.isDoomed()) {
+                send(createRemoveEntityPacket(entity.getId(), entity.getRemovalCondition()));
+            } else {
+                entityUpdate( entity.getId(), movePath  );
+            };
+        };
 
         // if using double blind, update the player on new units he might see
         if (doBlind()) {

@@ -3817,6 +3817,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 0;
         weapon.bv = 15;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3838,6 +3839,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 21;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3859,6 +3861,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.75f;
         weapon.criticals = 0;
         weapon.bv = 30;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3880,6 +3883,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 39;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3901,6 +3905,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.25f;
         weapon.criticals = 0;
         weapon.bv = 47;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3922,6 +3927,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3943,6 +3949,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 0;
         weapon.bv = 20;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3964,6 +3971,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1f;
         weapon.criticals = 0;
         weapon.bv = 40;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -3985,6 +3993,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 0;
         weapon.bv = 59;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -4006,6 +4015,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2f;
         weapon.criticals = 0;
         weapon.bv = 79;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -4027,6 +4037,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 0;
         weapon.bv = 99;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 
@@ -4048,6 +4059,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3f;
         weapon.criticals = 0;
         weapon.bv = 119;
+        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 

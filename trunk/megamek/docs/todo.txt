@@ -38,10 +38,6 @@ general:
   
 - In Mech Selection dialog, implement an "advanced filters and sorts" pane
 
-board display:
-- zooming and/or scrollbars
-- display blown off limbs, and make available for clubs
-
 mechs:
 -- Find out how to get M$ .exe to allow UTF-8 encoding.
 -- handle "slottless" equipment

@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29.8-dev
++ Bug 786735: Vibrabombs now works correctly.
+
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images
 + Minefields(no command-detonated, but Thunders). LOS setting button back.

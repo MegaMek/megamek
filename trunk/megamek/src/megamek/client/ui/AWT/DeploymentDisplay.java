@@ -397,13 +397,15 @@ public class DeploymentDisplay
 
             // What undeployed units can we load?
             Vector choices = new Vector();
-            Vector entities = client.game.getEntitiesVector();
-            for (int i=0; i < entities.size(); i++) {
-                if ( ((Entity)entities.elementAt(i)).isSelectableThisTurn(client.game) && ce().canLoad((Entity)entities.elementAt(i))) {
-                    choices.addElement(entities.elementAt(i));
-                };
-            };
+            Enumeration entities = client.game.getEntities();
             Entity other;
+            while ( entities.hasMoreElements() ) {
+                other = (Entity) entities.nextElement();
+                if ( other.isSelectableThisTurn(client.game)
+                     && ce().canLoad(other) ) {
+                    choices.addElement( other );
+                }
+            }
 
             // Do we have anyone to load?
             if ( choices.size() > 0 ) {

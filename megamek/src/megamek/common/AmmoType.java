@@ -41,6 +41,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_AC_ULTRA          = 20;
     public static final int     T_GAUSS_LIGHT       = 21;
     public static final int     T_GAUSS_HEAVY       = 22;
+    public static final int     T_AC_ROTARY         = 23;
     
     // ammo flags
     public static final int     F_CLUSTER           = 0x0001; // for lbx
@@ -53,6 +54,7 @@ public class AmmoType extends EquipmentType {
     public static final int     F_THUNDER           = 0x0080;
     public static final int     F_INFERNO           = 0x0100;
     public static final int     F_EXPLOSIVE         = 0x0200; // for narc
+    public static final int     F_MG                = 0x0400; // all mg's
     
     private int damagePerShot;
     private int rackSize;
@@ -110,6 +112,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISUltra5Ammo());
         EquipmentType.addType(createISUltra10Ammo());
         EquipmentType.addType(createISUltra20Ammo());
+        EquipmentType.addType(createISRotary2Ammo());
+        EquipmentType.addType(createISRotary5Ammo());
         EquipmentType.addType(createISGaussAmmo());
         EquipmentType.addType(createISLTGaussAmmo());
         EquipmentType.addType(createISHVGaussAmmo());
@@ -226,6 +230,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
+        ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
         
@@ -242,6 +247,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
+        ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
@@ -563,6 +569,38 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 5;
         ammo.bv = 32;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISRotary2Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Rotary AC/2 Ammo";
+        ammo.internalName = "ISRotaryAC2 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 45;
+        ammo.bv = 15;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISRotary5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Rotary AC/5 Ammo";
+        ammo.internalName = "ISRotaryAC5 Ammo";
+        ammo.mepName = ammo.internalName;
+        ammo.mtfName = ammo.internalName;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_ROTARY;
+        ammo.shots = 20;
+        ammo.bv = 31;
         
         return ammo;
     }
@@ -909,6 +947,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.bv = 1;
         
@@ -925,6 +964,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
+        ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
         
@@ -941,6 +981,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
+        ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 1;
@@ -958,6 +999,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags |= F_MG;
         ammo.shots = 200;
         ammo.bv = 1;
         

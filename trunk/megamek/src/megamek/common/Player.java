@@ -16,10 +16,10 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
-import java.net.*;
+import java.util.*;
 
 /**
- * This represents a player in the game.
+ * Represents a player in the game.
  */
 public final class Player
     implements Serializable
@@ -40,7 +40,7 @@ public final class Player
     private int             colorIndex = 0;
 
     // these are game-specific, and maybe should be seperate from the player object
-    private int             initiative = 0;
+    private Vector             initVector = new Vector();
     private int             order = 0;
     private int             startingPos = 0;
         
@@ -89,12 +89,31 @@ public final class Player
         this.colorIndex = index;
     }
     
-    public int getInitiative() {
-        return initiative;
+    public void clearInitiative() {
+        initVector.removeAllElements();
     }
   
-    public void setInitiative(int initiative) {
-        this.initiative = initiative;
+    public int getInitiative(int index) {
+        return ((Integer)initVector.elementAt(index)).intValue();
+    }
+  
+    public int getInitiativeSize() {
+        return initVector.size();
+    }
+  
+    public Enumeration getInitiatives() {
+        return initVector.elements();
+    }
+  
+    public void setInitiative(int init, int index) {
+        if (initVector.size() < index + 1) {
+            initVector.setSize(index + 1);
+        }
+        initVector.setElementAt(new Integer(init), index);
+    }
+    
+    public void setInitiativeVector(Vector initVector) {
+        this.initVector = initVector;
     }
     
     public int getOrder() {

@@ -42,7 +42,7 @@ public class MovementDisplay
     private Button            butGetup;
     private Button            butProne;
     private Button            butCharge;
-    private Button            butDFA;
+    private Button            butDfa;
     private Button            butOther;
     private Button            butNext;
     private Button            butMove;
@@ -105,10 +105,10 @@ public class MovementDisplay
         butCharge.addActionListener(this);
         butCharge.setEnabled(false);
 
-        butDFA = new Button("D.F.A.");
-        butDFA.setActionCommand("dfa");
-        butDFA.addActionListener(this);
-        butDFA.setEnabled(false);
+        butDfa = new Button("D.F.A.");
+        butDfa.setActionCommand("dfa");
+        butDfa.addActionListener(this);
+        butDfa.setEnabled(false);
 
         butNext = new Button("Next Unit");
         butNext.setActionCommand("next");
@@ -134,7 +134,7 @@ public class MovementDisplay
         panButtons.add(butGetup);
         panButtons.add(butNext);
         panButtons.add(butCharge);
-        panButtons.add(butDFA);
+        panButtons.add(butDfa);
         panButtons.add(butOther);
         panButtons.add(butProne);
         panButtons.add(butMove);
@@ -196,6 +196,7 @@ public class MovementDisplay
         butJump.setEnabled(ce().getJumpMP() > 0);
         butBackup.setEnabled(ce().getWalkMP() > 0);
         butCharge.setEnabled(ce().getWalkMP() > 0);
+        butDfa.setEnabled(ce().getJumpMP() > 0);
         if (ce().isProne()) {
             butGetup.setEnabled(true);
         } else {
@@ -246,7 +247,7 @@ public class MovementDisplay
         butGetup.setEnabled(false);
         butProne.setEnabled(false);
         butCharge.setEnabled(false);
-        butDFA.setEnabled(false);
+        butDfa.setEnabled(false);
         butNext.setEnabled(false);
         butOther.setEnabled(false);
         butMove.setEnabled(false);
@@ -293,6 +294,8 @@ public class MovementDisplay
             return Compute.backwardsLazyPathfinder(src, facing, dest);
         } else if (gear == Compute.GEAR_CHARGE) {
             return Compute.chargeLazyPathfinder(src, facing, dest);
+        } else if (gear == Compute.GEAR_DFA) {
+            return Compute.dfaLazyPathfinder(src, facing, dest);
         }       
 
         return null;
@@ -360,6 +363,32 @@ public class MovementDisplay
                 } else {
                     // if not valid, tell why
                     client.doAlertDialog("Can't perform charge", toHit.getDesc());
+                    clearAllMoves();
+                    gear = Compute.GEAR_LAND;
+                    return;
+                }
+            } else if (gear == Compute.GEAR_DFA) {
+                // check if target is valid
+                if (target == null || target.equals(ce())) {
+                    client.doAlertDialog("Can't perform D.F.A.", "No target!");
+                    clearAllMoves();
+                    gear = Compute.GEAR_LAND;
+                    return;
+                }
+                
+                // check if it's a valid charge
+                ToHitData toHit = Compute.toHitDfa(client.game, cen, target.getId(), md);
+                if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+                    // if yes, ask them if they want to charge
+                        
+                        // if they answer yes, charge
+                        moveTo(md);
+                        return;
+                
+                        // else clear movement
+                } else {
+                    // if not valid, tell why
+                    client.doAlertDialog("Can't perform D.F.A.", toHit.getDesc());
                     clearAllMoves();
                     gear = Compute.GEAR_LAND;
                     return;
@@ -451,8 +480,11 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = Compute.GEAR_DFA;
+            if (!md.contains(MovementData.STEP_START_JUMP)) {
+                md.addStep(MovementData.STEP_START_JUMP);
+            }
             butWalk.setEnabled(true);
-            butJump.setEnabled(ce().getJumpMP() > 0);
+            butBackup.setEnabled(true);
         } else if (ev.getActionCommand().equalsIgnoreCase("getup") && client.isMyTurn()) {
             clearAllMoves();
             gear = Compute.GEAR_LAND;

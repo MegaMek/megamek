@@ -4,6 +4,7 @@ v0.29.61 (2005-01-17 8:00am)
 + Bug 1099792: Glancing blows with missiles for no damage
 + Bug 951000, Patch 1102698: Add lots of synchronization to prevent NPEs.
 + RFE 1100986: Allow mechset files to include other mechset files.
++ Additional Batchall.de-Mechs
 
 v0.29.60 (2005-01-10 7:30am)
 + Bug 1066865: Offboard Artillery tanks causing game to freeze

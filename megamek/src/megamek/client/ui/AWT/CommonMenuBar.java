@@ -253,6 +253,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         viewUnitOverview = new MenuItem( "Unit Overview" );
         viewUnitOverview.addActionListener( this );
         viewUnitOverview.setActionCommand(ClientGUI.VIEW_UNIT_OVERVIEW);
+        viewUnitOverview.setShortcut(new MenuShortcut(KeyEvent.VK_U));
         menu.add( viewUnitOverview );
         viewZoomIn = new MenuItem( "Zoom In" );
         viewZoomIn.addActionListener( this );

@@ -35,15 +35,62 @@ public class ConfirmDialog
     private Panel panButtons = new Panel();
     private Button butYes = new Button("Yes");
     private Button butNo = new Button("No");
+    private Button defaultButton = butYes;
 
     private boolean confirmation = false;
 
+    private Component firstFocusable;
+
+
+  /** Creates a new dialog window that lets the user answer Yes or No,
+    * with the Yes button pre-focused
+    *
+    * @param   title            a title for the dialog window
+    * @param   question         the text of the dialog
+    */
     public ConfirmDialog(Frame p, String title, String question) {
         this(p, title, question, false);
     }
 
+
+  /** Creates a new dialog window that lets the user answer Yes or No,
+    * with either the Yes or No button pre-focused
+    *
+    * @param   title            a title for the dialog window
+    * @param   question         the text of the dialog
+    * @param   defButton        set it to 'n' to make the No button pre-focused (Yes button is focused by default)
+    */
+    public ConfirmDialog(Frame p, String title, String question, char defButton) {
+        this(p, title, question, false, defButton);
+    }
+
+  /** Creates a new dialog window that lets the user answer Yes or No,
+    * with an optional checkbox to specify future behaviour,
+    * and the Yes button pre-focused
+    *
+    * @param   title            a title for the dialog window
+    * @param   question         the text of the dialog
+    * @param   includeCheckbox  whether the dialog includes a "bother me" checkbox for the user to tick
+    */
     public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox) {
+        this(p, title, question, includeCheckbox, 'y');
+    }
+
+  /** Creates a new dialog window that lets the user answer Yes or No,
+    * with an optional checkbox to specify future behaviour,
+    * and either the Yes or No button pre-focused
+    *
+    * @param   title            a title for the dialog window
+    * @param   question         the text of the dialog
+    * @param   includeCheckbox  whether the dialog includes a "bother me" checkbox for the user to tick
+    * @param   defButton        set it to 'n' to make the No button pre-focused (Yes button is focused by default)
+    */
+    public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox, char defButton) {
         super(p, title, true);
+
+        if ('n'==defButton) {
+            defaultButton = butNo;
+        };
         
         super.setResizable(false);
         useCheckbox = includeCheckbox;
@@ -52,7 +99,7 @@ public class ConfirmDialog
         addQuestion(question);
         addInputs();
         finishSetup(p);
-    }
+    };
 
     private void addQuestion(String question) {
         AdvancedLabel questionLabel = new AdvancedLabel(question);
@@ -102,6 +149,7 @@ public class ConfirmDialog
             });
 
         pack();
+        
         Dimension size = getSize();
         boolean updateSize = false;
         if ( size.width < Settings.minimumSizeWidth ) {
@@ -116,6 +164,29 @@ public class ConfirmDialog
         }
         setLocation(p.getLocation().x + p.getSize().width/2 - size.width/2,
                     p.getLocation().y + p.getSize().height/2 - size.height/2);
+
+
+        // work out which component will get the focus in the window
+        if (useCheckbox) {
+            firstFocusable=botherCheckbox;
+        } else {
+            firstFocusable=butYes;
+        };
+        // we'd like the default button to have focus, but that can only be done on displayed
+        // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
+        // component receives the focus, it shunts the focus to the OK button, and then
+        // removes the FocusListener to prevent this happening again
+
+        if (!firstFocusable.equals(defaultButton)) {
+            firstFocusable.addFocusListener(new FocusListener() {
+                public void focusGained(FocusEvent e) {
+                    defaultButton.requestFocus();
+                }
+                public void focusLost(FocusEvent e) {
+                    firstFocusable.removeFocusListener(this); // refers to listener
+                }
+            });
+        };
     }
     
     public boolean getAnswer() {

@@ -4382,7 +4382,8 @@ public class Compute
         }
 
         // Check range.
-        if (ae.getPosition().distance(te.getPosition()) > 0 ) {
+        if (te.getPosition() == null 
+        || ae.getPosition().distance(te.getPosition()) > 0 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Target not in same hex");
         }

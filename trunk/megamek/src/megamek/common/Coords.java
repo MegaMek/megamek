@@ -162,37 +162,6 @@ public class Coords
     }
     
     /**
-     * Old version.
-     * 
-     * Returns the approximate direction in which another coordinate
-     * lies; 0 if the coordinates are equal.
-     * 
-     * @param d the destination coordinate.
-     */
-    public int direction1(Coords d) {
-        if (x < d.x) {
-            if (y < d.y || (y == d.y && !isXOdd())) {
-                return 2;
-            } else {
-                return 1;
-            }
-        } else if (x == d.x) {
-            if (y < d.y) {
-                return 3;
-            } else {
-                return 0;
-            }
-        } else {
-            // x > d.x
-            if (y < d.y || (y == d.y && !isXOdd())) {
-                return 4;
-            } else {
-                return 5;
-            }
-        }
-    }
-    
-    /**
      * Returns the radian direction of another Coords.
      * 
      * @param d the destination coordinate.
@@ -249,48 +218,6 @@ public class Coords
         return xd + ym;
     }
     
-    /**
-     * Returns the distance to another coordinate.
-     * 
-     * My old, inaccurate formula (what's wrong?)
-     */
-    public int distance1(Coords c) {
-        int dx, dy, xf;
-        dx = Math.abs(this.x - c.x);
-        dy = Math.abs(this.y - c.y);
-        xf = (dx / 2) + (isXOdd() == c.isXOdd() ? 0 : 1);
-        if (dy < xf) {
-            return dx;
-        } else {
-            return dx + dy - xf;
-        }
-    }
-    
-    /**
-     * Returns the distance to another coordinate.
-     * @author John Uckele (btzealot55@yahoo.com)
-     */
-    public int distance2(Coords c) {
-        //variables
-        int dx, dy, x, y;
-        //x-y conversion
-        y=2*this.y-this.x%2;
-        x=2*this.x;
-        c.y=2*c.y-c.x%2;
-        c.x*=2;
-        //distance calculations
-        dx=Math.abs(x-c.x);
-        dy=Math.abs(y-c.y)-dx;
-        //return values
-        if (dy<=0)
-        {
-            return dx;
-        }
-        else
-        {
-            return dx + dy;
-        }
-    }
     /**
      * Returns a string representing a coordinate in "board number" format.
      */

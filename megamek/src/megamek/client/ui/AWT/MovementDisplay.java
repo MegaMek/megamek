@@ -582,14 +582,8 @@ public class MovementDisplay
             rollTarget = entity.checkGetUp(step);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
-            } else if (firstStep) {
-                // running with destroyed hip or gyro needs a check
-                rollTarget = entity.checkRunningWithDamage(overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    nagReport.append(addNag(rollTarget));
-                }
             }
-            
+
             // set most step parameters
             moveType = step.getMovementType();
             distance = step.getDistance();
@@ -734,6 +728,12 @@ public class MovementDisplay
             firstStep = false;
         }
         
+        // running with destroyed hip or gyro needs a check
+        rollTarget = entity.checkRunningWithDamage(overallMoveType);
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            nagReport.append(addNag(rollTarget));
+        }
+
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == Entity.MOVE_JUMP && !entity.isMakingDfa()) {
             // check for damaged criticals

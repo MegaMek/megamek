@@ -21,6 +21,8 @@ v0.29.54 (CVS)
    picks up an ejected MechWarrior, giving preference to those that are controlled
    by the same player
 + Bug 1013571: Selected Mech not highlighted in physical phase
++ Bug 912094: Per the new Hardcover BMRr, a loss of movement points should not cancel
+   a charge, eventhough the number of MPs might not be sufficient anymore, see page 42.
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except
@@ -31,7 +33,7 @@ v0.29.53 (2004-10-17 3:00pm)
 + Add date/time stamp to "END OF GAME" message.
 + Bug 1047085: allow delayed deployment with 'any' as starting direction
 + Bug 1046545: Client hangs with PPC inhibitor disengaging and missile mod.
-+ RFE 580405: Artillery. Off-board artillery support added, when cofiguring a
++ RFE 580405: Artillery. Off-board artillery support added, when configuring a
     unit that has an artillery weapon, you can select to deploy it off-board,
     select the map-edge behind which it should be positioned, and select the
     distance from the board.

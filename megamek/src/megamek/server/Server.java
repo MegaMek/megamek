@@ -1584,15 +1584,21 @@ implements Runnable {
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovementData md = (MovementData)packet.getObject(1);
         
-        // is this the right thing to move right now?
-        GameTurn turn = game.getTurn();
-        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)) {
-            processMovement(entity, md);
-            endCurrentTurn();
-        } else {
-            // TODO: log it
+        // is this the right phase?
+        if (game.getPhase() != Game.PHASE_MOVEMENT) {
+            System.err.println("error: server got movement packet in wrong phase");
+            return;
         }
         
+        // can this player/entity act right now?
+        if (!game.getTurn().isValid(connId, entity)) {
+            System.err.println("error: server got invalid movement packet");
+            return;
+        }
+        
+        // looks like mostly everything's okay
+        processMovement(entity, md);
+        endCurrentTurn();
     }
 
     /**
@@ -2759,20 +2765,22 @@ implements Runnable {
             loadVector.add(game.getEntity( loadedId ));
         }
         
-        // game.board.isLegalDeployment(c, e.getOwner())is this the right phase?
+        // is this the right phase?
         if (game.getPhase() != Game.PHASE_DEPLOYMENT) {
             System.err.println("error: server got deployment packet in wrong phase");
+            return;
         }
         
-        // is this the right thing to move right now?
-        GameTurn turn = game.getTurn();
-        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)
-        && game.board.isLegalDeployment(coords, entity.getOwner())) {
-            processDeployment(entity, coords, nFacing, loadVector);
-            endCurrentTurn();
-        } else {
+        // can this player/entity act right now?
+        if (!game.getTurn().isValid(connId, entity)
+        || game.board.isLegalDeployment(coords, entity.getOwner())) {
             System.err.println("error: server got invalid deployment packet");
+            return;
         }
+        
+        // looks like mostly everything's okay
+        processDeployment(entity, coords, nFacing, loadVector);
+        endCurrentTurn();
     }
     
     /**
@@ -2842,16 +2850,18 @@ implements Runnable {
         if (game.getPhase() != Game.PHASE_FIRING 
         && game.getPhase() != Game.PHASE_PHYSICAL) {
             System.err.println("error: server got attack packet in wrong phase");
+            return;
         }
         
-        // is this the right thing to move right now?
-        GameTurn turn = game.getTurn();
-        if (turn.getPlayerNum() == connId && turn.isValidEntity(entity)) {
-            processAttack(entity, vector);
-            endCurrentTurn();
-        } else {
+        // can this player/entity act right now?
+        if (!game.getTurn().isValid(connId, entity)) {
             System.err.println("error: server got invalid attack packet");
+            return;
         }
+        
+        // looks like mostly everything's okay
+        processAttack(entity, vector);
+        endCurrentTurn();
     }
     
     /**

@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.29.43 (CVS)
 + Extra light woods hex in Citytech board.
 + RFE 959014 working again.
++ Dedicated server now loads game options from the xml file.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

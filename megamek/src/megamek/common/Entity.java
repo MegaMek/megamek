@@ -2387,6 +2387,14 @@ public abstract class Entity
         
         PilotingRollData roll;
         
+        // Pilot dead?
+        if ( getCrew().isDead() || getCrew().isDoomed() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
+        // pilot awake?
+        else if (!getCrew().isActive()) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+        }
         // gyro operational?
         if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
@@ -2402,14 +2410,6 @@ public abstract class Entity
         // entity shut down?
         if (isShutDown()) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
-        }
-        // Pilot dead?
-        if ( getCrew().isDead() ) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
-        }
-        // pilot awake?
-        else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
         }
         
         // okay, let's figure out the stuff then

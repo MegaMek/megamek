@@ -316,9 +316,11 @@ public class Client extends Panel
         menuBar.addActionListener( this );
         frame.addKeyListener(this);
 
-
         // from constructor
         initializeDialogs();
+
+        // from connect
+        pump.start();
     }
 
     /**
@@ -521,7 +523,6 @@ public class Client extends Panel
         }
 
         pump = new Thread(this);
-        pump.start();
 
         return true;
     }

@@ -868,6 +868,19 @@ public class BoardView1
         // no re-use possible, add a new one
         attackSprites.addElement(new AttackSprite(aa));
     }
+    
+    /** Removes all attack sprites from a certain entity */
+    public void removeAttacksFor(int entityId) {
+        // or rather, only keep sprites NOT for that entity
+        Vector toKeep = new Vector(attackSprites.size());
+        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
+            AttackSprite sprite = (AttackSprite)i.next();
+            if (sprite.getEntityId() != entityId) {
+                toKeep.addElement(sprite);
+            }
+        }
+        this.attackSprites = toKeep;
+    }
 
     /**
      * Clears out all attacks and re-adds the ones in the current game.

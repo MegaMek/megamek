@@ -911,6 +911,19 @@ public class Game implements Serializable
         actions.removeAllElements();
     }
     
+    /** Removes all actions by the specified entity */
+    public void removeActionsFor(int entityId) {
+        // or rather, only keeps actions NOT by that entity
+        Vector toKeep = new Vector(actions.size());
+        for (Enumeration i = actions.elements(); i.hasMoreElements();) {
+            EntityAction ea = (EntityAction)i.nextElement();
+            if (ea.getEntityId() != entityId) {
+                toKeep.addElement(ea);
+            }
+        }
+        this.actions = toKeep;
+    }
+    
     public int actionsSize() {
         return actions.size();
     }

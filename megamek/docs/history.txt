@@ -83,6 +83,7 @@ v (next)
 + messed around with LOS; hopefully more readable code, bugs fixed
 + split crits supported
 + TSM added
++ 624368: LBX AC's use shots, not missles.
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

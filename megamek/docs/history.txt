@@ -81,16 +81,24 @@ FUTURE VERSION PLANS:
 - level 2!
 - more interface improvements, particularly in the lobby
 
-v 0.26
+v 0.27
+- pavement movement
+- bridges you can walk on
+- (maybe) buildings, at least as obstacles
+- deployment phase
+- ammo switching
+- level 2 tech
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.25.7 (05-30-02, 6pm)
 + properly disable flee button
 + 540326: mech elevation while mid-DFA calculated correctly
 + added color red; some tweaks to other colors
 + map tileset now included in MegaMek.cfg
 + corrected typo regarding underwater heat sinks
++ maps added in new format, some new maps (roads just cosmetic)
++ switched mechs to blk format
 
 v 0.25.6 (05-23-02, 8:30pm)
 + 554568: fixed false secondary target modifier on first shot

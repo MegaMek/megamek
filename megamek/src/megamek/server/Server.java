@@ -2089,9 +2089,7 @@ implements Runnable {
         PilotingRollData rollTarget;
         
         // Compile the move
-        if (!md.isCompiled()) {
-            Compute.compile(game, entity.getId(), md);
-        }
+        Compute.compile(game, entity.getId(), md);
 
         // check for MASC failure
         if (entity instanceof Mech) {

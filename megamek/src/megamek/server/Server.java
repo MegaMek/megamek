@@ -12833,9 +12833,9 @@ implements Runnable, ConnectionHandler {
       // on the field that ejected from this entity
       Enumeration doubleMechWarriors =
             game.getSelectedEntities( new EntitySelector() {
-                public boolean accept(Entity entity) {
-                    if (entity instanceof MechWarrior) {
-                        MechWarrior mw = (MechWarrior)entity;
+                public boolean accept(Entity esEntity) {
+                    if (esEntity instanceof MechWarrior) {
+                        MechWarrior mw = (MechWarrior)esEntity;
                         if (mw.getOriginalRideId() == entity.getId()) {
                             return true;
                         }

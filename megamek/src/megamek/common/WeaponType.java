@@ -37,7 +37,8 @@ public class WeaponType extends EquipmentType {
     public static final int     F_BALLISTIC     = 0x20000; // For Gunnery/Ballistic skill
     public static final int     F_ENERGY        = 0x40000; // For Gunnery/Energy skill
     public static final int     F_MISSILE       = 0x80000; // For Gunnery/Missile skill
-    public static final int     F_SPLITABLE     = 0x100; // Weapons that can be split between locations
+    public static final int     F_SPLITABLE     = 0x0100; // Weapons that can be split between locations
+    public static final int     F_MG            = 0x0200; // MG; for rapid fire set up
 
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
@@ -541,7 +542,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        weapon.flags |= F_BALLISTIC;
+        weapon.flags |= F_BALLISTIC | F_MG;
 
         return weapon;
     }
@@ -2339,7 +2340,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        weapon.flags |= F_BALLISTIC;
+        weapon.flags |= F_BALLISTIC | F_MG;
 
         return weapon;
     }
@@ -2362,7 +2363,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        weapon.flags |= F_BALLISTIC;
+        weapon.flags |= F_BALLISTIC | F_MG;
 
         return weapon;
     }
@@ -2385,7 +2386,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 6;
-        weapon.flags |= F_BALLISTIC;
+        weapon.flags |= F_BALLISTIC | F_MG;
 
         return weapon;
     }

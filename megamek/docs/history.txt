@@ -88,6 +88,11 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ clan gauss rifles explode too
++ light gauss rifles use distinct ammo, explode for less damage
++ preliminary victory phase
+
 v 0.26.5 (07-05-02, 6:42pm)
 + 575448: critical hits on ammo make explosions again
 + 577153: Tooltip now clears itself on report screens and is readable on the right edge--LDE

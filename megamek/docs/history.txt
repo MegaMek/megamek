@@ -17,6 +17,7 @@ v0.29.36 (CVS)
 + Bug 963307: Mechs with 6 Pilot hits are marked doomed
 + Bug 859571: A swarming Inf no longer causes a "/skip" error if it's the
 	last unit the player has left
++ Patch 959200:	optional lvl2 rule high/low gravity
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

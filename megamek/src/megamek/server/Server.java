@@ -3060,6 +3060,89 @@ implements Runnable, ConnectionHandler {
                         doFlamingDeath(entity);
                 }
             }
+//          check if we used more MPs than the Mech/Vehicle would have in normal gravity
+            if (!i.hasMoreElements()) {
+                HitData hit;
+                if (entity instanceof Mech) {
+                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                        if (step.getMpUsed() > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                    int j=step.getMpUsed();
+                                    int damage = 0;
+                                    while (j > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                                        j--;
+                                        damage++;
+                                    }
+                                    if (entity instanceof BipedMech) {
+                                        hit = new HitData (Mech.LOC_LLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    } else if (entity instanceof QuadMech) {
+                                        hit = new HitData (Mech.LOC_LLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_LARM);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RARM);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    }
+                                }
+                            }
+                        }
+                    } else if (step.getMovementType() == Entity.MOVE_JUMP) {
+                        if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                    int j=step.getMpUsed();
+                                    int damage = 0;
+                                    while (j > entity.getOriginalJumpMP()) {
+                                        j--;
+                                        damage++;
+                                    }
+                                    if (entity instanceof BipedMech) {
+                                        hit = new HitData (Mech.LOC_LLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    } else if (entity instanceof QuadMech) {
+                                        hit = new HitData (Mech.LOC_LLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RLEG);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_LARM);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                        hit = new HitData (Mech.LOC_RARM);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    }
+                                }
+                            }
+                        }    
+                      }
+                } else if (entity instanceof Tank) {
+                    if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
+                        if (step.getMpUsed() > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                            rollTarget = entity.checkMovedTooFast(step);
+                            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                    int j=step.getMpUsed();
+                                    int damage = 0;
+                                    while (j > (int)Math.ceil(entity.getOriginalWalkMP() * 1.5)) {
+                                        j--;
+                                        damage++;
+                                    }
+                                    hit = new HitData (Tank.LOC_FRONT);
+                                    phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                }
+                            }
+                        }
+                    }   
+                }
+            }
 
             // check for minefields.
 //            if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
@@ -8002,6 +8085,10 @@ implements Runnable, ConnectionHandler {
     public String damageEntity(Entity te, HitData hit, int damage) {
         return damageEntity(te, hit, damage, false, 0);
     }
+    
+    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
+        return damageEntity(te, hit, damage, ammoExplosion, 0, false);
+    }
 
     /**
      * Deals the listed damage to a mech.  Returns a description
@@ -8014,8 +8101,9 @@ implements Runnable, ConnectionHandler {
      * @param damage the damage to apply
      * @param ammoExplosion ammo explosion type damage is handled slightly differently
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
+     * @param damageIS Should the target location's internal structure be damaged directly? (only for mechs and tanks)
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS) {
         StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
@@ -8082,8 +8170,11 @@ implements Runnable, ConnectionHandler {
                 .append( te.getDisplayName() )
                 .append( " takes " )
                 .append( damage )
-                .append( " damage to " )
-                .append(te.getLocationAbbr(hit) )
+                .append( " damage to " );
+                
+            if (damageIS) desc.append ( "Internal Struture of ");
+
+            desc.append(te.getLocationAbbr(hit) )
                 .append( "." );
 
             // was the section destroyed earlier this phase?
@@ -8093,68 +8184,70 @@ implements Runnable, ConnectionHandler {
             }
 
             // Does an exterior passenger absorb some of the damage?
-            int nLoc = hit.getLocation();
-            Entity passenger = te.getExteriorUnitAt( nLoc, hit.isRear() );
-            if ( !ammoExplosion &&
-                 null != passenger && !passenger.isDoomed() ) {
+            if (!damageIS) {
+                int nLoc = hit.getLocation();
+                Entity passenger = te.getExteriorUnitAt( nLoc, hit.isRear() );
+                if ( !ammoExplosion &&
+                     null != passenger && !passenger.isDoomed() ) {
 
-                // Yup.  Roll up some hit data for that passenger.
-                desc.append( "\n            The passenger, " )
-                    .append( passenger.getDisplayName() )
-                    .append( ", gets in the way." );
-                HitData passHit = passenger.rollHitLocation
-                    ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+                    // Yup.  Roll up some hit data for that passenger.
+                    desc.append( "\n            The passenger, " )
+                        .append( passenger.getDisplayName() )
+                        .append( ", gets in the way." );
+                    HitData passHit = passenger.rollHitLocation
+                        ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
 
-                // How much damage will the passenger absorb?
-                int absorb = 0;
-                HitData nextPassHit = passHit;
-                do {
-                    if ( 0 < passenger.getArmor( nextPassHit ) ) {
-                        absorb += passenger.getArmor( nextPassHit );
+                    // How much damage will the passenger absorb?
+                    int absorb = 0;
+                    HitData nextPassHit = passHit;
+                    do {
+                        if ( 0 < passenger.getArmor( nextPassHit ) ) {
+                            absorb += passenger.getArmor( nextPassHit );
+                        }
+                        if ( 0 < passenger.getInternal( nextPassHit ) ) {
+                            absorb += passenger.getInternal( nextPassHit );
+                        }
+                        nextPassHit = passenger.getTransferLocation( nextPassHit );
+                    } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
+
+                    // Damage the passenger.
+                    desc.append( damageEntity( passenger, passHit, damage ) );
+
+                    // Did some damage pass on?
+                    if ( damage > absorb ) {
+                        // Yup.  Remove the absorbed damage.
+                        damage -= absorb;
+                        desc.append( "\n    " )
+                            .append( damage )
+                            .append( " damage point(s) passes on to " )
+                            .append( te.getDisplayName() )
+                            .append( "." );
+                    } else {
+                        // Nope.  Return our description.
+                        return desc.toString();
                     }
-                    if ( 0 < passenger.getInternal( nextPassHit ) ) {
-                        absorb += passenger.getInternal( nextPassHit );
-                    }
-                    nextPassHit = passenger.getTransferLocation( nextPassHit );
-                } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
 
-                // Damage the passenger.
-                desc.append( damageEntity( passenger, passHit, damage ) );
+                } // End nLoc-has-exterior-passenger
 
-                // Did some damage pass on?
-                if ( damage > absorb ) {
-                    // Yup.  Remove the absorbed damage.
-                    damage -= absorb;
-                    desc.append( "\n    " )
-                        .append( damage )
-                        .append( " damage point(s) passes on to " )
-                        .append( te.getDisplayName() )
-                        .append( "." );
-                } else {
-                    // Nope.  Return our description.
-                    return desc.toString();
-                }
-
-            } // End nLoc-has-exterior-passenger
-
-            // is this a mech dumping ammo being hit in the rear torso?
-            boolean bTorso = (nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT ||
-                              nLoc == Mech.LOC_LT);
-            if (te instanceof Mech && hit.isRear() && bTorso) {
-                for (Enumeration e = te.getAmmo(); e.hasMoreElements(); ) {
-                    Mounted mAmmo = (Mounted)e.nextElement();
-                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
-                        !mAmmo.isHit()) {
-                        // doh.  explode it
-                        desc.append( explodeEquipment(te, mAmmo.getLocation(),
-                                                      mAmmo) );
-                        mAmmo.setHit(true);
+                // is this a mech dumping ammo being hit in the rear torso?
+                boolean bTorso = (nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT ||
+                                  nLoc == Mech.LOC_LT);
+                if (te instanceof Mech && hit.isRear() && bTorso) {
+                    for (Enumeration e = te.getAmmo(); e.hasMoreElements(); ) {
+                        Mounted mAmmo = (Mounted)e.nextElement();
+                        if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
+                            !mAmmo.isHit()) {
+                            // doh.  explode it
+                            desc.append( explodeEquipment(te, mAmmo.getLocation(),
+                                                          mAmmo) );
+                            mAmmo.setHit(true);
+                        }
                     }
                 }
             }
 
             // is there armor in the location hit?
-            if (!ammoExplosion && te.getArmor(hit) > 0) {
+            if (!ammoExplosion && te.getArmor(hit) > 0 && !damageIS) {
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);

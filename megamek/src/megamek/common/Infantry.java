@@ -254,7 +254,13 @@ public class Infantry
      * Infantry have only one speed.
      */
     public int getRunMP() {
-        return this.getWalkMP();
+        float j;
+        if (game != null) {
+            j = getOriginalWalkMP() / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            return Math.max((int)j, 0);
+        }
+        else return this.getWalkMP();
     }
 
     /**

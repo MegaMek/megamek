@@ -830,10 +830,15 @@ public abstract class Entity
 
     /**
      * Returns this entity's walking/cruising mp, factored
-     * for heat.
+     * for heat and gravity.
      */
     public int getWalkMP() {
-        return Math.max(walkMP - (int)(heat / 5), 0);
+        float j = walkMP;
+        if (game != null) {
+            j = walkMP / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+        }
+        return Math.max((int)j - (int)(heat / 5), 0);
     }
 
     /**
@@ -874,10 +879,16 @@ public abstract class Entity
     }
 
     /**
-     * Returns this entity's current jumping MP, not effected by terrain.
+     * Returns this entity's current jumping MP, not effected by terrain,
+     * factored for gravity.
      */
     public int getJumpMP() {
-        return jumpMP;
+        float j;
+        if (game != null) {
+            j = jumpMP / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            return (int)j;
+        } else return jumpMP;
     }
 
     /**
@@ -885,7 +896,12 @@ public abstract class Entity
      * water.)
      */
     public int getJumpMPWithTerrain() {
-        return jumpMP;
+        float j;
+        if (game != null) {
+            j = jumpMP / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            return (int)j;
+        } else return jumpMP;
     }
 
     /**
@@ -2629,6 +2645,17 @@ public abstract class Entity
 
         return roll;
     }
+    
+    public PilotingRollData checkMovedTooFast(MoveStep step) {
+        PilotingRollData roll = getBasePilotingRoll();
+        
+        if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
+            roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        }
+        return roll;
+        }
 
     /**
      * Checks if the entity might skid on pavement.  If so, returns

@@ -186,7 +186,14 @@ public class Protomech
      	int wmp=getOriginalWalkMP();
      	int legCrits=this.getCritsHit(LOC_LEG);
         int i;
-     	switch(legCrits)
+        float j;
+        if (game != null) {
+            j = getOriginalWalkMP() / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            if (j > getOriginalWalkMP()) j = wmp;
+            wmp = (int) j;
+        }
+        switch(legCrits)
      	{
      		case 0:
      		break;
@@ -263,11 +270,18 @@ public class Protomech
     } // End public void newRound()
 
     /**
-     * This pmech's jumping MP modified for missing jump jets
+     * This pmech's jumping MP modified for missing jump jets and gravity.
      */
     public int getJumpMP() {
         int jump=this.jumpMP;
         int torsoCrits=this.getCritsHit(LOC_TORSO);
+        float j=this.jumpMP;
+        if (game != null) {
+            j = jump / game.getOptions().floatOption("gravity");
+            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            if (j > this.jumpMP) j = jump;
+            jump = (int) j;
+        }
      	switch(torsoCrits)
      	{
      		case 0:

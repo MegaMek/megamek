@@ -55,11 +55,12 @@ public class QuadMech extends Mech
 
       for ( int i = 0; i < locations(); i++ ) {    
           if ( locationIsLeg(i) ) {
-              if ( !isLocationDestroyed(i) ) {
+              if ( !isLocationBad(i) ) {
                   if ( legHasHipCrit(i) ) {
                       hipHits++;
-                      if (!game.getOptions().booleanOption("maxtech_leg_damage"))
+                      if (!game.getOptions().booleanOption("maxtech_leg_damage")) {
                           continue;
+                      }
                   }
                   actuatorHits += countLegActuatorCrits(i);
               } else {
@@ -116,7 +117,7 @@ public class QuadMech extends Mech
    * Returns this mech's running/flank mp modified for leg loss & stuff.
    */
     public int getRunMP() {
-      if ( countDestroyedLegs() <= 1 ) {
+      if ( countBadLegs() <= 1 ) {
         return super.getRunMP();
       } else {
         return getWalkMP();
@@ -127,7 +128,7 @@ public class QuadMech extends Mech
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
     public int getRunMPwithoutMASC() {
-        if ( countDestroyedLegs() <= 1 ) {
+        if ( countBadLegs() <= 1 ) {
             return super.getRunMPwithoutMASC();
         } else {
             return getWalkMP();
@@ -169,7 +170,7 @@ public class QuadMech extends Mech
    * Returns true is the entity needs a roll to stand up
    */
     public boolean needsRollToStand() {
-      if ( countDestroyedLegs() == 0 )
+      if ( countBadLegs() == 0 )
         return false;
       
       return true;
@@ -188,7 +189,7 @@ public class QuadMech extends Mech
       locsToCheck[2] = Mech.LOC_RARM;
       locsToCheck[3] = Mech.LOC_LARM;
       
-      destroyedLegs = countDestroyedLegs();
+      destroyedLegs = countBadLegs();
 
       if ( destroyedLegs == 0 )
         roll.addModifier(-2, "Quad bonus");
@@ -196,26 +197,26 @@ public class QuadMech extends Mech
       for ( int i = 0; i < locsToCheck.length; i++ ) {
         int loc = locsToCheck[i];
         
-        if (isLocationDestroyed(loc)) {
+        if (isLocationBad(loc)) {
           if ( destroyedLegs > 1 )
             roll.addModifier(5, getLocationName(loc) + " destroyed");
         } else {
             // check for damaged hip actuators
-            if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
+            if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                 roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
                 if (!game.getOptions().booleanOption("maxtech_leg_damage"))
                     continue;
             }
             // upper leg actuators?
-            if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+            if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
                 roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
             }
             // lower leg actuators?
-            if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+            if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
                 roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
             }
             // foot actuators?
-            if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+            if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
                 roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
             }
         }

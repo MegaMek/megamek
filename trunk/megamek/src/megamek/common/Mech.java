@@ -17,7 +17,6 @@ package megamek.common;
 import java.io.*;
 import java.util.Enumeration;
 import megamek.client.FiringDisplay;
-import megamek.client.UnitOverview;
 
 /**
  * You know what mechs are, silly.
@@ -346,17 +345,17 @@ public abstract class Mech
     }
                                     
     /**
-     * Count the number of destroyed legs on the mech
-     */
-      public int countDestroyedLegs() {
+	 * Count the number of destroyed or breached legs on the mech
+	 */
+    public int countBadLegs() {
         int destroyed = 0;
-        
-        for ( int i = 0; i < locations(); i++ ) {    
-          destroyed += (locationIsLeg(i) && isLocationDestroyed(i)) ? 1 : 0;
-                }
-        
+
+        for (int i = 0; i < locations(); i++) {
+            destroyed += (locationIsLeg(i) && isLocationBad(i)) ? 1 : 0;
+        }
+
         return destroyed;
-                }
+    }
 
     /**
      * Returns true if the entity has a hip crit.
@@ -374,10 +373,11 @@ public abstract class Mech
      * Return true is the location is a leg and has a hip crit
      */   
     public boolean legHasHipCrit(int loc) {
-        if ( isLocationDestroyed(loc) )
+        if (isLocationBad(loc)) {
             return false;
+        }
           
-        if ( locationIsLeg(loc) ) {
+        if (locationIsLeg(loc)) {
             return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
                                      Mech.ACTUATOR_HIP, loc) == 0);
         }
@@ -389,22 +389,23 @@ public abstract class Mech
      * Count non-hip leg actuator crits
      */
       public int countLegActuatorCrits(int loc) {
-        if ( isLocationDestroyed(loc) )
-          return 0;
+        if (isLocationBad(loc)) {
+            return 0;
+        }
           
         int crits = 0;
         
-        if ( locationIsLeg(loc) ) {
-          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
-              crits++;
-        }
-          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
-              crits++;
+        if (locationIsLeg(loc)) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
+                crits++;
             }
-          if(getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) == 0) {
-              crits++;
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
+                crits++;
+            }
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) == 0) {
+                crits++;
+            }
         }
-    }
 
         return crits;
     }
@@ -1777,7 +1778,7 @@ public abstract class Mech
      */
       public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         // gyro hit?
-          if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
+          if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
             roll.addModifier(3, "Gyro damaged");
           }
         

@@ -198,7 +198,7 @@ public class MoveOption extends MovePath {
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
         if (current.getMovementType() == Entity.MOVE_RUN
-            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
+            && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0
                 || entity.hasHipCrit())) {
             this.getStep(0).setDanger(true);
             current.setDanger(true);

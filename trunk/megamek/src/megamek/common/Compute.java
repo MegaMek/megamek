@@ -544,7 +544,7 @@ public class Compute
         }
 
         // sensors operational?
-        final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+        final int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if (sensorHits > 1) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker sensors destroyed.");
         }
@@ -1256,7 +1256,7 @@ public class Compute
     ToHitData mods = new ToHitData();
     Mounted weapon = attacker.getEquipment(weaponId);
         if ( attacker.entityIsQuad() ) {
-            int legsDead = ((Mech)attacker).countDestroyedLegs();
+            int legsDead = ((Mech)attacker).countBadLegs();
             if (legsDead == 0) {
         // No legs destroyed: no penalty and can fire all weapons
               return null; // no modifier
@@ -1266,7 +1266,7 @@ public class Compute
       // we have one or two dead legs...
 
             // Need an intact front leg
-            if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+            if (attacker.isLocationBad(Mech.LOC_RARM) && attacker.isLocationBad(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
             }
 
@@ -1286,14 +1286,14 @@ public class Compute
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
-            if (attacker.isLocationDestroyed(Mech.LOC_RARM) || attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+            if (attacker.isLocationBad(Mech.LOC_RARM) || attacker.isLocationBad(Mech.LOC_LARM)) {
               if ( game.getOptions().booleanOption("maxtech_prone_fire") ) {
                 //Can fire with only one arm
-                if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
+                if (attacker.isLocationBad(Mech.LOC_RARM) && attacker.isLocationBad(Mech.LOC_LARM)) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both arms destroyed.");
                 }
 
-                l3ProneFiringArm = attacker.isLocationDestroyed(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
+                l3ProneFiringArm = attacker.isLocationBad(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
               } else {
                 // must have an arm intact
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
@@ -1390,7 +1390,7 @@ public class Compute
       } // End attacker-is-Protomech
 
       // Is the shoulder destroyed?
-      else if ( attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+      else if ( attacker.getBadCriticals( CriticalSlot.TYPE_SYSTEM,
                                               Mech.ACTUATOR_SHOULDER,
                                               weapon.getLocation() ) > 0 ) {
           mods.addModifier(4, "shoulder actuator destroyed");
@@ -1398,12 +1398,12 @@ public class Compute
       else {
           // no shoulder hits, add other arm hits
           int actuatorHits = 0;
-          if ( attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+          if ( attacker.getBadCriticals( CriticalSlot.TYPE_SYSTEM,
                                                Mech.ACTUATOR_UPPER_ARM,
                                                weapon.getLocation() ) > 0 ) {
               actuatorHits++;
           }
-          if ( attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
+          if ( attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                               Mech.ACTUATOR_LOWER_ARM,
                                               weapon.getLocation() ) > 0 ) {
               actuatorHits++;
@@ -1415,7 +1415,7 @@ public class Compute
     }
 
     // sensors critical hit to attacker
-    int sensorHits = attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+    int sensorHits = attacker.getBadCriticals( CriticalSlot.TYPE_SYSTEM,
                                                      Mech.SYSTEM_SENSORS,
                                                      Mech.LOC_HEAD );
     if (sensorHits > 0) {
@@ -1551,7 +1551,7 @@ public class Compute
         }
 
         // check if arm is present
-        if (ae.isLocationDestroyed(armLoc)) {
+        if (ae.isLocationBad(armLoc)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
         }
 
@@ -1605,8 +1605,8 @@ public class Compute
         if (ae.isProne()) {
             // The Mek must have both arms, the target must
             // be a tank, and both must be in the same hex.
-            if ( !ae.isLocationDestroyed(Mech.LOC_RARM) &&
-                 !ae.isLocationDestroyed(Mech.LOC_LARM) &&
+            if ( !ae.isLocationBad(Mech.LOC_RARM) &&
+                 !ae.isLocationBad(Mech.LOC_LARM) &&
                  te instanceof Tank &&
                  ae.getPosition().distance( target.getPosition() ) == 0 ) {
                 toHit.addModifier( 2, "attacker is prone" );
@@ -1797,9 +1797,9 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
-        // check if both legs are present
-        if (ae.isLocationDestroyed(kickLegs[0])
-            || ae.isLocationDestroyed(kickLegs[1])) {
+        // check if both legs are present & working
+        if (ae.isLocationBad(kickLegs[0])
+            || ae.isLocationBad(kickLegs[1])) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
         }
 
@@ -2070,9 +2070,9 @@ public class Compute
         }
 
         if (bothArms) {
-            // check if both arms are present
-            if (ae.isLocationDestroyed(Mech.LOC_RARM)
-                || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+            // check if both arms are present & operational
+            if (ae.isLocationBad(Mech.LOC_RARM)
+                || ae.isLocationBad(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
             }
             // check if attacker has fired arm-mounted weapons
@@ -2091,7 +2091,7 @@ public class Compute
             }
         } else {
             // check if arm is present
-            if (ae.isLocationDestroyed(club.getLocation())) {
+            if (ae.isLocationBad(club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
             }
             // check if attacker has fired arm-mounted weapons
@@ -2108,7 +2108,7 @@ public class Compute
         }
 
         // club must not be damaged
-        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_EQUIPMENT, ae.getEquipmentNum(club), club.getLocation()) > 0) {
+        if (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae.getEquipmentNum(club), club.getLocation()) > 0) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Club is damaged");
         }
 
@@ -2338,8 +2338,8 @@ public class Compute
         }
 
         // check if both arms are present
-        if (ae.isLocationDestroyed(Mech.LOC_RARM)
-            || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+        if (ae.isLocationBad(Mech.LOC_RARM)
+            || ae.isLocationBad(Mech.LOC_LARM)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
         }
 
@@ -3705,7 +3705,7 @@ public class Compute
         }
 
         // check if arm is present
-        if (ae.isLocationDestroyed(armLoc)) {
+        if (ae.isLocationBad(armLoc)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
         }
 

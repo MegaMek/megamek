@@ -176,7 +176,7 @@ here.
 
 Movement Phase:
 
-The buttons at the bottom right of the screen let you change between different
+The buttons at the bottom of the screen let you change between different
 modes of movement, switch to another unit, or commit to your current path.
 You do not have to move the first selected unit first.
 
@@ -245,7 +245,24 @@ showing the results of these rolls will be shown.
 
 Weapons Fire Phase:
 
-The buttons at the bottom right of the screen allow you to fire your weapons,
+If you need to check the range and line of sight (LoS) between two hexes, 
+there are two tools available for you to use; the LoS tool and the ruler 
+tool.  To use the LoS tool, hold CTRL and click on the two hexes you want to 
+check. The ruler tool works like the LoS tool, but uses the ALT key instead 
+of the CTRL key.  The ruler tool can also be used by middle-clicking the 
+two hexes with a three-button mouse.  Both tools will pop up a window that
+tells you what terrain is intervening and whether one or both hexes has
+partial cover.  The ruler tool also draws the line of sight on the board 
+so that you can see which hexes LoS passes through. 
+
+You can switch between 'Mech line of sight and non-'Mech line of sight in the
+"LoS Setting" panel, located under the "View" menu at the top of the screen.
+'Mech line of sight and non-'Mech line of sight differ in that 'Mechs are
+assumed to be "looking" from one elevation level above that of the hex
+they are in, whereas infantry and vehicles only take up the elevation level
+of their hex.
+
+The buttons at the bottom of the screen allow you to fire your weapons,
 switch to another unit, or commit to your currently declared fire.  Again, 
 you do not need to declare fire for your first selected unit first.
 

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000, 2001, 2002, 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -5074,20 +5074,23 @@ implements Runnable, ConnectionHandler {
                 nDamPerHit = Math.abs( wtype.getAmmoType() );
             } else {
                 sSalvoType = " missile(s) ";
-                if(!(wtype.hasFlag(WeaponType.F_ONESHOT))) {  //will be null for oneshots.
-                  nDamPerHit = atype.getDamagePerShot();
-                } else { //Hard code in weapon types.
-                  switch(wtype.getAmmoType()) {
+                // Is this a one-shot weapon system?
+                if( !wtype.hasFlag(WeaponType.F_ONESHOT) ) {
+                    // Nope, get the damage from the linked ammo.
+                    nDamPerHit = atype.getDamagePerShot();
+                } else {
+                    // Yup.  Hard code in weapon types.
+                    switch(wtype.getAmmoType()) {
                     case AmmoType.T_LRM:
                     case AmmoType.T_MRM:
-                      nDamPerHit=1;
-                      break;
+                    case AmmoType.T_ROCKET_LAUNCHER:
+                        nDamPerHit=1;
+                        break;
                     case AmmoType.T_SRM:
                     case AmmoType.T_SRM_STREAK:
-                      nDamPerHit=2;
-                      break;
-
-                  }
+                        nDamPerHit=2;
+                        break;
+                    }
                 }
 
             }

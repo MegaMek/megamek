@@ -9,6 +9,8 @@ v 0.29.24 (CVS)
 + Bug 885742, 885825: correctly handle null or "No Camo" categories
 + Feature 886721: "Infantry deploy last" option added
 + The Drawing Board mech file parser now recognizes rocket launchers
++ Added an ammo type for Rocket Launchers.
++ Bug 875324: create special munitions for *all* clan SRM and LRM sizes
 
 v 0.29.23 (2004-01-25 9:45pm)
 + Bug 828741: jumping bypasses fire, but not on the first step. Also optimised

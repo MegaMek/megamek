@@ -5417,12 +5417,12 @@ implements Runnable {
         final Entity ae = game.getEntity(caa.getEntityId());
         final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
         Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
+        Building bldg = game.board.getBuildingAt( caa.getTargetPos() );
         
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
@@ -5439,9 +5439,8 @@ implements Runnable {
         }
         
         // should we even bother?
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY &&
-             ( te == null || te.isDestroyed() ||
-               te.isDoomed() || te.crew.isDead() ) ) {
+        if (target == null || (target.getTargetType() == Targetable.TYPE_ENTITY
+             && (te.isDestroyed() || te.isDoomed() || te.crew.isDead()))) {
             phaseReport.append("    Charge cancelled as the target has been destroyed.\n");
             return;
         }

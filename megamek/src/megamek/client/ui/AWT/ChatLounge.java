@@ -680,20 +680,28 @@ public class ChatLounge extends AbstractPhaseDisplay
             if ( !entity.getOwner().equals(client.getLocalPlayer()) &&
                  client.game.getOptions().booleanOption("blind_drop") )
             {
-                int weigth = entity.getWeightClass();
-                String weight = "";
-                switch (weigth)
-                {
-                    case Entity.WEIGHT_LIGHT   : weight = "Light";   break;
-                    case Entity.WEIGHT_MEDIUM  : weight = "Medium";  break;
-                    case Entity.WEIGHT_HEAVY   : weight = "Heavy";   break;
-                    case Entity.WEIGHT_ASSAULT : weight = "Assault"; break;
+                String unitClass = "";
+                if (entity instanceof Infantry) {
+                    unitClass = "Infantry";
+                } else if (entity instanceof Protomech) {
+                    unitClass = "Protomech";
+                } else {
+                    int weight = entity.getWeightClass();
+                    switch (weight)
+                    {
+                        case Entity.WEIGHT_LIGHT  : unitClass= "Light";break;
+                        case Entity.WEIGHT_MEDIUM : unitClass= "Medium";break;
+                        case Entity.WEIGHT_HEAVY  : unitClass= "Heavy";break;
+                        case Entity.WEIGHT_ASSAULT: unitClass= "Assault";break;
+                    }
+                    if (entity instanceof Tank) {
+                        unitClass += " Vehicle";
+                    }
                 }
-            
                 lisEntities.add(entity.getOwner().getName() 
                 + " (" + entity.getCrew().getGunnery()
                 + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
-                + " Class: " + weight
+                + " Class: " + unitClass
                 + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
             }
             else

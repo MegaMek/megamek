@@ -19,11 +19,11 @@ import java.io.Serializable;
 public class Ammo
   implements Serializable
 {
-	public static final int	TYPE_NA = 0;
-	public static final int	TYPE_MG = 1;
-	public static final int	TYPE_AC = 2;
-	public static final int	TYPE_LRM = 3;
-	public static final int	TYPE_SRM = 4;
+    public static final int    TYPE_NA = 0;
+    public static final int    TYPE_MG = 1;
+    public static final int    TYPE_AC = 2;
+    public static final int    TYPE_LRM = 3;
+    public static final int    TYPE_SRM = 4;
   
   private String name;
   
@@ -89,7 +89,7 @@ public class Ammo
       return null;
     }
   }
-	
+    
   public static Ammo makeMGAmmo() {
     Ammo ammo = new Ammo();
     

@@ -19,28 +19,28 @@ package megamek.common;
  */
 public class ToHitData
 {
-	public static final int HIT_NORMAL      = 0;
-	public static final int HIT_PUNCH       = 1;
-	public static final int HIT_KICK        = 2;
+    public static final int HIT_NORMAL      = 0;
+    public static final int HIT_PUNCH       = 1;
+    public static final int HIT_KICK        = 2;
     
-	public static final int SIDE_FRONT      = 0;
-	public static final int SIDE_REAR       = 1;
-	public static final int SIDE_LEFT       = 2;
-	public static final int SIDE_RIGHT      = 3;
+    public static final int SIDE_FRONT      = 0;
+    public static final int SIDE_REAR       = 1;
+    public static final int SIDE_LEFT       = 2;
+    public static final int SIDE_RIGHT      = 3;
   
     public final static int IMPOSSIBLE      = Integer.MAX_VALUE;
     
     private int             value;
- 	private StringBuffer    desc;
+     private StringBuffer    desc;
     private int             hitTable;
     private int             sideTable;
-	
+    
     /**
      * Construct with value and desc.  Other values default.
      */
-	public ToHitData(int value, String desc) {
-		this(value, desc, HIT_NORMAL, SIDE_FRONT);
-	}
+    public ToHitData(int value, String desc) {
+        this(value, desc, HIT_NORMAL, SIDE_FRONT);
+    }
     
     /**
      * Construct with all variables.

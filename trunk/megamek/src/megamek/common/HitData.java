@@ -16,19 +16,19 @@ package megamek.common;
 
 public class HitData
 {
-	public static final int		EFFECT_NONE = 0;
-	public static final int		EFFECT_CRITICAL = 1;
-	public static final int		EFFECT_VEHICLES_ARE_DUMB = 2;
-	
-	public int loc;
-	public int effect;
-	
-	public HitData(int loc) {
-		this(loc, EFFECT_NONE);
-	}
-	
-	public HitData(int loc, int effect) {
-		this.loc = loc;
-		this.effect = effect;
-	}
+    public static final int        EFFECT_NONE = 0;
+    public static final int        EFFECT_CRITICAL = 1;
+    public static final int        EFFECT_VEHICLES_ARE_DUMB = 2;
+    
+    public int loc;
+    public int effect;
+    
+    public HitData(int loc) {
+        this(loc, EFFECT_NONE);
+    }
+    
+    public HitData(int loc, int effect) {
+        this.loc = loc;
+        this.effect = effect;
+    }
 }

@@ -31,11 +31,11 @@ public class BoardView1
     implements BoardListener, MouseListener, MouseMotionListener, KeyListener,
     Runnable
 {
-    private static final int        PIC_MAX				= 4;
-    private static final int        PIC_MECH_LIGHT		= 0;
-    private static final int        PIC_MECH_MEDIUM		= 1;
-    private static final int        PIC_MECH_HEAVY		= 2;
-    private static final int        PIC_MECH_ASSAULT	= 3;
+    private static final int        PIC_MAX                = 4;
+    private static final int        PIC_MECH_LIGHT        = 0;
+    private static final int        PIC_MECH_MEDIUM        = 1;
+    private static final int        PIC_MECH_HEAVY        = 2;
+    private static final int        PIC_MECH_ASSAULT    = 3;
     
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
@@ -88,13 +88,13 @@ public class BoardView1
     private boolean             imagesLoaded = false;
 
     // player-tinted mech image cache
-    private Image[][]			imageCache = new Image[PIC_MAX][6]; // [type][facing]
-    private Image[][][]			tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
+    private Image[][]            imageCache = new Image[PIC_MAX][6]; // [type][facing]
+    private Image[][][]            tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
     
     // polygons for a few things
-    private Polygon				hexPoly;
-    private Polygon[]			facingPolys;
-    private Polygon[]			movementPolys;
+    private Polygon                hexPoly;
+    private Polygon[]            facingPolys;
+    private Polygon[]            movementPolys;
     
     
     /**
@@ -105,10 +105,10 @@ public class BoardView1
         this.frame = frame;
         
         game.board.addBoardListener(this);
-		scroller.start();
-		addKeyListener(this);
-		addMouseListener(this);
-		addMouseMotionListener(this);
+        scroller.start();
+        addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
         
         // tooltip
         tipWindow = new Window(frame);
@@ -121,33 +121,33 @@ public class BoardView1
     }
  
     
-	/**
-	 * loadAllImages
-	 */
-	public void loadAllImages() {
-		imagesLoaded = false;
-		
-		for (int i = 0; i < 6; i++) {
-			imageCache[PIC_MECH_LIGHT][i] = getToolkit().getImage("data/mex/light-" + i + ".gif");
-			imageCache[PIC_MECH_MEDIUM][i] = getToolkit().getImage("data/mex/medium-" + i + ".gif");
-			imageCache[PIC_MECH_HEAVY][i] = getToolkit().getImage("data/mex/heavy-" + i + ".gif");
-			imageCache[PIC_MECH_ASSAULT][i] = getToolkit().getImage("data/mex/assault-" + i + ".gif");
-			
-			tracker.addImage(imageCache[PIC_MECH_LIGHT][i], 1);
-			tracker.addImage(imageCache[PIC_MECH_MEDIUM][i], 1);
-			tracker.addImage(imageCache[PIC_MECH_HEAVY][i], 1);
-			tracker.addImage(imageCache[PIC_MECH_ASSAULT][i], 1);
-		}
+    /**
+     * loadAllImages
+     */
+    public void loadAllImages() {
+        imagesLoaded = false;
+        
+        for (int i = 0; i < 6; i++) {
+            imageCache[PIC_MECH_LIGHT][i] = getToolkit().getImage("data/mex/light-" + i + ".gif");
+            imageCache[PIC_MECH_MEDIUM][i] = getToolkit().getImage("data/mex/medium-" + i + ".gif");
+            imageCache[PIC_MECH_HEAVY][i] = getToolkit().getImage("data/mex/heavy-" + i + ".gif");
+            imageCache[PIC_MECH_ASSAULT][i] = getToolkit().getImage("data/mex/assault-" + i + ".gif");
+            
+            tracker.addImage(imageCache[PIC_MECH_LIGHT][i], 1);
+            tracker.addImage(imageCache[PIC_MECH_MEDIUM][i], 1);
+            tracker.addImage(imageCache[PIC_MECH_HEAVY][i], 1);
+            tracker.addImage(imageCache[PIC_MECH_ASSAULT][i], 1);
+        }
     
         for (int i = 0; i < game.board.terrains.length; i++) {
             tracker.addImage( game.board.terrains[i].getImage(this), 2);
         }
         
-		imagesLoading = true;
-	}
+        imagesLoading = true;
+    }
 
     public void paint(Graphics g) {
-		update(g);
+        update(g);
     }
 
     /**
@@ -159,14 +159,14 @@ public class BoardView1
         final Dimension size = getSize();
         view = new Rectangle(scroll, size);
         
-		if (!imagesLoading) {
-			g.drawString("loading images...", 20, 50);
-			loadAllImages();
-			return;
-		} else if (!imagesLoaded) {
-			imagesLoaded = tracker.checkAll(true);
-			return;
-		}
+        if (!imagesLoading) {
+            g.drawString("loading images...", 20, 50);
+            loadAllImages();
+            return;
+        } else if (!imagesLoaded) {
+            imagesLoaded = tracker.checkAll(true);
+            return;
+        }
 
         // make sure back buffer is valid
         if (backGraph == null || !size.equals(backSize)) {
@@ -282,22 +282,22 @@ public class BoardView1
         boardRect = new Rectangle(view);
         
         /*
-		// clear the edges, if necessary
-		if (view.x < 21) {
+        // clear the edges, if necessary
+        if (view.x < 21) {
             Rectangle clear = new Rectangle(0, unLeft.y, 21, unRight.height);
             clear = unLeft.intersection(clear);
-			boardGraph.clearRect(clear.x, clear.y, clear.width, clear.height);
+            boardGraph.clearRect(clear.x, clear.y, clear.width, clear.height);
             System.out.println("moveboardimage: clearing " + clear);
-		}
-		if (boardRect.y < 36) {
-			boardGraph.clearRect(0, 0, boardRect.width, 36 - boardRect.y);
-		}
-		if (boardRect.x > (boardSize.width - boardRect.width - 21)) {
-			boardGraph.clearRect(boardRect.width - 21, 0, boardRect.width, boardRect.height);
-		}
-		if (boardRect.y > (boardSize.height - boardRect.height - 36)) {
-			boardGraph.clearRect(0,  boardRect.height - 36, boardRect.width, boardRect.height);
-		}
+        }
+        if (boardRect.y < 36) {
+            boardGraph.clearRect(0, 0, boardRect.width, 36 - boardRect.y);
+        }
+        if (boardRect.x > (boardSize.width - boardRect.width - 21)) {
+            boardGraph.clearRect(boardRect.width - 21, 0, boardRect.width, boardRect.height);
+        }
+        if (boardRect.y > (boardSize.height - boardRect.height - 36)) {
+            boardGraph.clearRect(0,  boardRect.height - 36, boardRect.width, boardRect.height);
+        }
         */
 
         // paint needed areas
@@ -359,36 +359,36 @@ public class BoardView1
         int drawX = hexLoc.x - boardRect.x;
         int drawY = hexLoc.y - boardRect.y;
         
-		// draw picture
-		boardGraph.drawImage(hex.getImage(this), drawX, drawY, this);
-		// draw text stuff
-		boardGraph.setColor(Color.black);
-		boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 10));
-		boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
-		if (hex.getElevation() != 0) {
-			boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 9));
-			boardGraph.drawString("LEVEL " + hex.getElevation(), drawX + 24, drawY + 70);
-		}
-		// draw elevation borders
-		Hex tHex;
-		if ((tHex = game.board.getHex(c.translated(0))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX + 21, drawY, drawX + 62, drawY);
-		}
-		if ((tHex = game.board.getHex(c.translated(1))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX + 62, drawY, drawX + 83, drawY + 35);
-		}
-		if ((tHex = game.board.getHex(c.translated(2))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX + 83, drawY + 36, drawX + 62, drawY + 71);
-		}
-		if ((tHex = game.board.getHex(c.translated(3))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX + 62, drawY + 71, drawX + 21, drawY + 71);
-		}
-		if ((tHex = game.board.getHex(c.translated(4))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX + 21, drawY + 71, drawX, drawY + 36);
-		}
-		if ((tHex = game.board.getHex(c.translated(5))) != null && tHex.getElevation() != hex.getElevation()) {
-			boardGraph.drawLine(drawX, drawY + 35, drawX + 21, drawY);
-		}
+        // draw picture
+        boardGraph.drawImage(hex.getImage(this), drawX, drawY, this);
+        // draw text stuff
+        boardGraph.setColor(Color.black);
+        boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
+        if (hex.getElevation() != 0) {
+            boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 9));
+            boardGraph.drawString("LEVEL " + hex.getElevation(), drawX + 24, drawY + 70);
+        }
+        // draw elevation borders
+        Hex tHex;
+        if ((tHex = game.board.getHex(c.translated(0))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX + 21, drawY, drawX + 62, drawY);
+        }
+        if ((tHex = game.board.getHex(c.translated(1))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX + 62, drawY, drawX + 83, drawY + 35);
+        }
+        if ((tHex = game.board.getHex(c.translated(2))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX + 83, drawY + 36, drawX + 62, drawY + 71);
+        }
+        if ((tHex = game.board.getHex(c.translated(3))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX + 62, drawY + 71, drawX + 21, drawY + 71);
+        }
+        if ((tHex = game.board.getHex(c.translated(4))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX + 21, drawY + 71, drawX, drawY + 36);
+        }
+        if ((tHex = game.board.getHex(c.translated(5))) != null && tHex.getElevation() != hex.getElevation()) {
+            boardGraph.drawLine(drawX, drawY + 35, drawX + 21, drawY);
+        }
     }
     
     /**
@@ -396,19 +396,19 @@ public class BoardView1
      * of the hex graphic
      */
     private Point getHexLocation(int x, int y) {
-		return new Point(x * 63, y * 72 + ((x & 1) == 1 ? 36 : 0));
+        return new Point(x * 63, y * 72 + ((x & 1) == 1 ? 36 : 0));
     }
     private Point getHexLocation(Coords c) {
-		return getHexLocation(c.x, c.y);
+        return getHexLocation(c.x, c.y);
     }
     
     /**
      * Returns the coords at the specified point
      */
     private Coords getCoordsAt(Point p) {
-		final int x = (p.x + scroll.x) / 63;
-		final int y = ((p.y + scroll.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
-		return new Coords(x, y);
+        final int x = (p.x + scroll.x) / 63;
+        final int y = ((p.y + scroll.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
+        return new Coords(x, y);
     }
     
     
@@ -538,9 +538,9 @@ public class BoardView1
     private void moveCursor(CursorSprite cursor, Coords newPos) {
         final Rectangle oldBounds = new Rectangle(cursor.getBounds());
         if (newPos != null) {
-		    cursor.setLocation(getHexLocation(newPos));
+            cursor.setLocation(getHexLocation(newPos));
         } else {
-		    cursor.setLocation(-100, -100);
+            cursor.setLocation(-100, -100);
         }
         // experimental only-repaint-affected-area technique
         repaintBounds(oldBounds);
@@ -613,33 +613,33 @@ public class BoardView1
     
     
     
-	/**
-	 * Returns the image type index for the specified entity
-	 */
-	public int getEntityImageIndex(Entity en) {
-		if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_LIGHT) {
-			return PIC_MECH_LIGHT;
-		} else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_MEDIUM) {
-			return PIC_MECH_MEDIUM;
-		} else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_HEAVY) {
-			return PIC_MECH_HEAVY;
-		} else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_ASSAULT) {
-			return PIC_MECH_ASSAULT;
+    /**
+     * Returns the image type index for the specified entity
+     */
+    public int getEntityImageIndex(Entity en) {
+        if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_LIGHT) {
+            return PIC_MECH_LIGHT;
+        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_MEDIUM) {
+            return PIC_MECH_MEDIUM;
+        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_HEAVY) {
+            return PIC_MECH_HEAVY;
+        } else if (en instanceof Mech && en.getWeight() <= Mech.WEIGHT_ASSAULT) {
+            return PIC_MECH_ASSAULT;
         } else {
-    		return -1;
+            return -1;
         }
-	}
-	
-	/**
-	 * Returns the image from the cache
-	 */
-	public Image getEntityImage(Entity en) {
-		final int type = getEntityImageIndex(en);
-		final int facing = en.getSecondaryFacing();
-		final int cindex = en.getOwner().getColorIndex();
-		
-		// check cache in image
-		if (tintCache[type][facing][cindex] == null) {
+    }
+    
+    /**
+     * Returns the image from the cache
+     */
+    public Image getEntityImage(Entity en) {
+        final int type = getEntityImageIndex(en);
+        final int facing = en.getSecondaryFacing();
+        final int cindex = en.getOwner().getColorIndex();
+        
+        // check cache in image
+        if (tintCache[type][facing][cindex] == null) {
             tintCache[type][facing][cindex] = 
                     createImage(new FilteredImageSource(
                             imageCache[type][facing].getSource(),
@@ -651,37 +651,37 @@ public class BoardView1
             } catch (InterruptedException ex) {
                 System.err.println("boardview.getEntityImage: interrupted waiting for tinted image to load");
             }
-		}
-		
-		return tintCache[type][facing][cindex];
-	}
-	
+        }
+        
+        return tintCache[type][facing][cindex];
+    }
+    
     
 
     
     
-	public void boardHexMoused(BoardEvent b) {
-		;
-	}
-	public void boardHexCursor(BoardEvent b) {
+    public void boardHexMoused(BoardEvent b) {
+        ;
+    }
+    public void boardHexCursor(BoardEvent b) {
         moveCursor(cursorSprite, b.getCoords());
-	}
-	public void boardHexSelected(BoardEvent b) {
+    }
+    public void boardHexSelected(BoardEvent b) {
         moveCursor(selectedSprite, b.getCoords());
-	}
-	public void boardHexHighlighted(BoardEvent b) {
+    }
+    public void boardHexHighlighted(BoardEvent b) {
         moveCursor(highlightSprite, b.getCoords());
-	}
-	public void boardChangedHex(BoardEvent b) {
-		;
-	}
-	public void boardNewVis(BoardEvent b) {
-		;
-	}
-	public void boardNewBoard(BoardEvent b) {
-		boardSize = new Dimension(game.board.width * 63 + 21, 
+    }
+    public void boardChangedHex(BoardEvent b) {
+        ;
+    }
+    public void boardNewVis(BoardEvent b) {
+        ;
+    }
+    public void boardNewBoard(BoardEvent b) {
+        boardSize = new Dimension(game.board.width * 63 + 21, 
                                   game.board.height * 72 + 36);
-	}
+    }
     
     public void boardNewEntities(BoardEvent e) {
         redrawAllEntities();
@@ -692,242 +692,242 @@ public class BoardView1
     
     
     
-	/**
-	 * If the mouse is at the edges of the screen, this
-	 * scrolls the board image on the canvas.
-	 */
-	public void doScroll() {
+    /**
+     * If the mouse is at the edges of the screen, this
+     * scrolls the board image on the canvas.
+     */
+    public void doScroll() {
         if (!isScrolling) {
             return;
         }
         final Point oldScroll = new Point(scroll);
-		final int sf = 3; // scroll factor
-		// adjust x scroll
-		// scroll when the mouse is at the edges
-		if (mousePos.x < 100) {
-			scroll.x -= (100 - mousePos.x) / sf;
-		} else if (mousePos.x > (backSize.width - 100)) {
-			scroll.x -= ((backSize.width - 100) - mousePos.x) / sf;
-		}
-		// scroll when the mouse is at the edges
-		if (mousePos.y < 100) {
-			scroll.y -= (100 - mousePos.y) / sf;
-		} else if (mousePos.y > (backSize.height - 100)) {
-			scroll.y -= ((backSize.height - 100) - mousePos.y) / sf;
-		}
-		checkScrollBounds();
-        if (!oldScroll.equals(scroll)) {
-		    repaint();
+        final int sf = 3; // scroll factor
+        // adjust x scroll
+        // scroll when the mouse is at the edges
+        if (mousePos.x < 100) {
+            scroll.x -= (100 - mousePos.x) / sf;
+        } else if (mousePos.x > (backSize.width - 100)) {
+            scroll.x -= ((backSize.width - 100) - mousePos.x) / sf;
         }
-	}
-	
-	/**
-	 * Makes sure that the scroll dimensions stay in bounds
-	 */
-	public void checkScrollBounds() {
-		if (scroll.x < 0) {
-			scroll.x = 0;
-		} else if (scroll.x > (boardSize.width - backSize.width)) {
-			scroll.x = (boardSize.width - backSize.width);
-		}
+        // scroll when the mouse is at the edges
+        if (mousePos.y < 100) {
+            scroll.y -= (100 - mousePos.y) / sf;
+        } else if (mousePos.y > (backSize.height - 100)) {
+            scroll.y -= ((backSize.height - 100) - mousePos.y) / sf;
+        }
+        checkScrollBounds();
+        if (!oldScroll.equals(scroll)) {
+            repaint();
+        }
+    }
+    
+    /**
+     * Makes sure that the scroll dimensions stay in bounds
+     */
+    public void checkScrollBounds() {
+        if (scroll.x < 0) {
+            scroll.x = 0;
+        } else if (scroll.x > (boardSize.width - backSize.width)) {
+            scroll.x = (boardSize.width - backSize.width);
+        }
 
-		if (scroll.y < 0) {
-			scroll.y = 0;
-		} else if (scroll.y > (boardSize.height - backSize.height)) {
-			scroll.y = (boardSize.height - backSize.height);
-		}
-	}
+        if (scroll.y < 0) {
+            scroll.y = 0;
+        } else if (scroll.y > (boardSize.height - backSize.height)) {
+            scroll.y = (boardSize.height - backSize.height);
+        }
+    }
     
     
-	/**
-	 * Initializes the various overlay polygons with their
-	 * vertices.
-	 */
-	public void initPolys() {
-		// hex polygon
-		hexPoly = new Polygon();
-		hexPoly.addPoint(21, 0);
-		hexPoly.addPoint(62, 0);
-		hexPoly.addPoint(83, 35);
-		hexPoly.addPoint(83, 36);
-		hexPoly.addPoint(62, 71);
-		hexPoly.addPoint(21, 71);
-		hexPoly.addPoint(0, 36);
-		hexPoly.addPoint(0, 35);
-		
-		// facing polygons
-		facingPolys = new Polygon[6];
-		facingPolys[0] = new Polygon();
-		facingPolys[0].addPoint(41, 3);
-		facingPolys[0].addPoint(38, 6);
-		facingPolys[0].addPoint(45, 6);
-		facingPolys[0].addPoint(42, 3);
-		facingPolys[1] = new Polygon();
-		facingPolys[1].addPoint(69, 17);
-		facingPolys[1].addPoint(64, 17);
-		facingPolys[1].addPoint(68, 23);
-		facingPolys[1].addPoint(70, 19);
-		facingPolys[2] = new Polygon();
-		facingPolys[2].addPoint(69, 53);
-		facingPolys[2].addPoint(68, 49);
-		facingPolys[2].addPoint(64, 55);
-		facingPolys[2].addPoint(68, 54);
-		facingPolys[3] = new Polygon();
-		facingPolys[3].addPoint(41, 68);
-		facingPolys[3].addPoint(38, 65);
-		facingPolys[3].addPoint(45, 65);
-		facingPolys[3].addPoint(42, 68);
-		facingPolys[4] = new Polygon();
-		facingPolys[4].addPoint(15, 53);
-		facingPolys[4].addPoint(18, 54);
-		facingPolys[4].addPoint(15, 48);
-		facingPolys[4].addPoint(14, 52);
-		facingPolys[5] = new Polygon();
-		facingPolys[5].addPoint(13, 19);
-		facingPolys[5].addPoint(15, 23);
-		facingPolys[5].addPoint(19, 17);
-		facingPolys[5].addPoint(17, 17);
+    /**
+     * Initializes the various overlay polygons with their
+     * vertices.
+     */
+    public void initPolys() {
+        // hex polygon
+        hexPoly = new Polygon();
+        hexPoly.addPoint(21, 0);
+        hexPoly.addPoint(62, 0);
+        hexPoly.addPoint(83, 35);
+        hexPoly.addPoint(83, 36);
+        hexPoly.addPoint(62, 71);
+        hexPoly.addPoint(21, 71);
+        hexPoly.addPoint(0, 36);
+        hexPoly.addPoint(0, 35);
+        
+        // facing polygons
+        facingPolys = new Polygon[6];
+        facingPolys[0] = new Polygon();
+        facingPolys[0].addPoint(41, 3);
+        facingPolys[0].addPoint(38, 6);
+        facingPolys[0].addPoint(45, 6);
+        facingPolys[0].addPoint(42, 3);
+        facingPolys[1] = new Polygon();
+        facingPolys[1].addPoint(69, 17);
+        facingPolys[1].addPoint(64, 17);
+        facingPolys[1].addPoint(68, 23);
+        facingPolys[1].addPoint(70, 19);
+        facingPolys[2] = new Polygon();
+        facingPolys[2].addPoint(69, 53);
+        facingPolys[2].addPoint(68, 49);
+        facingPolys[2].addPoint(64, 55);
+        facingPolys[2].addPoint(68, 54);
+        facingPolys[3] = new Polygon();
+        facingPolys[3].addPoint(41, 68);
+        facingPolys[3].addPoint(38, 65);
+        facingPolys[3].addPoint(45, 65);
+        facingPolys[3].addPoint(42, 68);
+        facingPolys[4] = new Polygon();
+        facingPolys[4].addPoint(15, 53);
+        facingPolys[4].addPoint(18, 54);
+        facingPolys[4].addPoint(15, 48);
+        facingPolys[4].addPoint(14, 52);
+        facingPolys[5] = new Polygon();
+        facingPolys[5].addPoint(13, 19);
+        facingPolys[5].addPoint(15, 23);
+        facingPolys[5].addPoint(19, 17);
+        facingPolys[5].addPoint(17, 17);
 
-		// movement polygons
-		movementPolys = new Polygon[6];
-		movementPolys[0] = new Polygon();
-		movementPolys[0].addPoint(41, 65);
-		movementPolys[0].addPoint(38, 68);
-		movementPolys[0].addPoint(45, 68);
-		movementPolys[0].addPoint(42, 65);
-		movementPolys[1] = new Polygon();
-		movementPolys[1].addPoint(17, 48);
-		movementPolys[1].addPoint(12, 48);
-		movementPolys[1].addPoint(16, 54);
-		movementPolys[1].addPoint(17, 49);
-		movementPolys[2] = new Polygon();
-		movementPolys[2].addPoint(18, 19);
-		movementPolys[2].addPoint(17, 15);
-		movementPolys[2].addPoint(13, 21);
-		movementPolys[2].addPoint(17, 20);
-		movementPolys[3] = new Polygon();
-		movementPolys[3].addPoint(41, 6);
-		movementPolys[3].addPoint(38, 3);
-		movementPolys[3].addPoint(45, 3);
-		movementPolys[3].addPoint(42, 6);
-		movementPolys[4] = new Polygon();
-		movementPolys[4].addPoint(67, 15);
-		movementPolys[4].addPoint(66, 19);
-		movementPolys[4].addPoint(67, 20);
-		movementPolys[4].addPoint(71, 20);
-		movementPolys[5] = new Polygon();
-		movementPolys[5].addPoint(69, 55);
-		movementPolys[5].addPoint(66, 50);
-		movementPolys[5].addPoint(67, 49);
-		movementPolys[5].addPoint(72, 48);
-	}
+        // movement polygons
+        movementPolys = new Polygon[6];
+        movementPolys[0] = new Polygon();
+        movementPolys[0].addPoint(41, 65);
+        movementPolys[0].addPoint(38, 68);
+        movementPolys[0].addPoint(45, 68);
+        movementPolys[0].addPoint(42, 65);
+        movementPolys[1] = new Polygon();
+        movementPolys[1].addPoint(17, 48);
+        movementPolys[1].addPoint(12, 48);
+        movementPolys[1].addPoint(16, 54);
+        movementPolys[1].addPoint(17, 49);
+        movementPolys[2] = new Polygon();
+        movementPolys[2].addPoint(18, 19);
+        movementPolys[2].addPoint(17, 15);
+        movementPolys[2].addPoint(13, 21);
+        movementPolys[2].addPoint(17, 20);
+        movementPolys[3] = new Polygon();
+        movementPolys[3].addPoint(41, 6);
+        movementPolys[3].addPoint(38, 3);
+        movementPolys[3].addPoint(45, 3);
+        movementPolys[3].addPoint(42, 6);
+        movementPolys[4] = new Polygon();
+        movementPolys[4].addPoint(67, 15);
+        movementPolys[4].addPoint(66, 19);
+        movementPolys[4].addPoint(67, 20);
+        movementPolys[4].addPoint(71, 20);
+        movementPolys[5] = new Polygon();
+        movementPolys[5].addPoint(69, 55);
+        movementPolys[5].addPoint(66, 50);
+        movementPolys[5].addPoint(67, 49);
+        movementPolys[5].addPoint(72, 48);
+    }
     
     
-	//
-	// Runnable
-	//
-	public void run() {
-		final Thread currentThread = Thread.currentThread();
-		while (scroller == currentThread) {
-			try {
-				Thread.sleep(20);
-			} catch(InterruptedException ex) {
-				// duh?
-			}
+    //
+    // Runnable
+    //
+    public void run() {
+        final Thread currentThread = Thread.currentThread();
+        while (scroller == currentThread) {
+            try {
+                Thread.sleep(20);
+            } catch(InterruptedException ex) {
+                // duh?
+            }
             if (!isShowing()) {
                 continue;
             }
-			if (backSize != null) {
-				doScroll();
+            if (backSize != null) {
+                doScroll();
                 checkTooltip();
-			} else {
-				repaint(100);
-			}
-		}
-	}
+            } else {
+                repaint(100);
+            }
+        }
+    }
     
-	//
-	// KeyListener
-	//
-	public void keyPressed(KeyEvent ke) {
-		switch(ke.getKeyCode()) {
-		case KeyEvent.VK_UP :
-			scroll.y -= 36;
-			break;
-		case KeyEvent.VK_DOWN :
-			scroll.y += 36;
-			break;
-		case KeyEvent.VK_LEFT :
-			scroll.x -= 36;
-			break;
-		case KeyEvent.VK_RIGHT :
-			scroll.x += 36;
-			break;
-		}
+    //
+    // KeyListener
+    //
+    public void keyPressed(KeyEvent ke) {
+        switch(ke.getKeyCode()) {
+        case KeyEvent.VK_UP :
+            scroll.y -= 36;
+            break;
+        case KeyEvent.VK_DOWN :
+            scroll.y += 36;
+            break;
+        case KeyEvent.VK_LEFT :
+            scroll.x -= 36;
+            break;
+        case KeyEvent.VK_RIGHT :
+            scroll.x += 36;
+            break;
+        }
         if (isTipShowing()) {
             hideTooltip();
         }
-		lastIdle = System.currentTimeMillis();
+        lastIdle = System.currentTimeMillis();
         checkScrollBounds();
-		repaint();
+        repaint();
     }
-	public void keyReleased(KeyEvent ke) {
-		;
-	}
-	public void keyTyped(KeyEvent ke) {
-		;
-	}
+    public void keyReleased(KeyEvent ke) {
+        ;
+    }
+    public void keyTyped(KeyEvent ke) {
+        ;
+    }
 
     //
-	// MouseListener
-	//
-	public void mousePressed(MouseEvent me) {
+    // MouseListener
+    //
+    public void mousePressed(MouseEvent me) {
         isScrolling = true;
         isTipPossible = false;
         if (isTipShowing()) {
             hideTooltip();
         }
-		game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
-	}
-	public void mouseReleased(MouseEvent me) {
+        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
+    }
+    public void mouseReleased(MouseEvent me) {
         isScrolling = false;
         isTipPossible = true;
-		if (me.getClickCount() == 1) {
-			game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers()); 
-		} else {
-			game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers()); 
-		}
-	}
-	public void mouseEntered(MouseEvent me) {
-		;
-	}
-	public void mouseExited(MouseEvent me) {
+        if (me.getClickCount() == 1) {
+            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_CLICK, me.getModifiers()); 
+        } else {
+            game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DOUBLECLICK, me.getModifiers()); 
+        }
+    }
+    public void mouseEntered(MouseEvent me) {
+        ;
+    }
+    public void mouseExited(MouseEvent me) {
         isTipPossible = false;
-	}
-	public void mouseClicked(MouseEvent me) {
-		;
-	}
-	
-	//
-	// MouseMotionListener
-	//
-	public void mouseDragged(MouseEvent me) {
-		mousePos = me.getPoint();
+    }
+    public void mouseClicked(MouseEvent me) {
+        ;
+    }
+    
+    //
+    // MouseMotionListener
+    //
+    public void mouseDragged(MouseEvent me) {
+        mousePos = me.getPoint();
         isTipPossible = false;
         isScrolling = true;
-		if (view != null) {
-			doScroll();
-		}
-		game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
-	}
-	public void mouseMoved(MouseEvent me) {
-		mousePos = me.getPoint();
+        if (view != null) {
+            doScroll();
+        }
+        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 
+    }
+    public void mouseMoved(MouseEvent me) {
+        mousePos = me.getPoint();
         if (isTipShowing()) {
             hideTooltip();
         }
-		lastIdle = System.currentTimeMillis();
+        lastIdle = System.currentTimeMillis();
         isTipPossible = true;
-	}
+    }
     
     
     
@@ -946,8 +946,8 @@ public class BoardView1
             
             // setup
             setFont(new Font("SansSerif", Font.PLAIN, 12));
-		    setBackground(SystemColor.info);
-		    setForeground(SystemColor.infoText);
+            setBackground(SystemColor.info);
+            setForeground(SystemColor.infoText);
             
             // determine size
             final FontMetrics fm = getFontMetrics(getFont());
@@ -957,13 +957,13 @@ public class BoardView1
                     width = fm.stringWidth(tipStrings[i]);
                 }
             }
-		    size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
+            size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
             setSize(size);
         }
         
         public void paint(Graphics g) {
             final FontMetrics fm = getFontMetrics(getFont());
-		    g.setColor(getBackground());
+            g.setColor(getBackground());
             g.fillRect(0, 0, size.width, size.height);
             g.setColor(getForeground());
             g.drawRect(0, 0, size.width - 1, size.height - 1);
@@ -1043,8 +1043,8 @@ public class BoardView1
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
             // draw attack poly
-		    graph.setColor(color);
-		    graph.drawPolygon(hexPoly);
+            graph.setColor(color);
+            graph.drawPolygon(hexPoly);
             
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
@@ -1070,9 +1070,9 @@ public class BoardView1
         public EntitySprite(Entity entity) {
             this.entity = entity;
 
-		    String model = entity.getModel();
-		    Font font = new Font("SansSerif", Font.PLAIN, 10);
-		    Rectangle modelRect = new Rectangle(47, 55,  
+            String model = entity.getModel();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,  
                                  getFontMetrics(font).stringWidth(model) + 1, 
                                  getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
@@ -1089,9 +1089,9 @@ public class BoardView1
          */
         public void draw() {
             // figure out size
-		    String model = entity.getModel();
-		    Font font = new Font("SansSerif", Font.PLAIN, 10);
-		    Rectangle modelRect = new Rectangle(47, 55,  
+            String model = entity.getModel();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,  
                                  getFontMetrics(font).stringWidth(model) + 1, 
                                  getFontMetrics(font).getAscent());
             Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
@@ -1114,54 +1114,54 @@ public class BoardView1
             // draw box with model
             Color col;
             Color bcol;
-		    if (entity.isImmobile()) {
-		    	col = Color.black;
-		    	bcol = Color.lightGray;
-		    } else if (!entity.ready) {
-		    	col = Color.darkGray;
-		    	bcol = Color.black;
+            if (entity.isImmobile()) {
+                col = Color.black;
+                bcol = Color.lightGray;
+            } else if (!entity.ready) {
+                col = Color.darkGray;
+                bcol = Color.black;
             } else {
-		    	col = Color.lightGray;
-		    	bcol = Color.darkGray;
-		    }
+                col = Color.lightGray;
+                bcol = Color.darkGray;
+            }
             graph.setFont(font);
-		    graph.setColor(bcol);
-		    graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            graph.setColor(bcol);
+            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
             modelRect.translate(-1, -1);
-		    graph.setColor(col);
-		    graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-		    graph.setColor(entity.ready ? Color.black : Color.lightGray);
-		    graph.drawString(model, modelRect.x + 1, modelRect.y + modelRect.height - 1);
+            graph.setColor(col);
+            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            graph.setColor(entity.ready ? Color.black : Color.lightGray);
+            graph.drawString(model, modelRect.x + 1, modelRect.y + modelRect.height - 1);
             
-		    // draw facing
-		    graph.setColor(Color.white);
-		    if (entity.getFacing() != -1) {
+            // draw facing
+            graph.setColor(Color.white);
+            if (entity.getFacing() != -1) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
-		    }
+            }
             
             // draw condition strings
-		    if (entity.isImmobile() && !entity.isProne()) {
-		    	// draw "IMMOBILE"
-		    	graph.setColor(Color.darkGray);
-		    	graph.drawString("IMMOBILE", 18, 39);
-		    	graph.setColor(Color.red);
-		    	graph.drawString("IMMOBILE", 17, 38);
-		    } else if (!entity.isImmobile() && entity.isProne()) {
-		    	// draw "PRONE"
-		    	graph.setColor(Color.darkGray);
-		    	graph.drawString("PRONE", 26, 39);
-		    	graph.setColor(Color.yellow);
-		    	graph.drawString("PRONE", 25, 38);
-		    } else if (entity.isImmobile() && entity.isProne()) {
-		    	// draw "IMMOBILE" and "PRONE"
-		    	graph.setColor(Color.darkGray);
-		    	graph.drawString("IMMOBILE", 18, 35);
-		    	graph.drawString("PRONE", 26, 48);
-		    	graph.setColor(Color.red);
-		    	graph.drawString("IMMOBILE", 17, 34);
-		    	graph.setColor(Color.yellow);
-		    	graph.drawString("PRONE", 25, 47);
-		    }	
+            if (entity.isImmobile() && !entity.isProne()) {
+                // draw "IMMOBILE"
+                graph.setColor(Color.darkGray);
+                graph.drawString("IMMOBILE", 18, 39);
+                graph.setColor(Color.red);
+                graph.drawString("IMMOBILE", 17, 38);
+            } else if (!entity.isImmobile() && entity.isProne()) {
+                // draw "PRONE"
+                graph.setColor(Color.darkGray);
+                graph.drawString("PRONE", 26, 39);
+                graph.setColor(Color.yellow);
+                graph.drawString("PRONE", 25, 38);
+            } else if (entity.isImmobile() && entity.isProne()) {
+                // draw "IMMOBILE" and "PRONE"
+                graph.setColor(Color.darkGray);
+                graph.drawString("IMMOBILE", 18, 35);
+                graph.drawString("PRONE", 26, 48);
+                graph.setColor(Color.red);
+                graph.drawString("IMMOBILE", 17, 34);
+                graph.setColor(Color.yellow);
+                graph.drawString("PRONE", 25, 47);
+            }    
             
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
@@ -1222,7 +1222,7 @@ public class BoardView1
             for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
                 final MovementData.Step step = (MovementData.Step)i.nextElement();
                 // setup some variables
-		    	final Point stepPos = getHexLocation(step.getPosition());
+                final Point stepPos = getHexLocation(step.getPosition());
                 stepPos.translate(-bounds.x, -bounds.y);
                 final Polygon facingPoly = facingPolys[step.getFacing()];
                 final Polygon movePoly = movementPolys[step.getFacing()];
@@ -1248,37 +1248,37 @@ public class BoardView1
                 switch (step.getType()) {
                 case MovementData.STEP_FORWARDS :
                 case MovementData.STEP_BACKWARDS :
-		    		// draw arrows showing them entering the next
+                    // draw arrows showing them entering the next
                     myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
                                          movePoly.npoints);
-		    		graph.setColor(Color.darkGray);
+                    graph.setColor(Color.darkGray);
                     myPoly.translate(stepPos.x + 1, stepPos.y + 1);
                     graph.drawPolygon(myPoly);
-		    		graph.setColor(col);
+                    graph.setColor(col);
                     myPoly.translate(-1, -1);
                     graph.drawPolygon(myPoly);
-		    		// draw movement cost
+                    // draw movement cost
                     String costString = new Integer(step.getMpUsed()).toString()
                                         + (step.isDanger() ? "*" : "");
                     if (step.isPastDanger()) {
-		    		    costString = "(" + costString + ")";
+                        costString = "(" + costString + ")";
                     }
-		    		graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
                     int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
-		    		graph.setColor(Color.darkGray);
-		    		graph.drawString(costString, costX, stepPos.y + 39);
-		    		graph.setColor(col);
-		    		graph.drawString(costString, costX - 1, stepPos.y + 38);
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(costString, costX, stepPos.y + 39);
+                    graph.setColor(col);
+                    graph.drawString(costString, costX - 1, stepPos.y + 38);
                     break;
                 case MovementData.STEP_TURN_LEFT:
                 case MovementData.STEP_TURN_RIGHT:
-		    		// draw arrows showing the facing
+                    // draw arrows showing the facing
                     myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, 
                                          facingPoly.npoints);
-		    		graph.setColor(Color.darkGray);
+                    graph.setColor(Color.darkGray);
                     myPoly.translate(stepPos.x + 1, stepPos.y + 1);
                     graph.drawPolygon(myPoly);
-		    		graph.setColor(col);
+                    graph.setColor(col);
                     myPoly.translate(-1, -1);
                     graph.drawPolygon(myPoly);
                     break;
@@ -1311,17 +1311,17 @@ public class BoardView1
             final Entity ae = game.getEntity(attack.getEntityId());
             final Entity te = game.getEntity(attack.getTargetId());
             final Point a = getHexLocation(ae.getPosition());
-		    final Point t = getHexLocation(te.getPosition());
-		
-		    final double an = (ae.getPosition().radian(te.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
-		    final double lw = 3; // line width
-		
+            final Point t = getHexLocation(te.getPosition());
+        
+            final double an = (ae.getPosition().radian(te.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            final double lw = 3; // line width
+        
             // make a polygon
-		    attackPoly = new Polygon();
-		    attackPoly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
-		    attackPoly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
-		    attackPoly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
-		    attackPoly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
+            attackPoly = new Polygon();
+            attackPoly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
+            attackPoly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
+            attackPoly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
+            attackPoly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
             
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
@@ -1350,10 +1350,10 @@ public class BoardView1
             graph.setColor(new Color(TRANSPARENT));
             graph.fillRect(0, 0, bounds.width, bounds.height);
             // draw attack poly
-		    graph.setColor(game.getEntity(attack.getEntityId()).getOwner().getColor());
-		    graph.fillPolygon(attackPoly);
-		    graph.setColor(Color.white);
-		    graph.drawPolygon(attackPoly);
+            graph.setColor(game.getEntity(attack.getEntityId()).getOwner().getColor());
+            graph.fillPolygon(attackPoly);
+            graph.setColor(Color.white);
+            graph.drawPolygon(attackPoly);
             
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),

@@ -25,8 +25,8 @@ public class Hex
   implements Serializable
 {
     private Terrain      terrain;
-    private int					elevation;
-	
+    private int                    elevation;
+    
     /**
      * Constructs a hex with all parameters
      */
@@ -34,16 +34,16 @@ public class Hex
         this.terrain = terrain;
         this.elevation = elevation;
     }
-	
-	/**
-	 * Constructs a new hex, using the parameters of another
-	 * hex.
-	 * 
-	 * @param hex			the hex to use.
-	 */
-	public Hex(Hex hex) {
-		this(hex.terrain, hex.elevation);
-	}
+    
+    /**
+     * Constructs a new hex, using the parameters of another
+     * hex.
+     * 
+     * @param hex            the hex to use.
+     */
+    public Hex(Hex hex) {
+        this(hex.terrain, hex.elevation);
+    }
   
     public int getTerrainType() {
         return terrain.type;
@@ -65,37 +65,37 @@ public class Hex
         this.elevation = elevation;
     }
 
-	/**
-	 * Checks whether the images has been initialized; if
-	 * so, returns it; if not, uses the component's toolkit
-	 * to load the image.
-	 * 
-	 * @return the image for the hex.
-	 * 
-	 * @param comp			the component where the picture
-	 *						will be displayed.
-	 */
-	public Image getImage(Component comp) {
+    /**
+     * Checks whether the images has been initialized; if
+     * so, returns it; if not, uses the component's toolkit
+     * to load the image.
+     * 
+     * @return the image for the hex.
+     * 
+     * @param comp            the component where the picture
+     *                        will be displayed.
+     */
+    public Image getImage(Component comp) {
         return terrain.getImage(comp);
-	}
-	
-	/**
-	 * Check through the TERRAIN_NAMES for a match to the
-	 * specified string.
-	 * 
-	 * @return the terrain variable if found; -1 if not;
-	 * 
-	 * @param s				the string.
-	 */
-	public static int parse(String s) {
-		return Terrain.parse(s);
-	}
-	
-	/**
-	 * Hexes are equal if their terrains equal each other and if the 
-	 * elevations are equal
-	 */
-	public boolean equals(Object object) {
+    }
+    
+    /**
+     * Check through the TERRAIN_NAMES for a match to the
+     * specified string.
+     * 
+     * @return the terrain variable if found; -1 if not;
+     * 
+     * @param s                the string.
+     */
+    public static int parse(String s) {
+        return Terrain.parse(s);
+    }
+    
+    /**
+     * Hexes are equal if their terrains equal each other and if the 
+     * elevations are equal
+     */
+    public boolean equals(Object object) {
         if (this == object) {
             return true;
         } else if (object == null || getClass() != object.getClass()) {
@@ -104,6 +104,6 @@ public class Hex
         Hex other = (Hex)object;
         return other.getTerrain().equals(this.terrain) 
                && other.getElevation() == elevation;
-	}
+    }
 }
 

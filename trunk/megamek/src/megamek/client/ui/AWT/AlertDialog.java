@@ -40,14 +40,14 @@ public class AlertDialog
             
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;	c.weighty = 0.0;
+        c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
             
-        c.weightx = 1.0;	c.weighty = 1.0;
+        c.weightx = 1.0;    c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-		c.ipadx = 20;	c.ipady = 5;
+        c.ipadx = 20;    c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
         
@@ -56,7 +56,7 @@ public class AlertDialog
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     }
     
-	public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         this.setVisible(false);
     }
 }

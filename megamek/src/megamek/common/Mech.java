@@ -1121,10 +1121,21 @@ public abstract class Mech
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
+            double dBV = wtype.getBV(this);
+            
+            // artemis bumps up the value
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && 
+                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.3;
+                }
+            } 
+            
             if (mounted.isRearMounted()) {
-                weaponsBVRear += wtype.getBV(this);
+                weaponsBVRear += dBV;
             } else {
-                weaponsBVFront += wtype.getBV(this);
+                weaponsBVFront += dBV;
             }
         }
         if (weaponsBVFront > weaponsBVRear) {

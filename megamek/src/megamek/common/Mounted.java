@@ -43,6 +43,7 @@ public class Mounted implements Serializable{
     private boolean rearMounted;
     
     private Mounted linked = null; // for ammo, or artemis
+    private Mounted linkedBy = null; // reverse link for convenience
     
     private Entity entity; // what I'm mounted on
     
@@ -257,9 +258,24 @@ public class Mounted implements Serializable{
     public Mounted getLinked() {
         return linked;
     }
+    
+    public Mounted getLinkedBy() {
+        return linkedBy;
+    }
 
     public void setLinked(Mounted linked) {
         this.linked = linked;
+        linked.setLinkedBy(this);
+    }
+    
+    // should only be called by setLinked()
+    // in the case of a many-to-one relationship (like ammo) this is meaningless
+    protected void setLinkedBy(Mounted linker) {
+        if (linker.getLinked() != this) {
+            // liar
+            return;
+        }
+        linkedBy = linker;
     }
     
     public int getFoundCrits() {

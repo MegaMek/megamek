@@ -40,8 +40,9 @@ public class MiscType extends EquipmentType {
     public static final int     F_C3M               = 0x0200;
     public static final int     F_C3S               = 0x0400;
     public static final int     F_C3I               = 0x0800;
+    public static final int     F_ARTEMIS           = 0x1000;
 
-    public static final int     F_ECM               = 0x1000;
+    public static final int     F_ECM               = 0x2000;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -136,6 +137,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createC3S());
         EquipmentType.addType(createC3M());
         EquipmentType.addType(createC3I());
+        EquipmentType.addType(createISArtemis());
+        EquipmentType.addType(createCLArtemis());
     }
     
     public static MiscType createHeatSink() {
@@ -415,7 +418,31 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
+    public static MiscType createISArtemis() {
+        MiscType misc = new MiscType();
+        misc.name = "Artemis IV FCS";
+        misc.mtfName = "ISArtemisIV";
+        misc.mepName = misc.mtfName; // ?
+        misc.internalName = misc.mtfName;
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.flags |= F_ARTEMIS;
+        return misc;
+    }
+    
+    public static MiscType createCLArtemis() {
+        MiscType misc = new MiscType();
+        misc.name = "Artemis IV FCS";
+        misc.mtfName = "CLArtemisIV";
+        misc.mepName = misc.mtfName; // ?
+        misc.internalName = misc.mtfName;
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.flags |= F_ARTEMIS;
+        return misc;
+    }
+        
     public static MiscType createGECM() {
         MiscType misc = new MiscType();
         

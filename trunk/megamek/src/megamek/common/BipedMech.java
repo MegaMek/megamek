@@ -65,14 +65,19 @@ public class BipedMech extends Mech {
      * Returns this entity's walking/cruising mp, factored
      * for heat, leg damage and gravity
      */
+    
     public int getWalkMP() {
+        return getWalkMP(true);
+    }
+    
+    public int getWalkMP(boolean gravity) {
         int wmp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
         
         //gravity
-        wmp = applyGravityEffectsOnMP(wmp);
+        if (gravity) wmp = applyGravityEffectsOnMP(wmp);
         
         for ( int i = 0; i < locations(); i++ ) {
             if ( locationIsLeg(i) ) {

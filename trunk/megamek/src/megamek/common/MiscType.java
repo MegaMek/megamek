@@ -71,7 +71,9 @@ public class MiscType extends EquipmentType {
             return (int)Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() != TechConstants.T_CLAN_LEVEL_2) {
             return 3;
-        }
+		} else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+			return 2;
+		}
         // right, well I'll just guess then
         return 1;
     }

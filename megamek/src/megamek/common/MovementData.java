@@ -444,6 +444,7 @@ public class MovementData
     {
         private int type;
 	private int targetId;
+        private boolean onPavement;
 
         // these are all set using Compute.compile:
         private transient Coords position;
@@ -462,6 +463,8 @@ public class MovementData
          */
         public Step(int type) {
             this.type = type;
+            this.targetId = Entity.NONE;
+            this.onPavement = false;
         }
 
         /**
@@ -475,6 +478,7 @@ public class MovementData
         public Step( int type, Entity target ) {
             this.type = type;
             this.targetId = target.getId();
+            this.onPavement = false;
         }
 
         /**
@@ -485,6 +489,7 @@ public class MovementData
         public Step(Step other) {
             this.type = other.type;
             this.targetId = other.targetId;
+            this.onPavement = other.onPavement;
             this.position = new Coords(other.position);
             this.facing = other.facing;
             this.mpUsed = other.mpUsed;
@@ -525,9 +530,14 @@ public class MovementData
          *
          * @param       target - the <code>Entity</code> that is the target
          *              of this step. For example, the enemy being charged.
+         *              If there is no target, pass a <code>null</code>
          */
         public void setTarget( Entity target ) {
-            this.targetId = target.getId();
+            if ( target == null ) {
+                this.targetId = Entity.NONE;
+            } else {
+                this.targetId = target.getId();
+            }
         }
 
         /**
@@ -536,9 +546,38 @@ public class MovementData
          * @param       game - The <code>Game</code> object.
          * @return      The <code>Entity</code> that is the target of
          *              this step. For example, the enemy being charged.
+         *              This value may be <code>null</code>
          */
         public Entity getTarget( Game game ) {
+            if ( this.targetId == Entity.NONE ) {
+                return null;
+            }
             return game.getEntity( this.targetId );
+        }
+
+        /**
+         * Specify that the step is from one pavement hex to another.  This
+         * includes movement along roads and bridges.
+         *
+         * @param       pavement - this <code>boolean</code> value should be
+         *              <code>true</code> if this step is from one pavement
+         *              (or road or bridge) hex to another, <code>false</code>
+         *              otherwise.
+         */
+        public void setOnPavement( boolean pavement ) {
+            this.onPavement = pavement;
+        }
+
+        /**
+         * Determine if the step is from one pavement hex to another.  This
+         * includes movement along roads and bridges.
+         *
+         * @return      <code>true</code> if this step is from one pavement
+         *              (or road or bridge) hex to another, <code>false</code>
+         *              otherwise.
+         */
+        public boolean isOnPavement() {
+            return this.onPavement;
         }
 
         public Coords getPosition() {

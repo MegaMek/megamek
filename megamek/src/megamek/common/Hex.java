@@ -161,12 +161,12 @@ public class Hex
         final Terrain terr = getTerrain( terrType );
 
         // Do we have the given terrain that has exits?
-        if ( terr != null && terr.hasExitsSpecified() ) {
+        if ( direction >= 0 && direction <= 5 && terr != null ) {
 
             // See if we have an exit in the given direction.
             final int exits = terr.getExits();
-            if ( 0 >= direction && 5 <= direction &&
-                 (exits ^ (int) Math.pow(2, direction)) > 0 ) {
+            final int exitInDir = (int) Math.pow(2, direction);
+            if ( (exits & exitInDir) > 0 ) {
                 result = true;
             }
         }

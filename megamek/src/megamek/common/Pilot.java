@@ -27,7 +27,7 @@ public class Pilot
     private int         piloting;
     private int         hits; // hits taken
       
-    private boolean     unconcious;
+    private boolean     unconscious;
     private boolean     doomed;  // scheduled to die at end of phase
     private boolean     dead;
     
@@ -49,7 +49,7 @@ public class Pilot
         this.gunnery = gunnery;
         this.piloting = piloting;
         hits = 0;
-        unconcious = false;
+        unconscious = false;
         dead = false;
         rollsNeeded = 0;
         koThisRound = false;
@@ -77,12 +77,12 @@ public class Pilot
         this.hits = hits;
     }
   
-    public boolean isUnconcious() {
-        return unconcious;
+    public boolean isUnconscious() {
+        return unconscious;
     }
     
-    public void setUnconcious(boolean unconcious) {
-        this.unconcious = unconcious;
+    public void setUnconscious(boolean unconscious) {
+        this.unconscious = unconscious;
     }
     
     public boolean isDead() {
@@ -110,7 +110,7 @@ public class Pilot
     }
     
     public boolean isActive() {
-        return !unconcious && !dead;
+        return !unconscious && !dead;
     }
     
     public int getRollsNeeded() {
@@ -231,14 +231,14 @@ public class Pilot
         String s = new String(name);
         if (hits > 0) {
             s += " (" + hits + " hit(s)";
-            if (isUnconcious()) {
+            if (isUnconscious()) {
                 s += " [ko]";
             } else if (isDead()) {
                 s += " [dead]";
             }
             s += ")";
         }
-        else if (isUnconcious()) {
+        else if (isUnconscious()) {
             s += " [ko]";
         } else if (isDead()) {
             s += " [dead]";

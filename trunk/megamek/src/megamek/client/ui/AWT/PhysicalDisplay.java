@@ -373,7 +373,6 @@ public class PhysicalDisplay
           } else {
               attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
           }
-
           ready();
   };
     }

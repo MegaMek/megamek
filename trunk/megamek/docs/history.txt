@@ -7,6 +7,10 @@ v0.29.50 (CVS)
 + Bug 1033003: Mechs who's CT gets destroyed by artillery saturation fire
     should have their pilot killed
 + Bug 1028638: split weapon slot allocation bug in [Mtf|Tdb|Hmp]File.java
++ Bug 779673: Bug with breaches and physicals. This Bug occured because 
+    originally, physical attacks did not happen at the same time. Now they
+    do, and thus 2 opposing pushes actually cancel itself. Note that
+    Bug 1027253 still happens.
 
 v0.29.49 (2004-09-20 7:45am)
 + RFE 1022892, Patch 1023640: Maxtech Missile Hit Penalties, MaxTech revised page 23.

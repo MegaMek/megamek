@@ -4313,7 +4313,6 @@ implements Runnable, ConnectionHandler {
                 }
                 doEntityFall(entity, dest, fallElevation, pilotRoll);
                 doEntityDisplacementMinefieldCheck(entity, src, dest);
-                doSetLocationsExposure(entity, destHex, destHex.hasPavement(), false);
                 return;
             }
         }
@@ -7681,6 +7680,7 @@ implements Runnable, ConnectionHandler {
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 doEntityFall(ae, daa.getTargetPos(), 2, 3, ae.getBasePilotingRoll());
+
             } else {
                 // same effect as successful DFA
                 doEntityDisplacement(ae, ae.getPosition(), daa.getTargetPos(), new PilotingRollData(ae.getId(), 4, "executed death from above"));
@@ -9850,6 +9850,7 @@ implements Runnable, ConnectionHandler {
      * Makes a mech fall.
      */
     private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, PilotingRollData roll) {
+        Hex fallHex = game.board.getHex(fallPos);
         // we don't need to deal damage yet, if the entity is doing DFA
         if (entity.isMakingDfa()) {
             phaseReport.append("But, since the 'mech is making a death from above attack, damage will be dealt during the physical phase.\n");
@@ -9880,7 +9881,7 @@ implements Runnable, ConnectionHandler {
                 table = ToHitData.SIDE_FRONT;
         }
 
-        int waterDepth = game.board.getHex(fallPos).levelOf(Terrain.WATER);
+        int waterDepth = fallHex.levelOf(Terrain.WATER);
         int damageHeight = height;
 
         // HACK: if the dest hex is water, assume that the fall height given is
@@ -9906,14 +9907,14 @@ implements Runnable, ConnectionHandler {
         final int swarmerId = entity.getSwarmAttackerId();
 
         //positioning must be prior to damage for proper handling of breaches
-	// Only Mechs can fall prone.
-	if ( entity instanceof Mech ) {
-	    entity.setProne(true);
-	}
+	    // Only Mechs can fall prone.
+	    if ( entity instanceof Mech ) {
+	        entity.setProne(true);
+	    }
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
-        if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
+        if (fallHex.levelOf(Terrain.WATER) > 0) {
             for (int loop=0; loop< entity.locations();loop++){
                 entity.setLocationStatus(loop, Entity.LOC_WET);
             }
@@ -9926,6 +9927,9 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(damageEntity(entity, hit, cluster));
             damage -= cluster;
         }
+        
+        //check for location exposure
+        doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
         // pilot damage?
         roll.removeAutos();
@@ -9957,7 +9961,6 @@ implements Runnable, ConnectionHandler {
             entity.setSwarmAttackerId( Entity.NONE );
             swarmer.setSwarmTargetId( Entity.NONE );
             // Did the infantry fall into water?
-            Hex fallHex = game.board.getHex( fallPos );
             if ( fallHex.levelOf(Terrain.WATER) > 0 ) {
                 // Swarming infantry die.
                 swarmer.setPosition( fallPos );

@@ -1519,7 +1519,7 @@ public boolean isPassworded() {
         + ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
-        phaseReport.append("Needs " + roll.getValue()
+        phaseReport.append("Needs " + roll.getValueAsString()
         + " [" + roll.getDesc() + "]"
         + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
@@ -1568,7 +1568,7 @@ public boolean isPassworded() {
                 + " (" + reason.getPlainDesc() + ")" + ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
-        phaseReport.append("Needs " + roll.getValue()
+        phaseReport.append("Needs " + roll.getValueAsString()
                 + " [" + roll.getDesc() + "]"
                 + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
@@ -2744,10 +2744,10 @@ public boolean isPassworded() {
                 doEntityFall(entity, roll);
             } else {
                 phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
-                phaseReport.append("The target is " + roll.getValue() + " [" + roll.getDesc() + "].\n");
+                phaseReport.append("The target is " + roll.getValueAsString() + " [" + roll.getDesc() + "].\n");
                 for (int j = 0; j < rolls; j++) {
                     final int diceRoll = Compute.d6(2);
-                    phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValue() + ", rolls " + diceRoll + " : ");
+                    phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValueAsString() + ", rolls " + diceRoll + " : ");
                     phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
                     if (diceRoll < roll.getValue()) {
                         doEntityFall(entity, roll);
@@ -3327,7 +3327,7 @@ public boolean isPassworded() {
         } else {
             int diceRoll = Compute.d6(2);
             phaseReport.append("\nPilot of " + entity.getDisplayName() 
-            + " \"" + entity.crew.getName() + "\" must roll " + roll.getValue() 
+            + " \"" + entity.crew.getName() + "\" must roll " + roll.getValueAsString() 
 //            + " [" + roll.getDesc() + "]";
             + " to avoid damage; rolls " + diceRoll + " : "); 
             if (diceRoll >= roll.getValue()) {

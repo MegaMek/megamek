@@ -25,7 +25,7 @@ import megamek.common.actions.*;
 public class FiringDisplay 
     extends StatusBarPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
-    KeyListener, ItemListener
+    KeyListener, ItemListener, BoardViewListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 2;
 
@@ -269,7 +269,9 @@ public class FiringDisplay
             refreshAll();
             cacheVisibleTargets();
 
-            client.bv.centerOnHex(ce().getPosition());
+	        if (!client.bv.isMovingUnits()) {
+	            client.bv.centerOnHex(ce().getPosition());
+	        }
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
@@ -290,9 +292,13 @@ public class FiringDisplay
         butDone.setEnabled(true);
         butMore.setEnabled(true);
         butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
-        client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
+
+        if (!client.bv.isMovingUnits()) {
+	        client.setDisplayVisible(true);
+	    }
+
         selectEntity(client.getFirstEntityNum());
     }
     
@@ -902,6 +908,14 @@ public class FiringDisplay
         }
     }
     
+    // board view listener 
+	public void finishedMovingUnits(BoardViewEvent b) {
+		if (client.isMyTurn()) {
+	        client.setDisplayVisible(true);
+			client.bv.centerOnHex(ce().getPosition());
+		}
+	}
+
   private class AimedShotHandler implements ActionListener, ItemListener {  
     private int aimingAt = Mech.LOC_NONE;
     private int aimingMode = AIM_MODE_NONE;

@@ -278,7 +278,12 @@ public class Server
     private void sendCurrentInfo(int connId) {
         transmitAllPlayerConnects(connId);
         send(createGameSettingsPacket());
+        if (doBlind()) {
+            send(connId, createFilteredEntitiesPacket(getPlayer(connId)));
+        }
+        else {
         send(connId, createEntitiesPacket());
+        }
         switch (game.phase) {
         case Game.PHASE_LOUNGE :
             send(connId, createMapSettingsPacket());
@@ -349,7 +354,8 @@ public class Server
         // in the lounge, just remove all entities for that player
         if (game.phase == Game.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
-            send(createEntitiesPacket());
+            //send(createEntitiesPacket());
+            entityAllUpdate();
         }
 
         // if a player has active entities, he becomes a ghost
@@ -726,7 +732,8 @@ public class Server
             setIneligible(phase);
             determineTurnOrder();
             resetActivePlayersReady();
-            send(createEntitiesPacket());
+            //send(createEntitiesPacket());
+            entityAllUpdate();
             phaseReport = new StringBuffer();
             break;
         case Game.PHASE_END :
@@ -1349,7 +1356,8 @@ public class Server
         entity.ready = false;
 
         // duhh.. send an outgoing packet to everybody
-        send(createEntityPacket(entity.getId()));
+        //send(createEntityPacket(entity.getId()));
+        entityUpdate(entity.getId());
     }
 
     /**
@@ -1626,7 +1634,8 @@ public class Server
             // send an outgoing packet to everybody
             send(createAttackPacket(ea));
         }
-        send(createEntityPacket(entity.getId()));
+        //send(createEntityPacket(entity.getId()));
+        entityUpdate(entity.getId());
     }
 
     /**
@@ -2980,6 +2989,105 @@ public class Server
         return boards;
     }
     
+    private boolean doBlind()
+    {
+        return (game.getOptions().booleanOption("double_blind") &&
+                game.phase >= Game.PHASE_INITIATIVE);
+    }
+    
+    /**
+     * In a double-blind game, update only visible entities.  Otherwise,
+     * update everyone
+     */
+    private void entityUpdate(int nEntityID)
+    {
+        if (doBlind()) {
+            Entity eTarget = game.getEntity(nEntityID);
+            Vector vPlayers = game.getPlayersVector();
+            Vector vCanSee = new Vector();
+            vCanSee.addElement(eTarget.getOwner());
+            Vector vEntities = game.getEntitiesVector();
+            for (int x = 0; x < vEntities.size(); x++) {
+                Entity e = (Entity)vEntities.elementAt(x);
+                if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
+                    continue;
+                }
+                if (Compute.canSee(game, e, eTarget)) {
+                    vCanSee.addElement(e.getOwner());
+                }
+            }
+            // send an entity update to everyone who can see
+            Packet pack = createEntityPacket(nEntityID);
+            for (int x = 0; x < vCanSee.size(); x++) {
+                Player p = (Player)vCanSee.elementAt(x);
+                send(p.getId(), pack);
+            }
+            // send an entity delete to everyone else
+            pack = createRemoveEntityPacket(nEntityID);
+            for (int x = 0; x < vPlayers.size(); x++) {
+                if (!vCanSee.contains(vPlayers.elementAt(x))) {
+                    Player p = (Player)vPlayers.elementAt(x);
+                    send(p.getId(), pack);
+                }
+            }
+        }
+        else {
+            // everyone can see
+            send(createEntityPacket(nEntityID));
+        }
+    }
+    
+    /**
+     * Send the complete list of entities to the players.
+     * If double_blind is in effect, enforce it by filtering the entities
+     */
+    private void entityAllUpdate()
+    {
+        if (doBlind()) {
+            Vector vPlayers = game.getPlayersVector();
+            for (int x = 0; x < vPlayers.size(); x++) {
+                Player p = (Player)vPlayers.elementAt(x);
+                send(p.getId(), createFilteredEntitiesPacket(p));
+            }
+        }
+        else {
+            send(createEntitiesPacket());
+        }
+    }
+            
+            
+    /**
+     * Filters an entity vector according to LOS
+     */
+    private Vector filterEntities(Player pViewer, Vector vEntities)
+    {
+        Vector vCanSee = new Vector();
+        Vector vAllEntities = game.getEntitiesVector();
+        Vector vMyEntities = new Vector();
+        for (int x = 0; x < vAllEntities.size(); x++) {
+            Entity e = (Entity)vAllEntities.elementAt(x);
+            if (e.getOwner() == pViewer) {
+                vMyEntities.addElement(e);
+            }
+        }
+        
+        for (int x = 0; x < vEntities.size(); x++) {
+            Entity e = (Entity)vEntities.elementAt(x);
+            if (vMyEntities.contains(e)) {
+                vCanSee.addElement(e);
+                continue;
+            }
+            for (int y = 0; y < vMyEntities.size(); y++) {
+                Entity e2 = (Entity)vMyEntities.elementAt(y);
+                if (Compute.canSee(game, e2, e)) {
+                    vCanSee.addElement(e);
+                    break;
+                }
+            }
+        }
+        return vCanSee;
+    }
+            
     /**
      * Sets an entity ready status to false
      */
@@ -3205,6 +3313,13 @@ public class Server
     }
 
     /**
+     * Creates a packet containing all entities visible to the player in a blind game
+     */
+    private Packet createFilteredEntitiesPacket(Player p) {
+        return new Packet(Packet.COMMAND_SENDING_ENTITIES, filterEntities(p, game.getEntitiesVector()));
+    }
+
+    /**
      * Creates a packet detailing the addition of an entity
      */
     private Packet createAddEntityPacket(int entityId) {
@@ -3325,7 +3440,8 @@ public class Server
             break;
         case Packet.COMMAND_ENTITY_READY :
             receiveEntityReady(packet, connId);
-            send(createEntityPacket(packet.getIntValue(0)));
+            //send(createEntityPacket(packet.getIntValue(0)));
+            entityUpdate(packet.getIntValue(0));
             break;
         case Packet.COMMAND_PLAYER_READY :
             receivePlayerReady(packet, connId);

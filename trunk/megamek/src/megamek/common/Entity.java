@@ -57,6 +57,7 @@ public abstract class Entity
     protected float             weight;
     protected String            model;
     protected String            name;
+	protected String			tech;
 
     protected transient Player  owner;
     protected int               ownerId;
@@ -163,6 +164,17 @@ public abstract class Entity
   
     protected void setName(String name) {
         this.name = name;
+    }
+	
+	/**
+     * Returns the unit tech for this entity.
+     */
+    public String getTech() {
+        return tech;
+    }
+  
+    protected void setTech(String tech) {
+        this.tech = tech;
     }
     
     public float getWeight() {

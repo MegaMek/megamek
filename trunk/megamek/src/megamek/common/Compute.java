@@ -2245,6 +2245,56 @@ public class Compute
     }
     
     /**
+     * LOS check from ae to te.
+     * Most of the code stolen from toHitWeapon()
+     */
+    public static boolean canSee(Game game, Entity ae, Entity te)
+    {
+    	Coords[] in = intervening(ae.getPosition(), te.getPosition());
+    	int ilw = 0;
+    	int ihw = 0;
+    	int attEl = ae.elevation() + ae.height();
+        int targEl = te.elevation() + te.height();
+        for (int i = 0; i < in.length; i++) {
+            // skip this hex if it is not on the board
+            if (!game.board.contains(in[i])) continue;
+
+            // don't count attacker or target hexes
+            if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
+                continue;
+            }
+            
+            final Hex h = game.board.getHex(in[i]);
+            final int hexEl = h.floor();
+            
+            // check for block by terrain
+            if ((hexEl > attEl && hexEl > targEl) 
+                    || (hexEl > attEl && ae.getPosition().distance(in[i]) <= 1)
+                    || (hexEl > targEl && te.getPosition().distance(in[i]) <= 1)) {
+                return false;
+            }
+            
+            // determine number of woods hexes in the way
+            if (h.levelOf(Terrain.WOODS) > 0) {
+                if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
+                        || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1) 
+                        || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
+                    ilw += (h.levelOf(Terrain.WOODS) == 1 ? 1 : 0);
+                    ihw += (h.levelOf(Terrain.WOODS) > 1 ? 1 : 0);
+                }
+            }
+        }
+            
+        // more than 1 heavy woods or more than two light woods block LOS
+        if (ilw + ihw * 2 >= 3) {
+            return false;
+        }
+        else {
+        	return true;
+        }
+    }
+    
+    /**
      * This returns the Coords of hexes that are crossed by a straight line 
      * from the middle of the hex at Coords a to the middle of the hex at 
      * Coords b.

@@ -92,6 +92,21 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createSRM2Ammo());
         EquipmentType.addType(createSRM4Ammo());
         EquipmentType.addType(createSRM6Ammo());
+        
+        // Start of Level2 Ammo
+        EquipmentType.addType(createLBX2Ammo());
+        EquipmentType.addType(createLBX5Ammo());
+        EquipmentType.addType(createLBX10Ammo());
+        EquipmentType.addType(createLBX20Ammo());
+        EquipmentType.addType(createGaussAmmo());
+        EquipmentType.addType(createLTGaussAmmo());
+        EquipmentType.addType(createStreakSRM2Ammo());
+        EquipmentType.addType(createStreakSRM4Ammo());
+        EquipmentType.addType(createStreakSRM6Ammo());
+        EquipmentType.addType(createMRM10Ammo());
+        EquipmentType.addType(createMRM20Ammo());
+        EquipmentType.addType(createMRM30Ammo());
+        EquipmentType.addType(createMRM40Ammo());
     }
     
     public static AmmoType createAC2Ammo() {
@@ -299,6 +314,224 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 15;
         ammo.bv = 7;
+        
+        return ammo;
+    }
+    
+    // Start of Level2 Ammo
+    
+    public static AmmoType createLBX2Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LBX AC/2 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "LBXAmmo AC/2";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_CLUSTER;
+        ammo.shots = 45;
+        ammo.bv = 6;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createLBX5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LBX AC/5 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "LBXAmmo AC/5";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_CLUSTER;
+        ammo.shots = 20;
+        ammo.bv = 12;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createLBX10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LBX AC/10 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "LBXAmmo AC/10";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_CLUSTER;
+        ammo.shots = 10;
+        ammo.bv = 19;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createLBX20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LBX AC/20 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "LBXAmmo AC/20";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC;
+        ammo.flags |= F_CLUSTER;
+        ammo.shots = 5;
+        ammo.bv = 33;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Gauss Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "GaussAmmo";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 15;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS;
+        ammo.shots = 8;
+        ammo.bv = 33;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createLTGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Light Gauss Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "LTGaussAmmo";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 8;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS;
+        ammo.shots = 16;
+        ammo.bv = 20;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createStreakSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Streak SRM 2 Ammo";
+        ammo.internalName = "StreakSRM2Ammo";
+        ammo.mepName = "StreakSRM2Ammo";
+        ammo.mtfName = ammo.mepName;
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 50;
+        ammo.bv = 5;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createStreakSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Streak SRM 4 Ammo";
+        ammo.internalName = "StreakSRM4Ammo";
+        ammo.mepName = "StreakSRM4Ammo";
+        ammo.mtfName = ammo.mepName;
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 25;
+        ammo.bv = 10;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createStreakSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Streak SRM 6 Ammo";
+        ammo.internalName = "StreakSRM6Ammo";
+        ammo.mepName = "StreakSRM6Ammo";
+        ammo.mtfName = ammo.mepName;
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 15;
+        ammo.bv = 15;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createMRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "MRM 10 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "Ammo MRM-10";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 24;
+        ammo.bv = 7;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createMRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "MRM 20 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "Ammo MRM-20";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 12;
+        ammo.bv = 14;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createMRM30Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "MRM 30 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "Ammo MRM-30";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 30;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 8;
+        ammo.bv = 21;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createMRM40Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "MRM 40 Ammo";
+        ammo.internalName = ammo.name;
+        ammo.mepName = "Ammo MRM-40";
+        ammo.mtfName = ammo.name;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 40;
+        ammo.ammoType = AmmoType.T_MRM;
+        ammo.shots = 6;
+        ammo.bv = 28;
         
         return ammo;
     }

@@ -149,7 +149,7 @@ public class Client extends Panel
         
         // load at init time because it's heavy
         mechSelectorDialog = new MechSelectorDialog(this, 
-        		new File("data" + File.separator + "blk"));
+        		new File(Settings.mechDirectory));
         mechSelectorDialog.loadMechs();
             
         changePhase(Game.PHASE_UNKNOWN);
@@ -614,8 +614,11 @@ public class Client extends Panel
      */
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
-        Coords oc = game.getEntity(eindex).getPosition();
         Entity entity = (Entity)c.getObject(1);
+        Coords oc = entity.getPosition();
+        if (game.getEntity(eindex) != null) {
+        	oc = game.getEntity(eindex).getPosition();
+        }
         // re-link player
         entity.restore();
         entity.setOwner(getPlayer(entity.getOwnerId()));
@@ -657,10 +660,14 @@ public class Client extends Panel
         Object o = c.getObject(0);
         if (o instanceof TorsoTwistAction) {
             TorsoTwistAction tta = (TorsoTwistAction)o;
+            if (game.getEntity(tta.getEntityId()) != null) {
             game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
+            }
         } else if (o instanceof FlipArmsAction) {
             FlipArmsAction faa = (FlipArmsAction)o;
+            if (game.getEntity(faa.getEntityId()) != null) {
             game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
+            }
         } else if (o instanceof AttackAction) {
             bv.addAttack((AttackAction)o);
         }

@@ -46,6 +46,8 @@ public class Settings
     
     public static String    mapTileset              = "defaulthexset.txt";
     
+    public static String    mechDirectory           = "data/mechfiles/";
+    
     
     /**
      * Loads the settings from disk

@@ -1437,12 +1437,12 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_MOVEMENT :
                 addMovementHeat();
+                applyBuildingDamage();
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls(); // Skids cause damage in movement phase
                 resolveCrewDamage(); // again, I guess
                 checkForFlamingDeath();
-                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1459,11 +1459,11 @@ implements Runnable, ConnectionHandler {
                 resolveAllButWeaponAttacks();
                 assignAMS();
                 resolveOnlyWeaponAttacks();
+                applyBuildingDamage();                
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
-                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1478,12 +1478,12 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_PHYSICAL :
                 resolvePhysicalAttacks();
+                applyBuildingDamage();
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
                 resolveSinkVees();
-                applyBuildingDamage();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1499,11 +1499,11 @@ implements Runnable, ConnectionHandler {
             case Game.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
                 resolveIndirectArtilleryAttacks();
+                applyBuildingDamage();
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls();
                 resolveCrewDamage(); // again, I guess
-                applyBuildingDamage();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                     changePhase(Game.PHASE_OFFBOARD_REPORT);

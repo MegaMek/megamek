@@ -10,7 +10,7 @@ import java.util.Enumeration;
 /** This class was created to iteratively compile
  * movement data
  */
-public class EntityState extends MovePath implements com.sun.java.util.collections.Comparable {
+public class EntityState extends MovementData implements com.sun.java.util.collections.Comparable {
   
   public static Game game;
   public static TestBot tb;
@@ -126,12 +126,12 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
       // We *might* skid if we move after turning.
       boolean isTurning = false;
     try {
-      if (firstStep && step_type == MovePath.STEP_START_JUMP) {
+      if (firstStep && step_type == MovementData.STEP_START_JUMP) {
         this.overallMoveType = Entity.MOVE_JUMP;
         this.isJumping = true;
       }
       //check to make sure we're not jumping after the first move.
-      if (!firstStep && step_type == MovePath.STEP_START_JUMP) {
+      if (!firstStep && step_type == MovementData.STEP_START_JUMP) {
         this.overallMoveType = Entity.MOVE_ILLEGAL;
       }
       super.addStep(step_type);
@@ -146,18 +146,18 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
       int stepMp = 0;
       //calculate mps used
       switch(step_type) {
-        case MovePath.STEP_TURN_LEFT :
-        case MovePath.STEP_TURN_RIGHT :
+        case MovementData.STEP_TURN_LEFT :
+        case MovementData.STEP_TURN_RIGHT :
           stepMp = (isJumping || hasJustStood) ? 0 : 1;
-          curFacing = MovePath.getAdjustedFacing(curFacing,step_type);
+          curFacing = MovementData.getAdjustedFacing(curFacing,step_type);
           break;
-        case MovePath.STEP_BACKWARDS :
+        case MovementData.STEP_BACKWARDS :
           isRunProhibited = true;
-        case MovePath.STEP_FORWARDS :
-        case MovePath.STEP_CHARGE :
-        case MovePath.STEP_DFA :
+        case MovementData.STEP_FORWARDS :
+        case MovementData.STEP_CHARGE :
+        case MovementData.STEP_DFA :
           // step forwards or backwards
-          if (step_type == MovePath.STEP_BACKWARDS) {
+          if (step_type == MovementData.STEP_BACKWARDS) {
             curPos = curPos.translated((curFacing + 3) % 6);
           } else {
             curPos = curPos.translated(curFacing);
@@ -167,7 +167,7 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
             return;
           }
           stepMp = Compute.getMovementCostFor(game, this.entity.getId(),
-                                              lastPos, curPos,isJumping);
+                                              lastPos, curPos,overallMoveType);
           // check for water
           if (game.board.getHex(curPos).contains(Terrain.WATER)) {
             isRunProhibited = true;
@@ -175,7 +175,7 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
           //should check for heatBuildup related to movement
           hasJustStood = false;
           break;
-        case MovePath.STEP_GET_UP :
+        case MovementData.STEP_GET_UP :
           // mechs with 1 MP are allowed to get up
           stepMp = entity.getWalkMP() == 1 ? 1 : 2;
           heatBuildup += 1;
@@ -214,8 +214,8 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
       }
       // check for valid walk/run mp
       if ((overallMoveType == Entity.MOVE_WALK || overallMoveType == Entity.MOVE_RUN)
-      && (!isProne || step_type == MovePath.STEP_TURN_LEFT
-      || step_type == MovePath.STEP_TURN_RIGHT)) {
+      && (!isProne || step_type == MovementData.STEP_TURN_LEFT
+      || step_type == MovementData.STEP_TURN_RIGHT)) {
         if (mpUsed <= entity.getWalkMP()) {
           moveType = Entity.MOVE_WALK;
         } else if (mpUsed <= entity.getRunMP() && !isRunProhibited) {
@@ -223,15 +223,15 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
         }
       }
       // mechs with 1 MP are allowed to get up
-      if (step_type == MovePath.STEP_GET_UP && entity.getWalkMP() == 1) {
+      if (step_type == MovementData.STEP_GET_UP && entity.getWalkMP() == 1) {
         moveType = Entity.MOVE_RUN;
       }
       // amnesty for the first step
-      if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && !entity.isProne() && step_type == MovePath.STEP_FORWARDS) {
+      if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && !entity.isProne() && step_type == MovementData.STEP_FORWARDS) {
         moveType = Entity.MOVE_RUN;
       }
       // check if this movement is illegal for reasons other than points
-      if (!EntityState.isMovementPossible(game, entity.getId(), lastPos, curPos, moveType, step_type)) {
+      if (!this.isMovementPossible(game, entity.getId(), lastPos, curPos, moveType, step_type)) {
         moveType = Entity.MOVE_ILLEGAL;
       }
       // no legal moves past an illegal one
@@ -239,27 +239,31 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
         isMovementLegal = false;
       }
       // We need the previous step.
-      MoveStep prevStep = null;
+      MovementData.Step prevStep = null;
       boolean lastStepOnPavement = false;
       if (this.length() > 1) {
-	  prevStep = (MoveStep)getStep(length() - 1);
-          lastStepOnPavement = prevStep.isPavementStep();
+	  prevStep = (MovementData.Step)getStep(length() - 1);
+          lastStepOnPavement = prevStep.isOnPavement();
       }
       // check for danger
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId,
                                                 lastPos, curPos,
                                                 moveType, isTurning,
+                                                overallMoveType, 
                                                 lastStepOnPavement)
-                  || step_type == MovePath.STEP_GET_UP);
+            /* Bug 754610: Revert fix for bug 702735.
+                                                overallMoveType)
+            */
+                  || step_type == MovementData.STEP_GET_UP);
 
       // Record if we're turning *after* check for danger,
       // because the danger lies in moving *after* turn.
       switch(step_type) {
-      case MovePath.STEP_UNLOAD:
+      case MovementData.STEP_UNLOAD:
           // Unloading transported units doesn't protect vs. skids.
           break;
-      case MovePath.STEP_TURN_LEFT :
-      case MovePath.STEP_TURN_RIGHT :
+      case MovementData.STEP_TURN_LEFT :
+      case MovementData.STEP_TURN_RIGHT :
           isTurning = true;
           break;
       default:
@@ -321,7 +325,7 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
       for (Enumeration i = game.getEntities(); i.hasMoreElements() && !found;) {
         final Entity en = (Entity)i.nextElement();
         CEntity cen = TestBot.enemies.get(en);
-        if (!en.isSelectableThisTurn(game) && this.curPos.equals(en.getPosition()) && en.isEnemyOf(this.entity)) {
+        if (!en.isSelectable() && this.curPos.equals(en.getPosition()) && en.isEnemyOf(this.entity)) {
           found = true;
           this.PhysicalTarget = cen;
         }
@@ -345,7 +349,7 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
   public String toString() {
     StringBuffer sb = new StringBuffer();
     for (Enumeration i =Steps.elements();i.hasMoreElements();) {
-      sb.append(new MoveStep(this, ((Integer)i.nextElement()).intValue()));
+      sb.append(new Step(((Integer)i.nextElement()).intValue()));
       sb.append(' ');
     }
     return sb.toString();
@@ -388,10 +392,10 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
     return (this.overallMoveType != Entity.MOVE_ILLEGAL);
   }
   
-  public MoveStep getLastStep() {
+  public Step getLastStep() {
     int l = Steps.size();
     if (l <= 0) return null;
-    return new MoveStep(this, ((Integer)Steps.elementAt(l-1)).intValue());
+    return new Step(((Integer)Steps.elementAt(l-1)).intValue());
   }
   
   public String getKey() {
@@ -517,13 +521,13 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
     return new int[] {toHita.getValue(), toHitd.getValue(), apc?1:0, pc?1:0};
   }
   
-  public MovePath getMovementData() {
-    MovePath transmit = new MovePath();
+  public MovementData getMovementData() {
+    MovementData transmit = new MovementData();
     for (int j = 0; j < Steps.size(); j++) {
         int stepType = ( (Integer)Steps.elementAt(j) ).intValue();
       // Charges and DFA steps now identify their targets.
-      if ( stepType == MovePath.STEP_CHARGE ||
-           stepType == MovePath.STEP_DFA ) {
+      if ( stepType == MovementData.STEP_CHARGE ||
+           stepType == MovementData.STEP_DFA ) {
           transmit.addStep( stepType, this.PhysicalTarget.entity );
       } else {
           transmit.addStep( stepType );
@@ -650,7 +654,7 @@ public class EntityState extends MovePath implements com.sun.java.util.collectio
       return false;
     }
     // units moving backwards may not change elevation levels (I think this rule's dumb)
-    if (stepType == MovePath.STEP_BACKWARDS
+    if (stepType == MovementData.STEP_BACKWARDS
     && srcHex.floor() != destHex.floor()) {
       return false;
     }

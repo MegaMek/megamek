@@ -41,10 +41,6 @@ public class Settings
     public static boolean   autoEndFiring           = true;
 
     public static boolean   nagForMASC              = true;
-    public static boolean   nagForPSR               = true;
-    
-    public static boolean   showMoveStep            = true;
-    public static int       moveStepDelay           = 500;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
@@ -156,10 +152,6 @@ scan:
                         st.nextToken();
                         nagForMASC = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if (key.equals("nagforpsr")) {
-                        st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
-                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -210,14 +202,6 @@ scan:
                             thrown.printStackTrace();
                             mekHitLocLog = null;
                         }
-                    }
-                    else if ( key.equals("showmovestep")) {
-                        st.nextToken();
-                        showMoveStep = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("movestepdelay")) {
-                        st.nextToken();
-                        moveStepDelay = (int)st.nval;
                     }
                 }
             }
@@ -275,7 +259,6 @@ scan:
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
-            cw.write("nagforpsr " + nagForPSR + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
@@ -286,8 +269,6 @@ scan:
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
-            cw.write("showmovestep " + showMoveStep + "\r\n");
-            cw.write("movestepdelay " + moveStepDelay + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

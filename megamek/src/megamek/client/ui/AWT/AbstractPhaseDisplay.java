@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -23,11 +23,6 @@ public abstract class AbstractPhaseDisplay
   extends Panel
   implements BoardListener, GameListener
 {
-	// Action commands.
-	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
-	public static final String VIEW_MINI_MAP         = "viewMiniMap";
-	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
-
     //
     // BoardListener
     //
@@ -52,13 +47,8 @@ public abstract class AbstractPhaseDisplay
     public void boardNewBoard(BoardEvent b) {
         ;
     }
-    public void boardFirstLOSHex(BoardEvent b) {
-        ;
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
-        ;
-    }
 
+  //
     // GameListener
     //
     public void gamePlayerChat(GameEvent ev) {

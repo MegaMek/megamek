@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -55,7 +55,6 @@ implements Serializable {
     
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
-    public static final int        COMMAND_ROUND_UPDATE         = 34; //reorder me
 
     public static final int        COMMAND_SENDING_BOARD        = 17;
     public static final int        COMMAND_SENDING_ENTITIES     = 18;
@@ -67,10 +66,7 @@ implements Serializable {
     public static final int        COMMAND_QUERY_MAP_SETTINGS   = 23;
                                                                 
     public static final int        COMMAND_END_OF_GAME          = 24;
-    public static final int        COMMAND_DEPLOY_MINEFIELDS    = 35;
-    public static final int        COMMAND_REVEAL_MINEFIELD     = 36;
-    public static final int        COMMAND_REMOVE_MINEFIELD     = 37;
-    public static final int        COMMAND_SENDING_MINEFIELDS   = 38;    
+    
     
     private int command;
     private Object[] data;

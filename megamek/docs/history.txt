@@ -113,184 +113,37 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-
-v 0.29.13-dev
-+ RFE 814576: Show PlayerColor when Camo is missing.
-+ Added common client settings dialog.
-
-v 0.29.12 (09-28-03, 10:30pm)
-+ Shows movement step by step, optional in MegaMek.cfg.
-+ Bug fix for the above.
+v 0.29-stable-4 (09-30-03, 4:30 pm)
 + Bug 802741: "check false" should *not* be added as a modifier.
 + Use the build.xml from thebohemian.
-+ RFE 807590: Distinguish "fled" from "pushed offboard" and "ejected".
-+ Bug 803965: Changed option label from I.S. Equipment Limits to Ammo & Equip..
-+ When a transporter ejects, unload all passengers.
-PARTIAL IMPLEMENTATION:
-+ RFE 555499, 702795, 726478, 783395: Added a menu bar.
-+ Data 808992: added tallasia maps from German box set
-+ Added Deploy-menu.
-+ Sorts camolist
 
-v 0.29.11 (09-15-03, 3pm)
-+ All movement resets result in the "walk" gear being selected
-+ Back space removes the last movement step.
-+ Fixed NPE with quad lateral shifts
-
-v 0.29.10 (09-08-03, 2pm)
-+ Bug 799275: Gauss ammo defensive BV correctly calculated.--LDE
-+ Fixed problem with turning and backwards movement
-+ Added /defeat command to acknowledge /victory command.
-+ Fixed bug with Mech preview image.
-+ RFE 799511: defined images for Enforcer III and Grand Dragon
-+ Data 796980: added Hauptmann image by brandfuchs
-+ Patch 794111 MaxTech Target Movement Modifiers by Alexander Schölling.
-+ Bug 787486, 789749: LOS bug over water, also fixed bug with smoke on water.
-
-v 0.29.9 (08-31-03, 10pm)
-+ Fixed bug 781250 and cleaned up MASC code a bit
-+ RFE 795292: Added "data/hexes/shrubbery.txt" for "maptileset" in MegaMek.cfg
-+ Finally located a copy of the source for TinyXML.
-+ Bug 774533: Added isRepairable() to indicate that a unit can be rebuit.
+v 0.29-stable-3 (08-27-03, 2:17 pm)
++ Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
 + Bug 762509: Can't run or jump when unjamming a RAC.
-+ Found and fixed an NPE when hit "done" in movement phase.
-+ MSJDK compatibility changes(Vector issues). No net change.
-+ Mech preview image in Select Mech... dialog and Mech Quick View dialog.
-+ Bug 796081: updated "BMRr Feature List.txt" to indicate how to face off-board
-+ Fixed repeating "Player X disconnected" problem
-+ Bug 794377: fixed main menu not reappearing when client disconnected
-+ Data 796410: Added Uziel.gif (submitted by brandfuchs).
-+ Fixed MSJDK compatibility issues
-+ Continue movement state refactoring (some PSR warnings broken, watch out)
-+ RFE 706481: recognize units with two C3Master computers.
-+ Bug 686063: Count the members of the C3 network and alert the user.
-+ Bug 791578: C3 range: use Entity#isActive() not Entity#isSelectableThisTurn()
-+ Added the minimap to the map editor. Also, made minimap more efficient by 
-  disabling its drawing if it's hidden (it can slow down the game on large maps)
-+ Bug 797819: Pre-loaded infantry can now be deployed when using "Infantry move
-  after meks" option.
-+ Bug 795729: inactive units may not eject, spot for IDF, or dump ammo
-+ Fixed bug with Artemis IV hanging the server
-+ Bug 782037: fixed problem with movement paths and re-selecting units
-  
-v 0.29.8 (08-24-03, 8pm)
-+ Bug 786735: Vibrabombs now works correctly.
-+ Added minefield option under Game Options.
-+ Splash screen image code now uses natural image size
++ Bug 793574: TDB uses the "Missile" spelling, not "Missle".
++ Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
++ Bug 775122: fixed NPE which broke map editor load button
++ Bug 775472: wait for new hex images (like smoke) to load before drawing
++ Data 779006: Added BH-21's resized mech images
 + Vehicles now use red secondary arrow to indicate turret direction
 + Fixed bug where locked turrets wouldn't show a direction
-+ Bug 780962: tree clubs work again
 + Bug 760256: mechs dumping ammo try to reload weapons using that ammo
-+ RFE 675994: "I.S. Equipment Limits" option allows TL2 ammo in TL1 units
-+ RFE 762234: Support "Mixed" tech base in MTF files
-+ New wood images.
-+ RFE 730456: "Load Unit List..." now appends.
-+ RFE 730457: Added a "Delete All" to compensate.
-+ Bug 735499: Delay RNG start until beginning to host.
-+ Updated BMRr Feature List.
-+ RFE 700190: unconscious units count for initiative (option disables)
-+ Bug 793574: TDB uses the "Missile" spelling, not "Missle".
-+ Bug 783641: Unloaded infantry are deployed.
-+ Removed opportunity for unconscious units to move or attack
-+ Restored old woods images (I love them so)
 
-v 0.29.7 (08-08-03, 6pm)
-+ Data 779006: Added BH-21's resized mech images
-+ Minefields(no command-detonated, but Thunders). LOS setting button back.
-+ Bug 782105: Can't make physical attacks while spotting
-+ Bug 775122: Map editor load button now never disabled
-+ Bug 777415: No Artemis IV bonus while using IDF
-
-v 0.29.6 (08-03-03, 7pm)
-+ Merge of underwater patch undid the Inferno SRM2 fix.
-+ Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
-+ Bug 755993: fixed NPE when closing a non-initialized connection
-+ Changed main menu behavior (Client is now responsible for its own Frame)
-+ Added aimed shots for targeting computers and against immobile targets.
-+ Added explosive NARC pods.
-+ Bug 775122: fixed NPE which broke map editor load button
-+ Saved game load dialog starts in base directory
-+ Bug 775472: wait for new hex images (like smoke) to load before drawing
-+ Bug 779344: Entity.ARMOR_DOOMED made human-readable in display
-+ Added a LOS tool setting dialog.
-+ Added delayed deployment code
-+ Patch 781242: Applied BobTheDull's patch, fixing a few water issues
-+ Movement code refactoring step 1: MovementState object made
-+ Removed the LOS tool from the board editor.
-
-v 0.29.5 (07-27-03, 9pm)
-+ Bug 759032: fixed NPE in MovementDisplay
-+ Bug 774767: attacks at 0 range prohibited again for non-infantry
-+ Patch 770478: Added nalleolsson's LOS/Range tool.
-+ Data 775715: Added carpe_mortis' image.
-+ Data 775886, 775888, 775891: Added rancherion's images.
-+ RFE 775704, Data 775984: Added starcaptaintorc's images.
-+ Bug 776084: target partial cover now counts in indirect fire
-+ Patch 726073: Applied bobthdull's updated patch for underwater rules
-+ Bug 776522: Meks missing a leg should have a run MP of 1, not 2.
-+ Bug 755001: Passengers with ECM should still affect enemy electronics.
-
-v 0.29.4 (07-20-03, 7pm)
-+ Added all new files from xylaan (no net change).
-+ Bug 773000: Tank hit locations
-+ Bug 773001: Tank locations on armor diagram
-+ Added files for 'camo' schemes from nalleolsson (no code changes)
-+ Patch 768978: Allow selection of camo schemes instead of colors. Camo schemes
-  take precedence but default to 'No Camo'. Patch originally submitted by 
-  nalleolsson (Björn Olsson). Tweaks and additional code by kipsta.
+v 0.29-stable-2 (07-28-03, 12:32 am)
++ Bug 763169: Dropping prone now has chance to dislodge swarmers.
++ Bug 756126 (possible): Only needed hex images loaded during board load
 + Bug 769106: Fixed bug that was messing up "go prone to dislodge swarmers."
 + Data 762795: Added BH-21's Avatar image.
 + Data 764066: Added BH-21's updated images.
 + Data 769828: Swapped Perseus' & Yeoman's images.
 + Bug 764704: Inferno SRM-2's can still target woods for ignition.
-+ More cleanup work on "go prone to dislodge swarmers" code. (no net change)
-+ Bug 772328: the spotter flag now resets every round
-+ Bug 772328: no benefit from C3 when using indirect fire
-+ Bug 774509: fixed infinite loop in camo selection on linux
-
-v 0.29.3 (06-14-03, 9pm)
-+ Did some to-hit code refactoring (no net change).
-+ Added indirect fire mode to LRMs (spotters must use spot button)
-+ Indirect fire rules made optional
-
-v 0.29.2 (06-07-03, 12am)
-+ Task L3 Advantages: Added core code for L3 (MaxTech) pilot advantages. To 
-  enable these you must enable the MaxTech pilot advantages Game Option. This 
-  will make a scrollable box visible in the customize mech dialog. Advantages
-  finished are: Dodge Maneuver, Maneuvering Ace, Melee Specialist and 
-  Pain Resistance
-+ Task L3 Engine Explosions: Engine explosions, per MaxTech (BTH12 after 2 or 
-  more engine crits in a round), are done.
-+ Task L3 Scenario Improvements: Added ability to define pilot advantages for a
-  scenario. See new Example.mms
-+ File Added: data/scenarios/Example.mms to explain all scenario posibilities
-+ Task L3 Weight Class Mods: MaxTech 20+ damage per round weight class mods 
-  added. Assaults are -2 to BTH, whereas lights are +1. Mediums and heavies are
-  in between. When turned on, also enables cumulative damage tracking. Roll is
-  now +1 for EVERY 20 damage taken in a round instead of just for the first 20. 
-  It's still only 1 pilot roll for the damage. Therefore, 20-39 damage is +1, 
-  40-59 is +2, etc...
-+ Feature 734125+: Added "are you sure" check for movement that requires
-  piloting skill rolls.
-+ Bug 763169: Dropping prone now has chance to dislodge swarmers.
-+ Bug 756126 (possible): Only needed hex images loaded during board load
-+ Found and fixed bug in L3 weight mod damage rolls. Was forcing 2 pilot rolls.
-+ Added ability to save game options. On the Game options dialog is a save 
-  button which will write the current state of the game options to the
-  gameoptions.xml file. This file is read at start up if you are hosting a game
-  and will automatically set your desired 'default' options.
-+ Task L3 Firing while down: MaxTech firing while down rule: can fire if you 
-  still have one arm but are at a +1 to hit with all weapons and can not
-  fire weapons in that arm.
-+ Task L3 Opposed weight mods for physicals: PSR BTH when being kicked or 
-  pushed is modified by weight class difference. Modifier is 1 for every 
-  weight class difference. Add the difference to the PSR BTH if the attacker
-  is heavier, subtract if the attacker is lighter.
-+ Extracted multiple version of status bar code to one StatusBarPhaseDisplay 
-  class and changed all phase display subclasses to extend this. This allows 
-  changes to the status bar to happen in one and only one place.
-+ Added save/load of advantages for unit list
-+ Bug 767439: Made CT of engine boomed mechs marked as destroyed
++ Bug 773000: Tank hit locations
++ Bug 773001: Tank locations on armor diagram
++ Updated FiringDisplay#findClub() from mainline.
++ Updated TargetRoll.java from mainline.
++ Bug 759032: fixed NPE in MovementDisplay
++ Bug 776522: Meks missing a leg should have a run MP of 1, not 2.
++ Bug 755001: Passengers with ECM should still affect enemy electronics.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.
@@ -1705,5 +1558,3 @@ version 0.06
 
 versions before 0.06
 + i dunno
-
-

@@ -37,7 +37,7 @@ public class MechView {
     private boolean isVehicle;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
-
+    private boolean hasMASC;
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
 
@@ -80,7 +80,12 @@ public class MechView {
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
-            .append( mech.getRunMPasString() );
+            .append( mech.getRunMPwithoutMASC() );
+        if (hasMASC) {
+            sBasic.append( "(")
+                .append( mech.getWalkMP() * 2)
+                .append( ")");
+        }
         sBasic.append( "/" )
             .append( mech.getJumpMP() );
         if (isVehicle) {
@@ -217,6 +222,9 @@ public class MechView {
                     hasFerroFibrous = true;
                 }
                 continue;
+            }
+            if (mounted.getDesc().indexOf("MASC") != -1) {
+                hasMASC = true;
             }
             sMisc.append( mounted.getDesc() )
                 .append( "  [" )

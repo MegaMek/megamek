@@ -29,7 +29,6 @@ public class BufferedPanel extends Panel implements ComponentListener {
      private Image offScr;
      //Vector of Background Drawers
      private Vector bgDrawers = new Vector();
-     private Dimension preferredSize = new Dimension();
 
      public BufferedPanel(){
 	  super();
@@ -56,14 +55,6 @@ public class BufferedPanel extends Panel implements ComponentListener {
     
     public void removeBgDrawer(BackGroundDrawer bd){
          bgDrawers.removeElement(bd);
-    }
-
-    /**
-     * Removes all Background drawers from panel.
-     */
-    
-    public void removeBgDrawers(){
-         bgDrawers.removeAllElements();
     }
 
      /**
@@ -131,17 +122,6 @@ public class BufferedPanel extends Panel implements ComponentListener {
      public void componentShown(ComponentEvent e) {}
 
      public void componentHidden(ComponentEvent e) {}
-
-    public Dimension getPreferredSize() {
-        return preferredSize;
-    }
-
-	public void setPreferredSize(Dimension dimension) {
-		preferredSize = dimension;
-	}
-	public void setPreferredSize(int width, int height) {
-		setPreferredSize(new Dimension(width, height));
-	}
 
 }
 

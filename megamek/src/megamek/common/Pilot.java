@@ -14,10 +14,7 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import java.io.*;
 
 public class Pilot
     implements Serializable
@@ -35,8 +32,6 @@ public class Pilot
     private int rollsNeeded; // how many KO rolls needed this turn
     private boolean koThisRound; // did I go KO this game round?
     
-    private PilotOptions options = new PilotOptions();
-
     
     public Pilot() {
         this("Unnamed", 4, 5);
@@ -51,8 +46,6 @@ public class Pilot
         dead = false;
         rollsNeeded = 0;
         koThisRound = false;
-        
-        options.initialize();
     }
   
     public String getName() {
@@ -125,81 +118,6 @@ public class Pilot
     
     public void setKoThisRound(boolean koThisRound) {
         this.koThisRound = koThisRound;
-    }
-    
-    public void setOptions(PilotOptions options) { 
-      this.options = options; 
-    }
-    
-    public PilotOptions getOptions() { 
-      return options; 
-    }
-
-    public void clearAdvantages() {
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              option.setValue(false);
-          }
-      }
-      
-    }
-    
-    public int countAdvantages() {
-      int count = 0;
-      
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              if ( option.booleanValue() )
-                count++;
-          }
-      }
-      
-      return count;
-    }
-    
-    public String getAdvantageList(String sep) {
-      StringBuffer adv = new StringBuffer();
-      
-      if ( (null == sep) || (sep.trim().length() == 0) ) {
-        sep = "";
-      } else {
-        sep = sep + " ";
-      }
-      
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-        OptionGroup group = (OptionGroup)i.nextElement();
-        
-        if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-          continue;
-          
-        for (Enumeration j = group.options(); j.hasMoreElements();) {
-          GameOption option = (GameOption)j.nextElement();
-          
-          if ( option.booleanValue() ) {
-            if ( adv.length() > 0 ) {
-              adv.append(sep);
-            }
-            
-            adv.append(option.getShortName());
-          }
-        }
-      }
-      
-      return adv.toString();
     }
     
     public String getDesc() {

@@ -798,6 +798,9 @@ public class Client extends Panel
             case Packet.COMMAND_ENTITY_REMOVE :
                 receiveEntityRemove(c);
                 break;
+            case Packet.COMMAND_CHANGE_HEX :
+                game.board.setHex((Coords)c.getObject(0), (Hex)c.getObject(1));
+                break;
             case Packet.COMMAND_PHASE_CHANGE :
                 changePhase(c.getIntValue(0));
                 break;

@@ -40,8 +40,11 @@ public class DeployMinefieldDisplay
     private Button            butC;
     private Button            butM;
     private Button            butSpace;
-    private Button              butV;
-    private Button              butUnload;
+    private Button            butSpace1;
+    private Button            butSpace2;
+    private Button            butSpace3;
+    private Button            butV;
+    private Button            butUnload;
     private Button            butDone;
 
     private int                cen;    // current entity number
@@ -76,6 +79,12 @@ public class DeployMinefieldDisplay
                         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
+        butSpace1 = new Button(".");
+        butSpace1.setEnabled(false);
+        butSpace2 = new Button(".");
+        butSpace2.setEnabled(false);
+        butSpace3 = new Button(".");
+        butSpace3.setEnabled(false);
 
         butC = new Button("Command(" + p.getNbrMFCommand() + ")");
         butC.addActionListener(this);
@@ -97,10 +106,14 @@ public class DeployMinefieldDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(1, 4));
+        panButtons.setLayout(new GridLayout(2, 4));
         panButtons.add(butM);
         panButtons.add(butC);
         panButtons.add(butV);
+        panButtons.add(butSpace);
+        panButtons.add(butSpace1);
+        panButtons.add(butSpace2);
+        panButtons.add(butSpace3);
         panButtons.add(butDone);
 
         // layout screen
@@ -118,9 +131,12 @@ public class DeployMinefieldDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
+        c.weightx = 1.0;    c.weighty = 0;
+        c.gridwidth = 1;
+        addBag(client.cb.getComponent(), gridbag, c);
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
-        c.ipady = 20;
         addBag(panButtons, gridbag, c);
 
         addKeyListener(this);

@@ -188,7 +188,7 @@ public abstract class Entity
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
      */
-    int                 conveyance = Entity.NONE;
+    private int                 conveyance = Entity.NONE;
 
     /**
      * Set to <code>true</code> if this unit was unloaded this turn.

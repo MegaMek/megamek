@@ -3554,6 +3554,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 1 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-1";
         ammo.mtfName = "CLPRMLRM1 Ammo";
+        ammo.mepName = "CLPRMLRM1 Ammo";
+        ammo.tdbName = "CLPRMLRM1 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3570,6 +3572,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 2 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-2";
         ammo.mtfName = "CLPRMLRM2 Ammo";
+        ammo.mepName = "CLPRMLRM2 Ammo";
+        ammo.tdbName = "CLPRMLRM2 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3586,6 +3590,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 3 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-3";
         ammo.mtfName = "CLPRMLRM3 Ammo";
+        ammo.mepName = "CLPRMLRM3 Ammo";
+        ammo.tdbName = "CLPRMLRM3 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3602,6 +3608,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 4 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-4";
         ammo.mtfName = "CLPRMLRM4 Ammo";
+        ammo.mepName = "CLPRMLRM4 Ammo";
+        ammo.tdbName = "CLPRMLRM4 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3618,6 +3626,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 5 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-5";
         ammo.mtfName = "CLPRMLRM5 Ammo";
+        ammo.mepName = "CLPRMLRM5 Ammo";
+        ammo.tdbName = "CLPRMLRM5 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3634,6 +3644,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 6 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-6";
         ammo.mtfName = "CLPRMLRM6 Ammo";
+        ammo.mepName = "CLPRMLRM6 Ammo";
+        ammo.tdbName = "CLPRMLRM6 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3650,6 +3662,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 7 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-7";
         ammo.mtfName = "CLPRMLRM7 Ammo";
+        ammo.mepName = "CLPRMLRM7 Ammo";
+        ammo.tdbName = "CLPRMLRM7 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3666,6 +3680,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 8 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-8";
         ammo.mtfName = "CLPRMLRM8 Ammo";
+        ammo.mepName = "CLPRMLRM8 Ammo";
+        ammo.tdbName = "CLPRMLRM8 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3682,6 +3698,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 9 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-9";
         ammo.mtfName = "CLPRMLRM9 Ammo";
+        ammo.mepName = "CLPRMLRM9 Ammo";
+        ammo.tdbName = "CLPRMLRM9 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3698,6 +3716,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 10 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-10";
         ammo.mtfName = "CLPRMLRM10 Ammo";
+        ammo.mepName = "CLPRMLRM10 Ammo";
+        ammo.tdbName = "CLPRMLRM10 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3714,6 +3734,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 11 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-11";
         ammo.mtfName = "CLPRMLRM11 Ammo";
+        ammo.mepName = "CLPRMLRM11 Ammo";
+        ammo.tdbName = "CLPRMLRM11 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3730,6 +3752,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 12 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-12";
         ammo.mtfName = "CLPRMLRM12 Ammo";
+        ammo.mepName = "CLPRMLRM12 Ammo";
+        ammo.tdbName = "CLPRMLRM12 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3746,6 +3770,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 13 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-13";
         ammo.mtfName = "CLPRMLRM13 Ammo";
+        ammo.mepName = "CLPRMLRM13 Ammo";
+        ammo.tdbName = "CLPRMLRM13 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3762,6 +3788,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 14 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-14";
         ammo.mtfName = "CLPRMLRM14 Ammo";
+        ammo.mepName = "CLPRMLRM14 Ammo";
+        ammo.tdbName = "CLPRMLRM14 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3778,6 +3806,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 15 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-15";
         ammo.mtfName = "CLPRMLRM15 Ammo";
+        ammo.mepName = "CLPRMLRM15 Ammo";
+        ammo.tdbName = "CLPRMLRM15 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3794,6 +3824,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 16 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-16";
         ammo.mtfName = "CLPRMLRM16 Ammo";
+        ammo.mepName = "CLPRMLRM16 Ammo";
+        ammo.tdbName = "CLPRMLRM16 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3810,6 +3842,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 17 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-17";
         ammo.mtfName = "CLPRMLRM17 Ammo";
+        ammo.mepName = "CLPRMLRM17 Ammo";
+        ammo.tdbName = "CLPRMLRM17 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3826,6 +3860,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 18 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-18";
         ammo.mtfName = "CLPRMLRM18 Ammo";
+        ammo.mepName = "CLPRMLRM18 Ammo";
+        ammo.tdbName = "CLPRMLRM18 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3842,6 +3878,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 19 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-19";
         ammo.mtfName = "CLPRMLRM19 Ammo";
+        ammo.mepName = "CLPRMLRM19 Ammo";
+        ammo.tdbName = "CLPRMLRM19 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3858,6 +3896,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LRM 20 Ammo";
         ammo.internalName ="Clan Ammo Protomech LRM-20";
         ammo.mtfName = "CLPRMLRM20 Ammo";
+        ammo.mepName = "CLPRMLRM20 Ammo";
+        ammo.tdbName = "CLPRMLRM20 Ammo";
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM;
@@ -3877,6 +3917,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 1 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-1";
         ammo.mtfName = "CLPRMSRM1 Ammo";
+        ammo.mepName = "CLPRMSRM1 Ammo";
+        ammo.tdbName = "CLPRMSRM1 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3891,6 +3933,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 2 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-2";
         ammo.mtfName = "CLPRMSRM2 Ammo";
+        ammo.mepName = "CLPRMSRM2 Ammo";
+        ammo.tdbName = "CLPRMSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3905,6 +3949,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 3 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-3";
         ammo.mtfName = "CLPRMSRM3 Ammo";
+        ammo.mepName = "CLPRMSRM3 Ammo";
+        ammo.tdbName = "CLPRMSRM3 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3919,6 +3965,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 4 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-4";
         ammo.mtfName = "CLPRMSRM4 Ammo";
+        ammo.mepName = "CLPRMSRM4 Ammo";
+        ammo.tdbName = "CLPRMSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3933,6 +3981,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 5 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-5";
         ammo.mtfName = "CLPRMSRM5 Ammo";
+        ammo.mepName = "CLPRMSRM5 Ammo";
+        ammo.tdbName = "CLPRMSRM5 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3947,6 +3997,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "SRM 6 Ammo";
         ammo.internalName = "Clan Ammo Protomech SRM-6";
         ammo.mtfName = "CLPRMSRM6 Ammo";
+        ammo.mepName = "CLPRMSRM6 Ammo";
+        ammo.tdbName = "CLPRMSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
@@ -3961,6 +4013,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 1 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 1 Ammo";
         ammo.mtfName = "CLPRMStreakSRM1 Ammo";
+        ammo.mepName = "CLPRMStreakSRM1 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM1 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -3976,6 +4030,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 2 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 2 Ammo";
         ammo.mtfName = "CLPRMStreakSRM2 Ammo";
+        ammo.mepName = "CLPRMStreakSRM2 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM2 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -3991,6 +4047,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 3 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 3 Ammo";
         ammo.mtfName = "CLPRMStreakSRM3 Ammo";
+        ammo.mepName = "CLPRMStreakSRM3 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM3 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -4006,6 +4064,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 4 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 4 Ammo";
         ammo.mtfName = "CLPRMStreakSRM4 Ammo";
+        ammo.mepName = "CLPRMStreakSRM4 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM4 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -4021,6 +4081,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 5 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 5 Ammo";
         ammo.mtfName = "CLPRMStreakSRM5 Ammo";
+        ammo.mepName = "CLPRMStreakSRM5 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM5 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
@@ -4036,6 +4098,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Streak SRM 6 Ammo";
         ammo.internalName = "Clan Protomech Streak SRM 6 Ammo";
         ammo.mtfName = "CLPRMStreakSRM6 Ammo";
+        ammo.mepName = "CLPRMStreakSRM6 Ammo";
+        ammo.tdbName = "CLPRMStreakSRM6 Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_STREAK;

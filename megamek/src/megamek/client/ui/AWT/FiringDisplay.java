@@ -58,7 +58,6 @@ public class FiringDisplay
     private Button            butTwist;
     private Button            butSkip;
     
-    private Button            butAim;
     private Button            butFindClub;
     private Button            butNextTarg;
     private Button            butFlipArms;
@@ -127,11 +126,6 @@ public class FiringDisplay
         butFindClub.addActionListener(this);
         butFindClub.setActionCommand(FIRE_FIND_CLUB);
         butFindClub.setEnabled(false);
-        
-        butAim = new Button("Aim");
-        butAim.addActionListener(this);
-        butAim.setActionCommand(FIRE_AIM);
-        butAim.setEnabled(false);
         
         butNextTarg = new Button("Next Target");
         butNextTarg.addActionListener(this);
@@ -262,15 +256,15 @@ public class FiringDisplay
             // ASSUMPTION: there will always be *at least one* entity on map.
             if ( null == ce().getPosition() ) {
 
-    // Walk through the list of entities for this player.
-    for ( int nextId = client.getNextEntityNum(en);
-          nextId != en;
-          nextId = client.getNextEntityNum(nextId) ) {
-
-        if (null != client.game.getEntity(nextId).getPosition()) {
-      this.cen = nextId;
-      break;
-        }
+			    // Walk through the list of entities for this player.
+			    for ( int nextId = client.getNextEntityNum(en);
+			    	nextId != en;
+			        nextId = client.getNextEntityNum(nextId) ) {
+			
+			        if (null != client.game.getEntity(nextId).getPosition()) {
+			      		this.cen = nextId;
+			      		break;
+			        }
 
                 } // Check the player's next entity.
 
@@ -299,11 +293,11 @@ public class FiringDisplay
             // Update the menu bar.
             client.getMenuBar().setEntity( ce() );
             
-            butTwist.setEnabled(ce().canChangeSecondaryFacing());
-            butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
-            butSpot.setEnabled(ce().canSpot()
+            setTwistEnabled(ce().canChangeSecondaryFacing());
+            setFindClubEnabled(Compute.canMechFindClub(client.game, en));
+            setSpotEnabled(ce().canSpot()
               && client.game.getOptions().booleanOption("indirect_fire"));
-            butFlipArms.setEnabled(ce().canFlipArms());
+            setFlipArmsEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
         }
@@ -314,10 +308,10 @@ public class FiringDisplay
      */
     private void beginMyTurn() {
         target = null;
-        butNext.setEnabled(true);
+        setNextEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-        butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+        setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
 
@@ -349,19 +343,17 @@ public class FiringDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        client.getMenuBar().setHasFireChoice( false );
-        butFire.setEnabled(false);
-        butSkip.setEnabled(false);
-        butTwist.setEnabled(false);
-        butAim.setEnabled(false);
-        butSpot.setEnabled(false);
-        butFindClub.setEnabled(false);
+        setFireEnabled(false);
+        setSkipEnabled(false);
+        setTwistEnabled(false);
+        setSpotEnabled(false);
+        setFindClubEnabled(false);
         butMore.setEnabled(false);
-        butNext.setEnabled(false);
+        setNextEnabled(false);
         butDone.setEnabled(false);
-        butNextTarg.setEnabled(false);
-        butFlipArms.setEnabled(false);
-        butFireMode.setEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
+        setNextTargetEnabled(false);
+        setFlipArmsEnabled(false);
+        setFireModeEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
     }
     
    /**
@@ -430,15 +422,13 @@ public class FiringDisplay
           visibleTargets[count++] = (Entity)it.next();
         }
 
-        client.getMenuBar().setHasTarget( visibleTargets.length > 0 );
-        butNextTarg.setEnabled(visibleTargets.length > 0);
+        setNextTargetEnabled(visibleTargets.length > 0);
       }
 
       private void clearVisibleTargets() {
         visibleTargets = null;
         lastTargetID = -1;
-        client.getMenuBar().setHasTarget( false );
-        butNextTarg.setEnabled(false);
+        setNextTargetEnabled(false);
       }
       
     /**
@@ -556,7 +546,6 @@ public class FiringDisplay
         client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
         
-        butNext.setEnabled(false);
     }
     
     /**
@@ -691,8 +680,7 @@ public class FiringDisplay
      * Targets something
      */
     protected void updateTarget() {
-        client.getMenuBar().setHasFireChoice( false );
-        butFire.setEnabled(false);
+        setFireEnabled(false);
         
         // make sure we're showing the current entity in the mech display
         if (ce() != null && !ce().equals(client.mechD.getCurrentEntity())) {
@@ -724,24 +712,22 @@ public class FiringDisplay
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 client.mechD.wPan.wToHitR.setText("Already fired");
-                butFire.setEnabled(false);
+                setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 client.mechD.wPan.wToHitR.setText("Auto-firing weapon");
-                butFire.setEnabled(false);
+                setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
-                butFire.setEnabled(false);
+                setFireEnabled(false);
             } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
-                client.getMenuBar().setHasFireChoice( true );
-                butFire.setEnabled(true);
+                setFireEnabled(true);
             } else {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
-                client.getMenuBar().setHasFireChoice( true );
-                butFire.setEnabled(true);
+                setFireEnabled(true);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());
-            butSkip.setEnabled(true);
+            setSkipEnabled(true);
         } else {
             client.mechD.wPan.wTargetR.setText("---");
             client.mechD.wPan.wRangeR.setText("---");
@@ -915,6 +901,43 @@ public class FiringDisplay
       updateTarget();
       refreshAll();
     }
+
+	private void setFireEnabled(boolean enabled) {
+		butFire.setEnabled(enabled);
+        client.getMenuBar().setFireFireEnabled(enabled);
+	}
+	private void setTwistEnabled(boolean enabled) {
+		butTwist.setEnabled(enabled);
+        client.getMenuBar().setFireTwistEnabled(enabled);
+	}
+	private void setSkipEnabled(boolean enabled) {
+		butSkip.setEnabled(enabled);
+        client.getMenuBar().setFireSkipEnabled(enabled);
+	}
+	private void setFindClubEnabled(boolean enabled) {
+		butFindClub.setEnabled(enabled);
+        client.getMenuBar().setFireFindClubEnabled(enabled);
+	}
+	private void setNextTargetEnabled(boolean enabled) {
+		butNextTarg.setEnabled(enabled);
+        client.getMenuBar().setFireNextTargetEnabled(enabled);
+	}
+	private void setFlipArmsEnabled(boolean enabled) {
+		butFlipArms.setEnabled(enabled);
+        client.getMenuBar().setFireFlipArmsEnabled(enabled);
+	}
+	private void setSpotEnabled(boolean enabled) {
+		butSpot.setEnabled(enabled);
+        client.getMenuBar().setFireSpotEnabled(enabled);
+	}
+	private void setFireModeEnabled(boolean enabled) {
+		butFireMode.setEnabled(enabled);
+        client.getMenuBar().setFireModeEnabled(enabled);
+	}
+	private void setNextEnabled(boolean enabled) {
+		butNext.setEnabled(enabled);
+        client.getMenuBar().setFireNextEnabled(enabled);
+	}
     
     //
     // KeyListener

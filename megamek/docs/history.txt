@@ -123,6 +123,7 @@ v 0.28.17 CVS
 + bug 717273: possible fix for "dead mech makes physical attack"
 + bug 730075: fixed crash during DFA against destroyed target
 + similar fixes to charge against destroyed target
++ Bug 729877: save games load without error again
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

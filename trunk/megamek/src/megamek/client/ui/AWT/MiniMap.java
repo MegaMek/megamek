@@ -27,7 +27,7 @@ import megamek.common.actions.*;
  * Displays all the mapsheets in a scaled-down size.
  */
 public class MiniMap extends Canvas
-implements BoardListener, MouseListener, ComponentListener, GameListener {
+    implements BoardListener, MouseListener, ComponentListener, GameListener {
     // these indices match those in Terrain.java, and are therefore sensitive to any changes there
 
     private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
@@ -35,7 +35,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private static Color BACKGROUND;
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
-    
+
     private final static int SHOW_NO_HEIGHT = 0;
     private final static int SHOW_GROUND_HEIGHT = 1;
     private final static int SHOW_BUILDING_HEIGHT = 2;
@@ -67,7 +67,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     Coords               secondLOS;
 
     private Client       m_client;
-  
+
     /**
      * Creates and lays out a new mech display.
      */
@@ -90,7 +90,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
             updateSize = true;
         }
         if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight; 
+            size.height = Settings.minimumSizeHeight;
             updateSize = true;
         }
         if ( updateSize ) {
@@ -99,10 +99,10 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         setLocation( Settings.minimapPosX, Settings.minimapPosY );
 
     }
-    
+
     public MiniMap(Dialog d, ClientGUI c, BoardView1 bview) throws IOException {
         this (d, c.getClient().game, bview);
-        
+
         c.getClient().addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);
         addKeyListener(c.menuBar);
@@ -122,8 +122,8 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     }
 
     /*
-    * Initialize default colours and override with config file if there is one.
-    */
+     * Initialize default colours and override with config file if there is one.
+     */
     private void initializeColors() throws IOException {
 
         // set up defaults -- this might go away later...
@@ -161,7 +161,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         st.quoteChar('"');
         st.commentChar('#');
 
-scan:
+        scan:
         while (true) {
             red=0;
             green=0;
@@ -173,7 +173,7 @@ scan:
             case StreamTokenizer.TT_EOL:
                 break scan;
             case StreamTokenizer.TT_WORD:
-                // read in 
+                // read in
                 String key = st.sval;
                 if (key.equals("unitsize")) {
                     st.nextToken();
@@ -239,14 +239,14 @@ scan:
             zoom = (hexSide.length - 1);
         }
 
-    int requiredWidth, requiredHeight;
-    int currentHexSide = hexSide[zoom];
-    int currentHexSideByCos30 = hexSideByCos30[zoom];
-    int currentHexSideBySin30 = hexSideBySin30[zoom];
-    topMargin = margin;
-    leftMargin = margin;
-    requiredWidth = m_game.board.width*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
-    requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+        int requiredWidth, requiredHeight;
+        int currentHexSide = hexSide[zoom];
+        int currentHexSideByCos30 = hexSideByCos30[zoom];
+        int currentHexSideBySin30 = hexSideBySin30[zoom];
+        topMargin = margin;
+        leftMargin = margin;
+        requiredWidth = m_game.board.width*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
+        requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
         //m_dialog.show();
@@ -263,7 +263,7 @@ scan:
         }
 
         if ( !m_dialog.isVisible() )
-          return;
+            return;
 
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
@@ -278,7 +278,7 @@ scan:
                     g.setColor(terrainColor(h, j, k));
                     paintCoord(g, j, k, true);
                 }
-            }          
+            }
 
             if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
             if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
@@ -305,14 +305,14 @@ scan:
                         };
                     };
                 }
-            }          
+            }
 
             // draw declared fire
             if (Game.PHASE_FIRING==m_game.getPhase() || Game.PHASE_PHYSICAL==m_game.getPhase()) {
                 for (Enumeration enum = m_game.getActions(); enum.hasMoreElements(); ) {
                     Object action = enum.nextElement();
                     if (action instanceof AttackAction) {
-                            paintAttack(g,(AttackAction) action);
+                        paintAttack(g,(AttackAction) action);
                     };
                 };
             };
@@ -321,7 +321,7 @@ scan:
                 Entity e = (Entity)enum.nextElement();
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
-            }            
+            }
         }
 
         drawBtn(g);
@@ -329,9 +329,9 @@ scan:
         repaint();
     }
 
-    /** 
-    * Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
-    */
+    /**
+     * Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
+     */
     private void drawBtn(Graphics g){
         int [] xPoints = new int[3];
         int [] yPoints = new int[3];
@@ -365,98 +365,98 @@ scan:
 
         //drawing "+" and "-" buttons
         if (! minimized){
-      g.setColor(Color.black);
-      g.drawLine(14 - 1,getSize().height - 14, 14 - 1,getSize().height);
-      g.drawLine(getSize().width - 14 - 1,getSize().height - 14, getSize().width - 14 - 1,getSize().height);
-      g.setColor(Color.green.darker());
-      g.drawLine(14,getSize().height - 14, 14,getSize().height);
-      g.drawLine(getSize().width - 14 ,getSize().height - 14, getSize().width - 14,getSize().height);
-      if (zoom == 0){
-        g.setColor(Color.gray.brighter());
-        } else {
-        g.setColor(Color.yellow);
-      }
-      g.fillRect(3,getSize().height - 14 + 6, 8, 2);
-      if (zoom == (hexSide.length - 1)){
-        g.setColor(Color.gray.brighter());
-        } else {
-        g.setColor(Color.yellow);
-      }
-      g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
-      g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
+            g.setColor(Color.black);
+            g.drawLine(14 - 1,getSize().height - 14, 14 - 1,getSize().height);
+            g.drawLine(getSize().width - 14 - 1,getSize().height - 14, getSize().width - 14 - 1,getSize().height);
+            g.setColor(Color.green.darker());
+            g.drawLine(14,getSize().height - 14, 14,getSize().height);
+            g.drawLine(getSize().width - 14 ,getSize().height - 14, getSize().width - 14,getSize().height);
+            if (zoom == 0){
+                g.setColor(Color.gray.brighter());
+            } else {
+                g.setColor(Color.yellow);
+            }
+            g.fillRect(3,getSize().height - 14 + 6, 8, 2);
+            if (zoom == (hexSide.length - 1)){
+                g.setColor(Color.gray.brighter());
+            } else {
+                g.setColor(Color.yellow);
+            }
+            g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
+            g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
 
-      if (zoom > 2) {     
-        // Button for displying heights.
-        g.setColor(Color.black);
-        g.drawLine(28 - 1,getSize().height - 14, 28 - 1,getSize().height);
-        g.setColor(Color.green.darker());
-        g.drawLine(28, getSize().height - 14, 28, getSize().height);
-        g.setColor(Color.yellow);
-        String label;
-        switch (heightDisplayMode) {
-          case SHOW_NO_HEIGHT :
-            label = "N";
-            break;
-          case SHOW_GROUND_HEIGHT :
-            label = "G";
-            break;
-          case SHOW_BUILDING_HEIGHT :
-            label = "B";
-            break;
-          case SHOW_TOTAL_HEIGHT :
-            label = "T";
-            break;
-          default :
-            label = "";
+            if (zoom > 2) {
+                // Button for displying heights.
+                g.setColor(Color.black);
+                g.drawLine(28 - 1,getSize().height - 14, 28 - 1,getSize().height);
+                g.setColor(Color.green.darker());
+                g.drawLine(28, getSize().height - 14, 28, getSize().height);
+                g.setColor(Color.yellow);
+                String label;
+                switch (heightDisplayMode) {
+                case SHOW_NO_HEIGHT :
+                    label = "N";
+                    break;
+                case SHOW_GROUND_HEIGHT :
+                    label = "G";
+                    break;
+                case SHOW_BUILDING_HEIGHT :
+                    label = "B";
+                    break;
+                case SHOW_TOTAL_HEIGHT :
+                    label = "T";
+                    break;
+                default :
+                    label = "";
+                }
+                g.drawString(label, 17, getSize().height - 14 + 12);
+            }
         }
-        g.drawString(label, 17, getSize().height - 14 + 12);
-      }
-      }
 
         g.setColor(oldColor);
 
     }
-  
-  private void paintHeight(Graphics g, Hex h, int x, int y) {
-    if (heightDisplayMode == SHOW_NO_HEIGHT) return;
+
+    private void paintHeight(Graphics g, Hex h, int x, int y) {
+        if (heightDisplayMode == SHOW_NO_HEIGHT) return;
         if(zoom > 2){
-      int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-          int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
-          g.setColor(Color.white);
-          int height = 0;
-          if (h.getTerrain(Terrain.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
-            height = h.ceiling();
-          } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
-            height = h.floor();
-          } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-            height = (h.getTerrain(Terrain.BUILDING) != null) ? h.ceiling() : h.floor();
-          }
-          if (height != 0) {
-            g.drawString(height + "", baseX + 5, baseY + 5);
-          }
+            int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
+            int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
+            g.setColor(Color.white);
+            int height = 0;
+            if (h.getTerrain(Terrain.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
+                height = h.ceiling();
+            } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
+                height = h.floor();
+            } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
+                height = (h.getTerrain(Terrain.BUILDING) != null) ? h.ceiling() : h.floor();
+            }
+            if (height != 0) {
+                g.drawString(height + "", baseX + 5, baseY + 5);
+            }
         }
-  }
-  
-  private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-    int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-    int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
-    int [] xPoints = new int[6];
-    int [] yPoints = new int[6];
-    xPoints[0] = baseX;
-    yPoints[0] = baseY;
-    xPoints[1] = baseX + hexSideBySin30[zoom];
-    yPoints[1] = baseY + hexSideByCos30[zoom];
-    xPoints[2] = xPoints[1] + hexSide[zoom];
-    yPoints[2] = yPoints[1];
-    xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-    yPoints[3] = baseY;
-    xPoints[4] = xPoints[2];
-    yPoints[4] = baseY - hexSideByCos30[zoom];
-    xPoints[5] = xPoints[1];
-    yPoints[5] = yPoints[4];
-    g.setColor(c);
-    g.drawPolygon(xPoints,yPoints,6);
-  }
+    }
+
+    private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
+        int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
+        int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
+        int [] xPoints = new int[6];
+        int [] yPoints = new int[6];
+        xPoints[0] = baseX;
+        yPoints[0] = baseY;
+        xPoints[1] = baseX + hexSideBySin30[zoom];
+        yPoints[1] = baseY + hexSideByCos30[zoom];
+        xPoints[2] = xPoints[1] + hexSide[zoom];
+        yPoints[2] = yPoints[1];
+        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
+        yPoints[3] = baseY;
+        xPoints[4] = xPoints[2];
+        yPoints[4] = baseY - hexSideByCos30[zoom];
+        xPoints[5] = xPoints[1];
+        yPoints[5] = yPoints[4];
+        g.setColor(c);
+        g.drawPolygon(xPoints,yPoints,6);
+    }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
         int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
@@ -477,7 +477,7 @@ scan:
         yPoints[5] = yPoints[4];
         g.fillPolygon(xPoints,yPoints,6);
         if (border) {
-          Color oldColor = g.getColor();
+            Color oldColor = g.getColor();
             g.setColor(oldColor.darker());
             g.drawPolygon(xPoints,yPoints,6);
             g.setColor(oldColor);
@@ -485,8 +485,8 @@ scan:
     }
 
     /**
-    * Draw a line to represent an attack
-    */
+     * Draw a line to represent an attack
+     */
     private void paintAttack(Graphics g, AttackAction attack) {
         Entity source = m_game.getEntity(attack.getEntityId());
         Targetable target = m_game.getTarget(attack.getTargetType(), attack.getTargetId());
@@ -497,7 +497,7 @@ scan:
 
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
-        
+
         xPoints[0] = source.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
         yPoints[0] = (2*source.getPosition().y + 1 + source.getPosition().x%2)* hexSideByCos30[zoom] + topMargin;
         xPoints[1] = target.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
@@ -505,9 +505,9 @@ scan:
         xPoints[2] = xPoints[1]+2;
         xPoints[3] = xPoints[0]+2;
         if ((source.getPosition().x > target.getPosition().x
-            && source.getPosition().y < target.getPosition().y)
+             && source.getPosition().y < target.getPosition().y)
             || (source.getPosition().x < target.getPosition().x
-            && source.getPosition().y > target.getPosition().y)) {
+                && source.getPosition().y > target.getPosition().y)) {
             yPoints[3] = yPoints[0]+2;
             yPoints[2] = yPoints[1]+2;
         } else {
@@ -527,30 +527,30 @@ scan:
                 AttackAction otherAttack = (AttackAction) action;
                 if (attack.getEntityId() == otherAttack.getTargetId()
                     && otherAttack.getEntityId() == attack.getTargetId() ) {
-                        // attackTarget _must_ be an entity since it's shooting back (?)
-                        Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
-                        g.setColor(attackTarget.getOwner().getColor());
+                    // attackTarget _must_ be an entity since it's shooting back (?)
+                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
+                    g.setColor(attackTarget.getOwner().getColor());
 
-                        xPoints[0] = xPoints[3];
-                        yPoints[0] = yPoints[3];
-                        xPoints[1] = xPoints[2];
-                        yPoints[1] = yPoints[2];
-                        xPoints[2] = xPoints[1]+2;
-                        xPoints[3] = xPoints[0]+2;
-                        if ((source.getPosition().x > target.getPosition().x
-                            && source.getPosition().y < target.getPosition().y)
-                            || (source.getPosition().x < target.getPosition().x
+                    xPoints[0] = xPoints[3];
+                    yPoints[0] = yPoints[3];
+                    xPoints[1] = xPoints[2];
+                    yPoints[1] = yPoints[2];
+                    xPoints[2] = xPoints[1]+2;
+                    xPoints[3] = xPoints[0]+2;
+                    if ((source.getPosition().x > target.getPosition().x
+                         && source.getPosition().y < target.getPosition().y)
+                        || (source.getPosition().x < target.getPosition().x
                             && source.getPosition().y > target.getPosition().y)) {
-                            yPoints[3] = yPoints[0]+2;
-                            yPoints[2] = yPoints[1]+2;
-                        } else {
-                            yPoints[3] = yPoints[0]-2;
-                            yPoints[2] = yPoints[1]-2;
-                        };
-                        g.fillPolygon(xPoints,yPoints,4);
-                        g.setColor(Color.black);
-                        g.drawPolygon(xPoints,yPoints,4);
-                        break;
+                        yPoints[3] = yPoints[0]+2;
+                        yPoints[2] = yPoints[1]+2;
+                    } else {
+                        yPoints[3] = yPoints[0]-2;
+                        yPoints[2] = yPoints[1]-2;
+                    };
+                    g.fillPolygon(xPoints,yPoints,4);
+                    g.setColor(Color.black);
+                    g.drawPolygon(xPoints,yPoints,4);
+                    break;
                 };
             };
         };
@@ -665,7 +665,7 @@ scan:
                 g.drawPolygon(xPoints,yPoints,4);
                 g.fillPolygon(xPoints,yPoints,4);
             }
-                  // Is there a South-East exit?
+            // Is there a South-East exit?
             if ( 0 != (exits & 0x0004) ) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
@@ -785,81 +785,81 @@ scan:
             return new Color(r, g, b);
 
         }
-/*
-        if (terrain < 5){
-             level = (int) Math.abs(x.floor());
-             // By experiment it is possible to make only 6 distinctive color steps
-             if (level > 5) level = 5;
-             int r = terrColor.getRed()-level*30;
-             int g = terrColor.getGreen()-level*30;
-             int b = terrColor.getBlue()-level*30;
-             if (r < 0) r = 0;
-             if (g < 0) g = 0;
-             if (b < 0) b = 0;
-             return new Color(r, g, b);
-        }
-*/
-            return terrColor;
+        /*
+          if (terrain < 5){
+          level = (int) Math.abs(x.floor());
+          // By experiment it is possible to make only 6 distinctive color steps
+          if (level > 5) level = 5;
+          int r = terrColor.getRed()-level*30;
+          int g = terrColor.getGreen()-level*30;
+          int b = terrColor.getBlue()-level*30;
+          if (r < 0) r = 0;
+          if (g < 0) g = 0;
+          if (b < 0) b = 0;
+          return new Color(r, g, b);
+          }
+        */
+        return terrColor;
     }
 
-  private Coords translateCoords(int x, int y) {
-    int gridX = (int) (x / (hexSideBySin30[zoom] + hexSide[zoom]));
-    int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
-    int gridY = (int) (y / (2 * hexSideByCos30[zoom]));
-    int restY = y % (2 * hexSideByCos30[zoom]);
-    
-    boolean evenColumn = (gridX & 1) == 0;
-    
-    if (restY < hexSideByCos30[zoom]) {
-      if (evenColumn) {
-        if (restX < ((restY - hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
-          gridX--;
-          gridY--;
-        }
-      } else {
-        if (restX < (restY * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
-          gridX--;
+    private Coords translateCoords(int x, int y) {
+        int gridX = (int) (x / (hexSideBySin30[zoom] + hexSide[zoom]));
+        int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
+        int gridY = (int) (y / (2 * hexSideByCos30[zoom]));
+        int restY = y % (2 * hexSideByCos30[zoom]);
+
+        boolean evenColumn = (gridX & 1) == 0;
+
+        if (restY < hexSideByCos30[zoom]) {
+            if (evenColumn) {
+                if (restX < ((restY - hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                    gridX--;
+                    gridY--;
+                }
+            } else {
+                if (restX < (restY * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
+                    gridX--;
+                } else {
+                    gridY--;
+                }
+            }
         } else {
-          gridY--;
+            if (evenColumn) {
+                if (restX < ((restY- hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
+                    gridX--;
+                }
+            } else {
+                if (restX < ((restY - 2 * hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                    gridX--;
+                }
+            }
         }
-      }
-    } else {
-      if (evenColumn) {
-        if (restX < ((restY- hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
-          gridX--;
-        }
-      } else {
-        if (restX < ((restY - 2 * hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
-          gridX--;
-        }
-      }
+        /*       restX = hexSideBySin30[zoom] + hexSide[zoom] - restX;
+                 restY -= hexSideByCos30[zoom];
+                 if (hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridX ++;
+                 if (-hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridY --;
+        */
+        if (gridX < 0) gridX = 0;
+        if (gridY < 0) gridY = 0;
+
+        return new Coords(gridX, gridY);
     }
-/*       restX = hexSideBySin30[zoom] + hexSide[zoom] - restX;
-       restY -= hexSideByCos30[zoom];
-       if (hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridX ++;
-       if (-hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridY --;
-*/
-    if (gridX < 0) gridX = 0;
-    if (gridY < 0) gridY = 0;
-    
-    return new Coords(gridX, gridY);
-  }
 
     private void processMouseClick(int x, int y, MouseEvent me){
         if (y > (getSize().height - 14)){
 
             if(x < 14){
-        if (zoom == 0) return;
-        zoom --;
-        initializeMap();
-      }else if (x < 28 && zoom > 2) {
-        heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
-        initializeMap();
-        }else if ( x> (getSize().width - 14)){
-        if (zoom == (hexSide.length - 1)) return;
-        zoom ++;
-        initializeMap();
-        } else{
+                if (zoom == 0) return;
+                zoom --;
+                initializeMap();
+            }else if (x < 28 && zoom > 2) {
+                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                initializeMap();
+            }else if ( x> (getSize().width - 14)){
+                if (zoom == (hexSide.length - 1)) return;
+                zoom ++;
+                initializeMap();
+            } else{
                 if (minimized){
                     //m_dialog.setResizable(true);
                     setSize(getSize().width, heightBufer);
@@ -873,19 +873,19 @@ scan:
                 minimized = ! minimized;
                 m_dialog.pack();
                 drawMap();
-      }
+            }
         }else{
             if ((x < margin) || (x > (getSize().width -  leftMargin)) || (y < topMargin) || (y > (getSize().height - topMargin - 14))){
                 return;
             } else {
-              if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-//              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
-                m_game.board.mouseAction(translateCoords(x - leftMargin, y - topMargin), Board.BOARD_HEX_CLICK, me.getModifiers());
-            } else {
-                  m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
+                if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                    //              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                    m_game.board.mouseAction(translateCoords(x - leftMargin, y - topMargin), Board.BOARD_HEX_CLICK, me.getModifiers());
+                } else {
+                    m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
                 }
             }
-       }
+        }
     }
 
     public int getZoom() {
@@ -911,30 +911,30 @@ scan:
     public void boardHexMoused(BoardEvent b) {
     }
     public void boardHexCursor(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
+        firstLOS = null;
+        secondLOS = null;
         drawMap();
     }
     public void boardHexHighlighted(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
+        firstLOS = null;
+        secondLOS = null;
         drawMap();
     }
     public void boardHexSelected(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
+        firstLOS = null;
+        secondLOS = null;
         drawMap();
     }
     public void boardNewBoard(BoardEvent b) {
         initializeMap();
     }
     public void boardFirstLOSHex(BoardEvent b) {
-      secondLOS = null;
-      firstLOS = b.getCoords();
+        secondLOS = null;
+        firstLOS = b.getCoords();
         drawMap();
     }
     public void boardSecondLOSHex(BoardEvent b, Coords c) {
-      firstLOS = c;
+        firstLOS = c;
         secondLOS = b.getCoords();
         drawMap();
     }
@@ -971,11 +971,11 @@ scan:
     }
 
     public void componentShown(ComponentEvent ce) {
-      drawMap();
+        drawMap();
     }
 
     public void componentResized(ComponentEvent ce) {
-           // if (!minimized) initializeMap();
+        // if (!minimized) initializeMap();
     }
 
 
@@ -985,7 +985,7 @@ scan:
     }
 
     public void gameDisconnected(GameEvent e) {
-        ;    
+        ;
     }
 
     public void boardChangedEntity(BoardEvent b) {

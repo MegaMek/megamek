@@ -611,10 +611,11 @@ public class MovementDisplay
     }
 
     private void UpdateRACButton() {
-        if ( null == ce() ) System.err.println( "MD: UpdateRACButton - no ce()");//killme
-        if ( null == md ) System.err.println( "MD: UpdateRACButton - no md");//killme
-            butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
-            butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
+        if ( null == ce() || null == md ) {
+            return;
+        }
+        butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
+        butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
     }
 
     private void updateLoadButtons() {

@@ -657,11 +657,13 @@ class WeaponPanel
                 int totalShotsLeft = entity.getTotalAmmoOfType(typeUsed);
                 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
-                // Fire Mode - lots of things have variable modes
-                if (wtype.hasModes()) {
-                    wn += " " + mounted.curMode();
-                }            
             }
+
+            // Fire Mode - lots of things have variable modes
+            if (wtype.hasModes()) {
+                wn += " " + mounted.curMode();
+            }    
+
             weaponList.add(wn);
         }
     }

@@ -232,7 +232,11 @@ public class Game implements Serializable
     }
 
     public void setOptions(GameOptions options) {
-        this.options = options;
+        if ( null == options ) {
+            System.err.println( "Can't set the game options to null!" );
+        } else {
+            this.options = options;
+        }
     }
 
 

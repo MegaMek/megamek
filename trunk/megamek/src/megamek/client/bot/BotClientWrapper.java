@@ -85,7 +85,7 @@ public abstract class BotClientWrapper extends BotClient {
     }
   }
 
-  protected abstract void initialize();
+  public abstract void initialize();
   protected abstract void initMovement();
   protected abstract void initFiring();
   protected abstract void processChat(GameEvent ge);

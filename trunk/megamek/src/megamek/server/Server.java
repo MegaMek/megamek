@@ -12920,7 +12920,7 @@ implements Runnable, ConnectionHandler {
                 if (game.board.contains(targetCoords)) {
                     phaseReport.append("and the pilot ejects safely!\n");
                     pilot.setPosition(targetCoords);
-                    doEntityDisplacementMinefieldCheck(pilot, entity.getPosition(), targetCoords);       
+                    doEntityDisplacementMinefieldCheck(pilot, entity.getPosition(), targetCoords);
                 } else {
                     phaseReport.append("and the pilot ejects safely and lands far from the battle!");
                     game.removeEntity( pilot.getId(), Entity.REMOVE_IN_RETREAT );

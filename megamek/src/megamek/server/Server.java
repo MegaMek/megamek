@@ -811,7 +811,7 @@ implements Runnable, ConnectionHandler {
         if (game.getVictoryTeam() == Player.TEAM_NONE) {
             Player player = getPlayer( game.getVictoryPlayerId() );
             if ( null == player ) {
-                roundReport.append( "the Chicaco Cubs!!!\n\n" );
+                roundReport.append( "the Chicago Cubs!!!\n\n" );
             } else {
                 roundReport.append( player.getName() );
                 roundReport.append("\n\n");

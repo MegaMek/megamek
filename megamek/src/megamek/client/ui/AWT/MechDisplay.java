@@ -676,7 +676,7 @@ class WeaponPanel extends BufferedPanel
                     typeUsed = mounted.getLinked().getType();
                 }
 
-                int totalShotsLeft = entity.getTotalMunitionsOfType(typeUsed);
+                int totalShotsLeft = entity.getTotalAmmoOfType(typeUsed);
 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
             }

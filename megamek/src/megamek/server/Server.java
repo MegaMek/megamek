@@ -3160,32 +3160,31 @@ implements Runnable, ConnectionHandler {
             }
 
             // check for minefields.
-//            if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
-//            	|| ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
-            if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements())) {
-	         checkVibrabombs(entity, curPos, false, lastPos, curPos);
-            }
-            if (game.containsMinefield(curPos)) {
-            	Enumeration minefields = game.getMinefields(curPos).elements();
-            	while (minefields.hasMoreElements()) {
-            		Minefield mf = (Minefield) minefields.nextElement();
+            if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
+            	|| ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
+            	checkVibrabombs(entity, curPos, false, lastPos, curPos); 
+                if (game.containsMinefield(curPos)) {
+                	Enumeration minefields = game.getMinefields(curPos).elements();
+                	while (minefields.hasMoreElements()) {
+                		Minefield mf = (Minefield) minefields.nextElement();
 
-            		switch (mf.getType()) {
-            			case (Minefield.TYPE_CONVENTIONAL) :
-            			case (Minefield.TYPE_THUNDER) :
-            			case (Minefield.TYPE_THUNDER_INFERNO) :
-            			case (Minefield.TYPE_COMMAND_DETONATED) :
-            				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
-            					enterMinefield(entity, mf, curPos, curPos, true);
-            				break;
-            			case (Minefield.TYPE_THUNDER_ACTIVE) :
-            				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
-	            				enterMinefield(entity, mf, curPos, curPos, true);
-	            			else
-	            				enterMinefield(entity, mf, curPos, curPos, true, 2);
-            				break;
-            		}
-            	}
+                		switch (mf.getType()) {
+                			case (Minefield.TYPE_CONVENTIONAL) :
+                			case (Minefield.TYPE_THUNDER) :
+                			case (Minefield.TYPE_THUNDER_INFERNO) :
+                			case (Minefield.TYPE_COMMAND_DETONATED) :
+                				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+                					enterMinefield(entity, mf, curPos, curPos, true);
+                				break;
+                			case (Minefield.TYPE_THUNDER_ACTIVE) :
+                				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+    	            				enterMinefield(entity, mf, curPos, curPos, true);
+    	            			else
+    	            				enterMinefield(entity, mf, curPos, curPos, true, 2);
+                				break;
+                		}
+                	}
+                }	        
             }
 
             // infantry discovers minefields if they end their move
@@ -3728,7 +3727,7 @@ implements Runnable, ConnectionHandler {
 	// When an entity enters a conventional or Thunder minefield.
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
 		// Bug 954272: Mines shouldn't work underwater
-		if (game.board.getHex(dest).contains(Terrain.WATER) && !game.board.getHex(dest).contains(Terrain.PAVEMENT)) {
+		if (!game.board.getHex(mf.getCoords()).contains(Terrain.WATER) || game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
 		switch (mf.getType()) {
 			case (Minefield.TYPE_CONVENTIONAL) :
 			case (Minefield.TYPE_THUNDER) :

@@ -6,6 +6,7 @@ v0.29.39
 + Patch 979497: lvl3 Diagramming LOS rule from MaxTech, thanks hentaizonga
 + Bug 830715: Breach locations when Mechs are displaced into water
 + Bug 954272: Mines shouldn't work underwater
++ Bug 878766: Mines should trigger only when entering hex
 
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages

@@ -186,6 +186,17 @@ public class MtfFile {
     }
     
     private void parseCrits(Mech mech, int loc) {
+        // check for removed arm actuators
+        if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
+            if (!critData[loc][3].equals("Hand Actuator")) {
+                mech.setCritical(loc, 3, null);
+            }
+            if (!critData[loc][2].equals("Lower Arm Actuator")) {
+                mech.setCritical(loc, 2, null);
+            }
+        }
+        
+        // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
             // if the slot's full already, skip it.
             if (mech.getCritical(loc, i) != null) {

@@ -9,6 +9,8 @@ v0.29.69 (CVS)
 + Don't allow missed charges to displace the attacker off the map.
 + Changed the Battle Armor BVs to match the ones from HMBA
 + Bug 1160780: Offboard Deployment and Double Blind NPE
++ When pushing a target off-board, the pushing Mech did not move to the position
+    the pushed target previously had.
 
 v0.29.68 (2005-03-06 4:45pm)
 + Bug 1153269 "configure unit" not remembering burst fire mg setup.

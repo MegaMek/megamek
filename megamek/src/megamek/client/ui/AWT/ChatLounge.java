@@ -55,6 +55,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Button butLoad;
     private Button butDelete;
     private Button butCustom;
+    private Button butMechReadout;
     private List lisEntities;
     private int[] entityCorrespondance;
     private Panel panEntities;
@@ -339,10 +340,15 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
 
-        butCustom = new Button("Configure / View Mech Info...");
+        butCustom = new Button("Configure Mech...");
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
         butCustom.setEnabled(false);
+            
+        butMechReadout = new Button("View Mech...");
+        butMechReadout.setActionCommand("Mech_readout");
+        butMechReadout.addActionListener(this);
+        butMechReadout.setEnabled(false);
             
         butDelete = new Button("Delete Mech");
         butDelete.setActionCommand("delete_mech");
@@ -370,6 +376,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
+            
+        gridbag.setConstraints(butMechReadout, c);
+        panEntities.add(butMechReadout);
             
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -672,6 +681,37 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     
     /**
+     * Pop up the view mech dialog
+     */
+    public void mechReadout() {
+        if (lisEntities.getSelectedIndex() == -1) {
+            return;
+        }
+        Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+        MechView mechView = new MechView(entity);
+        TextArea ta = new TextArea();
+	ta.setEditable(false);
+        if (mechView.isValid()) {
+            ta.setText(mechView.getMechReadout());
+        } else {
+            ta.setText("Sorry, can only display mechs.");
+        }
+        final Dialog dialog = new Dialog(client.frame, "Mech Quick View", false);
+        Button btn = new Button("Ok");
+        dialog.add("South", btn);
+        btn.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                }
+        });
+        dialog.add("Center", ta);
+        dialog.setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - dialog.getSize().width/2,
+                    client.frame.getLocation().y + client.frame.getSize().height/5 - dialog.getSize().height/2);
+        dialog.setSize(300, 450);
+        dialog.show();
+    }
+    
+    /**
      * Pop up the dialog to load a mech
      */
     public void loadMech() {
@@ -717,6 +757,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == lisEntities) {
             boolean selected = lisEntities.getSelectedIndex() != -1;
             butCustom.setEnabled(selected);
+            if (client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]) instanceof Mech) {
+                //Can only display mechs right now, future upgrade for vehicles?
+                butMechReadout.setEnabled(selected);
+            } else {
+                butMechReadout.setEnabled(false);
+            }
             butDelete.setEnabled(selected);
         }
         
@@ -750,6 +796,8 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             client.getStartingPositionDialog().update();
             client.getStartingPositionDialog().show();
+        } else if (ev.getSource() == butMechReadout) {
+            mechReadout();
         }
         else if ( ev.getSource() == butLoadList ) {
             // Allow the player to replace their current

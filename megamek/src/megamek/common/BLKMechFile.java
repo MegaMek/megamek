@@ -205,12 +205,8 @@ public class BLKMechFile {
             
                 //changed...
             EquipmentType etype = EquipmentType.getByMepName(critName);
-            if (etype instanceof WeaponType) {
-                mech.addWeapon(new Mounted(etype), loc, rearMounted);
-            } else if (etype instanceof AmmoType) {
-                mech.addAmmo(new Mounted(etype), loc);
-            } else if (etype instanceof MiscType) {
-                mech.addMisc(new Mounted(etype), loc);
+            if (etype != null) {
+                mech.addEquipment(new Mounted(etype), loc, rearMounted);
             } else {
                 //System.out.println("blkmechfile: could not find equipment " + critName);
             }

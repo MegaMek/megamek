@@ -411,6 +411,7 @@ class WeaponPanel
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
     private Vector weapons;
+    private Entity entity;
         
     public WeaponPanel() {
         super(new GridBagLayout());
@@ -546,12 +547,13 @@ class WeaponPanel
      */
     public void displayMech(Entity en) {
         // update pointer to weapons
-        weapons = en.getWeaponList();
+        this.weapons = en.getWeaponList();
+        this.entity = en;
             
         // update weapon list
         weaponList.removeAll();
         for(int i = 0; i < weapons.size(); i++) {
-            Mounted mounted = en.getWeapon(i);
+            Mounted mounted = (Mounted)weapons.elementAt(i);
             WeaponType wtype = (WeaponType)mounted.getType();
             String wn = mounted.getDesc() 
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
@@ -566,13 +568,25 @@ class WeaponPanel
         }
     }
   
-  /**
-   * Selects the weapon at the specified index in the list
-   */
-  public void selectWeapon(int wn) {
-    weaponList.select(wn);
-    displaySelected();
-  }
+    /**
+     * Selects the weapon at the specified index in the list
+     */
+    public void selectWeapon(int wn) {
+        int index = weapons.indexOf(entity.getEquipment(wn));
+        weaponList.select(index);
+        displaySelected();
+    }
+        
+    /**
+     * Selects the weapon at the specified index in the list
+     */
+    public int getSelectedWeaponNum() {
+        int selected = weaponList.getSelectedIndex();
+        if (selected == -1) {
+            return -1;
+        }
+        return entity.getEquipmentNum((Mounted)weapons.elementAt(selected));
+    }
         
     /**
      * displays the selected item from the list in the weapon
@@ -715,14 +729,8 @@ class SystemPanel
                 case CriticalSlot.TYPE_SYSTEM :
                     slotList.add((cs.isDestroyed() ? "*" : "") + Mech.systemNames[cs.getIndex()]);
                     break;
-                case CriticalSlot.TYPE_WEAPON :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getWeapon(cs.getIndex()).getDesc());
-                    break;
-                case CriticalSlot.TYPE_AMMO :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getAmmo(cs.getIndex()).getDesc());
-                    break;
-                case CriticalSlot.TYPE_MISC :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getMisc(cs.getIndex()).getDesc());
+                case CriticalSlot.TYPE_EQUIPMENT :
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getEquipment(cs.getIndex()).getDesc());
                     break;
                 }
             }

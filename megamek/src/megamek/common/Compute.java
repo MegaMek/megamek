@@ -868,13 +868,18 @@ public class Compute
                                         Vector prevAttacks) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final Mounted mounted = ae.getWeapon(weaponId);
+        final Mounted mounted = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)mounted.getType();
         final Coords[] in = intervening(ae.getPosition(), te.getPosition());
         
         ToHitData toHit;
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
+        
+        // weapon fired already?
+        if (mounted.isUsedThisRound()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon already fired this round.");
+        }
         
         // sensors operational?
         final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
@@ -1099,7 +1104,7 @@ public class Compute
                     if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
                         break;
                     }
-                    if (prevAttack.getEntityId() == attackerId && ae.getWeapon(prevAttack.getWeaponId()).getLocation() == otherArm) {
+                    if (prevAttack.getEntityId() == attackerId && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
                         return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already");
                     }
                 }
@@ -1320,7 +1325,7 @@ public class Compute
         // check if attacker has fired leg-mounted weapons
         for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isUsedThisTurn() && mounted.getLocation() == legLoc) {
+            if (mounted.isUsedThisRound() && mounted.getLocation() == legLoc) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from leg this turn");
             }
         }
@@ -1490,7 +1495,7 @@ public class Compute
         }
         
         // club must not be damaged
-        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_MISC, ae.getMiscNum(club), club.getLocation()) > 0) {
+        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_EQUIPMENT, ae.getEquipmentNum(club), club.getLocation()) > 0) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Club is damaged");
         }
         
@@ -1624,7 +1629,7 @@ public class Compute
         // check if attacker has fired arm-mounted weapons
         for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isUsedThisTurn() && (mounted.getLocation() == Mech.LOC_RARM && mounted.getLocation() == Mech.LOC_LARM)) {
+            if (mounted.isUsedThisRound() && (mounted.getLocation() == Mech.LOC_RARM && mounted.getLocation() == Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
         }

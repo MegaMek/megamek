@@ -3959,7 +3959,7 @@ implements Runnable, ConnectionHandler {
             // build up heat from movement
             if (entity.moved == Entity.MOVE_WALK) {
                 entity.heatBuildup += 1;
-            } else if (entity.moved == Entity.MOVE_RUN) {
+            } else if (entity.moved == Entity.MOVE_RUN || entity.moved == Entity.MOVE_SKID) {
                 entity.heatBuildup += 2;
             } else if (entity.moved == Entity.MOVE_JUMP) {
                 entity.heatBuildup += Math.max(3, entity.delta_distance);

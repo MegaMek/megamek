@@ -97,7 +97,7 @@ public class MovementData
      * @param type the type of movement.
      */
     public void addStep(int type) {
-        steps.addElement(new Step(type));
+        addStep(new Step(type));
     }
 
     /**
@@ -108,7 +108,20 @@ public class MovementData
      *          of this step. For example, the enemy being charged.
      */
     public void addStep(int type, Targetable target) {
-        steps.addElement(new Step(type, target));
+        addStep(new Step(type, target));
+    }
+    
+    /**
+     * Initializes a step as part of this movement data.  Then adds
+     * it to the list.
+     * @param step
+     */
+    protected void addStep(Step step) {
+        step.parent = this;
+        if (steps.size() > 0) {
+            step.prev = (Step)steps.elementAt(steps.size() - 1);
+        }
+        steps.addElement(step);
     }
 
     public Enumeration getSteps() {
@@ -127,7 +140,7 @@ public class MovementData
      */
     public void append(MovementData md) {
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            this.steps.addElement(i.nextElement());
+            addStep((Step)i.nextElement());
         }
         compiled = false;
     }
@@ -481,14 +494,16 @@ public class MovementData
         return hexes;
     };
     
-    public class MovementState implements Cloneable, Serializable {
+    public static class MovementState implements Cloneable, Serializable {
         Coords position;
         int facing;
         int elevation;
         //
-        int mpUsed;
+        int mp; // this step
+        int mpUsed; // whole path
         int distance;
         int movementType;
+        boolean isProne;
         //
         boolean legal;
         boolean danger; // keep psr
@@ -501,7 +516,6 @@ public class MovementData
         boolean isTurning; // method
         boolean isUnloaded;
         boolean prevStepOnPavement; // prev
-        boolean isProne;
         //
         Coords lastPos; // prev
         boolean hasJustStood;
@@ -514,6 +528,81 @@ public class MovementData
         boolean isPavementStep;
         boolean isUsingManAce; // method
 
+        /**
+         * Takes the given state as the previous state and sets flags from it.
+         * 
+         * @param state
+         */
+        public void setFromPrev(MovementState prev) {
+           this.hasJustStood =  prev.hasJustStood;
+           this.facing = prev.getFacing();
+           this.position = prev.getPosition();
+           
+           this.distance = prev.getDistance();
+           this.mpUsed = prev.mpUsed;
+           this.isPavementStep = prev.isPavementStep;
+           this.onlyPavement = prev.onlyPavement;
+           this.isJumping = prev.isJumping;
+           this.isRunProhibited = prev.isRunProhibited;
+        }
+        
+        /**
+         * Sets this state as coming from the entity.
+         * @param entity
+         */
+        public void setFromEntity(Entity entity, Game game) {
+            this.position = entity.getPosition();
+            this.facing = entity.getFacing();
+            // elevation
+            this.mpUsed = entity.mpUsed;
+            this.distance = entity.delta_distance;
+            this.isProne = entity.isProne();
+
+            // check pavement
+            if (position != null) {
+                Hex curHex = game.board.getHex(position);
+                if (curHex.hasPavement()) {
+                    onlyPavement = true;
+                    isPavementStep = true;
+                }
+            }
+
+            this.isInfantry = (entity instanceof Infantry);
+        }
+        
+        /**
+         * Adjusts facing to comply with the type of step indicated.
+         * @param stepType
+         */
+        public void adjustFacing(int stepType) {
+           facing = MovementData.getAdjustedFacing(facing, stepType);
+        }
+        
+        /**
+         * Moves the position one hex in the direction indicated.  Does not
+         * change facing.
+         * @param dir
+         */
+        public void moveInDir(int dir) {
+            position = position.translated(dir);
+        }
+        
+        /**
+         * Adds a certain amount to the distance parameter.
+         * @param increment
+         */
+        public void addDistance(int increment) {
+            distance += increment;
+        }
+        
+        /**
+         * Adds a certain amount to the mpUsed parameter.
+         * @param increment
+         */
+        public void addMpUsed(int increment) {
+            mpUsed += increment;
+        }
+        
         /**
          * @return
          */
@@ -901,6 +990,21 @@ public class MovementData
             }
         }
 
+
+        /**
+         * @return
+         */
+        public int getMp() {
+            return mp;
+        }
+
+        /**
+         * @param i
+         */
+        public void setMp(int i) {
+            mp = i;
+        }
+
     }
     
     /**
@@ -909,12 +1013,15 @@ public class MovementData
     public class Step
         implements Serializable
     {
-        private int type;
-    	private int targetId;
-    	private int targetType;
+        private int type = 0;
+    	private int targetId = Entity.NONE;
+    	private int targetType = Targetable.TYPE_ENTITY;
         
-        MovementState state;
+        private MovementState state = new MovementState();
 
+        private Step prev = null;
+        private MovementData parent = null;
+        
         /**
          * Create a step of the given type.
          *
@@ -923,9 +1030,6 @@ public class MovementData
          */
         public Step(int type) {
             this.type = type;
-            this.targetId = Entity.NONE;
-            this.targetType = Targetable.TYPE_ENTITY;
-            this.state = new MovementState();
         }
 
         /**
@@ -1006,6 +1110,14 @@ public class MovementData
         
         public void clearAllFlags() {
             this.state = new MovementState();
+        }
+        
+        public void setStateFromPrev() {
+            // if there's no previous step, then we can't
+            if (prev == null) {
+                return;
+            }
+            state.setFromPrev(prev.getState());
         }
         
         public Object clone() {
@@ -1430,6 +1542,13 @@ public class MovementData
          */
         public void setUsingMASC(boolean b) {
             state.setUsingMASC(b);
+        }
+
+        /**
+         * @return
+         */
+        public Step getPrev() {
+            return prev;
         }
 
     }

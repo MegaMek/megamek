@@ -167,7 +167,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
             return;
           }
           stepMp = Compute.getMovementCostFor(game, this.entity.getId(),
-                                              lastPos, curPos,overallMoveType);
+                                              lastPos, curPos,isJumping);
           // check for water
           if (game.board.getHex(curPos).contains(Terrain.WATER)) {
             isRunProhibited = true;
@@ -231,7 +231,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         moveType = Entity.MOVE_RUN;
       }
       // check if this movement is illegal for reasons other than points
-      if (!this.isMovementPossible(game, entity.getId(), lastPos, curPos, moveType, step_type)) {
+      if (!EntityState.isMovementPossible(game, entity.getId(), lastPos, curPos, moveType, step_type)) {
         moveType = Entity.MOVE_ILLEGAL;
       }
       // no legal moves past an illegal one
@@ -249,11 +249,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId,
                                                 lastPos, curPos,
                                                 moveType, isTurning,
-                                                overallMoveType, 
                                                 lastStepOnPavement)
-            /* Bug 754610: Revert fix for bug 702735.
-                                                overallMoveType)
-            */
                   || step_type == MovementData.STEP_GET_UP);
 
       // Record if we're turning *after* check for danger,

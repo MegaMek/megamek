@@ -331,7 +331,7 @@ public abstract class Mech
     }
     
     /**
-     * Makes it possible for a mech to use its MASC system.  Note
+     * Checks if a mech has an armed MASC system. Note
      *  that the mech will have to exceed its normal run to actually
      *  engage the MASC system
      */

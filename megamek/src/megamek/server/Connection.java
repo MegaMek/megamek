@@ -46,6 +46,8 @@ public class Connection {
     private Thread              sender;
     
     private Vector              sendQueue = new Vector();
+    
+    private long                bytesSent;
 
 
     public Connection(Server server, Socket socket, int id) {
@@ -178,6 +180,7 @@ public class Connection {
             out.reset(); // write each packet fresh
             out.writeObject(packet);
             out.flush();
+            bytesSent += packet.size();
 //            System.out.println("server(" + id + "): command #" + packet.getCommand() + " sent with " + packet.getData().length + " data");
         } catch(IOException ex) {
             System.err.println("server(" + id + "): error sending command.  dropping player");
@@ -187,5 +190,11 @@ public class Connection {
         }
     }
     
-
+    /**
+     * Returns a very approximate count of how many bytes were sent to this
+     * player.
+     */
+    public long bytesSent() {
+        return bytesSent;
+    }
 }

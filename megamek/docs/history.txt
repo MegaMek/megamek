@@ -87,6 +87,8 @@ v 0.28.6-dev (CVS)
 + 682166 LMG and HMG racksize == weapon damage; add half-ton ammo
 + 679250 Change BA NARC racksize to prevent listing in ammo selector.
 + Striker Light Tank (level 1 & 2, and LRM variant) shouldn't show Mek gif.
++ rough byte count kept per connection (use /who)
++ externalId field added to entities (for mm.net use)
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

@@ -45,6 +45,9 @@ public class Protomech
     public int TorsoBGunNum;
     // locations
 
+    //Pilot damage caused so far by crits to this location. 
+    // Needed for location destruction pilot damage.
+    public int PilotDamageTaken[] = {0, 0, 0, 0, 0, 0};
     /**
      * The battle value of this unit.  This value should
      * be set when the unit's file is read.
@@ -75,8 +78,9 @@ public class Protomech
     public static final int		SYSTEM_LEGCRIT			= 1;
     public static final int		SYSTEM_HEADCRIT			= 2;
     public static final int		SYSTEM_TORSOCRIT		= 3;
-        private static final int[] NUM_OF_SLOTS = {2,3,2,2,3,0};
-  public static final String systemNames[] = {"Arm", "Leg", "Head", "Torso"};
+    private static final int[] NUM_OF_SLOTS = {2, 3, 2, 2, 3, 0};
+    public static final int[] POSSIBLE_PILOT_DAMAGE = {1, 3, 1, 1, 1, 0};
+    public static final String systemNames[] = {"Arm", "Leg", "Head", "Torso"};
     /**
      * Construct a new, blank, pmech.
      */
@@ -106,19 +110,47 @@ public class Protomech
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
+
+    /**
+     * Returns # of pilot damage points taken
+     * due to crits to the location so far.
+     */
+    public int getPilotDamageTaken(int loc) {
+        return PilotDamageTaken[loc];
+    }
+
+    /**
+     * Tells the Protomech to note  pilot damage
+     * taken from crit damage to the location
+     */
+    public void setPilotDamageTaken(int loc, int damage) {
+        PilotDamageTaken[loc]=damage;
+    }
+
+    /**
+     * Protos don't take piloting skill rolls.
+     */
+    public PilotingRollData getBasePilotingRoll()
+    {
+        return new PilotingRollData( this.getId(),
+                                     PilotingRollData.CHECK_FALSE,
+                                     "Protomech" );
+    }
+
     /**
      *A "shaded" critical is a box shaded on the record sheet, implies pilot damage when hit.  Returns whether shaded.
      */
     public boolean shaded(int loc, int numHit)
     {
     	switch(loc)
-    	{case LOC_HEAD:
+    	{
+        case LOC_HEAD:
     	case LOC_LARM:
     	case LOC_RARM:
     	return (2==numHit);
     	case LOC_TORSO:
-    	return true;
-    	case LOC_MAINGUN:
+        return true;
+        case LOC_MAINGUN:
     	case LOC_NMISS:
     	return false;
     	case LOC_LEG:

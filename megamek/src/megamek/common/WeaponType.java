@@ -285,6 +285,7 @@ public class WeaponType extends EquipmentType {
         // Start BattleArmor weapons
         EquipmentType.addType( createBAMG() );
         EquipmentType.addType( createBASingleMG() );
+        EquipmentType.addType( createBASingleFlamer());
         EquipmentType.addType( createBAFlamer() );
         EquipmentType.addType( createBASmallLaser() );
         EquipmentType.addType( createBACLERSmallLaser() );
@@ -2885,6 +2886,28 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+    public static WeaponType createBASingleFlamer() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Flamer";
+        weapon.internalName = "ISBASingleFlamer";
+        weapon.mepName = "IS BA-Single Flamer";
+        weapon.mtfName = "ISBASingleFlamer";
+        weapon.tdbName = "IS BA-Single Flamer";
+        weapon.heat = 3;
+        weapon.damage = 2;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_FLAMER;
+        weapon.bv = 0;
+
+        return weapon;
+    }
     public static WeaponType createBAFlamer() {
         WeaponType weapon = new WeaponType();
 
@@ -2905,8 +2928,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER;
-        String[] modes = { "Damage", "Heat" };
-        weapon.setModes(modes);
 
         return weapon;
     }
@@ -2999,8 +3020,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER | F_DOUBLE_HITS;
-        String[] modes = { "Damage", "Heat" };
-        weapon.setModes(modes);
 
         return weapon;
     }

@@ -893,6 +893,7 @@ implements Runnable {
                 resolveCrewDamage();
 		resolvePilotingRolls(); // Skids cause damage in movement phase
 		resolveCrewDamage(); // again, I guess
+                checkForFlamingDeath();
                 // check phase report
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1879,19 +1880,25 @@ implements Runnable {
                 doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Rubble"));
             }
             
-            // check to see if we've moved OUT of fire
+            // check to see if we've moved OUT of fire and we are a mech
             if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP
             && game.board.getHex(lastPos).contains(Terrain.FIRE)) {
-                if (entity instanceof Tank) {
-                    doFlamingDeath(entity);
-                }
-                else {
+                if (entity instanceof Mech) {
                     entity.heatBuildup+=2;
                     phaseReport.append("\n" + entity.getDisplayName()
                     + " passes through a fire.  It will generate 2 more heat this round.\n");
                 }
-            }			
+            }	
+            
+            // check to see if we've moved INTO fire and we are not a mech
+            if (!lastPos.equals(curPos)
+            && step.getMovementType() != Entity.MOVE_JUMP
+            && game.board.getHex(curPos).contains(Terrain.FIRE)) {
+                if (!(entity instanceof Mech)) {
+                    doFlamingDeath(entity);
+                }
+            }	
 
             // check if we've moved into water
             if (!lastPos.equals(curPos)
@@ -3535,12 +3542,12 @@ implements Runnable {
     
     private void doFlamingDeath(Entity entity) {
         int boomroll = Compute.d6(2);
-        roundReport.append(entity.getDisplayName() + " is on fire.  Needs an 8+ to avoid destruction, rolls " + boomroll + " : ");
+        phaseReport.append(entity.getDisplayName() + " is on fire.  Needs an 8+ to avoid destruction, rolls " + boomroll + " : ");
         if (boomroll >= 8) {
-            roundReport.append("avoids successfully!\n");
+            phaseReport.append("avoids successfully!\n");
         } else {
-            roundReport.append("fails to avoid horrible instant flaming death.\n");
-            roundReport.append(destroyEntity(entity, "fire"));
+            phaseReport.append("fails to avoid horrible instant flaming death.\n");
+            phaseReport.append(destroyEntity(entity, "fire"));
         }
     }
     
@@ -3557,6 +3564,23 @@ implements Runnable {
                 if (entity.damageThisPhase >= 20) {
                     pilotRolls.addElement(new PilotingRollData(entity.getId(), 1, "20+ damage"));
                 }
+            }
+        }
+    }
+    
+    /**
+     * Checks to see if any non-mech units are standing in fire.  Called at the
+     * end of the movement phase
+     */
+    public void checkForFlamingDeath() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (entity instanceof Mech || entity.isDoomed() || entity.isDestroyed()) {
+                continue;
+            }
+            final Hex curHex = game.board.getHex(entity.getPosition());
+            if (curHex.contains(Terrain.FIRE)) {
+                doFlamingDeath(entity);
             }
         }
     }

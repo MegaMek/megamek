@@ -2592,6 +2592,10 @@ implements Runnable, ConnectionHandler {
         final boolean isInfantry = (entity instanceof Infantry);
         AttackAction charge = null;
         PilotingRollData rollTarget;
+        // cache this here, otherwise changing MP in the turn causes 
+        // errorneous gravity PSRs
+        int cachedGravityLimit = (Entity.MOVE_JUMP == moveType)?
+            entity.getOriginalJumpMP() : entity.getRunMP(false); 
 
         // Compile the move
         md.compile(game, entity);
@@ -2665,7 +2669,7 @@ implements Runnable, ConnectionHandler {
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
                 if (entity.canCharge()) {
-                    checkExtremeGravityMovement(entity, step, curPos);
+                    checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget( game );
                     ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                     entity.setDisplacementAttack(caa);
@@ -2684,7 +2688,7 @@ implements Runnable, ConnectionHandler {
             // check for dfa
             if (step.getType() == MovePath.STEP_DFA) {
                 if (entity.canDFA()) {
-                    checkExtremeGravityMovement(entity, step, curPos);
+                    checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget( game );
                     DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                     entity.setDisplacementAttack(daa);
@@ -3240,7 +3244,7 @@ implements Runnable, ConnectionHandler {
             }
             // check for extreme gravity movement
             if (!i.hasMoreElements() && !firstStep) {
-                checkExtremeGravityMovement(entity, step, curPos);
+                checkExtremeGravityMovement(entity, step, curPos, cachedGravityLimit);
             }
             // check for minefields.
             if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
@@ -6056,25 +6060,20 @@ implements Runnable, ConnectionHandler {
             if(splashHexHits.hasMoreElements()) {
                 phaseReport.append("in hex " + tempcoords.getBoardNum());
             }
-            for(;splashHexHits.hasMoreElements();) {;
-            Entity entity = (Entity)splashHexHits.nextElement();
-            int hits = wtype.getRackSize()/2;
-            while(hits>0) {
-                HitData hit = entity.rollHitLocation
-                    ( toHit.getHitTable(),
-                      toHit.getSideTable(),
-                      wr.waa.getAimedLocation(),
-                      wr.waa.getAimingMode() );
-
-                phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
-                hits -= Math.min(nCluster,hits);
+            for(;splashHexHits.hasMoreElements();) {
+                Entity entity = (Entity)splashHexHits.nextElement();
+                int hits = wtype.getRackSize()/2;
+                while(hits>0) {
+                    HitData hit = entity.rollHitLocation
+                        ( toHit.getHitTable(),
+                          toHit.getSideTable(),
+                          wr.waa.getAimedLocation(),
+                          wr.waa.getAimingMode() );
+                    phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+                    hits -= Math.min(nCluster,hits);
+                }
             }
-
-            }
-
-
         }
-
         return !bMissed;
       } // End artillery
       int ammoUsage=0;
@@ -13420,18 +13419,19 @@ implements Runnable, ConnectionHandler {
      * @param entity The <code>Entity</code> to check.
      * @param step   The last <code>MoveStep</code> of this entity
      * @param curPos The current <code>Coords</code> of this entity
+     * @param cachedMaxMPExpenditure Server checks run/jump MP at start of move, as appropriate, caches to avoid mid-move change in MP causing erroneous grav check
      */
-    private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
+    private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos, int cachedMaxMPExpenditure) {
         PilotingRollData rollTarget;
         if (game.getOptions().floatOption("gravity") != 1) {
             if (entity instanceof Mech) {
                 if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                    if (step.getMpUsed() > entity.getRunMP(false)) {
+                    if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
                 } else if (step.getMovementType() == Entity.MOVE_JUMP) {
-                    if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+                    if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We jumped too far, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     } else if (game.getOptions().floatOption("gravity") > 1) {
@@ -13446,11 +13446,10 @@ implements Runnable, ConnectionHandler {
                     || step.getMovementType() == Entity.MOVE_RUN) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
-                    if (step.getMpUsed() > entity.getRunMP(false)
-                        && !step.isOnlyPavement()) {
+                    if ((step.getMpUsed() > cachedMaxMPExpenditure) && !step.isOnlyPavement()) {
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
-                    else if (step.getMpUsed() > entity.getRunMP(false) + 1) {
+                    else if (step.getMpUsed() > cachedMaxMPExpenditure + 1) {
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         //      tank on a road can move 5/7, **not** 5/8.

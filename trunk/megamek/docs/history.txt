@@ -12,6 +12,8 @@ v0.29.72 (CVS)
 + RFE 933288: Allow Backspace to "unfire" the last fired weapon in the Firing
     Display.
 + Bug 1121134: leg lost due to building collapse didn't cause immediate PSR.
++ Patch 1172957, Bug 1018871: gravity PSR when losing movement points in 
+    movement phase.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

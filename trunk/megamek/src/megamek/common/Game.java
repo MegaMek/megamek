@@ -1621,7 +1621,7 @@ public class Game implements Serializable
      * @param o The action to remove.
      */
     public void removeAction(Object o) {
-    	actions.removeElement(o);
+        actions.removeElement(o);
     }
 
     public int actionsSize() {

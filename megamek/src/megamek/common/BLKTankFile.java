@@ -104,8 +104,9 @@ public class BLKTankFile implements MechLoader {
 		// TroopSpace:
 		if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
 		    // Everything after the ':' should be the space's size.
-		    int size = Integer.parseInt
+                    Double fsize = new Double
 			( transporters[index].substring(11) );
+                    int size = fsize.intValue();
 		    t.addTransporter( new TroopSpace(size) );
 		}
 

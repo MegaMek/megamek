@@ -824,7 +824,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = "ISLightGaussRifle";
         weapon.heat = 1;
         weapon.damage = 8;
-        weapon.ammoType = AmmoType.T_GAUSS;
+        weapon.ammoType = AmmoType.T_GAUSS_LIGHT;
         weapon.minimumRange = 3;
         weapon.shortRange = 8;
         weapon.mediumRange = 17;
@@ -832,6 +832,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 12.0f;
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
+        weapon.explosive = true;
         weapon.bv = 159;
         
         return weapon;
@@ -1718,6 +1719,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 12.0f;
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE;
+        weapon.explosive = true;
         weapon.bv = 321;
         
         return weapon;

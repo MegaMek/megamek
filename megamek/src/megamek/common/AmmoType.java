@@ -39,6 +39,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_THUMPER           = 18;
     public static final int     T_AC_LBX            = 19;
     public static final int     T_AC_ULTRA          = 20;
+    public static final int     T_GAUSS_LIGHT       = 21;
     
     // ammo flags
     public static final int     F_CLUSTER           = 0x0001; // for lbx
@@ -581,7 +582,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "ISLightGauss Ammo";
         ammo.damagePerShot = 8;
         ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS;
+        ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
         ammo.shots = 16;
         ammo.bv = 20;
         

@@ -546,7 +546,7 @@ public abstract class Entity
     /**
      * Returns this entity's original walking movement points
      */
-    protected int getOriginalWalkMP() {
+    public int getOriginalWalkMP() {
         return walkMP;
     }
 
@@ -1465,6 +1465,22 @@ public abstract class Entity
             if (cs.getType() == orig.getType() && cs.getIndex() == orig.getIndex()) {
                 cs.setHit(true);
             }
+        }
+    }
+    
+    public void newRound()
+    {
+        delta_distance = 0;
+        moved = Entity.MOVE_NONE;
+        
+        setDisplacementAttack(null);
+        setFindingClub(false);
+
+        crew.setKoThisRound(false);
+
+        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            mounted.setUsedThisRound(false);
         }
     }
   

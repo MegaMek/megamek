@@ -92,6 +92,9 @@ v (next)
 + made physical code more flexible for vehicles
 + fixed mechcache load bug with zipfile entries
 + non-mechs never make PSRs that could result in falls
++ vehicle side-firing arcs setup
++ vehicles don't break the ammo-selector anymore
++ vehicle critical hits and special hits implemented
 
 v 0.26.11 (08-30-02, 10pm)
 + 598824: a few more hovercraft movement fixes

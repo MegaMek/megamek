@@ -107,8 +107,12 @@ public class BLKTankFile implements MechLoader {
         
         t.setHasTurret(armor.length == 5);
         
+        // add the body to the armor array
+        int[] fullArmor = new int[armor.length + 1];
+        fullArmor[0] = 0;
+        System.arraycopy(armor, 0, fullArmor, 1, armor.length);
         for (int x = 0; x < armor.length; x++) {
-            t.initializeArmor(armor[x], x);
+            t.initializeArmor(fullArmor[x], x);
         }
         
         
@@ -123,7 +127,6 @@ public class BLKTankFile implements MechLoader {
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
         }
         loadEquipment(t, "Body", Tank.LOC_BODY);
-        
         return t;        
     }
     

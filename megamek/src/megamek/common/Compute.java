@@ -2461,8 +2461,12 @@ public class Compute
             return fa >= 240 || fa <= 60;
         case ARC_REAR :
             return fa > 120 && fa < 240;
+        case ARC_RIGHTSIDE :
+            return fa > 60 && fa <= 120;
+        case ARC_LEFTSIDE :
+            return fa < 300 && fa >= 240;
         case ARC_360 :
-      return true;
+            return true;
         default:
             return false;
         }

@@ -7,6 +7,10 @@ v0.29.48 (CVS)
 + Data 1019241: Fixed Wasp antennas.
 + Added the rest of the one-shot weapons.
 + Chat Lounge now uses tabs (controlled with "chatloungetabs" in MegaMek.cfg).
++ Batch file updated again.  It now performs correctly when given command line
+    options like "-dedicated".  Also fixed problems the MS JVM was having with
+    some of the new features.  Finally, the default memory size for the Sun
+    JVM was rasied from 64 to 128MB.
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

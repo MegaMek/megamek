@@ -1474,7 +1474,8 @@ public abstract class Entity
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
-        
+
+        setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
 

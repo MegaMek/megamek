@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -1090,7 +1090,11 @@ public class Client extends Panel
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        send(new Packet(Packet.COMMAND_PLAYER_UPDATE, game.getPlayer(local_pn)));
+        Player player = game.getPlayer( local_pn );
+        Settings.lastPlayerColor = player.getColorIndex();
+        Settings.lastPlayerCategory = player.getCamoCategory();
+        Settings.lastPlayerCamoName = player.getCamoFileName();
+        send( new Packet(Packet.COMMAND_PLAYER_UPDATE, player) );
     }
   
     /**
@@ -1133,6 +1137,9 @@ public class Client extends Panel
         } else {
             game.setPlayer(pindex, newPlayer);
         }
+        Settings.lastPlayerColor = newPlayer.getColorIndex();
+        Settings.lastPlayerCategory = newPlayer.getCamoCategory();
+        Settings.lastPlayerCamoName = newPlayer.getCamoFileName();
         processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
     }
     
@@ -1784,10 +1791,11 @@ public class Client extends Panel
 		loadPreviewImage(bp, entity, player);
     }
 
-    public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
-		String camo = player.getCamoFileName();
-		int tint = player.getColorRGB();
-		bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
+    public void loadPreviewImage( BufferedPanel bp, Entity entity,
+                                  Player player ) {
+        Image camo = bv.getTilesetManager().getPlayerCamo( player );
+        int tint = player.getColorRGB();
+        bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
     }
 
     /**

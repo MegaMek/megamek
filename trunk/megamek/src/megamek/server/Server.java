@@ -271,6 +271,7 @@ implements Runnable, ConnectionHandler {
             connPlayer.setColorIndex(player.getColorIndex());
             connPlayer.setStartingPos(player.getStartingPos());
             connPlayer.setTeam(player.getTeam());
+            connPlayer.setCamoCategory(player.getCamoCategory());
             connPlayer.setCamoFileName(player.getCamoFileName());
             connPlayer.setNbrMFConventional(player.getNbrMFConventional());
             connPlayer.setNbrMFCommand(player.getNbrMFCommand());

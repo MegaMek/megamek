@@ -113,7 +113,6 @@ public abstract class Entity
      * Generates a new, blank, entity.
      */
     public Entity() {
-        System.out.println("L: " + locations());
         this.armor = new int[locations()];
         this.internal = new int[locations()];
         this.orig_armor = new int[locations()];
@@ -416,6 +415,13 @@ public abstract class Entity
      */
     public int height() {
         return 0;
+    }
+    
+    /**
+     * Returns the absolute height of the entity
+     */
+    public int absHeight() {
+        return elevation() + height();
     }
     
     /**

@@ -867,7 +867,8 @@ public class Compute
                                         Vector prevAttacks) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final MountedWeapon w = ae.getWeapon(weaponId);
+        final Mounted mounted = ae.getWeapon(weaponId);
+        final WeaponType wtype = (WeaponType)mounted.getType();
         final Coords[] in = intervening(ae.getPosition(), te.getPosition());
         
         ToHitData toHit;
@@ -946,7 +947,7 @@ public class Compute
         }
         
         // attacker partial cover means no leg weapons
-        if (apc && (w.getLocation() == Mech.LOC_RLEG || w.getLocation() == Mech.LOC_LLEG)) {
+        if (apc && (mounted.getLocation() == Mech.LOC_RLEG || mounted.getLocation() == Mech.LOC_LLEG)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons");
         }
         
@@ -958,19 +959,19 @@ public class Compute
         // determine range
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
-        if (range > w.getType().getLongRange()) {
+        if (range > wtype.getLongRange()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target out of range");
         }
-        if (range > w.getType().getMediumRange()) {
+        if (range > wtype.getMediumRange()) {
             // long range, add +4
             toHit.addModifier(4, "long range");
-        } else if (range > w.getType().getShortRange()) {
+        } else if (range > wtype.getShortRange()) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
         } else {
             // also check for minimum range
-            if (range <= w.getType().getMinimumRange()) {
-                int minPenalty = w.getType().getMinimumRange() - range + 1;
+            if (range <= wtype.getMinimumRange()) {
+                int minPenalty = wtype.getMinimumRange() - range + 1;
                 toHit.addModifier(minPenalty, "minumum range");
             }
         }
@@ -1052,17 +1053,17 @@ public class Compute
         }
 
         // arm critical hits to attacker
-        if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, w.getLocation()) > 0
-            && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, w.getLocation()) > 0) {
+        if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0
+            && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0) {
             toHit.addModifier(4, "shoulder actuator destroyed");
         } else {
             int actuatorHits = 0;
-            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, w.getLocation()) > 0
-                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, w.getLocation()) > 0) {
+            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0
+                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0) {
                 actuatorHits++;
             }
-            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, w.getLocation()) > 0
-                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, w.getLocation()) > 0) {
+            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0
+                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0) {
                 actuatorHits++;
             }
             if (actuatorHits > 0) {
@@ -1087,8 +1088,8 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and both arms destroyed");
             }
             // arm-mounted weapons have addidional trouble
-            if (w.getLocation() == Mech.LOC_RARM || w.getLocation() == Mech.LOC_LARM) {
-                int otherArm = w.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+            if (mounted.getLocation() == Mech.LOC_RARM || mounted.getLocation() == Mech.LOC_LARM) {
+                int otherArm = mounted.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                 if (ae.isLocationDestroyed(otherArm)) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and opposite arm destroyed");
                 }
@@ -1109,7 +1110,7 @@ public class Compute
                 }
             }
             // can't fire leg weapons
-            if (w.getLocation() == Mech.LOC_LLEG && w.getLocation() == Mech.LOC_RLEG) {
+            if (mounted.getLocation() == Mech.LOC_LLEG && mounted.getLocation() == Mech.LOC_RLEG) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone");
             }
             toHit.addModifier(2, "attacker prone");
@@ -1177,13 +1178,10 @@ public class Compute
         }  
         
         // check if attacker has fired arm-mounted weapons
-        for (Enumeration i = ae.weapons.elements(); i.hasMoreElements();) {
-            MountedWeapon weapon = (MountedWeapon)i.nextElement();
-            if (weapon.isFiredThisRound()) {
-                if (weapon.getLocation() == armLoc) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, 
-                                         "Weapons fired from arm this turn");
-                }
+        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isUsedThisTurn() && mounted.getLocation() == armLoc) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
         }
         
@@ -1337,13 +1335,10 @@ public class Compute
         }  
         
         // check if attacker has fired leg-mounted weapons
-        for (Enumeration i = ae.weapons.elements(); i.hasMoreElements();) {
-            MountedWeapon weapon = (MountedWeapon)i.nextElement();
-            if (weapon.isFiredThisRound()) {
-                if (weapon.getLocation() == legLoc) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, 
-                                         "Weapons fired from leg this turn");
-                }
+        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isUsedThisTurn() && mounted.getLocation() == legLoc) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from leg this turn");
             }
         }
         
@@ -1482,14 +1477,10 @@ public class Compute
         }
         
         // check if attacker has fired arm-mounted weapons
-        for (Enumeration i = ae.weapons.elements(); i.hasMoreElements();) {
-            MountedWeapon weapon = (MountedWeapon)i.nextElement();
-            if (weapon.isFiredThisRound()) {
-                if (weapon.getLocation() == Mech.LOC_RARM
-                    || weapon.getLocation() == Mech.LOC_LARM) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, 
-                                         "Weapons fired from arm this turn");
-                }
+        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isUsedThisTurn() && (mounted.getLocation() == Mech.LOC_RARM && mounted.getLocation() == Mech.LOC_LARM)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
         }
         

@@ -19,10 +19,10 @@ import java.io.*;
 public class CriticalSlot
     implements Serializable
 {
-    public final static int        TYPE_WEAPON        = 0;
-    public final static int        TYPE_SYSTEM        = 1;
+    public final static int        TYPE_SYSTEM       = 0;
+    public final static int        TYPE_WEAPON       = 1;
     public final static int        TYPE_AMMO         = 2;
-    public final static int        TYPE_EQUIPMENT    = 3;
+    public final static int        TYPE_MISC         = 3;
     
     private int                    type;
     private int                    index;

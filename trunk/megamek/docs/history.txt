@@ -11,7 +11,7 @@ could almost be combined:
 - make fields private, classes encapsulated
 
 ? javax.swing gui
-? unify equipment (anything that takes up a critical slot)
+? unify systems & equipment (anything that takes up a critical slot)
 
 - the turn report could keep a list of "message" objects 
   instead of a large report string.  This would allow some customizing of the
@@ -80,19 +80,21 @@ FUTURE VERSION PLANS:
 - interface cleaned up: reasonably intuitive & bug-free
 
 v 0.25
-- game ends/restarts when only one player is left
-- observer mode
-- players that connect with the same name as a "ghost" take control of that player
 - option to start dedicated server from command line
-- simple game logs (chat/reports)
-- clubs/hatchets (if I have time)
+- clubs/hatchets
+- teams
+- /kick command for hung clients
+- passwords for /reset & /kick
 
 VERSION HISTORY:
 ----------------
 v next
 + refined command interface.  type "/help" for a list.
-+ removed unused terrain types, added "moon" & "moon_rough"
++ removed unused terrain types
 + players can reconnect to a game that they've left
++ changed how weapons, equipment and ammo are stored on a mech
++ moved jump jets & heat sinks into "equipment" from "systems"
++ hatchets load properly
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

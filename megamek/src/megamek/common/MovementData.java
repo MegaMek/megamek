@@ -480,7 +480,7 @@ public class MovementData
         return hexes;
     };
     
-    public class MovementState {
+    public class MovementState implements Cloneable, Serializable {
         Coords position;
         int facing;
         int elevation;
@@ -890,6 +890,15 @@ public class MovementData
         public void setThisStepBackwards(boolean b) {
             thisStepBackwards = b;
         }
+        
+        public Object clone() {
+            try {
+                return super.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
 
     }
     
@@ -998,6 +1007,15 @@ public class MovementData
             this.state = new MovementState();
         }
         
+        public Object clone() {
+            Step other = new Step(this.type);
+            
+            other.targetId = this.targetId;
+            other.targetType = this.targetType;
+            other.state = (MovementState)this.state.clone();
+            
+            return other;
+        }
         
         /**
          * Steps are equal if everything about them is equal
@@ -1009,7 +1027,10 @@ public class MovementData
                 return false;
             }
             Step other = (Step)object;
-            return other.type == this.type;
+            return other.type == this.type
+                && other.targetId == this.targetId
+                && other.targetType == this.targetType
+                && other.state.equals(this.state);
         }
         /**
          * @return

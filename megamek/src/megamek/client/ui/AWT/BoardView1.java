@@ -1667,7 +1667,7 @@ public class BoardView1
         private MovementData.Step step;
 
         public StepSprite(MovementData.Step step) {
-            this.step = step;//(MovementData.Step)step.clone();
+            this.step = (MovementData.Step)step.clone();
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);

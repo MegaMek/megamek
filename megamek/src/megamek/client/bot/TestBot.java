@@ -19,7 +19,6 @@
 
 package megamek.client.bot;
 
-import java.awt.Frame;
 import com.sun.java.util.collections.*;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -118,12 +117,6 @@ public class TestBot extends BotClientWrapper {
   
   public static java.util.Properties BotProperties = new java.util.Properties();
   public static int Ignore = 10;
-  
-  /** Creates a new instance of TestBot */
-  public TestBot(Frame frame, String name) {
-    super(frame, name);
-    setup();
-  }
   
   public TestBot(String name) {
     super(name);
@@ -1580,14 +1573,12 @@ public class TestBot extends BotClientWrapper {
         super.setVisible(false);
       }
     };*/
-    Frame frame1 = new Frame();
-    Frame frame2 = new Frame();
     int total1 = 0;
     int total2 = 0;
     for (int run = 1; run <= 5; run++) {
       megamek.server.Server s = new megamek.server.Server("hello", 2348);
-      ConnectionThread c1 = new ConnectionThread("Player 1", BotFactory.TEST, 0, frame1);
-      ConnectionThread c2 = new ConnectionThread("Player 2", BotFactory.HUMAN, 1, frame2);
+      ConnectionThread c1 = new ConnectionThread("Player 1", BotFactory.TEST, 0);
+      ConnectionThread c2 = new ConnectionThread("Player 2", BotFactory.HUMAN, 1);
       System.gc();
       c1.start();
       c2.start();
@@ -1609,11 +1600,9 @@ public class TestBot extends BotClientWrapper {
 
 class PlayBot {
   public static void main(String[] args) {
-    Frame frame1 = new Frame();
-    Frame frame2 = new Frame();
     megamek.server.Server s = new megamek.server.Server("hello", 2348);
-    ConnectionThread c1 = new ConnectionThread("Player 0", BotFactory.TEST, 0, frame1);
-    ConnectionThread c2 = new ConnectionThread("Player 1", BotFactory.HUMAN, 2, frame2);
+    ConnectionThread c1 = new ConnectionThread("Player 0", BotFactory.TEST, 0);
+    ConnectionThread c2 = new ConnectionThread("Player 1", BotFactory.HUMAN, 2);
     c1.start();
     c2.start();
   }
@@ -1624,18 +1613,16 @@ class ConnectionThread extends Thread {
   int type;
   int location;
   MegaMek result;
-  Frame frame;
-  public ConnectionThread(String name,int type,int location, Frame frame) {
+  public ConnectionThread(String name,int type,int location) {
     this.name = name;
     this.type = type;
     this.location = location;
-    this.frame = frame;
   }
   public void run() {
     boolean die = false;
     try {
-      MegaMek mm = new MegaMek(frame);
-      mm.client = BotFactory.getBot(type,frame, name);
+      MegaMek mm = new MegaMek();
+      mm.client = BotFactory.getBot(type, name);
       if(!mm.client.connect("localhost", 2348)) {
         return;
       }

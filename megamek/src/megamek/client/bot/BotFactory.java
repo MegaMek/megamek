@@ -8,8 +8,6 @@ package megamek.client.bot;
 
 import megamek.client.*; 
 
-import java.awt.Frame;
-
 /**
  *
  * @author  Administrator
@@ -21,17 +19,6 @@ public class BotFactory {
   
   /** Creates a new instance of BotFactory */
   public BotFactory() {
-  }
-  
-  public static Client getBot(int type, Frame frame, String name) {
-    switch (type) {
-      case TEST:
-        return new TestBot(frame,name);
-      case HUMAN:
-        return new Client(frame,name);
-      default:
-        return new BotClient(frame, name);
-    }
   }
   
     public static Client getBot(int type, String name) {

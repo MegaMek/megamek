@@ -25,7 +25,6 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
-import megamek.common.actions.*;
 
 /**
  *
@@ -112,7 +111,10 @@ public class Connection {
             socket.close();
             in.close();
             out.close();
-        } catch (IOException ex) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException ex) {
+        	; // never initialized, poor thing
         }
     }
     

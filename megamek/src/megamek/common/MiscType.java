@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -23,7 +23,7 @@ package megamek.common;
 /**
  *
  * @author  Ben
- * @version 
+ * @version
  */
 public class MiscType extends EquipmentType {
     // equipment flags (okay, like every type of equipment has its own flag)
@@ -34,7 +34,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_CLUB              = 0x0008;
     public static final int     F_HATCHET           = 0x0010;
     public static final int     F_TREE_CLUB         = 0x0020;
-
+    
     /** Creates new MiscType */
     public MiscType() {
         ;
@@ -60,7 +60,7 @@ public class MiscType extends EquipmentType {
         // okay, I'm out of ideas
         return 1.0f;
     }
-
+    
     public int getCriticals(Entity entity) {
         if (criticals != CRITICALS_VARIABLE) {
             return criticals;
@@ -68,6 +68,8 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
+        } else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTech().equalsIgnoreCase("Inner Sphere")) {
+            return 3;
         }
         // right, well I'll just guess then
         return 1;
@@ -97,8 +99,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createGirderClub());
         EquipmentType.addType(createLimbClub());
         EquipmentType.addType(createHatchet());
+        
+        // Start of Level2 stuff
+        EquipmentType.addType(createDoubleHeatSink());
     }
-
+    
     public static MiscType createHeatSink() {
         MiscType misc = new MiscType();
         
@@ -113,7 +118,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
     public static MiscType createJumpJet() {
         MiscType misc = new MiscType();
         
@@ -128,7 +133,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
     public static MiscType createTreeClub() {
         MiscType misc = new MiscType();
         
@@ -143,7 +148,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
     public static MiscType createGirderClub() {
         MiscType misc = new MiscType();
         
@@ -158,7 +163,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
     public static MiscType createLimbClub() {
         MiscType misc = new MiscType();
         
@@ -173,7 +178,7 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
     public static MiscType createHatchet() {
         MiscType misc = new MiscType();
         
@@ -188,5 +193,21 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-
+    
+    // Start of Level2 stuff
+    public static MiscType createDoubleHeatSink() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Double Heat Sink";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = misc.name;
+        misc.tonnage = 1.0f;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.flags |= F_DOUBLE_HEAT_SINK;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
 }

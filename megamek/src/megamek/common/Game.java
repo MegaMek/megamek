@@ -209,7 +209,12 @@ public class Game
     public void setEntity(int id, Entity entity) {
         final Entity oldEntity = getEntity(id);
         entity.setGame(this);
+        if (oldEntity == null) {
+        	entities.addElement(entity);
+        }
+        else {
         entities.setElementAt(entity, entities.indexOf(oldEntity));
+        }
         entityIds.put(new Integer(id), entity);
     }
   

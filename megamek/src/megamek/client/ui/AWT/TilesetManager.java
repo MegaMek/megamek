@@ -59,6 +59,16 @@ public class TilesetManager {
      */
     public Image imageFor(Entity entity) {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        if (entityImage == null) {
+            // probably double_blind.  Try to load on the fly
+            System.out.println("Loading image for " + entity.getName() + " on the fly.");
+            loadImage(entity);
+            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            if (entityImage == null) {
+                // now it's a real problem
+                System.out.println("Unable to load image for entity: " + entity.getName());
+            }            
+        }
         return entityImage.getFacing(entity.getSecondaryFacing());
     }
     
@@ -117,7 +127,17 @@ public class TilesetManager {
         
         // load all mech images
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity)i.nextElement();
+            loadImage((Entity)i.nextElement());
+        }
+        
+        started = true;
+    }
+    
+    /**
+     * Load a single entity image
+     */
+    public void loadImage(Entity entity)
+    {
             Image base = mechTileset.imageFor(entity, comp);
             int tint = entity.getOwner().getColorRGB();
             EntityImage entityImage = null;
@@ -143,9 +163,6 @@ public class TilesetManager {
             
             // relate this id to this image set
             mechImages.put(new Integer(entity.getId()), entityImage);
-        }
-        
-        started = true;
     }
     
     /**

@@ -9335,7 +9335,9 @@ implements Runnable, ConnectionHandler {
     private String criticalEntity(Entity en, int loc, int critMod) {
         CriticalSlot slot = null;
         StringBuffer desc = new StringBuffer();
-        Hex h = game.board.getHex(en.getPosition());
+        Coords coords = en.getPosition();
+        Hex hex = null;
+        if (null != coords) hex = game.board.getHex (coords);
         desc.append( "        Critical hit on " )
         .append( en.getLocationAbbr(loc) )
         .append( ". " );
@@ -9375,10 +9377,16 @@ implements Runnable, ConnectionHandler {
                 if (en.getInternal(loc) > 0) {
                     destroyLocation(en, loc);
                 }
-                if (!h.contains( Terrain.LEGS)) {
-                    h.addTerrain(new Terrain(Terrain.LEGS, 1));
+                if (null != hex) {
+                    if (!hex.contains (Terrain.LEGS)) {
+                        hex.addTerrain (new Terrain(Terrain.LEGS, 1));
+                    }
+                    else { 
+                        hex.addTerrain (new Terrain
+                                        (Terrain.LEGS,
+                                         hex.levelOf(Terrain.LEGS)+1));
+                    }
                 }
-                else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
                 sendChangedHex(en.getPosition());
                 return desc.toString();
             } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
@@ -9386,10 +9394,16 @@ implements Runnable, ConnectionHandler {
                 .append( en.getLocationName(loc) )
                 .append( " blown off." );
                 destroyLocation(en, loc);
-                if (!h.contains( Terrain.ARMS)) {
-                    h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                if (null != hex) {
+                    if (!hex.contains( Terrain.ARMS)) {
+                        hex.addTerrain (new Terrain(Terrain.ARMS, 1));
+                    }
+                    else {
+                        hex.addTerrain (new Terrain
+                                        (Terrain.ARMS,
+                                         hex.levelOf(Terrain.ARMS)+1));
+                    }
                 }
-                else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
                 sendChangedHex(en.getPosition());
                 return desc.toString();
             } else if (loc == Mech.LOC_HEAD) {

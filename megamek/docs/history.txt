@@ -37,8 +37,6 @@ board display:
 ? some way to resize chat to be bigger or smaller
 ? hex numbers are hard to read on dark tiles
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
-- bug: movement arrows dissappear when scrolled off the screen
-- mechs not disappearing properly when moved/dead
 
 mech display:
 - many fields in movement panel are useless
@@ -99,12 +97,19 @@ v 0.24
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.23.2 (03-06-02, 10pm)
 + fast-drawin' cursors
 + image filters for tint, transparency (slower?)
 + movement now showing
 + new scrolling cache system
-+ (not display related) buggy LOS back to normal levels of buggyness
++ buggy LOS back to normal levels of buggyness
++ player name in title bar
++ tooltips for entities include armor & internals
++ tooltips for attacks show weapons used
++ section destruction more noticible
++ both arms needed for pushing
++ to-hit rolls lower than 0 handled
+++ fixed a bug where an entity facing north & falling forwards caused a crash
 
 v 0.23.1 (03-04-02, 4:48pm)
 + new board display stuff

@@ -152,7 +152,7 @@ public class BoardView1
      * Draw the screen!
      */
     public void update(Graphics g) {
-        final long start = System.currentTimeMillis();
+        //final long start = System.currentTimeMillis();
         
         final Dimension size = getSize();
         view = new Rectangle(scroll, size);
@@ -178,7 +178,9 @@ public class BoardView1
             updateBoardImage();
         }
         
-        // draw the board onto the back buffer
+        // begin drawing onto the back buffer:
+        
+        // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
         
         // draw onscreen entities
@@ -200,9 +202,8 @@ public class BoardView1
         // draw the back buffer onto the screen
         g.drawImage(backImage, 0, 0, this);
         
-        final long finish = System.currentTimeMillis();
-        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
-        //view = " + view);
+        //final long finish = System.currentTimeMillis();
+        //System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
     }
     
     /**
@@ -261,7 +262,7 @@ public class BoardView1
     /**
      * Moves the board view to another area.
      */
-    private synchronized void moveBoardImage() {
+    private void moveBoardImage() {
         // salvage the old
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
         boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
@@ -576,12 +577,15 @@ public class BoardView1
      * Adds an attack to the sprite list.
      */
     public void addAttack(AttackAction aa) {
-        // one already exists, from attacker to target, use that
         for (final Enumeration i = attackSprites.elements(); i.hasMoreElements();) {
-            final AttackSprite buff = (AttackSprite)i.nextElement();
+            final AttackSprite sprite = (AttackSprite)i.nextElement();
             
-            if (buff.getAttack().getEntityId() == aa.getEntityId() 
-                && buff.getAttack().getTargetId() == aa.getTargetId()) {
+            if (sprite.getAttack().getEntityId() == aa.getEntityId() 
+                && sprite.getAttack().getTargetId() == aa.getTargetId()) {
+                // use existing attack, but add this weapon
+                if (aa instanceof WeaponAttackAction) {
+                    sprite.addWeapon((WeaponAttackAction)aa);
+                }
                 return;
             }
         }
@@ -1131,8 +1135,10 @@ public class BoardView1
         
         public String[] getTooltip() {
             String[] tipStrings = new String[2];
-            tipStrings[0] = entity.getName() + "  (" + entity.getOwner().getName() + ")";
-            tipStrings[1] = "heat " + entity.heat;
+            tipStrings[0] = entity.getName() + "  (" + entity.getOwner().getName() + ")"
+                + "; Heat " + entity.heat;
+            tipStrings[1] = "Armor " + entity.getTotalArmor() 
+                            + "; Internal " + entity.getTotalInternal();
             return tipStrings;
         }
     }
@@ -1253,6 +1259,10 @@ public class BoardView1
         private AttackAction attack;
         private Polygon attackPoly;
         
+        private String attackerDesc;
+        private String targetDesc;
+        private Vector weaponDescs = new Vector();
+        
         public AttackSprite(AttackAction attack) {
             this.attack = attack;
             
@@ -1277,6 +1287,13 @@ public class BoardView1
             
             // move poly to upper right of image
             attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            
+            // set names & stuff
+            attackerDesc = ae.getDisplayName();
+            targetDesc = te.getDisplayName();
+            if (attack instanceof WeaponAttackAction) {
+                addWeapon((WeaponAttackAction)attack);
+            }
             
             // nullify image
             this.image = null;
@@ -1314,9 +1331,23 @@ public class BoardView1
             return attack;
         }
         
+        /**
+         * Adds a weapon to this attack
+         */
+        public void addWeapon(WeaponAttackAction attack) {
+            final Entity entity = game.getEntity(attack.getEntityId());
+            final Weapon weapon = entity.getWeapon(attack.getWeaponId()).getType();
+            final int roll = Compute.toHitWeapon(game, attack).getValue();
+            weaponDescs.addElement(weapon.getName() + "; needs " + roll);
+        }
+        
         public String[] getTooltip() {
-            String[] tipStrings = new String[1];
-            tipStrings[0] = "attack: " + attack.getEntityId() + " on " + attack.getTargetId();
+            String[] tipStrings = new String[1 + weaponDescs.size()];
+            int tip = 1;
+            tipStrings[0] = attackerDesc + " on " + targetDesc;
+            for (Enumeration i = weaponDescs.elements(); i.hasMoreElements();) {
+                tipStrings[tip++] = (String)i.nextElement();
+            }
             return tipStrings;
         }
     }

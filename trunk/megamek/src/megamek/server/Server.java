@@ -11252,18 +11252,13 @@ implements Runnable, ConnectionHandler {
         return false;//only things w/ tag are, and we don't yet have TAG.
     }
     private void resolveIndirectArtilleryAttacks()  {
-        System.out.println("Offboard phase checking for attacks we got " + game.getArtillerySize());
         Vector results = new Vector(game.getArtillerySize());
 
         // loop thru received attack actions, getting weapon results
-        System.out.println("OK, here's the check.");
         for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-        System.out.println("Is it an AAA?");
             ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
-            System.out.println("checking an arty for landing" + aaa.turnsTilHit);
             aaa.turnsTilHit--;
             if (aaa.turnsTilHit < 0) {
-                System.out.println("Fire in the hole");
                 WeaponAttackAction waa = aaa.getWAA();
                 results.addElement(preTreatWeaponAttack(waa));
 
@@ -11298,11 +11293,9 @@ implements Runnable, ConnectionHandler {
         resolveAllButWeaponAttacks();
         ArtilleryAttackAction aaa;
         for (Enumeration i = game.getActions();i.hasMoreElements();) {
-            System.out.println("An action being checked for artillery type and enqued");
             EntityAction ea = (EntityAction) i.nextElement();
             Entity entity = game.getEntity(ea.getEntityId());
             if (ea instanceof WeaponAttackAction) {
-            System.out.println("yay, it's a WAA");
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
                 aaa = new ArtilleryAttackAction(waa, game);
                 game.addArtilleryAttack(aaa);

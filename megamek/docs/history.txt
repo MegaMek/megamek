@@ -93,6 +93,8 @@ v 0.28.11-dev
 + Infantry can no longer clear woods (per BMR's more stringent clearing)--LDE
 + Flamers (except unarmored infantry, they are ambiguous at best) now have 
   "Damage" and "Heat" modes (flamer option now default on)--LDE
++ 708441: Merged changes into "data/mechfiles/vehicles.zip"
++ Added new images for Highlander and Bushwacker.
 
 v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar

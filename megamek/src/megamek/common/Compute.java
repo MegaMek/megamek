@@ -567,7 +567,7 @@ public class Compute
             && stepType != MovementData.STEP_CHARGE
             && stepType != MovementData.STEP_DFA
             && game.getEntity(dest) != null
-            && !game.getEntity(dest).getOwner().equals(entity.getOwner())) {
+            && game.getEntity(dest).getOwner().isEnemyOf(entity.getOwner())) {
             return false;
         }
         // can't jump over too-high terrain
@@ -1054,17 +1054,14 @@ public class Compute
         }
 
         // arm critical hits to attacker
-        if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0
-            && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0) {
+        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0) {
             toHit.addModifier(4, "shoulder actuator destroyed");
         } else {
             int actuatorHits = 0;
-            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0
-                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0) {
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0) {
                 actuatorHits++;
             }
-            if (ae.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0
-                && ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0) {
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0) {
                 actuatorHits++;
             }
             if (actuatorHits > 0) {
@@ -1173,7 +1170,7 @@ public class Compute
         }
         
         // check if shoulder is functional
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, armLoc) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
         }  
         
@@ -1233,17 +1230,14 @@ public class Compute
         toHit.append(getTargetTerrainModifier(game, targetId));
         
         // damaged or missing actuators
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_UPPER_ARM, armLoc) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
             toHit.addModifier(2, "Upper arm actuator destroyed");
         }
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_LOWER_ARM, armLoc) == 0) {
-            toHit.addModifier(2, "Lower arm actuator destroyed");
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
+            toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_HAND, armLoc) == 0) {
-            toHit.addModifier(1, "Hand actuator destroyed");
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
+            toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
 
         // target immobile
@@ -1279,16 +1273,13 @@ public class Compute
         int damage = (int)Math.ceil(entity.getWeight() / 10.0);
         float multiplier = 1.0f;
         
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_UPPER_ARM, armLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, armLoc)) {
             multiplier /= 2.0f;
         }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_LOWER_ARM, armLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             multiplier /= 2.0f;
         }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_SHOULDER, armLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             damage = 0;
         }
         return (int)Math.floor(damage * multiplier);
@@ -1327,10 +1318,8 @@ public class Compute
         }
         
         // check if both hips are operational
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_HIP, Mech.LOC_RLEG) == 0
-            || ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                   Mech.ACTUATOR_HIP, Mech.LOC_LLEG) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RLEG)
+            || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LLEG)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Hip destroyed");
         }  
         
@@ -1390,16 +1379,13 @@ public class Compute
         toHit.append(getTargetTerrainModifier(game, targetId));
         
         // damaged or missing actuators
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_UPPER_LEG, legLoc) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");
         }
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_LOWER_LEG, legLoc) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLoc)) {
             toHit.addModifier(2, "Lower leg actuator destroyed");
         }
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_FOOT, legLoc) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
@@ -1437,16 +1423,13 @@ public class Compute
         int damage = (int)Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
         
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_UPPER_LEG, legLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
             multiplier /= 2.0f;
         }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_LOWER_LEG, legLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLoc)) {
             multiplier /= 2.0f;
         }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_HIP, legLoc) == 0) {
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
         return (int)Math.floor(damage * multiplier);
@@ -1486,16 +1469,16 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM) == 0
-            || ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
+            || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, Mech.LOC_RARM) == 0
-            || ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, Mech.LOC_LARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+            || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         } else {
-            // check if both arm is present
+            // check if arm is present
             if (ae.isLocationDestroyed(club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
             }
@@ -1504,10 +1487,10 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, club.getLocation()) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder actuator destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, club.getLocation()) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation())) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Hand actuator destroyed");
             }
         }
@@ -1565,29 +1548,23 @@ public class Compute
         
         // damaged or missing actuators
         if (bothArms) {
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
         } else {
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_UPPER_ARM, club.getLocation()) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
-            if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_LOWER_ARM, club.getLocation()) == 0) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
         }
@@ -1704,12 +1681,10 @@ public class Compute
         toHit.append(getTargetTerrainModifier(game, targetId));
         
         // damaged or missing actuators
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
             toHit.addModifier(2, "Right Shoulder destroyed");
         }
-        if (ae.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM) == 0) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
         }
 
@@ -2322,6 +2297,35 @@ public class Compute
             return ToHitData.SIDE_LEFT;
         }
         return ToHitData.SIDE_FRONT;
+    }
+    
+    /**
+     * Returns whether an entity can find a club in its current location
+     */
+    public static boolean canMechFindClub(Game game, int entityId) {
+        final Entity entity = game.getEntity(entityId);
+        final Hex hex = game.board.getHex(entity.getPosition());
+        
+        // need woods for now
+        //TODO: building rubble, possibly missing limbs
+        if (hex.getTerrainType() != Terrain.FOREST_HVY && hex.getTerrainType() != Terrain.FOREST_LITE) {
+            return false;
+        }
+        
+        // also, need shoulders and hands
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+        || !entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            return false;
+        }
+        
+        // and last, check if you already have a club, greedy
+        if (clubMechHas(entity) != null) {
+            return false;
+        }
+        
+        return true;
     }
     
     /**

@@ -264,7 +264,7 @@ public class BotClient extends Client
             Entity target = (Entity)e.nextElement();
 
             if (target.equals(entity)) continue;
-            if (target.getOwner().equals(entity.getOwner())) continue;
+            if (!target.isEnemyOf(entity)) continue;
             PhysicalOption one = getBestPhysicalAttack(game.getEntityID(entity),
                                                         game.getEntityID(target));
             if (one != null) {
@@ -490,7 +490,7 @@ public class BotClient extends Client
         Enumeration ents = game.getEntities();
         while (ents.hasMoreElements()) {
             Entity e = (Entity)ents.nextElement();
-            if (e.getOwner() != game.getPlayer(this.local_pn)) {
+            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn))) {
                 // sendChat("Calculating threat from entity " + e.getName());
                 total += calculateOneThreat(game.getEntityID(e), to);
             }
@@ -648,7 +648,7 @@ public class BotClient extends Client
         Enumeration ents = game.getEntities();
         while (ents.hasMoreElements()) {
             Entity e = (Entity)ents.nextElement();
-            if (e.getOwner() != game.getPlayer(this.local_pn)) {
+            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn))) {
                 ToHitData th = Compute.toHitWeapon(game, from, game.getEntityID(e), weaponID, new Vector(0));    
                 if (th.getValue() != ToHitData.IMPOSSIBLE) {
                     double odds = Compute.oddsAbove(th.getValue())/ 100.0;

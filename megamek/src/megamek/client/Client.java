@@ -539,11 +539,6 @@ public class Client extends Panel
         Object o = c.getObject(0);
         if (o instanceof AttackAction) {
             bv.addAttack((AttackAction)o);
-        } else if (o instanceof TorsoTwistAction) {
-            ;
-        } else {
-            System.out.println("client.receiveAttack: not attack or torso twist action");
-            System.out.println(c.getObject(0));
         }
     }
     

@@ -442,6 +442,7 @@ public class Server
             
             entity.setCharging(false);
             entity.setMakingDfa(false);
+            entity.setFindingClub(false);
 
             entity.crew.setKoThisRound(false);
 
@@ -1087,8 +1088,8 @@ public class Server
     private boolean isEligibleForPhysical(Entity entity, int phase) {
         boolean canHit = false;
         
-        // if you're charging, it's already declared
-        if (entity.isCharging() || entity.isMakingDfa()) {
+        // if you're charging or finding a club, it's already declared
+        if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
             return false;
         }
 
@@ -1102,7 +1103,7 @@ public class Server
 
             // don't hit your own guys with friendly fire
             if (!gameSettings.friendlyFire
-                && target.getOwner().equals(entity.getOwner())) {
+                && !target.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             
@@ -1529,7 +1530,7 @@ public class Server
 
             // add to the list.
             attacks.addElement(ea);
-
+            
             // if torso twist, twist so that everybody can see it later
             if (ea instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)ea;
@@ -1560,10 +1561,11 @@ public class Server
             } else if (o instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)o;
                 game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
-
-                System.out.println("server.resolveFire: torso twisting "
-                                   + game.getEntity(tta.getEntityId()).getDisplayName()
-                                   + " in direction " + tta.getFacing());
+            } else if (o instanceof FindClubAction) {
+                FindClubAction fca = (FindClubAction)o;
+                game.getEntity(fca.getEntityId()).setFindingClub(true);
+                game.getEntity(fca.getEntityId()).addMisc(new Mounted(EquipmentType.getByInternalName("Tree Club")), Mech.LOC_LARM);
+                phaseReport.append("\n" + game.getEntity(fca.getEntityId()).getDisplayName() + " uproots a tree for use as a club.\n");
             } else {
                 // hmm, error
             }
@@ -1859,6 +1861,11 @@ public class Server
         phaseReport.append(damageEntity(te, hit, damage));
 
         phaseReport.append("\n");
+        
+        if (caa.getClub().getName().startsWith("Tree")) {
+            phaseReport.append("The " + caa.getClub().getName() + " breaks.\n");
+            ae.removeMisc(caa.getClub().getName());
+        }
     }
     
     /**

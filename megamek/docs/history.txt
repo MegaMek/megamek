@@ -13,7 +13,8 @@ v0.29.47 (CVS)
     Thanks schoelling!
 + RFE 543601: Added scroll bars to Board view (in the game and in the editor).
 + Bug 1017100: Mini turn report updates by default
-+ Bug 1017200: turn report now updated after a unit falls during the Movement phase
++ Bug 1017200, RFE 993094: turn report now updated after a unit falls during the Movement phase
++ RFE 765114: Client Setting to dump chat and turn reports into a file
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

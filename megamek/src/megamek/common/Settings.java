@@ -98,7 +98,10 @@ public class Settings
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
 
-    public static boolean   soundMute               = false;
+    public static boolean    soundMute              = false;
+
+    public static boolean    keepServerlog          = false;
+    public static String    serverlogFilename       = "gamelog.txt";
 
     // I *intentionally* use a hardcoded "/" instead of File.separator.
     // (a) I'm defining an "abstract pathname" that generates a URI, so it
@@ -487,6 +490,14 @@ scan:
                         st.nextToken();
                         mechDisplayArmorLargeFontSize = (int)st.nval;
                     }
+                    else if (key.equals("keepserverlog")) {
+                        st.nextToken();
+                        keepServerlog = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("serverlogfilename")) {
+                        st.nextToken();
+                        serverlogFilename = st.sval;
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -603,6 +614,9 @@ scan:
             cw.write("mechdisplayarmorsmallfontsize " + mechDisplayArmorSmallFontSize + "\r\n");
             cw.write("mechdisplayarmormediumfontsize " + mechDisplayArmorMediumFontSize + "\r\n");
             cw.write("mechdisplayarmorlargefontsize " + mechDisplayArmorLargeFontSize + "\r\n");
+
+            cw.write("keepserverlog " + keepServerlog + "\r\n");
+            cw.write("serverlogfilename " + serverlogFilename + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

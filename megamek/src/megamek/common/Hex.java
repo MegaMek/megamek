@@ -82,6 +82,10 @@ public class Hex
         return theme;
     }
     
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+    
     public Image getBase() {
         return base;
     }

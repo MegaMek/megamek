@@ -114,6 +114,7 @@ FUTURE VERSION PLANS:
 VERSION HISTORY:
 ----------------
 v 0.29-stable-3 (CVS)
++ Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
 
 v 0.29-stable-2 (07-28-03, 12:32 am)
 + Bug 763169: Dropping prone now has chance to dislodge swarmers.

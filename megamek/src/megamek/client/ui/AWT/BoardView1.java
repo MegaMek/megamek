@@ -1049,7 +1049,7 @@ public class BoardView1
         facingPolys[5].addPoint(17, 17);
 
         // movement polygons
-        movementPolys = new Polygon[6];
+        movementPolys = new Polygon[8];
         movementPolys[0] = new Polygon();
         movementPolys[0].addPoint(41, 65);
         movementPolys[0].addPoint(38, 68);
@@ -1080,6 +1080,25 @@ public class BoardView1
         movementPolys[5].addPoint(66, 50);
         movementPolys[5].addPoint(67, 49);
         movementPolys[5].addPoint(72, 48);
+
+        movementPolys[6] = new Polygon(); // up arrow with tail
+        movementPolys[6].addPoint(35, 44);
+        movementPolys[6].addPoint(30, 49);
+        movementPolys[6].addPoint(33, 49);
+        movementPolys[6].addPoint(33, 53);
+        movementPolys[6].addPoint(38, 53);
+        movementPolys[6].addPoint(38, 49);
+        movementPolys[6].addPoint(41, 49);
+        movementPolys[6].addPoint(36, 44);
+        movementPolys[7] = new Polygon(); // down arrow with tail
+        movementPolys[7].addPoint(34, 53);
+        movementPolys[7].addPoint(29, 48);
+        movementPolys[7].addPoint(32, 48);
+        movementPolys[7].addPoint(32, 44);
+        movementPolys[7].addPoint(37, 44);
+        movementPolys[7].addPoint(37, 48);
+        movementPolys[7].addPoint(40, 48);
+        movementPolys[7].addPoint(35, 53);
     }
 
 
@@ -1575,6 +1594,7 @@ public class BoardView1
             stepPos.translate(-bounds.x, -bounds.y);
             final Polygon facingPoly = facingPolys[step.getFacing()];
             final Polygon movePoly = movementPolys[step.getFacing()];
+            Point offsetCostPos;
             Polygon myPoly;
             Color col;
             // set color
@@ -1617,27 +1637,29 @@ public class BoardView1
                 break;
             case MovementData.STEP_GO_PRONE:
                 // draw arrow indicating dropping prone
-                Polygon downPoly = movementPolys[3];
+                Polygon downPoly = movementPolys[7];
                 myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
                 graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 40);
+                myPoly.translate(stepPos.x, stepPos.y);
                 graph.drawPolygon(myPoly);
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
-                drawMovementCost(step, stepPos, graph, col);
+                offsetCostPos = new Point(stepPos.x + 8, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col);
                 break;
             case MovementData.STEP_GET_UP:
                 // draw arrow indicating standing up
-                Polygon upPoly = movementPolys[0];
+                Polygon upPoly = movementPolys[6];
                 myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
                 graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 42);
+                myPoly.translate(stepPos.x, stepPos.y);
                 graph.drawPolygon(myPoly);
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
-                drawMovementCost(step, stepPos, graph, col);
+                offsetCostPos = new Point(stepPos.x + 7, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col);
                 break;
             case MovementData.STEP_TURN_LEFT:
             case MovementData.STEP_TURN_RIGHT:

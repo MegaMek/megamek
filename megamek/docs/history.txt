@@ -121,6 +121,8 @@ v 0.28.18-dev (CVS)
 + Bug 725946: Handle falls during skids.
 + Bug 725075: Handle infantry that is killed in same phase that it swarms.
 + Bug 730729: No more extra movement when getting up with walk MP of 1.
++ Updated get up and go prone graphics (and fixed problem with getting up
+     arrow not displaying).
 
 v 0.28.17 (05-11-03, 1pm)
 + bug 731676: allow skipping a player w/ no entities to move

@@ -16,6 +16,7 @@ package megamek;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.NumberFormat;
 import java.io.*;
 import java.util.*;
 
@@ -30,6 +31,8 @@ import megamek.test.*;
 public class MegaMek implements ActionListener {
     public static String VERSION = "0.29.35-dev";
     public static long TIMESTAMP = new File("timestamp").lastModified();
+
+    private static final NumberFormat commafy = NumberFormat.getInstance();
 
     public Frame frame;
 
@@ -75,10 +78,14 @@ public class MegaMek implements ActionListener {
                            + " ("
                            + System.getProperty("os.arch")
                            + ")");
-        if ( System.getProperties().getProperty( "java.version" ).charAt(2) != '1' ) {
-            Long m = new Long(Runtime.getRuntime().maxMemory() / 1024);
-            System.out.println("Total memory available to MegaMek: " + MegaMek.commafy(m.toString()) + " kB");
+        // BEGIN DEBUG memory
+        if ( System.getProperties().getProperty( "java.version" ).charAt(2)
+             >= '4' ) {
+            Long maxMemory = new Long(Runtime.getRuntime().maxMemory() / 1024);
+            System.out.println("Total memory available to MegaMek: " 
+                               + MegaMek.commafy.format(maxMemory) + " kB");
         }
+        //  END  DEBUG memory
         System.out.println();
 
         // set visible on middle of screen
@@ -742,19 +749,8 @@ public class MegaMek implements ActionListener {
     public static String getMemoryUsed() {
         long heap = Runtime.getRuntime().totalMemory();
         long free = Runtime.getRuntime().freeMemory();
-        Long used = new Long((heap - free) / 1024);
-        return MegaMek.commafy(used.toString()) + " kB";
-    }
-
-    public static String commafy(String num) {
-        StringBuffer display = new StringBuffer(num);
-        if (display.length() > 3) {
-            display.insert(display.length() - 3, ',');
-        }
-        if (display.length() > 7) {
-            display.insert(display.length() - 7, ',');
-        }
-        return display.toString();
+        long used = (heap - free) / 1024;
+        return MegaMek.commafy.format(used) + " kB";
     }
 
     //

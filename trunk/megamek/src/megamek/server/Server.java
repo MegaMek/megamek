@@ -962,8 +962,8 @@ implements Runnable, ConnectionHandler {
 
         Vector players = game.getPlayersVector();
         for (int i = 0; i < players.size(); i++) {
-        	Player player = (Player) players.elementAt(i);
-        	player.setAdmitsDefeat(false);
+            Player player = (Player) players.elementAt(i);
+            player.setAdmitsDefeat(false);
         }
     }
 
@@ -1187,20 +1187,20 @@ implements Runnable, ConnectionHandler {
                 resetActivePlayersDone();
                 setIneligible(phase);
 
-		        Enumeration e = game.getPlayers();
-		        Vector turns = new Vector();
-		        while (e.hasMoreElements()) {
-		        	Player p = (Player) e.nextElement();
-		        	if (p.hasMinefields()) {
-		        		GameTurn gt = new GameTurn(p.getId());
-		        		turns.addElement(gt);
-		        	}
-		        }
-		        game.setTurnVector(turns);
-		        game.resetTurnIndex();
+                Enumeration e = game.getPlayers();
+                Vector turns = new Vector();
+                while (e.hasMoreElements()) {
+                    Player p = (Player) e.nextElement();
+                    if (p.hasMinefields()) {
+                        GameTurn gt = new GameTurn(p.getId());
+                        turns.addElement(gt);
+                    }
+                }
+                game.setTurnVector(turns);
+                game.resetTurnIndex();
 
-		        // send turns to all players
-		        send(createTurnVectorPacket());
+                // send turns to all players
+                send(createTurnVectorPacket());
                 break;
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
@@ -1317,18 +1317,18 @@ implements Runnable, ConnectionHandler {
                 break;
             case Game.PHASE_EXCHANGE :
             case Game.PHASE_STARTING_SCENARIO :
-            	Enumeration e = game.getPlayers();
-            	boolean mines = false;
-            	while (e.hasMoreElements()) {
-            		Player p = (Player) e.nextElement();
-            		if (p.hasMinefields()) {
-            			mines = true;
-            		}
-            	}
-            	if (mines) {
-                	changePhase(Game.PHASE_DEPLOY_MINEFIELDS);
+                Enumeration e = game.getPlayers();
+                boolean mines = false;
+                while (e.hasMoreElements()) {
+                    Player p = (Player) e.nextElement();
+                    if (p.hasMinefields()) {
+                        mines = true;
+                    }
+                }
+                if (mines) {
+                    changePhase(Game.PHASE_DEPLOY_MINEFIELDS);
                 } else {
-	               	changePhase(Game.PHASE_INITIATIVE);
+                       changePhase(Game.PHASE_INITIATIVE);
                 }
                 break;
             case Game.PHASE_DEPLOY_MINEFIELDS :
@@ -1555,44 +1555,44 @@ implements Runnable, ConnectionHandler {
      */
     public boolean victory() {
         if (game.isForceVictory()) {
-        	int victoryPlayerId = game.getVictoryPlayerId();
-        	int victoryTeam = game.getVictoryTeam();
-        	Vector players = game.getPlayersVector();
-        	boolean forceVictory = true;
+            int victoryPlayerId = game.getVictoryPlayerId();
+            int victoryTeam = game.getVictoryTeam();
+            Vector players = game.getPlayersVector();
+            boolean forceVictory = true;
 
-        	// Individual victory.
-        	if (victoryPlayerId != Player.PLAYER_NONE) {
-        		for (int i = 0; i < players.size(); i++) {
-        			Player player = (Player) players.elementAt(i);
+            // Individual victory.
+            if (victoryPlayerId != Player.PLAYER_NONE) {
+                for (int i = 0; i < players.size(); i++) {
+                    Player player = (Player) players.elementAt(i);
 
-        			if (player.getId() != victoryPlayerId && !player.isObserver()) {
-        				if (!player.admitsDefeat()) {
-        					forceVictory = false;
-        					break;
-        				}
-        			}
-        		}
-        	}
-        	// Team victory.
-        	if (victoryTeam != Player.TEAM_NONE) {
-        		for (int i = 0; i < players.size(); i++) {
-        			Player player = (Player) players.elementAt(i);
+                    if (player.getId() != victoryPlayerId && !player.isObserver()) {
+                        if (!player.admitsDefeat()) {
+                            forceVictory = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            // Team victory.
+            if (victoryTeam != Player.TEAM_NONE) {
+                for (int i = 0; i < players.size(); i++) {
+                    Player player = (Player) players.elementAt(i);
 
-        			if (player.getTeam() != victoryTeam && !player.isObserver()) {
-        				if (!player.admitsDefeat()) {
-        					forceVictory = false;
-        					break;
-        				}
-        			}
-        		}
-        	}
-
-            for (int i = 0; i < players.size(); i++) {
-            	Player player = (Player) players.elementAt(i);
-            	player.setAdmitsDefeat(false);
+                    if (player.getTeam() != victoryTeam && !player.isObserver()) {
+                        if (!player.admitsDefeat()) {
+                            forceVictory = false;
+                            break;
+                        }
+                    }
+                }
             }
 
-        	if (forceVictory) {
+            for (int i = 0; i < players.size(); i++) {
+                Player player = (Player) players.elementAt(i);
+                player.setAdmitsDefeat(false);
+            }
+
+            if (forceVictory) {
             return true;
             }
             cancelVictory();
@@ -1673,12 +1673,12 @@ implements Runnable, ConnectionHandler {
                 isRotated = true;
                 name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
             }
-			if (name.startsWith(MapSettings.BOARD_GENERATED)) {
-				sheetBoards[i].generateRandom(mapSettings);
-			} else {
-	            sheetBoards[i].load( name + ".board");
-	            sheetBoards[i].flip( isRotated, isRotated );
-	        }
+            if (name.startsWith(MapSettings.BOARD_GENERATED)) {
+                sheetBoards[i].generateRandom(mapSettings);
+            } else {
+                sheetBoards[i].load( name + ".board");
+                sheetBoards[i].flip( isRotated, isRotated );
+            }
         }
         game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
         mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
@@ -2805,7 +2805,7 @@ implements Runnable, ConnectionHandler {
                                     .append( "\n" );
 
                                 entity.setPosition( nextPos );
-	                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                                doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                                 curPos = nextPos;
                             } // End buildings-suffer-too
 
@@ -3091,49 +3091,49 @@ implements Runnable, ConnectionHandler {
 
             // check for minefields.
             if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
-            	|| ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
-            	checkVibrabombs(entity, curPos, false, lastPos, curPos); 
+                || ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
+                checkVibrabombs(entity, curPos, false, lastPos, curPos); 
                 if (game.containsMinefield(curPos)) {
-                	Enumeration minefields = game.getMinefields(curPos).elements();
-                	while (minefields.hasMoreElements()) {
-                		Minefield mf = (Minefield) minefields.nextElement();
+                    Enumeration minefields = game.getMinefields(curPos).elements();
+                    while (minefields.hasMoreElements()) {
+                        Minefield mf = (Minefield) minefields.nextElement();
 
-                		switch (mf.getType()) {
-                			case (Minefield.TYPE_CONVENTIONAL) :
-                			case (Minefield.TYPE_THUNDER) :
-                			case (Minefield.TYPE_THUNDER_INFERNO) :
-                			case (Minefield.TYPE_COMMAND_DETONATED) :
-                				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
-                					enterMinefield(entity, mf, curPos, curPos, true);
-                				break;
-                			case (Minefield.TYPE_THUNDER_ACTIVE) :
-                				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
-    	            				enterMinefield(entity, mf, curPos, curPos, true);
-    	            			else
-    	            				enterMinefield(entity, mf, curPos, curPos, true, 2);
-                				break;
-                		}
-                	}
-                }	        
+                        switch (mf.getType()) {
+                            case (Minefield.TYPE_CONVENTIONAL) :
+                            case (Minefield.TYPE_THUNDER) :
+                            case (Minefield.TYPE_THUNDER_INFERNO) :
+                            case (Minefield.TYPE_COMMAND_DETONATED) :
+                                if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+                                    enterMinefield(entity, mf, curPos, curPos, true);
+                                break;
+                            case (Minefield.TYPE_THUNDER_ACTIVE) :
+                                if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+                                    enterMinefield(entity, mf, curPos, curPos, true);
+                                else
+                                    enterMinefield(entity, mf, curPos, curPos, true, 2);
+                                break;
+                        }
+                    }
+                }            
             }
 
             // infantry discovers minefields if they end their move
             // in a minefield.
 
             if (!lastPos.equals(curPos) &&
-            	!i.hasMoreElements() &&
-            	isInfantry) {
-            	if (game.containsMinefield(curPos)) {
-            		Player owner = entity.getOwner();
-	            	Enumeration minefields = game.getMinefields(curPos).elements();
-	            	while (minefields.hasMoreElements()) {
-	            		Minefield mf = (Minefield) minefields.nextElement();
-	            		if (!owner.containsMinefield(mf)) {
-		            		phaseReport.append(entity.getShortName() + " discovers a minefield.\n");
-							revealMinefield(owner, mf);
-						}
-	            	}
-            	}
+                !i.hasMoreElements() &&
+                isInfantry) {
+                if (game.containsMinefield(curPos)) {
+                    Player owner = entity.getOwner();
+                    Enumeration minefields = game.getMinefields(curPos).elements();
+                    while (minefields.hasMoreElements()) {
+                        Minefield mf = (Minefield) minefields.nextElement();
+                        if (!owner.containsMinefield(mf)) {
+                            phaseReport.append(entity.getShortName() + " discovers a minefield.\n");
+                            revealMinefield(owner, mf);
+                        }
+                    }
+                }
             }
 
             // check if we've moved into water
@@ -3615,13 +3615,13 @@ implements Runnable, ConnectionHandler {
     private void deliverFASCAMMinefield( Coords coords, int playerId) {
         // Only if this is on the board...
         if ( game.board.contains(coords) ) {
-        	Minefield minefield = null;
+            Minefield minefield = null;
             Enumeration minefields = game.getMinefields(coords).elements();
             // Check if there already are Thunder minefields in the hex.
             while (minefields.hasMoreElements()) {
-            	Minefield mf = (Minefield) minefields.nextElement();
+                Minefield mf = (Minefield) minefields.nextElement();
                 if (mf.getType() == Minefield.TYPE_THUNDER) {
-                	minefield = mf;
+                    minefield = mf;
                     break;
                 }
             }
@@ -3695,81 +3695,81 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-	/** 
+    /** 
      * When an entity enters a conventional or Thunder minefield.
      */
-	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
-		enterMinefield(entity, mf, src, dest, resolvePSRNow, 0);
-	}
+    private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
+        enterMinefield(entity, mf, src, dest, resolvePSRNow, 0);
+    }
 
-	/**
-	 * When an entity enters a conventional or Thunder minefield.
-	 * @param entity
-	 * 
-	 * @param mf
-	 * @param src
-	 * @param dest
-	 * @param resolvePSRNow
-	 * @param hitMod
-	 */
-	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
-		// Bug 954272: Mines shouldn't work underwater
-		if (!game.board.getHex(mf.getCoords()).contains(Terrain.WATER) || game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
-		switch (mf.getType()) {
-			case (Minefield.TYPE_CONVENTIONAL) :
-			case (Minefield.TYPE_THUNDER) :
-			case (Minefield.TYPE_THUNDER_ACTIVE) :
-			if (mf.getTrigger() != Minefield.TRIGGER_NONE &&
-				Compute.d6(2) < (mf.getTrigger()+hitMod)) {
-				return;
-			}
+    /**
+     * When an entity enters a conventional or Thunder minefield.
+     * @param entity
+     * 
+     * @param mf
+     * @param src
+     * @param dest
+     * @param resolvePSRNow
+     * @param hitMod
+     */
+    private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
+        // Bug 954272: Mines shouldn't work underwater
+        if (!game.board.getHex(mf.getCoords()).contains(Terrain.WATER) || game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
+        switch (mf.getType()) {
+            case (Minefield.TYPE_CONVENTIONAL) :
+            case (Minefield.TYPE_THUNDER) :
+            case (Minefield.TYPE_THUNDER_ACTIVE) :
+                if (mf.getTrigger() != Minefield.TRIGGER_NONE &&
+                    Compute.d6(2) < (mf.getTrigger()+hitMod)) {
+                    return;
+                }
 
-			phaseReport.append("\n" + entity.getShortName() + " hits a mine in hex " + mf.getCoords().getBoardNum() + ".");
-	        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-	        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+                phaseReport.append("\n" + entity.getShortName() + " hits a mine in hex " + mf.getCoords().getBoardNum() + ".");
+                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
 
-	        if (resolvePSRNow) {
-            	resolvePilotingRolls(entity, true, src, dest);
+                if (resolvePSRNow) {
+                    resolvePilotingRolls(entity, true, src, dest);
+                }
+
+                if (!mf.isOneUse()) {
+                    revealMinefield(mf);
+                } else {
+                    removeMinefield(mf);
+                }
+                break;
+
+            case (Minefield.TYPE_THUNDER_INFERNO) :
+                if (mf.getTrigger() != Minefield.TRIGGER_NONE &&
+                    Compute.d6(2) < (mf.getTrigger()+hitMod)) {
+                    return;
+                }
+                entity.infernos.add( InfernoTracker.STANDARD_ROUND, mf.getDamage() );
+                phaseReport.append("\n" + entity.getShortName())
+                           .append(" hits an inferno mine in hex ")
+                           .append(mf.getCoords().getBoardNum() + ".")
+                           .append("\n        " )
+                           .append( entity.getDisplayName() )
+                           .append( " now on fire for ")
+                           .append( entity.infernos.getTurnsLeftToBurn() )
+                           .append(" turns.\n");
+                
+                // start a fire in the targets hex
+                Hex h = game.getBoard().getHex(dest);
+
+                // Unless there a fire in the hex already, start one.
+                if ( !h.contains( Terrain.FIRE ) ) {
+                    phaseReport.append( " Fire started in hex " )
+                               .append( dest.getBoardNum() )
+                               .append( ".\n" );
+                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                }
+                game.board.addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
+                sendChangedHex(dest);
+                break;
             }
-
-            if (!mf.isOneUse()) {
-            	revealMinefield(mf);
-            } else {
-            	removeMinefield(mf);
-            }
-	        break;
-
-			case (Minefield.TYPE_THUNDER_INFERNO) :
-				if (mf.getTrigger() != Minefield.TRIGGER_NONE &&
-					Compute.d6(2) < (mf.getTrigger()+hitMod)) {
-					return;
-				}
-	                    entity.infernos.add( InfernoTracker.STANDARD_ROUND,
-	                                               mf.getDamage() );
-				phaseReport.append("\n" + entity.getShortName() + " hits an inferno mine in hex " + mf.getCoords().getBoardNum() + ".");
-				phaseReport.append("\n        " )
-					.append( entity.getDisplayName() )
-					.append( " now on fire for ")
-					.append( entity.infernos.getTurnsLeftToBurn() )
-					.append(" turns.\n");
-
-	                    // start a fire in the targets hex
-	                    Hex h = game.getBoard().getHex(dest);
-
-	                    // Unless there a fire in the hex already, start one.
-	                    if ( !h.contains( Terrain.FIRE ) ) {
-	                        phaseReport.append( " Fire started in hex " )
-	                            .append( dest.getBoardNum() )
-	                            .append( ".\n" );
-	                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
-	                    }
-	                    game.board.addInfernoTo
-	                        ( dest, InfernoTracker.STANDARD_ROUND, 1 );
-	                    sendChangedHex(dest);
-				break;
-	     }
-		} else return;
-	}
+        } else return;
+    }
 
 	/**
 	 * Checks to see if an entity sets off any vibrabombs.

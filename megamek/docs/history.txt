@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.5-dev (CVS)
+v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay
 + Bug 774767: attacks at 0 range prohibited again for non-infantry
 + Patch 770478: Added nalleolsson's LOS/Range tool.

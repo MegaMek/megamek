@@ -90,6 +90,7 @@ v next
 + 540326: mech elevation while mid-DFA calculated correctly
 + added color red; some tweaks to other colors
 + map tileset now included in MegaMek.cfg
++ corrected typo regarding underwater heat sinks
 
 v 0.25.6 (05-23-02, 8:30pm)
 + 554568: fixed false secondary target modifier on first shot

@@ -226,7 +226,7 @@ public abstract class Mech
     }
     
     /**
-     * Returns the about of heat that the entity can sink each 
+     * Returns the about of heat that the entity can sink each
      * turn, factoring for water.
      */
     public int getHeatCapacityWithWater(Game game) {
@@ -237,17 +237,17 @@ public abstract class Mech
         if (curHex.levelOf(Terrain.WATER) >= 0) {
             return capacity;
         } else if (curHex.levelOf(Terrain.WATER) == 1) {
-          if ( isProne() ) {
-            sinksUnderwater = getHeatCapacity();
-          } else {
-            for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-                Mounted mounted = (Mounted)i.nextElement();
-                if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
-                    sinksUnderwater++;
+            if ( isProne() ) {
+                sinksUnderwater = getHeatCapacity();
+            } else {
+                for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+                    Mounted mounted = (Mounted)i.nextElement();
+                    if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
+                        sinksUnderwater++;
+                    }
                 }
             }
-          }
-        } else if (curHex.levelOf(Terrain.WATER) <= 2) {
+        } else if (curHex.levelOf(Terrain.WATER) >= 2) {
             sinksUnderwater = getHeatCapacity();
         }
         

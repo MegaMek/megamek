@@ -567,7 +567,7 @@ public class Compute
             && stepType != MovementData.STEP_CHARGE
             && stepType != MovementData.STEP_DFA
             && game.getEntity(dest) != null
-            && game.getEntity(dest).getOwner().isEnemyOf(entity.getOwner())) {
+            && entity.isEnemyOf(game.getEntity(dest))) {
             return false;
         }
         // can't jump over too-high terrain
@@ -1247,7 +1247,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(4, "4 (base)");
+        toHit = new ToHitData(4, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1396,7 +1396,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(3, "3 (base)");
+        toHit = new ToHitData(3, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1564,7 +1564,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(4, "4 (base)");
+        toHit = new ToHitData(4, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1696,7 +1696,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(4, "4 (base)");
+        toHit = new ToHitData(4, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1848,7 +1848,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(5, "5 (base)");
+        toHit = new ToHitData(5, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId, movement));
@@ -1984,7 +1984,7 @@ public class Compute
         }
         
         // okay, modifiers...
-        toHit = new ToHitData(5, "5 (base)");
+        toHit = new ToHitData(5, "base");
         
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId, Entity.MOVE_JUMP));

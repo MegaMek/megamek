@@ -20,6 +20,7 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.options.*;
 import megamek.server.commands.*;
 
 /**
@@ -46,7 +47,6 @@ public class Server
 
     private Game                game = new Game();
 
-    private GameSettings        gameSettings = new GameSettings();
     private MapSettings         mapSettings = new MapSettings();
     
     // list of turns and whose turn it is
@@ -80,6 +80,8 @@ public class Server
         } catch(IOException ex) {
             System.err.println("could not create server socket on port " + port);
         }
+        
+        game.getOptions().initialize();
 
         changePhase(Game.PHASE_LOUNGE);
 
@@ -205,6 +207,12 @@ public class Server
                            + getClient(connId).getSocket().getInetAddress());
         sendServerChat(getPlayer(connId).getName() + " connected from "
                            + getClient(connId).getSocket().getInetAddress());
+        
+        // there is more than one player, uncheck the friendly fire option
+        if (game.getNoOfPlayers() > 1 && game.getOptions().booleanOption("friendly_fire")) {
+            game.getOptions().getOption("friendly_fire").setValue(false);
+            send(createGameSettingsPacket());
+        }
     }
     
     /**
@@ -212,11 +220,11 @@ public class Server
      */
     private void sendCurrentInfo(int connId) {
         transmitAllPlayerConnects(connId);
+        send(createGameSettingsPacket());
         send(connId, createEntitiesPacket());
         switch (game.phase) {
         case Game.PHASE_LOUNGE :
             send(connId, createMapSettingsPacket());
-            send(connId, createGameSettingsPacket());
             break;
         default :
             getPlayer(connId).setReady(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
@@ -621,7 +629,6 @@ public class Server
             mapSettings.setNullBoards(DEFAULT_BOARD);
             break;
         case Game.PHASE_EXCHANGE :
-            gameSettings.friendlyFire = game.getNoOfPlayers() <= 1;
             resetPlayerReady();
             // apply board layout settings to produce a mega-board
             mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
@@ -1061,6 +1068,13 @@ public class Server
             return false;
         }
         
+//        // check game options
+//        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+//            return true;
+//        }
+        
+        // TODO: check for any weapon attacks
+        
         return true;
     }
 
@@ -1074,6 +1088,11 @@ public class Server
         if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
             return false;
         }
+        
+        // check game options
+        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
+            return true;
+        }
 
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity target = (Entity)e.nextElement();
@@ -1083,9 +1102,8 @@ public class Server
                 continue;
             }
 
-            // don't hit your own guys with friendly fire
-            if (!gameSettings.friendlyFire
-                && !target.getOwner().isEnemyOf(entity.getOwner())) {
+            // don't shoot at friendlies
+            if (!target.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             
@@ -1116,6 +1134,12 @@ public class Server
         final MovementData md = (MovementData)c.getObject(1);
         // walk thru data, stopping when the mech is out of movement
         final Entity entity = game.getEntity(c.getIntValue(0));
+        
+        if (entity == null) {
+            // what causes this?  --Ben
+            return;
+        }
+        
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
@@ -1451,7 +1475,7 @@ public class Server
                            + target.getDisplayName() + ".\n");
 
             // determine to-hit number
-            ToHitData toHit = new ToHitData(7, "7 (base)");
+            ToHitData toHit = new ToHitData(7, "base");
             toHit.append(Compute.getTargetMovementModifier(game, target.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, target.getId()));
 
@@ -1637,32 +1661,34 @@ public class Server
             return;
         }
         // are we attacks normal weapons or missiles?
-        if (wtype.getDamage() != WeaponType.DAMAGE_MISSILE) {
-            // normal weapon; deal damage
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
-            phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
-        } else {
+        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
             // missiles; determine number of missiles hitting
             int hits = Compute.missilesHit(wtype.getRackSize());
             phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
-            // for SRMs, do each missile seperately
             if (wtype.getAmmoType() == AmmoType.TYPE_SRM) {
+                // for SRMs, do each missile seperately
                 for (int j = 0; j < hits; j++) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                     phaseReport.append(damageEntity(te, hit, 2));
                 }
-            }
-            // LRMs, do salvos of 5
-                if (wtype.getAmmoType() == AmmoType.TYPE_LRM) {
-                    while (hits > 0) {
-                        int salvo = Math.min(5, hits);
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, salvo));
-                        hits -= salvo;
-                    }
+            } else if (wtype.getAmmoType() == AmmoType.TYPE_LRM) {
+                // LRMs, do salvos of 5
+                while (hits > 0) {
+                    int salvo = Math.min(5, hits);
+                    HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                    phaseReport.append(damageEntity(te, hit, salvo));
+                    hits -= salvo;
                 }
             }
+        } else if (wtype.getName().indexOf("Flamer") != -1 && game.getOptions().booleanOption("flamer_heat")) {
+             phaseReport.append("hits; target gains 2 more heat during heat phase.");
+             te.heatBuildup += 2;
+        } else {
+            // normal weapon; deal damage
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+            phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
+        }
 
         phaseReport.append("\n");
     }
@@ -2938,6 +2964,38 @@ public class Server
         }
         getPlayer(connIndex).setReady(ready);
     }
+    
+    /**
+     * Sets game options, providing that the player has specified the password
+     * correctly.
+     *
+     * @returns true if any options have been successfully changed.
+     */
+    private boolean receiveGameOptions(Packet packet, int connId) {
+        // check password
+        if (password != null && password.length() > 0 && !password.equals(packet.getObject(0))) {
+            sendServerChat(connId, "The password you specified to change game options is incorrect.");
+            return false;
+        }
+        
+        int changed = 0;
+        
+        for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
+            GameOption option = (GameOption)i.nextElement();
+            GameOption originalOption = game.getOptions().getOption(option.getShortName());
+            
+            if (originalOption == null) {
+                continue;
+            }
+            
+            sendServerChat("Player " + getPlayer(connId).getName() + " changed option \"" + originalOption.getFullName() + "\" to " + option.stringValue() + ".");
+            
+            originalOption.setValue(option.getValue());
+            changed++;
+        }
+        
+        return changed > 0;
+    }
 
     /**
      * Sends out all player info to the specified connection
@@ -3023,7 +3081,7 @@ public class Server
      * Creates a packet containing the game settingss
      */
     private Packet createGameSettingsPacket() {
-        return new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, gameSettings);
+        return new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, game.getOptions());
     }
 
     /**
@@ -3217,10 +3275,11 @@ public class Server
             transmitAllPlayerReadys();
             break;
         case Packet.COMMAND_SENDING_GAME_SETTINGS :
-            gameSettings = (GameSettings)packet.getObject(0);
-            resetPlayerReady();
-            transmitAllPlayerReadys();
-            send(createGameSettingsPacket());
+            if (receiveGameOptions(packet, connId)) {
+                resetPlayerReady();
+                transmitAllPlayerReadys();
+                send(createGameSettingsPacket());
+            }
             break;
         case Packet.COMMAND_SENDING_MAP_SETTINGS :
             mapSettings = (MapSettings)packet.getObject(0);

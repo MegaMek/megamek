@@ -38,6 +38,8 @@ public abstract class Entity
 
     public static final int        LOC_NONE            = -1;
     public static final int        LOC_DESTROYED       = -2;
+    
+    protected transient Game    game;
 
     protected int               id;
 
@@ -124,6 +126,10 @@ public abstract class Entity
         this.id = id;
     }
     
+    public void setGame(Game game) {
+        this.game = game;
+    }
+    
     /**
      * Returns the unit code for this entity.
      */
@@ -175,8 +181,13 @@ public abstract class Entity
         return ownerId;
     }
     
+    /**
+     * Returns true if the other entity is an enemy of this entity.  This is
+     * more reliable than Player.isEnemyOf since it knows that an entity will
+     * never be an enemy of itself.
+     */
     public boolean isEnemyOf(Entity other) {
-        return owner.isEnemyOf(other.getOwner());
+        return id != other.getId() && owner.isEnemyOf(other.getOwner());
     }
   
     public Pilot getCrew() {

@@ -225,9 +225,9 @@ public class MovementData
         int index;
         while ((index = firstLateralShift()) != -1) {
             int stepType = getStep(index).getType();
-            steps.removeElement(index);
-            steps.removeElement(index);
-            steps.removeElement(index);
+            steps.removeElementAt(index);
+            steps.removeElementAt(index);
+            steps.removeElementAt(index);
             steps.insertElementAt(new Step(lateralShiftForTurn(stepType)), index);
         }
     }

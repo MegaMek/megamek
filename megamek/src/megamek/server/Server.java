@@ -11763,7 +11763,7 @@ implements Runnable, ConnectionHandler {
                 while ( spotters.hasMoreElements() ) {
                     Integer id = new Integer
                         ( ((Entity) spotters.nextElement() ).getId() );
-                    spotterIds.add( id );
+                    spotterIds.addElement( id );
                 }
                 aaa = new ArtilleryAttackAction( wr, game,
                                                  firingEntity.getOwnerId(),

@@ -46,12 +46,12 @@ implements Serializable
                 correct.modifier=modifier;
             } else {
                 correct=new ArtilleryModifier(coords,modifier);
-                weaponMods.add(correct);
+                weaponMods.addElement(correct);
             }
 
         } else {
             weaponMods = new Vector();
-            weaponMods.add(new ArtilleryModifier(coords,modifier));
+            weaponMods.addElement(new ArtilleryModifier(coords,modifier));
             artyWeaps.put(mounted,weaponMods);
         }
     }
@@ -71,13 +71,13 @@ implements Serializable
                 return correct.modifier;
             } else {
                 correct=new ArtilleryModifier(coords,0);
-                weaponMods.add(correct);
+                weaponMods.addElement(correct);
                 return 0;
             }
 
         } else {
             weaponMods = new Vector();
-            weaponMods.add(new ArtilleryModifier(coords,0));
+            weaponMods.addElement(new ArtilleryModifier(coords,0));
             artyWeaps.put(mounted,weaponMods);
             return 0;
         }

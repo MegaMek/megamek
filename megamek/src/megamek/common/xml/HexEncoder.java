@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
+import megamek.common.util.StringUtil;
 
 /**
  * Objects of this class can encode a <code>Hex</code> object as XML
@@ -143,8 +144,9 @@ public class HexEncoder {
                         try {
                             final int type = Integer.parseInt
                                 ( subnode.getAttribute( "type" ) );
-                            final boolean exitsSpecified = Boolean.getBoolean
-                                ( subnode.getAttribute( "exitsSpecified" ) );
+                            final boolean exitsSpecified = 
+                                StringUtil.parseBoolean
+                                ( subnode.getAttribute("exitsSpecified") );
                             final int level = Integer.parseInt
                                 ( subnode.getAttribute( "level" ) );
                             final int exits = Integer.parseInt

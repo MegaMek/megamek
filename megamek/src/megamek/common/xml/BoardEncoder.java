@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
+import megamek.common.util.StringUtil;
 
 /**
  * Objects of this class can encode a <code>Board</code> object as XML
@@ -217,8 +218,8 @@ public class BoardEncoder {
                 width = attrVal;
 
                 // Read the "roadsAutoExit" attribute.
-                roadsAutoExit = Boolean.getBoolean
-                    ( child.getAttribute( "roadsAutoExit" ) );
+                roadsAutoExit = StringUtil.parseBoolean
+                    ( child.getAttribute("roadsAutoExit") );
 
                 // Create an array to hold all the boardData.
                 hexes = new Hex[height * width];
@@ -263,13 +264,6 @@ public class BoardEncoder {
 
         // Construct the board.
         retVal = new Board( width, height, hexes, buildings, infernos );
-        /* begin killme block */
-        try {
-            retVal.save( new FileOutputStream("retVal.board") );
-        } catch ( IOException ioErr ) {
-            ioErr.printStackTrace();
-        }
-        /* end killme block */
 
         // Return the board for this node.
         return retVal;

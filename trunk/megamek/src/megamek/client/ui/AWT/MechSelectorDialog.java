@@ -123,21 +123,21 @@ public class MechSelectorDialog
     
     
     private void populateChoices() {
-        
-        
         m_chWeightClass.addItem("Light");
         m_chWeightClass.addItem("Medium");
         m_chWeightClass.addItem("Heavy");
         m_chWeightClass.addItem("Assault");
+        m_chWeightClass.addItem("All");
         
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);
         }
+        m_chType.addItem("All");
 
-        m_chUnitType.addItem("All");
         m_chUnitType.addItem("Mek");
         m_chUnitType.addItem("Tank");
         m_chUnitType.addItem("Infantry");
+        m_chUnitType.addItem("All");
     }
     
     
@@ -155,8 +155,10 @@ public class MechSelectorDialog
         else if (sClass.equals("Heavy")) {
             nWeight = Entity.WEIGHT_HEAVY;
         }
-        else {
+        else if (sClass.equals("Assault")) {
             nWeight = Entity.WEIGHT_ASSAULT;
+        } else {
+            nWeight = 0;  // use for "All Weights" choice
         }
         int nType = m_chType.getSelectedIndex();
         String sUnitType = m_chUnitType.getSelectedItem();
@@ -166,8 +168,9 @@ public class MechSelectorDialog
             return;
         }
         for (int x = 0; x < mechs.length; x++) {
-            if ( mechs[x].getWeightClass() == nWeight && 
-                 mechs[x].getType() == nType && 
+            // watch out for hard-coded constants below
+            if ( (nWeight == 0 || mechs[x].getWeightClass() == nWeight) && 
+                 (nType == 4 || mechs[x].getType() == nType) && 
                  ( sUnitType.equals( "All" ) ||
                    mechs[x].getUnitType().equals(sUnitType) ) ) {
                 vMechs.addElement(mechs[x]);

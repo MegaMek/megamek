@@ -14,9 +14,11 @@ it to stop responding.  When this happens, start again from the last saved game.
     Hit done and have fun!
 	
     The bot will also work in most Scenarios.
+    
+    Alternatively, you can still launch the bot in a separate client like before.
         
-    TODO: add the ability to control the bot's minefields.
     TODO: camo change ability
+    TODO: have unit loading list work with bots
     
 History:
 
@@ -87,7 +89,7 @@ Other Possibilities:
 Tech Note:
 
 Be careful about the memory allocated to you JVM when playing against the bot.
-MegaMek by itself currently needs about 40MB + .5MB for each entity.  Some number of bots 
+MegaMek by itself currently needs about 20MB + .5MB for each entity.  Some number of bots 
 need about 15MB + 2MB for each entity.  It is quite possible for a lance on lance battle
 to generate an OutOfMemory error after several rounds.  We are working on reducing
 this overhead, but until then make sure to give the JVM enough heap space. 

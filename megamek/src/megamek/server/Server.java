@@ -5659,7 +5659,7 @@ implements Runnable, ConnectionHandler {
                        wr.waa.getAimedLocation(),
                        wr.waa.getAimingMode() );
 
-             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+             phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits), false, 0, false, true) + "\n");
              hits -= Math.min(nCluster,hits);
            }
 
@@ -8437,12 +8437,14 @@ implements Runnable, ConnectionHandler {
     public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
         return damageEntity(te, hit, damage, ammoExplosion, 0, false);
     }
+    
+    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS) {
+    	return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, false);
+    }
 
     /**
-     * Deals the listed damage to a mech.  Returns a description
+     * Deals the listed damage to an entity.  Returns a description
      * string for the log.
-     *
-     * Currently mech only.
      *
      * @param te the target entity
      * @param hit the hit data for the location hit
@@ -8450,8 +8452,9 @@ implements Runnable, ConnectionHandler {
      * @param ammoExplosion ammo explosion type damage is handled slightly differently
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
      * @param damageIS Should the target location's internal structure be damaged directly? (only for mechs and tanks)
+     * @param areaSatArty Is the damage from an area saturating artillery attack?
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS, boolean areaSatArty) {
         StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
@@ -8776,7 +8779,7 @@ implements Runnable, ConnectionHandler {
                                                          Mech.LOC_CT ) ) );
                           // If the head is destroyed, kill the crew.
                           if (hit.getLocation() == Mech.LOC_HEAD ||
-                              (hit.getLocation() == Mech.LOC_CT && ammoExplosion)) {
+                              (hit.getLocation() == Mech.LOC_CT && (ammoExplosion || areaSatArty))) {
                           	te.getCrew().setDoomed(true);
                           }
                         }

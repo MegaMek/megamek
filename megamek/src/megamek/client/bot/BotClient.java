@@ -287,6 +287,11 @@ public class BotClient extends Client
     {
         Entity ten = game.getEntity(to);
         Entity fen = game.getEntity(from);
+        
+        if (!(fen instanceof Mech)) {
+            return null;
+        }
+        
         double bestDmg=0, dmg;
         int damage;
         int bestType = PhysicalOption.PUNCH_LEFT;

@@ -82,6 +82,8 @@ v 0.26.14 (09-14-02, 9:30pm)
 + added no-tac and floating-tac game options for mechs (thx John Rowat)
 + 612180: vehicles use their slightly different damage arcs
 + 610616: immobile vehicle critss don't apply the to-hit mod in the same phase
++ 574898: bots don't instantly logout with double-blind
++ 612248: bots work tolerably with vehicles
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

@@ -232,89 +232,115 @@ public class CEntity  {
       int points = 0;
       int temp[] = null;
       boolean rear = false;
-      switch (arc) {
-        case ToHitData.SIDE_REAR:
-          rear = true;
-        case ToHitData.SIDE_FRONT:
-          temp = this.getArmorValues(Mech.LOC_CT,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_RARM,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_RLEG,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_RT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LLEG,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LARM,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_HEAD,rear);
-          total += temp[0];
-          points += temp[1];
-          break;
-        case ToHitData.SIDE_LEFT:
-          temp = this.getArmorValues(Mech.LOC_CT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_RARM,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_RLEG,rear);
-          this.leg_health[this.RIGHT_LEG] = temp[0]/entity.getOArmor(Mech.LOC_RLEG);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_RT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LT,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_LLEG,rear);
-          this.leg_health[this.LEFT_LEG] = temp[0]/entity.getOArmor(Mech.LOC_LLEG);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_LARM,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_HEAD,rear);
-          total += temp[0];
-          points += temp[1];
-          break;
-        case ToHitData.SIDE_RIGHT:
-          temp = this.getArmorValues(Mech.LOC_CT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_RARM,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_RLEG,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_RT,rear);
-          total += 2*temp[0];
-          points += 2*temp[1];
-          temp = this.getArmorValues(Mech.LOC_LT,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LLEG,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_LARM,rear);
-          total += temp[0];
-          points += temp[1];
-          temp = this.getArmorValues(Mech.LOC_HEAD,rear);
-          total += temp[0];
-          points += temp[1];
-          break;
+      if (this.entity instanceof Tank) {
+        switch (arc) {
+            case ToHitData.SIDE_FRONT :
+                temp = this.getArmorValues(Tank.LOC_FRONT, false);
+                total += 2*temp[0];
+                points += 2*temp[1];
+                break;
+            case ToHitData.SIDE_REAR :
+                temp = this.getArmorValues(Tank.LOC_REAR, false);
+                total += 2*temp[0];
+                points += 2*temp[1];
+                break;
+            case ToHitData.SIDE_RIGHT :
+                temp = this.getArmorValues(Tank.LOC_RIGHT, false);
+                total += 2*temp[0];
+                points += 2*temp[1];
+                break;
+            case ToHitData.SIDE_LEFT :
+                temp = this.getArmorValues(Tank.LOC_LEFT, false);
+                total += 2*temp[0];
+                points += 2*temp[1];
+                break;
+        }
+      }
+      else {
+           switch (arc) {
+             case ToHitData.SIDE_REAR:
+               rear = true;
+             case ToHitData.SIDE_FRONT:
+               temp = this.getArmorValues(Mech.LOC_CT,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_RARM,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_RLEG,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_RT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LLEG,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LARM,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_HEAD,rear);
+               total += temp[0];
+               points += temp[1];
+               break;
+             case ToHitData.SIDE_LEFT:
+               temp = this.getArmorValues(Mech.LOC_CT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_RARM,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_RLEG,rear);
+               this.leg_health[this.RIGHT_LEG] = temp[0]/entity.getOArmor(Mech.LOC_RLEG);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_RT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LT,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_LLEG,rear);
+               this.leg_health[this.LEFT_LEG] = temp[0]/entity.getOArmor(Mech.LOC_LLEG);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_LARM,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_HEAD,rear);
+               total += temp[0];
+               points += temp[1];
+               break;
+             case ToHitData.SIDE_RIGHT:
+               temp = this.getArmorValues(Mech.LOC_CT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_RARM,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_RLEG,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_RT,rear);
+               total += 2*temp[0];
+               points += 2*temp[1];
+               temp = this.getArmorValues(Mech.LOC_LT,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LLEG,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_LARM,rear);
+               total += temp[0];
+               points += temp[1];
+               temp = this.getArmorValues(Mech.LOC_HEAD,rear);
+               total += temp[0];
+               points += temp[1];
+               break;
+           }
       }
       this.armor_health[arc] = ((double)total*points)/242;
       if (this.armor_health[arc] > max) {

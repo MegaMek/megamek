@@ -31,6 +31,7 @@ Lot of people have contributed to the MegaMek project.
      David Taylor <dtaylor@swiftdsl.com.au>
      Björn Olsson <nalleolsson@users.sourceforge.net>
      Florian Stock <flolo@users.sourceforge.net>
+     Patrick Johnmeyer <pineconius@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -191,6 +191,13 @@ public class Compute
             && !isInfantry) {
             return true;
         }
+        
+        // check for swamp
+        if (destHex.contains(Terrain.SWAMP)
+            && entity.getMovementType() != Entity.MovementType.HOVER
+            && movementType != Entity.MOVE_JUMP) {
+            return true;
+        }
 
         // Check for water unless we're a hovercraft or using a bridge.
         if (movementType != Entity.MOVE_JUMP
@@ -3143,6 +3150,10 @@ public class Compute
         if (hex.levelOf(Terrain.WATER) > 0
         && entityTarget.getMovementType() != Entity.MovementType.HOVER) {
             toHit.addModifier(-1, "target in water");
+        }
+        
+        if (entityTarget.isStuck()) {
+            toHit.addModifier(-2, "target stuck in swamp");
         }
 
         // Smoke and woods. With L3, the effects STACK.

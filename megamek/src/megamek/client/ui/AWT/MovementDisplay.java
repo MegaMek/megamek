@@ -327,8 +327,8 @@ public class MovementDisplay
         boolean isProtomech = (ce() instanceof Protomech);
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
-        setWalkEnabled(!ce().isImmobile() && ce().getWalkMP() > 0);
-        setJumpEnabled(!ce().isImmobile() && ce().getJumpMP() > 0);
+        setWalkEnabled(!ce().isImmobile() && ce().getWalkMP() > 0 && !ce().isStuck());
+        setJumpEnabled(!ce().isImmobile() && ce().getJumpMP() > 0 && !ce().isStuck());
         setBackUpEnabled(butWalk.isEnabled());
 
         setChargeEnabled(ce().canCharge());
@@ -344,14 +344,16 @@ public class MovementDisplay
             setClearEnabled(false);
         }
         
-        setTurnEnabled(!ce().isImmobile() && (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
+        setTurnEnabled(!ce().isImmobile() && 
+                !ce().isStuck() &&
+                (ce().getWalkMP() > 0 || ce().getJumpMP() > 0));
 
         if (ce().isProne()) {
-            setGetUpEnabled(!ce().isImmobile());
+            setGetUpEnabled(!ce().isImmobile() && !ce().isStuck());
             setGoProneEnabled(false);
         } else {
             setGetUpEnabled(false);
-            setGoProneEnabled(!ce().isImmobile() && isMech);
+            setGoProneEnabled(!ce().isImmobile() && isMech && !ce().isStuck());
         }
 
         updateProneButtons();

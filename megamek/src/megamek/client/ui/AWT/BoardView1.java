@@ -2977,6 +2977,15 @@ public class BoardView1
                 graph.setColor(Color.black);
                 graph.drawString("T", 19, 70);
             }
+            
+            // If this unit is stuck, say so.
+            if ((entity.isStuck())) {
+                graph.setColor(Color.darkGray);
+                graph.drawString("STUCK", 26, 61);
+                graph.setColor(Color.orange);
+                graph.drawString("STUCK", 25, 60);
+                
+            }
 
             // If this unit is currently unknown to the enemy, say so.
             if (trackThisEntitiesVisibilityInfo(entity)) {

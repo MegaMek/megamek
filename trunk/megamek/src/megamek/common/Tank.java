@@ -489,7 +489,7 @@ public class Tank
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getRunMP(), false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }
@@ -564,7 +564,7 @@ public class Tank
         weaponBV += ammoBV;
         
         // adjust further for speed factor
-        double speedFactor = getRunMP() - 5;
+        double speedFactor = getOriginalRunMP() - 5;
         speedFactor /= 10;
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);

@@ -558,6 +558,9 @@ public abstract class Mech
     public int getRunMPwithoutMASC(boolean gravity) {
         return super.getRunMP(gravity);
     }
+    public int getOriginalRunMPwithoutMASC() {
+        return super.getRunMP(false);
+    }
 
     /**
      * Returns this entity's running/flank mp as a string.
@@ -1664,7 +1667,7 @@ public abstract class Mech
         */
 
         // adjust for target movement modifier
-        int runMP = getRunMPwithoutMASC();
+        int runMP = getOriginalRunMPwithoutMASC();
         // factor in masc or tsm
         if (hasMASC()) {
             runMP = getWalkMP() * 2;
@@ -1673,7 +1676,7 @@ public abstract class Mech
             runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true).getValue();
         int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
         if (targetMovementModidifer > 5) {
             targetMovementModidifer = 5;
@@ -1787,7 +1790,7 @@ public abstract class Mech
         }
         
         // adjust further for speed factor
-        double speedFactor = getRunMPwithoutMASC() + getJumpMP() - 5;
+        double speedFactor = getOriginalRunMPwithoutMASC() + getOriginalJumpMP() - 5;
         // +1 for MASC or TSM, you may not have both
         if (hasMASC() || hasTSM()) {
             speedFactor++;

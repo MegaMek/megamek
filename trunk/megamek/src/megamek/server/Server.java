@@ -4308,7 +4308,8 @@ implements Runnable {
         spreadFire(nextCoords, 9);
         
         // Spread to the next hex downwind on a 12 if the first hex wasn't burning...
-        if (!(game.getBoard().getHex(nextCoords).contains(Terrain.FIRE))) {
+        Hex nextHex = game.getBoard().getHex(nextCoords);
+        if (nextHex != null && !(nextHex.contains(Terrain.FIRE))) {
             // we've already gone one step in the wind direction, now go another
             spreadFire(nextCoords.translated(windDir), 12);
         }
@@ -4363,7 +4364,7 @@ implements Runnable {
     public void addSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
         Hex nextHex = game.getBoard().getHex(smokeCoords);
-        if (!(nextHex.contains(Terrain.SMOKE))) {
+        if (nextHex != null && !(nextHex.contains(Terrain.SMOKE))) {
             nextHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
             sendChangedHex(smokeCoords);
             phaseReport.append("Smoke fills " + smokeCoords.getBoardNum() + "!\n");

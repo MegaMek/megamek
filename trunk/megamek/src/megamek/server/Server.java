@@ -7438,7 +7438,10 @@ implements Runnable, ConnectionHandler {
         if (target == null || (target.getTargetType() == Targetable.TYPE_ENTITY
              && (te.isDestroyed() || te.isDoomed() || te.crew.isDead()))) {
             phaseReport.append("    Charge cancelled as the target has been destroyed.\n");
-            doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null);
+            // doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null);
+            // Randall said that if a charge fails because of target destruction,
+            // the attacker stays in the hex he was in at the end of the movement phase
+            // See Bug 912094
             return;
         }
 
@@ -7451,6 +7454,11 @@ implements Runnable, ConnectionHandler {
         // attacker immobile?
         if (ae.isImmobile()) {
             phaseReport.append("    Charge cancelled as the attacker has been immobilized.\n");
+            return;
+        }
+        
+        if (te.isProne()) {
+            phaseReport.append("    Charge cancelled as the target has fallen.\n");
             return;
         }
 

@@ -7235,7 +7235,7 @@ implements Runnable {
                     Building bldg = game.board.getBuildingAt( currentCoords );
                     if ( bldg != null ) {
                         bldg.setBurning( true );
-                        burningBldgs.add( bldg );
+                        burningBldgs.addElement( bldg );
                     }
                 }
                 if (currentHex.contains(Terrain.FIRE)) {

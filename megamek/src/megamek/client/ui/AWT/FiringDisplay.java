@@ -63,7 +63,6 @@ public class FiringDisplay
     // let's keep track of what we're shooting and at what, too
     private int                cen;        // current entity number
     private Targetable         target;        // target 
-    private int       selectedWeapon;
   
     // shots we have so far.
     private Vector attacks;  
@@ -460,45 +459,70 @@ public class FiringDisplay
     }
     
     /**
-     * Called when the current entity is done firing.
+     * Called when the current entity is done firing.  Send out our attack
+     * queue to the server.
      */
     private void ready() {
+        // stop further input (hopefully)
         disableButtons();
+
+        // remove temporary attacks from game & board
+        removeTempAttacks();
+        
+        // send out attacks
         client.sendAttackData(cen, attacks);
+        
+        // clear queue
         attacks.removeAllElements();
     }
     
     /**
-     * Sends a data packet indicating the chosen weapon and 
-     * target.
+     * Adds a weapon attack with the currently selected weapon to the attack
+     * queue.
      */
     private void fire() {
-        int wn = client.mechD.wPan.getSelectedWeaponNum();
-        if (ce() == null || target == null || ce().getEquipment(wn) == null 
-        || !(ce().getEquipment(wn).getType() instanceof WeaponType)) {
+        // get the sepected weaponnum
+        int weaponNum = client.mechD.wPan.getSelectedWeaponNum();
+        Mounted mounted = ce().getEquipment(weaponNum);
+        
+        // validate
+        if (ce() == null || target == null || mounted == null 
+        || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
-        Mounted m = ce().getEquipment(wn);
         
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
-                target.getTargetId(), wn);
+                target.getTargetId(), weaponNum);
         
-        if (((WeaponType)m.getType()).getAmmoType() != AmmoType.T_NA) {
-            waa.setAmmoId(ce().getEquipmentNum(m.getLinked()));
+        if (((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+            waa.setAmmoId(ce().getEquipmentNum(mounted.getLinked()));
         }
     
+        // add the attack to our temporary queue
         attacks.addElement(waa);
-    
-        ce().getEquipment(wn).setUsedThisRound(true);
-        selectedWeapon = ce().getNextWeapon(wn);
+        
+        // and add it into the game, temporarily
+        client.game.addAction(waa);
+        client.bv.addAttack(waa);
+        client.bv.repaint(100);
+        
+        // set the weapon as used
+        mounted.setUsedThisRound(true);
+        
+        // find the next available weapon 
+        int nextWeapon = ce().getNextWeapon(weaponNum);
+        
         // check; if there are no ready weapons, you're done.
-        if(selectedWeapon == -1 && Settings.autoEndFiring) {
+        if (nextWeapon == -1 && Settings.autoEndFiring) {
             ready();
             return;
         }
+        
+        // otherwise, display firing info for the next weapon
         client.mechD.wPan.displayMech(ce());
-        client.mechD.wPan.selectWeapon(selectedWeapon);
+        client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
+        
         butNext.setEnabled(false);
     }
     
@@ -506,13 +530,13 @@ public class FiringDisplay
      * Skips to the next weapon
      */
     private void nextWeapon() {
-        selectedWeapon = ce().getNextWeapon(client.mechD.wPan.getSelectedWeaponNum());
-        // check; if there are no ready weapons, you're done.
-        if(selectedWeapon == -1) {
+        int nextWeapon = ce().getNextWeapon(client.mechD.wPan.getSelectedWeaponNum());
+        // if there's no next weapon, forget about it
+        if(nextWeapon == -1) {
             return;
         }
         client.mechD.wPan.displayMech(ce());
-        client.mechD.wPan.selectWeapon(selectedWeapon);
+        client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
     }
     
@@ -535,21 +559,38 @@ public class FiringDisplay
      */
     private void clearAttacks() {
         // We may not have an entity selected yet (race condition).
-        if ( ce() != null ) {
-            Enumeration i = attacks.elements();
-            if ( i.hasMoreElements() ) {
-                while ( i.hasMoreElements() ) {
-                    Object o = i.nextElement();
-                    if (o instanceof WeaponAttackAction) {
-                        WeaponAttackAction waa = (WeaponAttackAction)o;
-                        ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                    }
-                }
-                attacks.removeAllElements();
-            }
-            ce().setSecondaryFacing(ce().getFacing());
-            ce().setArmsFlipped(false);
+        if (ce() == null) {
+            return;
         }
+        
+        // remove attacks, set weapons available again
+        Enumeration i = attacks.elements();
+        while ( i.hasMoreElements() ) {
+            Object o = i.nextElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction)o;
+                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+            }
+        }
+        attacks.removeAllElements();
+        
+        // remove temporary attacks from game & board
+        removeTempAttacks();
+        
+        // restore any other movement to default
+        ce().setSecondaryFacing(ce().getFacing());
+        ce().setArmsFlipped(false);
+    }
+    
+    /**
+     * Removes temp attacks from the game and board
+     */
+    private void removeTempAttacks() {
+        // remove temporary attacks from game & board
+        client.game.removeActionsFor(cen);
+        client.bv.removeAttacksFor(cen);
+        client.bv.repaint(100);
+        
     }
     
     /**
@@ -562,8 +603,7 @@ public class FiringDisplay
         client.bv.redrawEntity(ce());
         client.mechD.displayEntity(ce());
         client.mechD.showPanel("weapons");
-        selectedWeapon = ce().getFirstWeapon();
-        client.mechD.wPan.selectWeapon(selectedWeapon);
+        client.mechD.wPan.selectWeapon(ce().getFirstWeapon());
         updateTarget();
     }
     

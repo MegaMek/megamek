@@ -121,7 +121,7 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * When comparing <code>AmmoType</code>s, just look at the ammoType.
+     * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
      *
      * @param   other the <code>Object</code> to compare to this one.
      * @return  <code>true</code> if the other is an <code>AmmoType</code>
@@ -132,7 +132,7 @@ public class AmmoType extends EquipmentType {
         if ( !(other instanceof AmmoType) ) {
             return false;
         }
-        return this.getAmmoType() == ( (AmmoType) other ).getAmmoType();
+        return (this.getAmmoType() == ( (AmmoType) other ).getAmmoType() && this.getRackSize() == ((AmmoType)other).getRackSize());
     }
 
     public int getAmmoType() {

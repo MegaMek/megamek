@@ -1290,6 +1290,8 @@ public abstract class Mech
         // stupid irregular table... grr.
         switch ((int)weight) {
             //                     H, CT,TSO,ARM,LEG
+            case 10  : setInternal(3,  4,  3,  1,  2); break;
+            case 15  : setInternal(3,  5,  4,  2,  3); break;
             case 20  : setInternal(3,  6,  5,  3,  4); break;
             case 25  : setInternal(3,  8,  6,  4,  6); break;
             case 30  : setInternal(3, 10,  7,  5,  7); break;

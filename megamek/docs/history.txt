@@ -94,6 +94,7 @@ v next
 + Extra PSRs for leg destruction corrected--LDE
 + Fixed bug allowing gyro'd quads to stand--LDE
 + Fixed bug involving ammo switching tons--LDE
++ Fixed bug preventing fire when LOS passes outside the board--LDE
 
 v 0.25.5 (05-10-02, 10:20am)
 + minor changes to the client & server for Helge

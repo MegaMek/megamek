@@ -13,7 +13,8 @@ import megamek.common.weapons.*;
 
 /**
  * @author Andrew Hunter
- * A basic, simple attack handler.  May or may not work for your purposes.
+ * A basic, simple attack handler.  May or may not work for any particular weapon; must be overloaded to support
+ * special rules.  
  */
 public class WeaponHandler implements AttackHandler {
 	boolean matters;
@@ -42,6 +43,7 @@ public class WeaponHandler implements AttackHandler {
 
 	
 	public boolean handle(int phase) {
+		System.out.println("Hey, started the Handle function");
 		if(!this.cares(phase)) {
 			return true;
 		}
@@ -112,6 +114,7 @@ public class WeaponHandler implements AttackHandler {
 	        boolean bSalvo = false;
 	        String sSalvoType = " shot(s) ";
 	        boolean bAllShotsHit = false;
+	       
 
 	        // We've calculated how many hits.  At this point, any missed
 	        // shots damage the building instead of the target.
@@ -153,8 +156,67 @@ public class WeaponHandler implements AttackHandler {
 
 	        // for each cluster of hits, do a chunk of damage
 	        while (hits > 0) {
+
 	            int nDamage;
+//	          targeting a hex for igniting
+	            if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||
+	                target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
+	                if ( !bSalvo ) {
+	                    phaseReport.append("hits!");
+	                }
+	                // We handle Inferno rounds above.
+	                int tn = wtype.getFireTN();
+	                if (tn != TargetRoll.IMPOSSIBLE) {
+	                    if ( bldg != null ) {
+	                        tn += bldg.getType() - 1;
+	                    }
+	                    phaseReport.append( "\n" );
+	                    server.tryIgniteHex( target.getPosition(), false, tn, true );
+	                }
+	                return false;
+	            }
+
+	            // targeting a hex for clearing
+	            if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+
+	                nDamage = nDamPerHit * hits;
+	                
+	                phaseReport.append("hits!");
+	                phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
+
+	                // Any clear attempt can result in accidental ignition, even
+	                // weapons that can't normally start fires.  that's weird.
+	                // Buildings can't be accidentally ignited.
+	                if ( bldg != null &&
+	                     server.tryIgniteHex(target.getPosition(), false, 9) ) {
+	                    return false;
+	                }
+
+	                int tn = 14 - nDamage;
+	                server.tryClearHex(target.getPosition(), tn);
+
+	                return false;
+	            }
+//	          Targeting a building.
+	            if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+
+	                // The building takes the full brunt of the attack.
+	                nDamage = nDamPerHit * hits;
+	                if ( !bSalvo ) {
+	                    phaseReport.append( "hits." );
+	                }
+	                phaseReport.append( "\n        " )
+	                    .append( server.damageBuilding( bldg, nDamage ) )
+	                    .append( "\n" );
+
+	                // Damage any infantry in the hex.
+	                server.damageInfantryIn( bldg, nDamage );
+
+	                // And we're done!
+	                return false;
+	            }
 	            if (entityTarget != null) {
+	            	
 	                 HitData hit = entityTarget.rollHitLocation
 	                     ( toHit.getHitTable(),
 	                       toHit.getSideTable(),

@@ -51,15 +51,15 @@ public class WeaponType extends EquipmentType {
     protected int   heat;
     protected int   damage;
     private int     rackSize; // or AC size, or whatever
-    private int     ammoType;
+    protected int     ammoType;
 
-    private int     minimumRange;
-    private int     shortRange;
-    private int     mediumRange;
-    private int     longRange;
-    private int     waterShortRange;
-    private int     waterMediumRange;
-    private int     waterLongRange;
+    protected int     minimumRange;
+    protected int     shortRange;
+    protected int     mediumRange;
+    protected int     longRange;
+    protected int     waterShortRange;
+    protected int     waterMediumRange;
+    protected int     waterLongRange;
 
     protected WeaponType() {
         ;

@@ -19,7 +19,7 @@
  */
 
 package megamek.common;
-
+import megamek.common.weapons.*;
 import java.util.*;
 
 /**
@@ -158,7 +158,18 @@ public class EquipmentType {
         if ( null == EquipmentType.lookupHash ) {
             EquipmentType.initializeTypes();
         }
-        return (EquipmentType) EquipmentType.lookupHash.get(key);
+        EquipmentType equip=(EquipmentType) EquipmentType.lookupHash.get(key);
+        if(equip instanceof Weapon) {
+        	try {
+				return (EquipmentType) equip.getClass().newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+        } 
+        return equip;
+        
     }
 
     public Enumeration getNames() {
@@ -170,7 +181,8 @@ public class EquipmentType {
         EquipmentType.lookupHash = new Hashtable();
         
         // will I need any others?
-        WeaponType.initializeTypes();
+       // WeaponType.initializeTypes();
+        initializeWeaponTypes();
         AmmoType.initializeTypes();
         MiscType.initializeTypes();
     }
@@ -187,6 +199,9 @@ public class EquipmentType {
             EquipmentType.initializeTypes();
         }
         EquipmentType.allTypes.addElement(type);
+    }
+    private static void initializeWeaponTypes() {
+    	addType(new ISMediumLaser());
     }
     
 }

@@ -460,6 +460,7 @@ public class Client implements Runnable {
         data[1] = attacks;
 
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
+        System.out.println("Sent attacks just fine");
     }
 
     /**

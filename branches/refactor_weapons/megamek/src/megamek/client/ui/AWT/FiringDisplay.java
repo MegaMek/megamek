@@ -523,7 +523,7 @@ public class FiringDisplay
 
         // remove temporary attacks from game & board
         removeTempAttacks();
-        
+        System.out.println("got to sending out attacks FiringDisplay#ready");
         // send out attacks
         client.sendAttackData(cen, attacks);
         
@@ -583,6 +583,7 @@ public class FiringDisplay
           waa.setAimedLocation(Mech.LOC_NONE);
           waa.setAimimgMode(AIM_MODE_NONE);
         }
+        System.out.println("got to adding attacks to temp queue");
 
         // add the attack to our temporary queue
         attacks.addElement(waa);

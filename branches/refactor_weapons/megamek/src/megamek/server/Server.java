@@ -4322,6 +4322,7 @@ implements Runnable, ConnectionHandler {
      * them and ends the current turn.
      */
     private void receiveAttack(Packet packet, int connId) {
+    	System.out.println("Receiving attacks");
         Entity entity = game.getEntity(packet.getIntValue(0));
         Vector vector = (Vector)packet.getObject(1);
 
@@ -4342,6 +4343,7 @@ implements Runnable, ConnectionHandler {
         // looks like mostly everything's okay
         processAttack(entity, vector);
         endCurrentTurn(entity);
+    	System.out.println("Received attacks");
     }
 
     /**
@@ -4349,7 +4351,7 @@ implements Runnable, ConnectionHandler {
      * the proper list to be processed later.
      */
     private void processAttack(Entity entity, Vector vector) {
-
+    	System.out.println("processing attacks");
         // Not **all** actions take up the entity's turn.
         boolean setDone =
             !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn);
@@ -4429,6 +4431,7 @@ implements Runnable, ConnectionHandler {
         // update all players on the attacks.  Don't worry about pushes being a
         // "charge" attack.  It doesn't matter to the client.
         send(createAttackPacket(vector, false));
+        System.out.println("processed attacks");
     }
 
     /**
@@ -4609,6 +4612,7 @@ implements Runnable, ConnectionHandler {
     /** Called during the fire phase to resolve all (and only) weapon attacks
      */
     private void resolveOnlyWeaponAttacks() {
+    	System.out.println("resolving only weapon attacks");
         Vector results = new Vector(game.actionsSize());
 
         // loop thru received attack actions, getting weapon results
@@ -4629,6 +4633,7 @@ implements Runnable, ConnectionHandler {
 
         
         game.resetActions();
+        System.out.println("resolved only weapon attacks");
     }
 
     /**
@@ -11040,7 +11045,7 @@ implements Runnable, ConnectionHandler {
      * @param   bldg - the <code>Building</code> that sustained the damage.
      * @param   damage - the <code>int</code> amount of damage.
      */
-    private void damageInfantryIn( Building bldg, int damage ) {
+    public void damageInfantryIn( Building bldg, int damage ) {
 
         // Calculate the amount of damage the infantry will sustain.
         float percent = 0.0f;

@@ -41,6 +41,9 @@ import megamek.common.actions.*;
  * A class representing a weapon.
  */
 public abstract class Weapon extends WeaponType {
+	public Weapon() {
+		
+	}
 	public AttackHandler fire(WeaponAttackAction waa, Game game) {
 		ToHitData toHit=this.toHit(waa,game);
 		Entity ae = game.getEntity(waa.getEntityId());
@@ -228,7 +231,7 @@ public abstract class Weapon extends WeaponType {
 	 * @param distance
 	 * @return toHit
 	 */
-	private ToHitData calcMods(Game game, Targetable target, int attackerId, int weaponId, final Entity ae, int aimingAt, int aimingMode, Entity te, final Mounted weapon, final WeaponType wtype, boolean isAttackerInfantry, final boolean usesAmmo, final AmmoType atype, boolean isIndirect, Entity spotter, int targEl, LosEffects los, ToHitData losMods, int distance) {
+	protected ToHitData calcMods(Game game, Targetable target, int attackerId, int weaponId, final Entity ae, int aimingAt, int aimingMode, Entity te, final Mounted weapon, final WeaponType wtype, boolean isAttackerInfantry, final boolean usesAmmo, final AmmoType atype, boolean isIndirect, Entity spotter, int targEl, LosEffects los, ToHitData losMods, int distance) {
 		// Attacks against adjacent buildings automatically hit.
         ToHitData toHit=new ToHitData();
 		if ( distance == 1 &&
@@ -342,7 +345,7 @@ public abstract class Weapon extends WeaponType {
 	 * @param distance
 	 * @param targHex
 	 */
-	private void calcSideTable(Game game, Targetable target, final Entity ae, Entity te, final Mounted weapon, boolean isAttackerInfantry, int targEl, LosEffects los, ToHitData toHit, int aElev, int tElev, int distance) {
+	protected void calcSideTable(Game game, Targetable target, final Entity ae, Entity te, final Mounted weapon, boolean isAttackerInfantry, int targEl, LosEffects los, ToHitData toHit, int aElev, int tElev, int distance) {
 		// Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {
 
@@ -387,7 +390,7 @@ public abstract class Weapon extends WeaponType {
 	 * @param wtype
 	 * @return
 	 */
-	private ToHitData getBaseToHit(final Entity ae, Entity te, final WeaponType wtype) {
+	protected ToHitData getBaseToHit(final Entity ae, Entity te, final WeaponType wtype) {
 		return new ToHitData(ae.crew.getGunnery(), "gunnery skill");
        
 	}
@@ -414,7 +417,7 @@ public abstract class Weapon extends WeaponType {
 	 * @param los
 	 * @return
 	 */
-	private ToHitData impossibilityCheck(Game game, Targetable target, int attackerId, int weaponId, final Entity ae, Entity te, final Mounted weapon, final WeaponType wtype, boolean isAttackerInfantry, final AmmoType atype,boolean targetInBuilding, ToHitData losMods, LosEffects los) {
+	protected ToHitData impossibilityCheck(Game game, Targetable target, int attackerId, int weaponId, final Entity ae, Entity te, final Mounted weapon, final WeaponType wtype, boolean isAttackerInfantry, final AmmoType atype,boolean targetInBuilding, ToHitData losMods, LosEffects los) {
 		// make sure weapon can deliver minefield
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");

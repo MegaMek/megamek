@@ -369,10 +369,13 @@ public class Client extends Panel
             switchPanel(new FiringDisplay(this));
             break;
         case Game.PHASE_PHYSICAL :
+            game.resetActions();
+            bv.refreshAttacks();
             switchPanel(new PhysicalDisplay(this));
             break;
         case Game.PHASE_INITIATIVE :
             game.resetActions();
+            game.resetCharges();
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
@@ -813,6 +816,7 @@ public class Client extends Panel
      */
     protected void receiveAttack(Packet c) {
         Vector vector = (Vector)c.getObject(0);
+        boolean charge = c.getBooleanValue(1);
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
             int entityId = ea.getEntityId();
@@ -833,7 +837,12 @@ public class Client extends Panel
             } else if (ea instanceof AttackAction) {
                 bv.addAttack((AttackAction)ea);
             }
-            game.addAction(ea);
+            // track in the appropriate list
+            if (charge) {
+                game.addCharge((AttackAction)ea);
+            } else {
+                game.addAction(ea);
+            }
         }
     }
     

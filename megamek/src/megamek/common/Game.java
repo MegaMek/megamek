@@ -834,7 +834,9 @@ public class Game implements Serializable
         return actions.size();
     }
     
-    /** Returns the actions vector.  Do not use to modify the actions! */
+    /** Returns the actions vector.  Do not use to modify the actions;
+     * I will be angry. >:[  Used for sending all actions to the client.
+     */
     public Vector getActionsVector() {
         return actions;
     }
@@ -855,6 +857,13 @@ public class Game implements Serializable
     /** Resets the pending charges list. */
     public void resetCharges() {
         pendingCharges.removeAllElements();
+    }
+    
+    /** Returns the charges vector.  Do not modify. >:[ Used for sending all 
+     * charges to the client.
+     */
+    public Vector getChargesVector() {
+        return pendingCharges;
     }
     
     /** Adds a pending PSR to the list for this phase. */

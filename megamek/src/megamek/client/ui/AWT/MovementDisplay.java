@@ -557,8 +557,13 @@ public class MovementDisplay
     }
 
     private void updateProneButtons() {
-        butUp.setEnabled(md.getFinalProne(ce().isProne()));
-        butDown.setEnabled(!(butUp.isEnabled()));
+        if (ce() != null) {
+            butUp.setEnabled(md.getFinalProne(ce().isProne()));
+            butDown.setEnabled(!(butUp.isEnabled()));
+        } else {
+            butUp.setEnabled(false);
+            butDown.setEnabled(false);
+        }
     }
     
     private void updateRACButton() {

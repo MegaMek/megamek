@@ -55,11 +55,9 @@ public class MechTileset {
     private HashMap exact = new HashMap();
     private HashMap chassis = new HashMap();
     
-    private String dir;
-
     /** Creates new MechTileset */
-    public MechTileset(String dir) {
-		this.dir = dir;
+    public MechTileset() {
+        ;
     }
     
     public Image imageFor(Entity entity, Component comp) {
@@ -116,7 +114,7 @@ public class MechTileset {
     public void loadFromFile(String filename) {
         try {
             // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(dir + filename));
+            Reader r = new BufferedReader(new FileReader("data/mex/" + filename));
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -180,7 +178,7 @@ public class MechTileset {
         }
         
         public void loadImage(Component comp) {
-            image = comp.getToolkit().getImage(dir + imageFile);
+            image = comp.getToolkit().getImage("data/mex/" + imageFile);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -37,7 +37,7 @@ public class BoardSelectionDialog
     private Client client;
     private MapSettings mapSettings;
     
-    private RandomMapDialog randomMapDialog;
+
     
     private Panel panMapSize = new Panel();
 
@@ -67,8 +67,7 @@ public class BoardSelectionDialog
     private Checkbox chkRotateBoard = new Checkbox("Rotate Board");
     
     private Panel panButtons = new Panel();
-	private Button butUpdate = new Button("Update Size");
-	private Button butRandomMap = new Button("Generated Map Settings");
+    private Button butUpdate = new Button("Update Size Settings");
     private Label labButtonSpace = new Label("", Label.CENTER);
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
@@ -81,8 +80,6 @@ public class BoardSelectionDialog
         this.mapSettings = (MapSettings)client.getMapSettings().clone();
         setResizable(true);
         
-        randomMapDialog = new RandomMapDialog(client.frame, this, mapSettings);
-
         setupMapSize();
         setupSelected();
         setupAvailable();
@@ -206,7 +203,6 @@ public class BoardSelectionDialog
         butUpdate.addActionListener(this);
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        butRandomMap.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -221,9 +217,6 @@ public class BoardSelectionDialog
         gridbag.setConstraints(butUpdate, c);
         panButtons.add(butUpdate);
         
-        gridbag.setConstraints(butRandomMap, c);
-        panButtons.add(butRandomMap);
-
         c.weightx = 1.0;    c.weighty = 1.0;
         gridbag.setConstraints(labButtonSpace, c);
         panButtons.add(labButtonSpace);
@@ -335,8 +328,6 @@ public class BoardSelectionDialog
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
         
-        randomMapDialog.setMapSettings(mapSettings);
-
         refreshMapSize();
         refreshMapButtons();
         
@@ -398,8 +389,6 @@ public class BoardSelectionDialog
             send();
         } else if (e.getSource() == butCancel) {
             this.setVisible(false);
-        } else if (e.getSource() == butRandomMap) {
-            randomMapDialog.setVisible(true);
         } else {
             // number button?
             try {
@@ -431,17 +420,4 @@ public class BoardSelectionDialog
         }
     }
     
-    public void updateMapSettings(MapSettings mapSettings) {
-    	this.mapSettings = mapSettings;
-        refreshMapSize();
-        refreshMapButtons();
-        
-        lisBoardsSelected.removeAll();
-        lisBoardsSelected.add("Updating...");
-        
-        lisBoardsAvailable.removeAll();
-        lisBoardsAvailable.add("Updating...");
-        
-        client.sendMapQuery(mapSettings);
-    }
 }

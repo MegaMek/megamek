@@ -41,11 +41,6 @@ public class Settings
     public static boolean   autoEndFiring           = true;
 
     public static boolean   nagForMASC              = true;
-    public static boolean   nagForPSR               = true;
-    
-    public static boolean   showMoveStep            = true;
-    public static int       moveStepDelay           = 500;
-    public static boolean   showWrecks              = true;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
@@ -67,10 +62,7 @@ public class Settings
     public static String    mapTileset              = "defaulthexset.txt";
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
-
-    public static boolean   soundMute               = false;
-    public static String    soundBingFilename       = "data/sounds/call.wav";
-
+    
     private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
             "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
             
@@ -160,10 +152,6 @@ scan:
                         st.nextToken();
                         nagForMASC = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if (key.equals("nagforpsr")) {
-                        st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
-                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -214,26 +202,6 @@ scan:
                             thrown.printStackTrace();
                             mekHitLocLog = null;
                         }
-                    }
-                    else if ( key.equals("showmovestep")) {
-                        st.nextToken();
-                        showMoveStep = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("movestepdelay")) {
-                        st.nextToken();
-                        moveStepDelay = (int)st.nval;
-                    }
-                    else if(key.equals("showwrecks")) {
-                        st.nextToken();
-                        showWrecks = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("soundmute")) {
-                        st.nextToken();
-                        soundMute = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("soundbingfilename")) {
-                        st.nextToken();
-                        soundBingFilename = st.sval;
                     }
                 }
             }
@@ -291,7 +259,6 @@ scan:
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
-            cw.write("nagforpsr " + nagForPSR + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
@@ -302,11 +269,6 @@ scan:
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
-            cw.write("showmovestep " + showMoveStep + "\r\n");
-            cw.write("movestepdelay " + moveStepDelay + "\r\n");
-            cw.write("showwrecks " + showWrecks + "\r\n");
-            cw.write("soundmute " + soundMute + "\r\n");
-            cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

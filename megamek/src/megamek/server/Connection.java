@@ -25,6 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.actions.*;
 
 /**
  *
@@ -111,10 +112,7 @@ public class Connection {
             socket.close();
             in.close();
             out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException ex) {
-        	; // never initialized, poor thing
+        } catch (IOException ex) {
         }
     }
     
@@ -161,11 +159,11 @@ public class Connection {
             return packet;
         } catch (IOException ex) {
             System.err.println("server(" + id + "): IO error reading command");
-            server.disconnected(this);
+            server.disconnected(id);
             return null;
         } catch (ClassNotFoundException ex) {
             System.err.println("server(" + id + "): class not found error reading command");
-            server.disconnected(this);
+            server.disconnected(id);
             return null;
         }
     }
@@ -188,7 +186,7 @@ public class Connection {
             System.err.println("server(" + id + "): error sending command.  dropping player");
             System.err.println(ex);
             System.err.println(ex.getMessage());
-            server.disconnected(this);
+            server.disconnected(id);
         }
     }
     

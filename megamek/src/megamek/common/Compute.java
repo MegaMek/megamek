@@ -14,10 +14,11 @@
 
 package megamek.common;
 
+import java.awt.Polygon;
 import java.util.*;
 
 import megamek.common.actions.*;
-import megamek.client.*;
+import megamek.common.util.*;
 
 /**
  * The compute class is designed to provide static methods for mechs
@@ -25,12 +26,6 @@ import megamek.client.*;
  */
 public class Compute
 {
-  public static final int        RANGE_MINIMUM    = 0;
-  public static final int        RANGE_SHORT      = 1;
-  public static final int        RANGE_MEDIUM     = 2;
-  public static final int        RANGE_LONG       = 3;
-  public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
-    
     public static final int        ARC_360          = 0;
     public static final int        ARC_FORWARD      = 1;
     public static final int        ARC_LEFTARM      = 2;
@@ -103,50 +98,50 @@ public class Compute
         case 12:return 1.0/36;
         }
         return 0;
-    } 
+    }	
      
     /**
-     * Generates a MovePath to rotate the entity to it's new facing
+     * Generates a MovementData to rotate the entity to it's new facing
      */
-    public static MovePath rotatePathfinder(Game game, int entityId, 
+    public static MovementData rotatePathfinder(Game game, int entityId, 
                                                 int destFacing) {
         final Entity entity = game.getEntity(entityId);
         return rotatePathfinder(entity.getFacing(), destFacing);
     }
     
     /**
-     * Generates a MovePath object to rotate from the start facing to the
+     * Generates a MovementData object to rotate from the start facing to the
      * destination facing.
      */
-    public static MovePath rotatePathfinder(int facing, int destFacing) {
-        MovePath md = new MovePath();
+    public static MovementData rotatePathfinder(int facing, int destFacing) {
+        MovementData md = new MovementData();
 
         // adjust facing
         while (facing != destFacing) {
-            int stepType = MovePath.getDirection(facing, destFacing);
+            int stepType = MovementData.getDirection(facing, destFacing);
             md.addStep(stepType);
-            facing = MovePath.getAdjustedFacing(facing, stepType);
+            facing = MovementData.getAdjustedFacing(facing, stepType);
         }
         
         return md;
     }
     
     /**
-     * Generates MovePath for a mech to move from its current position
+     * Generates MovementData for a mech to move from its current position
      * to the destination.
      */
-    public static MovePath lazyPathfinder(Game game, int entityId, 
+    public static MovementData lazyPathfinder(Game game, int entityId, 
                                                   Coords dest) {
         final Entity entity = game.getEntity(entityId);
         return lazyPathfinder(entity.getPosition(), entity.getFacing(), dest);
     }
     
     /**
-     * Generates MovePath for a mech to move from the start position and
+     * Generates MovementData for a mech to move from the start position and
      * facing to the destination
      */
-    public static MovePath lazyPathfinder(Coords src, int facing, Coords dest) {
-        MovePath md = new MovePath();
+    public static MovementData lazyPathfinder(Coords src, int facing, Coords dest) {
+        MovementData md = new MovementData();
         
         int curFacing = facing;
         Coords curPos = new Coords(src);
@@ -155,7 +150,7 @@ public class Compute
             // adjust facing
             md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
             // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
+            md.addStep(MovementData.STEP_FORWARDS);
 
             curFacing = curPos.direction1(dest);
             curPos = curPos.translated(curFacing);
@@ -168,8 +163,8 @@ public class Compute
      * Backwards walking pathfinder.  Note that this will let you do impossible
      * things, like run backwards.
      */
-    public static MovePath backwardsLazyPathfinder(Coords src, int facing, Coords dest) {
-        MovePath md = new MovePath();
+    public static MovementData backwardsLazyPathfinder(Coords src, int facing, Coords dest) {
+        MovementData md = new MovementData();
         
         int curFacing = facing;
         Coords curPos = new Coords(src);
@@ -180,7 +175,7 @@ public class Compute
             md.append(rotatePathfinder(curFacing, destFacing));
             
             // step backwards
-            md.addStep(MovePath.STEP_BACKWARDS);
+            md.addStep(MovementData.STEP_BACKWARDS);
 
             curFacing = destFacing;
             curPos = curPos.translated((destFacing + 3) % 6);
@@ -193,9 +188,9 @@ public class Compute
      * Charge pathfinder.  Finds a path up to the hex before the target,
      * then charges
      */
-    public static MovePath chargeLazyPathfinder(Coords src, int facing,
+    public static MovementData chargeLazyPathfinder(Coords src, int facing,
                                                         Coords dest) {
-        MovePath md = new MovePath();
+        MovementData md = new MovementData();
         
         int curFacing = facing;
         Coords curPos = new Coords(src);
@@ -206,7 +201,7 @@ public class Compute
             // adjust facing
             md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
             // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
+            md.addStep(MovementData.STEP_FORWARDS);
 
             curFacing = curPos.direction1(subDest);
             curPos = curPos.translated(curFacing);
@@ -215,7 +210,7 @@ public class Compute
         // adjust facing
         md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
         // charge!
-        md.addStep(MovePath.STEP_CHARGE);
+        md.addStep(MovementData.STEP_CHARGE);
         
         return md;
     }
@@ -224,9 +219,9 @@ public class Compute
      * Death from above pathfinder.  Finds a path up to the hex before the target,
      * then charges
      */
-    public static MovePath dfaLazyPathfinder(Coords src, int facing,
+    public static MovementData dfaLazyPathfinder(Coords src, int facing,
                                                         Coords dest) {
-        MovePath md = new MovePath();
+        MovementData md = new MovementData();
         
         int curFacing = facing;
         Coords curPos = new Coords(src);
@@ -237,7 +232,7 @@ public class Compute
             // adjust facing
             md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
             // step forwards
-            md.addStep(MovePath.STEP_FORWARDS);
+            md.addStep(MovementData.STEP_FORWARDS);
 
             curFacing = curPos.direction1(subDest);
             curPos = curPos.translated(curFacing);
@@ -246,7 +241,7 @@ public class Compute
         // adjust facing
         md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
         // charge!
-        md.addStep(MovePath.STEP_DFA);
+        md.addStep(MovementData.STEP_DFA);
         
         return md;
     }
@@ -257,164 +252,203 @@ public class Compute
      * steps are possible, how many movement points each uses, and where they
      * occur.
      */
-    public static void compile(Game game, int entityId, MovePath md) {
+    public static void compile(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         
         // some flags
+        int curFacing = entity.getFacing();
+        Coords lastPos;
+        Coords curPos = new Coords(entity.getPosition());
+        int mpUsed = entity.mpUsed;
+        int distance = entity.delta_distance;
+        boolean hasJustStood = false;
+        boolean lastWasBackwards = false;
+        boolean thisStepBackwards = false;
+        int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
+        boolean isRunProhibited = false;
         boolean isInfantry = (entity instanceof Infantry);
-        boolean isUsingManAce = false;
-        
+        boolean onlyPavement = false;   // Entire move on pavement or road
+        boolean isPavementStep = false; // This step on pavement or road
+
         // check for jumping
-        if (md.contains(MovePath.STEP_START_JUMP)) {
+        if (md.contains(MovementData.STEP_START_JUMP)) {
+            overallMoveType = Entity.MOVE_JUMP;
             isJumping = true;
-        } else {
-            isUsingManAce = entity.getCrew().getOptions().booleanOption("maneuvering_ace");
         }
         
-        // transform lateral shifts for quads or maneuverability aces
-        if (((entity instanceof QuadMech) || isUsingManAce) && !isJumping) {
+        if (entity instanceof QuadMech && !isJumping) {
             md.transformLateralShifts();
             md.transformLateralShiftsBackwards();
         }
 
+        // check for backwards movement
+        if (md.contains(MovementData.STEP_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_LEFT_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
+            isRunProhibited = true;
+        }
+
+        // If the movement starts on pavement,
+        // the entire move may be on pavement.
+        if ( curPos != null ) {
+            Hex curHex = game.board.getHex( curPos );
+            if ( curHex.contains(Terrain.PAVEMENT) ||
+                 curHex.contains(Terrain.ROAD) ||
+                 curHex.contains(Terrain.BRIDGE) ) {
+                onlyPavement = true;
+                isPavementStep = true;
+            }
+        }
+
         // first pass: set position, facing and mpUsed; figure out overallMoveType
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            MoveStep step = (MoveStep)i.nextElement();
-            MoveStep prev = step.getPrev();
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
             
-            MoveState state = step.getState();
-            MoveState prevState;
-            if (prev == null) {
-                prevState = new MoveState();
-                prevState.setFromEntity(entity, game); 
-            } else {
-                prevState = prev.getState();
-            }
+            int stepMp = 0;
             
-            state.setFromPrev(prevState);
+            lastPos = new Coords(curPos);
 
             // 
             switch(step.getType()) {
-            case MovePath.STEP_UNLOAD:
+            case MovementData.STEP_UNLOAD:
             // TODO: Can immobilized transporters unload?
-            case MovePath.STEP_LOAD:
-                state.setMp(1);
+            case MovementData.STEP_LOAD:
+                stepMp = 1;
                 break;
-            case MovePath.STEP_TURN_LEFT :
-            case MovePath.STEP_TURN_RIGHT :
+            case MovementData.STEP_TURN_LEFT :
+            case MovementData.STEP_TURN_RIGHT :
                 // Check for pavement movement.
-                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
-                    state.setPavementStep(true);
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
                 } else {
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
+                    isPavementStep = false;
+                    onlyPavement = false;
                 }
 
                 // Infantry can turn for free.
-                state.setMp((state.isJumping() || state.isHasJustStood() || isInfantry) ? 0 : 1);
-                state.adjustFacing(step.getType());
+                stepMp = (isJumping || hasJustStood || isInfantry) ? 0 : 1;
+                curFacing = MovementData.getAdjustedFacing(curFacing, step.getType());
                 break;
-            case MovePath.STEP_FORWARDS :
-            case MovePath.STEP_BACKWARDS :
-            case MovePath.STEP_CHARGE :
-            case MovePath.STEP_DFA :
+            case MovementData.STEP_FORWARDS :
+            case MovementData.STEP_BACKWARDS :
+            case MovementData.STEP_CHARGE :
+            case MovementData.STEP_DFA :
                 // step forwards or backwards
-                if (step.getType() == MovePath.STEP_BACKWARDS) {
-                    state.moveInDir((state.getFacing() + 3) % 6);
-                    state.setThisStepBackwards(true);
-                    state.setRunProhibited(true);
+                if (step.getType() == MovementData.STEP_BACKWARDS) {
+                    curPos = curPos.translated((curFacing + 3) % 6);
+                    thisStepBackwards = true;
                 } else {
-                    state.moveInDir(state.getFacing());
-                    state.setThisStepBackwards(false);
+                    curPos = curPos.translated(curFacing);
+                    thisStepBackwards = false;
                 }
 
                 // Check for pavement movement.
-                if (canMoveOnPavement(game, prevState.getPosition(), state.getPosition())) {
-                    state.setPavementStep(true);
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
                 } else {
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
+                    isPavementStep = false;
+                    onlyPavement = false;
                 }
 
-                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(), state.isJumping()));
+                stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
+                                            overallMoveType);
 
                 // check for water
-                if (!state.isPavementStep()
-                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0
-                    && entity.getMovementType() != Entity.MovementType.HOVER) {
-                    state.setRunProhibited(true);
+                if ( !isPavementStep &&
+                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 &&
+                     entity.getMovementType() != Entity.MovementType.HOVER ) {
+                    isRunProhibited = true;
                 }
-                state.setHasJustStood(false);
-                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
-                    state.setDistance(0); //start over after shifting gears
+                hasJustStood = false;
+                if (lastWasBackwards != thisStepBackwards) {
+                    distance = 0; //start over after shifting gears
                 }
-                state.addDistance(1);
+                distance += 1;
                 break;
-            case MovePath.STEP_LATERAL_LEFT :
-            case MovePath.STEP_LATERAL_RIGHT :
-            case MovePath.STEP_LATERAL_LEFT_BACKWARDS :
-            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS :
-                if (step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS 
-                    || step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS) {
-                    state.moveInDir((MovePath.getAdjustedFacing(state.getFacing(), MovePath.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
-                    state.setThisStepBackwards(true);
-                    state.setRunProhibited(true);
+            case MovementData.STEP_LATERAL_LEFT :
+            case MovementData.STEP_LATERAL_RIGHT :
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS :
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS :
+                if (step.getType() == MovementData.STEP_LATERAL_LEFT_BACKWARDS 
+                    || step.getType() == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) {
+                    curPos = curPos.translated((MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShiftBackwards(step.getType())) + 3) % 6);
+                    thisStepBackwards = true;
                 } else {
-                    state.moveInDir(MovePath.getAdjustedFacing(state.getFacing(), MovePath.turnForLateralShift(step.getType())));
-                    state.setThisStepBackwards(false);
+                    curPos = curPos.translated(MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShift(step.getType())));
+                    thisStepBackwards = false;
                 }
 
                 // Check for pavement movement.
-                if ( canMoveOnPavement(game, prevState.getPosition(), state.getPosition()) ) {
-                    state.setPavementStep(true);
+                if ( canMoveOnPavement(game, lastPos, curPos) ) {
+                    isPavementStep = true;
                 } else { 
-                    state.setPavementStep(false);
-                    state.setOnlyPavement(false);
+                    isPavementStep = false;
+                    onlyPavement = false;
                 }
 
-                state.setMp(getMovementCostFor(game, entityId, prevState.getPosition(), state.getPosition(),
-                state.isJumping()) + 1);
+                stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
+                                            overallMoveType) + 1;
                 // check for water
-                if (!state.isPavementStep()
-                    && game.board.getHex(state.getPosition()).levelOf(Terrain.WATER) > 0) {
-                        state.setRunProhibited(true);
+                if ( !isPavementStep &&
+                     game.board.getHex(curPos).levelOf(Terrain.WATER) > 0 ) {
+                    isRunProhibited = true;
                 }
-                state.setHasJustStood(false);
-                if (prevState.isThisStepBackwards() != state.isThisStepBackwards()) {
-                    state.setDistance(0); //start over after shifting gears
+                hasJustStood = false;
+                if (lastWasBackwards != thisStepBackwards) {  
+                    distance = 0;  //start over after shifting gears
                 }
-                state.addDistance(1);
+                distance += 1;
                 break;
-            case MovePath.STEP_GET_UP :
+            case MovementData.STEP_GET_UP :
                 // mechs with 1 MP are allowed to get up
-                state.setMp(entity.getRunMP() == 1 ? 1 : 2);
-                state.setHasJustStood(true);
+                stepMp = entity.getRunMP() == 1 ? 1 : 2;
+                hasJustStood = true;
                 break;
-            case MovePath.STEP_GO_PRONE :
-                state.setMp(1);
-                break;
-            case MovePath.STEP_START_JUMP :
-                state.setJumping(true);
+            case MovementData.STEP_GO_PRONE :
+                stepMp = 1;
                 break;
             default :
-                state.setMp(0);
+                stepMp = 0;
             }
             
-            state.addMpUsed(state.getMp());
+            mpUsed += stepMp;
 
+            // Check for running or flank speed
+            if ( overallMoveType == Entity.MOVE_WALK 
+                 && mpUsed > entity.getWalkMP() ) {
+
+                // This normally means we're running (or moving flank).
+                overallMoveType = Entity.MOVE_RUN;
+
+                // If the entire move is on pavement,
+                // a vehicle can get a road bonus.
+                if ( entity instanceof Tank && onlyPavement &&
+                     mpUsed == entity.getWalkMP() + 1 ) {
+                    overallMoveType = Entity.MOVE_WALK;
+                }
+
+            }
+
+            // set flags
+            step.setPosition(curPos);
+            step.setFacing(curFacing);
+            step.setMpUsed(mpUsed);
+            step.setDistance(distance);
+            step.setOnPavement( isPavementStep );
+            lastWasBackwards = thisStepBackwards;
         }
         
         // running with gyro or hip hit is dangerous!
-        // but we can't show it right now.  check officially moved anyhow.
-//        if (overallMoveType == Entity.MOVE_RUN
-//            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-//                || entity.hasHipCrit())) {
-//            md.getStep(0).setDanger(true);
-//        }
+        if (!isRunProhibited && overallMoveType == Entity.MOVE_RUN
+            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
+                || entity.hasHipCrit())) {
+            md.getStep(0).setDanger(true);
+        }
         
         // set moveType, illegal, trouble flags
-        compileIllegal(game, entityId, md);
+        compileIllegal( game, entityId, md,
+                        overallMoveType, isRunProhibited, onlyPavement );
 
         // Check the last step for legality.
         compileLastStep(game, entityId, md);
@@ -430,7 +464,11 @@ public class Compute
     /**
      * Go thru movement data and set the moveType, illegal and danger flags.
      */
-    private static void compileIllegal(Game game, int entityId, MovePath md) {
+    private static void compileIllegal( Game game, int entityId,
+                                        MovementData md,
+                                        int overallMoveType,
+                                        boolean runProhibited,
+                                        boolean onlyPavement ) {
         final Entity entity = game.getEntity(entityId);
 
         Coords curPos = new Coords(entity.getPosition());
@@ -441,59 +479,66 @@ public class Compute
         boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
+        /* Bug 754610: Revert fix for bug 702735. */
         boolean prevStepOnPavement = false;
         boolean isProne = entity.isProne();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
-
+        
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
             final int stepType = step.getType();
             
             Coords lastPos = new Coords(curPos);
             curPos = step.getPosition();
 
+            // If all movement is on pavement, say so in all steps.
+            if ( onlyPavement && !step.isOnPavement() ) {
+                step.setOnPavement( true );
+            }
+
             // guilty until proven innocent
             int moveType = Entity.MOVE_ILLEGAL;
             
             // check for valid jump mp
-            if (step.isJumping() 
+            if (overallMoveType == Entity.MOVE_JUMP 
                 && step.getMpUsed() <= entity.getJumpMPWithTerrain()
                 && !isProne) {
                 moveType = Entity.MOVE_JUMP;
             }
             
             // check for valid walk/run mp
-            if ( !step.isJumping()
-                && (!isProne || md.contains(MovePath.STEP_GET_UP)
-                    || stepType == MovePath.STEP_TURN_LEFT 
-                    || stepType == MovePath.STEP_TURN_RIGHT)) {
+            if ( (overallMoveType == Entity.MOVE_WALK ||
+                  overallMoveType == Entity.MOVE_RUN)
+                && (!isProne || md.contains(MovementData.STEP_GET_UP)
+                    || stepType == MovementData.STEP_TURN_LEFT 
+                    || stepType == MovementData.STEP_TURN_RIGHT)) {
 
                 // Vehicles moving along pavement get "road bonus" of 1 MP.
                 // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
-                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
+                } else if ( entity instanceof Tank && onlyPavement &&
                             step.getMpUsed() == entity.getWalkMP() + 1 ) {
                     moveType = Entity.MOVE_WALK;
                 } else if ( step.getMpUsed() <= entity.getRunMPwithoutMASC() &&
-                            !step.isRunProhibited() ) {
+                            !runProhibited ) {
                     moveType = Entity.MOVE_RUN;
                 } else if ( step.getMpUsed() <= entity.getRunMP() &&
-                            !step.isRunProhibited() ) {
+                            !runProhibited ) {
                     step.setUsingMASC(true);
                     Mech m = (Mech)entity;
-                    step.setTargetNumberMASC(m.getMASCTarget());
+                    step.setMASCNumber(m.getMASCTarget());
                     moveType = Entity.MOVE_RUN;
-                } else if ( entity instanceof Tank && step.isOnlyPavement() &&
+                } else if ( entity instanceof Tank && onlyPavement &&
                             step.getMpUsed() <= entity.getRunMP() + 
                             (isOdd(entity.getWalkMP()) ? 1 : 2) &&
-                            !step.isRunProhibited() ) {
+                            !runProhibited ) {
                     moveType = Entity.MOVE_RUN;
                 }
             }
             
             // mechs with 1 MP are allowed to get up
-            if ( stepType == MovePath.STEP_GET_UP &&
+            if ( stepType == MovementData.STEP_GET_UP &&
                  entity.getRunMP() == 1 ) {
                 moveType = Entity.MOVE_RUN;
             }
@@ -501,12 +546,12 @@ public class Compute
             // amnesty for the first step
             if ( firstStep && moveType == Entity.MOVE_ILLEGAL &&
                  entity.getWalkMP() > 0 && !entity.isProne() &&
-                 stepType == MovePath.STEP_FORWARDS ) {
+                 stepType == MovementData.STEP_FORWARDS ) {
                 moveType = Entity.MOVE_RUN;
             }
 
             // Is the entity unloading passeners?
-            if ( stepType == MovePath.STEP_UNLOAD ) {
+            if ( stepType == MovementData.STEP_UNLOAD ) {
                 // Prone Meks are able to unload, if they have the MP.
                 if ( step.getMpUsed() <= entity.getRunMP() &&
                      entity.isProne() && moveType == Entity.MOVE_ILLEGAL ) {
@@ -537,13 +582,14 @@ public class Compute
             }
 
             // Can't run or jump if unjamming a RAC.
-            if (isUnjammingRAC
-                && (moveType == Entity.MOVE_RUN || step.isJumping())) {
+            if ( isUnjammingRAC && 
+                 ( overallMoveType == Entity.MOVE_RUN ||
+                   overallMoveType == Entity.MOVE_JUMP ) ) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
 
             // only standing mechs may go prone
-            if (stepType == MovePath.STEP_GO_PRONE 
+            if (stepType == MovementData.STEP_GO_PRONE 
             && (isProne || !(entity instanceof Mech))) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
@@ -565,11 +611,14 @@ public class Compute
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
                                              curPos, moveType,
-                                             isTurning,
+                                             isTurning, overallMoveType,
                                              prevStepOnPavement );
+            /* Bug 754610: Revert fix for bug 702735.
+                                             isTurning, overallMoveType );
+            */
 
             // getting up is also danger
-            if (stepType == MovePath.STEP_GET_UP) {
+            if (stepType == MovementData.STEP_GET_UP) {
                 danger = true;
             }
             
@@ -584,11 +633,11 @@ public class Compute
             // Record if we're turning *after* check for danger,
             // because the danger lies in moving *after* turn.
             switch(stepType) {
-            case MovePath.STEP_TURN_LEFT :
-            case MovePath.STEP_TURN_RIGHT :
+            case MovementData.STEP_TURN_LEFT :
+            case MovementData.STEP_TURN_RIGHT :
                 isTurning = true;
                 break;
-            case MovePath.STEP_UNLOAD:
+            case MovementData.STEP_UNLOAD:
                 // Unloading must be the last step.
                 isUnloaded = true;
                 break;
@@ -602,7 +651,7 @@ public class Compute
                                           
             /* Bug 754610: Revert fix for bug 702735. */
             // Record if the step just taken was along pavement or a road.
-            prevStepOnPavement = step.isPavementStep();
+            prevStepOnPavement = step.isOnPavement();
 
             // Infantry can always move one hex in *any* direction.
             if ( isInfantry && step.getMpUsed() == 0 ) {
@@ -610,9 +659,9 @@ public class Compute
             }
 
             // update prone state
-            if (stepType == MovePath.STEP_GO_PRONE) {
+            if (stepType == MovementData.STEP_GO_PRONE) {
                 isProne = true;
-            } else if (stepType == MovePath.STEP_GET_UP) {
+            } else if (stepType == MovementData.STEP_GET_UP) {
                 isProne = false;
             }
         }
@@ -620,15 +669,15 @@ public class Compute
     
     /**
      * Check the last steps for stacking violations or other problems.
-     * MoveStep backwards until we get to the first (last) legal step.  Then check 
+     * Step backwards until we get to the first (last) legal step.  Then check 
      * if we have a violation.  If we do, then that step's illegal.  Check the 
      * next step backwards.  Otherwise, stop checking.
      */
-    private static void compileLastStep(Game game, int entityId, MovePath md) {
+    private static void compileLastStep(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         
         for (int i = md.length() - 1; i >= 0; i--) {
-            final MoveStep step = md.getStep(i);
+            final MovementData.Step step = md.getStep(i);
             final Hex destHex = game.board.getHex(step.getPosition());
             
             // skip steps that are not the last step
@@ -639,8 +688,8 @@ public class Compute
             // check for stacking violations
             final Entity violation = stackingViolation(game, entityId, step.getPosition());
             if (violation != null
-                    && step.getType() != MovePath.STEP_CHARGE
-                    && step.getType() != MovePath.STEP_DFA) {
+                    && step.getType() != MovementData.STEP_CHARGE
+                    && step.getType() != MovementData.STEP_DFA) {
                 // can't move here
                 step.setMovementType(Entity.MOVE_ILLEGAL);
                 continue;
@@ -648,7 +697,7 @@ public class Compute
             
             // Check again for illegal terrain, in case of jumping.  We're
             // allowed to enter prohibited terrain via a road or bridge.
-            if ( entity.isHexProhibited(destHex) && !step.isPavementStep() ) {
+            if ( entity.isHexProhibited(destHex) && !step.isOnPavement() ) {
                 step.setMovementType(Entity.MOVE_ILLEGAL);
                 continue;
             }
@@ -733,7 +782,7 @@ public class Compute
      * step have been properly calculated and that the movement it is given
      * is jumping movement.
      */
-    private static void compileJumpCheck(Game game, int entityId, MovePath md) {
+    private static void compileJumpCheck(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         Coords start = entity.getPosition();
         Coords land = md.getStep(md.length() - 1).getPosition();
@@ -743,7 +792,7 @@ public class Compute
         if (distance < 1 || mp > distance) {
             // whole movement illegal
             for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
-                MoveStep step = (MoveStep)i.nextElement();
+                MovementData.Step step = (MovementData.Step)i.nextElement();
                 step.setMovementType(Entity.MOVE_ILLEGAL);
             }
         }
@@ -754,12 +803,12 @@ public class Compute
      */
     public static int getMovementCostFor(Game game, int entityId, 
                                              Coords src, Coords dest,
-                                             boolean isJumping) {
+                                             int movementType) {
         final Entity entity = game.getEntity(entityId);
         final int moveType = entity.getMovementType();
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-        final boolean isInfantry = (entity instanceof Infantry);
+	final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = canMoveOnPavement( game, src, dest );
         
         // arguments valid?
@@ -774,7 +823,7 @@ public class Compute
         }
         
         // jumping always costs 1
-        if (isJumping) {
+        if (movementType == Entity.MOVE_JUMP) {
             return 1;
         }
         
@@ -822,10 +871,10 @@ public class Compute
             int delta_e = Math.abs(nSrcEl - nDestEl);
             
             // Infantry and ground vehicles are charged double.
-            if (isInfantry
-                || (nMove == Entity.MovementType.TRACKED
-                    || nMove == Entity.MovementType.WHEELED
-                    || nMove == Entity.MovementType.HOVER)) {
+            if ( isInfantry ||
+		 (nMove == Entity.MovementType.TRACKED ||
+		  nMove == Entity.MovementType.WHEELED ||
+		  nMove == Entity.MovementType.HOVER) ) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -870,10 +919,6 @@ public class Compute
             // that was easy
             return false;
         }
-        // super-easy
-        if (entity.isImmobile()) {
-            return false;
-        }
         // another easy check
         if (!game.board.contains(dest)) {
             return false;
@@ -885,7 +930,7 @@ public class Compute
         }
 
         // The entity is trying to load.  Check for a valid move.
-        if ( stepType == MovePath.STEP_LOAD ) {
+        if ( stepType == MovementData.STEP_LOAD ) {
 
             // Transports can't load after the first step.
             if ( !firstStep ) {
@@ -908,7 +953,7 @@ public class Compute
                     }
 
                     // The other unit should be able to have a turn.
-                    if ( !other.isSelectableThisTurn(game) ) {
+                    if ( !other.isSelectable() ) {
                         return false;
                     }
 
@@ -951,8 +996,8 @@ public class Compute
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
-        if ((stepType == MovePath.STEP_BACKWARDS || stepType == MovePath.STEP_LATERAL_LEFT_BACKWARDS
-            || stepType == MovePath.STEP_LATERAL_RIGHT_BACKWARDS) && nSrcEl != nDestEl) {
+        if ((stepType == MovementData.STEP_BACKWARDS || stepType == MovementData.STEP_LATERAL_LEFT_BACKWARDS
+            || stepType == MovementData.STEP_LATERAL_RIGHT_BACKWARDS) && nSrcEl != nDestEl) {
             return false;
         }
 
@@ -966,8 +1011,8 @@ public class Compute
         
         // ugh, stacking checks.  well, maybe we're immune!
         if (entityMoveType != Entity.MOVE_JUMP
-        && stepType != MovePath.STEP_CHARGE
-        && stepType != MovePath.STEP_DFA) {
+        && stepType != MovementData.STEP_CHARGE
+        && stepType != MovementData.STEP_DFA) {
             // can't move a mech into a hex with an enemy mech
             if (entity instanceof Mech && isEnemyMechIn(game, entityId, dest)) {
                 return false;
@@ -977,10 +1022,10 @@ public class Compute
             // there, BUT we're allowed to turn, unload, or go prone.
             if ( isEnemyUnitIn(game, entityId, src) &&
                  !src.equals(entity.getPosition()) &&
-                 stepType != MovePath.STEP_TURN_LEFT &&
-                 stepType != MovePath.STEP_TURN_RIGHT &&
-                 stepType != MovePath.STEP_UNLOAD &&
-                 stepType != MovePath.STEP_GO_PRONE ) {
+                 stepType != MovementData.STEP_TURN_LEFT &&
+                 stepType != MovementData.STEP_TURN_RIGHT &&
+                 stepType != MovementData.STEP_UNLOAD &&
+                 stepType != MovementData.STEP_GO_PRONE ) {
                 return false;
             }
             
@@ -1048,15 +1093,19 @@ public class Compute
     /** 
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(Game game, int entityId,
+    public static boolean isPilotingSkillNeeded(Game game, int entityId, 
                                                 Coords src, Coords dest,
                                                 int movementType,
-                                                boolean isTurning,
+						boolean isTurning,
+						int overallMoveType,
                                                 boolean prevStepIsOnPavement) {
+            /* Bug 754610: Revert fix for bug 702735.
+						int overallMoveType) {
+            */
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-        final boolean isInfantry = ( entity instanceof Infantry );
+	final boolean isInfantry = ( entity instanceof Infantry );
         final boolean isPavementStep = canMoveOnPavement( game, src, dest );
 
         // arguments valid?
@@ -1075,7 +1124,7 @@ public class Compute
         // check for rubble
         if (movementType != Entity.MOVE_JUMP
             && destHex.levelOf(Terrain.RUBBLE) > 0
-            && !isInfantry) {
+	    && !isInfantry) {
             return true;
         }
         
@@ -1097,8 +1146,7 @@ public class Compute
                srcHex.contains(Terrain.BRIDGE) ) 
         */
         if ( prevStepIsOnPavement
-        //   && overallMoveType == Entity.MOVE_RUN
-             && movementType == Entity.MOVE_RUN
+             && overallMoveType == Entity.MOVE_RUN
              && isTurning
              && !isInfantry ) {
             return true;
@@ -1258,6 +1306,49 @@ public class Compute
     }
     
     /**
+     * Returns an entity's base piloting skill roll needed
+     */
+    public static PilotingRollData getBasePilotingRoll(Game game, int entityId) {
+        final Entity entity = game.getEntity(entityId);
+        
+        PilotingRollData roll;
+        
+        // gyro operational?
+        if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+        }
+        // both legs present?
+        if ( entity instanceof BipedMech ) {
+          if ( ((BipedMech)entity).countDestroyedLegs() == 2 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+        } else if ( entity instanceof QuadMech ) {
+          if ( ((QuadMech)entity).countDestroyedLegs() >= 3 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)entity).countDestroyedLegs() + " legs destroyed");
+        }
+        // entity shut down?
+        if (entity.isShutDown()) {
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
+        }
+        // Pilot dead?
+        if ( entity.getCrew().isDead() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
+        // pilot awake?
+        else if (!entity.getCrew().isActive()) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+        }
+        
+        // okay, let's figure out the stuff then
+        roll = new PilotingRollData(entityId, entity.getCrew().getPiloting(), "Base piloting skill");
+        
+        //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
+        //object and adjust as necessary
+          roll = entity.addEntityBonuses(roll);
+        
+        return roll;
+    }
+    
+    /**
      * @deprecated no more prevattacks
      */
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa, Vector prevAttacks) {
@@ -1267,9 +1358,7 @@ public class Compute
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {
         return toHitWeapon(game, waa.getEntityId(), 
                            game.getTarget(waa.getTargetType(), waa.getTargetId()),
-                           waa.getWeaponId(),
-                           waa.getAimedLocation(),
-                           waa.getAimingMode());
+                           waa.getWeaponId());
     }
     
     /**
@@ -1279,16 +1368,13 @@ public class Compute
      */
     public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, Vector prevAttacks) {
          // ignore prevAttacks
-    return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-  }
-
-    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
-    return toHitWeapon(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-  }
+         return toHitWeapon(game, attackerId, target, weaponId);
+    }
+    
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
+    public static ToHitData toHitWeapon(Game game, int attackerId, Targetable target, int weaponId) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1307,42 +1393,21 @@ public class Compute
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
-        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
-            && weapon.curMode().equals("Indirect");
         boolean isInferno =
             ( atype != null &&
               atype.getMunitionType() == AmmoType.M_INFERNO ) ||
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
-
+        
         ToHitData toHit = null;
         
-        // make sure weapon can deliver minefield
-        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
-        	!AmmoType.canDeliverMinefield(atype)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
-        }
-        
-        if (atype != null && 
-        	atype.getAmmoType() == AmmoType.T_LRM &&
-        	atype.getMunitionType() == AmmoType.M_THUNDER &&
-        	target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can only deliver minefields");        	
-        }
-        
-        // make sure weapon can clear minefield
-		if (target instanceof MinefieldTarget && 
-			!AmmoType.canClearMinefield(atype)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
-		}
-		
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
         // weapon operational?
-        if (weapon.isDestroyed() || weapon.isBreached()) {
+        if (weapon.isDestroyed()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
         }
         
@@ -1358,11 +1423,6 @@ public class Compute
                 return new ToHitData( ToHitData.IMPOSSIBLE,
                                       "Dumping remaining ammo." );
             }
-        }
-        
-        // is the attacker even active?
-        if (ae.isShutDown() || !ae.getCrew().isActive()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is in no condition to fire weapons.");
         }
 
         // sensors operational?
@@ -1387,7 +1447,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
         }
 
-        // Some weapons can't cause fires, but Infernos always can.
+        // Some weapons can't cause fires.
         if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
@@ -1442,37 +1502,9 @@ public class Compute
         //      the target hex or the elevation of the hex the attacker is
         //      in, whichever is higher."
         
-        // check if indirect fire is valid
-        if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
-        }
-        
-        // if we're doing indirect fire, find a spotter
-        Entity spotter = null;
-        if (isIndirect) {
-            spotter = findSpotter(game, ae, target);
-            if (spotter == null) {
-                return new ToHitData( ToHitData.IMPOSSIBLE, "No available spotter");
-            }
-        }
-        
-        // check LOS (indirect LOS is from the spotter)
-        LosEffects los;
-        ToHitData losMods;
-        if (!isIndirect) {
-            los = calculateLos(game, attackerId, target);
-            losMods = losModifiers(los);
-        } else {
-            los = calculateLos(game, spotter.getId(), target);
-            // do not count attacker partial cover in indirect fire
-            los.setAttackerCover(false);
-            losMods = losModifiers(los);
-        }
-
-        // if LOS is blocked, block the shot
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
-            return losMods;
-        }
+        // check LOS
+        LosEffects los = calculateLos(game, attackerId, target);
+        ToHitData losMods = losModifiers(los);
 
         // Must target infantry in buildings from the inside.
         if ( targetInBuilding &&
@@ -1480,16 +1512,16 @@ public class Compute
              null == los.getThruBldg() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
         }
+        
+        // if LOS is blocked, block the shot
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+            return losMods;
+        }
 
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
                                  "Nearby terrain blocks leg weapons.");
-        }
-
-        // Weapon in arc?
-        if (!isInArc(game, attackerId, weaponId, target)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
         }
 
         // Leg attacks, Swarm attacks, and
@@ -1574,14 +1606,154 @@ public class Compute
         else {
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
-        
-        // determine some more variables
-        int aElev = ae.getElevation();
-        int tElev = target.getElevation();
-        int distance = effectiveDistance(game, ae, target);
+
+        // determine range
+        int range = ae.getPosition().distance(target.getPosition());
+
+        // If the attack is completely inside a building, add the difference
+        // in elevations between the attacker and target to the range.
+        // Make certain the player knows what's going on.
+        final int aElev = ae.getElevation();
+        final int tElev = target.getElevation();
+        if ( null != los.getThruBldg() ) {
+            int elevDiff = aElev - tElev;
+            if ( aElev < tElev ) {
+                elevDiff = tElev - aElev;
+            }
+            if ( elevDiff > 0 ) {
+                toHit.addModifier( 0, "elevation difference inside building adds " + elevDiff + " to range" );
+                range += elevDiff;
+            }
+        }
+
+        int c3range = range;
+        Entity c3spotter = ae;
+        if (ae.hasC3() || ae.hasC3i()) {
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity fe = (Entity)i.nextElement();
+                if (ae.onSameC3NetworkAs(fe) && canSee(game, fe, target)) {
+                    final int buddyrange = fe.getPosition().distance(target.getPosition());
+                    if(buddyrange < c3range) {
+                        c3range = buddyrange;
+                        c3spotter = fe;
+                    }
+                }
+            }
+        }
+
+        int longRange = wtype.getLongRange();
+        int mediumRange = wtype.getMediumRange();
+        int shortRange = wtype.getShortRange();
+        int minimumRange = wtype.getMinimumRange();
+
+        // modify the ranges for ATM missile systems based on the ammo selected
+        if (wtype.getAmmoType() == AmmoType.T_ATM)
+        {
+            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
+            {
+                longRange = 27;
+                mediumRange = 18;
+                shortRange = 9;
+                minimumRange = 4;
+            }
+            else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
+            {
+                longRange = 9;
+                mediumRange = 6;
+                shortRange = 3;
+                minimumRange = 0;
+            }
+        }
+         
+        // if out of range, short circuit logic
+        if (range > longRange) {
+            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
+        }
+        if (range > mediumRange) {
+            // Infantry LRMs suffer an additional maximum range penalty.
+            if ( isWeaponInfantry &&
+                 wtype.getAmmoType() == AmmoType.T_LRM &&
+                 range == longRange ) {
+                toHit.addModifier(5, "infantry LRM maximum range");
+            } else {
+                // long range, add +4
+                toHit.addModifier(4, "long range");
+            }
+            // reduce range modifier back to short if a C3 spotter is at short range
+            if (c3range <= shortRange) {
+                toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() +
+                                  " at short range");
+                if ( te != null && te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+                }
+            }
+            // reduce range modifier back to medium if a C3 spotter is at medium range
+            else if (c3range <= mediumRange) {
+                toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
+                                  " at medium range");
+                if ( te != null && te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_MEDIUM) );
+                }
+            }
+            else if ( te != null && te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_LONG) );
+            }
+        } else if (range > shortRange) {
+            // medium range, add +2
+            toHit.addModifier(2, "medium range");
+            // reduce range modifier back to short if a C3 spotter is at short range
+            if (c3range <= shortRange) {
+                toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() +
+                                  " at short range");
+                if ( te != null && te.isStealthActive() ) {
+                    toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+                }
+            }
+            else if ( te != null && te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_MEDIUM) );
+            }
+
+
+        } else {
+            // short range
+
+            if ( 0 == range ) {
+                // Only Infantry shoot at zero range.
+                if ( !isAttackerInfantry ) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Only Infantry shoot at zero range.");
+                }
+
+                // Only infantry weapons get zero-range attack bonuses.
+                if ( isWeaponInfantry ) {
+
+                    // Infantry platoons attacking with infantry weapons can attack
+                    // in the same hex with a base of 2, except for flamers and
+                    // SRMs, which have a base of 3 and LRMs, which suffer badly. 
+                    if ( wtype.hasFlag(WeaponType.F_FLAMER) ) {
+                        toHit.addModifier(-1, "infantry flamer assault");
+                    } else if ( wtype.getAmmoType() == AmmoType.T_SRM ) {
+                        toHit.addModifier(-1, "infantry SRM assault");
+                    } else if ( isWeaponInfantry &&
+                                wtype.getAmmoType() != AmmoType.T_LRM ) {
+                        toHit.addModifier(-2, "infantry assault");
+                    }
+
+                } // End infantry-weapon
+
+            } // End zero-range
+            if ( te != null && te.isStealthActive() ) {
+                toHit.append( te.getStealthModifier(Entity.RANGE_SHORT) );
+            }
+
+        } // End short-range
+
+        // Weapon in arc?
+        if (!isInArc(game, attackerId, weaponId, target)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc.");
+        }
 
         // Attacks against adjacent buildings automatically hit.
-        if ( distance == 1 &&
+        if ( range == 1 &&
              ( target.getTargetType() == Targetable.TYPE_BUILDING ||
                target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) ) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS, 
@@ -1596,82 +1768,219 @@ public class Compute
                                   "Targeting building from inside (are you SURE this is a good idea?)." );
         }
 
-        // add range mods
-        toHit.append(getRangeMods(game, ae, weaponId, target));
+        // Check for minimum range.
+        if ( range <= minimumRange ) {
+            int minPenalty = minimumRange - range + 1;
+
+            // Attacks inside buildings don't use minimum range mods.
+            if ( null != los.getThruBldg() ) {
+                toHit.addModifier( 0, "attack in building, no minimum range" );
+            }
+            // Infantry LRMs suffer double minimum range penalties.
+            if ( isWeaponInfantry &&
+                 wtype.getAmmoType() == AmmoType.T_LRM ) {
+                toHit.addModifier(minPenalty*2, "infantry LRM minumum range");
+            } else {
+                toHit.addModifier(minPenalty, "minumum range");
+            }
+
+        }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
         }
 
-        // Indirect fire has a +1 mod
-        if (isIndirect) {
-            toHit.addModifier( 1, "indirect fire" );
-        }
-
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
-
+        
         // target movement
         if (te != null) {
             ToHitData thTemp = getTargetMovementModifier(game, target.getTargetId());
             toHit.append(thTemp);
-
+            
             // precision ammo reduces this modifier
             if (atype != null && atype.getAmmoType() == AmmoType.T_AC && 
-                atype.getMunitionType() == AmmoType.M_PRECISION) {
+                    atype.getMunitionType() == AmmoType.M_PRECISION) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
                 }
             }
         }
-
-        // spotter movement, if applicable
-        if (isIndirect) {
-            toHit.append(getAttackerMovementModifier(game, spotter.getId()));
-        }
-
+        
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
-        // target terrain, not applicable when delivering minefields
-        if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-            toHit.append(getTargetTerrainModifier(game, target));
+        // attacker in water?
+        Hex attHex = game.board.getHex(ae.getPosition());
+        if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker underwater.");
         }
         
+        // target terrain
+        toHit.append(getTargetTerrainModifier(game, target));
+        
         // target in water?
-        Hex attHex = game.board.getHex(ae.getPosition());
         Hex targHex = game.board.getHex(target.getPosition());
-        if (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
-            los.targetCover = true;
-            losMods = losModifiers(los);
+        if (targHex.contains(Terrain.WATER)) {
+            if (targHex.surface() == targEl && te.height() > 0) {
+                // force partial cover
+                los.targetCover = true;
+                losMods = losModifiers(los);
+            } else if (targHex.surface() > targEl) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater.");
+            }
         }
 
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
         
         // secondary targets modifier...
-    toHit.append(getSecondaryTargetMod(game, ae, target));
+        int primaryTarget = Entity.NONE;
+        boolean curInFrontArc = isInArc(ae.getPosition(), ae.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
+        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+            Object o = i.nextElement();
+            if (!(o instanceof WeaponAttackAction)) {
+                continue;
+            }
+            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+            if (prevAttack.getEntityId() == attackerId) {
+                // first front arc target is our primary.
+                // if first target is non-front, and either a later target or
+                // the current one is in front, use that instead.
+                Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
+                if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
+                    primaryTarget = prevAttack.getTargetId();
+                    break;
+                } else if (primaryTarget == Entity.NONE && !curInFrontArc) {
+                    primaryTarget = prevAttack.getTargetId();
+                }
+            }
+        }
+        
+        if (primaryTarget != Entity.NONE && primaryTarget != target.getTargetId()) {
+
+            // Infantry can't attack secondary targets (BMRr, pg. 32).
+            if ( isAttackerInfantry ) {
+                return new ToHitData( ToHitData.IMPOSSIBLE, 
+                                      "Can't have multiple targets." );
+            }
+
+            if (curInFrontArc) {
+                toHit.addModifier(1, "secondary target modifier");
+            } else {
+                toHit.addModifier(2, "secondary target modifier");
+            }
+        }
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
             toHit.addModifier(ae.getHeatFiringModifier(), "heat");
         }
 
-        // actuator & sensor damage to attacker
-    toHit.append(getDamageWeaponMods(ae, weapon));
+        // arm critical hits to attacker
+        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
+            toHit.addModifier(4, "shoulder actuator destroyed");
+        } else {
+            int actuatorHits = 0;
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
+                actuatorHits++;
+            }
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
+                actuatorHits++;
+            }
+            if (actuatorHits > 0) {
+                toHit.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
+            }
+        }
+        
+        // sensors critical hit to attacker
+        if (sensorHits > 0) {
+            toHit.addModifier(2, "attacker sensors damaged");
+        }
         
         // target immobile
-    toHit.append(getImmobileMod(target, aimingAt, aimingMode));
+        if (target.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         // attacker prone
-    toHit.append(getProneMods(game, ae, weaponId));
+        if (ae.isProne()) {
+            if ( ae.entityIsQuad() ) {
+                int legsDead = ((Mech)ae).countDestroyedLegs();
+                
+                //No legs destroyed: no penalty and can fire all weapons
+                if ( (legsDead == 1) || (legsDead == 2) ) {
+                    // Need an intact front leg
+                    if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
+                    }
+                    
+                    // arm-mounted weapons have addidional trouble
+                    if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                        int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+                        // check previous attacks for weapons fire from the other arm
+                        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+                            Object o = i.nextElement();
+                            if (!(o instanceof WeaponAttackAction)) {
+                                continue;
+                            }
+                            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                            // stop when we get to this weaponattack (does this always work?)
+                            if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+                                break;
+                            }
+                            if (prevAttack.getEntityId() == attackerId && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
+                                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
+                            }
+                        }
+                    }
+                    // can't fire leg weapons
+                    if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
+                        return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
+                    }
+                    toHit.addModifier(2, "attacker prone");
+                } else if ( legsDead >= 3 ) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
+                }
+            } else {
+                // must have an arm intact
+                if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
+                }
+                // arm-mounted weapons have addidional trouble
+                if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                    int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+                    // check previous attacks for weapons fire from the other arm
+                    for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+                        Object o = i.nextElement();
+                        if (!(o instanceof WeaponAttackAction)) {
+                            continue;
+                        }
+                        WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                        // stop when we get to this weaponattack (does this always work?)
+                        if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+                            break;
+                        }
+                        if (prevAttack.getEntityId() == attackerId
+                        && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
+                            return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
+                        }
+                    }
+                }
+                // can't fire leg weapons
+                if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
+                }
+                toHit.addModifier(2, "attacker prone");
+            }
+        }
 
         // target prone
         if (te != null && te.isProne()) {
             // easier when point-blank
-            if (distance <= 1) {
+            if (range <= 1) {
                 // BMRr, pg. 72: Swarm Mek attacks get "an additional -4
                 // if the BattleMech is prone or immoble."  I interpret
                 // this to mean that the bonus gets applied *ONCE*.
@@ -1700,16 +2009,11 @@ public class Compute
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
         }        
         
-        // add targeting computer (except with LBX cluster ammo)
-        if (aimingMode == FiringDisplay.AIM_MODE_TARG_COMP &&
-          aimingAt != Mech.LOC_NONE) {
-          toHit.addModifier(3, "aiming with targeting computer");
-        } else {
-          if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-               (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
-              toHit.addModifier(-1, "targeting computer");
-          }
-      }
+        // Targeting computer isn't used with LBX cluster munitions.
+        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
+             (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+            toHit.addModifier(-1, "targeting computer");
+        }
 
         // Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {
@@ -1730,18 +2034,13 @@ public class Compute
 
         }
 
-        // Change hit table for partial cover, accomodate for partial underwater(legs)
-        if (los.targetCover) {
-            if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
-            //weapon underwater, target in partial water
-                toHit.setHitTable(ToHitData.HIT_KICK);
-            } else {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
-            }
+        // Change hit table for partial cover.
+        else if (los.targetCover) {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
         // factor in target side
-        if ( isAttackerInfantry && 0 == distance ) {
+        if ( isAttackerInfantry && 0 == range ) {
             // Infantry attacks from the same hex are resolved against the front.
             toHit.setSideTable( ToHitData.SIDE_FRONT );
         } else {
@@ -1753,457 +2052,6 @@ public class Compute
     }
     
     /**
-     * Finds the best spotter for the attacker.  The best spotter is the one
-     * with the lowest attack modifiers, of course.  LOS modifiers and
-     * movement are considered.
-     */
-    public static Entity findSpotter(Game game, Entity attacker, Targetable target) {
-      Entity spotter = null;
-      ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
-      
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity other = (Entity)i.nextElement();
-            if (!other.isSpotting() || attacker.isEnemyOf(other)) {
-                continue; // useless to us...
-            }
-            // what are this guy's mods to the attack?
-            LosEffects los = calculateLos(game, other.getId(), target);
-            ToHitData mods = losModifiers(los);
-            los.setTargetCover(false);
-            mods.append(getAttackerMovementModifier(game, other.getId()));
-            // is this guy a better spotter?
-            if (true || mods.getValue() < bestMods.getValue()) {
-                spotter = other;
-                bestMods = mods;
-            }
-        }
-    
-        return spotter;
-    }
-  
-	private static ToHitData getImmobileMod(Targetable target) {
-		return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-	}
-
-	private static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
-		if (target.isImmobile()) {
-			if ((aimingAt == Mech.LOC_HEAD) && 
-				(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
-				return new ToHitData(3, "aiming at head");
-			} else {
-				return new ToHitData(-4, "target immobile");
-			}
-		} else {
-			return null;
-		}
-	}
-
-    /**
-     * Determines the to-hit modifier due to range for an attack with the 
-     * specified parameters. Includes minimum range, infantry 0-range 
-     * mods, and target stealth mods.  Accounts for friendly C3 units.
-     * 
-     * @return the modifiers
-     */
-    private static ToHitData getRangeMods(Game game, Entity ae, int weaponId, Targetable target) {
-        Mounted weapon = ae.getEquipment(weaponId);
-        WeaponType wtype = (WeaponType)weapon.getType();
-        int[] weaponRanges = wtype.getRanges();
-        boolean isAttackerInfantry = (ae instanceof Infantry);
-        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-        boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
-        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
-            && weapon.curMode().equals("Indirect");
-    
-        ToHitData mods = new ToHitData();
-    
-        // modify the ranges for ATM missile systems based on the ammo selected
-        // TODO: this is not the right place to hardcode these
-        if (wtype.getAmmoType() == AmmoType.T_ATM) {
-            AmmoType atype = (AmmoType)weapon.getLinked().getType();
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                weaponRanges = new int[] {4, 9, 18, 27};
-            }
-            else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                weaponRanges = new int[] {0, 3, 6, 9};
-            }
-        }
-
-        //is water involved?
-        Hex attHex = game.board.getHex(ae.getPosition());
-        Hex targHex = game.board.getHex(target.getPosition());
-        int targEl;
-        if (target == null) {
-            targEl = game.board.getHex(target.getPosition()).floor();
-        } else {
-
-            targEl = target.absHeight();
-        }
-
-        if (ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET) {
-            weaponRanges = wtype.getWRanges();
-            //HACK on ranges: for those without underwater range,
-            // long == medium; iteration in rangeBracket() allows this
-            if (weaponRanges[RANGE_SHORT] == 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
-                                     "Weapon cannot fire underwater."); 
-            }
-            if (!(targHex.contains(Terrain.WATER)) ||
-                targHex.surface() <= target.getElevation()) {
-                //target on land or over water
-                return new ToHitData(ToHitData.IMPOSSIBLE,
-                                     "Weapon underwater, but not target.");
-            }
-        } else if (targHex.contains(Terrain.WATER) &&
-                   targHex.surface() > targEl) {
-            //target completely underwater, weapon not
-            return new ToHitData(ToHitData.IMPOSSIBLE,
-                                 "Target underwater, but not weapon.");
-        }
-
-        // determine base distance & range bracket
-        int distance = effectiveDistance(game, ae, target);
-        int range = rangeBracket(distance, weaponRanges);
-        
-        // short circuit if at zero range or out of range
-        if (range == RANGE_OUT_OF) {
-            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
-        }
-        if (distance == 0 && !isAttackerInfantry) {
-            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
-        }
-
-        // find any c3 spotters that could help
-        Entity c3spotter = findC3Spotter(game, ae, target);
-        if (isIndirect) {
-            c3spotter = ae; // no c3 when using indirect fire
-        }
-        int c3dist = effectiveDistance(game, c3spotter, target);
-        int c3range = rangeBracket(c3dist, weaponRanges);
-    
-        // determine which range we're using
-        int usingRange = Math.min(range, c3range);
-
-    // add range modifier
-    if (usingRange == range) {
-      // no c3 adjustment
-      if (range == RANGE_MEDIUM) {
-        mods.addModifier(2, "medium range");
-      }
-      else if (range == RANGE_LONG) {
-        mods.addModifier(4, "long range");
-      }
-    }
-    else {
-      // report c3 adjustment
-      if (c3range == RANGE_SHORT) {
-        mods.addModifier(0, "short range due to C3 spotter");
-      }
-      else if (c3range == RANGE_MEDIUM) {
-        mods.addModifier(2, "medium range due to C3 spotter");
-      }
-    }
-        
-    // add infantry LRM maximum range penalty
-    if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
-      mods.addModifier(1, "infantry LRM maximum range");
-    }
-        
-    // add infantry zero-range modifier
-    // TODO: this is not the right place to hardcode these
-    if (isWeaponInfantry && distance == 0) {
-      // Infantry platoons attacking with infantry weapons can attack
-      // in the same hex with a base of 2, except for flamers and
-      // SRMs, which have a base of 3 and LRMs, which suffer badly.
-      if (wtype.hasFlag(WeaponType.F_FLAMER)) {
-        mods.addModifier(-1, "infantry flamer assault");
-      } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
-        mods.addModifier(-1, "infantry SRM assault");
-      } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
-        mods.addModifier(-2, "infantry assault");
-      }
-    }
-        
-    // add minumum range modifier
-    int minRange = weaponRanges[RANGE_MINIMUM];
-    if (minRange > 0 && distance <= minRange) {
-      int minPenalty = (minRange - distance) + 1;
-      // Infantry LRMs suffer double minimum range penalties.
-      if (isLRMInfantry) {
-        mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
-      } else {
-        mods.addModifier(minPenalty, "minumum range");
-      }
-    }
-        
-    // add any target stealth modifier
-    if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
-      mods.append(((Entity)target).getStealthModifier(usingRange));
-    }
-
-    return mods;
-  }
-  
-  /**
-   * Finds the effective distance between an attacker and a target.
-   * Includes the distance bonus if the attacker and target are in the
-   * same building and on different levels.
-   * 
-   * @return the effective distance
-   */
-  public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
-    int distance = attacker.getPosition().distance(target.getPosition());
-    
-    // If the attack is completely inside a building, add the difference
-    // in elevations between the attacker and target to the range.
-    // TODO: should the player be explcitly notified?
-    if ( isInSameBuilding(game, attacker, target) ) {
-      int aElev = attacker.getElevation();
-      int tElev = target.getElevation();
-      distance += Math.abs(aElev - tElev);
-    }
-
-    return distance;
-  }
-
-  /**
-   * Returns the range bracket a distance falls into.
-   */
-  public static int rangeBracket(int distance, int[] ranges) {
-    if (null == ranges || distance > ranges[RANGE_LONG]) {
-      return RANGE_OUT_OF;
-    }
-    else if (distance > ranges[RANGE_MEDIUM]) {
-      return RANGE_LONG;
-    }
-    else if (distance > ranges[RANGE_SHORT]) {
-      return RANGE_MEDIUM;
-    }
-    else {
-      return RANGE_SHORT;
-    }
-  }
-
-    /**
-     * Attempts to find a C3 spotter that is closer to the target than the
-     * attacker.
-     * @return A closer C3 spotter, or the attack if no spotters are found
-     */
-    private static Entity findC3Spotter(Game game, Entity attacker, Targetable target) {
-    if (!attacker.hasC3() && !attacker.hasC3i()) {
-      return attacker;
-    }
-    Entity c3spotter = attacker;
-    int c3range = attacker.getPosition().distance(target.getPosition());
-
-    for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-      Entity friend = (Entity)i.nextElement();
-
-      // TODO : can units being transported be used for C3 spotting?
-      if ( attacker.equals(friend) ||
-           !friend.isActive() ||
-           !attacker.onSameC3NetworkAs(friend) ||
-           !canSee(game, friend, target) ) {
-        continue; // useless to us...
-      }
-
-      int buddyRange = effectiveDistance(game, friend, target);
-      if(buddyRange < c3range) {
-        c3range = buddyRange;
-        c3spotter = friend;
-      }
-
-    }
-    return c3spotter;
-  }
-
-  /**
-     * Gets the modifiers, if any, that the mech receives from being prone.
-     * @return any applicable modifiers due to being prone
-     */
-    private static ToHitData getProneMods(Game game, Entity attacker, int weaponId) {
-    if (!attacker.isProne()) {
-      return null; // no modifier
-    }
-
-    ToHitData mods = new ToHitData();
-    Mounted weapon = attacker.getEquipment(weaponId);
-        if ( attacker.entityIsQuad() ) {
-            int legsDead = ((Mech)attacker).countDestroyedLegs();
-            if (legsDead == 0) {
-        // No legs destroyed: no penalty and can fire all weapons
-              return null; // no modifier
-            } else if ( legsDead >= 3 ) {
-        return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed.");
-      }
-      // we have one or two dead legs...
-      
-            // Need an intact front leg
-            if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed.");
-            }
-            
-            // front leg-mounted weapons have addidional trouble
-            if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-                // check previous attacks for weapons fire from the other arm
-                if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-          return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already.");
-                }
-            }
-            // can't fire rear leg weapons
-            if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
-            }
-            mods.addModifier(2, "attacker prone");
-        } else {
-            int l3ProneFiringArm = Entity.LOC_NONE;
-            
-            if (attacker.isLocationDestroyed(Mech.LOC_RARM) || attacker.isLocationDestroyed(Mech.LOC_LARM)) {
-              if ( game.getOptions().booleanOption("maxtech_prone_fire") ) {
-                //Can fire with only one arm
-                if (attacker.isLocationDestroyed(Mech.LOC_RARM) && attacker.isLocationDestroyed(Mech.LOC_LARM)) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both arms destroyed.");
-                }
-                
-                l3ProneFiringArm = attacker.isLocationDestroyed(Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
-              } else {
-                // must have an arm intact
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed.");
-              }
-            }
-
-            // arm-mounted weapons have addidional trouble
-            if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
-              if ( l3ProneFiringArm == weapon.getLocation() ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and propping up with this arm.");
-              }
-              
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-        // check previous attacks for weapons fire from the other arm
-        if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-          return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other arm already.");
-        }
-            }
-            // can't fire leg weapons
-            if (weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone.");
-            }
-            mods.addModifier(2, "attacker prone");
-            
-            if ( l3ProneFiringArm != Entity.LOC_NONE ) {
-              mods.addModifier(1, "attacker propping on single arm");
-            }
-        }
-        return mods;
-  }
-
-  /**
-   * Checks to see if there is an attack previous to the one with this
-   * weapon from the specified arm.
-   * @return true if there is a previous attack from this arm
-   */
-  private static boolean isFiringFromArmAlready(Game game, int weaponId, final Entity attacker, int armLoc) {
-    for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-        Object o = i.nextElement();
-        if (!(o instanceof WeaponAttackAction)) {
-            continue;
-        }
-        WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-        // stop when we get to this weaponattack (does this always work?)
-        if (prevAttack.getEntityId() == attacker.getId() && prevAttack.getWeaponId() == weaponId) {
-            break;
-        }
-        if (prevAttack.getEntityId() == attacker.getId() && attacker.getEquipment(prevAttack.getWeaponId()).getLocation() == armLoc) {
-          return true;
-        }
-    }
-    return false;
-  }
-
-  /**
-     * Adds any damage modifiers from arm critical hits or sensor damage.
-   * @return Any applicable damage modifiers
-   */
-  private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
-    ToHitData mods = new ToHitData();
-    
-    if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
-            mods.addModifier(4, "shoulder actuator destroyed");
-        } else {
-          // no shoulder hits, add other arm hits
-          int actuatorHits = 0;
-          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
-              actuatorHits++;
-          }
-          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
-              actuatorHits++;
-          }
-          if (actuatorHits > 0) {
-        mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
-          }
-    }
-        
-    // sensors critical hit to attacker
-    int sensorHits = attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-    if (sensorHits > 0) {
-      mods.addModifier(2, "attacker sensors damaged");
-    }
-    
-        return mods;
-  }
-
-  /**
-     * Determines if the current target is a secondary target, and if so,
-     * returns the appropriate modifier.
-     * 
-     * @return The secondary target modifier.
-     * @author Ben
-     */
-    private static ToHitData getSecondaryTargetMod(Game game, Entity attacker, Targetable target) {
-    boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
-
-    int primaryTarget = Entity.NONE;
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            Object o = i.nextElement();
-            if (!(o instanceof WeaponAttackAction)) {
-                continue;
-            }
-            WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-            if (prevAttack.getEntityId() == attacker.getId()) {
-                // first front arc target is our primary.
-                // if first target is non-front, and either a later target or
-                // the current one is in front, use that instead.
-                Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
-                if (isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
-                    primaryTarget = prevAttack.getTargetId();
-                    break;
-                } else if (primaryTarget == Entity.NONE && !curInFrontArc) {
-                    primaryTarget = prevAttack.getTargetId();
-                }
-            }
-        }
-        
-        if (primaryTarget == Entity.NONE || primaryTarget == target.getTargetId()) {
-          // current target is primary target
-          return null; // no modifier
-        }
-        
-        // current target is secondary
-
-        // Infantry can't attack secondary targets (BMRr, pg. 32).
-        if (attacker instanceof Infantry) {
-          return new ToHitData(ToHitData.IMPOSSIBLE, "Can't have multiple targets.");
-        }
-
-        if (curInFrontArc) {
-      return new ToHitData(1, "secondary target modifier");
-        } else {
-      return new ToHitData(2, "secondary target modifier");
-        }
-  }
-
-  /**
      * Returns ToHitData indicating the modifiers to fire for the specified
      * LOS effects data.
      */
@@ -2265,49 +2113,11 @@ public class Compute
             return los;
         }
         
-        Hex attHex = game.board.getHex(ae.getPosition());
-        Hex targetHex = game.board.getHex(target.getPosition());
-        
-        int attEl = ae.absHeight();
-        int targEl;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
-             target.getTargetType() == Targetable.TYPE_BUILDING ||
-             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
-            targEl = target.absHeight();
-        } else {
-            targEl = game.board.getHex(target.getPosition()).floor();
-        }
-        
-        boolean attUnderWater = attHex.contains(Terrain.WATER) && 
-        						attHex.depth() > 0 && 
-        						attEl < attHex.surface();
-        boolean attInWater = attHex.contains(Terrain.WATER) &&
-        						attHex.depth() > 0 && 
-        						attEl == attHex.surface();
-        boolean attOnLand = !(attUnderWater || attInWater);
-        
-        boolean targetUnderWater = targetHex.contains(Terrain.WATER) && 
-        						targetHex.depth() > 0 && 
-        						targEl < targetHex.surface();
-        boolean targetInWater = targetHex.contains(Terrain.WATER) &&
-        						targetHex.depth() > 0 && 
-        						targEl == targetHex.surface();
-        boolean targetOnLand = !(targetUnderWater || targetInWater);
-        
-        if (attOnLand && targetUnderWater ||
-        	attUnderWater && targetOnLand) {
-            LosEffects los = new LosEffects();
-            los.blocked = true;
-            return los;        	
-        }
-        
-        boolean underWaterCombat = targetUnderWater || attUnderWater;
-        
         double degree = ae.getPosition().degree(target.getPosition());
         if (degree % 60 == 30) {
-            return losDivided(game, attackerId, target, underWaterCombat);
+            return losDivided(game, attackerId, target);
         } else {
-            return losStraight(game, attackerId, target, underWaterCombat);
+            return losStraight(game, attackerId, target);
         }
     }
     
@@ -2316,8 +2126,7 @@ public class Compute
      * hexes.  Since intervening() returns all the coordinates, we just
      * add the effects of all those hexes.
      */
-    public static LosEffects losStraight(Game game, int attackerId, Targetable target,
-    									boolean underWaterCombat) {
+    public static LosEffects losStraight(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
         LosEffects los = new LosEffects();
@@ -2334,7 +2143,7 @@ public class Compute
 
         for (int i = 0; i < in.length; i++) {
             los.add( losForCoords(game, attackerId, target,
-                                  in[i], los.getThruBldg(), underWaterCombat) );
+                                  in[i], los.getThruBldg()) );
         }
 
         // Infantry inside a building can only be
@@ -2383,8 +2192,7 @@ public class Compute
      * leg weapons, as we want to return the same sequence regardless of
      * what weapon is attacking.
      */
-    public static LosEffects losDivided(Game game, int attackerId, Targetable target,
-    									boolean underWaterCombat) {
+    public static LosEffects losDivided(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         Coords[] in = intervening(ae.getPosition(), target.getPosition());
         LosEffects los = new LosEffects();
@@ -2404,7 +2212,7 @@ public class Compute
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
             los.add( losForCoords(game, attackerId, target,
-                                  in[i], los.getThruBldg(), underWaterCombat) );
+                                  in[i], los.getThruBldg()) );
         }
         
         // if blocked already, return that
@@ -2416,9 +2224,9 @@ public class Compute
         for (int i = 1; i < in.length - 2; i += 3) {
             // get effects of each side
             LosEffects left = losForCoords( game, attackerId, target, 
-                                            in[i], los.getThruBldg(), underWaterCombat);
+                                            in[i], los.getThruBldg() );
             LosEffects right = losForCoords( game, attackerId, target,
-                                             in[i+1], los.getThruBldg(), underWaterCombat);
+                                             in[i+1], los.getThruBldg() );
 
             // If a target Entity is at a different elevation as its
             // attacker, and if the attack is through a building, the
@@ -2467,7 +2275,7 @@ public class Compute
      */
     private static LosEffects losForCoords(Game game, int attackerId,
                                            Targetable target, Coords coords,
-                                           Building thruBldg, boolean underWaterCombat) {
+                                           Building thruBldg) {
         LosEffects los = new LosEffects();        
         // ignore hexes not on board
         if (!game.board.contains(coords)) {
@@ -2500,7 +2308,7 @@ public class Compute
             targEl = game.board.getHex(target.getPosition()).floor();
         }
         Hex hex = game.board.getHex(coords);
-        int hexEl = underWaterCombat ? hex.floor() : hex.surface();
+        int hexEl = hex.surface();
 
         // Handle building elevation.
         // Attacks thru a building are not blocked by that building.
@@ -2521,21 +2329,19 @@ public class Compute
             los.blocked = true;
         }
 
-        // check for woods or smoke only if not under water
-        if (!underWaterCombat) {
-	        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
-	        || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
-	        || (hexEl + 2 > targEl && target.getPosition().distance(coords) == 1)) {
-	            // smoke overrides any woods in the hex
-	            if (hex.contains(Terrain.SMOKE)) {
-	                los.smoke++;
-	            } else if (hex.levelOf(Terrain.WOODS) == 1) {
-	                los.lightWoods++;
-	            } else if (hex.levelOf(Terrain.WOODS) > 1) {
-	                los.heavyWoods++;
-	            }
-	        }
-	    }
+        // check for woods or smoke
+        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
+        || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
+        || (hexEl + 2 > targEl && target.getPosition().distance(coords) == 1)) {
+            // smoke overrides any woods in the hex
+            if (hex.contains(Terrain.SMOKE)) {
+                los.smoke++;
+            } else if (hex.levelOf(Terrain.WOODS) == 1) {
+                los.lightWoods++;
+            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                los.heavyWoods++;
+            }
+        }
         
         // check for target partial cover
         if ( target.getPosition().distance(coords) == 1 &&
@@ -2551,178 +2357,6 @@ public class Compute
             los.attackerCover = true;
         }
         
-        return los;
-    }
-
-    /**
-     * Returns a LosEffects object representing the LOS effects of two
-     * specified coordinates.
-     * <P>
-     * Assumes entities at ground level.
-     *
-     * @see #calculateLos(Game, int, Targetable)
-     */
-  public static LosEffects calculateLos(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
-        // good time to ensure hex cache
-        IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
-         
-        double degree = c1.degree(c2);
-        if (degree % 60 == 30) {
-            return losDivided(game, c1, c2, mechInFirst, mechInSecond);
-        } else {
-            return losStraight(game, c1, c2, mechInFirst, mechInSecond);
-        }
-    }
-
-    /**
-     * Returns LosEffects for a line that never passes exactly between two 
-     * specified coordinates.  Since intervening() returns all the coordinates,
-     * we just add the effects of all those hexes.
-     * <P>
-     * Assumes entities at ground level.
-     *
-     * @see #losStraight(Game, int, Targetable)
-     */
-    public static LosEffects losStraight(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
-        Coords[] in = intervening(c1, c2);
-        LosEffects los = new LosEffects();
-        boolean targetInBuilding = false;
- 
-        for (int i = 0; i < in.length; i++) {
-            los.add(losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond));
-        }
- 
-        return los;
-    }
-
-    /**
-     * Returns LosEffects for a line that passes between two specified
-     * coordinates at least once.  The rules say that this situation is
-     * resolved in favor of the defender.
-     *
-     * The intervening() function returns both hexes in these circumstances,
-     * and, when they are in line order, it's not hard to figure out which
-     * hexes are split and which are not.
-     * <P>
-     * Assumes entities at ground level.
-     *
-     * @see #losDivided(Game, int, Targetable)
-     */
-    public static LosEffects losDivided(Game game, Coords c1, Coords c2, boolean mechInFirst, boolean mechInSecond) {
-        Coords[] in = intervening(c1, c2);
-        LosEffects los = new LosEffects();
- 
-        // add non-divided line segments
-        for (int i = 3; i < in.length - 2; i += 3) {
-            los.add( losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond));
-        }
-         
-        // if blocked already, return that
-        if (losModifiers(los).getValue() == ToHitData.IMPOSSIBLE) {
-            return los;
-        }
-         
-        // go through divided line segments
-        for (int i = 1; i < in.length - 2; i += 3) {
-            // get effects of each side
-            LosEffects left = losForCoords(game, c1, c2, in[i], mechInFirst, mechInSecond);
-            LosEffects right = losForCoords(game, c1, c2, in [i + 1], mechInFirst, mechInSecond);
- 
-            // Include all previous LOS effects.
-            left.add(los);
-            right.add(los);
- 
-            // which is better?
-            int lVal = losModifiers(left).getValue();
-            int rVal = losModifiers(right).getValue();
-            if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
-                los = left;
-            } else {
-                los = right;
-            }
-        }
-         
-        return los;
-    }
-
-    /**
-     * Returns a LosEffects object representing the LOS effects of anything at
-     * the specified coordinates.  
-     *
-     * @see #losForCoords(Game, int, Targetable, Coords, Building)
-     */
-    private static LosEffects losForCoords(Game game, Coords c1, Coords c2, Coords c3, boolean mechInFirst, boolean mechInSecond){
-        LosEffects los = new LosEffects();        
-        // ignore hexes not on board
-        if (!game.board.contains(c3)) {
-            return los;
-        }
-
-        // ignore hexes the attacker or target are in
-        if ( c3.equals(c1) || c3.equals(c2) ) {
-            return los;
-        }
-        int attEl = game.board.getHex(c1).floor();
-        if (mechInFirst) {
-          attEl++;
-        }
-        int targEl = game.board.getHex(c2).floor();
-        if (mechInSecond) {
-          targEl++;
-        }
- 
-        Hex hex = game.board.getHex(c3);
-        int hexEl = hex.surface();
- 
-        // Handle building elevation.
-        // Attacks thru a building are not blocked by that building.
-        // ASSUMPTION: bridges don't block LOS.
-        int bldgEl = 0;
-        if ( null == los.getThruBldg() &&
-             hex.contains( Terrain.BLDG_ELEV ) ) {
-            bldgEl = hex.levelOf( Terrain.BLDG_ELEV );
-        }
- 
-        // TODO: Identify when LOS travels *above* a building's hex.
-        //       Alternatively, force all building hexes to be same height.
- 
-        // check for block by terrain
-        if ((hexEl + bldgEl > attEl && hexEl + bldgEl > targEl)
-            || (hexEl + bldgEl > attEl && c1.distance(c3) == 1)
-            || (hexEl + bldgEl > targEl && c2.distance(c3) == 1)) {
-            los.blocked = true;
-        }
- 
-        // check for woods or smoke
-        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
-            || (hexEl + 2 > attEl && c1.distance(c3) == 1)
-            || (hexEl + 2 > targEl && c2.distance(c3) == 1)) {
-            // smoke overrides any woods in the hex
-            if (hex.contains(Terrain.SMOKE)) {
-                los.smoke++;
-            } else if (hex.levelOf(Terrain.WOODS) == 1) {
-                los.lightWoods++;
-            } else if (hex.levelOf(Terrain.WOODS) > 1) {
-                los.heavyWoods++;
-            }
-        }
-         
-        // check for target partial cover
-        if ( c2.distance(c3) == 1 &&
-             hexEl + bldgEl == targEl &&
-             attEl <= targEl &&
-             mechInSecond) {
-            los.targetCover = true;
-        }
- 
-        // check for attacker partial cover
-        if (c1.distance(c3) == 1 &&
-            hexEl + bldgEl == attEl &&
-            attEl >= targEl &&
-            mechInFirst) {
-            los.attackerCover = true;
-        }
-         
         return los;
     }
     
@@ -2784,10 +2418,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // non-mechs can't punch
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
-  }
+	// non-mechs can't punch
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
+	}
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
@@ -2797,11 +2431,6 @@ public class Compute
         // Can't target a entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
-        }
-        
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         //Quads can't punch
@@ -2855,15 +2484,8 @@ public class Compute
             }
         }
 
-    
-        //Set the base BTH
-          int base = 4;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-          }
-          
-          toHit = new ToHitData(base, "base");
+        // okay, modifiers...
+        toHit = new ToHitData(4, "base");
 
         // Prone Meks can only punch vehicles in the same hex.
         if (ae.isProne()) {
@@ -2938,10 +2560,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         // elevation
         if (attackerHeight == targetElevation) {
@@ -2982,10 +2604,7 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-        if (entity.getLocationStatus(armLoc) == Entity.LOC_WET) {
-            multiplier /= 2.0f;
-        }
-        return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
+        return (int)Math.floor(damage * multiplier);
     }
     
     public static ToHitData toHitKick(Game game, KickAttackAction kaa) {
@@ -3051,15 +2670,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-        // non-mechs can't kick
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
-        }
-        
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
+	// non-mechs can't kick
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
+	}
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
@@ -3108,9 +2722,9 @@ public class Compute
         }
 
         // check facing
-  // Don't check arc for stomping infantry or tanks.
+	// Don't check arc for stomping infantry or tanks.
         if (0 != range &&
-      !isInArc(ae.getPosition(), ae.getFacing(), 
+	    !isInArc(ae.getPosition(), ae.getFacing(), 
                      target.getPosition(), Compute.ARC_FORWARD)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
@@ -3144,19 +2758,13 @@ public class Compute
             return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
-          int base = 3;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 2;
-          }
-          
-          toHit = new ToHitData(base, "base");
+        // okay, modifiers...
+        toHit = new ToHitData(3, "base");
 
-  // BMR(r), page 33. +3 modifier for kicking infantry.
-  if ( te instanceof Infantry ) {
-      toHit.addModifier( 3, "Stomping Infantry" );
-  }
+	// BMR(r), page 33. +3 modifier for kicking infantry.
+	if ( te instanceof Infantry ) {
+	    toHit.addModifier( 3, "Stomping Infantry" );
+	}
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -3197,10 +2805,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         // elevation
         if (attackerElevation < targetHeight) {
@@ -3254,10 +2862,8 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-        if (entity.getLocationStatus(legLoc) == Entity.LOC_WET) {
-            multiplier /= 2.0f;
-        }
-        return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
+
+        return (int)Math.floor(damage * multiplier);
     }
     
     public static ToHitData toHitClub(Game game, ClubAttackAction caa) {
@@ -3308,19 +2914,14 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // non-mechs can't club
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
-  }
+	// non-mechs can't club
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
+	}
 
         //Quads can't club
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
-        }
-
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         // Can't target a transported entity.
@@ -3428,18 +3029,12 @@ public class Compute
             return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
-          int base = 4;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-          }
-          
-          if (club.getType().hasFlag(MiscType.F_SWORD)) {
-            base--;
-          }
-
-          toHit = new ToHitData(base, "base");
+        // okay, modifiers...
+        if (club.getType().hasFlag(MiscType.F_SWORD)) {
+            toHit = new ToHitData(3, "base");
+        } else {
+            toHit = new ToHitData(4, "base");
+        }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -3492,10 +3087,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         // elevation
         if (attackerElevation == targetElevation) {
@@ -3529,16 +3124,8 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
         }
-        int clubLocation = club.getLocation();
-        // tree clubs don't have a location--use right arm (is this okay?)
-        if (clubLocation == Entity.LOC_NONE) {
-            clubLocation = Mech.LOC_RARM;
-        }
-        if (entity.getLocationStatus(clubLocation) == Entity.LOC_WET) {
-            nDamage /= 2.0f;
-        }
 
-        return nDamage + modifyPhysicalDamagaForMeleeSpecialist(entity);
+        return nDamage;
     }
     
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {
@@ -3585,21 +3172,16 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // non-mechs can't push
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
-  }
+	// non-mechs can't push
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
+	}
 
         //Quads can't push
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
         
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
-
         //Can only push mechs
         if ( te !=null && !(te instanceof Mech) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
@@ -3703,15 +3285,9 @@ public class Compute
             return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
-          int base = 4;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-          }
-          
-          toHit = new ToHitData(base, "base");
-
+        // okay, modifiers...
+        toHit = new ToHitData(4, "base");
+        
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
         
@@ -3738,10 +3314,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         // side and elevation shouldn't matter
 
@@ -3752,7 +3328,7 @@ public class Compute
     /**
     * Checks if a charge can hit the target, including movement
     */
-    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovePath md) {
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
             // the attacker must have at least walked...
             int movement=Entity.MOVE_WALK;
             // ...if they moved more than their walk MPs, they must've Run
@@ -3760,70 +3336,70 @@ public class Compute
                     movement=Entity.MOVE_RUN;
             };
             // ...and if they have a jump step, they must've jumped!
-            if (md.contains(MovePath.STEP_START_JUMP)) {
+            if (md.contains(MovementData.STEP_START_JUMP)) {
                     movement=Entity.MOVE_JUMP;
             };
 
             return toHitCharge(game, attackerId, targetId, md, movement);
-  };
+	};
 
-  /**
-  * Checks if a charge can hit the target, taking account of movement
-  */
-  public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovePath md, int movement) {
+	/**
+	* Checks if a charge can hit the target, taking account of movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md, int movement) {
             final Entity target = game.getEntity( targetId );
             return toHitCharge( game, attackerId, target, md, movement );
         }
 
-  /**
-  * Checks if a charge can hit the target, including movement
-  */
-  public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovePath md) {
-    // the attacker must have at least walked...
-    int movement=Entity.MOVE_WALK;
-    // ...if they moved more than their walk MPs, they must've Run
-    if (md.getMpUsed() > game.getEntity(attackerId).walkMP) {
-      movement=Entity.MOVE_RUN;
-    };
-    // ...and if they have a jump step, they must've jumped!
-    if (md.contains(MovePath.STEP_START_JUMP)) {
-      movement=Entity.MOVE_JUMP;
-    };
+	/**
+	* Checks if a charge can hit the target, including movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovementData md) {
+		// the attacker must have at least walked...
+		int movement=Entity.MOVE_WALK;
+		// ...if they moved more than their walk MPs, they must've Run
+		if (md.getMpUsed() > game.getEntity(attackerId).walkMP) {
+			movement=Entity.MOVE_RUN;
+		};
+		// ...and if they have a jump step, they must've jumped!
+		if (md.contains(MovementData.STEP_START_JUMP)) {
+			movement=Entity.MOVE_JUMP;
+		};
 
-    return toHitCharge(game, attackerId, target, md, movement);
-  };
+		return toHitCharge(game, attackerId, target, md, movement);
+	};
 
-  /**
-  * Checks if a charge can hit the target, taking account of movement
-  */
-  public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovePath md, int movement) {
+	/**
+	* Checks if a charge can hit the target, taking account of movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, MovementData md, int movement) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
         }
         Coords chargeSrc = ae.getPosition();
-        MoveStep chargeStep = null;
+        MovementData.Step chargeStep = null;
 
-  // Infantry CAN'T charge!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
-  }
+	// Infantry CAN'T charge!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
+	}
 
         // let's just check this
-        if (!md.contains(MovePath.STEP_CHARGE)) {
+        if (!md.contains(MovementData.STEP_CHARGE)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found in movment path");
         }
 
         // no jumping
-        if (md.contains(MovePath.STEP_START_JUMP)) {
+        if (md.contains(MovementData.STEP_START_JUMP)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "No jumping allowed while charging");
         }
 
         // no backwards
-        if (md.contains(MovePath.STEP_BACKWARDS) 
-            || md.contains(MovePath.STEP_LATERAL_LEFT_BACKWARDS)
-            || md.contains(MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) {
+        if (md.contains(MovementData.STEP_BACKWARDS) 
+            || md.contains(MovementData.STEP_LATERAL_LEFT_BACKWARDS)
+            || md.contains(MovementData.STEP_LATERAL_RIGHT_BACKWARDS)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
 
@@ -3840,11 +3416,11 @@ public class Compute
         // determine last valid step
         compile(game, attackerId, md);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
                 break;
             } else {
-                if (step.getType() == MovePath.STEP_CHARGE) {
+                if (step.getType() == MovementData.STEP_CHARGE) {
                     chargeStep = step;
                 } else {
                     chargeSrc = step.getPosition();
@@ -3862,7 +3438,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
 
-  return toHitCharge(game, attackerId, target, chargeSrc, movement);
+	return toHitCharge(game, attackerId, target, chargeSrc, movement);
     }
 
     /**
@@ -3916,19 +3492,14 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // Infantry CAN'T charge!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
-  }
+	// Infantry CAN'T charge!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
+	}
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
-        }
-
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         // Can't target a entity conducting a swarm attack.
@@ -4000,15 +3571,9 @@ public class Compute
             return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
-          int base = 5;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting();
-          }
-          
-          toHit = new ToHitData(base, "base");
-
+        // okay, modifiers...
+        toHit = new ToHitData(5, "base");
+        
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId, movement));
         
@@ -4037,11 +3602,11 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
-        
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
+
         // determine hit direction
         toHit.setSideTable(targetSideTable(src, te.getPosition(),
                                             te.getFacing(), te instanceof Tank));
@@ -4057,26 +3622,26 @@ public class Compute
         return toHit;
     }
 
-  /**
-  * Damage that a mech does with a successful charge.  Assumes that 
-  * delta_distance is correct.
-  */
-  public static int getChargeDamageFor(Entity entity) {
-    return getChargeDamageFor(entity, entity.delta_distance);
-  };
+	/**
+	* Damage that a mech does with a successful charge.  Assumes that 
+	* delta_distance is correct.
+	*/
+	public static int getChargeDamageFor(Entity entity) {
+		return getChargeDamageFor(entity, entity.delta_distance);
+	};
 
-  /**
-  * Damage that a mech does with a successful charge, given it will move a certain way
-  */
-  public static int getChargeDamageFor(Entity entity, int hexesMoved) {
-         return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
-  };
+	/**
+	* Damage that a mech does with a successful charge, given it will move a certain way
+	*/
+	public static int getChargeDamageFor(Entity entity, int hexesMoved) {
+		return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1));
+	};
 
     /**
      * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int) Math.ceil( target.getWeight() / 10.0 * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
+        return (int) Math.ceil( target.getWeight() / 10.0 );
     }
 
     /**
@@ -4090,7 +3655,7 @@ public class Compute
     /**
      * Checks if a death from above attack can hit the target, including movement
      */
-    public static ToHitData toHitDfa(Game game, int attackerId, int targetId, MovePath md) {
+    public static ToHitData toHitDfa(Game game, int attackerId, int targetId, MovementData md) {
         final Entity target = game.getEntity( targetId );
         return toHitDfa( game, attackerId, target, md );
     }
@@ -4098,38 +3663,33 @@ public class Compute
     /**
      * Checks if a death from above attack can hit the target, including movement
      */
-    public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, MovePath md) {
+    public static ToHitData toHitDfa(Game game, int attackerId, Targetable target, MovementData md) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
         }
         Coords chargeSrc = ae.getPosition();
-        MoveStep chargeStep = null;
+        MovementData.Step chargeStep = null;
         
         // Infantry CAN'T dfa!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
-  }
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
+	}
 
         // let's just check this
-        if (!md.contains(MovePath.STEP_DFA)) {
+        if (!md.contains(MovementData.STEP_DFA)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. action not found in movment path");
         }
         
         // have to jump
-        if (!md.contains(MovePath.STEP_START_JUMP)) {
+        if (!md.contains(MovementData.STEP_START_JUMP)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. must involve jumping");
         }
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
-        }
-
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
         }
 
         // Can't target a entity conducting a swarm attack.
@@ -4140,11 +3700,11 @@ public class Compute
         // determine last valid step
         compile(game, attackerId, md);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
                 break;
             } else {
-                if (step.getType() == MovePath.STEP_DFA) {
+                if (step.getType() == MovementData.STEP_DFA) {
                     chargeStep = step;
                 } else {
                     chargeSrc = step.getPosition();
@@ -4162,7 +3722,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
         
-  return toHitDfa(game, attackerId, target, chargeSrc);
+	return toHitDfa(game, attackerId, target, chargeSrc);
     }
     
     public static ToHitData toHitDfa(Game game, DfaAttackAction daa) {
@@ -4207,10 +3767,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
         
-  // Infantry CAN'T dfa!!!
-  if ( ae instanceof Infantry ) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
-  }
+	// Infantry CAN'T dfa!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
+	}
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
@@ -4261,19 +3821,13 @@ public class Compute
             return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
-          int base = 5;
-          
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting();
-          }
-          
-          toHit = new ToHitData(base, "base");
+        // okay, modifiers...
+        toHit = new ToHitData(5, "base");
 
-  // BMR(r), page 33. +3 modifier for DFA on infantry.
-  if ( te instanceof Infantry ) {
-      toHit.addModifier( 3, "Infantry target" );
-  }
+	// BMR(r), page 33. +3 modifier for DFA on infantry.
+	if ( te instanceof Infantry ) {
+	    toHit.addModifier( 3, "Infantry target" );
+	}
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {
@@ -4302,10 +3856,10 @@ public class Compute
             toHit.addModifier(3, "target has partial cover");
         }
 
-    // target immobile
-    toHit.append(getImmobileMod(te));
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
         
         if (te instanceof Tank) {
             toHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -4372,50 +3926,12 @@ public class Compute
     }
     
     /**
-     * Modifier to physical attack BTH due to pilot advantages
-     */
-      public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit) {
-        int movement = attacker.moved;
-        
-        if ( attacker.getCrew().getOptions().booleanOption("melee_specialist") && attacker instanceof Mech ) {
-          int mod = 0;
-          
-          if (movement == Entity.MOVE_WALK) {
-            mod = 1;
-          } else if (movement == Entity.MOVE_RUN || movement == Entity.MOVE_SKID) {
-            mod = 2;
-          } else if (movement == Entity.MOVE_JUMP) {
-            mod = 3;
-          }
-          
-          if ( mod == 0 )
-            return;
-          
-          toHit.addModifier(-1, "melee specialist");
-        }
-        
-        if (  (target instanceof Mech) && target.getCrew().getOptions().booleanOption("dodge_maneuver") && target.dodging ) {
-          toHit.addModifier(2, "target is dodging");
-        }
-      }
-     
-    /**
-     * Modifier to physical attack damage due to melee specialist
-     */
-      public static int modifyPhysicalDamagaForMeleeSpecialist(Entity entity) {
-        if ( !entity.getCrew().getOptions().booleanOption("melee_specialist") )
-          return 0;
-        
-        return 1;
-      }
-     
-    /**
      * Modifier to attacks due to target movement
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier
-            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP, game.getOptions().booleanOption("maxtech_target_modifiers") ); 
+            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP ); 
 
         // Did the target skid this turn?
         if ( entity.moved == Entity.MOVE_SKID ) {
@@ -4429,40 +3945,17 @@ public class Compute
      * Target movement modifer for the specified delta_distance
      */
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped) {
-    	return getTargetMovementModifier(distance, jumped, false);
-    }
-
-    public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean maxtech) {
         ToHitData toHit = new ToHitData();
       
-		if (!maxtech) {
-			if (distance >= 3 && distance <= 4) {
-	            toHit.addModifier(1, "target moved 3-4 hexes");
-	        } else if (distance >= 5 && distance <= 6) {
-	            toHit.addModifier(2, "target moved 5-6 hexes");
-	        } else if (distance >= 7 && distance <= 9) {
-	            toHit.addModifier(3, "target moved 7-9 hexes");
-	        } else if (distance >= 10) {
-	            toHit.addModifier(4, "target moved 10+ hexes");
-	        }
-	    } else {
-			if (distance >= 3 && distance <= 4) {
-			   toHit.addModifier(1, "target moved 3-4 hexes");
-			} else if (distance >= 5 && distance <= 6) {
-			   toHit.addModifier(2, "target moved 5-6 hexes");
-			} else if (distance >= 7 && distance <= 9) {
-			   toHit.addModifier(3, "target moved 7-9 hexes");
-			} else if (distance >= 10 && distance <= 13) {
-			   toHit.addModifier(4, "target moved 10-13 hexes");
-			} else if (distance >= 14 && distance <=18) {
-			   toHit.addModifier(5, "target moved 14-18 hexes");
-			} else if (distance >= 19 && distance <=24) {
-			   toHit.addModifier(6, "target moved 19-24 hexes");
-			} else if (distance >= 25) {
-			   toHit.addModifier(7, "target moved 25+ hexes");
-			}
+        if (distance >= 3 && distance <= 4) {
+            toHit.addModifier(1, "target moved 3-4 hexes");
+        } else if (distance >= 5 && distance <= 6) {
+            toHit.addModifier(2, "target moved 5-6 hexes");
+        } else if (distance >= 7 && distance <= 9) {
+            toHit.addModifier(3, "target moved 7-9 hexes");
+        } else if (distance >= 10) {
+            toHit.addModifier(4, "target moved 10+ hexes");
         }
-	    	
         if (jumped) {
             toHit.addModifier(1, "target jumped");
         }
@@ -4499,7 +3992,7 @@ public class Compute
         // you don't get terrain modifiers in midair
         // should be abstracted more into a 'not on the ground' flag for vtols and such
         if (entityTarget != null && entityTarget.isMakingDfa()) {
-            return null;
+            return new ToHitData();
         }
         
         ToHitData toHit = new ToHitData();
@@ -4578,7 +4071,7 @@ public class Compute
         
         float fDamage = 0.0f;
         WeaponType wt = (WeaponType)weapon.getType();
-        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+        if (wt.getDamage() == wt.DAMAGE_MISSILE) {
             if (weapon.getLinked() == null) return 0.0f;
             AmmoType at = (AmmoType)weapon.getLinked().getType();
             
@@ -4833,7 +4326,7 @@ public class Compute
     /**
      * Maintain backwards compatability.
      *
-     * @param   missiles - the <code>int</code> number of missiles in the pack.
+     * @param   missles - the <code>int</code> number of missles in the pack.
      */
     public static int missilesHit(int missiles) {
         return missilesHit(missiles, 0);
@@ -4843,9 +4336,9 @@ public class Compute
      * Roll the number of missiles (or whatever) on the missile
      * hit table, with the specified mod to the roll.
      *
-     * @param   missiles - the <code>int</code> number of missiles in the pack.
+     * @param   missles - the <code>int</code> number of missles in the pack.
      * @param   nMod - the <code>int</code> modifier to the roll for number
-     *          of missiles that hit.
+     *          of missles that hit.
      */
     public static int missilesHit(int missiles, int nMod) {
         int nRoll = d6(2) + nMod;
@@ -5084,10 +4577,10 @@ public class Compute
     /**
      * Returns the conciousness roll number
      * 
-     * @param hit - the <code>int</code> number of the crew hit currently
-     *    being rolled.
-     * @return  The <code>int</code> number that must be rolled on 2d6
-     *    for the crew to stay concious.
+     * @param	hit - the <code>int</code> number of the crew hit currently
+     *		being rolled.
+     * @return	The <code>int</code> number that must be rolled on 2d6
+     *		for the crew to stay concious.
      */
     public static int getConciousnessNumber(int hit) {
         switch(hit) {
@@ -5139,7 +4632,6 @@ public class Compute
                     vECMRanges.addElement( new Integer(other.getECMRange()) );
                 }
             }
-
         }
         
         // none?  get out of here
@@ -5515,9 +5007,9 @@ public class Compute
         // Check terrain.
         Hex hex = game.board.getHex( ae.getPosition() );
         if ( hex.contains( Terrain.WOODS ) ||
-       hex.contains( Terrain.ROUGH ) ||
-       hex.contains( Terrain.RUBBLE ) ||
-       hex.contains( Terrain.BUILDING ) ) {
+ 	     hex.contains( Terrain.ROUGH ) ||
+ 	     hex.contains( Terrain.RUBBLE ) ||
+ 	     hex.contains( Terrain.BUILDING ) ) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Not a clear or pavement hex." );
         }
@@ -5704,9 +5196,7 @@ public class Compute
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
-        
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
-        
+
         // If the target has Assault claws, give a 1 modifier.
         // We can stop looking when we find our first match.
         for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
@@ -5797,27 +5287,6 @@ public class Compute
     public static boolean isOdd( int number ) {
         return ( (number & 1) == 1 );
     }
-
-  /**
-   * Determines whether the attacker and the target are in the same
-   * building.  
-   * @return true if the target can and does occupy the same building,
-   * false otherwise. 
-   */
-  public static boolean isInSameBuilding(Game game, Entity attacker, Targetable target) {
-    if (!(target instanceof Entity)) {
-      return false;
-    }
-    Entity targetEntity = (Entity)target;
-    if (!isInBuilding(game, attacker) || !isInBuilding(game, targetEntity)) {
-      return false;
-    }
-    
-    Building attkBldg = game.board.getBuildingAt(attacker.getPosition());
-    Building targBldg = game.board.getBuildingAt(target.getPosition());
-    
-    return attkBldg.equals(targBldg);
-  }
 
     /**
      * Determine if the given unit is inside of a building at the given
@@ -5912,16 +5381,6 @@ public class Compute
 
         // Entity is not *inside* of the building.
         return false;
-    }
-    
-    public static Coords scatter(Coords coords) {
-    	int scatterDirection = d6(1) - 1;
-    	int scatterDistance = d6(1);
-    	
-    	for (int i = 0; i < scatterDistance; i++) {
-    		coords = coords.translated(scatterDirection);
-    	}
-    	return coords;
     }
 
 } // End public class Compute

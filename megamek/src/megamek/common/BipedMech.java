@@ -17,11 +17,11 @@
 package megamek.common;
 
 public class BipedMech extends Mech {
-    public static final String[] LOCATION_NAMES = {"Head",
+    private static final String[] LOCATION_NAMES = {"Head",
     "Center Torso", "Right Torso", "Left Torso",
     "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
     
-    public static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
+    private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
     "LT", "RA", "LA", "RL", "LL"};
     
     private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};
@@ -90,11 +90,7 @@ public class BipedMech extends Mech {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if(hipHits > 0) {
-               if (game.getOptions().booleanOption("maxtech_leg_damage")) {
-                 wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
-               } else {
-                 wmp = (hipHits == 1) ? (int) Math.ceil( (double) wmp / 2.0) : 0;
-               }
+                wmp = (hipHits == 1) ? (int)Math.ceil((double)wmp / 2.0) : 0;
             }
             wmp -= actuatorHits;
         }
@@ -134,7 +130,7 @@ public class BipedMech extends Mech {
      */
     public int getRunMPwithoutMASC() {
         if ( countDestroyedLegs() == 0 ) {
-            return super.getRunMPwithoutMASC();
+            return super.getRunMP();
         } else {
             return getWalkMP();
         }

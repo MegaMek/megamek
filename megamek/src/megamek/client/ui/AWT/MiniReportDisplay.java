@@ -18,7 +18,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Shows a Report, with an Okay Button
+ * Displays the info for a mech.  This is also a sort
+ * of interface for special movement and firing actions.
  */
 public class MiniReportDisplay extends Dialog 
     implements ActionListener
@@ -26,8 +27,8 @@ public class MiniReportDisplay extends Dialog
     private Button butOkay;
     private TextArea taData;
 
-    public MiniReportDisplay(Frame parent, String sReport) {
-        super(parent, "Turn Report", true);
+    public MiniReportDisplay(Frame f, String sReport) {
+        super(f, "Turn Report", true);
         
         taData = new TextArea(sReport, 20, 48);
         taData.setEditable(false);
@@ -37,10 +38,9 @@ public class MiniReportDisplay extends Dialog
         
         add(BorderLayout.CENTER, taData);
         add(BorderLayout.SOUTH, butOkay);
-        setSize(400, 300);
+        setSize(200, 300);
+        setLocation(100, 100);
         doLayout();
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     }
     
     public void actionPerformed(ActionEvent ae) {

@@ -16,8 +16,6 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import megamek.client.FiringDisplay;
-import megamek.client.UnitOverview;
 
 /**
  * You know what mechs are, silly.
@@ -26,7 +24,7 @@ public abstract class Mech
     extends Entity
     implements Serializable
 {
-    public static final int      NUM_MECH_LOCATIONS = 8;
+    private static final int      NUM_MECH_LOCATIONS = 8;
     
     // weight class limits
     public static final int        WEIGHT_LIGHT        = 35;
@@ -173,7 +171,7 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(StringBuffer phaseReport, MovePath md) {
+    public boolean checkForMASCFailure(StringBuffer phaseReport, MovementData md) {
         if (md.hasActiveMASC()) {
             boolean bFailure = false;
 
@@ -231,7 +229,7 @@ public abstract class Mech
     /**
      * Override Entity#newRound() method.
      */
-    public void newRound(int roundNumber) {
+    public void newRound() {
 
         // Walk through the Mech's miscellaneous equipment before
         // we apply our parent class' newRound() functionality
@@ -242,13 +240,13 @@ public abstract class Mech
 
             // Stealth can not be turned on if it's ECM is destroyed.
             if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
-                      m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
+                      m.getLinked().isDestroyed() ) {
                 m.setMode("Off");
             }
 
         } // Check the next piece of equipment.
 
-        super.newRound(roundNumber);
+        super.newRound();
         // If MASC was used last turn, increment the counter,
         // otherwise decrement.  Then, clear the counter 
         if (usedMASC) {
@@ -256,8 +254,8 @@ public abstract class Mech
         } else
             nMASCLevel = Math.max(0, nMASCLevel - 1);        
 
-  // Clear the MASC flag 
-  usedMASC = false;
+	// Clear the MASC flag 
+	usedMASC = false;
 
         setSecondaryFacing(getFacing());
         
@@ -312,17 +310,16 @@ public abstract class Mech
     /**
      * Return true is the location is a leg and has a hip crit
      */   
-    public boolean legHasHipCrit(int loc) {
+      public boolean legHasHipCrit(int loc) {
         if ( isLocationDestroyed(loc) )
-            return false;
+          return false;
           
         if ( locationIsLeg(loc) ) {
-            return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                     Mech.ACTUATOR_HIP, loc) == 0);
-        }
+          return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) == 0);
+                }
         
         return false;
-    }
+            }
     
     /**
      * Count non-hip leg actuator crits
@@ -400,7 +397,7 @@ public abstract class Mech
     public boolean hasArmedMASC() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
+            if (!m.isDestroyed() && m.getType() instanceof MiscType &&
                 m.getType().hasFlag(MiscType.F_MASC)
                 && m.curMode().equals("Armed")) {
                 return true;
@@ -438,18 +435,6 @@ public abstract class Mech
     public int getRunMPwithoutMASC() {
         return super.getRunMP();
     }
-
-    /**
-     * Returns this entity's running/flank mp as a string.
-     */
-    public String getRunMPasString() {
-        if (hasArmedMASC()) {
-            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
-        } else {
-            return Integer.toString(getRunMP());
-        }
-
-    }
     
     /**
      * This mech's jumping MP modified for missing jump jets
@@ -459,7 +444,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()) {
                 jump++;
             }
         }
@@ -493,7 +478,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()
             && locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
@@ -616,7 +601,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+            if (mounted.isDestroyed()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -660,7 +645,7 @@ public abstract class Mech
         int sinksUnderwater = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
+            if (mounted.isDestroyed() || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -839,26 +824,7 @@ public abstract class Mech
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
-    	return rollHitLocation(table, side, LOC_NONE, FiringDisplay.AIM_MODE_NONE);
-    }     
-     
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
-        
-        if ((aimedLocation != LOC_NONE) &&
-        	(aimingMode == FiringDisplay.AIM_MODE_TARG_COMP)) {
-            	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);        		
-        }
-        
-    	if ((aimedLocation != LOC_NONE) &&
-    		(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
-            roll = Compute.d6(2);
-            
-            if ((5 < roll) && (roll < 9)) {
-            	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
-            }
-    	}
-
         if(table == ToHitData.HIT_NORMAL) {
             roll = Compute.d6(2);
             try {
@@ -1655,8 +1621,7 @@ public abstract class Mech
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
         double xbv = 0.0;
-        if ((hasC3MM() && calculateFreeC3MNodes() < 2) ||
-            (hasC3M() && calculateFreeC3Nodes() < 3) ||
+        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) {
@@ -1731,12 +1696,12 @@ public abstract class Mech
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( char range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -1747,13 +1712,13 @@ public abstract class Mech
         // Determine the modifier based upon the range.
         else {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case Entity.RANGE_SHORT:
                 result = new TargetRoll( 0, "stealth" );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case Entity.RANGE_MEDIUM:
                 result = new TargetRoll( 1, "stealth" );
                 break;
-            case Compute.RANGE_LONG:
+            case Entity.RANGE_LONG:
                 result = new TargetRoll( 2, "stealth" );
                 break;
             default:
@@ -1766,29 +1731,5 @@ public abstract class Mech
         return result;
 
     } // End public TargetRoll getStealthModifier( char )
-
-    /**
-     * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     Entity#isSalvage()
-     */
-    public boolean isRepairable() {
-        // A Mech is repairable if it is salvageable,
-        // and its CT internals are not gone.
-        int loc_is = this.getInternal( Mech.LOC_CT );
-        return this.isSalvage() &&
-            (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
-    }
-
-    public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getModel();
-		
-        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
-            iconName = iconName.substring(0, iconName.length() - 1);
-        }
-    }
 
 }

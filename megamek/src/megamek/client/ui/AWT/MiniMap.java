@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -32,12 +32,6 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
     private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
     private final static Color HEAVY_WOODS = new Color(160,200,100);
-    
-    private final static int SHOW_NO_HEIGHT = 0;
-    private final static int SHOW_GROUND_HEIGHT = 1;
-    private final static int SHOW_BUILDING_HEIGHT = 2;
-    private final static int SHOW_TOTAL_HEIGHT = 3;
-  private final static int NBR_MODES = 3;
 
     private Image        m_mapImage;
     private BoardView1   m_bview;
@@ -59,29 +53,20 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private int[]        halfRoadWidthBySin30 = {0,0,1,1,1,2};
     private int[]        halfRoadWidth        = {0,0,1,2,3,3};
 
-  private int          heightDisplayMode = SHOW_NO_HEIGHT;
-  Coords        firstLOS;
-  Coords        secondLOS;
-  
+
     /**
      * Creates and lays out a new mech display.
      */
-    public MiniMap(Dialog d, Game g, BoardView1 bview) {
-        m_game = g;
+    public MiniMap(Dialog d, Client c, BoardView1 bview) {
+        m_game = c.game;
         m_bview = bview;
         m_dialog = d;
         initializeColors();
         m_game.board.addBoardListener(this);
+        c.addGameListener(this);
         addMouseListener(this);
         addComponentListener(this);
-        m_dialog.addComponentListener(this);
         m_dialog.setResizable(false);
-    }
-    
-    public MiniMap(Dialog d, Client c, BoardView1 bview) {
-        this (d, c.game, bview);
-        
-        c.addGameListener(this);
     }
 
     public synchronized void update(Graphics g) {
@@ -112,14 +97,14 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     }
 
     private void initializeMap() {
-    int requiredWidth, requiredHeight;
-    int currentHexSide = hexSide[zoom];
-    int currentHexSideByCos30 = hexSideByCos30[zoom];
-    int currentHexSideBySin30 = hexSideBySin30[zoom];
-    topMargin = margin;
-    leftMargin = margin;
-    requiredWidth = m_game.board.width*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
-    requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+		int requiredWidth, requiredHeight;
+		int currentHexSide = hexSide[zoom];
+		int currentHexSideByCos30 = hexSideByCos30[zoom];
+		int currentHexSideBySin30 = hexSideBySin30[zoom];
+		topMargin = margin;
+		leftMargin = margin;
+		requiredWidth = m_game.board.width*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
+		requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
         //m_dialog.show();
@@ -134,10 +119,6 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         if (m_mapImage == null) {
             return;
         }
-
-        if ( !m_dialog.isVisible() )
-          return;
-        
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
         g.setColor(Color.black);
@@ -147,23 +128,11 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
             roadHexIndexes.removeAllElements();
             for (int j = 0; j < m_game.board.width; j++) {
                 for (int k = 0; k < m_game.board.height; k++) {
-                  Hex h = m_game.board.getHex(j, k);
-                    g.setColor(terrainColor(h, j, k));
+                    g.setColor(terrainColor(m_game.board.getHex(j, k), j, k));
                     paintCoord(g, j, k, true);
                 }
             }
-            
-            if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
-            if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
-            
             if (! roadHexIndexes.isEmpty()) paintRoads(g);
-            
-            for (int j = 0; j < m_game.board.width; j++) {
-                for (int k = 0; k < m_game.board.height; k++) {
-                  Hex h = m_game.board.getHex(j, k);
-                    paintHeight(g, h, j , k);
-                }
-            }
 
             for (Enumeration enum = m_game.getEntities(); enum.hasMoreElements(); ) {
                 Entity e = (Entity)enum.nextElement();
@@ -209,98 +178,31 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
         //drawing "+" and "-" buttons
         if (! minimized){
-      g.setColor(Color.black);
-      g.drawLine(14 - 1,getSize().height - 14, 14 - 1,getSize().height);
-      g.drawLine(getSize().width - 14 - 1,getSize().height - 14, getSize().width - 14 - 1,getSize().height);
-      g.setColor(Color.green.darker());
-      g.drawLine(14,getSize().height - 14, 14,getSize().height);
-      g.drawLine(getSize().width - 14 ,getSize().height - 14, getSize().width - 14,getSize().height);
-      if (zoom == 0){
-        g.setColor(Color.gray.brighter());
-        } else {
-        g.setColor(Color.yellow);
-      }
-      g.fillRect(3,getSize().height - 14 + 6, 8, 2);
-      if (zoom == (hexSide.length - 1)){
-        g.setColor(Color.gray.brighter());
-        } else {
-        g.setColor(Color.yellow);
-      }
-      g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
-      g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
-
-      if (zoom > 2) {     
-        // Button for displying heights.
-        g.setColor(Color.black);
-        g.drawLine(28 - 1,getSize().height - 14, 28 - 1,getSize().height);
-        g.setColor(Color.green.darker());
-        g.drawLine(28, getSize().height - 14, 28, getSize().height);
-        g.setColor(Color.yellow);
-        String label;
-        switch (heightDisplayMode) {
-          case SHOW_NO_HEIGHT :
-            label = "N";
-            break;
-          case SHOW_GROUND_HEIGHT :
-            label = "G";
-            break;
-          case SHOW_BUILDING_HEIGHT :
-            label = "B";
-            break;
-          case SHOW_TOTAL_HEIGHT :
-            label = "T";
-            break;
-          default :
-            label = "";
-        }
-        g.drawString(label, 17, getSize().height - 14 + 12);
-      }
-      }
+			g.setColor(Color.black);
+			g.drawLine(14 - 1,getSize().height - 14, 14 - 1,getSize().height);
+			g.drawLine(getSize().width - 14 - 1,getSize().height - 14, getSize().width - 14 - 1,getSize().height);
+			g.setColor(Color.green.darker());
+			g.drawLine(14,getSize().height - 14, 14,getSize().height);
+			g.drawLine(getSize().width - 14 ,getSize().height - 14, getSize().width - 14,getSize().height);
+			if (zoom == 0){
+				g.setColor(Color.gray.brighter());
+		    } else {
+				g.setColor(Color.yellow);
+			}
+			g.fillRect(3,getSize().height - 14 + 6, 8, 2);
+			if (zoom == (hexSide.length - 1)){
+				g.setColor(Color.gray.brighter());
+		    } else {
+				g.setColor(Color.yellow);
+			}
+			g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
+			g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
+	    }
 
         g.setColor(oldColor);
 
     }
-  
-  private void paintHeight(Graphics g, Hex h, int x, int y) {
-    if (heightDisplayMode == SHOW_NO_HEIGHT) return;
-        if(zoom > 2){
-      int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-          int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
-          g.setColor(Color.white);
-          int height = 0;
-          if (h.getTerrain(Terrain.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
-            height = h.ceiling();
-          } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
-            height = h.floor();
-          } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-            height = (h.getTerrain(Terrain.BUILDING) != null) ? h.ceiling() : h.floor();
-          }
-          if (height != 0) {
-            g.drawString(height + "", baseX + 5, baseY + 5);
-          }
-        }
-  }
-  
-  private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-    int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-    int baseY = (2*y + 1 + x%2)* hexSideByCos30[zoom] + topMargin;
-    int [] xPoints = new int[6];
-    int [] yPoints = new int[6];
-    xPoints[0] = baseX;
-    yPoints[0] = baseY;
-    xPoints[1] = baseX + hexSideBySin30[zoom];
-    yPoints[1] = baseY + hexSideByCos30[zoom];
-    xPoints[2] = xPoints[1] + hexSide[zoom];
-    yPoints[2] = yPoints[1];
-    xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-    yPoints[3] = baseY;
-    xPoints[4] = xPoints[2];
-    yPoints[4] = baseY - hexSideByCos30[zoom];
-    xPoints[5] = xPoints[1];
-    yPoints[5] = yPoints[4];
-    g.setColor(c);
-    g.drawPolygon(xPoints,yPoints,6);
-  }
+
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
         int baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
@@ -321,7 +223,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         yPoints[5] = yPoints[4];
         g.fillPolygon(xPoints,yPoints,6);
         if (border) {
-          Color oldColor = g.getColor();
+            Color oldColor = g.getColor();
             g.setColor(oldColor.darker());
             g.drawPolygon(xPoints,yPoints,6);
             g.setColor(oldColor);
@@ -466,40 +368,6 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
                 break;
             }
         }
-
-    int r, g, b;
-    switch (terrain) {
-    case 0 :
-    case Terrain.WOODS :
-    case Terrain.ROUGH :
-    case Terrain.RUBBLE :
-    case Terrain.WATER :
-    case Terrain.PAVEMENT :
-      level = (int) Math.abs(x.floor());
-      // By experiment it is possible to make only 6 distinctive color steps
-      if (level > 10) level = 10;
-      r = terrColor.getRed()-level*15;
-      g = terrColor.getGreen()-level*15;
-      b = terrColor.getBlue()-level*15;
-      if (r < 0) r = 0;
-      if (g < 0) g = 0;
-      if (b < 0) b = 0;
-      return new Color(r, g, b);
-      
-    case Terrain.BUILDING :
-      level = (int) Math.abs(x.ceiling());
-      // By experiment it is possible to make only 6 distinctive color steps
-      if (level > 10) level = 10;
-      r = terrColor.getRed()-level*15;
-      g = terrColor.getGreen()-level*15;
-      b = terrColor.getBlue()-level*15;
-      if (r < 0) r = 0;
-      if (g < 0) g = 0;
-      if (b < 0) b = 0;
-      return new Color(r, g, b);
-      
-    }
-/*
         if (terrain < 5){
              level = (int) Math.abs(x.floor());
              // By experiment it is possible to make only 6 distinctive color steps
@@ -512,68 +380,34 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
              if (b < 0) b = 0;
              return new Color(r, g, b);
         }
-*/
             return terrColor;
     }
 
-  private Coords translateCoords(int x, int y) {
-    int gridX = (int) (x / (hexSideBySin30[zoom] + hexSide[zoom]));
-    int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
-    int gridY = (int) (y / (2 * hexSideByCos30[zoom]));
-    int restY = y % (2 * hexSideByCos30[zoom]);
-    
-    boolean evenColumn = (gridX & 1) == 0;
-    
-    if (restY < hexSideByCos30[zoom]) {
-      if (evenColumn) {
-        if (restX < ((restY - hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
-          gridX--;
-          gridY--;
-        }
-      } else {
-        if (restX < (restY * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
-          gridX--;
-        } else {
-          gridY--;
-        }
-      }
-    } else {
-      if (evenColumn) {
-        if (restX < ((restY- hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
-          gridX--;
-        }
-      } else {
-        if (restX < ((restY - 2 * hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
-          gridX--;
-        }
-      }
-    }
-/*       restX = hexSideBySin30[zoom] + hexSide[zoom] - restX;
+    private Coords translateCoords(int x, int y) {
+       int gridX = (int) (x / (hexSideBySin30[zoom] + hexSide[zoom]));
+       int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
+       int gridY = (int) (y / (2*hexSideByCos30[zoom]));
+       int restY = y % (2*hexSideByCos30[zoom]);
+       restX = hexSideBySin30[zoom] + hexSide[zoom] - restX;
        restY -= hexSideByCos30[zoom];
        if (hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridX ++;
        if (-hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridY --;
-*/
-    if (gridX < 0) gridX = 0;
-    if (gridY < 0) gridY = 0;
-    
-    return new Coords(gridX, gridY);
-  }
+       if (gridY <0)gridY = 0;
+       return new Coords(gridX, gridY);
+    }
 
-    private void processMouseClick(int x, int y, MouseEvent me){
+    private void processMouseClick(int x, int y){
         if (y > (getSize().height - 14)){
 
             if(x < 14){
-        if (zoom == 0) return;
-        zoom --;
-        initializeMap();
-      }else if (x < 28 && zoom > 2) {
-        heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
-        initializeMap();
-        }else if ( x> (getSize().width - 14)){
-        if (zoom == (hexSide.length - 1)) return;
-        zoom ++;
-        initializeMap();
-        } else{
+				if (zoom == 0) return;
+				zoom --;
+				initializeMap();
+		    }else if ( x> (getSize().width - 14)){
+				if (zoom == (hexSide.length - 1)) return;
+				zoom ++;
+				initializeMap();
+		    } else{
                 if (minimized){
                     //m_dialog.setResizable(true);
                     setSize(getSize().width, heightBufer);
@@ -587,17 +421,12 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
                 minimized = ! minimized;
                 m_dialog.pack();
                 drawMap();
-      }
+		  }
         }else{
             if ((x < margin) || (x > (getSize().width -  leftMargin)) || (y < topMargin) || (y > (getSize().height - topMargin - 14))){
                 return;
             } else {
-              if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-//              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
-                m_game.board.mouseAction(translateCoords(x - leftMargin, y - topMargin), Board.BOARD_HEX_CLICK, me.getModifiers());
-            } else {
-                  m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
-                }
+                m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
             }
        }
     }
@@ -621,32 +450,13 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     public void boardHexMoused(BoardEvent b) {
     }
     public void boardHexCursor(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
-        drawMap();
     }
     public void boardHexHighlighted(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
-        drawMap();
     }
     public void boardHexSelected(BoardEvent b) {
-      firstLOS = null;
-      secondLOS = null;
-        drawMap();
     }
     public void boardNewBoard(BoardEvent b) {
         initializeMap();
-    }
-    public void boardFirstLOSHex(BoardEvent b) {
-      secondLOS = null;
-      firstLOS = b.getCoords();
-        drawMap();
-    }
-    public void boardSecondLOSHex(BoardEvent b, Coords c) {
-      firstLOS = c;
-        secondLOS = b.getCoords();
-        drawMap();
     }
 
     public void boardChangedHex(BoardEvent b) {
@@ -669,7 +479,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
     public void mouseClicked(MouseEvent me) {
         // center main map on clicked area
-        processMouseClick(me.getX(), me.getY(), me);
+        processMouseClick(me.getX(), me.getY());
     }
     // end MouseListener implementation
 
@@ -681,7 +491,6 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     }
 
     public void componentShown(ComponentEvent ce) {
-      drawMap();
     }
 
     public void componentResized(ComponentEvent ce) {

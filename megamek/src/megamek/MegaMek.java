@@ -245,6 +245,7 @@ public class MegaMek
                 Client c = BotFactory.getBot(BotFactory.TEST, f, pa[x].getName());
                 c.connect("localhost", hd.port);
                 c.retrieveServerInfo();
+                ((BotClientWrapper)c).initialize();
                 //f.hide();
             }
         }

@@ -61,7 +61,7 @@ public class PhysicalDisplay
     private int               buttonLayout;
         
     // let's keep track of what we're shooting and at what, too
-    private int                cen;        // current entity number
+    private int                cen = Entity.NONE;        // current entity number
     private Targetable         target;        // target 
       
     // stuff we want to do
@@ -267,12 +267,16 @@ public class PhysicalDisplay
      */
     private void endMyTurn() {
         // end my turn, then.
+        if ( Game.PHASE_PHYSICAL == client.game.getPhase()
+            && Entity.NONE!=cen
+            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+            client.setDisplayVisible(false);
+        };
         cen = Entity.NONE;
         target(null);
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.setDisplayVisible(false);
         client.bv.clearMovementData();
         disableButtons();
     }

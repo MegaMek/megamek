@@ -46,7 +46,7 @@ public class DeploymentDisplay
     private Button            butUnload;
     private Button            butDone;
 
-    private int                cen;    // current entity number
+    private int               cen = Entity.NONE;    // current entity number
 
     // is the shift key held?
     private boolean            turnMode = false;
@@ -196,11 +196,15 @@ public class DeploymentDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
+        if ( Game.PHASE_DEPLOYMENT == client.game.getPhase()
+            && Entity.NONE!=cen
+            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+            client.setDisplayVisible(false);
+        };                
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.setDisplayVisible(false);
         client.bv.markDeploymentHexesFor(null);
         client.bv.repaint(100);
     }

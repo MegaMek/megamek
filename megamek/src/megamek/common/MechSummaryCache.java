@@ -12,11 +12,6 @@ import java.util.zip.ZipFile;
 import megamek.common.loaders.EntityLoadingException;
 
 import com.sun.java.util.collections.*;
-import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.HashSet;
-import com.sun.java.util.collections.Map;
-import com.sun.java.util.collections.Set;
-import com.sun.java.util.collections.Vector;
 
 /*
  * Setting this up as static so a client and server running in the same
@@ -24,53 +19,53 @@ import com.sun.java.util.collections.Vector;
  */
 
 public class MechSummaryCache {
-    
-    public static interface Listener {        
+
+    public static interface Listener {
         void doneLoading();
     }
-    
+
     private static final MechSummaryCache m_instance = new MechSummaryCache();
-            
+
     private static boolean initialized = false;
     private static boolean initializing = false;
     private static ArrayList listeners = new ArrayList();
-    
+
     public static synchronized MechSummaryCache getInstance() {
         if (!initialized && !initializing) {
             initializing = true;
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     m_instance.loadMechData();
-                 }
+                }
             });
             t.setPriority(Thread.NORM_PRIORITY - 1);
             t.start();
         }
         return m_instance;
     }
-    
+
     public static boolean isInitialized() {
         return initialized;
     }
-    
+
     public static void addListener(Listener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
-    
+
     public static void removeListener(Listener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
     }
-    
+
     private MechSummary[] m_data;
     private Map m_nameMap;
     private Hashtable hFailedFiles;
-	private int cacheCount;
-	private int fileCount;
-	private int zipCount;
+    private int cacheCount;
+    private int fileCount;
+    private int zipCount;
 
     private static final char SEPARATOR = '|';
     private static final File ROOT = new File(Settings.mechDirectory);
@@ -84,14 +79,14 @@ public class MechSummaryCache {
         block();
         return m_data;
     }
-    
+
     private static void block() {
         if (!initialized) {
             synchronized (m_instance) {
                 try {
                     m_instance.wait();
                 } catch (Exception e) {
-                    ;	
+                    ;
                 }
             }
         }
@@ -208,15 +203,17 @@ public class MechSummaryCache {
         System.out.println("");
         done();
     }
-    
+
     private void done() {
-		initialized = true;
-		synchronized (m_instance) {
-			m_instance.notifyAll();
-		}
-		for (Iterator i = listeners.iterator(); i.hasNext();) {
-		    ((Listener)i.next()).doneLoading();
-		}
+        initialized = true;
+        synchronized (m_instance) {
+            m_instance.notifyAll();
+        }
+        synchronized (listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+				((Listener)listeners.get(i)).doneLoading();
+            }
+        }
     }
 
     private void saveCache() throws Exception {
@@ -379,7 +376,7 @@ public class MechSummaryCache {
 
         return bNeedsUpdate;
     }
-    
+
     public int getCacheCount() {
         return cacheCount;
     }

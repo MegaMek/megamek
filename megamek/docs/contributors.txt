@@ -9,7 +9,7 @@ Lot of people have contributed to the MegaMek project.
 
   More Code:
      John Uckele <btzealot55@yahoo.com>
-     Derek Evans
+     Derek "deadeye00" Evans
      Nathan Rowden <njrkrynn@attbi.com>
      Brian Bucklew <brian.bucklew@scriptlogic.com>
      Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>

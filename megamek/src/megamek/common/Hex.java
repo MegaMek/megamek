@@ -133,6 +133,12 @@ public class Hex
             }
             
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
+
+            // Roads exit into pavement, too.
+            if ( cTerr.getType() == Terrain.ROAD &&
+                 other.contains(Terrain.PAVEMENT) ) {
+                cTerr.setExit( direction, true );
+            }
         }
         invalidateCache();
     }

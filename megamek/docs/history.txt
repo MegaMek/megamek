@@ -15,6 +15,7 @@ v0.29.60 (CVS)
 + Added "set_arty_player_homeedge" option, if set, all of the players' 
     artillery units will have their homeedge set to the deployment edge
     of the player, NW and NE are North, SW and SE are South.
++ Bug 1093079: accidental fall from above
 
 v0.29.59 (2005-01-02 3:00pm)
 + Bug 762436, 839980: Domino Effect not able to displace off the board

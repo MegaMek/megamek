@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 25th December 2004.  MegaMek Version 0.22.58. Best viewed in 1024x768.
+The Great MegaMek Feature list. 7th January 2004.  MegaMek Version 0.22.60. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -61,7 +61,7 @@ Movement (Actions)
 Movement (Stacking)		
 
 - Stacking			Yes		None
-- Accidental Violation		Yes 	None
+- Accidental Violation		Yes		None
 
 Movement (Pavement)
 
@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			Yes 	Fire declaration *is* as a point (report a bug if it's not).
+- Protomechs			Yes		Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -155,7 +155,7 @@ Buildings (Movement Effects)
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
-- Attacking Units inside Bldgs	Yes 	None
+- Attacking Units inside Bldgs	Yes		None
 - Combat Within Buildings	Partial		Needs to be debugged.
 - Collapse			Partial		Units may not climb buildings.
 
@@ -169,7 +169,7 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			Yes 	None
+- ProtoMechs			Yes		None
 
 ProtoMechs (Combat)
 
@@ -244,10 +244,10 @@ Special Case Rules (Miscellaneous)
 - Clearing Woods		Yes		None
 - Dropping Troops		No		None
 - Dumping Ammo			Yes		None
-- Ejecting			Yes 	Currently, MegaMek chooses which units will pick up
-                            an ejected pilot, giving preference to the units that
-                            are controlled by the player that is controlling the 
-                            ejected MechWarrior.
+- Ejecting			Yes		Currently, MegaMek chooses which units will pick up
+						an ejected pilot, giving preference to the units that
+						are controlled by the player that is controlling the 
+						ejected MechWarrior.
 - Improved Positions		No		Waiting on Hidden Units rule.
 - LRM Indirect Fire		Yes		To activate change LRM firing mode after designating a spotter.
 - Reversing Arms		Yes		None 
@@ -312,9 +312,7 @@ Special Case Rules (Underwater Operations)
 - Line Of Sight			Yes		None
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
-- Hull Integrity		Yes		Meks standing in Level 1 SHOULDN'T CHECK FOR BREACHES!!!
-                                                Select the "Check for leg breaches" option to override.
-
+- Hull Integrity		Yes		None
 Equipment
 
 - Active Probe			Yes		Hidden units is not implemented.

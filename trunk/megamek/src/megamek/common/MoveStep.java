@@ -303,13 +303,6 @@ public class MoveStep
     /**
      * @return
      */
-    public boolean isLastWasBackwards() {
-        return state.isLastWasBackwards();
-    }
-
-    /**
-     * @return
-     */
     public boolean isLegal() {
         return state.isLegal();
     }
@@ -452,13 +445,6 @@ public class MoveStep
      */
     public void setLastPos(Coords coords) {
         state.setLastPos(coords);
-    }
-
-    /**
-     * @param b
-     */
-    public void setLastWasBackwards(boolean b) {
-        state.setLastWasBackwards(b);
     }
 
     /**

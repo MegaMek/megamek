@@ -9639,6 +9639,27 @@ implements Runnable, ConnectionHandler {
         for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = entity.getCritical(loc, i);
             if (cs != null) {
+                // for every undamaged actuator destroyed by breaching,
+                // we make a PSR (see bug 1040858)
+                if (cs.isHittable()) {
+                    switch(cs.getIndex()) {
+                        case Mech.ACTUATOR_UPPER_LEG :
+                        case Mech.ACTUATOR_LOWER_LEG :
+                        case Mech.ACTUATOR_FOOT :
+                            // leg/foot actuator piloting roll
+                            game.addPSR( new PilotingRollData
+                                (entity.getId(), 1, "leg/foot actuator hit") );
+                            break;
+                        case Mech.ACTUATOR_HIP :
+                            // hip piloting roll (at +0, because we get the +2
+                            // anyway because the location is breached
+                            // phase report will look a bit weird, but the roll
+                            // is correct
+                            game.addPSR( new PilotingRollData
+                                (entity.getId(), 0, "hip actuator hit") );
+                            break;
+                    }
+                }
                 cs.setBreached(true);
             }
         }
@@ -9655,16 +9676,6 @@ implements Runnable, ConnectionHandler {
             if (entity.getLocationStatus(loc) == Entity.LOC_WET)
             	desc.append( " Pilot Drowned! ***" );
             else desc.append( " Pilot died to explosive decompression! ***");
-        }
-
-        //if it's a leg, apply PSRs for actuators
-        if (null != hex && entity.locationIsLeg(loc)) {
-            // Record the results to the phase report before resolving the PSR
-            phaseReport.append (desc.toString());
-            desc = new StringBuffer();
-            PilotingRollData rollTarget =
-                entity.checkWaterMove (hex.levelOf(Terrain.WATER));
-            doSkillCheckInPlace(entity, rollTarget);
         }
 
         // Set the status of the location.

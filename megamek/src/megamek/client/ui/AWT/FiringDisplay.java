@@ -910,7 +910,7 @@ public class FiringDisplay
     
     // board view listener 
 	public void finishedMovingUnits(BoardViewEvent b) {
-		if (client.isMyTurn()) {
+		if (client.isMyTurn() && ce() != null) {
 	        client.setDisplayVisible(true);
 			client.bv.centerOnHex(ce().getPosition());
 		}

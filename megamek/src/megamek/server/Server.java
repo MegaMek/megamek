@@ -6319,9 +6319,9 @@ implements Runnable, ConnectionHandler {
                     nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
                 }
             }
-            if (glancing) {
-                nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
-            }
+        }
+        if (glancing) {
+            nDamPerHit = (int)Math.floor((double)nDamPerHit/2.0);
         }
 
         // Some weapons double the number of hits scored.

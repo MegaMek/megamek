@@ -5744,11 +5744,13 @@ implements Runnable, ConnectionHandler {
           }
 
           if (jamCheck > 0 && wr.roll <= jamCheck) {
-              phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
-              weapon.setJammed(true);
               // ultras are destroyed by jamming
               if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                  phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+                  weapon.setJammed(true);
                   weapon.setHit(true);
+              } else {
+                  phaseReport.append("but the RAC jams and the shot is void.\n");
               }
               return true;
           }

@@ -37,8 +37,8 @@ public abstract class TurnOrdered implements Serializable
      * @return  the <code>int</code> number of "normal" turns this item
      * should take in a phase.
      */
-    public int getNormalTurns() {
-        return this.getMultiTurns() + this.getOtherTurns();
+    public int getNormalTurns(Game game) {
+        return this.getMultiTurns(game) + this.getOtherTurns();
     }
 
     public int getOtherTurns() {  
@@ -49,9 +49,9 @@ public abstract class TurnOrdered implements Serializable
 	return turns_even;       
     }
 
-    public int getMultiTurns() {
+    public int getMultiTurns(Game game) {
         return (int) Math.ceil( ((double)turns_multi) /
-                                ((double)Game.INF_AND_PROTOS_MOVE_MULTI) );
+                                ((double)game.getOptions().intOption("inf_proto_move_multi")) );
     }
 
     public void incrementOtherTurns() {
@@ -175,7 +175,7 @@ public abstract class TurnOrdered implements Serializable
     /**
      * This takes a Vector of TurnOrdered and generates a TurnVector. 
      */
-    public static TurnVectors generateTurnOrder( Vector v )
+    public static TurnVectors generateTurnOrder( Vector v, Game game )
     {
 	int[] num_even_turns = new int[v.size()];
 	int[] num_normal_turns = new int[v.size()];
@@ -207,7 +207,7 @@ public abstract class TurnOrdered implements Serializable
             order[orderedItems] = item;
 	    
             // Track even turns separately from the normal turns.
-            num_normal_turns[orderedItems] = item.getNormalTurns();
+            num_normal_turns[orderedItems] = item.getNormalTurns(game);
             num_even_turns[orderedItems] = item.getEvenTurns();
 
             // Keep a running total.

@@ -2161,11 +2161,11 @@ implements Runnable {
         if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
             // the mod is weight-based
             int nMod;
-            if (te.getWeight() <= Mech.WEIGHT_LIGHT) {
+            if (ae.getWeight() <= Mech.WEIGHT_LIGHT) {
                 nMod = 2;
-            } else if (te.getWeight() <= Mech.WEIGHT_MEDIUM) {
+            } else if (ae.getWeight() <= Mech.WEIGHT_MEDIUM) {
                 nMod = 1;
-            } else if (te.getWeight() <= Mech.WEIGHT_HEAVY) {
+            } else if (ae.getWeight() <= Mech.WEIGHT_HEAVY) {
                 nMod = 0;
             } else {
                 nMod = -1;

@@ -17,6 +17,7 @@ package megamek.common;
 public class PilotingRollData extends TargetRoll
 {
     private int entityId;
+    private boolean m_bCumulative = true;
     
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
@@ -35,6 +36,14 @@ public class PilotingRollData extends TargetRoll
     
     public int getEntityId() {
         return entityId;
+    }
+    
+    public void setCumulative(boolean b) {
+        m_bCumulative = b;
+    }
+    
+    public boolean isCumulative() {
+        return m_bCumulative;
     }
 
 }

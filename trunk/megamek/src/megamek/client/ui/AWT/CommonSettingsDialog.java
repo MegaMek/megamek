@@ -144,7 +144,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
             tempPanel.add( clickEdgeScroll );
 
         autoEdgeScroll
-            = new Checkbox( "Whenever you target near the edge of the map." );
+            = new Checkbox( "Whenever you left-click near the edge of the map." );
             tempPanel.add( autoEdgeScroll );
 
         panSetting = new Panel();
@@ -237,7 +237,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         ctlScroll.setState( Settings.ctlScroll );
         clickEdgeScroll.setState( Settings.clickEdgeScroll );
         autoEdgeScroll.setState( Settings.autoEdgeScroll );
-        scrollSensitivity.setText( Integer.toString(Settings.scrollSensitivity ) );
+        scrollSensitivity.setText( Integer.toString(Settings.getScrollSensitivity() ) );
 
 
         getFocus.setState( Settings.getFocus );
@@ -271,10 +271,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.ctlScroll         = ctlScroll.getState();
         Settings.clickEdgeScroll   = clickEdgeScroll.getState();
         Settings.autoEdgeScroll    = autoEdgeScroll.getState();
-        Settings.scrollSensitivity = Integer.parseInt(scrollSensitivity.getText());
+        Settings.setScrollSensitivity( Integer.parseInt(scrollSensitivity.getText()) );
 
-
-        Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
+        Settings.maxPathfinderTime = Integer.parseInt(maxPathfinderTime.getText());
 
         Settings.getFocus =       getFocus.getState();
         Settings.save();

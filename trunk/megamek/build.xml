@@ -33,6 +33,7 @@
   <property name="lib.tinyxml" value="TinyXML.jar"/>
   <property name="lib.ostermiller" value="Ostermiller.jar"/>
   <property name="lib.png" value="PngEncoder.jar"/>
+  <property name="lib.tabs" value="TabPanel.jar"/>
 
   <!-- Name of the target jarfile and the class containing the main-Method -->
   <property name="jarfile" value="MegaMek.jar"/>
@@ -42,7 +43,7 @@
   <property name="dataclasspath" value="."/>
   
   <!-- This is the classpath of the jar -->  
-  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller} ${lib.png}"/>
+  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller} ${lib.png} ${lib.tabs}"/>
 
   <!-- initializes system before build -->
   <target name="init">
@@ -61,6 +62,7 @@
             <pathelement location="${lib.tinyxml}"/>
             <pathelement location="${lib.ostermiller}"/>
             <pathelement location="${lib.png}"/>
+            <pathelement location="${lib.tabs}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -76,6 +78,7 @@
             <pathelement location="${lib.tinyxml}"/>
             <pathelement location="${lib.ostermiller}"/>
             <pathelement location="${lib.png}"/>
+            <pathelement location="${lib.tabs}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -103,7 +106,8 @@
            <pathelement location="${lib.tinyxml}"/>
            <pathelement location="${lib.ostermiller}"/>
            <pathelement location="${lib.png}"/>
-	    </classpath>
+           <pathelement location="${lib.tabs}"/>
+        </classpath>
      </java>
   </target>
 
@@ -151,6 +155,7 @@
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tinyxml}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.ostermiller}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.png}"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tabs}"/>
     
     <antcall target="cvsdev-build"/>
     
@@ -190,6 +195,7 @@
            <pathelement location="${cvsmaindir}/${lib.tinyxml}"/> 
            <pathelement location="${cvsmaindir}/${lib.ostermiller}"/> 
            <pathelement location="${cvsmaindir}/${lib.png}"/>
+           <pathelement location="${cvsmaindir}/${lib.tabs}"/>
         </classpath>
     </javac>
     

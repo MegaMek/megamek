@@ -172,6 +172,9 @@ public class Settings
     public static int mechDisplayArmorMediumFontSize = 10;
     public static int mechDisplayArmorLargeFontSize = 12;
 
+    /** Whether to display the Chat Lounge in tabs or not. */
+    public static boolean chatLoungeTabs = true;
+
     /** The system defaults for MegaMek settings. */
     private static Properties system = null;
 
@@ -503,6 +506,10 @@ scan:
                         st.nextToken();
                         serverlogMaxSize = (int)st.nval;
                     }
+                    else if(key.equals("chatloungetabs")) {
+                        st.nextToken();
+                        chatLoungeTabs = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -623,6 +630,8 @@ scan:
             cw.write("keepserverlog " + keepServerlog + "\r\n");
             cw.write("serverlogfilename " + serverlogFilename + "\r\n");
             cw.write("serverlogmaxsize " + serverlogMaxSize + "\r\n");
+
+            cw.write("chatloungetabs " + chatLoungeTabs + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

@@ -21,6 +21,8 @@ import java.util.Vector;
 
 import com.sun.java.util.collections.Iterator;
 
+import gov.nist.gui.TabPanel;
+
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotGUI;
 import megamek.client.bot.TestBot;
@@ -100,6 +102,7 @@ public class ChatLounge
     private Checkbox chkTons;
     private Panel panBVs;
 
+    private TabPanel panTabs;
     private Panel panMain;
 
     private Panel panUnits;
@@ -118,6 +121,9 @@ public class ChatLounge
         super();
         this.client = clientgui.getClient();
         this.clientgui = clientgui;
+
+        // Create a tabbed panel to hold our components.
+        panTabs = new TabPanel();
         
         // Create a new camo selection dialog.
         camoDialog = new CamoChoiceDialog(clientgui.getFrame());
@@ -173,7 +179,11 @@ public class ChatLounge
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panMain, gridbag, c);
+        if (Settings.chatLoungeTabs) {
+            addBag (panTabs, gridbag, c);
+        } else {
+            addBag(panMain, gridbag, c);
+        }
 
         //         c.weightx = 1.0;    c.weighty = 0.0;
         //         addBag(labStatus, gridbag, c);
@@ -505,10 +515,15 @@ public class ChatLounge
         gridbag.setConstraints(panUnits, c);
         panMain.add(panUnits);
 
-        c.weighty = 0.0;
-        gridbag.setConstraints(panTop, c);
-        panMain.add(panTop);
-
+        // Should we display the panels in tabs?
+        if (Settings.chatLoungeTabs) {
+            this.panTabs.add ("Select Units", panMain);
+            this.panTabs.add ("Configure", panTop);
+        } else {
+            c.weighty = 0.0;
+            gridbag.setConstraints(panTop, c);
+            panMain.add(panTop);
+        }
     }
 
     /**

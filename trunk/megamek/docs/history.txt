@@ -9,6 +9,7 @@ v0.29.67 (CVS)
 + Bug 1115574: Gravity doesn't change BV.
 + Bug 1120451: cannot use RMG when /data/boards directory is empty
 + Ontos, Rommel, Skulker, and Sturmfeur wrecks had non-transparent backgrounds
++ RFE 1151428: improved RAC jam report text.
 
 v0.29.66 (2005-02-21 7:45am)
 + Data 1100263: HMPRead Mixed Tech RAC Codes

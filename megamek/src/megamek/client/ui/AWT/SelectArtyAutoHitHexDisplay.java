@@ -140,7 +140,7 @@ public class SelectArtyAutoHitHexDisplay
         if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 6
              && clientgui.doYesNoDialog("Set designated artillery target",
                     "Do you want to set hex " + coords.getBoardNum() + " as a designated artillery target?\nAny artillery fire targeting this hex will automatically hit.")) {
-            artyAutoHitHexes.add(coords);
+            artyAutoHitHexes.addElement(coords);
             setArtyEnabled( 6 - artyAutoHitHexes.size());
             if (artyAutoHitHexes.size() == 6) {
                 setArtyEnabled(0);

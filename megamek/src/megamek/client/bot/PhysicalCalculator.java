@@ -47,13 +47,13 @@ public class PhysicalCalculator {
 						double rlarmor =
 							bestAttack.target.getArmor(Mech.LOC_RLEG) / bestAttack.target.getOArmor(Mech.LOC_RLEG);
 						switch (side) {
-							case CEntity.SIDE_FRONT :
+							case ToHitData.SIDE_FRONT :
 								mod = (llarmor + rlarmor) / 2;
 								break;
-							case CEntity.SIDE_LEFT :
+							case ToHitData.SIDE_LEFT :
 								mod = llarmor;
 								break;
-							case CEntity.SIDE_RIGHT :
+							case ToHitData.SIDE_RIGHT :
 								mod = rlarmor;
 								break;
 						}
@@ -61,22 +61,22 @@ public class PhysicalCalculator {
 						mod = 0.0;
 					} else if (bestAttack.target instanceof Tank) {
 						switch (side) {
-							case CEntity.SIDE_FRONT :
+							case ToHitData.SIDE_FRONT :
 								mod =
 									bestAttack.target.getArmor(Tank.LOC_FRONT)
 										/ bestAttack.target.getOArmor(Tank.LOC_FRONT);
 								break;
-							case CEntity.SIDE_LEFT :
+							case ToHitData.SIDE_LEFT :
 								mod =
 									bestAttack.target.getArmor(Tank.LOC_LEFT)
 										/ bestAttack.target.getOArmor(Tank.LOC_LEFT);
 								break;
-							case CEntity.SIDE_RIGHT :
+							case ToHitData.SIDE_RIGHT :
 								mod =
 									bestAttack.target.getArmor(Tank.LOC_RIGHT)
 										/ bestAttack.target.getOArmor(Tank.LOC_RIGHT);
 								break;
-							case CEntity.SIDE_REAR :
+							case ToHitData.SIDE_REAR :
 								mod =
 									bestAttack.target.getArmor(Tank.LOC_REAR)
 										/ bestAttack.target.getOArmor(Tank.LOC_REAR);

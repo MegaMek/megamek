@@ -36,6 +36,7 @@ public class GAAttack extends GA {
     protected Vector valid_target_indexes = null;
     protected boolean overheat_eligible = false;
     protected int firing_arc = 0;
+    double[] damages = null;
 
     public GAAttack(TestBot tb, CEntity attacker, Vector attack, int population, int generations, boolean isEnemy) {
         super(attack.size() + 1, population, .7, .05, generations, .4);
@@ -60,9 +61,7 @@ public class GAAttack extends GA {
     public int[] getResultChromosome() {
         return ((chromosomes[populationDim - 1]).genes);
     }
-
-    double[] damages = null;
-
+    
     public double getDamageUtility(CEntity to) {
         if (damages == null)
             damages = this.getDamageUtilities();
@@ -100,28 +99,28 @@ public class GAAttack extends GA {
         }
 
         for (int k = 0; k < this.target_array.size(); k++) {
-            double total_utility = 0;
             Entity en = (Entity) this.target_array.elementAt(k);
             CEntity enemy = null;
+            result[k] = 0;
             if ((enemy = (CEntity) this.targets.get(new Integer(en.getId()))) != null) {
-                if (enemy.possible_damage[ToHitData.SIDE_FRONT] > 0) {
-                    total_utility
-                        += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_FRONT], CEntity.SIDE_FRONT);
-                } else if (enemy.possible_damage[ToHitData.SIDE_REAR] > 0) {
-                    total_utility
-                        += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_REAR], CEntity.SIDE_REAR);
-                } else if (enemy.possible_damage[ToHitData.SIDE_LEFT] > 0) {
-                    total_utility
-                        += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_LEFT], CEntity.SIDE_LEFT);
-                } else if (enemy.possible_damage[ToHitData.SIDE_RIGHT] > 0) {
-                    total_utility
-                        += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_RIGHT], CEntity.SIDE_RIGHT);
-                }
-                enemy.resetPossibleDamage();
+                result[k] = getThreadUtility(enemy);
             }
-            result[k] = total_utility;
+            enemy.resetPossibleDamage();
         }
         return result;
+    }
+
+    private double getThreadUtility(CEntity enemy) {
+        if (enemy.possible_damage[ToHitData.SIDE_FRONT] > 0) {
+            return enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_FRONT], ToHitData.SIDE_FRONT);
+        } else if (enemy.possible_damage[ToHitData.SIDE_REAR] > 0) {
+            return enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_REAR], ToHitData.SIDE_REAR);
+        } else if (enemy.possible_damage[ToHitData.SIDE_LEFT] > 0) {
+            return enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_LEFT], ToHitData.SIDE_LEFT);
+        } else if (enemy.possible_damage[ToHitData.SIDE_RIGHT] > 0) {
+            return enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_RIGHT], ToHitData.SIDE_RIGHT);
+        }
+        return 0;
     }
 
     protected double getFitness(int iChromIndex) {
@@ -155,7 +154,7 @@ public class GAAttack extends GA {
                             mod = 0;
                         } else {
                             mod = a.primary_odds; //low percentage shots will
-												  // be frowned upon
+                            // be frowned upon
                         }
                     }
                 }
@@ -171,26 +170,13 @@ public class GAAttack extends GA {
         com.sun.java.util.collections.Iterator j = targets.values().iterator();
         while (j.hasNext()) {
             CEntity enemy = (CEntity) j.next();
-            if (enemy.possible_damage[ToHitData.SIDE_FRONT] > 0) {
-                total_utility
-                    += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_FRONT], CEntity.SIDE_FRONT);
-            } else if (enemy.possible_damage[ToHitData.SIDE_REAR] > 0) {
-                total_utility += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_REAR], CEntity.SIDE_REAR);
-            } else if (enemy.possible_damage[ToHitData.SIDE_LEFT] > 0) {
-                total_utility += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_LEFT], CEntity.SIDE_LEFT);
-            } else if (enemy.possible_damage[ToHitData.SIDE_RIGHT] > 0) {
-                total_utility
-                    += enemy.getThreatUtility(enemy.possible_damage[ToHitData.SIDE_RIGHT], CEntity.SIDE_RIGHT);
-            }
+            total_utility+=getThreadUtility(enemy);
             enemy.resetPossibleDamage();
         }
         //should be moved
         int capacity = attacker.entity.getHeatCapacityWithWater();
         int currentHeat = attacker.entity.heatBuildup + attacker.entity.heat;
         int overheat = currentHeat + heat_total - capacity;
-        //need to determine the situation -- readlining will help in certian
-		// situations
-        //bonus for cooling down
         if (attacker.entity.heat > 0 && overheat < 0) {
             //always perfer smaller heat numbers
             total_utility -= attacker.bv / 1000 * overheat;
@@ -227,16 +213,16 @@ public class GAAttack extends GA {
                 total_utility -= attacker.bv / 5;
             }
             total_utility -= overheat / 100; //small preference for less
-											 // overheat opposed to more
+            // overheat opposed to more
         }
         return total_utility;
     }
 
     /**
-	 * since the low fitness members have the least chance of getting selected,
-	 * but the highest chance of mutation, this is where we use the primary
-	 * target heuristic to drive convergence
-	 */
+     * since the low fitness members have the least chance of getting selected,
+     * but the highest chance of mutation, this is where we use the primary
+     * target heuristic to drive convergence
+     */
     protected void doRandomMutation(int iChromIndex) {
         Chromosome c1 = this.chromosomes[iChromIndex];
         // skip if it's an empty chomosome
@@ -310,8 +296,7 @@ public class GAAttack extends GA {
                     if (iGene + 1 == i)
                         cv.genes[iGene] = 0; //fire
                     else
-                        cv.genes[iGene] = ((Vector) (attack.elementAt(iGene))).size() - 1; //don't
-																						   // fire
+                        cv.genes[iGene] = ((Vector) (attack.elementAt(iGene))).size() - 1; 
                 }
             }
             cv.genes[chromosomeDim - 1] =
@@ -320,6 +305,7 @@ public class GAAttack extends GA {
             this.chromosomes[i].fitness = getFitness(i);
         }
     }
+    
     public int getFiringArc() {
         return firing_arc;
     }

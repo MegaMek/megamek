@@ -7904,9 +7904,8 @@ implements Runnable, ConnectionHandler {
                 crew.setRollsNeeded( crew.getRollsNeeded() + damage );
             } else if ( !crew.isDoomed() ) {
                 crew.setDoomed(true);
-                desc.append( "\n*** " )
-                    .append( en.getDisplayName() )
-                    .append( " PILOT KILLED! ***" );
+                desc.append( "\n" )
+                    .append( destroyEntity(en, "pilot death", true) );
             }
         }
 
@@ -8681,9 +8680,8 @@ implements Runnable, ConnectionHandler {
                     if ( Pilot.DEATH > en.getCrew().getHits() ) {
                         // boink!
                         en.getCrew().setDoomed(true);
-                        desc.append( "\n*** " )
-                            .append( en.getDisplayName() )
-                            .append( " PILOT KILLED! ***" );
+                        desc.append( "\n" )
+                            .append( destroyEntity(en, "pilot death", true) );
                     }
                     break;
                 case Mech.SYSTEM_ENGINE :
@@ -8862,9 +8860,8 @@ implements Runnable, ConnectionHandler {
                 // Don't kill a pilot multiple times.
                 if ( Pilot.DEATH > en.getCrew().getHits() ) {
                     en.crew.setDoomed(true);
-                    desc.append( "\n*** " )
-                        .append( en.getDisplayName() )
-                        .append( " PILOT KILLED! ***" );
+                    desc.append( "\n" )
+                        .append( destroyEntity(en, "pilot death", true) );
                 }
                 return desc.toString();
             } else {

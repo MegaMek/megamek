@@ -76,15 +76,18 @@ FUTURE VERSION PLANS:
 v 0.25
 - option to start dedicated server from command line
 ? go prone
-? aim
 - teams
 
 VERSION HISTORY:
 ----------------
 v next
 + hitting esc or next unit after a torso twist now cancels the torso twist
-+ intact mechs with dead pilots are now removed from the map
++ 537226: intact mechs with dead pilots are now removed from the map
 + locations can't be destroyed twice (preventing falls from destroyed leg hits)
++ skip button works in firing phase
++ 538581: charge/dfa on a destroyed target no longer locks game
++ 536097: mechs need both arms in order to fire while prone.  (dumb rule)
++ numbers for starting position replaced by compass directions
 
 v 0.24.6 (04-07-02, 1:18pm)
 + refined command interface.  type "/help" for a list.
@@ -105,10 +108,10 @@ v 0.24.6 (04-07-02, 1:18pm)
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map
-+ prone mechs are at the terrain elevation for LOS, not 1 higher
++ 536097: prone mechs are at the terrain elevation for LOS, not 1 higher
 + hex graphics brighter, flatter, renamed; added reddish sinkhole hexes
 + some changes & fixes to maps
-+ attacker being prone now cancels charge instead of auto-misses
++ 536104: attacker being prone now cancels charge instead of auto-misses
 + fixed a bug where a mech would fail to get up but move anyhow
 + fixed a bug where a leg destroyed critical would not cause a mech to fall
 + added MegaMek.cfg option to set map text color

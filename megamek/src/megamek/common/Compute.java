@@ -1082,15 +1082,12 @@ public class Compute
         // attacker prone
         if (ae.isProne()) {
             // must have an arm intact
-            if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and both arms destroyed");
+            if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed");
             }
             // arm-mounted weapons have addidional trouble
             if (mounted.getLocation() == Mech.LOC_RARM || mounted.getLocation() == Mech.LOC_LARM) {
                 int otherArm = mounted.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
-                if (ae.isLocationDestroyed(otherArm)) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and opposite arm destroyed");
-                }
                 // check previous attacks for weapons fire from the other arm
                 for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
                     Object o = i.nextElement();

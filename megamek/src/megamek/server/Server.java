@@ -1956,33 +1956,33 @@ public class Server
         
         final int direction = ae.getFacing();
 
+        // entity isn't charging any more
+        ae.setCharging(false);
+
         if (lastEntityId != caa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
         }
 
-        phaseReport.append("    Charging " + te.getDisplayName());
-        
-        // entity isn't charging any more
-        ae.setCharging(false);
-
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
+            phaseReport.append("    Charge cancelled as the target has been destroyed.\n");
             return;
         }
 
+        // attacker fell down?
+        if (ae.isProne()) {
+            phaseReport.append("    Charge cancelled as the attacker has fallen.\n");
+            return;
+        }
+
+        phaseReport.append("    Charging " + te.getDisplayName());
+        
         // target still in the same position?
         if (!te.getPosition().equals(caa.getTargetPos())) {
             phaseReport.append(" but the target has moved.\n");
             return;
         }
         
-        // attacker fell down?
-        if (ae.isProne()) {
-            phaseReport.append(" but attacker has fallen.\n");
-            return;
-        }
-
         // compute to-hit
         ToHitData toHit = Compute.toHitCharge(game, caa);
 
@@ -2062,16 +2062,16 @@ public class Server
             phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
         }
 
-        phaseReport.append("    Attempting death from above on " + te.getDisplayName());
-
         // entity isn't charging any more
         ae.setMakingDfa(false);
 
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
+            phaseReport.append("    Death from above cancelled as the target has been destroyed.\n");
             return;
         }
+
+        phaseReport.append("    Attempting death from above on " + te.getDisplayName());
 
         // target still in the same position?
         if (!te.getPosition().equals(daa.getTargetPos())) {
@@ -2086,10 +2086,10 @@ public class Server
         int roll;
         if (ae.isProne()) {
             roll = -12;
-            phaseReport.append("; but the attacker is prone : ");
+            phaseReport.append(" but the attacker is prone : ");
         } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
-            phaseReport.append(", but the attack is impossible (" + toHit.getDesc() + ") : ");
+            phaseReport.append(" but the attack is impossible (" + toHit.getDesc() + ") : ");
         } else {
             // roll
             roll = Compute.d6(2);

@@ -25,6 +25,8 @@ import megamek.common.*;
 public class ChatLounge extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardListener, GameListener
 {
+    private static final String startNames[] = {"NW", "N", "NE", "E", "SE", "S", "SW", "W"};
+    
     // parent Client
     private Client client;
         
@@ -85,7 +87,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         choColor = new Choice();
         choColor.addItemListener(this);
                 
-        refreshColors();
+        setupColors();
                 
         choTeam = new Choice();
         choTeam.addItem("Not Functional");
@@ -305,7 +307,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         
         butPos = new Button[8];
         for (int i = 0; i < 8; i++) {
-            butPos[i] = new Button(new Integer(i).toString());
+            butPos[i] = new Button(startNames[i]);
             butPos[i].setActionCommand("starting_pos_" + i);
             butPos[i].addActionListener(this);
         }
@@ -398,19 +400,26 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             Player player = (Player)i.nextElement();
             if(player != null) {
-                lisStarts.add(player.getName() + " : " + player.getStartingPos());
+                lisStarts.add(player.getName() + " : " + startNames[player.getStartingPos()]);
             }
         }
     }
     
     /**
-     * Refresh the color choice box
+     * Setup the color choice box
      */
-    private void refreshColors() {
+    private void setupColors() {
         choColor.removeAll();
         for(int i = 0; i < Player.colorNames.length; i++) {
             choColor.add(Player.colorNames[i]);
         }
+        choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
+    }
+  
+    /**
+     * Refresh the color choice box
+     */
+    private void refreshColors() {
         choColor.select(Player.colorNames[client.getLocalPlayer().getColorIndex()]);
     }
   
@@ -458,14 +467,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ev) {
-        if (ev.getSource().equals(choColor)) {
-            for (int i = 0; i < Player.colorNames.length; i++) {
-                if (Player.colorNames[i].equalsIgnoreCase(choColor.getSelectedItem())) {
-                    changeColor(i);
-                }
-            }
-            refreshColors();
-        } else if (ev.getSource().equals(chkBV) || ev.getSource().equals(chkTons)) {
+        if (ev.getSource() == choColor) {
+            changeColor(choColor.getSelectedIndex());
+        } else if (ev.getSource() ==chkBV || ev.getSource() == chkTons) {
             refreshBVs();
         }
         
@@ -476,10 +480,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("ready")) {
+        if (ev.getSource() == butReady) {
             client.sendReady(!client.getLocalPlayer().isReady());
             refreshReadyButton();
-        } else if (ev.getActionCommand().equalsIgnoreCase("load_mech")) {
+        } else if (ev.getSource() == butLoad) {
             // add (load) mech
             FileDialog fd = new FileDialog(client.frame, 
                                            "Select a .mep file...",
@@ -505,7 +509,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     client.sendAddEntity(mech);
                 }
             }
-        } else if (ev.getActionCommand().equalsIgnoreCase("custom_mech")) {
+        } else if (ev.getSource() == butCustom) {
             if (lisEntities.getSelectedIndex() != -1) {
                 Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
                 boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
@@ -518,12 +522,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                     client.sendUpdateEntity(entity);
                 }
             }
-        } else if (ev.getActionCommand().equalsIgnoreCase("delete_mech")) {
+        } else if (ev.getSource() == butDelete) {
             // delete mech
             if (lisEntities.getSelectedIndex() != -1) {
                 client.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
             }
-        } else if (ev.getActionCommand().equalsIgnoreCase("change_board")) {
+        } else if (ev.getSource() == butChangeBoard) {
             // board settings 
             client.getBoardSelectionDialog().update(client.getMapSettings(), true);
             client.getBoardSelectionDialog().show();

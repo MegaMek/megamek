@@ -24,15 +24,18 @@ import java.util.*;
 public final class Player
     implements Serializable
 {
-    public static int        colorRGBs[] = {0x8393CA, 0x00BFF3, 0xCCCCCC, 0x3CB878,
-                                           0x998675, 0xFBAF5D, 0xF49AC1, 0xFFFFFF, 
-                                           0xFFF568};
-    public static String    colorNames[] = {"Blue", "Cyan", "Gray", "Green",
-                                            "Brown", "Orange", "Pink", 
-                                            "White", "Yellow"};
+    public static final int     TEAM_NONE = 0;
+    
+    public static final int     colorRGBs[] = {0x8393CA, 0x00BFF3, 0xCCCCCC, 
+    0x3CB878, 0x998675, 0xFBAF5D, 0xF49AC1, 0xFFFFFF, 0xFFF568};
+    
+    public static final String  colorNames[] = {"Blue", "Cyan", "Gray", 
+    "Green", "Brown", "Orange", "Pink", "White", "Yellow"};
 
     private String          name = "unnamed";
     private int             id;
+    
+    private int             team = TEAM_NONE;
 
     private boolean         ready = false;
     private boolean         ghost = false; // disconnected player
@@ -40,7 +43,7 @@ public final class Player
     private int             colorIndex = 0;
 
     // these are game-specific, and maybe should be seperate from the player object
-    private Vector             initVector = new Vector();
+    private Vector          initVector = new Vector();
     private int             order = 0;
     private int             startingPos = 0;
         
@@ -59,6 +62,14 @@ public final class Player
   
     public int getId() {
         return id;
+    }
+  
+    public int getTeam() {
+        return team;
+    }
+  
+    public void setTeam(int team) {
+        this.team = team;
     }
   
     public boolean isReady() {
@@ -145,7 +156,7 @@ public final class Player
     }
     
     public boolean isEnemyOf(Player other) {
-        return id != other.getId();
+        return id != other.getId() && team != TEAM_NONE && team != other.getTeam();
     }
     
     /**

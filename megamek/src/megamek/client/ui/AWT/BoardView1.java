@@ -92,7 +92,7 @@ public class BoardView1
 
     // player-tinted mech image cache
     private Image[][]            imageCache = new Image[PIC_MAX][6]; // [type][facing]
-    private Image[][][]            tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
+    private Image[][][]          tintCache = new Image[PIC_MAX][6][Player.colorRGBs.length]; // [type][facing][color]
     
     // polygons for a few things
     private Polygon                hexPoly;

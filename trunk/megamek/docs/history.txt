@@ -129,6 +129,7 @@ v 0.28.14-dev
 + 706086: Included Blazindizzy's images.
 + 723157: Skimmer file updated.
 + Allow a player to configure a log to track Mek Hit Location rolls.
++ clients are now aware of who wins or loses in the victory phase
 
 v 0.28.13 (04-12-03, 5:30pm)
 + Players aren't allowed to target infantry with Inferno rounds.

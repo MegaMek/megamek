@@ -134,7 +134,7 @@ public class Client extends Panel
             File file = new File( Settings.soundBingFilename );
             bingClip = Applet.newAudioClip(file.toURL());
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             ex.printStackTrace();
         }
 
@@ -158,7 +158,7 @@ public class Client extends Panel
             File file = new File( Settings.soundBingFilename );
             bingClip = Applet.newAudioClip(file.toURL());
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             ex.printStackTrace();
         }
 

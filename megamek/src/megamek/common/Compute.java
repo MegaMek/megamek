@@ -2669,6 +2669,14 @@ public class Compute
     public static int getDfaDamageFor(Entity entity) {
         return (int)Math.ceil((entity.getWeight() / 10.0) * 3.0);
     }
+    
+    /**
+     * Damage that a mech does with a accidental fall from above.
+     */
+    
+    public static int getAffaDamageFor(Entity entity) {
+    	return (int)entity.getWeight() / 10;
+    }
 
     /**
      * Damage done to a mech after a successful DFA.

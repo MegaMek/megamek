@@ -251,6 +251,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
                         atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
                 }
+                
+                // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
+                if (!client.game.getOptions().booleanOption("is_eq_limits")
+                    && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
+                    && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
+                    bTechMatch = true;
+                }
 
                 if (!client.game.getOptions().booleanOption("minefields") &&
                 	AmmoType.canDeliverMinefield(atCheck)) {

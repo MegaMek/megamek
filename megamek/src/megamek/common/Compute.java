@@ -424,7 +424,7 @@ public class Compute
             }
             
             // check if this movement is illegal for reasons other than points
-            if (!isMovementPossible(game, entityId, lastPos, curPos, moveType, step.getType())) {
+            if (!isMovementPossible(game, entityId, lastPos, curPos, moveType, step.getType(), firstStep)) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
             
@@ -573,7 +573,7 @@ public class Compute
     public static boolean isMovementPossible(Game game, int entityId, 
                                              Coords src, Coords dest,
                                              int entityMoveType,
-                                             int stepType) {
+                                             int stepType, boolean firstStep) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
@@ -596,7 +596,7 @@ public class Compute
         }
         // check elevation difference > 2
         if (entityMoveType != Entity.MOVE_JUMP 
-            && Math.abs(srcHex.floor() - destHex.getElevation()) > 2) {
+            && Math.abs(srcHex.floor() - destHex.floor()) > 2) {
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
@@ -606,7 +606,7 @@ public class Compute
         }
         // can't run into water
         if (entityMoveType == Entity.MOVE_RUN 
-            && destHex.levelOf(Terrain.WATER) > 0) {
+            && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
             return false;
         }
         // can't jump out of water

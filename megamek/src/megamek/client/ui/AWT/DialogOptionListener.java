@@ -25,5 +25,6 @@ import megamek.common.options.GameOption;
 public interface DialogOptionListener
 {
   public void showDescFor(GameOption option);
+  public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state);
 }
 

@@ -20,13 +20,18 @@ import java.awt.*;
 /**
  * This class calculates and stores points of polygon shaped as straight arrow.
  * Minimum required arguments are two Point elements - start and end of arrow.
+ *
  * Special feature of this class is last boolean argument. It defines if it will
  * be full shaped arrow or left half only.
+ * Private Polygon hotArea contains same points as an arrow itself except when arrow
+ * is changed to halved hotArea stays if full arrow shape.
+ * It was done in order to get only one tooltip for two arrows in case of mutual attack.
  *
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon{
     private int[] pointX, pointY;
+    private Polygon hotArea = new Polygon();
     private Point startPoint;
     private Point endPoint;
     private int headLength = 30;
@@ -54,7 +59,7 @@ public class StraightArrowPolygon extends Polygon{
         this.halved = halved;
         buildPointsArrays();
     }
-        
+
     /** Short constructor. Two points and boolean value. */
     public StraightArrowPolygon(Point startPoint, Point endPoint, boolean halved){
         super();
@@ -105,6 +110,31 @@ public class StraightArrowPolygon extends Polygon{
            this.addPoint( (int) Math.round(endPoint.x - headLength*cos - arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin + arrowWidthAtHead*cos));
            this.addPoint( (int) Math.round(startPoint.x - tailWidth*sin - tailLength*cos), (int) Math.round(startPoint.y + tailWidth*cos - tailLength*sin));
        }
+       hotArea.addPoint(startPoint.x ,startPoint.y);
+       hotArea.addPoint( (int) Math.round(startPoint.x + tailWidth*sin - tailLength*cos),(int) Math.round(startPoint.y - tailWidth*cos - tailLength*sin));
+       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos + arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin - arrowWidthAtHead*cos));
+       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos + headWidth*sin),(int) Math.round(endPoint.y - headLength*sin - headWidth*cos));
+       hotArea.addPoint( endPoint.x, endPoint.y);
+       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos - headWidth*sin) ,(int) Math.round( endPoint.y - headLength*sin + headWidth*cos));
+       hotArea.addPoint( (int) Math.round(endPoint.x - headLength*cos - arrowWidthAtHead*sin), (int) Math.round(endPoint.y - headLength*sin + arrowWidthAtHead*cos));
+       hotArea.addPoint( (int) Math.round(startPoint.x - tailWidth*sin - tailLength*cos), (int) Math.round(startPoint.y + tailWidth*cos - tailLength*sin));
+   }
+
+   public boolean contains(int x, int y){
+   	   return hotArea.contains(x, y);
+   }
+
+   public boolean contains(Point p){
+   	   return hotArea.contains(p);
+   }
+
+   public boolean contains(double x, double y){
+   	   return hotArea.contains(x, y);
+   }
+
+   public void translate(int deltaX, int deltaY){
+   	   super.translate(deltaX, deltaY);
+   	   hotArea.translate(deltaX, deltaY);
    }
 
 }

@@ -6,6 +6,7 @@ v0.29.72 (CVS)
     can't start new game.
 + Patch 1172207, Bug 1057403: dead pilots taking damage.
 + RFE 1070596: adjust default facing in deployment phase for starting position.
++ RFE 994367: show heat generated for each weapon in unit selection dialog.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

@@ -1350,8 +1350,7 @@ public class Compute
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
         boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
-            && weapon.curMode().equals("Indirect")
-            && game.getOptions().booleanOption("indirect_fire");
+            && weapon.curMode().equals("Indirect");
         
         ToHitData toHit = null;
         
@@ -1460,6 +1459,11 @@ public class Compute
         //      above the hex, standing on an elevation 1 level higher than
         //      the target hex or the elevation of the hex the attacker is
         //      in, whichever is higher."
+        
+        // check if indirect fire is valid
+        if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Indirect fire option not enabled");
+        }
         
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;

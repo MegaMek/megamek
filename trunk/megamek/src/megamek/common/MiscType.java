@@ -258,6 +258,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = "ISCASE";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
+        misc.hittable = false;
         misc.flags |= F_CASE;
         misc.bv = 0;
         
@@ -273,6 +274,7 @@ public class MiscType extends EquipmentType {
         misc.mtfName = "CLCASE";
         misc.tonnage = 0.0f;
         misc.criticals = 0;
+        misc.hittable = false;
         misc.flags |= F_CASE;
         misc.bv = 0;
         

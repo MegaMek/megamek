@@ -46,8 +46,9 @@ public class EquipmentType {
     protected int       criticals = 0;
     
     protected boolean   explosive = false;
+    protected boolean   hittable = true; // if false, reroll critical hits
     protected int       toHitModifier = 0;
-    
+
     protected int       flags = 0;
       
     protected float     bv = 0; // battle value point system
@@ -93,6 +94,10 @@ public class EquipmentType {
     
     public boolean isExplosive() {
         return explosive;
+    }
+    
+    public boolean isHittable() {
+        return hittable;
     }
     
     public int getToHitModifier() {

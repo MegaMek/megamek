@@ -3079,13 +3079,13 @@ public boolean isPassworded() {
         }
         else {
             // transfer criticals, if needed
-            if (hits > 0 && !en.hasHitableCriticals(loc)
+            if (hits > 0 && !en.hasHittableCriticals(loc)
                     && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
                 loc = en.getTransferLocation(new HitData(loc)).getLocation();
                 desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
     
                 // may need to transfer crits twice--if you are shooting a CDA-3C Cicada and get lucky on the left arm two turns in a row
-                if (hits > 0 && !en.hasHitableCriticals(loc)
+                if (hits > 0 && !en.hasHittableCriticals(loc)
                         && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
                     loc = en.getTransferLocation(new HitData(loc)).getLocation();
                     desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
@@ -3093,13 +3093,13 @@ public boolean isPassworded() {
             }
             // roll criticals
             while (hits > 0) {
-                if (en.getHitableCriticals(loc) <= 0) {
+                if (en.getHittableCriticals(loc) <= 0) {
                     desc += "\n            Location empty.";
                     break;
                 }
                 int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
                 CriticalSlot cs = en.getCritical(loc, slot);
-                if (cs == null || !cs.isHitable()) {
+                if (cs == null || !cs.isHittable()) {
                     continue;
                 }
                 cs.setHit(true);

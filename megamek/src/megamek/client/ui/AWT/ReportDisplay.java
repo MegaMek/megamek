@@ -56,7 +56,7 @@ public class ReportDisplay
      * Creates and lays out a new movement phase display 
      * for the specified client.
      */
-    public ReportDisplay(Client client, boolean showRerollInitiativeButton) {
+    public ReportDisplay(Client client) {
         this.client = client;
 
         this.client.addGameListener( this );
@@ -94,12 +94,12 @@ public class ReportDisplay
         c.gridwidth = 1;
         c.weightx = 0.0;    c.weighty = 0.0;
         Panel panButtons = new Panel();
-        panButtons.setLayout( new GridLayout(0, 8) );
+        panButtons.setLayout( new GridLayout(1, 8) );
+        panButtons.add(rerollInitiativeB);
         for ( int padding = 0; padding < 6; padding++ ) {
             panButtons.add( new Label( "" ) );
         }
         addBag( panButtons, gridbag, c );
-        this.showRerollButton( showRerollInitiativeButton );
 
 //         c.weightx = 1.0;    c.weighty = 0.0;
 //         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -147,6 +147,17 @@ public class ReportDisplay
         client.sendRerollInitiativeRequest();
     }
     
+    public void resetButtons() {
+        resetReadyButton();
+        if (client.game.getPhase() == Game.PHASE_INITIATIVE
+            && client.game.hasTacticalGenius(client.getLocalPlayer())) {
+            showRerollButton(true);
+        } else {
+            showRerollButton(false);
+        }
+        rerollInitiativeB.setEnabled(true);
+    }
+
     public void resetReadyButton() {
         readyB.setEnabled(true);
     }
@@ -196,7 +207,7 @@ public class ReportDisplay
         }
 
         refresh();
-        resetReadyButton();
+        resetButtons();
     }
 
     /**

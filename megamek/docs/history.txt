@@ -74,7 +74,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v CVS
+v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks
 + 662333: ams can't use more ammo than it has
 + added a bunch of new level 2 i.s. mech pics, thanks to Cyric

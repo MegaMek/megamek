@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.12-dev (CVS)
+v 0.29.12 (09-28-03, 10:30pm)
 + Shows movement step by step, optional in MegaMek.cfg.
 + Bug fix for the above.
 + Bug 802741: "check false" should *not* be added as a modifier.

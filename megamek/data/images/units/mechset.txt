@@ -13,22 +13,19 @@
 # Images should be greyscale, 84x72 pixel gifs with the mech centered.  The
 # tinting process is subtractive, so make images light.
 # 
-# New images:Crusader, Wasp, Warhammer, Archer, Jagermech
 
-# these 5 must be in here 
+# these 7 must be in here 
 mech "default_light" "default_light.gif"
 mech "default_medium" "default_medium.gif"
 mech "default_heavy" "default_heavy.gif"
 mech "default_assault" "default_assault.gif"
 mech "default_quad" "default_quad.gif"
 mech "default_tank" "default_tank.gif"
-
-# by vestifex
 mech "default_infantry" "default_infantry.gif"
-mech "INF_M-*" "motorized_infantry.gif"
-mech "INF_J-*" "jump_infantry.gif"
 
 # put custom pictures here:
+mech "INF_M-*" "motorized_infantry.gif"
+mech "INF_J-*" "jump_infantry.gif"
 
 # special variant pics
 # by vestifex
@@ -40,6 +37,7 @@ mech "ARC-2R" "archer.gif
 #by RAw
 mech "COM-3A" "commando.gif"
 mech "JVN-N" "javelin.gif"
+mech "WHM-R" "warhammer0.gif"
 
 # end of special variants
 # Normal pics
@@ -101,6 +99,47 @@ mech "WTH-*" "whitworth.gif"
 mech "ENF-*" "enforcer.gif"
 mech "DV-*" "dervish.gif"
 mech "SHD-*" "shadowhawk.gif"
+mech "BLR-*" "battlemaster.gif"
+mech "CGR-*" "charger.gif"
+mech "CP-*" "cyclops.gif"
+mech "GHR-*" "grasshopper.gif"
+mech "ON1-*" "orion.gif"
+mech "QKD-*" "quickdraw.gif"
+mech "TDR-*" "thunderbolt.gif"
+mech "ANH-*" "annihilator.gif"
+mech "CRB-*" "crab.gif"
+mech "EXT-*" "exterminator.gif"
+mech "FFL-*" "firefly.gif"
+mech "LGB-*" "longbow.gif"
+mech "THG-*" "thug.gif"
+mech "BL-*" "blackknight.gif"
+mech "BMB-*" "bombardier.gif"
+mech "CTF-*" "cataphract.gif"
+mech "CLN-*" "chameleon.gif"
+mech "CHP-*" "champion.gif"
+mech "CRK-*" "crocket.gif"
+mech "DRT-*" "dart.gif"
+mech "FLC-*" "falcon.gif"
+mech "FLS-*" "flashman.gif"
+mech "FLE-*" "flea.gif"
+mech "GOL-*" "goliath.gif"
+mech "GLT-*" "guillotine.gif"
+mech "HOP-*" "hoplite.gif"
+mech "HNT-*" "hornet.gif"
+mech "HSR-*" "hussar.gif"
+mech "IMP-*" "imp.gif"
+mech "KGC-*" "kingcrab.gif"
+mech "KTO-*" "kintaro.gif"
+mech "LNC-*" "lancelot.gif"
+mech "MSK-*" "mackie.gif"
+mech "MCY-*" "mercury.gif"
+mech "MLN-*" "merlin.gif"
+mech "MON-*" "mongoose.gif"
+mech "STN-*" "sentinel.gif"
+mech "SHG-*" "shogun.gif"
+mech "STC-*" "strikermech.gif"
+mech "THE-*" "thorn.gif"
+mech "WVE-*" "wyvern.gif"
 
 # by Exo
 mech "Goblin Medium Tank" "default_tank.gif"

@@ -3730,7 +3730,7 @@ implements Runnable {
         }
     }
     
-    private String damageEntity(Entity te, HitData hit, int damage) {
+    public String damageEntity(Entity te, HitData hit, int damage) {
         return damageEntity(te, hit, damage, false);
     }
     

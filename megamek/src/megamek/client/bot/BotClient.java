@@ -97,6 +97,11 @@ public class BotClient extends Client
     
     }
     
+    public BotClient(String playerName)
+    {
+        super(playerName);
+    }
+    
     protected void changePhase(int phase) {
         super.changePhase(phase);
         
@@ -156,8 +161,73 @@ public class BotClient extends Client
         } else if (curPanel instanceof PhysicalDisplay) {
             // sendChat("Calculating my physical turn.");
             calculatePhysicalTurn();
-        }         
+        } else if (curPanel instanceof DeploymentDisplay) {
+            calculateDeployment();
+        }     
      }
+     
+     private void calculateDeployment() {
+        // Use the old clumping algorithm until someone puts AI in here
+        int entNum = game.getFirstEntityNum(getLocalPlayer());
+        Coords cStart = getStartingCoords(getLocalPlayer().getStartingPos());
+        Coords cDeploy = getCoordsAround(cStart);
+        
+        Coords cCenter = new Coords(game.board.width / 2, game.board.height / 2);
+        int nDir;
+        if (getLocalPlayer().getStartingPos() != 0) {
+            // face towards center if you aren't already there
+            nDir = cDeploy.direction(cCenter);
+        } else {
+            // otherwise, face away
+            nDir = cCenter.direction(cDeploy);
+        }
+        
+        deploy(entNum, cDeploy, nDir);
+        sendReady(true);        
+     }
+        
+     private Coords getCoordsAround(Coords c)
+     {
+        // check the requested coords
+        if (game.board.contains(c) && game.getFirstEntity(c) == null) {
+            return c;
+        }
+        
+        // check the surrounding coords
+        for (int x = 0; x < 6; x++) {
+            Coords c2 = c.translated(x);
+            if (game.board.contains(c2) && game.getFirstEntity(c2) == null) {
+                return c2;
+            }
+        }
+        
+        // recurse in a random direction
+        return getCoordsAround(c.translated(Compute.random.nextInt(6)));
+     }
+     
+     private Coords getStartingCoords(int nPos) {
+        switch (nPos) {
+            default :
+            case 0 :
+                return new Coords(game.board.width / 2, game.board.height / 2);
+            case 1 :
+                return new Coords(1, 1);
+            case 2 :
+                return new Coords(game.board.width / 2, 1);
+            case 3 :
+                return new Coords(game.board.width - 2, 1);
+            case 4 :
+                return new Coords(game.board.width - 2, game.board.height / 2);
+            case 5 :
+                return new Coords(game.board.width - 2, game.board.height - 2);
+            case 6 :
+                return new Coords(game.board.width / 2, game.board.height - 2);
+            case 7 :
+                return new Coords(1, game.board.height - 2);
+            case 8 :
+                return new Coords(1, game.board.height / 2);
+        }
+    }
      
     //-----------------------------------------------------------------
     // Helper Classes
@@ -510,7 +580,7 @@ public class BotClient extends Client
                     // make sure we can afford the move
                     if (mpsUsed + cost <= en.getRunMP()) {
                         // make sure there's no mech there
-                        if (game.getEntity(targetHex) == null) {
+                        if (game.getFirstEntity(targetHex) == null) {
                             MoveOption opt = new MoveOption(current);
                             opt.moves.addStep(MovementData.STEP_FORWARDS);
                             if (mpsUsed <= en.getWalkMP() && mpsUsed + cost > en.getWalkMP())

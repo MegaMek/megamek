@@ -625,6 +625,14 @@ public abstract class Entity
 //    public int elevationOccupied(Hex hex, int elevation) {
 //        return hex.floor();
 //    }
+    
+    /**
+     * Returns true if the specified hex contains some sort of prohibited
+     * terrain.
+     */
+    public boolean isHexProhibited(Hex hex) {
+        return false;
+    }
 
     /**
      * Returns the name of the type of movement used.

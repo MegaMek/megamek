@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.29.59 (CVS)
 + Bug 762436, 839980: Domino Effect not able to displace off the board
 + RFE 755636: Added Option to allow ammo dumping in the lobby
++ Bug 1091979: Infantry won't unload from Tanks
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

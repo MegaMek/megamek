@@ -12,30 +12,38 @@
  *  for more details.
  */
 
+/*
+ * ClubAttackAction.java
+ *
+ * Created on April 3, 2002, 2:37 PM
+ */
+
 package megamek.common.actions;
 
+import megamek.common.*;
+
 /**
- * The attacker kicks the target.
+ * The attacker makes a club attack on the target.  This also covers mech
+ * melee weapons like hatchets.
+ *
+ * @author  Ben
+ * @version 
  */
-public class KickAttackAction
-    extends AbstractAttackAction
-{
-    public static final int BOTH = 0;
-    public static final int LEFT = 1;
-    public static final int RIGHT = 2;
+public class ClubAttackAction extends AbstractAttackAction {
     
-    private int leg;
-    
-    public KickAttackAction(int entityId, int targetId, int leg) {
+    private Mounted club;
+
+    /** Creates new ClubAttackAction */
+    public ClubAttackAction(int entityId, int targetId, Mounted club) {
         super(entityId, targetId);
-        this.leg = leg;
+        this.club = club;
+    }
+
+    public Mounted getClub() {
+        return club;
     }
     
-    public int getLeg() {
-        return leg;
-    }
-    
-    public void setLeg(int leg) {
-        this.leg = leg;
+    public void setClub(Mounted club) {
+        this.club = club;
     }
 }

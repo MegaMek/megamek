@@ -713,6 +713,20 @@ public abstract class Entity
     }
     
     /**
+     * Checks whether a weapon has been fired from the specified location this
+     * turn
+     */
+    public boolean weaponFiredFrom(int loc) {
+        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc && mounted.isUsedThisTurn()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Adds the ammo to the specified location
      */
     public void addAmmo(Mounted ammo, int loc) {

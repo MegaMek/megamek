@@ -88,6 +88,9 @@ public class MiscType extends EquipmentType {
         // all tech level 1 stuff
         EquipmentType.addType(HEAT_SINK);
         EquipmentType.addType(JUMP_JET);
+        EquipmentType.addType(createTreeClub());
+        EquipmentType.addType(createGirderClub());
+        EquipmentType.addType(createLimbClub());
         EquipmentType.addType(createHatchet());
     }
 
@@ -112,6 +115,45 @@ public class MiscType extends EquipmentType {
         misc.mepName = misc.name;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createTreeClub() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Tree Club";
+        misc.internalName = misc.name;
+        misc.mepName = "N/A";
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createGirderClub() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Girder Club";
+        misc.internalName = misc.name;
+        misc.mepName = "N/A";
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createLimbClub() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Limb Club";
+        misc.internalName = misc.name;
+        misc.mepName = "N/A";
+        misc.tonnage = 0;
+        misc.criticals = 0;
         misc.bv = 0;
         
         return misc;

@@ -95,6 +95,7 @@ v next
 + changed how weapons, equipment and ammo are stored on a mech
 + moved jump jets & heat sinks into "equipment" from "systems"
 + hatchets load properly
++ hatchet attacks work
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

@@ -323,12 +323,12 @@ public class MechMapSet implements DisplayMapSet{
         Image tile = comp.getToolkit().getImage("data/widgets/tile.gif");
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
-        bgDrawers.add(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer (tile,b));
         tile = comp.getToolkit().getImage("data/widgets/bg_mech.gif");
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer (tile,b);
-        bgDrawers.add(bgd);         
+        bgDrawers.addElement(bgd);         
     }
     
     private void drawHeatControl(int t){

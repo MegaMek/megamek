@@ -149,7 +149,7 @@ public abstract class PicMap extends Component {
      */
     
     public void addBgDrawer(BackGroundDrawer bd){
-       bgDrawers.add(bd);
+       bgDrawers.addElement(bd);
              
     }
     

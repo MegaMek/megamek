@@ -2691,6 +2691,17 @@ public boolean isPassworded() {
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
                         desc += " <<<SECTION DESTROYED>>>,";
+			if (hit.getLocation() == Mech.LOC_RT || hit.getLocation() == Mech.LOC_LT) {
+				int numEngineHits = 0;
+				numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+				numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+				numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+				if (numEngineHits > 2) {
+				// third engine hit
+				te.setDoomed(true);
+				desc += "\n*** " + te.getDisplayName() + " ENGINE DESTROYED! ***";
+				}
+			}
                     }
                 } 
                 

@@ -63,8 +63,12 @@ public class BLKBattleArmorFile implements MechLoader {
         if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
 
-        if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find model block.");
-            t.setModel(dataFile.getDataAsString("Model")[0]);
+        // Model is not strictly necessary.
+        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+             t.setModel(dataFile.getDataAsString("Model")[0]);
+        } else {
+             t.setModel("");
+        }
 
         if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);

@@ -99,6 +99,12 @@ v 0.28.12-dev
 + The way the BMRr handles Mek Stealth Armor has been superceded.
 + New images for Rubble hexes.
 + Applied Oscarmm's Light Engine BV patch.
++ Applied oscarmm's "Unit Type" filter patch (711891).
++ Applied oscarmm's MechView patch (715044).
++ Added kurt_kajal's "fluff" hex graphix (711714).
++ Added hopalong's infantry files (712083).
++ Reverted BattleArmor short names back to the default generation procedure.
++ 712054: Only Longinus and Purifier are "burdened" by their ammo.
 
 v 0.28.11 (03-29-03, 7:30pm)
 + 708743: minimap now initialized correctly even if "disabled"

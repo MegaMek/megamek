@@ -171,6 +171,16 @@ public class BattleArmor
     public static final String SINGLE_HEX_ECM = "Single-Hex ECM";
 
     /**
+     * The name for Longinus squads.
+     */
+    public static final String LONGINUS_SQUAD = "Longinus";
+
+    /**
+     * The name for Purifier squads.
+     */
+    public static final String PURIFIER_SQUAD = "Purifier";
+
+    /**
      * The maximum number of men in an Inner Sphere battle armor squad.
      */
     public static final int     BA_MAX_MEN = 4;
@@ -229,48 +239,6 @@ public class BattleArmor
         // Construction complete.
         this.isInitialized = true;
     };
-
-    /**
-     * Generates the display name for this entity.
-     * <p/>
-     * Sub-classes are allowed to override this method.
-     * 
-     * The display name is in the format [Short Name] ([Player Name]).
-     */
-    protected void generateDisplayName() {
-        StringBuffer nbuf = new StringBuffer();
-        nbuf.append( this.getShortName() );
-        
-        if (getOwner() != null) {
-            nbuf.append(" (").append(getOwner().getName()).append(")");
-        }
-        
-        this.displayName = nbuf.toString();
-    }
-
-    /**
-     * Generate the short name for a unit
-     * <p/>
-     * Sub-classes are allowed to override this method.
-     * 
-     * The display name is in the format [Chassis] ([Weapon]) or
-     * [Model] ([Weapon]) [Chassis].
-     */
-    protected void generateShortName() {
-        StringBuffer nbuf = new StringBuffer();
-        if (model != null && model.length() > 0) {
-            if ( '(' == model.charAt(0) ) {
-                nbuf.append( this.getChassis() )
-                    .append(" ").append( this.getModel() );
-            } else {
-                nbuf.append( this.getModel() )
-                    .append(" ").append( this.getChassis() );
-            }
-        } else {
-            nbuf.append( this.getChassis() );
-        }
-        this.shortName = nbuf.toString();
-    }
 
     /**
      * Returns this entity's original jumping mp.
@@ -577,6 +545,13 @@ public class BattleArmor
 
         // Clan Elemental points are never burdened by equipment.
         if ( !this.isClan() ) {
+
+            // As of 2004-04-04 only Longinus and Purifier squads get burdened.
+            String name = this.getShortName();
+            if ( -1 == name.indexOf( LONGINUS_SQUAD ) &&
+                 -1 == name.indexOf( PURIFIER_SQUAD ) ) {
+                return false;
+            }
 
             // As of 2003-01-03, only ammo burdens the jump
             Enumeration enum = this.getAmmo();

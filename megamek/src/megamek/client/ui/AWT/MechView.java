@@ -36,6 +36,7 @@ public class MechView {
     private boolean isInf;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
+    private boolean hasMASC;
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
 
@@ -67,8 +68,13 @@ public class MechView {
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
-            .append( mech.getRunMP() )
-            .append( "/" )
+            .append( mech.getRunMP() );
+        if (hasMASC) {
+            sBasic.append( "(")
+                .append( mech.getWalkMP() * 2)
+                .append( ")");
+        }
+        sBasic.append( "/" )
             .append( mech.getJumpMP() )
             .append( "\n" );
         if ( isMech ) {
@@ -77,6 +83,9 @@ public class MechView {
                 .append( aMech.engineRating() );
             if (aMech.hasXL()) {
                 sBasic.append( " XL" );
+            }
+            if (aMech.hasLightEngine()) {
+                sBasic.append( " Light" );
             }
             sBasic.append("\n");
             sBasic.append( "Heat Sinks: " )
@@ -196,6 +205,9 @@ public class MechView {
                     hasFerroFibrous = true;
                 }
                 continue;
+            }
+            if (mounted.getDesc().indexOf("MASC") != -1) {
+                hasMASC = true;
             }
             sMisc.append( mounted.getDesc() )
                 .append( "  [" )

@@ -854,10 +854,11 @@ public abstract class Entity
     
     public int getWalkMP( boolean gravity ) {
         int mp = this.walkMP;
+        mp = Math.max(mp - (int)(heat / 5), 0);
         if (game != null && gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
-        return Math.max(mp - (int)(heat / 5), 0);
+        return mp;
     }
 
     /**

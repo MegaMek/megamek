@@ -53,7 +53,7 @@ public class EquipmentType {
 
     protected int       flags = 0;
       
-    protected float     bv = 0; // battle value point system
+    protected double     bv = 0; // battle value point system
     
     // what modes can this equipment be in?
     protected String[] m_saModes = null;
@@ -125,7 +125,7 @@ public class EquipmentType {
         return (flags & flag) != 0;
     }
 
-    public float getBV(Entity entity) {
+    public double getBV(Entity entity) {
         return bv;
     }
     

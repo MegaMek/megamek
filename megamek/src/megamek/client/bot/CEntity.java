@@ -62,14 +62,13 @@ public class CEntity {
             1.0 }, {
             1.0 }
     };
-    final static double mech_armor[][] =
+    final static double MECH_ARMOR[][] =
         { { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
             1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36, 4.0 / 36 }, {
             1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36 }, {
             1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36, 8.0 / 36, 2.0 / 36 }
     };
 
-    //some helpful constants
     public static final int MAX_RANGE = 24;
 
     public static final int OVERHEAT_NONE = 0;
@@ -85,12 +84,7 @@ public class CEntity {
     public static final int LAST_PRIMARY_ARC = 3;
     public static final int LAST_ARC = 4;
 
-    public static final int SIDE_FRONT = 0;
-    public static final int SIDE_REAR = 1;
-    public static final int SIDE_LEFT = 2;
-    public static final int SIDE_RIGHT = 3;
     public static final int TT = 4;
-    //there are more tt arcs, but I don't care about them
 
     public static final int LEFT_LEG = 0;
     public static final int RIGHT_LEG = 1;
@@ -106,14 +100,10 @@ public class CEntity {
 
     boolean isPhysicalTarget = false;
 
-    //will change based upon the pilot
-    private int gunnery = 4;
-    int piloting = 5;
-
     int overheat = OVERHEAT_NONE;
     int range = RANGE_ALL;
     int long_range = 0;
-    double RangeDamages[] = new double[4];
+    double range_damages[] = new double[4];
 
     double base_psr_odds = 1.0;
 
@@ -170,7 +160,6 @@ public class CEntity {
 
     public void reset() {
         this.entity = tb.game.getEntity(this.entity.getId()); //fresh entity
-        //clear it out just in case
         for (int a = FIRST_ARC; a <= LAST_ARC; a++) {
             Arrays.fill(this.damages[a], 0);
         }
@@ -178,7 +167,7 @@ public class CEntity {
         this.resetPossibleDamage();
         this.moves = null;
         this.hasTakenDamage = false;
-        this.expected_damage = new double[] { 0, 0, 0, 0 };
+        Arrays.fill(expected_damage, 0);
         this.engaged = false;
         this.moved = false;
         this.isPhysicalTarget = false;
@@ -196,15 +185,13 @@ public class CEntity {
     }
 
     public void resetPossibleDamage() {
-        Arrays.fill(this.possible_damage, 0);
+        Arrays.fill(possible_damage, 0);
     }
 
     public void characterize() {
         this.entity = tb.game.getEntity(this.entity.getId());
         this.current = new MoveOption(tb.game, this);
         this.bv = entity.calculateBattleValue();
-        this.gunnery = entity.getCrew().getGunnery();
-        this.piloting = entity.getCrew().getGunnery();
         this.runMP = entity.getRunMP();
         this.jumpMP = entity.getJumpMP();
         this.overall_armor_percent = entity.getArmorRemainingPercent();
@@ -240,17 +227,18 @@ public class CEntity {
             int lr = weapon.getLongRange();
             double ed = CEntity.getExpectedDamage(weapon);
             double odds = 0;
+            int gunnery = entity.getCrew().getGunnery();
             for (int range = 1; range <= lr && range <= MAX_RANGE; range++) {
                 if (range <= min) {
                     if (range < 7)
                         this.minRangeMods[range] += 1 + min - range;
-                    odds = Compute.oddsAbove(this.gunnery + 1 + min - range) / 100.0;
+                    odds = Compute.oddsAbove(gunnery + 1 + min - range) / 100.0;
                 } else if (range <= sr) {
-                    odds = Compute.oddsAbove(this.gunnery) / 100.0;
+                    odds = Compute.oddsAbove(gunnery) / 100.0;
                 } else if (range <= mr) {
-                    odds = Compute.oddsAbove(this.gunnery + 2) / 100.0;
+                    odds = Compute.oddsAbove(gunnery + 2) / 100.0;
                 } else if (range <= lr) {
-                    odds = Compute.oddsAbove(this.gunnery + 4) / 100.0;
+                    odds = Compute.oddsAbove(gunnery + 4) / 100.0;
                 }
                 //weapons unaffected by heat don't get penalized
                 this.addDamage(
@@ -274,7 +262,7 @@ public class CEntity {
         }
         //only worries about external armor
         double max = 1;
-        double armor[][] = mech_armor;
+        double armor[][] = MECH_ARMOR;
         if (this.entity instanceof Tank) {
             if (((Tank) entity).hasNoTurret()) {
                 armor = TANK_ARMOR;
@@ -287,7 +275,7 @@ public class CEntity {
         for (int arc = FIRST_ARC; arc <= LAST_PRIMARY_ARC; arc++) {
             double total = 0;
             for (int i = 0; i < armor[arc].length; i++) {
-                total += armor[arc][i] * getArmorValue(i, arc == SIDE_REAR);
+                total += armor[arc][i] * getArmorValue(i, arc == ToHitData.SIDE_REAR);
             }
             this.armor_health[arc] = total;
             max = Math.max(armor_health[arc], max);
@@ -301,46 +289,42 @@ public class CEntity {
     }
 
     /**
-     * Add a statistical damage into the damage table the arc is based upon
+     * Add a statistical damage into the damage table. the arc is based upon
      * firing arc Compute.XXXX --this is not yet exact, rear tt not accounted
      * for, and arm flipping is ignored
      */
-    protected void addDamage(int arc, boolean secondary, int range, double ed) {
-        this.damages[CEntity.firingArcToHitArc(arc)][range] += ed;
+    private void addDamage(int arc, boolean secondary, int r, double ed) {
+        this.damages[firingArcToHitArc(arc)][r] += ed;
         if (arc != Compute.ARC_REAR && arc != Compute.ARC_360) {
-            this.damages[SIDE_FRONT][range] += ed;
-            if (!secondary)
-                return;
-            this.damages[TT][range] += ed;
-            return;
+            damages[ToHitData.SIDE_FRONT][r] += ed;
+            if (secondary) {
+                damages[TT][r] += ed;
+            }
         }
         if (arc == Compute.ARC_360) {
             for (int i = FIRST_ARC; i <= LAST_ARC; i++)
-                this.damages[i][range] += ed;
-            return;
+                damages[i][r] += ed;
         }
     }
 
     /**
      * Computes the range (short, meduim, long, all) of the mec.
      */
-    protected void computeRange() {
-        double[] values = new double[3];
-        this.RangeDamages[3] = 0;
+    private void computeRange() {
+        Arrays.fill(range_damages, 0);
         for (int base = 0; base < 3; base++) {
             for (int i = 1 + 6 * base; i < 8 + 6 * base; i++) {
-                values[base] += this.damages[SIDE_FRONT][i];
+                range_damages[base] += this.damages[ToHitData.SIDE_FRONT][i];
             }
-            values[base] /= 8;
-            this.RangeDamages[base] = values[base];
-            this.RangeDamages[3] += values[base];
+            range_damages[base] /= 8;
+            range_damages[3] += range_damages[base];
         }
-        this.RangeDamages[3] /= 3;
-        if (values[0] > 2.5 * values[1]) {
+        range_damages[3] /= 3;
+        if (range_damages[0] > 2.5 * range_damages[1]) {
             this.range = RANGE_SHORT;
-        } else if (values[1] > 2.5 * values[2]) {
+        } else if (range_damages[1] > 2.5 * range_damages[2]) {
             this.range = RANGE_MEDIUM;
-        } else if (values[2] > .25 * values[0]) {
+        } else if (range_damages[2] > .25 * range_damages[0]) {
             this.range = RANGE_LONG;
         } else {
             this.range = RANGE_ALL;
@@ -500,7 +484,7 @@ public class CEntity {
         if (a_range > MAX_RANGE)
             return 0;
         double damage = this.damages[arc][a_range];
-        int base = this.gunnery;
+        int base = entity.getCrew().getPiloting();
         int dist_mod = 0;
         if (a_range < 7) {
             dist_mod = this.minRangeMods[a_range];
@@ -562,28 +546,29 @@ public class CEntity {
     public static int getThreatHitArc(Coords dest, int dest_facing, Coords src) {
         int fa = getFiringAngle(dest, dest_facing, src);
         if (fa >= 300 || fa <= 60)
-            return SIDE_FRONT;
+            return ToHitData.SIDE_FRONT;
         if (fa >= 60 && fa <= 120)
-            return SIDE_RIGHT;
+            return ToHitData.SIDE_RIGHT;
         if (fa >= 240 && fa <= 300)
-            return SIDE_LEFT;
+            return ToHitData.SIDE_LEFT;
         else
-            return SIDE_REAR;
+            return ToHitData.SIDE_REAR;
     }
 
     public static int firingArcToHitArc(int arc) {
         switch (arc) {
             case Compute.ARC_FORWARD :
                 return ToHitData.SIDE_FRONT;
-
             case Compute.ARC_LEFTARM :
                 return ToHitData.SIDE_LEFT;
-
             case Compute.ARC_RIGHTARM :
                 return ToHitData.SIDE_RIGHT;
-
             case Compute.ARC_REAR :
                 return ToHitData.SIDE_REAR;
+            case Compute.ARC_LEFTSIDE:
+                return ToHitData.SIDE_LEFT;
+            case Compute.ARC_RIGHTSIDE:
+                return ToHitData.SIDE_RIGHT;
         }
         return 0;
     }

@@ -175,7 +175,7 @@ public class MoveOption extends MovePath implements Cloneable {
                 current.setMovementType(Entity.MOVE_ILLEGAL);
             } else {
                 double cur_threat =
-                    getCEntity().getThreatUtility(.2 * this.entity.getWeight(), CEntity.SIDE_REAR)
+                    getCEntity().getThreatUtility(.2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
                 this.movement_threat += cur_threat;
                 this.tv.add(cur_threat + " Movement Threat \n");
@@ -413,12 +413,12 @@ public class MoveOption extends MovePath implements Cloneable {
         }
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT : enemy_firing_arcs[0], distance, modifier);
 
-        if (enemy_firing_arcs[1] == CEntity.SIDE_FRONT) {
+        if (enemy_firing_arcs[1] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT, distance, modifier));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(enemy_firing_arcs[1], distance, modifier));
         }
-        if (enemy_firing_arcs[2] == CEntity.SIDE_FRONT) {
+        if (enemy_firing_arcs[2] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT, distance, modifier));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(enemy_firing_arcs[2], distance, modifier));
@@ -426,12 +426,12 @@ public class MoveOption extends MovePath implements Cloneable {
         //TODO this is not quite right, but good enough for now...
         //ideally the pa charaterization should be in centity
         max *= mod;
-        if (!enemy.getFinalProne() && distance == 1 && enemy_firing_arcs[0] != CEntity.SIDE_REAR) {
+        if (!enemy.getFinalProne() && distance == 1 && enemy_firing_arcs[0] != ToHitData.SIDE_REAR) {
             Hex h = game.board.getHex(getFinalCoords());
             Hex h1 = game.board.getHex(enemy.getFinalCoords());
             if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
                 max += ((h1.getElevation() - h.getElevation() == 1 || getFinalProne()) ? 5 : 1)
-                    * ((enemy_firing_arcs[0] == CEntity.SIDE_FRONT) ? .2 : .05)
+                    * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2 : .05)
                     * centity.entity.getWeight()
                     * Compute.oddsAbove(3 + modifier)
                     / 100

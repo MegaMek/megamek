@@ -110,7 +110,7 @@ public class TdbFile implements MechLoader {
             root = TinyParser.parseXML(is);
         }
         catch (ParseException e) { 
-            throw new EntityLoadingException("   Failure to parse XML");
+            throw new EntityLoadingException("   Failure to parse XML (TinyParser exception)");
         }
         // Arbitrarily sized static arrays suck, or so a computer
         //  science teacher once told me.
@@ -128,17 +128,21 @@ public class TdbFile implements MechLoader {
         */
 
         Vector armorValues = readArmor(fileName);
-        larmArmor = ((Integer)armorValues.elementAt(0)).intValue();
-        rarmArmor = ((Integer)armorValues.elementAt(10)).intValue();
-        ltArmor = ((Integer)armorValues.elementAt(2)).intValue();
-        rtArmor = ((Integer)armorValues.elementAt(8)).intValue();
-        ctArmor = ((Integer)armorValues.elementAt(12)).intValue();
-        headArmor = ((Integer)armorValues.elementAt(14)).intValue();
-        llegArmor = ((Integer)armorValues.elementAt(4)).intValue();
-        rlegArmor = ((Integer)armorValues.elementAt(6)).intValue();
-        ltrArmor = ((Integer)armorValues.elementAt(16)).intValue();
-        rtrArmor = ((Integer)armorValues.elementAt(18)).intValue();
-        ctrArmor = ((Integer)armorValues.elementAt(20)).intValue();
+        try {
+            larmArmor = ((Integer)armorValues.elementAt(0)).intValue();
+            rarmArmor = ((Integer)armorValues.elementAt(10)).intValue();
+            ltArmor = ((Integer)armorValues.elementAt(2)).intValue();
+            rtArmor = ((Integer)armorValues.elementAt(8)).intValue();
+            ctArmor = ((Integer)armorValues.elementAt(12)).intValue();
+            headArmor = ((Integer)armorValues.elementAt(14)).intValue();
+            llegArmor = ((Integer)armorValues.elementAt(4)).intValue();
+            rlegArmor = ((Integer)armorValues.elementAt(6)).intValue();
+            ltrArmor = ((Integer)armorValues.elementAt(16)).intValue();
+            rtrArmor = ((Integer)armorValues.elementAt(18)).intValue();
+            ctrArmor = ((Integer)armorValues.elementAt(20)).intValue();
+        } catch (Exception e) {
+            throw new EntityLoadingException("Could not parse armor from Drawing Board (.dbm) file: " + e.getMessage());
+        }
 
         // The "if" block below should be removed eventually,
         //  it is basically a debuging tool.

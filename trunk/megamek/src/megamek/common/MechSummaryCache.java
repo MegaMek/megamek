@@ -241,7 +241,7 @@ public class MechSummaryCache
                     ((Label)waitDialog.getComponent(5)).setText(String.valueOf(++loadedFromFilesCount));
                 }
             } catch (EntityLoadingException ex) {
-                System.err.println("couldn't load file " + f.getName() + " : " + ex.getMessage());
+                System.err.println("Unable to load file " + f.getName() + " : " + ex.getMessage());
                 continue;
             }
         }
@@ -255,7 +255,7 @@ public class MechSummaryCache
         try {
             zFile = new ZipFile(fZipFile);
         } catch (Exception ex) {
-            System.err.println("couldn't load file " + fZipFile.getName() + " : " + ex.getMessage());
+            System.err.println("Unable to load file " + fZipFile.getName() + " : " + ex.getMessage());
             return false;
         }
         System.out.println("Looking in zip file " + fZipFile.getPath());
@@ -296,7 +296,7 @@ public class MechSummaryCache
                     ((Label)waitDialog.getComponent(7)).setText(String.valueOf(++loadedFromZipsCount));
                 }
             } catch (Exception ex) {
-                System.err.println("couldn't load file " + zEntry.getName() + " : " + ex.getMessage());
+                System.err.println("Unable to load file " + zEntry.getName() + " : " + ex.getMessage());
                 continue;
             }
         }

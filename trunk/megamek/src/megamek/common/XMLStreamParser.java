@@ -372,7 +372,9 @@ public class XMLStreamParser implements XMLResponder {
                             this.warning.append( "Unable to load mech: " )
                                 .append( ms.getSourceFile() )
                                 .append( ": " )
-                                .append( ms.getEntryName() );
+                                .append( ms.getEntryName() )
+                                .append( ": " )
+                                .append( excep.getMessage());
                         }
                     } // End found-MechSummary
 

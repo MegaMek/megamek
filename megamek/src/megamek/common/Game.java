@@ -950,6 +950,23 @@ public class Game implements Serializable
         }
         return null;
     }
+
+    /**
+     * Returns the first enemy entity at the given coordinate, if any.
+     * Only returns targetable (non-dead) entities.
+     * 
+     * @param c the coordinates to search at
+     * @param currentEntity the entity that is firing
+     */
+    public Entity getFirstEnemyEntity(Coords c, Entity currentEntity) {
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (c.equals(entity.getPosition()) && entity.isTargetable() && entity.isEnemyOf(currentEntity)) {
+                return entity;
+            }
+        }
+        return null;
+    }
     
     /**
      * Returns an Enumeration of the active entities at the given coordinates.

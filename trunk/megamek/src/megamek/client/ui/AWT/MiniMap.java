@@ -437,7 +437,9 @@ scan:
     */
     private void paintAttack(Graphics g, AttackAction attack) {
         Entity source = m_game.getEntity(attack.getEntityId());
-        Entity target = m_game.getEntity(attack.getTargetId());
+        Targetable target = m_game.getTarget(attack.getTargetType(), attack.getTargetId());
+        // sanity check...
+        if (null==source || null==target) { return; };
 
         Color oldColor = g.getColor();
 
@@ -445,9 +447,9 @@ scan:
         int[] yPoints = new int[4];
         
         xPoints[0] = source.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
-        yPoints[0] = (2*source.getPosition().y + 1 + source.getPosition().x%2)* hexSideByCos30[zoom] + topMargin +2;
+        yPoints[0] = (2*source.getPosition().y + 1 + source.getPosition().x%2)* hexSideByCos30[zoom] + topMargin;
         xPoints[1] = target.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
-        yPoints[1] = (2*target.getPosition().y + 1 + target.getPosition().x%2)* hexSideByCos30[zoom] + topMargin +2;
+        yPoints[1] = (2*target.getPosition().y + 1 + target.getPosition().x%2)* hexSideByCos30[zoom] + topMargin;
         xPoints[2] = xPoints[1]+2;
         xPoints[3] = xPoints[0]+2;
         if ((source.getPosition().x > target.getPosition().x
@@ -473,7 +475,10 @@ scan:
                 AttackAction otherAttack = (AttackAction) action;
                 if (attack.getEntityId() == otherAttack.getTargetId()
                     && otherAttack.getEntityId() == attack.getTargetId() ) {
-                        g.setColor(target.getOwner().getColor());
+                        // attackTarget _must_ be an entity since it's shooting back (?)
+                        Entity attackTarget = m_game.getEntity(otherAttack.getTargetId());
+                        g.setColor(attackTarget.getOwner().getColor());
+
                         xPoints[0] = xPoints[3];
                         yPoints[0] = yPoints[3];
                         xPoints[1] = xPoints[2];

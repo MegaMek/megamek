@@ -422,16 +422,25 @@ public class PhysicalDisplay
      * Club that target!
      */
     private void club() {
-  Mounted club = Compute.clubMechHas(ce());
-  ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
-  if (clientgui.doYesNoDialog( "Club " + target.getDisplayName() + "?",
-    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-    + "\nDamage: "+Compute.getClubDamageFor(ce(),club)+toHit.getTableDesc()
-  ) ) {
-    disableButtons();
-    attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
-    ready();
-  };
+        Mounted club = Compute.clubMechHas(ce());
+        ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
+        StringBuffer buff = new StringBuffer();
+        buff.append ("To Hit: ")
+            .append (toHit.getValueAsString())
+            .append (" (")
+            .append (Compute.oddsAbove(toHit.getValue()))
+            .append ("%)   (")
+            .append (toHit.getDesc())
+            .append (")\nDamage: ")
+            .append (Compute.getClubDamageFor(ce(),club))
+            .append (toHit.getTableDesc());
+        if ( clientgui.doYesNoDialog( "Club " + target.getDisplayName() + "?",
+                                      buff.toString()
+                                      ) ) {
+            disableButtons();
+            attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
+            ready();
+        };
     }
 
     /**

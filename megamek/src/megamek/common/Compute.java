@@ -2008,6 +2008,18 @@ public class Compute
     public static ToHitData toHitClub(Game game, int attackerId, Targetable target, Mounted club) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
+
+        // arguments legal?
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
+        if (club == null) {
+            throw new IllegalArgumentException("Club is null");
+        }
+        if (club.getType() == null) {
+            throw new IllegalArgumentException("Club type is null");
+        }
+
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
@@ -2024,11 +2036,6 @@ public class Compute
             bldg = game.board.getBuildingAt( te.getPosition() );
         }
         ToHitData toHit;
-
-        // arguments legal?
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
 
         // can't target yourself
         if (ae.equals(te)) {

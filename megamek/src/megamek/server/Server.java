@@ -20,6 +20,7 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.server.commands.*;
 
 /**
  * @author Ben Mazur
@@ -60,6 +61,9 @@ public class Server
 
     private StringBuffer        roundReport = new StringBuffer();
     private StringBuffer        phaseReport = new StringBuffer();
+    
+    // commands
+    private Hashtable           commandsHash = new Hashtable();
 
     // listens for and connects players
     private Thread              connector;
@@ -91,6 +95,12 @@ public class Server
         connector = new Thread(this);
         connector.start();
         
+        // register commands
+        registerCommand(new HelpCommand(this));
+        registerCommand(new ResetCommand(this));
+        registerCommand(new WhoCommand(this));
+        
+        
 //        // test RNG
 //        long rolls = 1000000000;
 //        int sides = 8;
@@ -108,6 +118,27 @@ public class Server
 //        for (int i = 0; i < sides; i++) {
 //            System.out.println("hits on " + i + " : " + hits[i] + "; probability = " + ((double)hits[i] / (double)rolls));
 //        }
+    }
+    
+    /**
+     * Registers a new command in the server command table
+     */
+    private void registerCommand(ServerCommand command) {
+        commandsHash.put(command.getName(), command);
+    }
+    
+    /**
+     * Returns the command associated with the specified name
+     */
+    public ServerCommand getCommand(String name) {
+        return (ServerCommand)commandsHash.get(name);
+    }
+    
+    /**
+     * Returns an enumeration of all the command names
+     */
+    public Enumeration getAllCommandNames() {
+        return commandsHash.keys();
     }
 
     /**
@@ -161,7 +192,7 @@ public class Server
         System.out.println("s: player " + connId
                            + " (" + getPlayer(connId).getName() + ") connected from "
                            + getClient(connId).getSocket().getInetAddress());
-        sendChatToAll("***Server", getPlayer(connId).getName() + " connected from "
+        sendServerChat(getPlayer(connId).getName() + " connected from "
                            + getClient(connId).getSocket().getInetAddress());
     }
     
@@ -253,7 +284,7 @@ public class Server
         }
 
         System.out.println("s: player " + connId + " disconnected");
-        sendChatToAll("***Server", player.getName() + " disconnected.");
+        sendServerChat(player.getName() + " disconnected.");
     }
     
     /**
@@ -262,22 +293,24 @@ public class Server
      * TODO: couldn't this be a hazard if there are other things executing at 
      *  the same time?
      */
-    private void resetGame() {
+    public void resetGame() {
         // remove all entities
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+        Vector tempEntities = (Vector)game.getEntitiesVector().clone();
+        for (Enumeration e = tempEntities.elements(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             game.removeEntity(entity.getId());
         }
+        send(createEntitiesPacket());
         
         //TODO: remove ghosts
         
         // reset all players
         resetPlayerReady();
+        transmitAllPlayerReadys();
         
         changePhase(Game.PHASE_LOUNGE);
     }
     
-
     /**
      * Shortcut to game.getPlayer(id)
      */
@@ -334,7 +367,14 @@ public class Server
     /**
      * Returns a connection, indexed by id
      */
-    private Connection getConnection(int connId) {
+    public Enumeration getConnections() {
+        return connections.elements();
+    }
+
+    /**
+     * Returns a connection, indexed by id
+     */
+    public Connection getConnection(int connId) {
         return (Connection)connectionIds.get(new Integer(connId));
     }
 
@@ -2923,17 +2963,25 @@ public class Server
     /**
      * Transmits a chat message to all players
      */
-    private void sendChatTo(int connId, String origin, String message) {
+    private void sendChat(int connId, String origin, String message) {
         send(connId, new Packet(Packet.COMMAND_CHAT, origin + ": " + message));
     }
 
     /**
      * Transmits a chat message to all players
      */
-    private void sendChatToAll(String origin, String message) {
+    private void sendChat(String origin, String message) {
         String chat = origin + ": " + message;
         send(new Packet(Packet.COMMAND_CHAT, chat));
         log.append(chat);
+    }
+    
+    public void sendServerChat(int connId, String message) {
+        sendChat(connId, "***Server", message);
+    }
+
+    public void sendServerChat(String message) {
+        sendChat("***Server", message);
     }
 
     /**
@@ -2970,29 +3018,21 @@ public class Server
     /**
      * Process an in-game command
      */
-    private void processInGame(int connId, String command) {
+    private void processCommand(int connId, String commandString) {
         // figure out which command this is
         String commandName;
-        if (command.indexOf(' ') != -1) {
-            commandName = command.substring(1, command.indexOf(' '));
+        if (commandString.indexOf(' ') != -1) {
+            commandName = commandString.substring(1, commandString.indexOf(' '));
         } else {
-            commandName = command.substring(1);
+            commandName = commandString.substring(1);
         }
         
         // process it
-        if (commandName.equals("connlist")) {
-            sendChatTo(connId, "Server", "Listing connections...");
-            sendChatTo(connId, "Server", "[id] : [name], [address], [pending]");
-            for (Enumeration i = connections.elements(); i.hasMoreElements();) {
-                final Connection conn = (Connection)i.nextElement();
-                sendChatTo(connId, "Server", conn.getId() + " : " + getPlayer(conn.getId()).getName() + ", " + conn.getSocket().getInetAddress() + ", " + conn.hasPending());
-            }
-            sendChatTo(connId, "Server", "end");
-        } else if (commandName.equals("reset")) {
-            sendChatToAll("Server", getPlayer(connId).getName() + " reset the game.");
-            resetGame();
+        ServerCommand command = getCommand(commandName);
+        if (command != null) {
+            command.run(connId, new String[0]);
         } else {
-            sendChatTo(connId, "Server", "Unknown command: \"" + commandName + "\".");
+            sendServerChat(connId, "Command not recognized.  Type /help for a list of commands.");
         }
     }
     
@@ -3027,9 +3067,9 @@ public class Server
         case Packet.COMMAND_CHAT :
             String chat = (String)packet.getObject(0);
             if (chat.startsWith("/")) {
-                processInGame(connId, chat);
+                processCommand(connId, chat);
             } else {
-                sendChatToAll(getPlayer(connId).getName(), chat);
+                sendChat(getPlayer(connId).getName(), chat);
             }
             break;
         case Packet.COMMAND_ENTITY_MOVE :

@@ -25,7 +25,6 @@ import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Arrays;
 import megamek.common.*;
 
-
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
  */
@@ -42,7 +41,7 @@ public class MechSelectorDialog
     
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
-    private Dialog waitDialog;
+    private UnitLoadingDialog unitLoadingDialog;
         
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
@@ -64,11 +63,11 @@ public class MechSelectorDialog
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
 
-    public MechSelectorDialog(Client cl, Dialog wD)
+    public MechSelectorDialog(Client cl, UnitLoadingDialog uld)
     {
         super(cl.frame, "Select Mech...", true);
         m_client = cl;
-        waitDialog = wD;
+        unitLoadingDialog = uld;
         
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
@@ -122,7 +121,12 @@ public class MechSelectorDialog
         // This prevents the UI from freezing, and allows the
         // "Please wait..." dialog to behave properly on various Java VMs.
         filterMechs();
-        waitDialog.setVisible(false);
+        unitLoadingDialog.setVisible(false);
+
+        final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
+        if (hFailedFiles != null && hFailedFiles.size() > 0) {
+            UnitFailureDialog unitFailureDialog = new UnitFailureDialog(m_client.frame, hFailedFiles); // self-showing dialog
+        }
     }
     
     
@@ -166,7 +170,7 @@ public class MechSelectorDialog
         }
         int nType = m_chType.getSelectedIndex();
         String sUnitType = m_chUnitType.getSelectedItem();
-        MechSummary[] mechs = MechSummaryCache.getInstance(waitDialog).getAllMechs();
+        MechSummary[] mechs = MechSummaryCache.getInstance(unitLoadingDialog).getAllMechs();
         if ( mechs == null ) {
             System.err.println( "No units to filter!" );
             return;

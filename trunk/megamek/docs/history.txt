@@ -5,6 +5,7 @@ v0.29.34 (CVS)
 	Thanks AlbinoSquirrel!
 + Patch 946255, RFE 734354: beerockxs' patch to show blown off limbs
 + Bug 950086: initialize EquipmentTypes before use.
++ Bug 950435: UnitOverview now "floats on top" of the battlefield
 
 v0.29.33 (2004-05-02, 7:00pm)
 + Bug 937996: Fix NPE when starting a scenario against the bot

@@ -336,11 +336,6 @@ public class BoardView1
             drawDeployment();
         }
 
-        for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
-            disp.draw(backGraph, backSize);
-        }
-
         // draw C3 links
         drawSprites(C3Sprites);
 
@@ -376,6 +371,12 @@ public class BoardView1
             backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y - 1, 2, 2);
         }
         // end kenn
+
+        // draw all the "displayables"
+        for (int i = 0; i < displayables.size(); i++) {
+            Displayable disp = (Displayable) displayables.elementAt(i);
+            disp.draw(backGraph, backSize);
+        }
 
         // draw the back buffer onto the screen
         // first clear the entire view if the map has been zoomed

@@ -522,7 +522,7 @@ public class MovePath implements Cloneable, Serializable {
         ArrayList candidates = new ArrayList();
         candidates.add(bestPath);
 
-        boolean keepLooping = this.getFinalCoords().distance(dest) > 2;
+        boolean keepLooping = this.getFinalCoords().distance(dest) > 1;
         int loopcount = 0;
 
         while (candidates.size() > 0 && keepLooping) {

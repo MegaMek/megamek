@@ -251,6 +251,10 @@ public class Compute
     public static void compile(Game game, int entityId, MovementData md) {
         final Entity entity = game.getEntity(entityId);
         
+        if (entity instanceof QuadMech) {
+            md.transformLateralShifts();
+        }
+        
         // some flags
         int curFacing = entity.getFacing();
         Coords lastPos;
@@ -264,10 +268,6 @@ public class Compute
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
         boolean isRunProhibited = false;
-        boolean isMovementLegal = true;
-        
-        boolean isDanger = false;
-        boolean isPastDanger = false;
         
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
@@ -315,6 +315,18 @@ public class Compute
                 hasJustStood = false;
                 distance += 1;
                 break;
+            case MovementData.STEP_LATERAL_LEFT :
+            case MovementData.STEP_LATERAL_RIGHT :
+                curPos = curPos.translated(MovementData.getAdjustedFacing(curFacing, MovementData.turnForLateralShift(step.getType())));
+                stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
+                                            overallMoveType) + 1;
+                // check for water
+                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0) {
+                    isRunProhibited = true;
+                }
+                hasJustStood = false;
+                distance += 1;
+                break;
             case MovementData.STEP_GET_UP :
                 // mechs with 1 MP are allowed to get up
                 stepMp = entity.getWalkMP() == 1 ? 1 : 2;
@@ -347,12 +359,31 @@ public class Compute
         }
         
         // second pass: set moveType, illegal, trouble flags
-        curPos = new Coords(entity.getPosition());
-        firstStep = true;
+        compileIllegal(game, entityId, md, overallMoveType, isRunProhibited);
+        
+        // third pass (sigh) : avoid stacking violations
+        compileStackingViolations(game, entityId, md);
+        
+        md.setCompiled(true);
+    }
+    
+    /**
+     * Go thru movement data and set the moveType, illegal and danger flags.
+     */
+    private static void compileIllegal(Game game, int entityId, MovementData md, 
+                                        int overallMoveType, boolean runProhibited) {
+        final Entity entity = game.getEntity(entityId);
+
+        Coords curPos = new Coords(entity.getPosition());
+        boolean legal = true;
+        boolean danger = false;
+        boolean pastDanger = false;
+        boolean firstStep = true;
+        
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             
-            lastPos = new Coords(curPos);
+            Coords lastPos = new Coords(curPos);
             curPos = step.getPosition();
             
             // guilty until proven innocent
@@ -372,7 +403,7 @@ public class Compute
                     || step.getType() == MovementData.STEP_TURN_RIGHT)) {
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
-                } else if (step.getMpUsed() <= entity.getRunMP() && !isRunProhibited) {
+                } else if (step.getMpUsed() <= entity.getRunMP() && !runProhibited) {
                     moveType = Entity.MOVE_RUN;
                 }
             }
@@ -394,51 +425,57 @@ public class Compute
             
             // no legal moves past an illegal one
             if (moveType == Entity.MOVE_ILLEGAL) {
-                isMovementLegal = false;
+                legal = false;
             }
             
             // check for danger
-            isDanger = step.isDanger();
-            isDanger |= isPilotingSkillNeeded(game, entityId, lastPos, 
+            danger = step.isDanger();
+            danger |= isPilotingSkillNeeded(game, entityId, lastPos, 
                                               curPos, moveType);
             
             // getting up is also danger
             if (step.getType() == MovementData.STEP_GET_UP) {
-                isDanger = true;
+                danger = true;
             }
             
             // set flags
-            step.setDanger(isDanger);
-            step.setPastDanger(isPastDanger);
-            step.setMovementType(isMovementLegal 
-                                 ? moveType : Entity.MOVE_ILLEGAL);
+            step.setDanger(danger);
+            step.setPastDanger(pastDanger);
+            step.setMovementType(legal ? moveType : Entity.MOVE_ILLEGAL);
             
             // set past danger
-            isPastDanger |= isDanger;
+            pastDanger |= danger;
             
             firstStep = false;
         }
+    }
+    
+    /**
+     * Check thru movement data and flag stacking violations.  Step backwards
+     * until we get to the first (last) legal step.  
+     */
+    private static void compileStackingViolations(Game game, int entityId, MovementData md) {
+        final Entity entity = game.getEntity(entityId);
         
-        // third pass (sigh) : avoid stacking violations
-        isMovementLegal = false;
+        boolean lastMoveLegal = false;
         for (int i = md.length() - 1; i >= 0; i--) {
             final MovementData.Step step = md.getStep(i);
             
             // find the last legal step
-            if (!isMovementLegal && step.getMovementType() != Entity.MOVE_ILLEGAL) {
-                final Entity entityInHex = game.getEntity(step.getPosition());
-                if (entityInHex != null && !entityInHex.equals(entity)
-                        && step.getType() != MovementData.STEP_CHARGE
-                        && step.getType() != MovementData.STEP_DFA) {
-                    // can't move here
-                    step.setMovementType(Entity.MOVE_ILLEGAL);
-                } else {
-                    isMovementLegal = true;
-                }
+            if (lastMoveLegal || step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                continue;
+            }
+            
+            final Entity entityInHex = game.getEntity(step.getPosition());
+            if (entityInHex != null && !entityInHex.equals(entity)
+                    && step.getType() != MovementData.STEP_CHARGE
+                    && step.getType() != MovementData.STEP_DFA) {
+                // can't move here
+                step.setMovementType(Entity.MOVE_ILLEGAL);
+            } else {
+                lastMoveLegal = true;
             }
         }
-        
-        md.setCompiled(true);
     }
     
     /**
@@ -2530,7 +2567,7 @@ public class Compute
         Coords pos = entity.getPosition();
         return entity.getWalkMP() > 0 && !entity.isProne()
         && (pos.x == 0 || pos.x == game.board.width - 1 
-            || pos.y == 0 || pos.x == game.board.height - 1);
+            || pos.y == 0 || pos.y == game.board.height - 1);
     }
     
     /**

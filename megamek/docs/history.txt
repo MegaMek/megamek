@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.52 (CVS)
 + Bug 1039773: the club needs to be restored after transmission.
++ Patch 1040096: PPC Field Inhibitor Disengaging (MaxTech Rule)
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

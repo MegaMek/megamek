@@ -5458,6 +5458,47 @@ implements Runnable, ConnectionHandler {
               return;
           }
       }
+      // Resolve roll for disengaged field inhibitors on PPCs, if needed
+      if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
+          && weapon.curMode().equals("Field Inhibitor OFF") ) {
+          int rollTarget = 0;
+          int dieRoll = Compute.d6(2);
+          int distance = Compute.effectiveDistance(game, ae, target);
+
+          if (distance>=3) {
+              rollTarget = 3;
+          } else if (distance == 2) {
+              rollTarget = 6;
+          } else if (distance == 1) {
+              rollTarget = 10;
+          }
+          phaseReport.append("    Fired PPC without field inhibitor, checking for damage:\n");
+          phaseReport.append("    Needs ");
+          phaseReport.append(rollTarget);
+          phaseReport.append(" to avoid damage, rolls ");
+          phaseReport.append(dieRoll);
+          phaseReport.append(": ");
+          if (dieRoll<rollTarget) {
+              // Oops, we ruined our day...
+              int wlocation = weapon.getLocation();
+              int wid = ae.getEquipmentNum(weapon);
+              int slot = 0;
+              weapon.setDestroyed (true);
+              for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
+                  CriticalSlot slot1 = ae.getCritical (wlocation, i);
+                  if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                      continue;
+                  }
+                  Mounted mounted = ae.getEquipment(slot1.getIndex());
+                  if (mounted.equals(weapon)) {
+                      ae.hitAllCriticals(wlocation,i);
+                  }
+              }
+              phaseReport.append("fails.").append(damageEntity(ae, new HitData(wlocation), 10, true)).append("\n    ");
+          } else {
+              phaseReport.append("Succeeds.\n    ");
+          }
+      }
 
       // do we hit?
       boolean bMissed = wr.roll < toHit.getValue();

@@ -413,7 +413,7 @@ public class Compute
               wtype.hasFlag(WeaponType.F_INFERNO) );
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
-
+        boolean isPPCwithoutInhibitor = wtype.name.equals("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
 
         ToHitData toHit = null;
 
@@ -1042,7 +1042,17 @@ public class Compute
                 weaponRanges = new int[] {0, 3, 6, 9, 12};
             }
         }
-
+        //
+        // modifiy the ranges for PPCs when field inhibitors are turned off
+        // TODO: See above, it should be coded elsewhere...
+        //
+        if (wtype.getName().equals("Particle Cannon")) {
+            if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")) {
+                if (weapon.curMode().equals("Field Inhibitor OFF")) {
+                    weaponRanges[0] = 0;
+                }
+            }
+        }
         //is water involved?
         Hex attHex = game.board.getHex(ae.getPosition());
         Hex targHex = game.board.getHex(target.getPosition());

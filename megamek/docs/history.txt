@@ -69,7 +69,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v CVS
+v 0.27.8 (11-22-02, 11:41pm)
 + applied HentaiZonga's patch for C3, RAC unjamming and targetting hexes
 + 639358: jumping over fire hexes does not raise mech heat
 + 636311: infantry are destroyed by fire too

@@ -94,16 +94,22 @@ public class BoardEncoder {
                 coords = (Coords) iter.nextElement();
                 out.write( "<inferno>" );
                 CoordsEncoder.encode( coords, out );
-                turns = board.getInfernoBurnTurns( coords );
-                out.write( "<standard turns=\"" );
-                out.write( turns );
                 turns = board.getInfernoIVBurnTurns( coords );
                 // This value may be zero.
                 if ( turns > 0 ) {
-                    out.write( "\" /><arrowiv turns=\"" );
+                    out.write( "<arrowiv turns=\"" );
                     out.write( turns );
+                    out.write( "\" />" );
                 }
-                out.write( "\" /></inferno>" );
+                // -(Arrow IV turns - All Turns) = Standard Turns.
+                turns -= board.getInfernoBurnTurns( coords );
+                turns = -turns;
+                if ( turns > 0 ) {
+                    out.write( "<standard turns=\"" );
+                    out.write( turns );
+                    out.write( "\" />" );
+                }
+                out.write( "</inferno>" );
             }
             out.write( "</infernos>" );
         }

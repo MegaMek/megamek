@@ -820,7 +820,7 @@ public abstract class Entity
     /**
      * Returns this entity's original jumping mp.
      */
-    protected int getOriginalJumpMP() {
+    public int getOriginalJumpMP() {
         return jumpMP;
     }
 
@@ -1989,6 +1989,18 @@ public abstract class Entity
       return m;
     }
 
+    /**
+     * Return the unit that is current master of this unit's C3 network.  If
+     * the master unit has been destroyed or had it's C3 master computer
+     * damaged, then this unit is out of the C3 network for the rest of the
+     * game.  If the master unit has shut down, then this unit may return to
+     * the C3 network at a later time.
+     *
+     * @return  the <code>Entity</code> that is the master of this unit's C3
+     *          network.  This value may be <code>null</code>.  If the value
+     *          master unit has shut down, then the value will be
+     *          non-<code>null</code> after the master unit restarts.
+     */
     public Entity getC3Master() {
       if(C3Master == NONE) return null;
       if(hasC3S() && C3Master > NONE) { 
@@ -2043,6 +2055,23 @@ public abstract class Entity
       } else {
           return game.getEntity(C3Master);
       }
+    }
+
+    /**
+     * Get the ID of the master unit in this unit's C3 network.  If the
+     * master unit has dhut down, then the ID will still be returned.  The
+     * only times when the value, <code>Entity.NONE</code> is returned is when
+     * this unit is permanently out of the C3 network, or when it was never
+     * in a C3 network.
+     *
+     * @return  the <code>int</code> ID of the unit that is the master of
+     *          this unit's C3 network, or <code>Entity.NONE</code>.
+     */
+    public int getC3MasterId() {
+        // Make sure that this unit is still on a C3 network.
+        // N.B. this call may set this.C3Master to NONE.
+        this.getC3Master();
+        return this.C3Master;
     }
 
     /**

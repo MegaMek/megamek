@@ -363,18 +363,18 @@ public class LosEffects {
      * what weapon is attacking.
      */
     private static LosEffects losDivided(Game game, AttackInfo ai) {
-		Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
-		LosEffects los = new LosEffects();
-		boolean targetInBuilding = false;
-		if (ai.targetEntity) {
-			targetInBuilding = Compute.isInBuilding(game, game.board.getHex(ai.targetPos).floor(), ai.targetPos);
-		}
+        Coords[] in = Coords.intervening(ai.attackPos, ai.targetPos);
+        LosEffects los = new LosEffects();
+        boolean targetInBuilding = false;
+        if (ai.targetEntity) {
+            targetInBuilding = Compute.isInBuilding(game, game.board.getHex(ai.targetPos).floor(), ai.targetPos);
+        }
 		    
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
-		if ( targetInBuilding && Compute.isInBuilding( game, game.board.getHex(ai.attackPos).floor(), ai.attackPos ) ) {
-			los.setThruBldg( game.board.getBuildingAt( in[0] ) );
-		}
+        if ( targetInBuilding && Compute.isInBuilding( game, game.board.getHex(ai.attackPos).floor(), ai.attackPos ) ) {
+            los.setThruBldg( game.board.getBuildingAt( in[0] ) );
+        }
     
         // add non-divided line segments
         for (int i = 3; i < in.length - 2; i += 3) {
@@ -395,7 +395,7 @@ public class LosEffects {
             // If a target Entity is at a different elevation as its
             // attacker, and if the attack is through a building, the
             // target has cover.
-			final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
+            final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
             
             if ( targetInBuilding && isElevDiff ) {
                  if ( null != left.getThruBldg() ) {
@@ -430,7 +430,6 @@ public class LosEffects {
                 los = right;
             }
         }
-        
         return los;
     }
 
@@ -491,6 +490,13 @@ public class LosEffects {
         if ((hexEl + bldgEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
         || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos.distance(coords) == 1)
         || (hexEl + bldgEl > ai.targetAbsHeight && ai.targetPos.distance(coords) == 1)) {
+            los.blocked = true;
+        }
+        
+        // check if there's a clear hex between the targets that's higher than
+        // one of them, if we're in underwater combat
+        if (ai.underWaterCombat && hex.levelOf(Terrain.WATER) == Terrain.LEVEL_NONE &&
+            (hexEl + bldgEl > ai.attackAbsHeight || hexEl + bldgEl > ai.targetAbsHeight)) {
             los.blocked = true;
         }
     

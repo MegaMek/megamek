@@ -5,6 +5,7 @@ v0.29.66 (CVS)
 + Data 1122339: New pics for Huntsman (Nobiri-Nin), Black Python, Mist Lynx,
     Thunder Stallion.
 + Patch 1122308: Entity id displays as -1 sometimes.
++ Bug 927687: Underwater firing problem
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

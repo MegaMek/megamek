@@ -5,7 +5,7 @@ Table format is Game Component - Implemented - Notes.
 Components (Units)
 
 - Battlemechs			Yes		None
-- Protomechs			Partial         Missing: Bot support
+- Protomechs			Yes		None
 - Vehicles			Partial		No VTOL's or Naval Units.
 - Infantry			Yes		None
 
@@ -128,7 +128,7 @@ Physical Attacks
 - Death From Above		Yes		Buildings may not be DFA'd
 - Different Elevations		Yes		None
 - Prone Battlemechs		Yes		None
-- Protomech Physical 	Yes 	None
+- Protomech Physical            Yes             None
 
 Heat (Heat Points)
 
@@ -169,14 +169,14 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			Partial		Missing: Bot support
+- ProtoMechs			Yes             None
 
 ProtoMechs (Combat)
 
 - Weapon Attacks		Yes		None
 - Hit Locations			Yes		None
 - Damage			Yes		None
-- Physical Attacks		No		None
+- Physical Attacks		Yes		None
 
 Vehicles (Movement)
 

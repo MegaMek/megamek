@@ -512,7 +512,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // make sure the game advances
-        if (game.phaseHasTurns(game.getPhase())) {
+        if ( game.phaseHasTurns(game.getPhase()) && null != game.getTurn() ) {
             if (game.getTurn().getPlayerNum() == player.getId()) {
                 sendGhostSkipMessage( player );
             }

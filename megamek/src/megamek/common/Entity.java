@@ -64,6 +64,7 @@ public abstract class Entity
     public boolean              ready = false;	
     	
     protected boolean           prone = false;
+    protected boolean           charging = false;
 	public int                  heat = 0;
 	public int                  heatBuildup = 0;
 	public int                  delta_distance = 0;
@@ -225,6 +226,14 @@ public abstract class Entity
   
     public void setProne(boolean prone) {
         this.prone = prone;
+    }
+    
+    public boolean isCharging() {
+        return charging;
+    }
+  
+    public void setCharging(boolean charging) {
+        this.charging = charging;
     }
     
     /**

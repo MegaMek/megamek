@@ -9,6 +9,12 @@ v 0.29.15 (CVS)
 + Bug 825739: Attempt to squash InputContext exception in Client#die().
 + Added confirm dialog for ammo dumping
 + Ammo dumping now reported in the final report of the round
++ Bug 824473: Retain building damage from saved games and restarts.
++ Bugs 798306, 822293, 825064: Restore Entity & Owner in Entity#setGame.
++ RFE 783395: Add a "Cancel" button to the Movement Display's menu.
++ RFE 787056: Set the default Mech Display window width to 235.
++ Sort the available boards by name.
++ There should be no megamek.client classes in megamek.common or megamek.server
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

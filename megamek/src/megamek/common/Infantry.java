@@ -17,7 +17,6 @@ package megamek.common;
 import java.io.*;
 import java.util.Enumeration;
 import megamek.client.UnitOverview;
-import java.awt.FontMetrics;
 
 /**
  * This class represents the lowest of the low, the ground pounders, 
@@ -806,12 +805,12 @@ public class Infantry
      */
     public int getShootingStrength() { return menShooting; }
 
-	public void generateIconName(FontMetrics fm) {
-		iconName = getModel();
+    public void generateIconName(java.awt.FontMetrics fm) {
+        iconName = getModel();
 		
-		while (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			iconName = iconName.substring(0, iconName.length() - 1);
-		}
-	}
+        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            iconName = iconName.substring(0, iconName.length() - 1);
+        }
+    }
 
 } // End class Infantry

@@ -23,6 +23,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.options.*;
 import megamek.server.commands.*;
+import megamek.common.util.StringUtil;
 
 /**
  * @author Ben Mazur
@@ -128,9 +129,7 @@ implements Runnable {
         // reattach the transient fields and ghost the players
         for (Enumeration e = game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = (Entity)e.nextElement();
-            ent.setOwner(game.getPlayer(ent.getOwnerId()));
             ent.setGame(game);
-            ent.restore();
         }
         
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
@@ -138,11 +137,6 @@ implements Runnable {
             p.setGame(game);
             p.setGhost(true);
         }
-
-        // Re-initialize the game's board.
-        // TODO: have megamek.common.Board's de-serialization
-        //       reconstruct the transient bldgByCoords instead.
-        game.board.newData( game.board );
 
         //HACK
         roundReport = game.getRoundReport();
@@ -8389,19 +8383,27 @@ implements Runnable {
         
         // scan files
         String[] fileList = boardDir.list();
+        com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
+        com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].indexOf(".board") == -1) {
                 continue;
             }
             if (Board.boardIsSize(fileList[i], boardWidth, boardHeight)) {
-                boards.addElement(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
+                tempList.addElement(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
             }
         }
         
         // if there are any boards, add these:
-        if (boards.size() > 0) {
-            boards.insertElementAt(MapSettings.BOARD_RANDOM, 0);
-            boards.insertElementAt(MapSettings.BOARD_SURPRISE, 1);
+        if (tempList.size() > 0) {
+            boards.addElement( MapSettings.BOARD_RANDOM );
+            boards.addElement( MapSettings.BOARD_SURPRISE );
+            com.sun.java.util.collections.Collections.sort(tempList, sortComp);
+            for ( int loop = 0; loop < tempList.size(); loop++ ) {
+                System.err.print( "Adding map " );//killme
+                System.err.println( tempList.elementAt(loop) );//killme
+                boards.addElement( tempList.elementAt(loop) );
+            }
         }
         
         //TODO: alphabetize files?
@@ -8559,9 +8561,6 @@ implements Runnable {
     private void receiveEntityAdd(Packet c, int connIndex) {
         Entity entity = (Entity)c.getObject(0);
         
-        entity.restore();
-        entity.setOwner(getPlayer(connIndex));
-
         // Only assign an entity ID when the client hasn't.
         if ( Entity.NONE == entity.getId() ) { 
             entity.setId(getFreeEntityId()); 
@@ -8579,8 +8578,6 @@ implements Runnable {
         Entity entity = (Entity)c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
         if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
-            entity.restore();
-            entity.setOwner(getPlayer(connIndex));
             game.setEntity(entity.getId(), entity);
             
             send(createEntitiesPacket());

@@ -15,7 +15,6 @@
 package megamek.common;
 
 import java.io.*;
-import java.awt.*;
 import java.util.Enumeration;
 import megamek.client.FiringDisplay;
 import megamek.client.UnitOverview;
@@ -1784,12 +1783,12 @@ public abstract class Mech
             (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
     }
 
-	public void generateIconName(FontMetrics fm) {
-		iconName = getModel();
+    public void generateIconName(java.awt.FontMetrics fm) {
+        iconName = getModel();
 		
-		while (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			iconName = iconName.substring(0, iconName.length() - 1);
-		}
-	}
+        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            iconName = iconName.substring(0, iconName.length() - 1);
+        }
+    }
 
 }

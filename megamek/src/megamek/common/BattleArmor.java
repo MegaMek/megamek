@@ -16,9 +16,7 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
-import java.awt.FontMetrics;
-import megamek.client.UnitOverview;
-import megamek.client.util.StringUtil;
+import megamek.common.util.StringUtil;
 import java.util.Vector;
 
 /**
@@ -663,21 +661,21 @@ public class BattleArmor
 
     } // End public TargetRoll getStealthModifier( char )
 
-	public void generateIconName(FontMetrics fm) {
-		iconName = getShortName();
+    public void generateIconName(java.awt.FontMetrics fm) {
+        iconName = getShortName();
 		
-		if (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			Vector v = StringUtil.splitString(iconName, " ");
-			iconName = (String) v.elementAt(0);
-			if (iconName.equals("Clan")) {
-				iconName = (String) v.elementAt(1);
-			}
-		}
+        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            Vector v = StringUtil.splitString(iconName, " ");
+            iconName = (String) v.elementAt(0);
+            if (iconName.equals("Clan")) {
+                iconName = (String) v.elementAt(1);
+            }
+        }
 		
-		while (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			iconName = iconName.substring(0, iconName.length() - 1);
-		}
-	}
+        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            iconName = iconName.substring(0, iconName.length() - 1);
+        }
+    }
 
 } // End public class BattleArmor extends Infantry implements Serializable
 

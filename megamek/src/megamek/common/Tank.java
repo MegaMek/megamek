@@ -17,9 +17,7 @@ package megamek.common;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.awt.FontMetrics;
-import megamek.client.UnitOverview;
-import megamek.client.util.StringUtil;
+import megamek.common.util.StringUtil;
 /**
  * You know what tanks are, silly.
  */
@@ -613,16 +611,17 @@ public class Tank
         return retval;
     }
 
-	public void generateIconName(FontMetrics fm) {
-		iconName = getShortName();
+    public void generateIconName(java.awt.FontMetrics fm) {
+        iconName = getShortName();
 		
-		if (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			Vector v = StringUtil.splitString(iconName, " ");
-			iconName = (String) v.elementAt(0);
-		}
+        if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            Vector v = StringUtil.splitString(iconName, " ");
+            iconName = (String) v.elementAt(0);
+        }
 		
-		while (fm.stringWidth(iconName) > UnitOverview.ICON_NAME_MAX_LENGTH) {
-			iconName = iconName.substring(0, iconName.length() - 1);
-		}
-	}
+        while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
+            iconName = iconName.substring(0, iconName.length() - 1);
+        }
+    }
+
 }

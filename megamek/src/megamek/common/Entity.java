@@ -73,6 +73,9 @@ public abstract class Entity
 
     public static final int        MAX_C3_NODES        = 12;
 
+    // The maximum length of the icon name.
+    public static final int        ICON_NAME_MAX_LENGTH = 52;
+
     protected transient Game    game;
 
     protected int               id = Entity.NONE;
@@ -251,6 +254,16 @@ public abstract class Entity
     
     public void setGame(Game game) {
         this.game = game;
+        this.restore();
+        // Make sure the owner is set.
+        if ( null == owner ) {
+            if ( Entity.NONE == ownerId ) {
+                throw new IllegalStateException
+                    ( "Entity doesn't know its owner's ID." );
+            } else {
+                setOwner( game.getPlayer(ownerId) );
+            }
+        }
     }
     
     /**
@@ -657,6 +670,8 @@ public abstract class Entity
         this.shortName = nbuf.toString();
     }
     
+    // TODO : I really REALLY hate having an AWT class in the megamek.common 
+    //        package, but I'm not smart enough to figure out how to remove it
     public String getIconName(FontMetrics fm) {
         if (iconName == null) {
             generateIconName(fm);

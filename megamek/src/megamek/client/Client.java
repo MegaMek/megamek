@@ -396,13 +396,6 @@ public class Client extends Panel
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println( "Attempting to close the InputContext in java.client.Client#die()..." );
-            try {
-                curPanel.getInputContext().endComposition();
-            }
-            catch ( Throwable thr ) {
-                thr.printStackTrace();
-            }
         } catch (NullPointerException e) {
             // not a big deal, just never connected
         }
@@ -416,6 +409,13 @@ public class Client extends Panel
             }
             catch ( Throwable error ) {
                 error.printStackTrace();
+                System.err.println( "Attempting to close the InputContext in java.client.Client#die()..." );
+                try {
+                    curPanel.getInputContext().endComposition();
+                }
+                catch ( Throwable thr ) {
+                    thr.printStackTrace();
+                }
             }
         }
         
@@ -1090,23 +1090,9 @@ public class Client extends Panel
         Vector newEntities = (Vector)c.getObject(0);
         Vector newOutOfGame = (Vector)c.getObject(1);
 
-        // re-link player in each entity
-        for (Enumeration i = newEntities.elements(); i.hasMoreElements();) {
-            Entity entity = (Entity)i.nextElement();
-            entity.restore();
-            entity.setOwner(getPlayer(entity.getOwnerId()));
-        }
+        // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
-        
-        if (newOutOfGame != null) {
-            // may as well relink these too
-            for (Enumeration i = newOutOfGame.elements(); i.hasMoreElements();) {
-                Entity entity = (Entity)i.nextElement();
-                entity.restore();
-                entity.setOwner(getPlayer(entity.getOwnerId()));
-            }
-            game.setOutOfGameEntitiesVector(newOutOfGame);
-        }
+        game.setOutOfGameEntitiesVector(newOutOfGame);
         
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
@@ -1125,10 +1111,7 @@ public class Client extends Panel
         if (game.getEntity(eindex) != null) {
           oc = game.getEntity(eindex).getPosition();
         }
-        // re-link player
-        entity.restore();
-        entity.setOwner(getPlayer(entity.getOwnerId()));
-        
+        // Replace this entity in the game.
         game.setEntity(eindex, entity);
         //XXX Hack alert!
         if (movePath.size() > 0 && Settings.showMoveStep) {
@@ -1142,10 +1125,8 @@ public class Client extends Panel
     protected void receiveEntityAdd(Packet packet) {
         int entityId = packet.getIntValue(0);
         Entity entity = (Entity)packet.getObject(1);
-        // re-link player
-        entity.restore();
-        entity.setOwner(getPlayer(entity.getOwnerId()));
-        
+
+        // Add the entity to the game.
         game.addEntity(entityId, entity);
         
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));

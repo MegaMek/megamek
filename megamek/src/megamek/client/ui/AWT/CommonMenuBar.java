@@ -105,6 +105,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem moveUnjam = null;
     private MenuItem moveClear = null;
     private MenuItem moveGetUp = null;
+    private MenuItem moveCancel         = null;
 
     private MenuItem fireFire           = null;
     private MenuItem fireSkip           = null;
@@ -317,6 +318,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         menu.addSeparator();
         menu.add( submenu );
 
+        // Add the cancel button.
+        menu.addSeparator();
+        moveNext = createMenuItem(menu, "Cancel", MovementDisplay.MOVE_CANCEL, KeyEvent.VK_ESCAPE);
+
         // *** Create the fire menu.
         menu = new Menu( "Fire" );
         this.add( menu );
@@ -342,7 +347,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         menu.addSeparator();
 
-		fireCancel = createMenuItem(menu, "Cancel", FiringDisplay.FIRE_CANCEL);
+		fireCancel = createMenuItem(menu, "Cancel", FiringDisplay.FIRE_CANCEL, KeyEvent.VK_ESCAPE);
 
         // *** Create the physical menu.
         menu = new Menu( "Physical" );

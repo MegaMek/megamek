@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.client.util;
+package megamek.common.util;
 
 import java.util.Vector;
 import com.sun.java.util.collections.Comparator;
@@ -43,29 +43,30 @@ public class StringUtil {
     	return v;
     }
 
-	public static Comparator stringComparator() {
-		return new Comparator() {
-			public int compare(java.lang.Object o1, java.lang.Object o2) {
-				String s1 = ((String) o1).toLowerCase();
-				String s2 = ((String) o2).toLowerCase();
+    public static Comparator stringComparator() {
+        return new Comparator() {
+                public int compare(java.lang.Object o1, java.lang.Object o2) {
+                    String s1 = ((String) o1).toLowerCase();
+                    String s2 = ((String) o2).toLowerCase();
 
-				for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {
-					if (s1.charAt(i) < s2.charAt(i)) {
-						return -1;
-					} else if (s1.charAt(i) > s2.charAt(i)) {
-						return 1;
-					}
-				}
+                    for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {
+                        if (s1.charAt(i) < s2.charAt(i)) {
+                            return -1;
+                        } else if (s1.charAt(i) > s2.charAt(i)) {
+                            return 1;
+                        }
+                    }
 
-				if (s1.length() < s2.length()) {
-					return -1;
-				} else if (s1.length() > s2.length()) {
-					return 1;
-				} else {
-					return 0;
-				}
+                    if (s1.length() < s2.length()) {
+                        return -1;
+                    } else if (s1.length() > s2.length()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
 
-			}
-		};
-	}
+                }
+            };
+    }
+
 }

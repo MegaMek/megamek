@@ -42,6 +42,7 @@ public class MovementDisplay
     public static final String    MOVE_UNLOAD = "moveUnload";
     public static final String    MOVE_UNJAM = "moveUnjam";
     public static final String    MOVE_CLEAR = "moveClear";
+    public static final String    MOVE_CANCEL   = "moveCancel";
 
     // parent game
     public Client client;
@@ -1053,6 +1054,8 @@ public class MovementDisplay
             moveTo(md);
         } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {       	
+	    clearAllMoves();
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;

@@ -108,6 +108,7 @@ v next
 + fixed bug with making too many consciousness rolls
 + mechs with 1 MP are allowed to get up
 + mechs with at least 1 MP can take 1 step forward, regardless of terrain cost
++ more notification about criticals due to "2" hit location
 
 v 0.23.6 (03-17-02, 8:15pm)
 + center on unit works in new display

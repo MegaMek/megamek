@@ -121,6 +121,9 @@ implements Serializable {
     public void newData( Board other ) {
         this.roadsAutoExit = other.roadsAutoExit;
         newData( other.width, other.height, other.data );
+        this.buildings = other.buildings;
+        this.bldgByCoords = other.bldgByCoords;
+        this.infernos = other.infernos;
     }
     
     /**
@@ -1136,6 +1139,37 @@ implements Serializable {
      */
     public void setRoadsAutoExit( boolean value ) {
         this.roadsAutoExit = value;
+    }
+
+    /**
+     * Override the default deserialization to populate the transient
+     * <code>bldgByCoords</code> member.
+     *
+     * @param   in - the <code>ObjectInputStream</code> to read.
+     * @throws  <code>IOException</code>
+     * @throws  <code>ClassNotFoundException</code>
+     */
+    private void readObject( ObjectInputStream in )
+        throws IOException, ClassNotFoundException 
+    {
+        in.defaultReadObject();
+
+        // Restore bldgByCoords from buildings.
+        bldgByCoords = new Hashtable();
+
+        // Walk through the vector of buildings.
+        Enumeration loop = buildings.elements();
+        while ( loop.hasMoreElements() ) {
+            final Building bldg = (Building) loop.nextElement();
+
+            // Each building identifies the hexes it covers.
+            Enumeration enum = bldg.getCoords();
+            while ( enum.hasMoreElements() ) {
+                bldgByCoords.put( enum.nextElement(), bldg );
+            }
+
+        }
+
     }
 
 }

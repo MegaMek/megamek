@@ -342,6 +342,13 @@ public class Game implements Serializable
     
     public void setOutOfGameEntitiesVector(Vector vOutOfGame) {
         this.vOutOfGame = vOutOfGame;
+        if ( vOutOfGame != null ) {
+            // Add these entities to the game.
+            for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                entity.setGame(this);
+            }
+        }
     }
 
     /**
@@ -552,11 +559,13 @@ public class Game implements Serializable
      */
     private void reindexEntities() {
         entityIds.clear();
-        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            entityIds.put(new Integer(entity.getId()), entity);
-            // may as well set this here as well
-            entity.setGame(this);
+        if ( entities != null ) {
+            // Add these entities to the game.
+            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                entityIds.put(new Integer(entity.getId()), entity);
+                entity.setGame(this);
+            }
         }
     }
     

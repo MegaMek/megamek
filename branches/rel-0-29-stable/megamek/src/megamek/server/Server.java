@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -127,9 +127,7 @@ implements Runnable {
         // reattach the transient fields and ghost the players
         for (Enumeration e = game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = (Entity)e.nextElement();
-            ent.setOwner(game.getPlayer(ent.getOwnerId()));
             ent.setGame(game);
-            ent.restore();
         }
         
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
@@ -137,11 +135,6 @@ implements Runnable {
             p.setGame(game);
             p.setGhost(true);
         }
-
-        // Re-initialize the game's board.
-        // TODO: have megamek.common.Board's de-serialization
-        //       reconstruct the transient bldgByCoords instead.
-        game.board.newData( game.board );
 
         //HACK
         roundReport = game.getRoundReport();
@@ -7694,9 +7687,6 @@ implements Runnable {
      */
     private void receiveEntityAdd(Packet c, int connIndex) {
         Entity entity = (Entity)c.getObject(0);
-        
-        entity.restore();
-        entity.setOwner(getPlayer(connIndex));
 
         // Only assign an entity ID when the client hasn't.
         if ( Entity.NONE == entity.getId() ) { 
@@ -7715,8 +7705,6 @@ implements Runnable {
         Entity entity = (Entity)c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
         if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
-            entity.restore();
-            entity.setOwner(getPlayer(connIndex));
             game.setEntity(entity.getId(), entity);
             
             send(createEntitiesPacket());

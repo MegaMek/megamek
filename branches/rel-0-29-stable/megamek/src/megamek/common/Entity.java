@@ -227,6 +227,16 @@ public abstract class Entity
     
     public void setGame(Game game) {
         this.game = game;
+        this.restore();
+        // Make sure the owner is set.
+        if ( null == owner ) {
+            if ( Entity.NONE == ownerId ) {
+                throw new IllegalStateException
+                    ( "Entity doesn't know its owner's ID." );
+            } else {
+                setOwner( game.getPlayer(ownerId) );
+            }
+        }
     }
     
     /**

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.15 (CVS)
+v 0.29.15 (10-19-03, 9:30pm)
 + Fa Shih units have superior mine-clearing capabilities.
 + Added movement menu.
 + Added physical attack menu.

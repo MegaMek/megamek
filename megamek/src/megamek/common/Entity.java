@@ -491,6 +491,14 @@ public abstract class Entity
     }
 
     /**
+     * This method should <strong>only</stong> be called when needed to
+     * remove a dead swarmer's game turn.
+     */
+    public void setUnloaded( boolean unloaded ) {
+        this.unloadedThisTurn = unloaded;
+    }
+
+    /**
      * Determine if this entity participate in the current game phase.
      *
      * @return  <code>true</code> if this entity is not shut down, is

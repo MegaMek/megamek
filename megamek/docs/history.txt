@@ -18,6 +18,8 @@ v0.29.66 (CVS)
 + Added game option to set how many infantry/ProtoMech units move per 'Mech
 + Bug 1126196: Tanks with 0 MPs get no road bonus.
 + New images for Myrmidon and Brutus courtesy of Vertigo
++ Swarming battle armor units don't drown in level 2 (or deeper).
++ Bug 1120511: remove game turn for swarmers that drown.
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

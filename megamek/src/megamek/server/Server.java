@@ -3272,11 +3272,39 @@ implements Runnable, ConnectionHandler {
             rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
                                                isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                // Swarmers need special handling.
+                final int swarmerId = entity.getSwarmAttackerId();
+                boolean swarmerDone = true;
+                Entity swarmer = null;
+                if (Entity.NONE != swarmerId) {
+                    swarmer = game.getEntity( swarmerId );
+                    swarmerDone = swarmer.isDone();
+                }
+
+                // Now do the skill check.
                 doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          true);
+
+                // Swarming infantry platoons may drown.
                 if (curHex.levelOf(Terrain.WATER) > 1) {
-                    // Any swarming infantry will be destroyed.
                     drownSwarmer(entity, curPos);
+                }
+
+                // Do we need to remove a game turn for the swarmer
+                if (!swarmerDone &&
+                    ( swarmer.isDoomed() || swarmer.isDestroyed() )) {
+                    // We have to diddle with the swarmer's
+                    // status to get its turn removed.
+                    swarmer.setDone( false );
+                    swarmer.setUnloaded( false );
+
+                    // Dead entities don't take turns.
+                    game.removeTurnFor( swarmer );
+                    send( createTurnVectorPacket() );
+
+                    // Return the original status.
+                    swarmer.setDone( true );
+                    swarmer.setUnloaded( true );
                 }
 
                 // check for inferno wash-off
@@ -3286,7 +3314,8 @@ implements Runnable, ConnectionHandler {
             // check during movement, for breach damage, and always
             // set dry if appropriate
             //TODO: possibly make the locations local and set later
-            doSetLocationsExposure(entity, curHex, isPavementStep, step.getMovementType() == Entity.MOVE_JUMP);
+            doSetLocationsExposure(entity, curHex, isPavementStep,
+                                   step.getMovementType() == Entity.MOVE_JUMP);
 
             // Handle loading units.
             if ( step.getType() == MovePath.STEP_LOAD ) {
@@ -3432,7 +3461,9 @@ implements Runnable, ConnectionHandler {
                 } else {
                     // Being swarmed
                     entity.setPosition(curPos);
-                    if (doDislodgeSwarmerSkillCheck(entity, rollTarget, curPos)) {
+                    if (doDislodgeSwarmerSkillCheck(entity,
+                                                    rollTarget,
+                                                    curPos)) {
                         // Entity falls
                         curFacing = entity.getFacing();
                         curPos = entity.getPosition();
@@ -3442,7 +3473,9 @@ implements Runnable, ConnectionHandler {
                 }
             }
 
-            movePath.addElement(new Integer(curPos.hashCode() ^ (curFacing << 16)));
+            // What the *heck* is this???
+            movePath.addElement
+                (new Integer(curPos.hashCode() ^ (curFacing << 16)));
 
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
@@ -3543,9 +3576,15 @@ implements Runnable, ConnectionHandler {
                 if (diceRoll < roll.getValue()) {
                     phaseReport.append("fails.\n");
                 } else {
+                    // Dislodged swarmers don't get turns.
+                    game.removeTurnFor( swarmer );
+                    send( createTurnVectorPacket() );
+
+                    // Update the report and the swarmer's status.
                     phaseReport.append("succeeds.\n");
                     entity.setSwarmAttackerId( Entity.NONE );
                     swarmer.setSwarmTargetId( Entity.NONE );
+
                     // Did the infantry fall into water?
                     final Hex curHex = game.board.getHex(curPos);
                     if ( curHex.levelOf(Terrain.WATER) > 0 ) {
@@ -4092,15 +4131,18 @@ implements Runnable, ConnectionHandler {
         final int swarmerId = entity.getSwarmAttackerId();
         if ( Entity.NONE != swarmerId ) {
             final Entity swarmer = game.getEntity( swarmerId );
-            swarmer.setSwarmTargetId( Entity.NONE );
-            entity.setSwarmAttackerId( Entity.NONE );
-            swarmer.setPosition( pos );
-            phaseReport.append( "   The swarming unit, " )
-                .append( swarmer.getShortName() )
-                .append( ", drowns!\n" )
-                .append( destroyEntity(swarmer,
-                                       "a watery grave", false) );
-            entityUpdate( swarmerId );
+            // Only *platoons* drown while swarming.
+            if (!(swarmer instanceof BattleArmor)) {
+                swarmer.setSwarmTargetId( Entity.NONE );
+                entity.setSwarmAttackerId( Entity.NONE );
+                swarmer.setPosition( pos );
+                phaseReport.append( "   The swarming unit, " )
+                    .append( swarmer.getShortName() )
+                    .append( ", drowns!\n" )
+                    .append( destroyEntity(swarmer,
+                                           "a watery grave", false) );
+                entityUpdate( swarmerId );
+            }
         }
     }
 
@@ -4258,7 +4300,9 @@ implements Runnable, ConnectionHandler {
      * @param   curPos The <code>Coords</code> the entity is at.
      * @return  <code>true</code> if the dislodging is successful.
      */
-    private boolean doDislodgeSwarmerSkillCheck(Entity entity, PilotingRollData roll, Coords curPos) {
+    private boolean doDislodgeSwarmerSkillCheck
+        (Entity entity, PilotingRollData roll, Coords curPos)
+    {
         // okay, print the info
         phaseReport.append("\n" ).append( entity.getDisplayName() )
             .append( " must make a piloting skill check (" )
@@ -4272,7 +4316,15 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("fails.\n");
             return false;
         } else {
+            // Dislodged swarmers don't get turns.
+            int swarmerId = entity.getSwarmAttackerId();
+            final Entity swarmer = game.getEntity( swarmerId );
+            game.removeTurnFor( swarmer );
+            send( createTurnVectorPacket() );
+
+            // Update the report and cause a fall.
             phaseReport.append("succeeds.\n");
+            entity.setPosition( curPos );
             doEntityFallsInto(entity, curPos, curPos, roll, false);
             return true;
         }
@@ -4394,7 +4446,7 @@ implements Runnable, ConnectionHandler {
         ).append( dest.getBoardNum() );
 
         // if hex was empty, deal damage and we're done
-        if (violation == null && affaTarget == null) {
+        if (violation == null || affaTarget == null) {
             doEntityFall(entity, dest, fallElevation, roll);
             return;
         }
@@ -4477,7 +4529,8 @@ implements Runnable, ConnectionHandler {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);
             // target gets displaced, because of low elevation
-            doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
+            Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+            doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 0, "domino effect"));
             // Update the violating entity's postion on the client.
             entityUpdate( violation.getId() );
         }
@@ -10394,11 +10447,11 @@ implements Runnable, ConnectionHandler {
         // the fall may kill the entity which will reset the attacker ID.
         final int swarmerId = entity.getSwarmAttackerId();
 
-        //positioning must be prior to damage for proper handling of breaches
-	    // Only Mechs can fall prone.
-	    if ( entity instanceof Mech ) {
-	        entity.setProne(true);
-	    }
+        // Positioning must be prior to damage for proper handling of breaches
+        // Only Mechs can fall prone.
+        if ( entity instanceof Mech ) {
+            entity.setProne(true);
+        }
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());

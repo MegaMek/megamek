@@ -541,7 +541,7 @@ public class TestBot extends BotClientWrapper {
                 double damage = 0;
                 if (option.isJumping) {
                   self.old.setState();
-                  MovementData md = option.getMovementData();
+                  MovePath md = option.getMovementData();
                   toHit = Compute.toHitDfa(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = 2*Compute.getDfaDamageFor(option.entity);
                   self_threat = option.centity.getThreatUtility(Compute.getDfaDamageTakenBy(option.entity), CEntity.SIDE_REAR)*Compute.oddsAbove(toHit.getValue())/100;
@@ -549,7 +549,7 @@ public class TestBot extends BotClientWrapper {
                   self_threat *= 100/option.centity.entity.getWeight(); //small mechs shouldn't do this...
                 } else {
                   self.old.setState();
-                  MovementData md = option.getMovementData();
+                  MovePath md = option.getMovementData();
                   toHit = Compute.toHitCharge(game, option.entity.getId(), option.PhysicalTarget.entity.getId(), md);
                   damage = Compute.getChargeDamageFor(option.entity, md.getHexesMoved());
                   self_threat = option.centity.getThreatUtility(Compute.getChargeDamageTakenBy(option.entity, option.PhysicalTarget.entity), CEntity.SIDE_FRONT)*(Compute.oddsAbove(toHit.getValue())/100);

@@ -44,8 +44,8 @@ public class ReportDisplay
     
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
-    private MovementData    md;        // movement data
-    private MovementData    cmd;    // considering movement data
+    private MovePath    md;        // movement data
+    private MovePath    cmd;    // considering movement data
     
     /**
      * Creates and lays out a new movement phase display 

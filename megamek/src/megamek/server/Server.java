@@ -1311,7 +1311,7 @@ implements Runnable {
                 break;
             case Game.PHASE_MOVEMENT :
                 if ( toSkip != null ) {
-                    processMovement(toSkip, new MovementData());
+                    processMovement(toSkip, new MovePath());
                 }
                 endCurrentTurn(toSkip);
                 break;
@@ -2090,7 +2090,7 @@ implements Runnable {
      */
     private void receiveMovement(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
-        MovementData md = (MovementData)packet.getObject(1);
+        MovePath md = (MovePath)packet.getObject(1);
         
         // is this the right phase?
         if (game.getPhase() != Game.PHASE_MOVEMENT) {
@@ -2118,9 +2118,9 @@ implements Runnable {
     /**
      * Steps thru an entity movement packet, executing it.
      */
-    private void processMovement(Entity entity, MovementData md) {
+    private void processMovement(Entity entity, MovePath md) {
         // check for fleeing
-        if (md.contains(MovementData.STEP_FLEE)) {
+        if (md.contains(MovePath.STEP_FLEE)) {
             // Unit has fled the battlefield.
             phaseReport.append("\n" ).append( entity.getDisplayName()
             ).append( " flees the battlefield.\n");
@@ -2170,7 +2170,7 @@ implements Runnable {
             return;
         }
         
-        if (md.contains(MovementData.STEP_EJECT)) {
+        if (md.contains(MovePath.STEP_EJECT)) {
             phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
             phaseReport.append(destroyEntity(entity, "ejection"));
 
@@ -2211,7 +2211,7 @@ implements Runnable {
         // Compile the move
         Compute.compile(game, entity.getId(), md);
 
-        if (md.contains(MovementData.STEP_CLEAR_MINEFIELD)) {
+        if (md.contains(MovePath.STEP_CLEAR_MINEFIELD)) {
             ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId());
             entity.setClearingMinefield(true);
             game.addAction(cma);
@@ -2231,9 +2231,9 @@ implements Runnable {
         firstStep = true;
         fellDuringMovement = false;
         /* Bug 754610: Revert fix for bug 702735. */
-        MovementData.Step prevStep = null;
+        MoveStep prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            final MoveStep step = (MoveStep)i.nextElement();
             wasProne = entity.isProne();
             boolean isPavementStep = step.isPavementStep();
             
@@ -2268,7 +2268,7 @@ implements Runnable {
                 break;
             }
              
-            if (step.getType() == MovementData.STEP_UNJAM_RAC) {
+            if (step.getType() == MovePath.STEP_UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
                 game.addAction(new UnjamAction(entity.getId()));
 
@@ -2281,7 +2281,7 @@ implements Runnable {
             mpUsed = step.getMpUsed();
 
             // check for charge
-            if (step.getType() == MovementData.STEP_CHARGE) {
+            if (step.getType() == MovePath.STEP_CHARGE) {
                 Targetable target = step.getTarget( game );
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
@@ -2291,7 +2291,7 @@ implements Runnable {
             }
             
             // check for dfa
-            if (step.getType() == MovementData.STEP_DFA) {
+            if (step.getType() == MovePath.STEP_DFA) {
                 Targetable target = step.getTarget( game );
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
@@ -2808,7 +2808,7 @@ implements Runnable {
             doSetLocationsExposure(entity, curHex, isPavementStep, step.getMovementType() == Entity.MOVE_JUMP);
 
             // Handle loading units.
-            if ( step.getType() == MovementData.STEP_LOAD ) {
+            if ( step.getType() == MovePath.STEP_LOAD ) {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
@@ -2855,7 +2855,7 @@ implements Runnable {
             } // End STEP_LOAD
 
             // Handle unloading units.
-            if ( step.getType() == MovementData.STEP_UNLOAD ) {
+            if ( step.getType() == MovePath.STEP_UNLOAD ) {
                 Targetable unloaded = step.getTarget( game );
                 if ( !this.unloadUnit( entity, unloaded,
                                        curPos, curFacing ) ) {
@@ -2939,7 +2939,7 @@ implements Runnable {
             }
             
             // dropping prone intentionally?
-            if (step.getType() == MovementData.STEP_GO_PRONE) {
+            if (step.getType() == MovePath.STEP_GO_PRONE) {
                 mpUsed = step.getMpUsed();
                 rollTarget = entity.checkDislodgeSwarmers();
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {

@@ -63,8 +63,8 @@ public class MovementDisplay
 
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
-    private MovementData    md;        // movement data
-    private MovementData    cmd;    // considering movement data
+    private MovePath    md;        // movement data
+    private MovePath    cmd;    // considering movement data
 
     // what "gear" is our mech in?
     private int                gear;
@@ -261,8 +261,8 @@ public class MovementDisplay
         // okay.
         this.cen = en;
 
-        md = new MovementData();
-        cmd = new MovementData();
+        md = new MovePath();
+        cmd = new MovePath();
         gear = Compute.GEAR_LAND;
         loadedUnits = ce().getLoadedUnits();
         
@@ -375,8 +375,8 @@ public class MovementDisplay
     private void clearAllMoves() {
         client.game.board.select(null);
         client.game.board.cursor(null);
-        md = new MovementData();
-        cmd = new MovementData();
+        md = new MovePath();
+        cmd = new MovePath();
         client.bv.clearMovementData();
         butDone.setLabel("Done");
         updateProneButtons();
@@ -395,7 +395,7 @@ public class MovementDisplay
     /**
      * Sends a data packet indicating the chosen movement.
      */
-    private void moveTo(MovementData md) {
+    private void moveTo(MovePath md) {
         if ( md != null ) {
             if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
                 Mech m = (Mech)ce();
@@ -449,7 +449,7 @@ public class MovementDisplay
      *  Compute.compile() is called though, which changes the
      *  md object (I think).
      */
-    private String doPSRCheck(MovementData md) {
+    private String doPSRCheck(MovePath md) {
 
         StringBuffer nagReport = new StringBuffer();
 
@@ -478,9 +478,9 @@ public class MovementDisplay
         // iterate through steps
         firstStep = true;
         /* Bug 754610: Revert fix for bug 702735. */
-        MovementData.Step prevStep = null;
+        MoveStep prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            final MoveStep step = (MoveStep)i.nextElement();
             boolean isPavementStep = step.isPavementStep();
             
             // stop for illegal movement
@@ -569,7 +569,7 @@ public class MovementDisplay
                 }
             }
 
-            if (step.getType() == MovementData.STEP_GO_PRONE) {
+            if (step.getType() == MovePath.STEP_GO_PRONE) {
                 rollTarget = entity.checkDislodgeSwarmers();
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
@@ -614,9 +614,9 @@ public class MovementDisplay
     }
 
     /**
-     * Returns new MovementData for the currently selected movement type
+     * Returns new MovePath for the currently selected movement type
      */
-    private MovementData currentMove(Coords src, int facing, Coords dest) {
+    private MovePath currentMove(Coords src, int facing, Coords dest) {
         if (shiftheld || gear == Compute.GEAR_TURN) {
             return Compute.rotatePathfinder(facing, src.direction(dest));
         } else if (gear == Compute.GEAR_LAND || gear == Compute.GEAR_JUMP) {
@@ -661,7 +661,7 @@ public class MovementDisplay
 
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
-            md = new MovementData(cmd);
+            md = new MovePath(cmd);
 
             client.game.board.select(b.getCoords());
 
@@ -1025,7 +1025,7 @@ public class MovementDisplay
                 butRAC.setEnabled(false);
             }
             else {
-              md.addStep(MovementData.STEP_UNJAM_RAC);
+              md.addStep(MovePath.STEP_UNJAM_RAC);
               moveTo(md);
             }
         } else if (ev.getSource() == butWalk) {
@@ -1037,8 +1037,8 @@ public class MovementDisplay
             if (gear != Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
-            if (!md.contains(MovementData.STEP_START_JUMP)) {
-                md.addStep(MovementData.STEP_START_JUMP);
+            if (!md.contains(MovePath.STEP_START_JUMP)) {
+                md.addStep(MovePath.STEP_START_JUMP);
             }
             gear = Compute.GEAR_JUMP;
         } else if (ev.getSource() == butTurn) {
@@ -1058,7 +1058,7 @@ public class MovementDisplay
 			if (client.doYesNoDialog("Clear the minefield?", "The unit successfully clears the\nminefield on " +
 				Minefield.CLEAR_NUMBER_INFANTRY + "+. The minefield\nwill explode on " + Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT +
 				" or less.")) {
-				md.addStep(MovementData.STEP_CLEAR_MINEFIELD);
+				md.addStep(MovePath.STEP_CLEAR_MINEFIELD);
 				moveTo(md);
 			}
         } else if (ev.getSource() == butCharge) {
@@ -1071,35 +1071,35 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = Compute.GEAR_DFA;
-            if (!md.contains(MovementData.STEP_START_JUMP)) {
-                md.addStep(MovementData.STEP_START_JUMP);
+            if (!md.contains(MovePath.STEP_START_JUMP)) {
+                md.addStep(MovePath.STEP_START_JUMP);
             }
         } else if (ev.getSource() == butUp) {
             clearAllMoves();
             gear = Compute.GEAR_LAND;
             if (md.getFinalProne(ce().isProne())) {
-                md.addStep(MovementData.STEP_GET_UP);
+                md.addStep(MovePath.STEP_GET_UP);
             }
-            cmd = new MovementData(md);
+            cmd = new MovePath(md);
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getSource() == butDown) {
             gear = Compute.GEAR_LAND;
             if (!md.getFinalProne(ce().isProne())) {
-                md.addStep(MovementData.STEP_GO_PRONE);
+                md.addStep(MovePath.STEP_GO_PRONE);
             }
-            cmd = new MovementData(md);
+            cmd = new MovePath(md);
             client.bv.drawMovementData(ce(), cmd);
             client.bv.repaint();
             butDone.setLabel("Move");
         } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
             clearAllMoves();
-            md.addStep(MovementData.STEP_FLEE);
+            md.addStep(MovePath.STEP_FLEE);
             moveTo(md);
         } else if (ev.getSource() == butEject && client.doYesNoDialog("Eject?", "Do you want to abandon this mech?")) {
             clearAllMoves();
-            md.addStep(MovementData.STEP_EJECT);
+            md.addStep(MovePath.STEP_EJECT);
             moveTo(md);
         }
         else if ( ev.getSource() == butLoad ) {
@@ -1120,7 +1120,7 @@ public class MovementDisplay
 
             // Handle not finding a unit to load.
             if ( other != null ) {
-                md.addStep( MovementData.STEP_LOAD );
+                md.addStep( MovePath.STEP_LOAD );
                 client.bv.drawMovementData(ce(), md);
                 gear = Compute.GEAR_LAND;
             }
@@ -1131,8 +1131,8 @@ public class MovementDisplay
 
             // Player can cancel the unload.
             if ( other != null ) {
-                cmd.addStep( MovementData.STEP_UNLOAD, other );
-                md = new MovementData(cmd);
+                cmd.addStep( MovePath.STEP_UNLOAD, other );
+                md = new MovePath(cmd);
                 client.bv.drawMovementData(ce(), cmd);
             }
         }
@@ -1178,7 +1178,7 @@ public class MovementDisplay
             Coords target = curPos.translated(dir);
             cmd = md.getAppended(currentMove(curPos, curDir, target));
             client.bv.drawMovementData(ce(), cmd);
-            md = new MovementData(cmd);
+            md = new MovePath(cmd);
         }
     }
     public void keyReleased(KeyEvent ev) {

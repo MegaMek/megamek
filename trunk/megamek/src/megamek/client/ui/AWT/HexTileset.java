@@ -97,7 +97,7 @@ public class HexTileset {
     private Image baseFor(Hex hex, Component comp) {
         HexEntry bestMatch = null;
         double match = -1;
-        
+
         // match a base image to the hex
         for (Iterator i = bases.iterator(); i.hasNext();) {
             HexEntry entry = (HexEntry)i.next();
@@ -233,9 +233,10 @@ public class HexTileset {
             elevation = 1.01 / (Math.abs(org.getElevation() - com.getElevation()) + 1.01);
         }
         
-        // check terrain
-        double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent());
-        double matches = 0;
+        // Determine maximum number of terrain matches.
+        // Bug 732188: Have a non-zero minimum terrain match.
+        double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent()) + 1.0;
+        double matches = 1.0;
         for (int i = 0; i < Terrain.SIZE; i++) {
             Terrain cTerr = com.getTerrain(i);
             Terrain oTerr = org.getTerrain(i);

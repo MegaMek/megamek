@@ -226,6 +226,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
         EquipmentType.addType(createISNarcOS());
+        EquipmentType.addType(createISImprovedNarc());
+        EquipmentType.addType(createISImprovedNarcOS());
         EquipmentType.addType(createISRL10());
         EquipmentType.addType(createISRL15());
         EquipmentType.addType(createISRL20());
@@ -2008,6 +2010,53 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
+    public static WeaponType createISImprovedNarc() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "iNarc";
+        weapon.setInternalName("ISImprovedNarc");
+        weapon.addLookupName("IS iNarc Beacon");
+        weapon.addLookupName("IS iNarc Missile Beacon");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 9;
+        weapon.longRange = 15;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 3;
+        weapon.bv = 75;
+        weapon.flags |= F_NO_FIRES | F_MISSILE;
+
+        return weapon;
+    }
+
+    public static WeaponType createISImprovedNarcOS() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "iNarc (OS)";
+        weapon.setInternalName("ISImprovedNarc (OS)");
+        weapon.addLookupName("IS OS iNarc Beacon");
+        weapon.addLookupName("IS iNarc Missile Beacon (OS)");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 9;
+        weapon.longRange = 15;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 5.5f;
+        weapon.criticals = 2;
+        weapon.bv = 15;
+        weapon.flags |= F_NO_FIRES | F_MISSILE | F_ONESHOT;
+
+        return weapon;
+    }
 
     // Start of Clan Level2 weapons
 

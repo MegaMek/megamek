@@ -612,16 +612,16 @@ public abstract class Entity
      */
     public int getHeatFiringModifier() {
         int mod = 0;
-        if (heat > 8) {
+        if (heat >= 8) {
             mod++;
         }
-        if (heat > 13) {
+        if (heat >= 13) {
             mod++;
         }
-        if (heat > 17) {
+        if (heat >= 17) {
             mod++;
         }
-        if (heat > 24) {
+        if (heat >= 24) {
             mod++;
         }
         return mod;

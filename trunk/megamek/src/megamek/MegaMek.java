@@ -552,8 +552,11 @@ class HostDialog extends Dialog implements ActionListener {
         portL = new Label("Port:", Label.RIGHT);
         
         yourNameF = new TextField(Settings.lastPlayerName, 16);
+        yourNameF.addActionListener(this);
         serverPassF = new TextField(Settings.lastServerPass, 16);
+        serverPassF.addActionListener(this);
         portF = new TextField(Settings.lastServerPort + "", 4);
+        portF.addActionListener(this);
     
         okayB = new Button("Okay");
         okayB.setActionCommand("done");
@@ -621,7 +624,7 @@ class HostDialog extends Dialog implements ActionListener {
     }
     
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("done")) {
+        if(!e.getActionCommand().equals("cancel")) {
             try {
                 name = yourNameF.getText();
                 serverPass = serverPassF.getText();
@@ -634,12 +637,8 @@ class HostDialog extends Dialog implements ActionListener {
             Settings.lastPlayerName = name;
             Settings.lastServerPass = serverPass;
             Settings.lastServerPort = port;
-
-            setVisible(false);
         }
-        if(e.getActionCommand().equals("cancel")) {
-            setVisible(false);
-        }
+        setVisible(false);
     }
 }
 
@@ -662,8 +661,11 @@ class ConnectDialog extends Dialog implements ActionListener {
         portL = new Label("Port:", Label.RIGHT);
         
         yourNameF = new TextField(Settings.lastPlayerName, 16);
+        yourNameF.addActionListener(this);
         serverAddrF = new TextField(Settings.lastConnectAddr, 16);
+        serverAddrF.addActionListener(this);
         portF = new TextField(Settings.lastConnectPort + "", 4);
+        portF.addActionListener(this);
     
         okayB = new Button("Okay");
         okayB.setActionCommand("done");
@@ -731,7 +733,7 @@ class ConnectDialog extends Dialog implements ActionListener {
     }
     
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("done")) {
+        if(!e.getActionCommand().equals("cancel")) {
             try {
                 name = yourNameF.getText();
                 serverAddr = serverAddrF.getText();
@@ -745,12 +747,8 @@ class ConnectDialog extends Dialog implements ActionListener {
             Settings.lastPlayerName = name;
             Settings.lastConnectAddr = serverAddr;
             Settings.lastConnectPort = port;
-                
-            setVisible(false);
         }
-        if(e.getActionCommand().equals("cancel")) {
-            setVisible(false);
-        }
+        setVisible(false);
     }
 }
 

@@ -546,8 +546,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                 System.out.println("trying mep file");
                 mech = new MepFile(file).getMech();
             } else if (file.getName().toLowerCase().endsWith(".mtf")) {
-                System.out.println("trying mep file");
+                System.out.println("trying mtf file");
                 mech = new MtfFile(file).getMech();
+            } else if (file.getName().toLowerCase().endsWith(".blk")) {
+                System.out.println("trying blk file");
+                mech = new BLKMechFile(file).getMech();
             }
 
             if (mech == null) {

@@ -87,6 +87,9 @@ VERSION HISTORY:
 v next
 + fixed a bug where the server thought everybody was on the same team
 + .mtf reader now handles removed arm actuators properly
++ .mtf reader now reads MG ammo properly
++ added .blk reader from Nathan Rowden <njrkrynn@attbi.com>
+  see his editor at http://tntbn.cjb.net/
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

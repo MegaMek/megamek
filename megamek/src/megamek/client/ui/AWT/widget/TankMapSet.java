@@ -27,17 +27,17 @@ import megamek.common.*;
 
 
 public class TankMapSet implements DisplayMapSet{
-	
-	private Component comp;
-	private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
+  
+  private Component comp;
+  private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
     private PMSimpleLabel[] labels = new PMSimpleLabel[12];
     private PMValueLabel[] vLabels = new PMValueLabel[12];
     private Vector  bgDrawers = new Vector();
     private PMAreasGroup content = new PMAreasGroup();
-	
-	private final int INT_STR_OFFSET = 6;
-	//Polygons for all areas
-	private Polygon frontArmor = new Polygon( new int[]{0,19,109,128,105,92,37,23},
+  
+  private final int INT_STR_OFFSET = 6;
+  //Polygons for all areas
+  private Polygon frontArmor = new Polygon( new int[]{0,19,109,128,105,92,37,23},
                                               new int[]{55,27,27,55,68,49,49,68}, 8);
         //front internal structure
     private Polygon frontIS = new Polygon(new int[]{67,67,105,92,37,23,61,61},
@@ -82,21 +82,21 @@ public class TankMapSet implements DisplayMapSet{
     private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9);
     private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
  
-	
-	
-	public TankMapSet(Component c){
-		comp = c;
-		setAreas();
-		setLabels();
-		setBackGround();
-		translateAreas();
-		setContent();
-	}
-	
-	public void setRest(){
-	}
-	
-	public PMAreasGroup getContentGroup(){
+  
+  
+  public TankMapSet(Component c){
+    comp = c;
+    setAreas();
+    setLabels();
+    setBackGround();
+    translateAreas();
+    setContent();
+  }
+  
+  public void setRest(){
+  }
+  
+  public PMAreasGroup getContentGroup(){
         return content;
     }
     
@@ -105,78 +105,78 @@ public class TankMapSet implements DisplayMapSet{
     }
     
     public void setEntity(Entity e){
-    	Tank t = (Tank) e;
-    	int a = 1;
+      Tank t = (Tank) e;
+      int a = 1;
         int a0 = 1;
-    	for(int i = 1; i < 6; i++){
-    	     a = t.getArmor(i);
+      for(int i = 1; i < 6; i++){
+           a = t.getArmor(i);
              a0 = t.getOArmor(i);
              vLabels[i].setValue(t.getArmorString(i));
              setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
-    	}
-    	for(int i = 7; i < 12; i++){
+      }
+      for(int i = 7; i < 12; i++){
              a = t.getInternal(i-6);
              a0 = t.getOInternal(i-6);
              vLabels[i].setValue(t.getInternalString(i-6));
              setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
-    	}
-    	
+      }
+      
     }
     
     private void setContent(){
-    	for(int i = 1; i < 6; i++){
-    		content.addArea(areas[i]);
-    		content.addArea(labels[i]);
-    		content.addArea(vLabels[i]);
-    	}
-    	for(int i = 1; i < 6; i++){
-    		content.addArea(areas[i + INT_STR_OFFSET]);
-    		content.addArea(labels[i + INT_STR_OFFSET]);
-    		content.addArea(vLabels[i + INT_STR_OFFSET]);
-    	}
+      for(int i = 1; i < 6; i++){
+        content.addArea(areas[i]);
+        content.addArea(labels[i]);
+        content.addArea(vLabels[i]);
+      }
+      for(int i = 1; i < 6; i++){
+        content.addArea(areas[i + INT_STR_OFFSET]);
+        content.addArea(labels[i + INT_STR_OFFSET]);
+        content.addArea(vLabels[i + INT_STR_OFFSET]);
+      }
     }
-	
-	private void setAreas(){
-		areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor);
-		areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor);
-		areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor);
-		areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor);
-		areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor);
-		areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS);
-		areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS);
-		areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS);
-		areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS);
-		areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS);
-	}
-	
-	private void setLabels(){
- 		FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
- 		
- 		//Labels for Front view
- 		labels[Tank.LOC_FRONT] = createLabel("Front Armor", fm, Color.black,65,35);
- 		labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel("Front I.S.", fm, Color.black,63,57);
- 		labels[Tank.LOC_LEFT] = createLabel("LA", fm, Color.black,19,135);
- 		labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel("L. I.S.", fm, Color.black,49,106);
- 		labels[Tank.LOC_RIGHT] = createLabel("RA", fm, Color.black,124,135);
- 		labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel("R. I.S.", fm, Color.black,95,106);
- 		labels[Tank.LOC_REAR] = createLabel("Rear Armor", fm, Color.black,65,257);
- 		labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel("Rear I.S.", fm, Color.black,63,239);
- 		labels[Tank.LOC_TURRET] = createLabel("Turret Armor", fm, Color.black,73,145);
- 		labels[Tank.LOC_TURRET + INT_STR_OFFSET] = createLabel("Turret I.S.", fm, Color.black,73,173);
- 		
- 		//Value labels for all parts of mek
- 		    //front
- 		fm =  comp.getFontMetrics(FONT_VALUE);   
- 		vLabels[Tank.LOC_FRONT] = createValueLabel(101, 37, "", fm);
- 		vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = createValueLabel(91, 58, "", fm);
- 		vLabels[Tank.LOC_LEFT] = createValueLabel(20, 150, "", fm);
- 		vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = createValueLabel(44, 121, "", fm);
- 		vLabels[Tank.LOC_RIGHT] = createValueLabel(125, 150, "", fm);
- 		vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createValueLabel(102, 121, "", fm);
- 		vLabels[Tank.LOC_REAR] = createValueLabel(99, 258, "", fm);
- 		vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = createValueLabel(91, 241, "", fm);
- 		vLabels[Tank.LOC_TURRET] = createValueLabel(73, 159, "", fm);
- 		vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = createValueLabel(73, 193, "", fm);
+  
+  private void setAreas(){
+    areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor);
+    areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor);
+    areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor);
+    areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor);
+    areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor);
+    areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS);
+    areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS);
+    areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS);
+    areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS);
+    areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS);
+  }
+  
+  private void setLabels(){
+    FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
+    
+    //Labels for Front view
+    labels[Tank.LOC_FRONT] = createLabel("Front Armor", fm, Color.black,65,35);
+    labels[Tank.LOC_FRONT + INT_STR_OFFSET] = createLabel("Front I.S.", fm, Color.black,63,57);
+    labels[Tank.LOC_LEFT] = createLabel("LA", fm, Color.black,19,135);
+    labels[Tank.LOC_LEFT + INT_STR_OFFSET] = createLabel("L. I.S.", fm, Color.black,49,106);
+    labels[Tank.LOC_RIGHT] = createLabel("RA", fm, Color.black,124,135);
+    labels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createLabel("R. I.S.", fm, Color.black,95,106);
+    labels[Tank.LOC_REAR] = createLabel("Rear Armor", fm, Color.black,65,257);
+    labels[Tank.LOC_REAR + INT_STR_OFFSET] = createLabel("Rear I.S.", fm, Color.black,63,239);
+    labels[Tank.LOC_TURRET] = createLabel("Turret Armor", fm, Color.black,73,145);
+    labels[Tank.LOC_TURRET + INT_STR_OFFSET] = createLabel("Turret I.S.", fm, Color.black,73,173);
+    
+    //Value labels for all parts of mek
+        //front
+    fm =  comp.getFontMetrics(FONT_VALUE);   
+    vLabels[Tank.LOC_FRONT] = createValueLabel(101, 37, "", fm);
+    vLabels[Tank.LOC_FRONT + INT_STR_OFFSET] = createValueLabel(91, 58, "", fm);
+    vLabels[Tank.LOC_LEFT] = createValueLabel(20, 150, "", fm);
+    vLabels[Tank.LOC_LEFT + INT_STR_OFFSET] = createValueLabel(44, 121, "", fm);
+    vLabels[Tank.LOC_RIGHT] = createValueLabel(125, 150, "", fm);
+    vLabels[Tank.LOC_RIGHT + INT_STR_OFFSET] = createValueLabel(102, 121, "", fm);
+    vLabels[Tank.LOC_REAR] = createValueLabel(99, 258, "", fm);
+    vLabels[Tank.LOC_REAR + INT_STR_OFFSET] = createValueLabel(91, 241, "", fm);
+    vLabels[Tank.LOC_TURRET] = createValueLabel(73, 159, "", fm);
+    vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = createValueLabel(73, 193, "", fm);
     }
     
     private void setBackGround(){
@@ -240,7 +240,7 @@ public class TankMapSet implements DisplayMapSet{
     }
     
     private void translateAreas(){
-    	areas[Tank.LOC_FRONT].translate(8,0);
+      areas[Tank.LOC_FRONT].translate(8,0);
         areas[Tank.LOC_FRONT + INT_STR_OFFSET].translate(8,29);
         areas[Tank.LOC_LEFT].translate(8,29);
         areas[Tank.LOC_LEFT + INT_STR_OFFSET].translate(8,29);
@@ -272,7 +272,11 @@ public class TankMapSet implements DisplayMapSet{
     }
     
     private void setAreaColor(PMSimplePolygonArea ha, PMValueLabel l, double percentRemaining) {
-        if ( percentRemaining <= .25 ){
+        if ( percentRemaining <= 0 ){
+            ha.backColor = Color.darkGray.brighter();
+            l.setColor(Color.blue);
+            ha.highlightBorderColor = Color.green;          
+        } else if ( percentRemaining <= .25 ){
             ha.backColor = Color.red.brighter();
             l.setColor(Color.blue);
             ha.highlightBorderColor = Color.green;          

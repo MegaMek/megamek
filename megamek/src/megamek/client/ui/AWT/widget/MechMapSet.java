@@ -168,7 +168,7 @@ public class MechMapSet implements DisplayMapSet{
     }
     
     public void setEntity(Entity e){           
-    	Mech m = (Mech) e;
+      Mech m = (Mech) e;
         int a = 1;
         int a0 = 1;
         for (int i = 0; i< m.locations(); i++){
@@ -348,7 +348,11 @@ public class MechMapSet implements DisplayMapSet{
     }
     
     private void setAreaColor(PMSimplePolygonArea ha, PMValueLabel l, double percentRemaining) {
-        if ( percentRemaining <= .25 ){
+        if ( percentRemaining <= 0 ){
+            ha.backColor = Color.darkGray.brighter();
+            l.setColor(Color.blue);
+            ha.highlightBorderColor = Color.green;          
+        } else if ( percentRemaining <= .25 ){
             ha.backColor = Color.red.brighter();
             l.setColor(Color.blue);
             ha.highlightBorderColor = Color.green;          

@@ -1014,22 +1014,6 @@ public class Compute
                            waa.getWeaponId(), prevAttacks);
     }
     
-
-    //makes it so that parallel hexes will be next to one another
-    public static Coords[] toLineOrder(Coords[] in, final Coords root) {
-      if (in.length <= 1) return in;
-      com.sun.java.util.collections.Arrays.sort(in, new com.sun.java.util.collections.Comparator() {
-        public int compare(Object obj, Object obj1) {
-          Coords coord = (Coords)obj;
-          Coords coord1 = (Coords)obj1;
-          if (coord1.distance(root) < coord.distance(root)) {
-            return 1;
-          }
-          return -1;
-        }});
-      return in;
-    }
-    
     /**
      * To-hit number for attacker firing a weapon at the target.
      * 
@@ -1085,147 +1069,19 @@ public class Compute
         
         //TODO: mech making DFA could be higher if DFA target hex is higher
         
-        int ilw = 0;  // intervening light woods
-        int ihw = 0;  // intervening heavy woods
+        // check LOS
+        LosEffects los = calculateLos(game, attackerId, targetId);
+        ToHitData losMods = losModifiers(los);
         
-        /* check to see if LOS is on the hex line
-         * it seems like a lot of work, but the following 
-         * assumes that the defender will want to have the highest
-         * modifier possible.
-         */ 
-        double degree = ae.getPosition().degree(te.getPosition());
-        if (degree > 180) degree = (degree + 180)%360;
-        if (degree == 30 || degree == 90 || degree == 150) {
-          Vector result = new Vector();
-          in = toLineOrder(in, ae.getPosition());
-          result.addElement(in[0]); //attacker spot
-          int w_total = 0;
-          for (int i = 1; i < in.length - 2; i+=3) {
-            Coords c1 = in[i];
-            Coords c2 = in[i+1];
-            result.addElement(in[i+2]);
-            if (!game.board.contains(c1)) {
-              result.addElement(c2);
-            } else if (!game.board.contains(c2)) {
-              result.addElement(c1);
-            } else { 
-              final Hex h = game.board.getHex(c1);
-              final int hexEl = h.floor();   
-              final Hex h1 = game.board.getHex(c2);
-              final int hexEl1 = h1.floor();   
-              int w = 0;
-              int w1 = 0;
-              if ((hexEl > attEl && hexEl > targEl) 
-                    || (i == 1 && hexEl > attEl)
-                    || (i == in.length - 3 && hexEl > targEl)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");                
-              } else if ((hexEl1 > attEl && hexEl1 > targEl) 
-                    || (i == 1 && hexEl1 > attEl)
-                    || (i == in.length - 3 && hexEl1 > targEl)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");                
-              } else { 
-                if (h.levelOf(Terrain.WOODS) > 0) {
-                  if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
-                        || (i == 1 && hexEl + 2 > attEl) 
-                        || (i == in.length - 3 && hexEl + 2 > targEl)) {
-                    w = (h.levelOf(Terrain.WOODS) == 1)?1:2;
-                  }
-                }
-                if (h1.levelOf(Terrain.WOODS) > 0) {
-                  if ((hexEl1 + 2 > attEl && hexEl1 + 2 > targEl) 
-                        || (i == 1 && hexEl1 + 2 > attEl) 
-                        || (i == in.length - 3 && hexEl1 + 2 > targEl)) {
-                    w1 = (h1.levelOf(Terrain.WOODS)==1)?1:2;
-                  }
-                }
-                if (i == 1) { //give the attacker pc if possible
-                  if (hexEl == attEl && attEl >= targEl && ae.height() > 0) {
-                    result.addElement(c1);
-                    continue;
-                  } else if (hexEl1 == attEl && attEl >= targEl && ae.height() > 0) {
-                    result.addElement(c2);
-                    continue;
-                  }
-                } else if (i == in.length -3) { //give the target pc, or block los
-                  if (w1 + w_total > 2) {
-                    result.addElement(c2);
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
-                  } else if (w + w_total > 2) {
-                    result.addElement(c1);
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
-                  } else if (hexEl == targEl && attEl <= targEl && te.height() > 0) {
-                    result.addElement(c1);
-                    continue;
-                  } else if (hexEl1 == targEl && attEl <= targEl && te.height() > 0) {
-                    result.addElement(c2);
-                    continue;
-                  }
-                } 
-                if (w1 > w) {
-                  result.addElement(c2);
-                  w_total += w1;
-                } else {
-                  result.addElement(c1);
-                  w_total += w;
-                }
-              }
-            }
-          }
-          in = new Coords[result.size()];
-          result.copyInto(in);
+        // if LOS is blocked, return that
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+            return losMods;
         }
-        
-        // LOS?
-        for (int i = 0; i < in.length; i++) {
-            // skip this hex if it is not on the board
-            if (!game.board.contains(in[i])) continue;
 
-            // don't count attacker or target hexes
-            if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
-                continue;
-            }
-            
-            final Hex h = game.board.getHex(in[i]);
-            final int hexEl = h.floor();
-            
-            // check for block by terrain
-            if ((hexEl > attEl && hexEl > targEl) 
-                    || (hexEl > attEl && ae.getPosition().distance(in[i]) <= 1)
-                    || (hexEl > targEl && te.getPosition().distance(in[i]) <= 1)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
-            }
-            
-            // determine number of woods hexes in the way
-            if (h.levelOf(Terrain.WOODS) > 0) {
-                if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
-                        || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1) 
-                        || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
-                    ilw += (h.levelOf(Terrain.WOODS) == 1 ? 1 : 0);
-                    ihw += (h.levelOf(Terrain.WOODS) > 1 ? 1 : 0);
-                }
-            }
-            
-            // check for partial cover
-            if (te.getPosition().distance(in[i]) <= 1 && hexEl == targEl && attEl <= targEl && te.height() > 0) {
-                pc = true;
-            }
-            
-            // check for attacker partial cover
-            if (ae.getPosition().distance(in[i]) <= 1 && hexEl == attEl && attEl >= targEl && ae.height() > 0) {
-                apc = true;
-            }
-        }
-        
-        // more than 1 heavy woods or more than two light woods block LOS
-        if (ilw + ihw * 2 >= 3) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
-        }
-        
         // attacker partial cover means no leg weapons
-        if (apc && (weapon.getLocation() == Mech.LOC_RLEG || weapon.getLocation() == Mech.LOC_LLEG)) {
+        if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons");
         }
-        
         
         // first: gunnery skill
         toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
@@ -1262,10 +1118,7 @@ public class Compute
         }
         
         // attacker movement
-	// 2002-09-17 : Infantry aren't affected by their own movement.
-	if ( !isAttackerInfantry ) {
         toHit.append(getAttackerMovementModifier(game, attackerId));
-	}
         
         // target movement
         toHit.append(getTargetMovementModifier(game, targetId));
@@ -1286,25 +1139,16 @@ public class Compute
         Hex targHex = game.board.getHex(te.getPosition());
         if (targHex.contains(Terrain.WATER)) {
             if (targHex.surface() == targEl && te.height() > 0) {
-                pc = true;
+                // force partial cover
+                los.targetCover = true;
+                losMods = losModifiers(los);
             } else if (targHex.surface() > targEl) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater");
             }
         }
 
-        // intervening terrain
-        if (ilw > 0) {
-            toHit.addModifier(ilw, ilw + " light woods intervening");
-        }
-        if (ihw > 0) {
-            toHit.addModifier(ihw * 2, ihw + " heavy woods intervening");
-        }
-        
-        // partial cover
-        if (pc) {
-            toHit.addModifier(3, "target has partial cover");
-            toHit.setHitTable(ToHitData.HIT_PUNCH);
-        }
+        // add in intervening terrain modifiers around now
+        toHit.append(losMods);
         
         // secondary targets modifier...
         int primaryTarget = Entity.NONE;
@@ -1336,7 +1180,6 @@ public class Compute
                 toHit.addModifier(2, "secondary target modifier");
             }
         }
-
 
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -1463,18 +1306,224 @@ public class Compute
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
         }        
         
+        // change hit table for partial cover
+        if (los.targetCover) {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        }
+        
         // factor in target side
 	if ( isAttackerInfantry && 0 == range ) {
 	    // Infantry attacks from the same hex
 	    // are resolved against the front.
 	    toHit.setSideTable( ToHitData.SIDE_FRONT );
 	} else {
-        toHit.setSideTable(targetSideTable(ae, te));
+            toHit.setSideTable(targetSideTable(ae, te));
 	}
         
         // okay!
         return toHit;
     }
+    
+    /**
+     * Returns ToHitData indicating the modifiers to fire for the specified
+     * LOS effects data.
+     */
+    public static ToHitData losModifiers(LosEffects los) {
+        ToHitData modifiers = new ToHitData();
+        if (los.blocked) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
+        }
+        
+        if (los.lightWoods + (los.heavyWoods * 2) > 3) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
+        }
+        
+        if (los.smoke > 1) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke");
+        }
+        
+        if (los.smoke == 1) {
+            if (los.lightWoods + los.heavyWoods > 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods");
+            } else {
+                modifiers.addModifier(2, "intervening smoke");
+            }
+        }
+        
+        if (los.lightWoods > 0) {
+            modifiers.addModifier(los.lightWoods, los.lightWoods + " intervening light woods");
+        }
+        
+        if (los.heavyWoods > 0) {
+            modifiers.addModifier(los.heavyWoods * 2, los.heavyWoods + " intervening heavy woods");
+        }
+        
+        if (los.targetCover) {
+            modifiers.addModifier(3, "target has partial cover");
+        }
+        
+        return modifiers;
+    }
+    
+    /**
+     * Returns a LosEffects object representing the LOS effects of interveing
+     * terrain between the attacker and target.
+     *
+     * Checks to see if the attacker and target are at an angle where the LOS
+     * line will pass between two hexes.  If so, calls losDivided, otherwise 
+     * calls losStraight.
+     */
+    public static LosEffects calculateLos(Game game, int attackerId, int targetId) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        
+        double degree = ae.getPosition().degree(te.getPosition());
+        if (degree % 60 == 30) {
+            return losDivided(game, attackerId, targetId);
+        } else {
+            return losStraight(game, attackerId, targetId);
+        }
+        
+    }
+    
+    /**
+     * Returns LosEffects for a line that never passes exactly between two 
+     * hexes.  Since intervening() returns all the coordinates, we just
+     * add the effects of all those hexes.
+     */
+    public static LosEffects losStraight(Game game, int attackerId, int targetId) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        Coords[] in = intervening(ae.getPosition(), te.getPosition());
+        
+        LosEffects los = new LosEffects();
+        
+        for (int i = 0; i < in.length; i++) {
+            los.add(losForCoords(game, attackerId, targetId, in[i]));
+        }
+        
+        return los;
+    }
+    
+    /**
+     * Returns LosEffects for a line that passes between two hexes at least
+     * once.  The rules say that this situation is resolved in favor of the
+     * defender.
+     *
+     * The intervening() function returns both hexes in these circumstances,
+     * and, when they are in line order, it's not hard to figure out which hexes 
+     * are split and which are not.
+     *
+     * The line always looks like:
+     *       ___     ___
+     *   ___/ 1 \___/...\___
+     *  / 0 \___/ 3 \___/etc\
+     *  \___/ 2 \___/...\___/
+     *      \___/   \___/
+     *
+     * We go thru and figure out the modifiers for the non-split hexes first.
+     * Then we go to each of the two split hexes and determine which gives us
+     * the bigger modifier.  We use the bigger modifier.
+     *
+     * This is not perfect as it takes partial cover as soon as it can, when
+     * perhaps later might be better.
+     * Also, it doesn't account for the face that attacker partial cover blocks
+     * leg weapons, as we want to return the same sequence regardless of
+     * what weapon is attacking.
+     */
+    public static LosEffects losDivided(Game game, int attackerId, int targetId) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        Coords[] in = intervening(ae.getPosition(), te.getPosition());
+        LosEffects los = new LosEffects();
+        
+        // add non-divided line segments
+        for (int i = 3; i < in.length - 2; i += 3) {
+            los.add(losForCoords(game, attackerId, targetId, in[i]));
+        }
+        
+        // if blocked already, return that
+        if (losModifiers(los).getValue() == ToHitData.IMPOSSIBLE) {
+            return los;
+        }
+        
+        // go through divided line segments
+        for (int i = 1; i < in.length - 2; i += 3) {
+            // get effects of each side
+            LosEffects left = losForCoords(game, attackerId, targetId, in[i]);
+            LosEffects right = losForCoords(game, attackerId, targetId, in[i+1]);
+            left.add(los);
+            right.add(los);
+            
+            // which is better?
+            if (losModifiers(left).getValue() > losModifiers(right).getValue()) {
+                los = left;
+            } else {
+                los = right;
+            }
+        }
+        
+        return los;
+    }
+    
+    /**
+     * Returns a LosEffects object representing the LOS effects of anything at
+     * the specified coordinate.  
+     */
+    public static LosEffects losForCoords(Game game, int attackerId, int targetId, Coords coords) {
+        LosEffects los = new LosEffects();
+        // ignore hexes not on board
+        if (!game.board.contains(coords)) {
+            return los;
+        }
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        // ignore hexes the attacker or target are in
+        if (coords.equals(ae.getPosition()) || coords.equals(te.getPosition())) {
+            return los;
+        }
+        int attEl = ae.elevation() + ae.height();
+        int targEl = te.elevation() + te.height();
+        Hex hex = game.board.getHex(coords);
+        int hexEl = hex.floor();
+        
+        
+        // check for block by terrain
+        if ((hexEl > attEl && hexEl > targEl)
+        || (hexEl > attEl && ae.getPosition().distance(coords) == 1)
+        || (hexEl > targEl && te.getPosition().distance(coords) == 1)) {
+            los.blocked = true;
+        }
+        
+        // check for woods or smoke
+        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
+        || (hexEl + 2 > attEl && ae.getPosition().distance(coords) == 1)
+        || (hexEl + 2 > targEl && te.getPosition().distance(coords) == 1)) {
+            if (hex.levelOf(Terrain.WOODS) == 1) {
+                los.lightWoods++;
+            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                los.heavyWoods++;
+            }
+            if (hex.contains(Terrain.SMOKE)) {
+                los.smoke++;
+            }
+        }
+        
+        // check for target partial cover
+        if (te.getPosition().distance(coords) == 1 && hexEl == targEl 
+        && attEl <= targEl && te.height() > 0) {
+            los.targetCover = true;
+        }
+
+        // check for attacker partial cover
+        if (ae.getPosition().distance(coords) == 1 && hexEl == attEl 
+        && attEl >= targEl && ae.height() > 0) {
+            los.attackerCover = true;
+        }
+        
+        return los;
+    }
+    
 
     public static ToHitData toHitPunch(Game game, PunchAttackAction paa) {
         return toHitPunch(game, paa.getEntityId(), paa.getTargetId(), 
@@ -2494,6 +2543,11 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
         
+        // infantry aren't affected by their own movement
+        if (entity instanceof Infantry) {
+            return toHit;
+        }
+        
         if (movement == Entity.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
         } else if (movement == Entity.MOVE_RUN) {
@@ -2586,7 +2640,7 @@ public class Compute
      */
     public static WeaponAttackAction getHighestExpectedDamage(Game g, Vector vAttacks, Vector vOtherAttacks)
     {
-        float fHighest = -1.0f;
+    float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
             WeaponAttackAction waa = (WeaponAttackAction)vAttacks.elementAt(x);
@@ -2715,238 +2769,71 @@ public class Compute
     }
     
     /**
-     * Returns the next coords or two after cur along the line
-     * 
-     * @return an array of either 1 or 2 coords
-     */
-    private static Coords[] getNextCoords(Coords cur, Coords cur1,
-                                          Coords last0, Coords last1,
-                                          int x0, int y0, int x1, int y1) {
-        Coords next0 = null;
-        Coords next1 = null;
-        
-        
-        
-        if (next1 == null) {
-            Coords[] next = new Coords[1];
-            next[0] = next0;
-            return next;
-        } else {
-            Coords[] next = new Coords[2];
-            next[0] = next0;
-            next[1] = next1;
-            return next;
-        }
-    }
-    
-    /**
      * LOS check from ae to te.
-     * Most of the code stolen from toHitWeapon()
      */
     public static boolean canSee(Game game, Entity ae, Entity te)
     {
-    	Coords[] in = intervening(ae.getPosition(), te.getPosition());
-    	int ilw = 0;
-    	int ihw = 0;
-    	int attEl = ae.elevation() + ae.height();
-        int targEl = te.elevation() + te.height();
-        for (int i = 0; i < in.length; i++) {
-            // skip this hex if it is not on the board
-            if (!game.board.contains(in[i])) continue;
-
-            // don't count attacker or target hexes
-            if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
-                continue;
-            }
-            
-            final Hex h = game.board.getHex(in[i]);
-            final int hexEl = h.floor();
-            
-            // check for block by terrain
-            if ((hexEl > attEl && hexEl > targEl) 
-                    || (hexEl > attEl && ae.getPosition().distance(in[i]) <= 1)
-                    || (hexEl > targEl && te.getPosition().distance(in[i]) <= 1)) {
-                return false;
-            }
-            
-            // determine number of woods hexes in the way
-            if (h.levelOf(Terrain.WOODS) > 0) {
-                if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
-                        || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1) 
-                        || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
-                    ilw += (h.levelOf(Terrain.WOODS) == 1 ? 1 : 0);
-                    ihw += (h.levelOf(Terrain.WOODS) > 1 ? 1 : 0);
-                }
-            }
-        }
-            
-        // more than 1 heavy woods or more than two light woods block LOS
-        if (ilw + ihw * 2 >= 3) {
-            return false;
-        }
-        else {
-        	return true;
-        }
+        LosEffects los = calculateLos(game, ae.getId(), te.getId());
+        return los.blocked || los.lightWoods + ((los.heavyWoods + los.smoke) * 2) > 3;
     }
     
     /**
-     * This returns the Coords of hexes that are crossed by a straight line 
-     * from the middle of the hex at Coords a to the middle of the hex at 
-     * Coords b.
-     * 
-     * This is the brute force, integer version based off of some of the 
-     * formulas at Amit's game programming site 
+     * Returns an array of the Coords of hexes that are crossed by a straight 
+     * line from the center of src to the center of dest, including src & dest.
+     *
+     * The returned coordinates are in line order, and if the line passes
+     * directly between two hexes, it returns them both.
+     *
+     * Based on the degree of the angle, the next hex is going to be one of
+     * three hexes.  We check those three hexes, sides first, add the first one 
+     * that intersects and continue from there.
+     *
+     * Based off of some of the formulas at Amit's game programming site.
      * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
      */
-    public static Coords[] intervening(Coords a, Coords b) {
-        IdealHex aHex = new IdealHex(a);
-        IdealHex bHex = new IdealHex(b);
+    public static Coords[] intervening(Coords src, Coords dest) {
+        IdealHex iSrc = new IdealHex(src);
+        IdealHex iDest = new IdealHex(dest);
         
-        // test any hexes that we think might be in the way
-        int minumumX = Math.min(a.x, b.x);
-        int minumumY = Math.min(a.y, b.y);
-        int rangeWidth = Math.abs(a.x - b.x) + 1;
-        int rangeHeight = Math.abs(a.y - b.y) + 1;
+        int[] directions = new int[3];
+        directions[2] = (int)Math.round((double)src.degree(dest) / 60.0) % 6; // center last
+        directions[1] = (directions[2] + 5) % 6;
+        directions[0] = (directions[2] + 1) % 6;
         
-        // adjust if we're along the x line
-        if (a.y == b.y && (a.x & 1) == (b.x & 1)) {
-            rangeHeight += 2;
-            minumumY--;
-        }
+        Vector hexes = new Vector();
+        Coords current = src;
         
-        int rangeArea = rangeWidth * rangeHeight; // hexes to test
-        Vector trueCoords = new Vector();
+        hexes.addElement(current);
+        while(!dest.equals(current)) {
+            current = nextHex(current, src, iSrc, iDest, directions);
+            hexes.addElement(current);
+         }
         
-        for (int i = 0; i < rangeArea; i++) {
-            Coords c = new Coords(i % rangeWidth + minumumX, i / rangeWidth + minumumY);
-            IdealHex cHex = new IdealHex(c);
-            // test the polygon
-            if (cHex.isIntersectedBy(aHex.cx, aHex.cy, bHex.cx, bHex.cy)) {
-                trueCoords.addElement(c);
-            }
-        }
-        
-        // make a nice array to return
-        Coords[] trueArray = new Coords[trueCoords.size()];
-        trueCoords.copyInto(trueArray);
-        
-//        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
-//        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
-//            final Coords coords = (Coords)i.nextElement();
-//            System.out.print(coords.getBoardNum() + " ");
-//        }
-//        System.out.print("]\n");
-        
-        return trueArray;
-    }
-
-    /**
-     * This returns the Coords that are crossed by a straight
-     * line from Coords a to Coords b.
-     * 
-     * Old version.  Brute force and tests every point on the line.  Ick, ick.
-     */
-    public static Coords[] intervening1(Coords a, Coords b) {
-        //System.err.print("r: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
-        
-        // set up hexagon poly
-        Polygon p = new Polygon();
-        p.addPoint(21, 0);
-        p.addPoint(62, 0);
-        p.addPoint(83, 35);
-        p.addPoint(83, 36);
-        p.addPoint(62, 71);
-        p.addPoint(21, 71);
-        p.addPoint(0, 36);
-        p.addPoint(0, 35);
-        
-        // set up line from one to the next
-        int lx = Math.abs(a.x - b.x) * 63 + 1;  // line width
-        int ly = Math.abs((a.y * 72 + (a.isXOdd() ? 36 : 0)) - (b.y * 72 + ((b.x & 1) == 1 ? 36 : 0))) + 1; // line height
-        boolean lxl = lx > ly; // line width longer?
-        int llong = lxl ? lx : ly;  // line longer dimension
-        int lshort = lxl ? ly : lx;  // line shorter dimension
-        
-        // we will always want to increase the longer dimension
-        int lox, loy;
-        boolean ld;
-        if ((lxl && a.x < b.x) || (!lxl && a.y < b.y)) {
-            lox = a.x * 63 + 42;
-            loy = a.y * 72 + (a.isXOdd() ? 72 : 36);
-            ld = (lxl && a.y < b.y) || (!lxl && a.x < b.x);
-        } else {
-            lox = b.x * 63 + 42;
-            loy = b.y * 72 + (b.isXOdd() ? 72 : 36);
-            ld = (lxl && b.y < a.y) || (!lxl && b.x < a.x);
-        }
-        
-        // make an array of the shorter point dimensions for each of the longer ones
-        int lsa[] = new int[llong];  // line shorter array
-        for (int i = 0; i < llong; i++) {
-            lsa[i] = (int)Math.round(((float)i / (float)llong) * (float)lshort);
-            if (!ld) {
-                lsa[i] = 0 - lsa[i];
-            }
-        }
-        
-        // test any hexes that we think might be in the way
-        int hrw = Math.abs(a.x - b.x) + 1;
-        int hrh = Math.abs(a.y - b.y) + 1;
-        int htt = hrw * hrh; // hexes to test
-        Coords[] pc = new Coords[htt]; // possible coordinates
-        boolean[] in = new boolean[htt]; // intervening flag
-        int not = 0;  // number of trues
-        
-        for (int i = 0; i < htt; i++) {
-            Coords c = new Coords(i % hrw + Math.min(a.x, b.x), i / hrw + Math.min(a.y, b.y));
-            pc[i] = c;
-            // set up a polygon for this coordinate
-            Polygon hp = new Polygon(p.xpoints, p.ypoints, p.npoints);
-            hp.translate(c.x * 63, c.y * 72 + (c.isXOdd() ? 36 : 0));
-            // test the points of the line possibly going thru that hex
-            if (lxl) {
-                for (int j = 0; j < 84; j++) {
-                    int tx = c.x * 63 + j;
-                    if (tx >= lox && tx < lox + llong && !c.equals(a) && !c.equals(b)) {
-                        if (hp.contains(tx, lsa[tx - lox] + loy)) {
-                            in[i] = true;
-                            not++;
-//System.err.println("r: testing #" + i + ", " + c + " : " + in[i]);
-                            break;
-                        }
-                    }
-                    in[i] = false;
-                }
-            } else {
-                for (int j = 0; j < 72; j++) {
-                    int ty = c.y * 72 + (c.isXOdd() ? 36 : 0) + j;
-                    if (ty >= loy && ty < loy + llong && !c.equals(a) && !c.equals(b)) {
-                        if (hp.contains(lsa[ty - loy] + lox, ty)) {
-                            in[i] = true;
-                            not++;
-//System.err.println("r: testing #" + i + ", " + c + " : " + in[i]);
-                            break;
-                        }
-                    }
-                    in[i] = false;
-                }
-            }
-        }
-        
-        // create array of "true" coordinates.
-        Coords[] ih = new Coords[not];
-        int ihi = 0;
-        for (int i = 0; i < htt; i++) {
-            if (in[i]) {
-//System.err.print(pc[i].getBoardNum() + " ");
-                ih[ihi++] = pc[i];
-            }
-        }
-//System.err.print("]\n");
-        
-        return ih;
+        Coords[] hexArray = new Coords[hexes.size()];
+        hexes.copyInto(hexArray);
+        return hexArray;
     }
     
+    /**
+     * Returns the first further hex found along the line from the centers of
+     * src to dest.  Checks the three directions given and returns the closest.
+     *
+     * This relies on the side directions being given first.  If it checked the
+     * center first, it would end up missing the side hexes sometimes.
+     *
+     * Not the most elegant solution, but it works.
+     */
+    public static Coords nextHex(Coords current, Coords src, IdealHex iSrc, IdealHex iDest, int[] directions) {
+        for (int i = 0; i < directions.length; i++) {
+            Coords testing = current.translated(directions[i]);
+            if (new IdealHex(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
+                return testing;
+            }
+        }
+        // if we're here then something's fishy!
+        throw new RuntimeException("Couldn't find the next hex!");
+    }
+
     public static int targetSideTable(Entity attacker, Entity target) {
         return targetSideTable(attacker.getPosition(), target.getPosition(), target.getFacing(), target instanceof Tank);
     }

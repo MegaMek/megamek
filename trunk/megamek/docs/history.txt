@@ -107,6 +107,7 @@ v 0.28.6-dev (CVS)
 + Added submitted unit image files.
 + option for teams to share vision (in double-blind) added
 + 688179: a few double-blind exceptions squashed
++ 688701: can't target youself for a physical (or other) attack
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -43,6 +43,9 @@ implements Serializable {
      * Record the infernos placed on the board.
      */
     private Hashtable           infernos = new Hashtable();
+
+    /** Option to turn have roads auto-exiting to pavement. */
+    private boolean             roadsAutoExit = true;
 
     /**
      * Creates a new board with zero as its width and
@@ -116,6 +119,7 @@ implements Serializable {
      * @param   board - the other <code>Board</code> to be duplicated.
      */
     public void newData( Board other ) {
+        this.roadsAutoExit = other.roadsAutoExit;
         newData( other.width, other.height, other.data );
     }
     
@@ -141,6 +145,10 @@ implements Serializable {
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
                 copyBoardInto(j * width, i * height, boards[i * sheetWidth + j]);
+                // Copy in the other board's options.
+                if ( boards[i * sheetWidth + j].roadsAutoExit == false ) {
+                    this.roadsAutoExit = false;
+                }
             }
         }
 
@@ -296,7 +304,7 @@ implements Serializable {
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             Hex other = getHexInDir(x, y, i);
-            hex.setExits(other, i);
+            hex.setExits(other, i, this.roadsAutoExit);
         }
     }
     
@@ -729,6 +737,21 @@ implements Serializable {
                     nh = Integer.parseInt(args[1]);
                     nd = new Hex[nw * nh];
                     di = 0;
+                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("option")) {
+                    // read rest of line
+                    String[] args = {"", ""};
+                    int i = 0;
+                    while(st.nextToken() == StreamTokenizer.TT_WORD || st.ttype == '"' || st.ttype == StreamTokenizer.TT_NUMBER) {
+                        args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int)st.nval + "" : st.sval;
+                    }
+                    // Only expect certain options.
+                    if ( args[0].equalsIgnoreCase("exit_roads_to_pavement") ) {
+                        if ( args[1].equalsIgnoreCase("false") ) {
+                            this.roadsAutoExit = false;
+                        } else {
+                            this.roadsAutoExit = true;
+                        }
+                    } // End exit_roads_to_pavement-option
                 } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("hex")) {
                     // read rest of line
                     String[] args = {"", "0", "", ""};
@@ -778,6 +801,9 @@ implements Serializable {
             Writer w = new OutputStreamWriter(os);
             // write
             w.write("size " + width + " " + height + "\r\n");
+            if ( !this.roadsAutoExit ) {
+                w.write( "option exit_roads_to_pavement false\r\n" );
+            }
             for (int i = 0; i < data.length; i++) {
                 Hex hex = data[i];
                 boolean firstTerrain = true;
@@ -794,6 +820,13 @@ implements Serializable {
                             hexBuff.append(";");
                         }
                         hexBuff.append(terrain.toString());
+                        // Do something funky to save building exits.
+                        if ( Terrain.BUILDING == j &&
+                             !terrain.hasExitsSpecified() &&
+                             terrain.getExits() != 0 ) {
+                            hexBuff.append( ":" )
+                                .append( terrain.getExits() );
+                        }
                         firstTerrain = false;
                     }
                 }
@@ -1083,6 +1116,27 @@ implements Serializable {
 
         } // Handle the next building.
 
+    }
+
+    /**
+     * Get the current value of the "road auto-exit" option.
+     *
+     * @return  <code>true</code> if roads should automatically exit onto
+     *          all adjacent pavement hexes.  <code>false</code> otherwise.
+     */
+    public boolean getRoadsAutoExit() {
+        return this.roadsAutoExit;
+    }
+
+    /**
+     * Set the value of the "road auto-exit" option.
+     *
+     * @param   value - The value to set for the option; <code>true</code>
+     *          if roads should automatically exit onto all adjacent pavement
+     *          hexes.  <code>false</code> otherwise.
+     */
+    public void setRoadsAutoExit( boolean value ) {
+        this.roadsAutoExit = value;
     }
 
 }

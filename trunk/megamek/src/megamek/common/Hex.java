@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -119,9 +119,21 @@ public class Hex
     /**
      * Sets the "exits" flag appropriately, assuming the specified hex
      * lies in the specified direction on the board.  Does not reset connects
-     * in other directions.
-     */
+     * in other directions.  All <code>Terrain.ROAD</code>s will exit onto
+     * <code>Terrain.PAVEMENT</code> hexes automatically.
+    */
     public void setExits(Hex other, int direction) {
+        this.setExits( other, direction, true );
+    }
+
+    /**
+     * Sets the "exits" flag appropriately, assuming the specified hex
+     * lies in the specified direction on the board.  Does not reset connects
+     * in other directions.  If the value of <code>roadsAutoExit</code> is
+     * <code>true</code>, any <code>Terrain.ROAD</code> will exit onto
+     * <code>Terrain.PAVEMENT</code> hexes automatically.
+     */
+    public void setExits(Hex other, int direction, boolean roadsAutoExit) {
         for (int i = 0; i < Terrain.SIZE; i++) {
             Terrain cTerr = getTerrain(i);
             Terrain oTerr;
@@ -140,6 +152,7 @@ public class Hex
 
             // Roads exit into pavement, too.
             if ( other != null &&
+                 roadsAutoExit &&
                  cTerr.getType() == Terrain.ROAD &&
                  other.contains(Terrain.PAVEMENT) ) {
                 cTerr.setExit( direction, true );

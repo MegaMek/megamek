@@ -89,6 +89,7 @@ v next
 + scenarios now use new bot
 + formatting fixed in push-off-board notice
 + 583692: duplicate physical attacks prevented
++ 532080: jumping into water provokes a PSR
 
 v 0.26.8 (07-26-02, 2:30pm)
 + Can now host a game from a user-editable scenario file

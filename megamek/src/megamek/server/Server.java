@@ -1424,6 +1424,15 @@ public boolean isPassworded() {
             if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0 || entity.hasLegActuatorCrit()) {
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "landing with damaged leg actuator or gyro"), false);
             }
+            // jumped into water?
+            int waterLevel = game.board.getHex(curPos).levelOf(Terrain.WATER);
+            if (waterLevel == 1) {
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"), false);
+            } else if (waterLevel == 2) {
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"), false);
+            } else if (waterLevel >= 3) {
+                doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"), false);
+            }            
         }
 
         // build up heat from movement

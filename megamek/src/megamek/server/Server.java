@@ -5157,7 +5157,7 @@ implements Runnable, ConnectionHandler {
         }
         PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
                                                     "fired HeavyGauss unbraced");
-        psr.setCumulative(false); // about the only time we set this flag
+        psr.setCumulative(false);
         game.addPSR(psr);
       }
 
@@ -6585,7 +6585,9 @@ implements Runnable, ConnectionHandler {
         }
 
         if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
-          game.addPSR(new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was kicked"));
+            PilotingRollData kickPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was kicked");
+            kickPRD.setCumulative(false); // see Bug# 811987 for more info
+            game.addPSR(kickPRD);
         }
 
         phaseReport.append("\n");
@@ -6905,12 +6907,15 @@ implements Runnable, ConnectionHandler {
         Coords src = te.getPosition();
         Coords dest = src.translated(direction);
 
+        PilotingRollData pushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
+        pushPRD.setCumulative(false); // see Bug# 811987 for more info
+
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             phaseReport.append("succeeds: target is pushed into hex "
             ).append( dest.getBoardNum()
             ).append( "\n");
 
-            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed"));
+            doEntityDisplacement(te, src, dest, pushPRD);
 
             // if push actually moved the target, attacker follows thru
             if (!te.getPosition().equals(src)) {
@@ -6927,7 +6932,7 @@ implements Runnable, ConnectionHandler {
                 ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
-                game.addPSR(new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed"));
+                game.addPSR(pushPRD);
             }
         }
 
@@ -7602,7 +7607,7 @@ implements Runnable, ConnectionHandler {
                       int weightMod = 0;
                       StringBuffer reportStr = new StringBuffer();
                       reportStr.append(entity.damageThisPhase)
-                          .append(" damage");
+                          .append(" damage +").append(damMod);
 
                       switch ( entity.getWeightClass() ) {
                         case Entity.WEIGHT_LIGHT:
@@ -7622,12 +7627,9 @@ implements Runnable, ConnectionHandler {
                           break;
                       }
 
-                      if ( weightMod != 0 ) {
-                          reportStr.append(": ").append(weightMod)
-                              .append(" weight mod");
-                      }
-
-                      game.addPSR(new PilotingRollData(entity.getId(), damMod + weightMod, reportStr.toString()));
+                      PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod + weightMod, reportStr.toString());
+                      damPRD.setCumulative(false);  // see Bug# 811987 for more info
+                      game.addPSR(damPRD);
                     } else {
                       game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
                     }
@@ -7744,7 +7746,8 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("    Roll #").append(i + 1).append(", (");
             phaseReport.append(modifier.getPlainDesc());
             if (!modifier.isCumulative()) {
-                phaseReport.append(", extra modifier ").append(modifier.getValueAsString());
+                // non-cumulative rolls only happen due to weight class adj.
+                phaseReport.append(", after weight adjustment the modifier is ").append(modifier.getValueAsString());
                 target = new PilotingRollData(entity.getId());
                 target.append(base);
                 target.append(modifier);

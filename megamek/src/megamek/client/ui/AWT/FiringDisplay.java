@@ -747,7 +747,23 @@ public class FiringDisplay
         client.game.removeActionsFor(cen);
         clientgui.bv.removeAttacksFor(cen);
         clientgui.bv.repaint(100);
-        
+    }
+    
+    /**
+     * removes the last action
+     */
+    private void removeLastFiring() {
+    	Object o = attacks.lastElement();
+    	if (o instanceof WeaponAttackAction) {
+            WeaponAttackAction waa = (WeaponAttackAction)o;
+            ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        	attacks.removeElement(o);
+        	clientgui.mechD.wPan.displayMech(ce());
+        	client.game.removeAction(o);
+            clientgui.bv.refreshAttacks();
+            clientgui.bv.repaint(100);
+            clientgui.minimap.drawMap();
+        }
     }
     
     /**
@@ -1108,6 +1124,11 @@ public class FiringDisplay
         if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 //
+            }
+        }
+        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (client.isMyTurn()) {
+                removeLastFiring();
             }
         }
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && !shiftheld) {

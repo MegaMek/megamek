@@ -78,7 +78,8 @@ v (next)
 + 622376: infantry can jump over water
 + MASC added
 + interface for switching equipment modes added
-+ fixed crash with AMS
++ 622305: fixed crash with AMS
++ 622514: changed "missles", etc. to "missile(s)"
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

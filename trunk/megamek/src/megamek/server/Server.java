@@ -2014,12 +2014,12 @@ implements Runnable {
              if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
-                String hitType = " missles";
+                String hitType = " missile(s)";
                 if ( isWeaponInfantry ) {
                     // Infantry damage depends on # men left in platoon.
                     platoon = (Infantry) ae;
                     hits = platoon.getDamage( platoon.getShootingStrength() );
-                    hitType = " shots";
+                    hitType = " shot(s)";
                 } else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                     hits = wtype.getRackSize();
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
@@ -2048,7 +2048,7 @@ implements Runnable {
                             
                             if (amsHits > hits) amsHits = hits;
                             hits -= amsHits;
-                            phaseReport.append("\n\tAMS shoots down " + amsHits + " missiles.");
+                            phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
                             
                             // build up some heat
                             ae.heatBuildup += ((WeaponType)counter.getType()).getHeat();

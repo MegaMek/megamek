@@ -355,6 +355,8 @@ public class EntityListFile {
             output.write( entity.getChassis() );
             output.write( "\" model=\"" );
             output.write( entity.getModel() );
+            output.write( "\" type=\"" );
+            output.write( entity.getMovementTypeAsString() );
             output.write( "\">" );
             output.write( Settings.NL );
 

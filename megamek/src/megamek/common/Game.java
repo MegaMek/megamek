@@ -286,6 +286,9 @@ public class Game implements Serializable
      * Returns the individual player assigned the id parameter.
      */
     public Player getPlayer(int id) {
+        if ( Player.PLAYER_NONE == id ) {
+            return null;
+        }
         return (Player)playerIds.get(new Integer(id));
     }
     

@@ -265,13 +265,16 @@ implements Runnable {
      */
     private void receivePlayerInfo(Packet packet, int connId) {
         Player player = (Player)packet.getObject(0);
-        game.getPlayer(connId).setColorIndex(player.getColorIndex());
-        game.getPlayer(connId).setStartingPos(player.getStartingPos());
-        game.getPlayer(connId).setTeam(player.getTeam());
-        game.getPlayer(connId).setCamoFileName(player.getCamoFileName());
-        game.getPlayer(connId).setNbrMFConventional(player.getNbrMFConventional());
-        game.getPlayer(connId).setNbrMFCommand(player.getNbrMFCommand());
-        game.getPlayer(connId).setNbrMFVibra(player.getNbrMFVibra());
+        Player connPlayer = game.getPlayer( connId );
+        if ( null != connPlayer ) {
+            connPlayer.setColorIndex(player.getColorIndex());
+            connPlayer.setStartingPos(player.getStartingPos());
+            connPlayer.setTeam(player.getTeam());
+            connPlayer.setCamoFileName(player.getCamoFileName());
+            connPlayer.setNbrMFConventional(player.getNbrMFConventional());
+            connPlayer.setNbrMFCommand(player.getNbrMFCommand());
+            connPlayer.setNbrMFVibra(player.getNbrMFVibra());
+        }
     }
     
     /**
@@ -313,9 +316,11 @@ implements Runnable {
         }
         
         // if it is not the lounge phase, this player becomes an observer
-        if (game.getPhase() != Game.PHASE_LOUNGE
-        && game.getEntitiesOwnedBy(getPlayer(connId)) < 1) {
-            getPlayer(connId).setObserver(true);
+        Player player = getPlayer( connId );
+        if ( game.getPhase() != Game.PHASE_LOUNGE
+             && null != player
+             && game.getEntitiesOwnedBy(player) < 1) {
+            player.setObserver(true);
         }
         
         // send the player the motd
@@ -338,19 +343,29 @@ implements Runnable {
         } catch (UnknownHostException  e) {
             // oh well.
         }
-        
-        System.out.println("s: player " + connId
-        + " (" + getPlayer(connId).getName() + ") connected from "
-        + getClient(connId).getSocket().getInetAddress());
-        
-        sendServerChat(getPlayer(connId).getName() + " connected from "
-        + getClient(connId).getSocket().getInetAddress());
-        
-        // there is more than one player, uncheck the friendly fire option
-        if (game.getNoOfPlayers() > 1 && game.getOptions().booleanOption("friendly_fire")) {
-            game.getOptions().getOption("friendly_fire").setValue(false);
-            send(createGameSettingsPacket());
-        }
+
+        // Get the player *again*, because they may have disconnected.
+        player = getPlayer( connId );
+        if ( null != player ) {
+            StringBuffer buff = new StringBuffer();
+            buff.append( player.getName() )
+                .append( " connected from " )
+                .append( getClient(connId).getSocket().getInetAddress() );
+            String who = buff.toString();
+            System.out.print( "s: player #" );
+            System.out.print( connId );
+            System.out.print( ", " );
+            System.out.println( who );
+
+            sendServerChat( who );
+
+            // there is more than one player, uncheck the friendly fire option
+            if ( game.getNoOfPlayers() > 1
+                 && game.getOptions().booleanOption("friendly_fire") ) {
+                game.getOptions().getOption("friendly_fire").setValue(false);
+                send(createGameSettingsPacket());
+            }
+        } // Found the player
     }
     
     /**
@@ -361,17 +376,18 @@ implements Runnable {
         send(connId, createGameSettingsPacket());
 
         Player player = game.getPlayer(connId);
-        send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS, player.getMinefields()));
+        if ( null != player ) {
+            send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS,
+                                    player.getMinefields()));
 
-        switch (game.getPhase()) {
+            switch (game.getPhase()) {
             case Game.PHASE_LOUNGE :
                 send(connId, createMapSettingsPacket());
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
                                         new Integer(game.getPhase())));
                 if (doBlind()) {
-                    send(connId,
-                         createFilteredEntitiesPacket(getPlayer(connId)));
+                    send(connId, createFilteredEntitiesPacket(player));
                 }
                 else {
                     send(connId, createEntitiesPacket());
@@ -387,33 +403,32 @@ implements Runnable {
                 // Send Entites *before* other phase changes.
                 send(connId, createGameSettingsPacket());
                 if (doBlind()) {
-                    send(connId,
-                         createFilteredEntitiesPacket(getPlayer(connId)));
+                    send(connId, createFilteredEntitiesPacket(player));
                 }
                 else {
                     send(connId, createEntitiesPacket());
                 }
-                getPlayer(connId).setDone
-                    (game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
+                player.setDone( game.getEntitiesOwnedBy(player) <= 0 );
                 send(connId, createBoardPacket());
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
                                         new Integer(game.getPhase())));
                 break;
-        }
-        if (game.getPhase() == Game.PHASE_FIRING ||
-            game.getPhase() == Game.PHASE_PHYSICAL) {
-            // can't go above, need board to have been sent
-            send(createAttackPacket(game.getActionsVector(), false));
-            send(createAttackPacket(game.getChargesVector(), true));
-        }
-        if (game.phaseHasTurns(game.getPhase())) {
-            send(connId, createTurnVectorPacket());
-            send(connId, createTurnIndexPacket());
-        }
+            }
+            if (game.getPhase() == Game.PHASE_FIRING ||
+                game.getPhase() == Game.PHASE_PHYSICAL) {
+                // can't go above, need board to have been sent
+                send(createAttackPacket(game.getActionsVector(), false));
+                send(createAttackPacket(game.getChargesVector(), true));
+            }
+            if (game.phaseHasTurns(game.getPhase())) {
+                send(connId, createTurnVectorPacket());
+                send(connId, createTurnIndexPacket());
+            }
+
+        } // Found the player.
+
     }
-    
-    
-    
+
     /**
      * Validates the player info.
      */
@@ -441,7 +456,7 @@ implements Runnable {
                 colorUsed[otherPlayer.getColorIndex()] = true;
             }
         }
-        if (colorUsed[player.getColorIndex()]) {
+        if (null != player && colorUsed[player.getColorIndex()]) {
             // find a replacement color;
             for (int i = 0; i < colorUsed.length; i++) {
                 if (!colorUsed[i]) {
@@ -452,6 +467,7 @@ implements Runnable {
         }
         
     }
+
     /**
      * Called when it is sensed that a connection has terminated.
      */ 
@@ -466,8 +482,9 @@ implements Runnable {
         connectionIds.remove(new Integer(conn.getId()));
         
         // if there's a player for this connection, remove it too
-        if (getPlayer(conn.getId()) != null) {
-            disconnected(getPlayer(conn.getId()));
+        Player player = getPlayer(conn.getId());
+        if (null != player) {
+            disconnected( player );
         }
     }
     
@@ -495,7 +512,7 @@ implements Runnable {
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase())) {
             if (game.getTurn().getPlayerNum() == player.getId()) {
-                sendGhostSkipMessage();
+                sendGhostSkipMessage( player );
             }
         } else {
             checkReady();
@@ -767,11 +784,11 @@ implements Runnable {
         
         roundReport.append("Winner is: ");
         if (game.getVictoryTeam() == Player.TEAM_NONE) {
-            if ( game.getVictoryPlayerId() == Player.PLAYER_NONE ) {
+            Player player = getPlayer( game.getVictoryPlayerId() );
+            if ( null == player ) {
                 roundReport.append( "the Chicaco Cubs!!!\n\n" );
             } else {
-                roundReport.append
-                    ( getPlayer(game.getVictoryPlayerId()).getName() );
+                roundReport.append( player.getName() );
                 roundReport.append("\n\n");
             }
         } else {
@@ -1289,33 +1306,46 @@ implements Runnable {
         // okay, well next turn then!
         GameTurn nextTurn = game.changeToNextTurn();
         send(createTurnIndexPacket());
-        
-        if (game.getFirstEntity() == null && game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
-            sendTurnErrorSkipMessage();
-        }
 
-        if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
-            sendGhostSkipMessage();
+        Player player = getPlayer( nextTurn.getPlayerNum() );
+        if ( null != player && player.isGhost() ) {
+            sendGhostSkipMessage( player );
+        }
+        else if ( null == game.getFirstEntity()
+                  && null != player
+                  && game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS ) {
+            sendTurnErrorSkipMessage( player );
         }
     }
 
     /**
      * Sends out a notification message indicating that a ghost player may
      * be skipped.
+     *
+     * @param   ghost - the <code>Player</code> who is ghosted.
+     *          This value must not be <code>null</code>.
      */
-    private void sendGhostSkipMessage() {
-        Player ghost = getPlayer(game.getTurn().getPlayerNum());
-        sendServerChat("Player '" + ghost.getName() + "' is disconnected.  You may skip his/her current turn with the /skip command.");
+    private void sendGhostSkipMessage( Player ghost ) {
+        StringBuffer message = new StringBuffer();
+        message.append( "Player '" )
+            .append( ghost.getName() )
+            .append( "' is disconnected.  You may skip his/her current turn with the /skip command." );
+        sendServerChat( message.toString() );
     }
     
     /**
      * Sends out a notification message indicating that the current turn is an
      * error and should be skipped.
+     *
+     * @param   skip - the <code>Player</code> who is to be skipped.
+     *          This value must not be <code>null</code>.
      */
-    private void sendTurnErrorSkipMessage() {
-        Player player = getPlayer(game.getTurn().getPlayerNum());
-        sendServerChat("Player '" + player.getName() + "' has no units to move.  You should skip his/her/your current turn with the /skip command. "
-        + "You may want to report this error.  See the MegaMek homepage (http://megamek.sf.net/) for details.");
+    private void sendTurnErrorSkipMessage( Player skip ) {
+        StringBuffer message = new StringBuffer();
+        message.append( "Player '" )
+            .append( skip.getName() )
+            .append( "' has no units to move.  You should skip his/her/your current turn with the /skip command. You may want to report this error.  See the MegaMek homepage (http://megamek.sf.net/) for details." );
+        sendServerChat( message.toString() );
     }
     
     /**
@@ -1353,8 +1383,9 @@ implements Runnable {
      * are skippable, and a turn should be skipped if there's nothing to move.
      */
     public boolean isTurnSkippable() {
-        return game.getFirstEntity() == null 
-            || getPlayer(game.getTurn().getPlayerNum()).isGhost();
+        Player player = getPlayer( game.getTurn().getPlayerNum() );
+        return ( null == player || player.isGhost()
+                 || game.getFirstEntity() == null );
     }
     
     /**
@@ -1751,8 +1782,12 @@ implements Runnable {
         boolean firstTurn = true;
         for (Enumeration i = game.getTurns(); i.hasMoreElements();) {
             GameTurn turn = (GameTurn)i.nextElement();
-            roundReport.append((firstTurn ? "" : ", ") ).append( getPlayer(turn.getPlayerNum()).getName());
-            firstTurn = false;
+            Player player = getPlayer( turn.getPlayerNum() );
+            if ( null != player ) {
+                roundReport.append( (firstTurn ? "" : ", ") )
+                    .append( player.getName() );
+                firstTurn = false;
+            }
         }
         roundReport.append("\n\n");
         roundReport.append("  Wind direction is "+game.getStringWindDirection()+"\n");
@@ -3870,38 +3905,38 @@ implements Runnable {
     private void processDeployMinefields(Vector minefields) {
     	int playerId = Player.PLAYER_NONE;
     	for (int i = 0; i < minefields.size(); i++) {
-    		Minefield mf = (Minefield) minefields.elementAt(i);
-    		playerId = mf.getPlayerId();
-    		
-    		game.addMinefield(mf);
-    		if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
-    			game.addVibrabomb(mf);
-    		}
+            Minefield mf = (Minefield) minefields.elementAt(i);
+            playerId = mf.getPlayerId();
+
+            game.addMinefield(mf);
+            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
+                game.addVibrabomb(mf);
+            }
     	}
-    	
-    	if (playerId != Player.PLAYER_NONE) {
-	    	Player player = game.getPlayer(playerId);
-	    	int teamId = player.getTeam();
-	    	
-	    	if (teamId != Player.TEAM_NONE) {
-		    	Enumeration teams = game.getTeams();
-		    	while (teams.hasMoreElements()) {
-		    		Team team = (Team) teams.nextElement();
-		    		if (team.getId() == teamId) {
-		    			Enumeration players = team.getPlayers();
-		    			while (players.hasMoreElements()) {
-		    				Player teamPlayer = (Player) players.nextElement();
-		    				if (teamPlayer.getId() != player.getId()) {
-		    					send(teamPlayer.getId(), new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
-		    				}
-		    				teamPlayer.addMinefields(minefields);
-		    			}
-		    			break;
-		    		}
-		    	}
-		    } else {
-		    	player.addMinefields(minefields);
-		    }
+
+        Player player = game.getPlayer( playerId );
+    	if ( null != player ) {
+            int teamId = player.getTeam();
+
+            if (teamId != Player.TEAM_NONE) {
+                Enumeration teams = game.getTeams();
+                while (teams.hasMoreElements()) {
+                    Team team = (Team) teams.nextElement();
+                    if (team.getId() == teamId) {
+                        Enumeration players = team.getPlayers();
+                        while (players.hasMoreElements()) {
+                            Player teamPlayer = (Player) players.nextElement();
+                            if (teamPlayer.getId() != player.getId()) {
+                                send(teamPlayer.getId(), new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
+                            }
+                            teamPlayer.addMinefields(minefields);
+                        }
+                        break;
+                    }
+                }
+            } else {
+                player.addMinefields(minefields);
+            }
     	}
     }
     /**
@@ -8653,10 +8688,11 @@ implements Runnable {
             System.err.println( entityId );
             return;
         }
-        if (e.getOwner() != getPlayer(connIndex)) {
+        Player player = getPlayer( connIndex );
+        if ( null != player && e.getOwner() != player ) {
             System.err.print
                 ( "Server.receiveEntityAmmoChange: player " );
-            System.err.print( getPlayer(connIndex).getName() );
+            System.err.print( player.getName() );
             System.err.print( " does not own the entity " );
             System.err.println( e.getDisplayName() );
             return;
@@ -8738,7 +8774,10 @@ implements Runnable {
      */
     private void receivePlayerDone(Packet pkt, int connIndex) {
         boolean ready = pkt.getBooleanValue(0);
-        getPlayer(connIndex).setDone(ready);
+        Player player = getPlayer(connIndex);
+        if ( null != player ) {
+            player.setDone(ready);
+        }
     }
     
     /**
@@ -8748,6 +8787,15 @@ implements Runnable {
      * @returns true if any options have been successfully changed.
      */
     private boolean receiveGameOptions(Packet packet, int connId) {
+        Player player = game.getPlayer( connId );
+        // Check player
+        if ( null == player ) {
+            System.err.print
+                ( "Server does not recognize player at connection " );
+            System.err.println( connId );
+            return false;
+        }
+
         // check password
         if (password != null && password.length() > 0 && !password.equals(packet.getObject(0))) {
             sendServerChat(connId, "The password you specified to change game options is incorrect.");
@@ -8768,7 +8816,15 @@ implements Runnable {
                 continue;
             }
             
-            sendServerChat("Player " + getPlayer(connId).getName() + " changed option \"" + originalOption.getFullName() + "\" to " + option.stringValue() + ".");
+            StringBuffer message = new StringBuffer();
+            message.append( "Player " )
+                .append( player.getName() )
+                .append( " changed option \"" )
+                .append( originalOption.getFullName() )
+                .append( "\" to " )
+                .append( option.stringValue() )
+                .append( "." );
+            sendServerChat( message.toString() );
 
             // Record mutually-exclusive infantry move options.
             if ( option.getShortName().equals("inf_move_last") ) {
@@ -8784,7 +8840,7 @@ implements Runnable {
 
         // Infantry move options can't BOTH be on!!!
         if ( infLastValue && (infLastValue == infMultiValue) ) {
-            sendServerChat("Player " + getPlayer(connId).getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
+            sendServerChat("Player " + player.getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
             sendServerChat("Clearing *BOTH* options.");
             game.getOptions().getOption("inf_move_last").setValue(false);
             game.getOptions().getOption("inf_move_multi").setValue(false);
@@ -8836,8 +8892,9 @@ implements Runnable {
     private void transmitAllPlayerUpdates() {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            
-            send(createPlayerUpdatePacket(player.getId()));
+            if ( null != player ) {
+                send(createPlayerUpdatePacket(player.getId()));
+            }
         }
     }
     
@@ -9132,6 +9189,15 @@ implements Runnable {
      * Process a packet
      */
     synchronized void handle(int connId, Packet packet) {
+        Player player = game.getPlayer( connId );
+        // Check player.  Please note, the connection may be pending.
+        if ( null == player && null == getPendingConnection(connId) ) {
+            System.err.print
+                ( "Server does not recognize player at connection " );
+            System.err.println( connId );
+            return;
+        }
+
         //System.out.println("s(" + cn + "): received command");
         if (packet == null) {
             System.out.println("server.connection.handle: got null packet");
@@ -9157,7 +9223,7 @@ implements Runnable {
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
                 } else {
-                    sendChat(getPlayer(connId).getName(), chat);
+                    sendChat(player.getName(), chat);
                 }
                 break;
             case Packet.COMMAND_ENTITY_MOVE :
@@ -9201,13 +9267,13 @@ implements Runnable {
                 }
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :
-				MapSettings newSettings=(MapSettings)packet.getObject(0);
-				if (!mapSettings.equalMapGenParameters(newSettings)) {
-					sendServerChat("Player " + getPlayer(connId).getName() + 
-									" changed mapsettings");
-				}
-				mapSettings = newSettings;
-				newSettings = null;
+                MapSettings newSettings=(MapSettings)packet.getObject(0);
+                if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    sendServerChat("Player " + player.getName() + 
+                                   " changed mapsettings");
+                }
+                mapSettings = newSettings;
+                newSettings = null;
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 resetPlayersDone();
                 transmitAllPlayerDones();

@@ -279,6 +279,22 @@ public class Infantry
     }
 
     /**
+     * Override the <code>Entity#getMovementTypeAsString()</code> method.
+     */
+    public String getMovementTypeAsString() {
+        switch (this.getMovementType()) {
+        case INF_LEG:
+            return "Leg";
+        case INF_MOTORIZED:
+            return "Motorized";
+        case INF_JUMP:
+            return "Jump";
+        default :
+            return "Unknown!";
+        }
+    }
+
+    /**
      * Returns the name of the type of movement used.
      * This is Infantry-specific.
      */

@@ -5,6 +5,13 @@ v 0.29.18 (CVS)
 + Data 841109: applied Hopalong's updated mechfiles and mex set.
 + Bug 841393: Blackjack BJ-1 should have lower arm actuator
 + Bug 825836: Gurkas and Firestarter FS9-OE should have swords.
++ Bug 834117, Patch 844447: set the game of loaded units.
++ Include movement type in MUL files.
++ Data 739343: Timber Wolf A & D should not have lower arm actuators.
++ Bug 842086: Check game.getPlayer(connId) for null.  A lot.
++ Bug 755993: Reduce stack trace to log message when error closing connection.
++ Possible source of Bug 826463: MechMapSet *requires* construction inside 
+  ArmorPanel#addNotify()!!!
 
 v 0.29.17 (2003-11-12, 8:30pm)
 + Patch 832885: use alternate LOS tool.

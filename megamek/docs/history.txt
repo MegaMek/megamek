@@ -1,12 +1,12 @@
 VERSION HISTORY:
 ----------------
 v0.29.67 (CVS)
-+ Bug 1115574: Gravity doesn't change BV.
 + Bug 1145584: Black Python image filename misspelled.
 + Bug 1145891: Bot doesn't know that protomechs can't charge, or that clan 
     units can't charge with the no_clan_physical option set.
 + Bug 1146225: Don't check SRM infantry for Narc-capable ammo.
 + RFE 1150066: Remember MiniReport window position and size.
++ Bug 1115574: Gravity doesn't change BV.
 + Bug 1120451: cannot use RMG when /data/boards directory is empty
 
 v0.29.66 (2005-02-21 7:45am)

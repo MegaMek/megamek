@@ -4,7 +4,12 @@
 # base/super <elevation> <terrains> <theme> <image>
 #
 
-super * "building:1" "" "buildingl2.gif"
+super * "building:1;bldg_elev:1" "" "boring/cropped_farm.png"
+super * "building:1;bldg_elev:2" "" "boring/cropped_church.png"
+super * "building:1;bldg_elev:3" "" "boring/light_bldg.png"
+super * "building:2;bldg_elev:3" "" "boring/cropped_cannon_tower.png"
+super * "building:3;bldg_elev:3" "" "boring/cropped_refinery.png"
+super * "building:3;bldg_elev:4" "" "boring/cropped_mage_tower.png"
 
 super * "road:1:00" "" "boring/road00.gif"
 super * "road:1:01" "" "boring/road01.gif"

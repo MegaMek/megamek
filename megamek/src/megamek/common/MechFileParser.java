@@ -102,9 +102,11 @@ public class MechFileParser {
      */
     private void postLoadInit(Entity ent) throws EntityLoadingException {
 
-        // Link Artemis IV fire-control systems to their missle racks.
+        // Walk through the list of equipment.
         for (Enumeration e = ent.getMisc(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
+
+            // Link Artemis IV fire-control systems to their missle racks.
             if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
                 
                 // link up to a weapon in the same location
@@ -139,8 +141,22 @@ public class MechFileParser {
                     // huh.  this shouldn't happen
                     throw new EntityLoadingException("Unable to match Artemis to launcher");
                 }
-            }
-        }
+            } // End link-Artemis
+            else if ( Mech.STEALTH.equals(m.getType().getInternalName()) &&
+                      m.getLinked() == null ) {
+                // Find an ECM suite to link to the stealth system.
+                // Stop looking after we find the first ECM suite.
+                for ( Enumeration equips = ent.getMisc(); equips.hasMoreElements(); ) {
+                    Mounted mEquip = (Mounted) equips.nextElement();
+                    MiscType mtype = (MiscType) mEquip.getType();
+                    if ( mtype.hasFlag(MiscType.F_ECM) ) {
+                        m.setLinked( mEquip );
+                        break;
+                    }
+                }
+            } // End link-Stealth
+
+        } // Check the next piece of equipment.
 
         // Add BattleArmorHandles to OmniMechs.
         if ( ent.isOmni() && ent instanceof Mech ) {

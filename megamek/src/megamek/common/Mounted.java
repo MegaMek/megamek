@@ -127,7 +127,7 @@ public class Mounted implements Serializable{
             if (type.hasInstantModeSwitch()) {
                 mode = n;
             }
-            else if (pendingMode == -1) {
+            else if (pendingMode != n) {
                 pendingMode = n;
             }
         }

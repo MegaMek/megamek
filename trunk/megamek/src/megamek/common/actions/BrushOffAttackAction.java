@@ -182,7 +182,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 			toHit.addModifier(1, "Hand actuator missing or destroyed");
 		}
 
-		Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+		Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
 		// If the target has Assault claws, give a 1 modifier.
 		// We can stop looking when we find our first match.

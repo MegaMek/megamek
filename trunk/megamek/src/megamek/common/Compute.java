@@ -1672,7 +1672,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
         if (attackerHeight == targetElevation) {
@@ -1928,7 +1928,7 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
         if (attackerElevation < targetHeight) {
@@ -2214,7 +2214,7 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
         if (attackerElevation == targetElevation) {
@@ -2453,7 +2453,7 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // side and elevation shouldn't matter
 
@@ -2609,7 +2609,7 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // elevation
         if (attackerElevation < targetHeight) {
@@ -2827,7 +2827,7 @@ public class Compute
         // target immobile
         toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         if (te instanceof Tank) {
             toHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -2936,32 +2936,20 @@ public class Compute
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-      public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit, boolean noClanPhysicals) {
-        int movement = attacker.moved;
+    public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit, Game game) {
 
-        if ( attacker.getCrew().getOptions().booleanOption("melee_specialist") && attacker instanceof Mech ) {
-          int mod = 0;
-
-          if (movement == Entity.MOVE_WALK) {
-            mod = 1;
-          } else if (movement == Entity.MOVE_RUN || movement == Entity.MOVE_SKID) {
-            mod = 2;
-          } else if (movement == Entity.MOVE_JUMP) {
-            mod = 3;
-          }
-
-          if ( mod == 0 )
-            return;
-
-          toHit.addModifier(-1, "melee specialist");
+        if (attacker.getCrew().getOptions().booleanOption("melee_specialist")
+            && attacker instanceof Mech
+            && getTargetMovementModifier(game, target.getId()).getValue() > 0) {
+            toHit.addModifier(-1, "melee specialist");
         }
 
-        if (  (target instanceof Mech) &&
-              target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
-              (target.dodging || noClanPhysicals) ) { //auto-dodge if approp.
-          toHit.addModifier(2, "target is dodging");
+        if (target instanceof Mech &&
+            target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
+            (target.dodging || !target.isEligibleForPhysical())) {
+            toHit.addModifier(2, "target is dodging");
         }
-      }
+    }
 
     /**
      * Modifier to attacks due to target movement
@@ -3605,6 +3593,60 @@ public class Compute
          {1,2,2,3,3,3,4,4,4,5,5}};
         
         return hit_table[shots - 2][nRoll - 2];
+    }
+
+    public static boolean canPhysicalTarget(Game game, int entityId, Targetable target) {
+        boolean canHit = false;
+
+        canHit |= Compute.toHitPunch
+            ( game, entityId, target,
+             PunchAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitPunch
+            ( game, entityId, target,
+             PunchAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitKick
+            ( game, entityId, target,
+             KickAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitKick
+            ( game, entityId, target,
+             KickAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= BrushOffAttackAction.toHitBrushOff
+            ( game, entityId, target,
+              BrushOffAttackAction.LEFT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= BrushOffAttackAction.toHitBrushOff
+            ( game, entityId, target,
+              BrushOffAttackAction.RIGHT ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= new ThrashAttackAction(entityId, target).toHit(game).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        canHit |= Compute.toHitProto(game, entityId, target).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        Mounted club = Compute.clubMechHas( game.getEntity(entityId) );
+        if ( null != club ) {
+            canHit |= Compute.toHitClub
+                ( game, entityId, target,
+                  club ).getValue()
+                != ToHitData.IMPOSSIBLE;
+        }
+
+        canHit |= Compute.toHitPush
+            ( game, entityId, target ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
+        return canHit;
     }
 
     /**

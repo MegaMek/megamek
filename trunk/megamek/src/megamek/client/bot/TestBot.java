@@ -272,13 +272,13 @@ public class TestBot extends BotClient {
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
                                             Compute.getDfaDamageTakenBy(option.getEntity()),
-                                            CEntity.SIDE_REAR)
+                                    ToHitData.SIDE_REAR)
                                             * Compute.oddsAbove(toHit.getValue())
                                             / 100;
                                     self_threat
                                         += option.getCEntity().getThreatUtility(
                                             .1 * self.getEntity().getWeight(),
-                                            CEntity.SIDE_REAR);
+                                    ToHitData.SIDE_REAR);
                                     self_threat *= 100 / option.getCEntity().getEntity().getWeight();
                                 } else {
                                     self.current.setState();
@@ -295,7 +295,7 @@ public class TestBot extends BotClient {
                                             ChargeAttackAction.getChargeDamageTakenBy(
                                                 option.getEntity(),
                                                 target.getEntity()),
-                                            CEntity.SIDE_FRONT)
+                                    ToHitData.SIDE_FRONT)
                                             * (Compute.oddsAbove(toHit.getValue()) / 100);
                                     option.setState();
                                 }
@@ -315,7 +315,7 @@ public class TestBot extends BotClient {
                                 if (toHit.getValue() < 8)
                                     damage *= 1.5;
                                 //this is all you are good for
-                                if (self.RangeDamages[CEntity.RANGE_SHORT] < 5)
+                                if (self.range_damages[CEntity.RANGE_SHORT] < 5)
                                     damage *= 2;
                                 MoveOption.DamageInfo di = option.getDamageInfo(enemy, true);
                                 di.damage = damage;
@@ -399,22 +399,22 @@ public class TestBot extends BotClient {
                 int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                 if (range > self.long_range) {
                     temp_adjustment += (!(range < enemy.long_range) ? .5 : 1)
-                        * (1 + self.RangeDamages[self.range])
+                        * (1 + self.range_damages[self.range])
                         * (Math.max(range - self.long_range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0));
                 }
                 if ((self.range == CEntity.RANGE_SHORT && (current_range > 5 || range > 9))
-                    || (self.RangeDamages[CEntity.RANGE_SHORT] < 4 && current_range > 10)) {
+                    || (self.range_damages[CEntity.RANGE_SHORT] < 4 && current_range > 10)) {
                     temp_adjustment += ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
-                        * (Math.max(1 + self.RangeDamages[CEntity.RANGE_SHORT], 5))
+                        * (Math.max(1 + self.range_damages[CEntity.RANGE_SHORT], 5))
                         * Math.max(range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0);
                 } else if (self.range == CEntity.RANGE_MEDIUM) {
                     temp_adjustment += ((current_range < 6 || current_range > 12) ? 1 : .25)
                         * ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
-                        * (1 + self.RangeDamages[CEntity.RANGE_MEDIUM])
+                        * (1 + self.range_damages[CEntity.RANGE_MEDIUM])
                         * Math.abs(range - .5 * Math.max(self.jumpMP, .8 * self.runMP));
-                } else if (option.damage < .25 * self.RangeDamages[CEntity.RANGE_LONG]) {
+                } else if (option.damage < .25 * self.range_damages[CEntity.RANGE_LONG]) {
                     temp_adjustment += ((range < 10) ? .25 : 1)
-                        * (Math.max(1 + self.RangeDamages[CEntity.RANGE_LONG], 3))
+                        * (Math.max(1 + self.range_damages[CEntity.RANGE_LONG], 3))
                         * (1 / (1 + option.threat));
                 }
                 adjustment += Math.sqrt(temp_adjustment * enemy.bv / self.bv);
@@ -424,7 +424,7 @@ public class TestBot extends BotClient {
                         option.getFinalCoords(),
                         option.getFinalFacing(),
                         enemy.getEntity().getPosition())
-                        != CEntity.SIDE_FRONT) {
+                        != ToHitData.SIDE_FRONT) {
                     int fa =
                         CEntity.getFiringAngle(
                             option.getFinalCoords(),
@@ -464,7 +464,7 @@ public class TestBot extends BotClient {
             }
 
             //close the range if nothing else and healthy
-            if (option.damage < .25 * self.RangeDamages[self.range] && adjustment < self.RangeDamages[self.range]) {
+            if (option.damage < .25 * self.range_damages[self.range] && adjustment < self.range_damages[self.range]) {
                 for (int e = 0; e < enemy_array.size(); e++) {
                     Entity en = (Entity) enemy_array.elementAt(e);
                     CEntity enemy = centities.get(en);
@@ -476,9 +476,9 @@ public class TestBot extends BotClient {
                 }
             }
 
-            if (option.damage < .25 * (1 + self.RangeDamages[self.range])) {
+            if (option.damage < .25 * (1 + self.range_damages[self.range])) {
                 option.self_threat += 2 * adjustment;
-            } else if (option.damage < .5 * (1 + self.RangeDamages[self.range])) {
+            } else if (option.damage < .5 * (1 + self.range_damages[self.range])) {
                 option.self_threat += adjustment;
             }
             option.tv.add(option.self_threat + " Initial Damage Adjustment " + "\n");
@@ -592,7 +592,7 @@ public class TestBot extends BotClient {
                                 max_threat =
                                     .8
                                         * enemy.getModifiedDamage(
-                                            (modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT : CEntity.SIDE_FRONT,
+                                            (modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT : ToHitData.SIDE_FRONT,
                                             enemy_option.getFinalCoords().distance(option.getFinalCoords()),
                                             modifiers[1]);
                             }
@@ -742,7 +742,7 @@ public class TestBot extends BotClient {
         int offset = 0;
         for (int i = 0; i < Math.min(move_array.length, 20); i++) {
             MoveOption next = (MoveOption) move_array[i];
-            if (next.isPhysical && self.RangeDamages[CEntity.RANGE_SHORT] > 5 && next.doomed) {
+            if (next.isPhysical && self.range_damages[CEntity.RANGE_SHORT] > 5 && next.doomed) {
                 if (offset + 20 < move_array.length) {
                     next = (MoveOption) move_array[offset + 20];
                     offset++;

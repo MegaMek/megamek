@@ -487,7 +487,7 @@ implements Serializable {
      */
     public boolean isLegalDeployment(Coords c, Player p)
     {
-        if (c == null || p == null) return false;
+        if (c == null || p == null || !contains(c)) return false;
         
         int nLimit = 3;
         int nDir = p.getStartingPos();

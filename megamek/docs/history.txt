@@ -81,7 +81,7 @@ pilots:
 - successive conciousness checks should be made from low rolls to high
 
 falling:
-- account for water
+- only fall to surface of water
 
 
 FUTURE VERSION PLANS:
@@ -111,6 +111,9 @@ v next
 + crash bug fixed in getMissedChargeDisplacement
 + can't charge charging mechs anymore
 + charge error messages a little better, maybe
++ "2" on rear table now results in CTR (critical) hit, not CT (thx bob dee)
++ falling in water is only half damage
++ tooltips work better
 
 v 0.23.4 (03-14-02, 12pm)
 + charging

@@ -5750,7 +5750,7 @@ implements Runnable, ConnectionHandler {
                   weapon.setJammed(true);
                   weapon.setHit(true);
               } else {
-                  phaseReport.append("but the RAC jams and the shot is void.\n");
+                  phaseReport.append("BECAUSE THE RAC JAMS.\n");
               }
               return true;
           }

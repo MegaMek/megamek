@@ -379,7 +379,6 @@ extends Dialog implements ActionListener, DialogOptionListener {
             WeaponType wtype = (WeaponType)m.getType();
             if (wtype.hasFlag(WeaponType.F_MG)) {
                 gbc.gridy = row++;
-                // Protomechs need special choice panels.
                 RapidfireMGPanel rmp = new RapidfireMGPanel(m);                
                 gbl.setConstraints(rmp, gbc);
                 panRapidfireMGs.add(rmp);

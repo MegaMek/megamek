@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -720,10 +720,13 @@ public class Compute
         	!AmmoType.canDeliverMinefield(atype)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
-        
+
         if ( atype != null && 
              atype.getAmmoType() == AmmoType.T_LRM &&
              ( atype.getMunitionType() == AmmoType.M_THUNDER ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB||
                atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED ) &&
              target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
@@ -1025,6 +1028,12 @@ public class Compute
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
                 }
             }
+        }
+        
+        // Armor Piercing ammo is a flat +1
+        if ( (atype != null) &&
+             (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) ) {
+            toHit.addModifier( 1, "Armor-Piercing Ammo" );
         }
 
         // spotter movement, if applicable

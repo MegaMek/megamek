@@ -2879,25 +2879,32 @@ implements Runnable, ConnectionHandler {
             }   
 
             // check for minefields.
-            if ((!lastPos.equals(curPos) && 
-            	step.getMovementType() != Entity.MOVE_JUMP) ||
-            	(overallMoveType == Entity.MOVE_JUMP &&
-            	!i.hasMoreElements())) {
-            	if (game.containsMinefield(curPos)) {
-	            	Enumeration minefields = game.getMinefields(curPos).elements();
-	            	while (minefields.hasMoreElements()) {
-	            		Minefield mf = (Minefield) minefields.nextElement();
-	            		
-	            		switch (mf.getType()) {
-	            			case (Minefield.TYPE_CONVENTIONAL) :
-	            			case (Minefield.TYPE_THUNDER) :
-	            			case (Minefield.TYPE_COMMAND_DETONATED) :
-	            			enterMinefield(entity, mf, curPos, curPos, true);
-	            			break;
-	            		}
-	            	}
-	         	}
-	         	checkVibrabombs(entity, curPos, false, lastPos, curPos);
+//            if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
+//            	|| ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
+            if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements())) {
+	         checkVibrabombs(entity, curPos, false, lastPos, curPos);
+            }
+            if (game.containsMinefield(curPos)) {
+            	Enumeration minefields = game.getMinefields(curPos).elements();
+            	while (minefields.hasMoreElements()) {
+            		Minefield mf = (Minefield) minefields.nextElement();
+v            		
+            		switch (mf.getType()) {
+            			case (Minefield.TYPE_CONVENTIONAL) :
+            			case (Minefield.TYPE_THUNDER) :
+            			case (Minefield.TYPE_THUNDER_INFERNO) :
+            			case (Minefield.TYPE_COMMAND_DETONATED) :
+            				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+            					enterMinefield(entity, mf, curPos, curPos, true);
+            				break;
+            			case (Minefield.TYPE_THUNDER_ACTIVE) :
+            				if ((step.getMovementType() != Entity.MOVE_JUMP) || (!i.hasMoreElements()))
+	            				enterMinefield(entity, mf, curPos, curPos, true);
+	            			else
+	            				enterMinefield(entity, mf, curPos, curPos, true, 2);
+            				break;
+            		}
+            	}
             }
 
             // infantry discovers minefields if they end their move
@@ -3342,11 +3349,17 @@ implements Runnable, ConnectionHandler {
 
 	// When an entity enters a conventional or Thunder minefield.
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
+		enterMinefield(entity, mf, src, dest, resolvePSRNow, 0);
+	}
+
+	// When an entity enters a conventional or Thunder minefield.
+	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
 		switch (mf.getType()) {
 			case (Minefield.TYPE_CONVENTIONAL) :
 			case (Minefield.TYPE_THUNDER) :
+			case (Minefield.TYPE_THUNDER_ACTIVE) :
 			if (mf.getTrigger() != Minefield.TRIGGER_NONE && 
-				Compute.d6(2) < mf.getTrigger()) {
+				Compute.d6(2) < (mf.getTrigger()+hitMod)) {
 				return;
 			}
 			
@@ -3364,6 +3377,35 @@ implements Runnable, ConnectionHandler {
             	removeMinefield(mf);
             }
 	        break;
+
+			case (Minefield.TYPE_THUNDER_INFERNO) :
+				if (mf.getTrigger() != Minefield.TRIGGER_NONE && 
+					Compute.d6(2) < (mf.getTrigger()+hitMod)) {
+					return;
+				}
+	                    entity.infernos.add( InfernoTracker.STANDARD_ROUND,
+	                                               mf.getDamage() );
+				phaseReport.append("\n" + entity.getShortName() + " hits an inferno mine in hex " + mf.getCoords().getBoardNum() + ".");
+				phaseReport.append("\n        " )
+					.append( entity.getDisplayName() )
+					.append( " now on fire for ")
+					.append( entity.infernos.getTurnsLeftToBurn() )
+					.append(" turns.\n");
+
+	                    // start a fire in the targets hex
+	                    Hex h = game.getBoard().getHex(dest);
+
+	                    // Unless there a fire in the hex already, start one.
+	                    if ( !h.contains( Terrain.FIRE ) ) {
+	                        phaseReport.append( " Fire started in hex " )
+	                            .append( dest.getBoardNum() )
+	                            .append( ".\n" );
+	                        h.addTerrain(new Terrain(Terrain.FIRE, 1));
+	                    }
+	                    game.board.addInfernoTo
+	                        ( dest, InfernoTracker.STANDARD_ROUND, mf.getDamage() );
+	                    sendChangedHex(dest);
+				break;
 	     }
 	}
 	
@@ -4633,6 +4675,7 @@ implements Runnable, ConnectionHandler {
         ToHitData toHit = wr.toHit;
         boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
 	boolean bFragmentation = (usesAmmo && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
+	boolean bFlechette = (usesAmmo && atype.getMunitionType() == AmmoType.M_FLECHETTE);
         if (!bInferno) {
             // also check for inferno infantry
             bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
@@ -4762,12 +4805,12 @@ implements Runnable, ConnectionHandler {
                 deliverThunderMinefield( coords, ae.getOwner().getId(),
                                          atype.getRackSize() );
             }
-            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-            //	deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
-            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-            //	deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
-            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-            //	deliverThunderActiveMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+                deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+                deliverThunderActiveMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
             //else
             //{
             //...This is an error, but I'll just ignore it for now.
@@ -5566,8 +5609,14 @@ implements Runnable, ConnectionHandler {
                     } else if (bFragmentation) {
                     	// If it's a frag missile...
                         phaseReport.append
-                            ( damageEntity(entityTarget, hit, nDamage, false, true) );
+                            ( damageEntity(entityTarget, hit, nDamage, false, 1) );
+                    } else if (bFlechette) {
+                    	// If it's a frag missile...
+                        phaseReport.append
+                            ( damageEntity(entityTarget, hit, nDamage, false, 2) );
                     } else {
+                    	if ((atype != null) && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
+                    		hit.makeArmorPiercing(atype);
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
                     }
@@ -7256,11 +7305,11 @@ implements Runnable, ConnectionHandler {
     }
     
     public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
-        return damageEntity(te, hit, damage, ammoExplosion, false);
+        return damageEntity(te, hit, damage, ammoExplosion, 0);
     }
     
     public String damageEntity(Entity te, HitData hit, int damage) {
-        return damageEntity(te, hit, damage, false, false);
+        return damageEntity(te, hit, damage, false, 0);
     }
     
     /**
@@ -7273,15 +7322,16 @@ implements Runnable, ConnectionHandler {
      * @param hit the hit data for the location hit
      * @param damage the damage to apply
      * @param ammoExplosion ammo explosion type damage is handled slightly differently
-     * @param bFrag damage is from a fragmenation missile
+     * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, boolean bFrag) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
         String desc = new String();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
         Hex te_hex = null;
         
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
+        int specCrits = 0;
         //int loc = hit.getLocation();
         HitData nextHit = null;
 
@@ -7301,13 +7351,34 @@ implements Runnable, ConnectionHandler {
         }
         // If dealing with fragmentation missiles,
         // it does double damage to infantry...
-        if (isPlatoon && bFrag) {
-            damage *= 2;
-            desc += "\n        Infantry platoon hit by fragmentation missiles!!!  Damage doubled." ;
-        }
-        else if ((te != null) && bFrag) {
-            damage = 0;
-            desc += "\n        Hardened unit hit by fragmentation missiles!!!  No damage." ;
+        switch (bFrag)
+        {
+        	case 1:
+        		if (isPlatoon)
+        		{
+		            damage *= 2;
+		            desc += "\n        Infantry platoon hit by fragmentation missiles!!!  Damage doubled." ;
+		        }
+		        else if (te != null)
+		        {
+		            damage = 0;
+		            desc += "\n        Hardened unit hit by fragmentation missiles!!!  No damage." ;
+		        }
+		        break;
+        	case 2:
+        		if (isPlatoon)
+        		{
+		            damage *= 2;
+		            desc += "\n        Infantry platoon hit by flechette ammunition!!!  Damage doubled." ;
+		        }
+		        else if ((te != null) && (!isBattleArmor))
+		        {
+		            damage /= 2;
+		            desc += "\n        Hardened unit hit by flechette ammunition!!!  Damage halved." ;
+		        }
+        	default:
+        		// We can ignore this.
+        		break;
         }
 
         // Allocate the damage
@@ -7494,6 +7565,10 @@ implements Runnable, ConnectionHandler {
                     }
                 }
             }
+            else if (hit.getSpecCritMod() < 0)
+            { // If there ISN'T any armor left but we did damage, then there's a chance of a crit, using Armor Piercing.
+                specCrits++;
+            }
 
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
@@ -7532,6 +7607,11 @@ implements Runnable, ConnectionHandler {
                 desc += "\n" + criticalEntity(te, hit.getLocation());
             }
             crits = 0;
+            
+            for (int i = 0; i < specCrits; i++) {
+                desc += "\n" + criticalEntity(te, hit.getLocation(), hit.getSpecCritMod());
+            }
+            specCrits = 0;
             
             if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
                 desc += "\n" + damageCrew(te, 1);
@@ -7635,17 +7715,30 @@ implements Runnable, ConnectionHandler {
       return didExplode;
     }
     
+    private String criticalEntity(Entity en, int loc) {
+    	return criticalEntity(en, loc, 0);
+    }
+    
     /**
      * Rolls and resolves critical hits on mechs or vehicles.
      */
-    private String criticalEntity(Entity en, int loc) {
+    private String criticalEntity(Entity en, int loc, int critMod) {
         StringBuffer desc = new StringBuffer();
         desc.append( "        Critical hit on " )
             .append( en.getLocationAbbr(loc) )
             .append( ". " );
         int hits = 0;
         int roll = Compute.d6(2);
-        desc.append( "Roll = " ).append( roll ).append( ";" );
+        desc.append( "Roll = " );
+        if ( critMod != 0 ) {
+            desc.append( "(" ).append( roll );
+            if ( critMod > 0 ) {
+                desc.append( "+" );
+            }
+            desc.append( critMod ).append( ") = " );
+            roll += critMod;
+        }
+        desc.append( roll ).append( ";" );
         if (roll <= 7) {
             desc.append( " no effect." );
             return desc.toString();
@@ -8788,7 +8881,8 @@ implements Runnable, ConnectionHandler {
                 send(p.getId(), pack);
             }
             // send an entity delete to everyone else
-            pack = createRemoveEntityPacket(nEntityID);
+            pack = createRemoveEntityPacket( nEntityID,
+                                             eTarget.getRemovalCondition() );
             for (int x = 0; x < vPlayers.size(); x++) {
                 if (!vCanSee.contains(vPlayers.elementAt(x))) {
                     Player p = (Player)vPlayers.elementAt(x);

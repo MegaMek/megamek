@@ -43,9 +43,14 @@ public class WeaponHandler implements AttackHandler {
 	protected void doChecks() {
 		
 	}
+	
+	//Not needed, I *think*  
+	/* 
 	protected boolean specialResolution(StringBuffer phaseReport,Entity entityTarget, boolean bMissed) {
 		return false;
-	}
+	}*/
+	
+	
 	protected boolean handleSpecialMiss(Entity entityTarget,boolean targetInBuilding,Building bldg) {
 		 // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
@@ -58,11 +63,20 @@ public class WeaponHandler implements AttackHandler {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if ( !targetInBuilding ) {
+        if ( !targetInBuilding || toHit.getValue()==TargetRoll.AUTOMATIC_FAIL) {
             return false;
         }
         return true;
 	}
+	
+	protected int calcHits() {
+		return 1;
+	}
+	
+	protected int calcnCluster() {
+		return 1;		
+	}
+	
 	public boolean handle(int phase) {
 		if(!this.cares(phase)) {
 			return true;
@@ -104,11 +118,12 @@ public class WeaponHandler implements AttackHandler {
 	      
 	      // do we hit?
 	      boolean bMissed = roll < toHit.getValue();
-	      
+	      //Not needed, I think.
+	      /*
 	      //Do we need some sort of special resolution (minefields, artillery, etc.)
 	      if(specialResolution(phaseReport,entityTarget,bMissed)) {
 	      	return false;
-	      }
+	      }*/
 
 	      
 
@@ -127,11 +142,11 @@ public class WeaponHandler implements AttackHandler {
 	       
 
 		// yeech.  handle damage. . different weapons do this in very different ways
-	        int hits = 1, nCluster = 1, nSalvoBonus = 0;
+	        int hits = calcHits(), nCluster = calcnCluster(), nSalvoBonus = 0;
 	        int nDamPerHit = wtype.getDamage();
 	        boolean bSalvo = false;
 	        String sSalvoType = " shot(s) ";
-	        boolean bAllShotsHit = false;
+	        boolean bAllShotsHit = allShotsHit();
 	       
 
 	        // We've calculated how many hits.  At this point, any missed
@@ -140,19 +155,7 @@ public class WeaponHandler implements AttackHandler {
 	            if ( targetInBuilding && bldg != null ) {
 
 
-	                // Damage the building in one big lump.
-	                
-
-	                    // Only report if damage was done to the building.
-	                    int toBldg = hits * nDamPerHit;
-	                    if ( toBldg > 0 ) {
-	                        phaseReport.append( "        " )
-	                            .append( server.damageBuilding( bldg, toBldg ) )
-	                            .append( "\n" );
-	                    }
-
-	             // End rounds-hit
-
+	                handleAccidentalBuildingDamage(phaseReport, bldg, hits, nDamPerHit);
 	            } // End missed-target-in-building
 	            return false;
 
@@ -179,18 +182,7 @@ public class WeaponHandler implements AttackHandler {
 //	          targeting a hex for igniting
 	            if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||
 	                target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
-	                if ( !bSalvo ) {
-	                    phaseReport.append("hits!");
-	                }
-	                // We handle Inferno rounds above.
-	                int tn = wtype.getFireTN();
-	                if (tn != TargetRoll.IMPOSSIBLE) {
-	                    if ( bldg != null ) {
-	                        tn += bldg.getType() - 1;
-	                    }
-	                    phaseReport.append( "\n" );
-	                    server.tryIgniteHex( target.getPosition(), false, tn, true );
-	                }
+	                handleIgnitionDamage(phaseReport, bldg, bSalvo);
 	                return false;
 	            }
 
@@ -199,84 +191,141 @@ public class WeaponHandler implements AttackHandler {
 
 	                nDamage = nDamPerHit * hits;
 	                
-	                phaseReport.append("hits!");
-	                phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
-
-	                // Any clear attempt can result in accidental ignition, even
-	                // weapons that can't normally start fires.  that's weird.
-	                // Buildings can't be accidentally ignited.
-	                if ( bldg != null &&
-	                     server.tryIgniteHex(target.getPosition(), false, 9) ) {
-	                    return false;
-	                }
-
-	                int tn = 14 - nDamage;
-	                server.tryClearHex(target.getPosition(), tn);
+	                handleClearDamage(phaseReport, bldg, nDamage);
 
 	                return false;
 	            }
 //	          Targeting a building.
 	            if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+	            	// The building takes the full brunt of the attack.
+	        		nDamage = nDamPerHit * hits;
 
-	                // The building takes the full brunt of the attack.
-	                nDamage = nDamPerHit * hits;
-	                if ( !bSalvo ) {
-	                    phaseReport.append( "hits." );
-	                }
-	                phaseReport.append( "\n        " )
-	                    .append( server.damageBuilding( bldg, nDamage ) )
-	                    .append( "\n" );
-
-	                // Damage any infantry in the hex.
-	                server.damageInfantryIn( bldg, nDamage );
+	                handleBuildingDamage(phaseReport, bldg, nDamage, bSalvo);
 
 	                // And we're done!
 	                return false;
 	            }
 	            if (entityTarget != null) {
-	            	
-	                 HitData hit = entityTarget.rollHitLocation
-	                     ( toHit.getHitTable(),
-	                       toHit.getSideTable(),
-	                       waa.getAimedLocation(),
-	                       waa.getAimingMode() );
-
-
-	                // Each hit in the salvo get's its own hit location.
-	                    phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).
-	                            append( entityTarget.getLocationAbbr(hit));
-	                    if (hit.hitAimedLocation()) {
-	                    	phaseReport.append("(hit aimed location)");
-	                    }
-	                
-	                    // Resolve damage normally.
-	                    nDamage = nDamPerHit * Math.min(nCluster, hits);
-
-	                    // A building may be damaged, even if the squad is not.
-	                    if ( bldgAbsorbs > 0 ) {
-	                        int toBldg = Math.min( bldgAbsorbs, nDamage );
-	                        nDamage -= toBldg;
-	                        phaseReport.append( "\n        " )
-	                            .append( server.damageBuilding( bldg, toBldg ) );
-	                    }
-
-	                    // A building may absorb the entire shot.
-	                    if ( nDamage == 0 ) {
-	                        phaseReport.append( "\n        " )
-	                            .append( entityTarget.getDisplayName() )
-	                            .append( " suffers no damage." );
-	                    } else {
-	                    	if(server==null) { System.out.println("serverN");}
-	                    	if(phaseReport==null) { System.out.println("phaseReportN");}
-	                    	if(entityTarget==null) { System.out.println("entityTargetN");}	                    	
-	                    	phaseReport.append( server.damageEntity(entityTarget, hit, nDamage) );
-	                    }
+	            		                
+	            	handeDamageEntity(entityTarget, phaseReport, bldg, hits, nCluster, nDamPerHit, bldgAbsorbs);
 	                
 	                hits -= nCluster;
 	            }
 	        } // Handle the next cluster.
 
 	        phaseReport.append("\n");
+		return false;
+	}
+	protected void handeDamageEntity(Entity entityTarget, StringBuffer phaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
+		int nDamage;
+		HitData hit = entityTarget.rollHitLocation
+		     ( toHit.getHitTable(),
+		       toHit.getSideTable(),
+		       waa.getAimedLocation(),
+		       waa.getAimingMode() );
+
+
+		// Each hit in the salvo get's its own hit location.
+		    phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).
+		            append( entityTarget.getLocationAbbr(hit));
+		    if (hit.hitAimedLocation()) {
+		    	phaseReport.append("(hit aimed location)");
+		    }
+		
+		    // Resolve damage normally.
+		    nDamage = nDamPerHit * Math.min(nCluster, hits);
+
+		    // A building may be damaged, even if the squad is not.
+		    if ( bldgAbsorbs > 0 ) {
+		        int toBldg = Math.min( bldgAbsorbs, nDamage );
+		        nDamage -= toBldg;
+		        phaseReport.append( "\n        " )
+		            .append( server.damageBuilding( bldg, toBldg ) );
+		    }
+
+		    // A building may absorb the entire shot.
+		    if ( nDamage == 0 ) {
+		        phaseReport.append( "\n        " )
+		            .append( entityTarget.getDisplayName() )
+		            .append( " suffers no damage." );
+		    } else {	                    	            	
+		    	phaseReport.append( server.damageEntity(entityTarget, hit, nDamage) );
+		    }
+	}
+	protected void handleAccidentalBuildingDamage(StringBuffer phaseReport, Building bldg, int hits, int nDamPerHit) {
+		// Damage the building in one big lump.
+		
+
+		    // Only report if damage was done to the building.
+		    int toBldg = hits * nDamPerHit;
+		    if ( toBldg > 0 ) {
+		        phaseReport.append( "        " )
+		            .append( server.damageBuilding( bldg, toBldg ) )
+		            .append( "\n" );
+		    }
+
+          // End rounds-hit
+
+	}
+	protected void handleIgnitionDamage(StringBuffer phaseReport, Building bldg, boolean bSalvo) {
+		if ( !bSalvo ) {
+		    phaseReport.append("hits!");
+		}
+		// We handle Inferno rounds above.
+		int tn = wtype.getFireTN();
+		if (tn != TargetRoll.IMPOSSIBLE) {
+		    if ( bldg != null ) {
+		        tn += bldg.getType() - 1;
+		    }
+		    phaseReport.append( "\n" );
+		    server.tryIgniteHex( target.getPosition(), false, tn, true );
+		}
+	}
+	protected void handleClearDamage(StringBuffer phaseReport, Building bldg, int nDamage) {
+		phaseReport.append("hits!");
+		phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
+
+		// Any clear attempt can result in accidental ignition, even
+		// weapons that can't normally start fires.  that's weird.
+		// Buildings can't be accidentally ignited.
+		if ( bldg != null &&
+		     server.tryIgniteHex(target.getPosition(), false, 9) ) {
+		   return;
+		} 
+
+		int tn = 14 - nDamage;
+		server.tryClearHex(target.getPosition(), tn);
+		return;
+	}
+	protected void handleBuildingDamage(StringBuffer phaseReport, Building bldg, int nDamage, boolean bSalvo) {
+		if ( !bSalvo ) {
+		    phaseReport.append( "hits." );
+		}
+		phaseReport.append( "\n        " )
+		    .append( server.damageBuilding( bldg, nDamage ) )
+		    .append( "\n" );
+
+		// Damage any infantry in the hex.
+		server.damageInfantryIn( bldg, nDamage );
+	}
+	protected boolean handleDamageBuilding(StringBuffer phaseReport, Building bldg, int hits, int nDamPerHit, boolean bSalvo) {
+		int nDamage;
+		// The building takes the full brunt of the attack.
+		nDamage = nDamPerHit * hits;
+		if ( !bSalvo ) {
+		    phaseReport.append( "hits." );
+		}
+		phaseReport.append( "\n        " )
+		    .append( server.damageBuilding( bldg, nDamage ) )
+		    .append( "\n" );
+
+		// Damage any infantry in the hex.
+		server.damageInfantryIn( bldg, nDamage );
+
+		// And we're done!
+		return false;
+	}
+	protected boolean allShotsHit() {
 		return false;
 	}
 	protected void reportMiss(StringBuffer phaseReport) {

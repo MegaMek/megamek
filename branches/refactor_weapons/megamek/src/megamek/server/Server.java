@@ -11810,7 +11810,7 @@ implements Runnable, ConnectionHandler {
      * TODO: Refactor the new entity annoucement out of here.
      */
     private void handleAttacks() {
-    	int lastAttackerId=0;
+    	int lastAttackerId=-1;
     	Vector currentAttacks,keptAttacks;
     	currentAttacks=game.getAttacksVector();
     	keptAttacks=new Vector();

@@ -193,6 +193,7 @@ public class EquipmentType {
         EquipmentType.allTypes.addElement(type);
     }
     private static void initializeWeaponTypes() {
+        //Laser types
     	addType(new ISMediumLaser());
     	addType(new ISLargeLaser());
     	addType(new ISSmallLaser());
@@ -213,6 +214,10 @@ public class EquipmentType {
     	addType(new CLHeavySmallLaser());
     	addType(new CLERMicroLaser());
     	addType(new CLMicroPulseLaser());
+    	//PPC types
+    	addType(new ISPPC());
+    	addType(new ISERPPC());
+    	addType(new CLERPPC());
     }
     
 }

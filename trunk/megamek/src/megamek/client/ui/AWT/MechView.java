@@ -80,7 +80,7 @@ public class MechView {
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
-            .append( mech.getRunMP() );
+            .append( mech.getRunMPwithoutMASC() );
         if (hasMASC) {
             sBasic.append( "(")
                 .append( mech.getWalkMP() * 2)

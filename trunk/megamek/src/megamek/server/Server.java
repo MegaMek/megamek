@@ -2614,6 +2614,7 @@ public class Server
                     if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
                         desc += explodeAmmo(en, loc, slot);
                     }
+                    en.getEquipment(cs.getIndex()).setHit(true);
                     break;
                 }
                 hits--;

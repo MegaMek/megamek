@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -611,19 +611,27 @@ public class MiniMap extends Canvas
             yPoints[3] = baseY;
         }
 
-        g.setColor(entity.getOwner().getColor());
+        g.setColor (entity.getOwner().getColor());
         if (! entity.isSelectableThisTurn(m_game)) {
             // entity has moved (or whatever) already
-            g.setColor(g.getColor().darker());
-        };
-        g.fillPolygon( xPoints, yPoints, xPoints.length );
+            g.setColor (g.getColor().darker());
+        }
+        g.fillPolygon (xPoints, yPoints, xPoints.length);
 
+        if (entity.isSelected()) {
+            Color w = new Color (255,255,255);
+            Color b = new Color (0,0,0);
+            g.setColor (b);
+            g.drawRect (baseX-1, baseY-1, 3, 3);
+            g.setColor (w);
+            g.drawRect (baseX, baseY, 1, 1);
+        }
         if (border) {
             Color oldColor = g.getColor();
-            g.setColor(oldColor.darker().darker().darker());
-            g.drawPolygon( xPoints, yPoints, xPoints.length );
-            g.setColor(oldColor);
-        };
+            g.setColor (oldColor.darker().darker().darker());
+            g.drawPolygon (xPoints, yPoints, xPoints.length);
+            g.setColor (oldColor);
+        }
     }
 
     private void paintRoads (Graphics g){

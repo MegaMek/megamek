@@ -17,6 +17,7 @@ v0.29.32 (CVS)
 + Players can set the time for the pathfinder to "think".
 + Bug 936861: LOS dialog no longer locks up MM client
 + Patch 927127, RFE 711582: allow players to zoom in and out on the board.
++ RFE 936863: ConfirmDialog can now have the Yes or No button focused
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

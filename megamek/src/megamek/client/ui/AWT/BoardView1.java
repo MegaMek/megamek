@@ -1421,8 +1421,7 @@ public class BoardView1
          * Return true if the point is inside our polygon
          */
         public boolean isInside(Point point) {
-            return super.isInside(point) 
-                   && attackPoly.contains(point.x + view.x - bounds.x - offset.x, 
+            return attackPoly.contains(point.x + view.x - bounds.x - offset.x, 
                                           point.y + view.y - bounds.y - offset.y);
         }
         

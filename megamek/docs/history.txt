@@ -96,8 +96,13 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
-v next
-+ changed RNG routine to avoid impossible chance of rounding errors (:P)
+v 0.24.1 (03-17-02, 11pm)
++ changed RNG routine to avoid very unlikely chance of rounding errors (:-P)
++ fixed bug causing pilot consciousness checks to never be made
++ mechwarrior name/skill customization
++ mechwarrior gunnery/piloting skill factored into BV
++ factored piloting skill differential into charging/dfa to-hit
++ fixed a bug causing weapons fire tooltips not to display sometimes
 
 v 0.24.0 (03-18-02, 12:30pm)
 + mechs making a dfa attack can't be physically attacked
@@ -109,6 +114,7 @@ v 0.24.0 (03-18-02, 12:30pm)
 + mechs with 1 MP are allowed to get up
 + mechs with at least 1 MP can take 1 step forward, regardless of terrain cost
 + more notification about criticals due to "2" hit location
++ added a bunch more mechs (thx Jeff Biron)
 
 v 0.23.6 (03-17-02, 8:15pm)
 + center on unit works in new display

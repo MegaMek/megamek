@@ -1596,6 +1596,11 @@ public class Compute
         // target terrain
         toHit.append(getTargetTerrainModifier(game, targetId));
         
+        // piloting skill differential
+        if (ae.getCrew().getGunnery() != te.getCrew().getGunnery()) {
+            toHit.addModifier(ae.getCrew().getGunnery() - te.getCrew().getGunnery(), "piloting skill differential");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -1715,6 +1720,11 @@ public class Compute
         // target movement
         toHit.append(getTargetMovementModifier(game, targetId));
         
+        // piloting skill differential
+        if (ae.getCrew().getGunnery() != te.getCrew().getGunnery()) {
+            toHit.addModifier(ae.getCrew().getGunnery() - te.getCrew().getGunnery(), "piloting skill differential");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");

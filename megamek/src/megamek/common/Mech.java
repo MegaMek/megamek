@@ -877,6 +877,9 @@ public class Mech
     
     obv = weaponBV * speedFactor;
     
-    return (int)Math.round(dbv + obv);
+    // and then factor in pilot
+    double pilotFactor = crew.getBVSkillMultiplier();
+    
+    return (int)Math.round((dbv + obv) * pilotFactor);
   }
 }

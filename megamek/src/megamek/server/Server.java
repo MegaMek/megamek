@@ -648,6 +648,7 @@ public class Server
             checkFor20Damage();
             resolveCrewDamage();
             resolvePilotingRolls();
+            resolveCrewDamage(); // again? or when else?
             // check phase report
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport.toString());
@@ -2100,7 +2101,7 @@ public class Server
                 continue;
             }
             anyRolls = true;
-            for (int j = 0; j < e.crew.getRollsNeeded(); j++) {
+            for (int j = 0; j < rollsNeeded; j++) {
                 int roll = Compute.d6(2);
                 phaseReport.append("\nPilot of " + e.getDisplayName()
                    + " \"" + e.getCrew().getName() + "\""
@@ -2590,6 +2591,24 @@ public class Server
      }
 
     /**
+      * Updates an entity with the info from the client.  Only valid to do this
+      * durring the lounge phase.
+      */
+    private void receiveEntityUpdate(Packet c, int connIndex) {
+        Entity entity = (Entity)c.getObject(0);
+        Entity oldEntity = game.getEntity(entity.getId());
+        if (oldEntity != null && oldEntity.getOwner() == getPlayer(connIndex)) {
+            entity.restore();
+            entity.setOwner(getPlayer(connIndex));
+            game.setEntity(entity.getId(), entity);
+
+            send(createEntitiesPacket());
+        } else {
+            // hey!
+        }
+     }
+
+    /**
      * Deletes an entity owned by a certain player from the list
      */
     private void receiveEntityDelete(Packet c, int connIndex) {
@@ -2898,6 +2917,11 @@ public class Server
                 break;
             case Packet.COMMAND_ENTITY_ADD :
                 receiveEntityAdd(c, id);
+                resetPlayerReady();
+                transmitAllPlayerReadys();
+                break;
+            case Packet.COMMAND_ENTITY_UPDATE :
+                receiveEntityUpdate(c, id);
                 resetPlayerReady();
                 transmitAllPlayerReadys();
                 break;

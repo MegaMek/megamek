@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -38,7 +38,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Button butChangeBoard;
     private Panel panBoardSettings;
       
-    private Button butLoad, butDelete;
+    private Button butLoad;
+    private Button butDelete;
+    private Button butCustom;
     private List lisEntities;
     private int[] entityCorrespondance;
     private Panel panEntities;
@@ -235,11 +237,15 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void setupEntities() {
         lisEntities = new List(10);
 
-        butLoad = new Button("Load Entity (meps only)...");
+        butLoad = new Button("Open Mech File...");
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
             
-        butDelete = new Button("Delete Entity");
+        butCustom = new Button("View/Edit Pilot...");
+        butCustom.setActionCommand("custom_mech");
+        butCustom.addActionListener(this);
+            
+        butDelete = new Button("Delete Mech");
         butDelete.setActionCommand("delete_mech");
         butDelete.addActionListener(this);
             
@@ -261,6 +267,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.gridwidth = 1;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
+            
+        gridbag.setConstraints(butCustom, c);
+        panEntities.add(butCustom);
             
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -369,6 +378,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             lisEntities.add(entity.getDisplayName() 
+                            + (entity.getCrew().isCustom() ? " (custom pilot) " : "")
                             + " BV=" + entity.calculateBattleValue());
             entityCorrespondance[listIndex++] = entity.getId();
         }
@@ -517,6 +527,19 @@ public class ChatLounge extends AbstractPhaseDisplay
                 } else {
                     mech.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(mech);
+                }
+            }
+        } else if (ev.getActionCommand().equalsIgnoreCase("custom_mech")) {
+            if (lisEntities.getSelectedIndex() != -1) {
+                Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+                boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
+                // display dialog
+                CustomMechDialog cmd = new CustomMechDialog(client.frame, entity, editable);
+                cmd.show();
+                if (editable && cmd.isOkay()) {
+                    // send changes
+                    
+                    client.sendUpdateEntity(entity);
                 }
             }
         } else if (ev.getActionCommand().equalsIgnoreCase("delete_mech")) {

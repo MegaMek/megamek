@@ -2771,17 +2771,7 @@ implements Runnable {
             // calculate # of missiles hitting
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_SRM) {
                 
-                // check for narc
-                if (te.isNarcedBy(ae.getOwner().getTeam())) {
-                    // check ECM interference
-                    bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
-                    bCheckedECM = true;
-                    if (!bECMAffected) {
-                        nSalvoBonus += 2;
-                    }
-                }
-                
-                // check for artemis
+                // check for artemis, else check for narc
                 Mounted mLinker = weapon.getLinkedBy();
                 if (mLinker != null && mLinker.getType() instanceof MiscType && 
                         !mLinker.isDestroyed() && !mLinker.isMissing() &&
@@ -2790,12 +2780,21 @@ implements Runnable {
                     // check ECM interference
                     if (!bCheckedECM) {
                         bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                        bCheckedECM = true;
+                    }
+                    if (!bECMAffected) {
+                        nSalvoBonus += 2;
+                    }
+                } else if (te.isNarcedBy(ae.getOwner().getTeam())) {
+                    // check ECM interference
+                    if (!bCheckedECM) {
+                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                        bCheckedECM = true;
                     }
                     if (!bECMAffected) {
                         nSalvoBonus += 2;
                     }
                 }
-                 
             }
             
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {

@@ -403,7 +403,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "TSM";
         misc.internalName = misc.name;
-        misc.mepName = misc.name;
+        misc.mepName = "ISTSM";
         misc.mtfName = "Triple Strength Myomer";
         misc.tonnage = 0;
         misc.criticals = 6;
@@ -420,7 +420,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "C3 Slave";
         misc.internalName = "ISC3SlaveUnit";
-        misc.mepName = misc.name;
+        misc.mepName = "ISC3 Slave";
         misc.mtfName = "ISC3SlaveUnit";
         misc.tonnage = 1;
         misc.criticals = 1;
@@ -437,7 +437,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "C3 Master";
         misc.internalName = misc.name;
-        misc.mepName = misc.name;
+        misc.mepName = "ISC3 Computer";
         misc.mtfName = "ISC3MasterComputer";
         misc.tonnage = 5;
         misc.criticals = 5;
@@ -470,7 +470,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "ISArtemisIV";
-        misc.mepName = misc.mtfName; // ?
+        misc.mepName = "ISArtemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -482,7 +482,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "CLArtemisIV";
-        misc.mepName = misc.mtfName; // ?
+        misc.mepName = "CLArtemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -495,7 +495,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "Guardian ECM Suite";
         misc.internalName = misc.name;
-        misc.mepName = misc.name;
+        misc.mepName = "ISGuardian ECM";
         misc.mtfName = "ISGuardianECM";
         misc.tonnage = 1.5f;
         misc.criticals = 2;
@@ -512,7 +512,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "ECM Suite";
         misc.internalName = misc.name;
-        misc.mepName = misc.name;
+        misc.mepName = "CLECM Suite";
         misc.mtfName = "CLECMSuite";
         misc.tonnage = 1;
         misc.criticals = 1;

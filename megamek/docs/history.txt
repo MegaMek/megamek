@@ -71,6 +71,11 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v next
++ 607207: getting up and failing now correctly uses movement points
++ 607207: no get-up retries should a mech become disabled during an attempt
++ movement points already used during current turn displayed
+
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon
 + mech selector now additionally looks inside .zip files

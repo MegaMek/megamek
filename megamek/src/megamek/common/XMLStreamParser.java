@@ -742,7 +742,7 @@ public class XMLStreamParser implements XMLResponder {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = 
-                                EquipmentType.getByInternalName( type );
+                                EquipmentType.get( type );
                             if ( newLoad instanceof AmmoType ) {
                                 int counter = -1;
                                 Enumeration ammo = entity.getAmmo();
@@ -914,7 +914,7 @@ public class XMLStreamParser implements XMLResponder {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = 
-                                EquipmentType.getByInternalName( type );
+                                EquipmentType.get( type );
                             if ( newLoad instanceof AmmoType ) {
 
                                 // Try to get a good shots value.

@@ -72,7 +72,8 @@ external way to update your Java VM.
 Earlier Mac OS versions:
 http://developer.apple.com/java/download.html
 
-
+IBM VM:
+MegaMek seems to react badly to this VM - it is not recommended.
 
 CONNECTING
 ----------
@@ -124,26 +125,9 @@ Here you can chat, specify what mechs you wish to use, select map settings,
 declare starting positions, and change your player's color.  When everybody
 has at least one mech, you may all hit "ready" to start the game.  Most
 changes to the game parameters will cancel your ready status, so you should
-wait for everybody to finish choosing their mechs and positions.
-
-Mechs can be loaded from any of three formats.  Files with the extension ".mep"
-are using the format from Mech Engineer Pro, an older program not made by the
-makers of MegaMek.  You can find this program on many Battletech web sites.
-
-Files with the ".mtf" extension are created by HMPRead, a seperate program,
-available on the MegaMek website, that converts data files from the popular
-Heavy Metal Pro mech designer.  MegaMek can read most ".hmp or ".hmv" files
-directly, but there are still some known problems.  Please note that neither
-Heavy Metal Pro nor Heavy Metal Vee is associated with MegaMek, so please do
-not email its authors about MegaMek.
-
-Mech files with the extension ".blk" are created by MekMaker, a Java mech design
-program specifically created to work with MegaMek.  It's homepage is at:
-
-http://mekmaker.darktech.org
-
-MekMaker is the offical mech design program, and the only one of the three 
-programs listed above officially associated with MegaMek.
+wait for everybody to finish choosing their mechs and positions.  Note: If
+you wish to use custom mech designs, please see the section below
+entitled "CUSTOM UNITS".
 
 You can enter the map selector by pressing the "Edit/View" button under the
 map sizes.  You can change the dimensions of the map boards (in hexes) or the
@@ -344,6 +328,54 @@ The results of the Heat and End phases will be shown.
 After this phase, it's time for initiative again!  Hurrah!
 
 
+CUSTOM UNITS
+------------
+All units (mechs, vehicles, infantry, etc.) are located in the
+data/mechfiles directory.  They may be individual files or zipped up
+into archives (".zip"), and you may also create subdirectories if you
+like.  There is also a special directory, named "unsupported" that
+contains units that you would like MegaMek to ignore.  Mechs can be
+loaded from any of several formats:
+
+ MegaMek Native - files with the extension ".mtf"
+    A simple format that is very whitespace sensitive.  All of the
+    meks distributed with MegaMek are in this format, so just look
+    inside the zips for examples of the format.  Also created by the
+    HMPRead program.
+
+ Heavy Metal - files with the extensions ".hmp" and ".hmv"
+    This is a commercial mech design program officially sanctioned by
+    FanPro.  MegaMek can read most ".hmp or ".hmv" files directly, but
+    there are still some known problems.  Please note that neither
+    Heavy Metal Pro nor Heavy Metal Vee is associated with MegaMek, so
+    please do not email its authors about MegaMek.
+
+ The Drawing Board - files with the extension ".xml"
+    The Drawing Board is a very slick freeware editor written by
+    Blackstone Interactive (Cord Awtry). In order to use it with MegaMek,
+    you must install the program and then use the patch to update to
+    version 2.0.23. Once you have created your mech, use the "File"->"Save
+    as XML file" command to create the ".xml" file.
+
+ MekMaker - files with the extension ".blk"
+    Mech files with the extension ".blk" are created by MekMaker, a Java
+    mech design program specifically created to work with MegaMek.
+    MekMaker was the offical mech design program, but it has since been
+    abandoned and is therefore not up to date with the current ruleset.
+    It's homepage is at: http://mekmaker.sourceforge.net/
+
+ Mech Engineer Pro - files with the extension ".mep"
+   This is an older freeware program not made by the makers of
+   MegaMek.  You can find this program on many Battletech web sites.
+   It is not up to date with the current ruleset.
+
+Note on mixed tech units:
+Units that contain both Inner Sphere and Clan technology are allowed
+with certain restrictions.  Only ".mtf", ".xml", and ".blk" files may
+contain mixed tech units.  In addition, some equipment cannot differ
+in technology type from the base chassis.  Units with an Inner Sphere
+chassis must mount Inner Sphere engines, internal structure, armor,
+heat sinks, and CASE.  The same goes for Clan units.
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------

@@ -63,10 +63,18 @@ public class BLKTankFile extends BLKFile implements MechLoader {
             } else {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_2);
             }
-        } else {
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
+            t.setTechLevel(TechConstants.T_MIXED_BASE_IS_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
+            t.setTechLevel(TechConstants.T_MIXED_BASE_CLAN_LEVEL_2);
+        } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
+            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+        } else {
+            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
         }
-        
+
         if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
             

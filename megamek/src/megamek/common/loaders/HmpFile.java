@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -33,7 +33,6 @@ import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.Entity.MovementType;
-import megamek.common.loaders.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -435,7 +434,7 @@ public class HmpFile
         else if (criticalName != null) {
             EquipmentType equipment = null;
           try {
-            equipment = EquipmentType.getByMtfName(criticalName);
+            equipment = EquipmentType.get(criticalName);
             if (equipment != null) {
               boolean rearMounted = equipment instanceof WeaponType &&
                 isRearMounted(critical);
@@ -491,6 +490,11 @@ public class HmpFile
               else {
                 mech.addEquipment(equipment, location, rearMounted);
               }
+            } else {
+                if (!criticalName.equals("-Empty-")) {
+                    // Can't load this piece of equipment!
+                    mech.addFailedEquipment(criticalName);
+                }
             }
           } catch (LocationFullException ex) {
               System.err.print( "Location was full when adding " );
@@ -900,6 +904,9 @@ public class HmpFile
             System.out.print( techType );
             System.out.println( ")" );
         }
+
+        if ( name == null && value == 0)
+            return "-Empty-";
 
         return name;
     }

@@ -4789,7 +4789,7 @@ implements Runnable, ConnectionHandler {
 
             // Let the player know if they found a club.
             if ( found ) {
-                clubType = EquipmentType.getByInternalName("Girder Club");
+                clubType = EquipmentType.get("Girder Club");
                 phaseReport.append( "\n" )
                     .append( entity.getDisplayName() )
                     .append( " found a girder to use as a club.\n" );
@@ -4803,7 +4803,7 @@ implements Runnable, ConnectionHandler {
 
         // Are there woods in the hex?
         else if ( 1 <= curHex.levelOf( Terrain.WOODS ) ) {
-            clubType = EquipmentType.getByInternalName("Tree Club");
+            clubType = EquipmentType.get("Tree Club");
             phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
         }
 

@@ -24,7 +24,8 @@ import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
-import megamek.common.loaders.*;
+
+// Known bug!  Split-location weapons are not supported.
 
 public class MepFile implements MechLoader {
     String version;
@@ -245,16 +246,21 @@ public class MepFile implements MechLoader {
                     critName = "Double Heat Sink";
                 }
                 
-                EquipmentType etype = EquipmentType.getByMepName(critName);
+                EquipmentType etype = EquipmentType.get(critName);
                 if (etype == null) {
                     // try w/ prefix
-                    etype = EquipmentType.getByMepName(prefix + critName);
+                    etype = EquipmentType.get(prefix + critName);
                 }
                 if (etype != null) {
                     try {
                         mech.addEquipment(etype, loc, rearMounted);
                     } catch (LocationFullException ex) {
                        throw new EntityLoadingException(ex.getMessage());
+                    }
+                } else {
+                    if (!critName.equals("-----------------")) {
+                        // Can't load this piece of equipment!
+                        mech.addFailedEquipment(critName);
                     }
                 }
             }

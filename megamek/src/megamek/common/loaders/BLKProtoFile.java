@@ -166,15 +166,11 @@ public class BLKProtoFile extends BLKFile implements MechLoader {
                 // Strip the shots out of the ammo name.
                 equipName = equipName.substring( 0, ammoIndex + 4 );
             }
-            EquipmentType etype = EquipmentType.getByMtfName(equipName);
-
-            if (etype == null) {
-                etype = EquipmentType.getByMepName(equipName);
-            }
+            EquipmentType etype = EquipmentType.get(equipName);
 
             if (etype == null) {
                 // try w/ prefix
-                etype = EquipmentType.getByMepName(prefix + equipName);
+                etype = EquipmentType.get(prefix + equipName);
             }
 
             if (etype != null) {

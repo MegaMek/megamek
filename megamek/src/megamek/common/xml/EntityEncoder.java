@@ -73,11 +73,7 @@ public class EntityEncoder {
         out.write( "\" typeVal=\"" );
         out.write( String.valueOf(entity.getMovementType()) );
         out.write( "\" techBase=\"" );
-        if ( TechConstants.T_MIXED_LEVEL_2 == entity.getTechLevel() ) {
-            out.write( "Mixed" );
-        } else {
-            out.write( entity.isClan() ? "Clan" : "IS" );
-        }
+        out.write ( entity.getTechLevel() + ":" + TechConstants.T_NAMES[entity.getTechLevel()] );
         out.write( "\" year=\"" );
         out.write( String.valueOf(entity.getYear()) );
         out.write( "\" mass=\"" );
@@ -998,15 +994,16 @@ public class EntityEncoder {
             throw new IllegalStateException
                 ( "Couldn't decode the techBase from an Entity node." );
         }
-        if ( attrStr.equals("Mixed") ) {
-            entity.setTechLevel( TechConstants.T_MIXED_LEVEL_2 );
-        } else if ( attrStr.equals("Clan") ) {
-            entity.setTechLevel( TechConstants.T_CLAN_LEVEL_2 );
-        } else if ( 3025 == entity.getYear() ) {
-            entity.setTechLevel( TechConstants.T_IS_LEVEL_1 );
-        } else {
-            entity.setTechLevel( TechConstants.T_IS_LEVEL_2 );
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr.substring(0,1) );
         }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr.substring(0,1) );
+        }
+        entity.setTechLevel( attrVal );
 
         // Decode the entity node's mass.
         attrStr = node.getAttribute( "mass" );

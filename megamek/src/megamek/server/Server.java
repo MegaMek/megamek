@@ -12142,7 +12142,7 @@ implements Runnable, ConnectionHandler {
      */
     private void creditKill(Entity target, Entity attacker) {
     	if (target.isDoomed() && !target.getGaveKillCredit()) {
-    		attacker.addKill(target);
+    		attacker.addKill(target.getExternalId());
     		target.setGaveKillCredit(true);
     	}
     }

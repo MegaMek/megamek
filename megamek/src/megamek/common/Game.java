@@ -276,11 +276,15 @@ public class Game implements Serializable
         return turnVector.size() > (turnIndex + 1);
     }
     
-    /** Inserts a turn after the current one */
+    /** Inserts a turn in front of the current one */
     public void insertTurn(GameTurn turn) {
         turnVector.insertElementAt(turn, turnIndex);
     }
-    
+
+    public void insertNextTurn(GameTurn turn) {
+	turnVector.insertElementAt(turn, turnIndex +1);
+    }
+
     /** Returns an Enumeration of the current turn list */
     public Enumeration getTurns() {
         return turnVector.elements();

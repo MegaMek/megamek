@@ -23,6 +23,9 @@ v 0.29.27 (CVS)
 + RFE 567481: have the server reset the game when the last player leaves
 + Bug 901362: any pending PSRs should cleared when a Mek stands from prone
 + Handle TroopTransport in HmvFile.
++ RFE 703357: Implemented AP Pods (still need OS missile racks).
++ Have the nagForNoAction screen include the "Do not bother me again" checkbox.
++ Fixed bug with "no move" animation.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

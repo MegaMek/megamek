@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -389,6 +389,47 @@ public class Compute
         } else {
             return src;
         }
+    }
+
+    /**
+     * Confirm that the given entity can fire the indicated equipment.
+     *
+     * @param   entity the <code>Entity</code> which owns the equipment.
+     *          This value may be <code>null</code>.
+     * @param   mount the <code>Mounted</code> equipment being tested.
+     *          This value may be <code>null</code>.
+     * @return  <code>true</code> if the equipment can be fired by the
+     *          entity; <code>false</code> otherwise.
+     */
+    public static boolean canFire( Entity entity, Mounted mount ) {
+
+        // Validate the input parameters.
+        if ( null == entity || null == mount ) {
+            return false;
+        }
+
+        // Equipment operational?
+        if ( !mount.isReady() || mount.isBreached() || mount.isMissing() ) {
+            return false;
+        }
+
+        // Oneshot fired?
+        EquipmentType equip = mount.getType();
+        if( ( ( equip instanceof WeaponType &&
+                equip.hasFlag(WeaponType.F_ONESHOT) ) ||
+              ( equip instanceof MiscType &&
+                equip.hasFlag(MiscType.F_AP_POD) ) )
+            && mount.isFired() ) {
+            return false;
+        }
+
+        // Is the entity even active?
+        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+            return false;
+        }
+
+        // Otherwise, the equipment can be fired.
+        return true;
     }
 
     public static ToHitData toHitWeapon(Game game, WeaponAttackAction waa) {

@@ -4161,6 +4161,10 @@ implements Runnable, ConnectionHandler {
      * the proper list to be processed later.
      */
     private void processAttack(Entity entity, Vector vector) {
+
+        // Not **all** actions take up the entity's turn.
+        boolean setDone = 
+            !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn);
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
 
@@ -4168,6 +4172,41 @@ implements Runnable, ConnectionHandler {
             if (ea.getEntityId() != entity.getId()) {
                 System.err.println("error: attack packet has wrong attacker");
                 continue;
+            }
+
+            // Anti-mech and pointblank attacks from
+            // hiding may allow the target to respond.
+            if ( ea instanceof WeaponAttackAction ) {
+                final WeaponAttackAction waa = (WeaponAttackAction) ea;
+                final String weaponName = entity.getEquipment
+                    ( waa.getWeaponId() ).getType().getInternalName();
+
+                if ( Infantry.SWARM_MEK.equals(weaponName) ||
+                     Infantry.LEG_ATTACK.equals(weaponName) ) {
+
+                    // Does the target have any AP Pods available?
+                    final Entity target = game.getEntity( waa.getTargetId() );
+                    Enumeration misc = target.getMisc();
+                    while ( misc.hasMoreElements() ) {
+                        final Mounted equip = (Mounted) misc.nextElement();
+                        if ( equip.getType().hasFlag(MiscType.F_AP_POD) &&
+                             Compute.canFire( target, equip ) ) {
+
+                            // Yup.  Insert a game turn to handle AP pods.
+                            // ASSUMPTION : AP pod declarations come
+                            // immediately after the attack declaration.
+                            game.insertNextTurn( new GameTurn.TriggerAPPodTurn
+                                  ( target.getOwnerId(), target.getId() ) );
+                            send(createTurnVectorPacket());
+
+                            // We can stop looking.
+                            break;
+
+                        } // end found-available-ap-pod
+
+                    } // Check the next piece of equipment on the target.
+
+                } // End check-for-available-ap-pod
             }
 
             if (ea instanceof PushAttackAction) {
@@ -4183,9 +4222,20 @@ implements Runnable, ConnectionHandler {
                 // add to the normal attack list.
                 game.addAction(ea);
             }
+
+            // Mark any AP Pod as used in this turn.
+            if ( ea instanceof TriggerAPPodAction ) {
+                TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
+                Mounted pod = entity.getEquipment( tapa.getPodId() );
+                pod.setUsedThisRound( true );
+            }
         }
-        // this entity is done for the round
-        entity.setDone(true);
+
+        // Unless otherwise stated,
+        // this entity is done for the round.
+        if ( setDone ) {
+            entity.setDone(true);
+        }
         entityUpdate(entity.getId());
 
         // update all players on the attacks.  Don't worry about pushes being a
@@ -4239,6 +4289,7 @@ implements Runnable, ConnectionHandler {
         roundReport.append("\nWeapon Attack Phase\n-------------------\n");
 
         Vector clearAttempts = new Vector();
+        Vector triggerPodActions = new Vector();
         // loop thru actions and handle everything we expect except attacks
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
@@ -4256,12 +4307,27 @@ implements Runnable, ConnectionHandler {
             else if (ea instanceof FindClubAction) {
                 resolveFindClub(entity);
             }
-			else if (ea instanceof UnjamAction) {
-				resolveUnjam(entity);
-			}
-			else if (ea instanceof ClearMinefieldAction) {
-				clearAttempts.addElement(entity);
-			}
+            else if (ea instanceof UnjamAction) {
+                resolveUnjam(entity);
+            }
+            else if (ea instanceof ClearMinefieldAction) {
+                clearAttempts.addElement(entity);
+            }
+            else if (ea instanceof TriggerAPPodAction) {
+                TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
+
+                // Don't trigger the same pod twice.
+                if ( !triggerPodActions.contains( tapa ) ) {
+                    triggerAPPod(entity, tapa.getPodId());
+                    triggerPodActions.add( tapa );
+                } else {
+                    System.err.print( "AP Pod #" );
+                    System.err.print( tapa.getPodId() );
+                    System.err.print( " on " );
+                    System.err.print( entity.getDisplayName() );
+                    System.err.println(" was already triggered this round!!");
+                }
+            }
         }
 
         resolveClearMinefieldAttempts(clearAttempts);
@@ -4374,6 +4440,102 @@ implements Runnable, ConnectionHandler {
 
         // and clear the attacks Vector
         game.resetActions();
+    }
+
+    /**
+     * Trigger the indicated AP Pod of the entity.
+     *
+     * @param   entity the <code>Entity</code> triggering the AP Pod.
+     * @param   podId the <code>int</code> ID of the AP Pod.
+     */
+    private void triggerAPPod( Entity entity, int podId ) {
+
+        // Get the mount for this pod.
+        Mounted mount = entity.getEquipment( podId );
+
+        // Confirm that this is, indeed, an AP Pod.
+        if ( null == mount ) {
+            System.err.print( "Expecting to find an AP Pod at " );
+            System.err.print( podId );
+            System.err.print( " on the unit, " );
+            System.err.print( entity.getDisplayName() );
+            System.err.println( " but found NO equipment at all!!!" );
+            return;
+        }
+        EquipmentType equip = mount.getType();
+        if ( !(equip instanceof MiscType) ||
+             !equip.hasFlag(MiscType.F_AP_POD) ) {
+            System.err.print( "Expecting to find an AP Pod at " );
+            System.err.print( podId );
+            System.err.print( " on the unit, " );
+            System.err.print( entity.getDisplayName() );
+            System.err.print( " but found " );
+            System.err.print( equip.getName() );
+            System.err.println( " instead!!!" );
+            return;
+        }
+
+        // Now confirm that the entity can trigger the pod.
+        // Ignore the "used this round" flag.
+        boolean oldFired = mount.isUsedThisRound();
+        mount.setUsedThisRound( false );
+        boolean canFire = Compute.canFire( entity, mount );
+        mount.setUsedThisRound( oldFired );
+        if ( !canFire ) {
+            System.err.print( "Can not trigger the AP Pod at " );
+            System.err.print( podId );
+            System.err.print( " on the unit, " );
+            System.err.print( entity.getDisplayName() );
+            System.err.println( "!!!" );
+            return;
+        }
+
+        // Mark the pod as fired and log the action.
+        mount.setFired( true );
+        phaseReport.append("\n")
+            .append( entity.getDisplayName() )
+            .append( " triggers an Anti-Personell Pod:" );
+
+        // Walk through ALL entities in the triggering entity's hex.
+        Enumeration targets = game.getEntities( entity.getPosition() );
+        while ( targets.hasMoreElements() ) {
+            final Entity target = (Entity) targets.nextElement();
+
+            // Is this an unarmored infantry platoon?
+            if ( target instanceof Infantry &&
+                 !(target instanceof BattleArmor) ) {
+
+                // Roll d6-1 for damage.
+                final int damage = Compute.d6() - 1;
+
+                // If the platoon took no damage, log it and go no further
+                if ( 0 == damage ) {
+                    phaseReport.append( "\n        " )
+                        .append( target.getDisplayName() )
+                        .append( " gets lucky and takes no damage." );
+                }
+                else {
+                    // Damage the platoon.
+                    phaseReport.append
+                        ( damageEntity( target,
+                                        new HitData(Infantry.LOC_INFANTRY),
+                                        damage ) );
+
+                    // Damage from AP Pods is applied immediately.
+                    target.applyDamage();
+                }
+
+            } // End target-is-unarmored
+
+            // Nope, the target is immune.
+            // Don't make a log entry for the triggering entity.
+            else if ( !entity.equals( target ) ) {
+                phaseReport.append( "\n        " )
+                    .append( target.getDisplayName() )
+                    .append( " is immune and takes no damage." );
+            }
+
+        } // Check the next entity in the triggering entity's hex.
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -463,7 +463,12 @@ public class MovementDisplay
             String title = "Remain stationary?";
             String body = "This unit has not moved.\n\n" +
                 "Are you really done?\n";
-            if (!client.doYesNoDialog(title, body)) {
+            ConfirmDialog response = client.doYesNoBotherDialog(title, body);
+            if ( !response.getShowAgain() ) {
+                Settings.nagForNoAction = false;
+                Settings.save();
+            }
+            if ( !response.getAnswer() ) {
                 return;
             }
         }

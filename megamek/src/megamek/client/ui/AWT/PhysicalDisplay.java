@@ -301,7 +301,12 @@ public class PhysicalDisplay
             String title = "Don't physical attack?";
             String body = "This unit has not used any physical attacks.\n\n" +
                 "Are you really done?\n";
-            if (!client.doYesNoDialog(title, body)) {
+            ConfirmDialog response = client.doYesNoBotherDialog(title, body);
+            if ( !response.getShowAgain() ) {
+                Settings.nagForNoAction = false;
+                Settings.save();
+            }
+            if ( !response.getAnswer() ) {
                 return;
             }
         }

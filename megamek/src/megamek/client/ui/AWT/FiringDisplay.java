@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -316,15 +316,30 @@ public class FiringDisplay
 
         selectEntity(client.getFirstEntityNum());
 
-        setNextEnabled(true);
-        butDone.setEnabled(true);
-        butMore.setEnabled(true);
-        setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
-        client.game.board.select(null);
-        client.game.board.highlight(null);
-
         if (!client.bv.isMovingUnits()) {
             client.setDisplayVisible(true);
+        }
+
+        // There's special processing for triggering AP Pods.
+        if ( client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn &&
+             null != ce() ) {
+            disableButtons();
+            TriggerAPPodDialog dialog = new TriggerAPPodDialog
+                ( client.getFrame(), ce() );
+            dialog.show();
+            attacks.removeAllElements();
+            Enumeration actions = dialog.getActions();
+            while ( actions.hasMoreElements() ) {
+                attacks.addElement( actions.nextElement() );
+            }
+            ready();
+        } else {
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+            butMore.setEnabled(true);
+            setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+            client.game.board.select(null);
+            client.game.board.highlight(null);
         }
     }
     
@@ -481,7 +496,12 @@ public class FiringDisplay
             String title = "Don't fire?";
             String body = "This unit has not fired any weapons.\n\n" +
                 "Are you really done?\n";
-            if (!client.doYesNoDialog(title, body)) {
+            ConfirmDialog response = client.doYesNoBotherDialog(title, body);
+            if ( !response.getShowAgain() ) {
+                Settings.nagForNoAction = false;
+                Settings.save();
+            }
+            if ( !response.getAnswer() ) {
                 return;
             }
         }

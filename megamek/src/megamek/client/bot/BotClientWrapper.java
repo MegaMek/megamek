@@ -42,7 +42,8 @@ public abstract class BotClientWrapper extends BotClient {
           sendChat("How about a nice game of chess?");
           this.die();
         }
-        if (game.getEntitiesOwnedBy(this.getLocalPlayer()) - game.getNoOfEntities() == 0) {
+        if (!(game.getOptions().booleanOption("double_blind")) &&
+                game.getEntitiesOwnedBy(this.getLocalPlayer()) - game.getNoOfEntities() == 0) {
           this.winner = 1;
           this.die();
         }

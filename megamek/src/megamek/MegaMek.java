@@ -347,6 +347,7 @@ public class MegaMek implements ActionListener {
             ;
         }
         optdlg = null;
+		launch(gui.getFrame());
     }
 
     /**
@@ -452,6 +453,7 @@ public class MegaMek implements ActionListener {
                 c.retrieveServerInfo(); 
             }
         }
+		launch(gui.getFrame());
     }
 
     /**

@@ -82,6 +82,11 @@ v 0.25
 VERSION HISTORY:
 ----------------
 v next
++ hitting esc or next unit after a torso twist now cancels the torso twist
++ intact mechs with dead pilots are now removed from the map
++ locations can't be destroyed twice (preventing falls from destroyed leg hits)
+
+v 0.24.6 (04-07-02, 1:18pm)
 + refined command interface.  type "/help" for a list.
 + removed unused terrain types
 + players can reconnect to a game that they've left

@@ -478,7 +478,7 @@ public class Server
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
             }
-            if (entity.isDestroyed()) {
+            if (entity.isDestroyed() || entity.getCrew().isDead()) {
                 game.moveToGraveyard(entity.getId());
             }
         }
@@ -2045,7 +2045,7 @@ public class Server
     }
 
     /**
-     * Handle a charge attack
+     * Handle a death from above attack
      */
     private void resolveDfaAttack(DfaAttackAction daa, int lastEntityId) {
         final Entity ae = game.getEntity(daa.getEntityId());
@@ -2634,6 +2634,10 @@ public class Server
      * Marks all equipment in a location on an entity as destroyed.
      */
     private void destroyLocation(Entity en, int loc) {
+        // if it's already marked as destroyed, don't bother
+        if (en.getInternal(loc) < 0) {
+            return;
+        }
         // mark armor, internal as doomed
         en.setArmor(Entity.ARMOR_DOOMED, loc, false);
         en.setInternal(Entity.ARMOR_DOOMED, loc);
@@ -2662,7 +2666,7 @@ public class Server
             }
         }
         // dependent locations destroyed
-        if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
+        if (en.getDependentLocation(loc)) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
     }

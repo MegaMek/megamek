@@ -80,6 +80,8 @@ implements Serializable {
     public static final int        COMMAND_REROLL_INITIATIVE    = 39;    
     public static final int        COMMAND_UNLOAD_STRANDED      = 40;    
     
+    public static final int        COMMAND_SET_ARTYAUTOHITHEXES = 42;
+    
     private int command;
     private Object[] data;
     private boolean zipped = false;

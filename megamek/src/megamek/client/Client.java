@@ -523,6 +523,13 @@ public class Client implements Runnable {
     }
 
     /**
+     * Sends a "set Artillery Autohit Hexes" packet
+     */
+    public void sendArtyAutoHitHexes(Vector hexes) {
+        send(new Packet(Packet.COMMAND_SET_ARTYAUTOHITHEXES, hexes));
+    }
+    
+    /**
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {

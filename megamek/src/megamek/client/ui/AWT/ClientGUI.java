@@ -652,6 +652,16 @@ public class ClientGUI
                 panMain.add(main, component);
                 panSecondary.add(secondary, new Label(""));
                 break;
+            case Game.PHASE_SET_ARTYAUTOHITHEXES:
+                component = new SelectArtyAutoHitHexDisplay(this);
+
+                main = "BoardView";
+                secondary = "SelectArtyAutoHitHexDisplay";
+                if (!mainNames.contains(main)) {
+                    panMain.add(main, this.scroller);
+                }
+                panSecondary.add(secondary, component);
+                break;
             case Game.PHASE_DEPLOY_MINEFIELDS :
                 component = new DeployMinefieldDisplay(this);
 

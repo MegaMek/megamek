@@ -384,6 +384,8 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
                 System.out.print( "COMMAND_SENDING_MINEFIELDS" ); break;
             case Packet.COMMAND_REROLL_INITIATIVE:
                 System.out.print( "COMMAND_REROLL_INITIATIVE" ); break;
+            case Packet.COMMAND_SET_ARTYAUTOHITHEXES:
+                System.out.print( "COMMAND_SET_ARTYAUTOHITHEXES" ); break;
             default:
                 System.out.print( "unknown" ); break;
             }

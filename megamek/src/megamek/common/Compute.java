@@ -764,6 +764,9 @@ public class Compute
           if (distance >17) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
           }
+          if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
+              return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
+          }
           return toHit;
 
         }
@@ -774,6 +777,9 @@ public class Compute
             }
             if(distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot fire indirectly at range <=17 hexes unless no LOS.");
+            }
+            if(game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
+                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             toHit.addModifier(7, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon,target.getPosition());

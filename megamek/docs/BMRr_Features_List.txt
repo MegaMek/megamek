@@ -229,7 +229,7 @@ Special Case Rules (Anti Mech Infantry)
 
 Special Case Rules (Artillery)
 
-- Setup				Partial		Need to designate 5 auto-hit hexes.  Offboard setup.
+- Setup				Partial		Offboard setup.
 - Targeting			Yes		None
 - Damage			Yes		None
 - Smoke Rounds			No		None

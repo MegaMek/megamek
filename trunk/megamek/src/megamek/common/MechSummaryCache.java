@@ -208,6 +208,7 @@ public class MechSummaryCache
             }
             if (f.getName().indexOf('.') == -1) { continue; }
             if (f.getName().toLowerCase().endsWith(".txt")) { continue; }
+            if (f.getName().toLowerCase().endsWith(".log")) { continue; }
             if (f.getName().toLowerCase().endsWith(".zip")) {
                 bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                 continue;

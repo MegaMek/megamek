@@ -23,7 +23,8 @@
  public class MechSummary
  {
  	private String m_sName;
- 	private String m_sRef;
+ 	private String m_sChassis;
+ 	private String m_sModel;
  	private File m_sSourceFile;
  	private String m_sEntryName; // for files in zips
  	private int m_nYear;
@@ -34,7 +35,8 @@
 
 	
 	public String getName() { return (this.m_sName); }
-	public String getRef() { return (this.m_sRef); }
+	public String getChassis() { return (this.m_sChassis); }
+	public String getModel() { return (this.m_sModel); }
 	public File getSourceFile() { return (this.m_sSourceFile); }
 	public String getEntryName() { return (this.m_sEntryName); }
 	public int getYear() { return (this.m_nYear); }
@@ -44,7 +46,8 @@
 	public long getModified() { return (this.m_lModified); }
 	
 	public void setName(String m_sName) { this.m_sName = m_sName; }
-	public void setRef(String m_sRef) { this.m_sRef = m_sRef; }
+	public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
+	public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
 	public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
 	public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
 	public void setYear(int m_nYear) { this.m_nYear = m_nYear; }

@@ -167,8 +167,8 @@ public class MechSelectorDialog
     
     private String formatMech(MechSummary ms)
     {
-        return makeLength(ms.getRef(), 10) + " " + 
-                makeLength(ms.getName(), 20) + " " + 
+        return makeLength(ms.getModel(), 10) + " " + 
+                makeLength(ms.getChassis(), 20) + " " + 
                 makeLength("" + ms.getTons(), 3) + " " + 
                 makeLength("" + ms.getBV(),5)+""+
 		    ms.getYear();

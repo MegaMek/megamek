@@ -481,7 +481,10 @@ public abstract class Entity
      */
     private void generateDisplayName() {
         StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis).append(" ").append(model);
+        nbuf.append(chassis);
+        if (model != null && model.length() > 0) {
+            nbuf.append(" ").append(model);
+        }
         
         if (getOwner() != null) {
             nbuf.append(" (").append(getOwner().getName()).append(")");
@@ -506,7 +509,10 @@ public abstract class Entity
      */
     private void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis).append(" ").append(model);
+        nbuf.append(chassis);
+        if (model != null && model.length() > 0) {
+            nbuf.append(" ").append(model);
+        }
         this.shortName = nbuf.toString();
     }
     

@@ -240,7 +240,7 @@ public abstract class Mech
 
             // Stealth can not be turned on if it's ECM is destroyed.
             if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
-                      m.getLinked().isDestroyed() ) {
+                      m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
                 m.setMode("Off");
             }
 
@@ -384,7 +384,7 @@ public abstract class Mech
     public boolean hasArmedMASC() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (!m.isDestroyed() && m.getType() instanceof MiscType &&
+            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
                 m.getType().hasFlag(MiscType.F_MASC)
                 && m.curMode().equals("Armed")) {
                 return true;
@@ -431,7 +431,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
             }
         }
@@ -465,7 +465,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()
             && locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
@@ -588,7 +588,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed()) {
+            if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -632,7 +632,7 @@ public abstract class Mech
         int sinksUnderwater = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed() || !locationIsLeg(mounted.getLocation())) {
+            if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {

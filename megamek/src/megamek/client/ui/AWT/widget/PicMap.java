@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -105,9 +105,9 @@ public abstract class PicMap extends Component {
             areascount++;
     	} else if (e instanceof PMAreasGroup){
     		PMAreasGroup ag = (PMAreasGroup) e;
-    		Enumeration enum = ag.elements();
-    		while(enum.hasMoreElements()){
-    			addElement((PMElement) enum.nextElement());
+    		Enumeration iter = ag.elements();
+    		while(iter.hasMoreElements()){
+    			addElement((PMElement) iter.nextElement());
     		}
     	} else{
     		otherAreas.addArea(e);
@@ -236,9 +236,9 @@ public abstract class PicMap extends Component {
     	int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
     	//Background painting
-        Enumeration enum = bgDrawers.elements();
-        while(enum.hasMoreElements()){
-            BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
+        Enumeration iter = bgDrawers.elements();
+        while(iter.hasMoreElements()){
+            BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
             bgd.drawInto(g, w, h);
         }
         Rectangle oldClip = (Rectangle) g.getClip();

@@ -17,7 +17,7 @@ package megamek.common.equip;
 import megamek.common.*;
 
 public class HvyGaussRifleAmmoType extends GaussRifleAmmoType {
-    protected int type;
+
     public HvyGaussRifleAmmoType() {
 	super(TechConstants.T_IS_LEVEL_2, GaussRifleType.HEAVY);
     }

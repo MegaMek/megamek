@@ -589,10 +589,10 @@ public class Game implements Serializable
     */
     public Vector getUndeployedEntities() {
       Vector entList = new Vector();
-      Enumeration enum = deploymentTable.elements();
+      Enumeration iter = deploymentTable.elements();
 
-      while ( enum.hasMoreElements() ) {
-        Vector vecTemp = (Vector)enum.nextElement();
+      while ( iter.hasMoreElements() ) {
+        Vector vecTemp = (Vector)iter.nextElement();
 
         for ( int i = 0; i < vecTemp.size(); i++ ) {
           entList.addElement(vecTemp.elementAt(i));
@@ -926,10 +926,10 @@ public class Game implements Serializable
         //We also need to remove it from the list of things to be deployed...
         //we might still be in this list if we never joined the game
           if ( deploymentTable.size() > 0 ) {
-            Enumeration enum = deploymentTable.elements();
+            Enumeration iter = deploymentTable.elements();
 
-            while ( enum.hasMoreElements() ) {
-              Vector vec = (Vector)enum.nextElement();
+            while ( iter.hasMoreElements() ) {
+              Vector vec = (Vector)iter.nextElement();
 
               for ( int i = vec.size() - 1; i >= 0; i-- ) {
                 Entity en = (Entity)vec.elementAt(i);
@@ -966,11 +966,11 @@ public class Game implements Serializable
         minefields.clear();
         vibrabombs.removeAllElements();
 
-    Enumeration players = getPlayers();
-    while (players.hasMoreElements()) {
-      Player player = (Player) players.nextElement();
+        Enumeration iter = getPlayers();
+        while (iter.hasMoreElements()) {
+            Player player = (Player) iter.nextElement();
             player.removeMinefields();
-    }
+        }
     }
 
     /**
@@ -1392,7 +1392,7 @@ public class Game implements Serializable
         Entity          unit = null;
         boolean         result;
         Hashtable       playerFlags = null;
-        Enumeration     enum = null;
+        Enumeration     misc = null;
         Mounted         equip = null;
         String          name = null;
 
@@ -1410,9 +1410,9 @@ public class Game implements Serializable
             if ( unit instanceof BattleArmor ) {
 
                 // Does the unit have a Magnetic Clamp?
-                enum = unit.getMisc();
-                while ( enum.hasMoreElements() ) {
-                    equip = (Mounted) enum.nextElement();
+                misc = unit.getMisc();
+                while ( misc.hasMoreElements() ) {
+                    equip = (Mounted) misc.nextElement();
                     name = equip.getType().getInternalName();
                     if ( BattleArmor.MAGNETIC_CLAMP.equals( name ) ){
                         // The unit's player needs new transporters.
@@ -1889,9 +1889,10 @@ public class Game implements Serializable
      * that players other units" options.
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
-        Vector entities = getPlayerEntities(getPlayer(playerId));
-        for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity)entities.elementAt(i);
+        Vector playerEnts = getPlayerEntities(getPlayer(playerId));
+        Enumeration iter = playerEnts.elements();
+        while (iter.hasMoreElements()) {
+            Entity entity = (Entity) iter.nextElement();
             boolean excluded = false;
             if (entity instanceof Infantry &&
                 getOptions().booleanOption("inf_move_later")) {

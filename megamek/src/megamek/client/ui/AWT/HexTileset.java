@@ -195,10 +195,10 @@ public class HexTileset {
         // add base
         tracker.addImage(hex.getBase(), 1);
         
-        // add supers
-        List supers = hex.getSupers();
-        if (supers != null) {
-            for (Iterator i = supers.iterator(); i.hasNext();) {
+        // add superImgs
+        List superImgs = hex.getSupers();
+        if (superImgs != null) {
+            for (Iterator i = superImgs.iterator(); i.hasNext();) {
                 tracker.addImage((Image)i.next(), 1);
             }
         }

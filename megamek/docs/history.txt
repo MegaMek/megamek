@@ -14,6 +14,7 @@ v0.29.42 (CVS)
 + Added "Save as Image" ability to the board editor.
 + Allow each roll to be tracked and each die to be reported.
 + Bug 996870: Made TargetRoll$Modifier implement Serializable.
++ Updates to support FLOSS Java hackers.
 
 v0.29.41 (2004-07-18 5:30pm)
 + Bug 985884: Attempt #2 at fixing this bug.

@@ -5392,13 +5392,13 @@ implements Runnable, ConnectionHandler {
       if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
         // the mod is weight-based
         int nMod;
-        if (ae.getWeight() <= Mech.WEIGHT_LIGHT) {
+        if (ae.getWeight() <= Entity.WEIGHT_LIGHT) {
           nMod = 2;
         }
-        else if (ae.getWeight() <= Mech.WEIGHT_MEDIUM) {
+        else if (ae.getWeight() <= Entity.WEIGHT_MEDIUM) {
           nMod = 1;
         }
-        else if (ae.getWeight() <= Mech.WEIGHT_HEAVY) {
+        else if (ae.getWeight() <= Entity.WEIGHT_HEAVY) {
           nMod = 0;
         }
         else {
@@ -8363,6 +8363,7 @@ implements Runnable, ConnectionHandler {
                 damage /= 2;
                 desc.append( "\n        Hardened unit hit by flechette ammunition!!!  Damage halved." );
             }
+            break;
         default:
             // We can ignore this.
             break;
@@ -8970,6 +8971,7 @@ implements Runnable, ConnectionHandler {
                             desc.append( applyCriticalHit(en, Entity.NONE,
                                                           newSlot,
                                                           secondaryEffects) );
+                            break;
                         case 3:
                         case 4:
                             newSlot = new CriticalSlot
@@ -8978,6 +8980,7 @@ implements Runnable, ConnectionHandler {
                             desc.append( applyCriticalHit(en, Entity.NONE,
                                                           newSlot,
                                                           secondaryEffects) );
+                            break;
                         }
                     }
                     break;

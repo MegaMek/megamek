@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -68,9 +68,9 @@ public class PMAreasGroup  implements PMElement{
      * Translates all elements in group by x, y.
      */  
     public void translate(int x, int y){
-        Enumeration enum = gr.elements();
-        while(enum.hasMoreElements()){
-            PMElement pme = (PMElement) enum.nextElement();
+        Enumeration iter = gr.elements();
+        while(iter.hasMoreElements()){
+            PMElement pme = (PMElement) iter.nextElement();
             if (pme != null) pme.translate(x,y);
         }
     }
@@ -90,9 +90,9 @@ public class PMAreasGroup  implements PMElement{
     public Rectangle getBounds(){
         Rectangle bounds = null;
         boolean empty = true;
-        Enumeration enum = gr.elements();
-        while(enum.hasMoreElements()){
-            PMElement pme = (PMElement) enum.nextElement();
+        Enumeration iter = gr.elements();
+        while(iter.hasMoreElements()){
+            PMElement pme = (PMElement) iter.nextElement();
             if ((pme != null) && (pme.getBounds() != null)){
             	if(empty){
             		bounds = pme.getBounds();
@@ -110,9 +110,9 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public void drawInto(Graphics g){
-        Enumeration enum = gr.elements();
-        while(enum.hasMoreElements()){
-            PMElement pme = (PMElement) enum.nextElement();
+        Enumeration iter = gr.elements();
+        while(iter.hasMoreElements()){
+            PMElement pme = (PMElement) iter.nextElement();
             if(pme != null) pme.drawInto(g);
         }
     }
@@ -122,9 +122,9 @@ public class PMAreasGroup  implements PMElement{
      */ 
     
     public void setVisible(boolean v){
-        Enumeration enum = gr.elements();
-        while(enum.hasMoreElements()){
-            PMElement pme = (PMElement) enum.nextElement();
+        Enumeration iter = gr.elements();
+        while(iter.hasMoreElements()){
+            PMElement pme = (PMElement) iter.nextElement();
             pme.setVisible(v);
         }
     }

@@ -746,9 +746,9 @@ public class PhysicalDisplay
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null) {
-            final Targetable target = this.chooseTarget( b.getCoords() );
-            if ( target != null ) {
-                target( target );
+            final Targetable targ = this.chooseTarget( b.getCoords() );
+            if ( targ != null ) {
+                target( targ );
             } else {
                 target(null);
             }

@@ -22,8 +22,6 @@ import java.awt.*;
  * A class for showing centered labels with desired value.
  */
 public class PMValueLabel extends PMSimpleLabel {
-      
-      boolean visible = true;
 
      /*
       * Create the label.
@@ -41,7 +39,7 @@ public class PMValueLabel extends PMSimpleLabel {
      }
      
      public void setVisible(boolean v){
-     	visible = v;
+     	super.setVisible (v);
      }
 
      /*

@@ -1253,10 +1253,10 @@ public class ChatLounge
         if (ev.getSource() == butDone) {
             boolean anyDelayed = false;
 
-            Enumeration enum = client.getEntities();
+            Enumeration iter = client.getEntities();
 
-            while (enum.hasMoreElements()) {
-                Entity en = (Entity) enum.nextElement();
+            while (iter.hasMoreElements()) {
+                Entity en = (Entity) iter.nextElement();
 
                 if (en.getDeployRound() > 0) {
                     anyDelayed = true;

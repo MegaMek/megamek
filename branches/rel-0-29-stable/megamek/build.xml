@@ -12,7 +12,7 @@
   <property name="maindir" value="megamek"/>
   <property name="apidocdir" value="apidocs"/>
   <property name="docdir" value="docs"/>
-  <property name="cvsdir" value="cvsdev"/>
+  <property name="cvsdir" value="cvsrel"/>
   <property name="cvstag" value="rel-0-29-stable-4" />
 
   <!-- same as maindir but under cvs -->
@@ -22,7 +22,8 @@
   <property name="cvsbuilddir" value="${cvsmaindir}/${builddir}"/>
   
   <!-- cvsroot used for cvs authentification --> 
-  <property name="cvsroot" value=":pserver:anonymous@cvs-pserver.sourceforge.net:80/cvsroot/megamek" />
+  <property name="cvsroot" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/megamek" />
+
   
   <property name="timestampfile" value="timestamp"/>
   <property name="TinyXMLsrc" value="TinyXML07-src.zip" />
@@ -120,20 +121,20 @@
   <target depends="compile, jar" name="all"/>
 
   <!-- generates the updated code & media package and the regular package (containing both) -->
-  <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="cvsdev-get, cvsdev-build, packageMedia, packageCode, cvsdev-package">
+  <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="cvsrel-get, cvsrel-build, packageMedia, packageCode, cvsrel-package">
   </target>
 
-  <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
+  <target name="packageCode" description="Generates code package only" depends="cvsrel-get, cvsrel-build">
     <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-code-${DSTAMP}.zip" includes="${jarfile} history.txt license.txt"/>
   </target>
 
-  <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
+  <target name="packageMedia" description="Generates media package only" depends="cvsrel-get">
     <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ *.txt" excludes="*.jar"/>
   </target>
 
-  <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsdev-init"> 
+  <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsrel-init"> 
     <!-- get the code -->
-    <antcall target="cvsdev-clean"/>
+    <antcall target="cvsrel-clean"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/megamek"/>
 
     <!-- KEEP this updated when additional libraries are available -->
@@ -141,7 +142,7 @@
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.collections}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tinyxml}"/>
     
-    <antcall target="cvsdev-build"/>
+    <antcall target="cvsrel-build"/>
     
     <!-- Copy new MegaMek.jar and potentially updated libraries into user dir -->
     <copy todir="${basedir}" overwrite="true">
@@ -157,17 +158,17 @@
     <echo message="datafiles updated."/>
   </target>
   
-  <target name="cvsdev-init">
+  <target name="cvsrel-init">
     <tstamp/>
     <mkdir dir="${cvsdir}"/>
   </target>
 
-  <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
-  <target name="cvsdev-get" depends="cvsdev-init">
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" tag="${cvstag}" package="megamek"/>
+  <!-- following cvsrel-* tasks get, build & package the current version from cvs -->
+  <target name="cvsrel-get" depends="cvsrel-init">
+    <cvs command="export" cvsRoot="${cvsroot}" dest="${cvsdir}" tag="${cvstag}" package="megamek"/>
   </target>
 
-  <target name="cvsdev-build" depends="cvsdev-init">
+  <target name="cvsrel-build" depends="cvsrel-init">
     <mkdir dir="${cvsbuilddir}"/>
     <!-- compile -->
     <echo message="building MegaMek from CVS sources"/>
@@ -193,7 +194,7 @@
     <touch file="${cvsmaindir}/${timestampfile}"/>
   </target>
 
-  <target name="cvsdev-package" depends="cvsdev-build">
+  <target name="cvsrel-package" depends="cvsrel-build">
     <delete file="${cvsmaindir}/${TinyXMLsrc}"/>
     <!-- zip file generation from CVS sources -->
     <!-- keep in mind that directory references for 'excludes' are -->
@@ -202,13 +203,13 @@
     <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${maindir}/, ${builddir}/, com/"/>
   </target>
   
-  <target name="cvsdev-clean">
+  <target name="cvsrel-clean">
     <delete dir="${cvsbuilddir}"/>
   </target>
 
-  <target name="cvsdev" depends="cvsdev-init, cvsdev-get, cvsdev-build, cvsdev-package"/>
+  <target name="cvsrel" depends="cvsrel-init, cvsrel-get, cvsrel-build, cvsrel-package"/>
   
-  <target name="cleanCvs" description="removes everything inside 'cvsdev' and the dir itself">
+  <target name="cleanCvs" description="removes everything inside 'cvsrel' and the dir itself">
     <delete dir="${cvsdir}/"/>
   </target>
 </project>

@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-4 (CVS)
+v 0.29-stable-4 (09-30-03, 4:30 pm)
 + Bug 802741: "check false" should *not* be added as a modifier.
 + Use the build.xml from thebohemian.
 

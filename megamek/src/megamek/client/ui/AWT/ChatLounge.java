@@ -724,6 +724,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         dialog.setVisible(false);
                 }
         });
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                        dialog.setVisible(false);
+                }
+        });
         dialog.add("Center", ta);
         dialog.setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - dialog.getSize().width/2,
                     client.frame.getLocation().y + client.frame.getSize().height/5 - dialog.getSize().height/2);

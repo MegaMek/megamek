@@ -1293,20 +1293,20 @@ public class Server
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
 
         // append the reason modifier
-        roll.addModifier(reason.getValue(), reason.getDesc());
+        roll.append(reason);
 
         // okay, print the info
         phaseReport.append("\n" + entity.getDisplayName()
-                   + " must make a piloting skill check (" + reason.getDesc() + ")"
+                   + " must make a piloting skill check (" + reason.getPlainDesc() + ")"
                    + ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
         phaseReport.append("Needs " + roll.getValue()
-                   + " (" + roll.getDesc() + ")"
+                   + " [" + roll.getDesc() + "]"
                    + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
             phaseReport.append("falls.\n");
-            doEntityFall(entity, roll.getValue());
+            doEntityFall(entity, roll);
         } else {
             phaseReport.append("succeeds.\n");
         }
@@ -1324,7 +1324,7 @@ public class Server
         int fallElevation;
 
         // append the reason modifier
-        roll.addModifier(reason.getValue(), reason.getDesc());
+        roll.append(reason);
 
         // will the entity fall in the source or destination hex?
         if (src.equals(dest) || srcHex.getElevation() < destHex.getElevation()) {
@@ -1341,16 +1341,15 @@ public class Server
                 + " must make a piloting skill check"
                 + " while moving from hex " + src.getBoardNum()
                 + " to hex " + dest.getBoardNum()
-                + " (" + reason.getDesc() + ")" + ".\n");
+                + " (" + reason.getPlainDesc() + ")" + ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
         phaseReport.append("Needs " + roll.getValue()
-                + " (" + roll.getDesc() + ")"
+                + " [" + roll.getDesc() + "]"
                 + ", rolls " + diceRoll + " : ");
         if (diceRoll < roll.getValue()) {
             phaseReport.append("falls.\n");
-            doEntityFallsInto(entity, (fallsInPlace ? src : dest), (fallsInPlace ? dest : src), roll.getValue());
-            //doEntityFall(entity, (fallsInPlace ? src : dest), fallElevation, roll.getValue());
+            doEntityFallsInto(entity, (fallsInPlace ? dest : src), (fallsInPlace ? src : dest), roll);
         } else {
             phaseReport.append("succeeds.\n");
         }
@@ -1360,7 +1359,7 @@ public class Server
      * The entity falls into the hex specified.  Check for any conflicts and
      * resolve them.  Deal damage to faller.
      */
-    private void doEntityFallsInto(Entity entity, Coords src, Coords dest, int roll) {
+    private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll) {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final int fallElevation = Math.abs(destHex.getElevation() - srcHex.getElevation());
@@ -1436,7 +1435,10 @@ public class Server
                 phaseReport.append(entity.getDisplayName() + " falls "
                            + fallElevation + " levels into hex "
                            + dest.getBoardNum() + ".\n");
-                doEntityFall(entity, dest, fallElevation, PilotingRollData.AUTOMATIC_FALL);
+                // only given a modifier, so flesh out into a full piloting roll
+                PilotingRollData pilotRoll = Compute.getBasePilotingRoll(game, entity.getId());
+                pilotRoll.append(roll);
+                doEntityFall(entity, dest, fallElevation, pilotRoll);
                 return;
             }
         }
@@ -1486,7 +1488,10 @@ public class Server
                 phaseReport.append("\n");
 
                 // attacker falls as normal, on his back
-                doEntityFall(entity, dest, fallElevation, 3, PilotingRollData.AUTOMATIC_FALL);
+                // only given a modifier, so flesh out into a full piloting roll
+                PilotingRollData pilotRoll = Compute.getBasePilotingRoll(game, entity.getId());
+                pilotRoll.append(roll);
+                doEntityFall(entity, dest, fallElevation, 3, pilotRoll);
 
                 // defender pushed away, or destroyed
                 Coords targetDest = Compute.getValidDisplacement(game, target.getId(), dest, direction);
@@ -1503,7 +1508,7 @@ public class Server
                 //TODO: this is not quite how the rules go
                 Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
                 if (targetDest != null) {
-                    doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.AUTOMATIC_FALL, "pushed off a cliff"));
+                    doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"));
                 } else {
                     // ack!  automatic death!
                     phaseReport.append("*** " + entity.getDisplayName()
@@ -1626,7 +1631,7 @@ public class Server
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
             mounted.setUsedThisRound(true);
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_MISS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             phaseReport.append(", the shot is an automatic miss, ");
         } else {
             phaseReport.append("; needs " + toHit.getValue() + ", ");
@@ -2109,7 +2114,7 @@ public class Server
                 doEntityDisplacement(te, dest, targetDest, null);
                 // attacker falls into destination hex
                 phaseReport.append(ae.getDisplayName() + " falls into hex " + dest.getBoardNum() + ".\n");
-                doEntityFall(ae, dest, 2, 3, PilotingRollData.AUTOMATIC_FALL);
+                doEntityFall(ae, dest, 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
             } else {
                 // attacker destroyed
                 phaseReport.append("*** " + ae.getDisplayName()
@@ -2149,8 +2154,7 @@ public class Server
             doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
         } else {
             // ack!  automatic death!
-            phaseReport.append("*** " + te.getDisplayName()
-                               + " DESTROYED due to impossible displacement! ***");
+            phaseReport.append("*** " + te.getDisplayName() + " DESTROYED due to impossible displacement! ***");
             te.setDoomed(true);
         }
         doEntityDisplacement(ae, src, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
@@ -2310,17 +2314,17 @@ public class Server
                     if (reasons.length() > 0) {
                         reasons.append(", ");
                     }
-                    reasons.append(modifier.getDesc());
-                    roll.addModifier(modifier.getValue(), modifier.getDesc());
+                    reasons.append(modifier.getPlainDesc());
+                    roll.append(modifier);
                 }
             }
             // any rolls needed?
             if (rolls == 0) {
                 continue;
             }
-            if (roll.getValue() == PilotingRollData.AUTOMATIC_FALL) {
+            if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL || roll.getValue() == PilotingRollData.IMPOSSIBLE) {
                 phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) and automatically fails (" + roll.getDesc() + ").\n");
-                doEntityFall(entity, roll.getValue());
+                doEntityFall(entity, roll);
             } else {
                 phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
                 phaseReport.append("The target is " + roll.getValue() + " [" + roll.getDesc() + "].\n");
@@ -2329,7 +2333,7 @@ public class Server
                     phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValue() + ", rolls " + diceRoll + " : ");
                     phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
                     if (diceRoll < roll.getValue()) {
-                        doEntityFall(entity, roll.getValue());
+                        doEntityFall(entity, roll);
                         // break rolling loop
                         break;
                     }
@@ -2493,8 +2497,7 @@ public class Server
                 if (te.getInternal(hit) <= 0) {
                     destroyLocation(te, hit.getLocation());
                     if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
-                        pilotRolls.addElement(new PilotingRollData(te.getId(),
-                        PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
+                        pilotRolls.addElement(new PilotingRollData(te.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
                     }
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
@@ -2552,8 +2555,10 @@ public class Server
         } else if (roll == 12) {
             if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
-                destroyLocation(en, loc);
-                pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
+                if (en.getInternal(loc) > 0) {
+                    destroyLocation(en, loc);
+                    pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+                }
                 return desc;
             } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
@@ -2608,7 +2613,7 @@ public class Server
                 case Mech.SYSTEM_GYRO :
                     if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
                         // gyro destroyed
-                        pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FALL, "gyro destroyed"));
+                        pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
                     } else {
                         // first gyro hit
                         pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
@@ -2748,8 +2753,7 @@ public class Server
     /**
      * Makes a mech fall.
      */
-    private void doEntityFall(Entity entity, Coords fallPos, int height,
-        int facing, int roll) {
+    private void doEntityFall(Entity entity, Coords fallPos, int height, int facing, PilotingRollData roll) {
         // we don't need to deal damage yet, if the entity is doing DFA
         if (entity.isMakingDfa()) {
             phaseReport.append("But, since the 'mech is making a death from above attack, damage will be dealt during the physical phase.\n");
@@ -2800,17 +2804,27 @@ public class Server
         }
 
         // pilot damage?
-        if (roll != PilotingRollData.AUTOMATIC_FALL) {
-            roll += height;
+        roll.removeAutos();
+        
+        if (height > 0) {
+            roll.addModifier(height, "height of fall");
         }
-        if (roll > 12) {
-            phaseReport.append("\nPilot of " + entity.getDisplayName() + " \"" + entity.crew.getName() + "\" cannot avoid damage.\n");
-            damageCrew(entity, 1);
+        
+        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
+            phaseReport.append("\nPilot of " + entity.getDisplayName() 
+            + " \"" + entity.crew.getName() + "\" cannot avoid damage.\n");
+            phaseReport.append(damageCrew(entity, 1) + "\n");
         } else {
             int diceRoll = Compute.d6(2);
-            phaseReport.append("\nPilot of " + entity.getDisplayName() + " \"" + entity.crew.getName() + "\" must roll " + roll + " to avoid damage; rolls " + diceRoll + " : " + (diceRoll >= roll ? "succeeds" : "fails") + ".\n");
-            if (diceRoll < roll) {
-                damageCrew(entity, 1);
+            phaseReport.append("\nPilot of " + entity.getDisplayName() 
+            + " \"" + entity.crew.getName() + "\" must roll " + roll.getValue() 
+//            + " [" + roll.getDesc() + "]";
+            + " to avoid damage; rolls " + diceRoll + " : "); 
+            if (diceRoll >= roll.getValue()) {
+                phaseReport.append("succeeds.\n");
+            } else {
+                phaseReport.append("fails.\n");
+                phaseReport.append(damageCrew(entity, 1) + "\n");
             }
         }
 
@@ -2823,18 +2837,17 @@ public class Server
     /**
      * The mech falls into an unoccupied hex from the given height above
      */
-    private void doEntityFall(Entity entity, Coords fallPos, int height,
-                          int roll) {
+    private void doEntityFall(Entity entity, Coords fallPos, int height, PilotingRollData roll) {
         doEntityFall(entity, fallPos, height, Compute.d6(1), roll);
     }
 
     /**
      * The mech falls down in place
      */
-    private void doEntityFall(Entity entity, int roll) {
+    private void doEntityFall(Entity entity, PilotingRollData roll) {
         doEntityFall(entity, entity.getPosition(), 0, roll);
     }
-
+    
     /**
      * Scans the boards directory for map boards of the appropriate size
      * and returns them.

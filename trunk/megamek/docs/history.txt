@@ -109,6 +109,10 @@ v next
 + 543593: lock ups after heat phase possibly caught, not particularly fixed
 + using sun collections Random instead of equivalent custom class
 + added /roll command
++ a mech falling while between hexes now ends up in the _lower_ hex
++ fixed concurrent modification exception in board drawing routines
++ 544493: pilot can save to avoid damage in leg/gyro destroyed situations
++ 544493: pilot can also save during missed DFA/
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

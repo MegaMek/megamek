@@ -4373,7 +4373,7 @@ public class Compute
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
         ToHitData toHit = getTargetMovementModifier
-            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP ); 
+            ( entity.delta_distance, entity.moved == Entity.MOVE_JUMP, game.getOptions().booleanOption("maxtech_target_modifiers") ); 
 
         // Did the target skid this turn?
         if ( entity.moved == Entity.MOVE_SKID ) {
@@ -4387,17 +4387,40 @@ public class Compute
      * Target movement modifer for the specified delta_distance
      */
     public static ToHitData getTargetMovementModifier(int distance, boolean jumped) {
+    	return getTargetMovementModifier(distance, jumped, false);
+    }
+
+    public static ToHitData getTargetMovementModifier(int distance, boolean jumped, boolean maxtech) {
         ToHitData toHit = new ToHitData();
       
-        if (distance >= 3 && distance <= 4) {
-            toHit.addModifier(1, "target moved 3-4 hexes");
-        } else if (distance >= 5 && distance <= 6) {
-            toHit.addModifier(2, "target moved 5-6 hexes");
-        } else if (distance >= 7 && distance <= 9) {
-            toHit.addModifier(3, "target moved 7-9 hexes");
-        } else if (distance >= 10) {
-            toHit.addModifier(4, "target moved 10+ hexes");
+		if (!maxtech) {
+			if (distance >= 3 && distance <= 4) {
+	            toHit.addModifier(1, "target moved 3-4 hexes");
+	        } else if (distance >= 5 && distance <= 6) {
+	            toHit.addModifier(2, "target moved 5-6 hexes");
+	        } else if (distance >= 7 && distance <= 9) {
+	            toHit.addModifier(3, "target moved 7-9 hexes");
+	        } else if (distance >= 10) {
+	            toHit.addModifier(4, "target moved 10+ hexes");
+	        }
+	    } else {
+			if (distance >= 3 && distance <= 4) {
+			   toHit.addModifier(1, "target moved 3-4 hexes");
+			} else if (distance >= 5 && distance <= 6) {
+			   toHit.addModifier(2, "target moved 5-6 hexes");
+			} else if (distance >= 7 && distance <= 9) {
+			   toHit.addModifier(3, "target moved 7-9 hexes");
+			} else if (distance >= 10 && distance <= 13) {
+			   toHit.addModifier(4, "target moved 10-13 hexes");
+			} else if (distance >= 14 && distance <=18) {
+			   toHit.addModifier(5, "target moved 14-18 hexes");
+			} else if (distance >= 19 && distance <=24) {
+			   toHit.addModifier(6, "target moved 19-24 hexes");
+			} else if (distance >= 25) {
+			   toHit.addModifier(7, "target moved 25+ hexes");
+			}
         }
+	    	
         if (jumped) {
             toHit.addModifier(1, "target jumped");
         }

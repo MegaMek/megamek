@@ -66,6 +66,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_physical_psr", "MaxTech physical PSR weight difference", "If checked, after being kicked or pushed the PSR is modified by the weight classes of the two mechs. The PSR is modified by 1 point per weight class difference. The difference is added to the PSR if the attacker is heavier or subtracted if the attacker is lighter.", false));
         addOption(level3, new GameOption("maxtech_round_damage", "MaxTech damage per round", "If checked, units will have +1 to their piloting skill roll for every 20 damage taken, not just the first damage. Also, BTH is altered by weight class. Lights get +1 to BTH where as assaults get -2. Mediums and heavies are in between.", false));
         addOption(level3, new GameOption("maxtech_prone_fire", "MaxTech firing while prone", "If checked, mechs that are prone can fire if they are missing one arm. Standard rules disallow firing when prone and missing an arm. All weapons are +1 BTH and weapons mounted in propping arm can not be fired.", false));
+		addOption(level3, new GameOption("maxtech_target_modifiers", "MaxTech target movement modifiers", "If checked, the target movement modifiers table is enhanced by 3 additional steps (14-18 hexes => +5, 19-24 hexes => +6 25+ hexes => +7.", false));
         
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);

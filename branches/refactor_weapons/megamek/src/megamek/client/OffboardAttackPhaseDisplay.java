@@ -381,7 +381,7 @@ public class OffboardAttackPhaseDisplay
 
         // validate
         if (ce() == null || target == null || mounted == null
-        || !(mounted.getType() instanceof WeaponType)) {
+        || !(mounted.isWeapon())) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
 

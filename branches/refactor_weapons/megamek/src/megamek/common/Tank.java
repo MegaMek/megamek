@@ -443,7 +443,7 @@ public class Tank
             if (mounted.isDestroyed())
                 continue;
 
-            if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            if ((mounted.isWeapon() && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);

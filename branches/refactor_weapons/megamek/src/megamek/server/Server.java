@@ -1364,6 +1364,7 @@ implements Runnable, ConnectionHandler {
                 resolveAllButWeaponAttacks();
                 assignAMS();
                 resolveOnlyWeaponAttacks();
+                handleAttacks();
                 checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls();
@@ -1397,12 +1398,12 @@ implements Runnable, ConnectionHandler {
                 changePhase(Game.PHASE_END);
                 break;
             case Game.PHASE_TARGETING :
-                enqueueIndirectArtilleryAttacks();
+                resolveOnlyWeaponAttacks();
                 changePhase(Game.PHASE_MOVEMENT);
                 break;
             case Game.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
-                resolveIndirectArtilleryAttacks();
+                handleAttacks();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                     changePhase(Game.PHASE_OFFBOARD_REPORT);
@@ -4613,19 +4614,18 @@ implements Runnable, ConnectionHandler {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
-                results.addElement(preTreatWeaponAttack(waa));
+                Entity ae=game.getEntity(waa.getEntityId());
+                Mounted m=ae.getEquipment(waa.getWeaponId());
+                Weapon w=(Weapon)m.getType();
+                AttackHandler ah=w.fire(waa,game);
+                if(ah!=null) {
+                	game.addAttack(ah);
+                }
+                
             }
         }
 
-        // loop through weapon results and resolve
-        int cen = Entity.NONE;
-        for (Enumeration i = results.elements(); i.hasMoreElements();) {
-            WeaponResult wr = (WeaponResult)i.nextElement();
-            resolveWeaponAttack(wr, cen);
-            cen = wr.waa.getEntityId();
-        }
-
-        // and clear the attacks Vector
+        
         game.resetActions();
     }
 
@@ -4984,7 +4984,7 @@ implements Runnable, ConnectionHandler {
 
                 Mounted counter = (Mounted)vCounters.elementAt(x);
                 Mounted mAmmo = counter.getLinked();
-                if (!(counter.getType() instanceof WeaponType)
+                if (!(counter.isWeapon())
                 || ((WeaponType)counter.getType()).getAmmoType() != AmmoType.T_AMS
                 || !counter.isReady() || counter.isMissing()) {
                     continue;
@@ -9153,7 +9153,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // special-case.  RACs only explode when jammed
-        if (mounted.getType() instanceof WeaponType &&
+        if (mounted.isWeapon() &&
                 ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY) {
             if (!mounted.isJammed()) {
                 return "";
@@ -10218,7 +10218,7 @@ implements Runnable, ConnectionHandler {
             System.err.println( weaponId );
             return;
         }
-        if ( !(mWeap.getType() instanceof WeaponType) ) {
+        if ( !(mWeap.isWeapon()) ) {
             System.err.print
                 ( "Server.receiveEntityAmmoChange: item # " );
             System.err.print( weaponId );
@@ -11649,16 +11649,7 @@ implements Runnable, ConnectionHandler {
      *
      * @param entityID int
      */
-    private void clearArtillerySpotters(int entityID,int weaponID)  {
-        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-            ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
-            if ( aaa.getWR().waa.getEntityId()==entityID &&
-                 aaa.getWR().waa.getWeaponId()==weaponID ) {
-                aaa.setSpotterIds(null);
-            }
 
-        }
-    }
     private boolean isEligibleForTargetingPhase(Entity entity) {
         for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
               Mounted mounted = (Mounted)i.nextElement();
@@ -11673,7 +11664,7 @@ implements Runnable, ConnectionHandler {
     private boolean isEligibleForOffboard(Entity entity) {
         return false;//only things w/ tag are, and we don't yet have TAG.
     }
-    private void resolveIndirectArtilleryAttacks()  {
+    private void resolveIndirectArtilleryAttacks()  {/*
         Vector results = new Vector(game.getArtillerySize());
         Vector attacks = new Vector(game.getArtillerySize());
 
@@ -11758,10 +11749,10 @@ implements Runnable, ConnectionHandler {
                 ( (ArtilleryAttackAction) i.nextElement() );
         }
 
-
+*/
     }
 
-    private void enqueueIndirectArtilleryAttacks() {
+    private void enqueueIndirectArtilleryAttacks() {/*
         resolveAllButWeaponAttacks();
         ArtilleryAttackAction aaa;
         for (Enumeration i = game.getActions();i.hasMoreElements();) {
@@ -11798,6 +11789,23 @@ implements Runnable, ConnectionHandler {
                 game.addArtilleryAttack(aaa);
             }
         }
-        game.resetActions();
+        game.resetActions();*/
+    }
+    /**
+     * Loops through all the attacks the game has.  
+     * Checks if they care about current phase, 
+     * if so, runs them, and removes them if they don't want to stay.
+     */
+    private void handleAttacks() {
+    	for(Enumeration i=game.getAttacks();i.hasMoreElements();) {
+    		AttackHandler ah = (AttackHandler)i.nextElement();
+    		if(ah.cares(game.getPhase())) {
+    			boolean keep = ah.handle(game.getPhase());
+    			if(!keep) {
+    				game.removeAttack(ah);
+    			}
+    		}
+    	}
     }
 }
+

@@ -3269,9 +3269,9 @@ public class BoardView1
          */
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
-            final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
-            final String roll = Compute.toHitWeapon(game, attack).getValueAsString();
-            weaponDescs.addElement( wtype.getName() + "; needs " + roll );
+            final Weapon weap = (Weapon)entity.getEquipment(attack.getWeaponId()).getType();
+            final String roll = weap.toHit(attack,game).getValueAsString();
+            weaponDescs.addElement( weap.getName() + "; needs " + roll );
         }
 
         public void addWeapon(KickAttackAction attack) {

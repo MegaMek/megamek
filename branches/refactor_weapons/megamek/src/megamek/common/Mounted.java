@@ -60,10 +60,22 @@ public class Mounted implements Serializable, RoundUpdated {
     // handle split weapons
     private boolean bSplit = false;
     private int nFoundCrits = 0;
+    
+    //is it a weapon?  (Needed for dynamic weapon types.
+    private boolean isWeapon;
 
 
     /** Creates new Mounted */
-    public Mounted(Entity entity, EquipmentType type) {
+    public Mounted(Entity entity,EquipmentType type) {
+    	this.entity = entity;
+        this.type = type;
+        this.typeName = type.getInternalName();
+
+        if (type instanceof AmmoType) {
+            shotsLeft = ((AmmoType)type).getShots();
+        }
+    }
+    public Mounted(Entity entity, EquipmentType type,boolean isWeapon) {
         this.entity = entity;
         this.type = type;
         this.typeName = type.getInternalName();
@@ -71,6 +83,7 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
         }
+        this.isWeapon=isWeapon;
     }
 
     /**
@@ -105,6 +118,9 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public String curMode() {
         return type.getModes()[mode];
+    }
+    public boolean isWeapon() {
+    	return isWeapon;
     }
 
     public String pendingMode() {
@@ -345,12 +361,12 @@ public class Mounted implements Serializable, RoundUpdated {
     public void setSplit(boolean b) {
         bSplit = b;
     }
-
+    //TODO:  With dynamic types, should this be changed around.
     public int getExplosionDamage() {
         if (type instanceof AmmoType) {
             AmmoType atype = (AmmoType)type;
             return atype.getDamagePerShot() * atype.getRackSize() * shotsLeft;
-        } else if (type instanceof WeaponType) {
+        } else if (isWeapon) {
             WeaponType wtype = (WeaponType)type;
             //HACK: gauss rifle damage hardcoding
             if (wtype.getAmmoType() == AmmoType.T_GAUSS) {
@@ -390,7 +406,7 @@ public class Mounted implements Serializable, RoundUpdated {
     
         // Oneshot fired?
         EquipmentType equip = getType();
-        if( ( ( equip instanceof WeaponType &&
+        if( ( ( isWeapon &&
                 equip.hasFlag(WeaponType.F_ONESHOT) ) ||
               ( equip instanceof MiscType &&
                 equip.hasFlag(MiscType.F_AP_POD) ) )

@@ -436,7 +436,7 @@ public class HmpFile
           try {
             equipment = EquipmentType.get(criticalName);
             if (equipment != null) {
-              boolean rearMounted = equipment instanceof WeaponType &&
+              boolean rearMounted = equipment instanceof WeaponType &&//FIXME won't work with dynamic weapons
                 isRearMounted(critical);
               if (equipment.isSpreadable()) {
                 Mounted m = (Mounted) spreadEquipment.get(equipment);

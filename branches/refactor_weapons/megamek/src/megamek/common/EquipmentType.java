@@ -164,7 +164,7 @@ public class EquipmentType {
     public Enumeration getNames() {
         return namesVector.elements();
     }
-
+    //FIXME won't work with dynamic weapon types as written
     public static void initializeTypes() {
         EquipmentType.allTypes = new Vector();
         EquipmentType.lookupHash = new Hashtable();

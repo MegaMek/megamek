@@ -124,7 +124,7 @@ public class Game implements Serializable
 
     private Hashtable minefields = new Hashtable();
     private Vector vibrabombs = new Vector();
-    private Vector offboardArtilleryAttacks = new Vector();
+    private Vector attacks = new Vector();
 
     /**
      * Constructor
@@ -1440,21 +1440,7 @@ public class Game implements Serializable
     public void addAction(EntityAction ea) {
         actions.addElement(ea);
     }
-    public void addArtilleryAttack(ArtilleryAttackAction aaa) {
-        offboardArtilleryAttacks.addElement(aaa);
-    }
-    public void removeArtilleryAttack(ArtilleryAttackAction aaa) {
-        offboardArtilleryAttacks.removeElement(aaa);
-    }
-    public Vector getArtilleryVector() {
-        return offboardArtilleryAttacks;
-    }
-    public Enumeration getArtilleryAttacks() {
-        return offboardArtilleryAttacks.elements(); //Fix?
-    }
-    public int getArtillerySize() {
-        return offboardArtilleryAttacks.size();
-    }
+
 
 
     /** Returns an Enumeration of actions scheduled for this phase. */
@@ -1502,6 +1488,18 @@ public class Game implements Serializable
     /** Adds a pending displacement attack to the list for this phase. */
     public void addCharge(AttackAction ea) {
         pendingCharges.addElement(ea);
+    }
+    public void addAttack(AttackHandler ah) {
+    	attacks.addElement(ah);
+    }
+    public void removeAttack(AttackHandler ah) {
+    	attacks.removeElement(ah);
+    }
+    public Enumeration getAttacks() {
+    	return attacks.elements();
+    }
+    public Vector getAttacksVector() {
+    	return attacks;
     }
 
     /**

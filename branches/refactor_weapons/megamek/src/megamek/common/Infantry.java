@@ -496,6 +496,7 @@ public class Infantry
 
     /**
      * Infantry weapons are dictated by their type.
+     * FIXME won't work with dynamic types.
      */
     protected void addEquipment( Mounted mounted,
                                  int loc,
@@ -515,7 +516,7 @@ public class Infantry
             // Do nothing.
         }
         // Handle infantry weapons.
-        else if ( (mounted.getType() instanceof WeaponType) &&
+        else if ( (mounted.isWeapon()) &&
                   equip.hasFlag(WeaponType.F_INFANTRY) ) {
 
             // Infantry can only mount one kind of infantry weapon.

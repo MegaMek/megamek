@@ -116,6 +116,7 @@ VERSION HISTORY:
 v 0.29-stable-8 (CVS)
 + Bug 898207: players should have to enter in a non-blank, non-whitespace name
 + Bug 899181: unconcious and shut down meks can't find clubs.
++ Bug 843723, Patch 842834: fix race condition with "Done" button
 
 v 0.29-stable-7 (2004-02-14 3:00 PM EST)
 + Bug 781250: Fixed MASC bug.

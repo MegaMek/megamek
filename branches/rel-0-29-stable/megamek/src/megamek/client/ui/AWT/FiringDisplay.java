@@ -315,6 +315,7 @@ public class FiringDisplay
      */
     private void beginMyTurn() {
         target = null;
+        selectEntity(client.getFirstEntityNum());
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
@@ -322,7 +323,6 @@ public class FiringDisplay
         client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
-        selectEntity(client.getFirstEntityNum());
     }
     
     /**

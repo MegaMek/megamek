@@ -25,6 +25,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.Hex;
+import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MechWarrior;
@@ -161,7 +162,7 @@ public class WeaponAttackAction
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == Game.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == Game.PHASE_TARGETING || game.getPhase() == Game.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
         boolean isPPCwithoutInhibitor = wtype.getInternalName()==("Particle Cannon") && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
-        boolean isHaywireINarced = ae.isHaywireINarced();
+        boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&

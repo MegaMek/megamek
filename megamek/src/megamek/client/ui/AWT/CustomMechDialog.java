@@ -35,7 +35,9 @@ import megamek.common.options.GameOption;
 
 /**
  * A dialog that a player can use to customize his mech before battle.  
- * Currently, only changing pilots is supported.
+ * Currently, changing pilots, setting up C3 networks, changing ammunition,
+ * deploying artillery offboard, setting MGs to rapidfire, setting auto-eject
+ * is supported.
  *
  * @author  Ben
  * @version 

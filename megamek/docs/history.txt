@@ -8,6 +8,7 @@ v0.29.64 (CVS)
         Mad Cat MK II, Maelstorm, O-Bakemono, Stooping Hawk, and Crossbow.
 + Bug 1112073: Don't count Rocket Launchers in calculating Max Heat.
 + Bug 1009227, Patch 1115911: bot hangs in Physical Phase.
++ Bug 1115581: Cannot dump Heavy or Light Gauss ammo in the lobby.
 
 v0.29.63 (2005-01-30 2:00pm)
 + Bug 1107959: ejected pilot moves same turn

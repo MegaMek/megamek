@@ -76,6 +76,8 @@ v (next)
 + AMS can be turned off
 + fixed crash with bot and non-mech units
 + 622376: infantry can jump over water
++ MASC added
++ interface for switching equipment modes added
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

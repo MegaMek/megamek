@@ -143,7 +143,7 @@ public class Client extends Panel
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 340);
         mechW.setResizable(true);
-        mechD = new MechDisplay();
+        mechD = new MechDisplay(this);
         mechW.add(mechD);
         if (Settings.minimapEnabled) {
             minimapW = new Dialog(frame, "MiniMap", false);
@@ -515,6 +515,17 @@ public class Client extends Panel
 		confirm.show();
 		return confirm.getAnswer();
 	};
+	
+	/**
+	 * Send mode-change data to the server
+	 */
+	public void sendModeChange(int nEntity, int nEquip, int nMode)
+	{
+	   Object[] data = { new Integer(nEntity), new Integer(nEquip), 
+	           new Integer(nMode) };
+	   send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
+    }
+
     
     /**
      * Send movement data for the given entity to the server.

@@ -92,7 +92,12 @@ v 0.26
 VERSION HISTORY:
 ----------------
 v next
-+ heat modifier to fire now applies at the correct levels
++ 543237: heat modifier to fire now applies at the correct levels
++ 543735: hip actuator hit halves movement, now rounded up
++ 543735: hip actuator hit piloting modifier now ignores other actuator hits
++ 543391: dead equipment is dead!  this includes jump jets!  arrgh!
++ 543737: more info shown when equipment is critically hit
++ 543645: weapons shows shots in ton and total shots left in firing display
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

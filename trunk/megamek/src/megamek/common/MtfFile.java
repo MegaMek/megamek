@@ -214,7 +214,7 @@ public class MtfFile {
             
             EquipmentType etype = EquipmentType.getByMtfName(critName);
             if (etype != null) {
-                mech.addEquipment(new Mounted(etype), loc, rearMounted);
+                mech.addEquipment(etype, loc, rearMounted);
             } else {
 //                System.out.println("mtffile: could not find equipment " + critName);
             }

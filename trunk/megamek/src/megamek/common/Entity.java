@@ -628,13 +628,21 @@ public abstract class Entity
     }
     
     /**
-     * Mount the specified weapon in the specified location.
+     * Creates a new mount for this equipment and adds it in.
      */
-    public void addEquipment(Mounted mounted, int loc) {
-        addEquipment(mounted, loc, false);
+    public void addEquipment(EquipmentType etype, int loc) {
+        addEquipment(etype, loc, false);
     }
     
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
+    /**
+     * Creates a new mount for this equipment and adds it in.
+     */
+    public void addEquipment(EquipmentType etype, int loc, boolean rearMounted) {
+        Mounted mounted = new Mounted(this, etype);
+        addEquipment(mounted, loc, rearMounted);
+    }
+    
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) {
         mounted.setLocation(loc, rearMounted);
         equipmentList.addElement(mounted);
         
@@ -656,6 +664,13 @@ public abstract class Entity
      */
     public int getEquipmentNum(Mounted mounted) {
         return equipmentList.indexOf(mounted);
+    }
+    
+    /**
+     * Returns an enumeration of all equipment
+     */
+    public Enumeration getEquipment() {
+        return equipmentList.elements();
     }
     
     /**
@@ -741,20 +756,14 @@ public abstract class Entity
      */
     public void loadWeapon(Mounted mounted) {
         WeaponType wtype = (WeaponType)mounted.getType();
-        for (int i = 0; i < this.locations(); i++) {
-            for (int j = 0; j < this.getNumberOfCriticals(i); j++) {
-                CriticalSlot cs = this.getCritical(i, j);
-                if (cs == null || cs.isDestroyed() || cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
-                    continue;
-                }
-                Mounted mountedAmmo = this.getEquipment(cs.getIndex());
-                if (!(mountedAmmo.getType() instanceof AmmoType)) {
-                    continue;
-                }
-                AmmoType atype = (AmmoType)mountedAmmo.getType();
-                if (mountedAmmo.getShotsLeft() > 0 && atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
-                    mounted.setLinked(mountedAmmo);
-                }
+        for (Enumeration i = getAmmo(); i.hasMoreElements();) {
+            Mounted mountedAmmo = (Mounted)i.nextElement();
+            AmmoType atype = (AmmoType)mountedAmmo.getType();
+            if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0) {
+                continue;
+            }
+            if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize()) {
+                mounted.setLinked(mountedAmmo);
             }
         }
     }

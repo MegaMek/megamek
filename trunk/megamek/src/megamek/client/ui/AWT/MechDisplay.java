@@ -557,12 +557,19 @@ class WeaponPanel
             WeaponType wtype = (WeaponType)mounted.getType();
             String wn = mounted.getDesc() 
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
+            // determine shots left & total shots left
             if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
-                if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() == 0) {
-                    wn += " (empty)";
-                } else {
-                    wn += " (" + mounted.getLinked().getShotsLeft() + ")";
+                int shotsLeft = mounted.getLinked() == null ? 0 : mounted.getLinked().getShotsLeft();
+                EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
+                int totalShotsLeft = 0;
+                for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
+                    Mounted amounted = (Mounted)j.nextElement();
+                    if (amounted.getType() == typeUsed) {
+                        totalShotsLeft += amounted.getShotsLeft();
+                    }
                 }
+                
+                wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
             }
             weaponList.add(wn);
         }

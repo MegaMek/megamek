@@ -807,18 +807,19 @@ public class Compute
             // check for damaged hip actuators
             if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0) {
                 roll.addModifier(2, "Right Hip Actuator destroyed");
-            }
-            // upper leg actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0) {
-                roll.addModifier(1, "Right Upper Leg Actuator destroyed");
-            }
-            // lower leg actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0) {
-                roll.addModifier(1, "Right Lower Leg Actuator destroyed");
-            }
-            // foot actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_RLEG) > 0) {
-                roll.addModifier(1, "Right Foot Actuator destroyed");
+            } else {
+                // upper leg actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0) {
+                    roll.addModifier(1, "Right Upper Leg Actuator destroyed");
+                }
+                // lower leg actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0) {
+                    roll.addModifier(1, "Right Lower Leg Actuator destroyed");
+                }
+                // foot actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_RLEG) > 0) {
+                    roll.addModifier(1, "Right Foot Actuator destroyed");
+                }
             }
         }
         // left leg destroyed?
@@ -828,18 +829,19 @@ public class Compute
             // check for damaged hip actuators
             if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0) {
                 roll.addModifier(2, "Left Hip Actuator destroyed");
-            }
-            // upper leg actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0) {
-                roll.addModifier(1, "Left Upper Leg Actuator destroyed");
-            }
-            // lower leg actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0) {
-                roll.addModifier(1, "Left Lower Leg Actuator destroyed");
-            }
-            // foot actuators?
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0) {
-                roll.addModifier(1, "Left Foot Actuator destroyed");
+            } else {
+                // upper leg actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0) {
+                    roll.addModifier(1, "Left Upper Leg Actuator destroyed");
+                }
+                // lower leg actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0) {
+                    roll.addModifier(1, "Left Lower Leg Actuator destroyed");
+                }
+                // foot actuators?
+                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0) {
+                    roll.addModifier(1, "Left Foot Actuator destroyed");
+                }
             }
         }
         // gyro hit?

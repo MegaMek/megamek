@@ -467,30 +467,14 @@ public class Server
 
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
-
-            // if ammo has exploded, empty the bin
-            for (Enumeration i = entity.getAmmo(); i.hasMoreElements();) {
+            
+            // mark all damaged equipment destroyed and empty
+            for (Enumeration i = entity.getEquipment(); i.hasMoreElements();) {
                 Mounted mounted = (Mounted)i.nextElement();
                 if (mounted.isHit() || mounted.isMissing()) {
                     mounted.setShotsLeft(0);
                     mounted.setDestroyed(true);
                 }
-            }
-
-            // set destroyed weapons properly
-            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-               Mounted mounted = (Mounted)i.nextElement();
-               WeaponType wtype = (WeaponType)mounted.getType();
-               if (mounted.isHit() || mounted.isMissing()) {
-                    mounted.setDestroyed(true);
-               }
-
-               // try to reload if needed
-               if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
-                   if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
-                       entity.loadWeapon(mounted);
-                   }
-               }              
             }
 
             // destroy criticals that were hit last phase
@@ -512,6 +496,18 @@ public class Server
                 }
             }
             
+            // try to reload weapons
+            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+               Mounted mounted = (Mounted)i.nextElement();
+               WeaponType wtype = (WeaponType)mounted.getType();
+
+               if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+                   if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
+                       entity.loadWeapon(mounted);
+                   }
+               }              
+            }
+
             // reset damage this phase
             entity.damageThisPhase = 0;
 
@@ -1547,6 +1543,7 @@ public class Server
         // loop thru received attack actions
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
             Object o = i.nextElement();
+            Entity entity = game.getEntity(((EntityAction)o).getEntityId());
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
                 resolveWeaponAttack(waa, cen);
@@ -1556,9 +1553,9 @@ public class Server
                 game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
-                game.getEntity(fca.getEntityId()).setFindingClub(true);
-                game.getEntity(fca.getEntityId()).addEquipment(new Mounted(EquipmentType.getByInternalName("Tree Club")), Mech.LOC_NONE);
-                phaseReport.append("\n" + game.getEntity(fca.getEntityId()).getDisplayName() + " uproots a tree for use as a club.\n");
+                entity.setFindingClub(true);
+                entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
+                phaseReport.append("\n" + entity.getDisplayName() + " uproots a tree for use as a club.\n");
             } else {
                 // hmm, error
             }
@@ -2571,55 +2568,56 @@ public class Server
             int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
             CriticalSlot cs = en.getCritical(loc, slot);
             if (cs != null && cs.isHitable()) {
-                cs.setHit(true);
-                switch(cs.getType()) {
-                case CriticalSlot.TYPE_SYSTEM :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
-                    switch(cs.getIndex()) {
-                    case Mech.SYSTEM_COCKPIT :
-                        // boink!
-                        en.crew.setDead(true);
-                        desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
-                        break;
-                    case Mech.SYSTEM_ENGINE :
-                        if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 2) {
-                            // third engine hit
-                            en.setDoomed(true);
-                            desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
-                        }
-                        break;
-                    case Mech.SYSTEM_GYRO :
-                        if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
-                            // gyro destroyed
-                            pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FALL, "gyro destroyed"));
-                        } else {
-                            // first gyro hit
-                            pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                        }
-                        break;
-                    case Mech.ACTUATOR_UPPER_LEG :
-                    case Mech.ACTUATOR_LOWER_LEG :
-                    case Mech.ACTUATOR_FOOT :
-                        // leg/foot actuator piloting roll
-                        pilotRolls.addElement(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
-                        break;
-                    case Mech.ACTUATOR_HIP :
-                        // hip piloting roll
-                        pilotRolls.addElement(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
-                        break;
+                continue;
+            }
+            cs.setHit(true);
+            switch(cs.getType()) {
+            case CriticalSlot.TYPE_SYSTEM :
+                desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
+                switch(cs.getIndex()) {
+                case Mech.SYSTEM_COCKPIT :
+                    // boink!
+                    en.crew.setDead(true);
+                    desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
+                    break;
+                case Mech.SYSTEM_ENGINE :
+                    if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 2) {
+                        // third engine hit
+                        en.setDoomed(true);
+                        desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
                     }
                     break;
-                case CriticalSlot.TYPE_EQUIPMENT :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getEquipment(cs.getIndex()).getName() + ".";
-                    if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
-                        desc += explodeAmmo(en, loc, slot);
+                case Mech.SYSTEM_GYRO :
+                    if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
+                        // gyro destroyed
+                        pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FALL, "gyro destroyed"));
+                    } else {
+                        // first gyro hit
+                        pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
                     }
-                    en.getEquipment(cs.getIndex()).setHit(true);
+                    break;
+                case Mech.ACTUATOR_UPPER_LEG :
+                case Mech.ACTUATOR_LOWER_LEG :
+                case Mech.ACTUATOR_FOOT :
+                    // leg/foot actuator piloting roll
+                    pilotRolls.addElement(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                    break;
+                case Mech.ACTUATOR_HIP :
+                    // hip piloting roll
+                    pilotRolls.addElement(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
                     break;
                 }
-                hits--;
-//                System.err.println("s: critical loop, " + hits + " remaining");
+                break;
+            case CriticalSlot.TYPE_EQUIPMENT :
+                desc += "\n            <<<CRITICAL HIT>>> on " + en.getEquipment(cs.getIndex()).getDesc() + ".";
+                if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
+                    desc += explodeAmmo(en, loc, slot);
+                }
+                en.getEquipment(cs.getIndex()).setHit(true);
+                break;
             }
+            hits--;
+//                System.err.println("s: critical loop, " + hits + " remaining");
         }
 
         return desc;
@@ -2639,15 +2637,8 @@ public class Server
         if (en.hasRearArmor(loc)) {
             en.setArmor(Entity.ARMOR_DOOMED, loc, true);
         }
-        // weapons marked missing
-        for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getLocation() == loc) {
-                mounted.setMissing(true);
-            }
-        }
-        // ammo marked missing
-        for (Enumeration i = en.getAmmo(); i.hasMoreElements();) {
+        // equipment marked missing
+        for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if (mounted.getLocation() == loc) {
                 mounted.setMissing(true);

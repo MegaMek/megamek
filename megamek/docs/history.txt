@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.43 (CVS)
+v0.29.43 (2004-08-01 9:15pm)
 + Extra light woods hex in Citytech board.
 + RFE 959014 working again.
 + Dedicated server now loads game options from the xml file.

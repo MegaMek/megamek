@@ -485,42 +485,67 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshEntities() {
         lisEntities.removeAll();
         int listIndex = 0;
-        String TreeSet = "";
-        String TreeView = "";
+        String strTreeSet = "";
+        String strTreeView = "";
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             if(entity.hasC3i()) {
-                TreeSet = "";
-                if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
-                TreeView = " (" + entity.getC3NetId() + ")";
+                strTreeSet = "";
+                if(entity.calculateFreeC3Nodes() == 5) strTreeSet = "**";
+                strTreeView = " (" + entity.getC3NetId() + ")";
             }
             else if(entity.hasC3()) {
                 if(entity.getC3Master() == null) {
                     if(entity.hasC3S())
-                        TreeSet = "***";
+                        strTreeSet = "***";
                     else
-                        TreeSet = "*";
-                    TreeView = "";
+                        strTreeSet = "*";
+                    strTreeView = "";
                 }
                 else {
-                    TreeSet = "";
+                    strTreeSet = "";
                     if(!entity.C3MasterIs(entity)) {
-                        TreeSet = ">";
+                        strTreeSet = ">";
                         if(entity.getC3Master().getC3Master() != null && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
-                            TreeSet = ">>";
-                        TreeView = " -> " + entity.getC3Master().getDisplayName();
+                            strTreeSet = ">>";
+                        strTreeView = " -> " + entity.getC3Master().getDisplayName();
                     }
                 }
             }
             else {
-                TreeSet = "";
-                TreeView = "";
+                strTreeSet = "";
+                strTreeView = "";
+            }            
+
+            // Handle the "Blind Drop" option.
+            if ( !entity.getOwner().equals(client.getLocalPlayer()) &&
+                 client.game.getOptions().booleanOption("blind_drop") )
+            {
+                int weigth = entity.getWeightClass();
+                String weight = "";
+                switch (weigth)
+                {
+                    case Entity.WEIGHT_LIGHT   : weight = "Light";   break;
+                    case Entity.WEIGHT_MEDIUM  : weight = "Medium";  break;
+                    case Entity.WEIGHT_HEAVY   : weight = "Heavy";   break;
+                    case Entity.WEIGHT_ASSAULT : weight = "Assault"; break;
+                }
+            
+                lisEntities.add(entity.getOwner().getName() 
+                + " (" + entity.getCrew().getGunnery()
+                + "/" + entity.getCrew().getPiloting() + " pilot)"
+                + " Class: " + weight);
             }
-            lisEntities.add(TreeSet + entity.getDisplayName()
-            + " (" + entity.getCrew().getGunnery()
-            + "/" + entity.getCrew().getPiloting() + " pilot)"
-            + " BV=" + entity.calculateBattleValue() + TreeView);
+            else
+            {
+                lisEntities.add(strTreeSet + entity.getDisplayName()
+                + " (" + entity.getCrew().getGunnery()
+                + "/" + entity.getCrew().getPiloting() + " pilot)"
+                + " BV=" + entity.calculateBattleValue() + strTreeView);
+            }
+            
+            
             entityCorrespondance[listIndex++] = entity.getId();
         }
         boolean unitListEmpty = ( 0 == lisEntities.getItemCount() );
@@ -737,6 +762,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     public void gameNewSettings(GameEvent ev) {
         refreshGameSettings();
         refreshBoardSettings();
+        refreshEntities();
     }
     
     //
@@ -752,7 +778,18 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == lisEntities) {
             boolean selected = lisEntities.getSelectedIndex() != -1;
             butCustom.setEnabled(selected);
-            butMechReadout.setEnabled(selected);
+
+            // Handle "Blind drop" option.
+            if ( selected &&
+                 client.game.getOptions().booleanOption("blind_drop") ) {
+                Entity entity = client.game.getEntity
+                    ( entityCorrespondance[lisEntities.getSelectedIndex()] );
+                butMechReadout.setEnabled
+                    ( entity.getOwner().equals(client.getLocalPlayer()) );
+            } else {
+                butMechReadout.setEnabled(selected);
+            }
+
             butDelete.setEnabled(selected);
         }
         

@@ -121,13 +121,14 @@ public class Client implements Runnable {
             ((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
         }
 
-        try {
-            serverlog.close();
-        } catch (IOException e) {
-            System.err.print("Exception closing logfile: ");
-            e.printStackTrace();
-        };
-
+        if (serverlog != null) {
+            try {
+                serverlog.close();
+            } catch (IOException e) {
+                System.err.print("Exception closing logfile: ");
+                e.printStackTrace();
+            };
+        }
         System.out.println("client: died");
         
     }
@@ -679,19 +680,19 @@ public class Client implements Runnable {
             Minefield mf = (Minefield) minefields.elementAt(i);
             game.addMinefield(mf);
         }
-		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+      processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveRevealMinefield(Packet packet) {
         Minefield mf = (Minefield) packet.getObject(0);
         game.addMinefield(mf);
-		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
         Minefield mf = (Minefield) packet.getObject(0);
         game.removeMinefield(mf);
-		processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
+        processGameEvent(new GameEvent(this, GameEvent.GAME_BOARD_CHANGE, null, ""));
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
@@ -722,12 +723,18 @@ public class Client implements Runnable {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setSecondaryFacing(tta.getFacing());
-				game.board.processBoardEvent(new BoardEvent(game.board, entity.getPosition(), entity, BoardEvent.BOARD_CHANGED_ENTITY, 0)); //XXX
+                game.board.processBoardEvent(new BoardEvent(
+                                       game.board, entity.getPosition(),
+                                       entity,
+                                       BoardEvent.BOARD_CHANGED_ENTITY, 0));
             } else if (ea instanceof FlipArmsAction && game.hasEntity(entityId)) {
                 FlipArmsAction faa = (FlipArmsAction) ea;
                 Entity entity = game.getEntity(entityId);
                 entity.setArmsFlipped(faa.getIsFlipped());
-				game.board.processBoardEvent(new BoardEvent(game.board, entity.getPosition(), entity, BoardEvent.BOARD_CHANGED_ENTITY, 0)); //XXX
+                game.board.processBoardEvent(new BoardEvent(
+                                       game.board, entity.getPosition(),
+                                       entity,
+                                       BoardEvent.BOARD_CHANGED_ENTITY, 0));
             } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
@@ -738,7 +745,9 @@ public class Client implements Runnable {
                     Entity entity = game.getEntity(clubAct.getEntityId());
                     clubAct.setClub(Compute.clubMechHas(entity));
                 }
-                game.board.processBoardEvent(new BoardEvent(ea, null, null, BoardEvent.BOARD_NEW_ATTACK, 0));
+                game.board.processBoardEvent(new BoardEvent(
+                                       ea, null, null,
+                                       BoardEvent.BOARD_NEW_ATTACK, 0));
             }
 
             if (addAction) {

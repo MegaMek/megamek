@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.9-dev
+v 0.29.9 (08-31-03, 10pm)
 + Fixed bug 781250 and cleaned up MASC code a bit
 + RFE 795292: Added "data/hexes/shrubbery.txt" for "maptileset" in MegaMek.cfg
 + Finally located a copy of the source for TinyXML.

@@ -24,6 +24,7 @@ import java.io.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.util.Distractable;
 import megamek.client.util.widget.*;
 
 public class Client extends Panel
@@ -62,7 +63,7 @@ public class Client extends Panel
     public String               eotr;
 
     // keep me
-    public ChatterBox           cb;
+    private ChatterBox          cb;
     public BoardView1           bv;
     public BoardComponent       bc;
     public Dialog               mechW;
@@ -99,7 +100,28 @@ public class Client extends Panel
      */
     AudioClip bingClip = null;
 
-	/**
+    /** Map each phase to the name of the card for the main display area. */
+    private Hashtable mainNames = new Hashtable();
+
+    /** The <code>Panel</code> containing the main display area. */
+    private Panel panMain = new Panel();
+
+    /** The <code>CardLayout</code> of the main display area. */
+    private CardLayout cardsMain = new CardLayout();
+
+    /** Map each phase to the name of the card for the secondary area. */
+    private Hashtable secondaryNames = new Hashtable();
+
+    /** The <code>Panel</code> containing the secondary display area. */
+    private Panel panSecondary = new Panel();
+
+    /** The <code>CardLayout</code> of the secondary display area. */
+    private CardLayout cardsSecondary = new CardLayout();
+
+    /** Map phase component names to phase component objects. */
+    private Hashtable phaseComponents = new Hashtable();
+
+    /**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
      *
@@ -147,6 +169,13 @@ public class Client extends Panel
      */
     public Client(String playername) {
         super(new BorderLayout());
+        panMain.setLayout( cardsMain );
+        panSecondary.setLayout( cardsSecondary );
+        Panel panDisplay = new Panel( new BorderLayout() );
+        panDisplay.add( panMain, BorderLayout.CENTER );
+        panDisplay.add( panSecondary, BorderLayout.SOUTH );
+        this.add( panDisplay, BorderLayout.CENTER );
+
         this.name = playername;
 
         Settings.load();
@@ -163,10 +192,20 @@ public class Client extends Panel
 
         initializeFrame();
         initializeDialogs();
+        this.add( cb.getComponent(), BorderLayout.SOUTH );
         changePhase(Game.PHASE_UNKNOWN);
         layoutFrame();
 
         frame.setVisible(true);
+    }
+
+    /**
+     * Display a system message in the chat box.
+     *
+     * @param   message the <code>String</code> message to be shown.
+     */
+    public void systemMessage( String message ) {
+        this.cb.systemMessage( message );
     }
 
     /**
@@ -187,9 +226,9 @@ public class Client extends Panel
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-		frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
+        frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
-		// when frame closes, save settings and clean up.
+        // when frame closes, save settings and clean up.
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
@@ -197,6 +236,7 @@ public class Client extends Panel
                 die();
             }
         });
+
     }
 
     /**
@@ -451,6 +491,25 @@ public class Client extends Panel
         connected = false;
         pump = null;
 
+        // Tell all the displays to remove themselves as listeners.
+        boolean reportHandled = false;
+        Enumeration names = phaseComponents.keys();
+        while ( names.hasMoreElements() ) {
+            Component component = (Component) phaseComponents.get
+                ( names.nextElement() );
+            if ( component instanceof ReportDisplay ) {
+                if ( reportHandled ) {
+                    continue;
+                } else {
+                    reportHandled = true;
+                }
+            }
+            if ( component instanceof Distractable ) {
+                ( (Distractable) component ).removeAllListeners();
+            }
+
+        } // Handle the next component
+
         // shut down threads & sockets
         try {
             frame.removeAll();
@@ -542,6 +601,14 @@ public class Client extends Panel
     }
 
     /**
+     * Returns an <code>Enumeration</code> of the entities that match
+     * the selection criteria.
+     */
+    public Enumeration getSelectedEntities( EntitySelector selector ) {
+        return game.getSelectedEntities( selector );
+    }
+
+    /**
      * Returns the number of first selectable entity
      */
     public int getFirstEntityNum() {
@@ -620,62 +687,45 @@ public class Client extends Panel
      * along with it.
      */
     protected void changePhase(int phase) {
-
-    	if ( curPanel instanceof BoardViewListener ) {
-    		bv.removeBoardViewListener((BoardViewListener) curPanel);
-    	}
-
-        if ( curPanel instanceof ActionListener ) {
-            menuBar.removeActionListener( (ActionListener) curPanel );
-        }
+        boolean showRerollButton = false;
 
         this.game.setPhase(phase);
 
-        bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
+        // Don't let the tooltip cover up anything during a report phase.
+        bv.hideTooltip();
 
-        // remove the current panel
-        curPanel = null;
-        this.removeAll();
-        doLayout();
+        // Swap to this phase's panel.
+        switchPanel( phase );
 
+        // Handle phase-specific items.
         switch(phase) {
         case Game.PHASE_LOUNGE :
-            switchPanel(new ChatLounge(this));
-           	game.reset();
+            game.reset();
             break;
         case Game.PHASE_STARTING_SCENARIO :
-            switchPanel(new Label("Starting scenario..."));
             sendDone(true);
             break;
         case Game.PHASE_EXCHANGE :
-            switchPanel(new Label("Transmitting game data..."));
             sendDone(true);
             break;
         case Game.PHASE_DEPLOY_MINEFIELDS :
-            switchPanel(new DeployMinefieldDisplay(this));
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
             break;
         case Game.PHASE_DEPLOYMENT :
-            switchPanel(new DeploymentDisplay(this));
-            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
             memDump( "entering deployment phase" );
             break;
         case Game.PHASE_MOVEMENT :
-            switchPanel(new MovementDisplay(this));
-            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
             memDump( "entering movement phase" );
             break;
         case Game.PHASE_FIRING :
-            switchPanel(new FiringDisplay(this));
-            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
@@ -684,8 +734,6 @@ public class Client extends Panel
         case Game.PHASE_PHYSICAL :
             game.resetActions();
             bv.refreshAttacks();
-            switchPanel(new PhysicalDisplay(this));
-            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
@@ -695,11 +743,13 @@ public class Client extends Panel
             game.resetActions();
             game.resetCharges();
             bv.clearAllAttacks();
+            showRerollButton = game.hasTacticalGenius( getLocalPlayer() );
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
         case Game.PHASE_VICTORY :
-            switchPanel(new ReportDisplay(this, game.showRerollInitiativeButton(getLocalPlayer())));
+            ( (ReportDisplay) curPanel ).showRerollButton( showRerollButton );
+
             setMapVisible(false);
 
             // nemchenk, 2004-01-01 -- hide MechDisplay at the end
@@ -707,21 +757,166 @@ public class Client extends Panel
 
             break;
         }
+
         menuBar.setPhase( phase );
+        this.cb.getComponent().setVisible(true);
         this.validate();
         this.doLayout();
         this.cb.moveToEnd();
         processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
     }
 
-    private void switchPanel(Component panel) {
-        if ( panel instanceof ActionListener ) {
-            menuBar.addActionListener( (ActionListener) panel );
+    private void switchPanel(int phase) {
+        // Clear the old panel's listeners.
+        if ( curPanel instanceof BoardViewListener ) {
+            bv.removeBoardViewListener( (BoardViewListener) curPanel );
         }
-        // TODO: reuse existing panels.
-        curPanel = panel;
-        this.add(curPanel);
+        if ( curPanel instanceof ActionListener ) {
+            menuBar.removeActionListener( (ActionListener) curPanel );
+        }
+        if ( curPanel instanceof Distractable ) {
+            ( (Distractable) curPanel ).setIgnoringEvents( true );
+        }
+
+        // Get the new panel.
+        String name = String.valueOf( phase );
+        curPanel = (Component) phaseComponents.get( name );
+        if ( null == curPanel ) {
+            curPanel = initializePanel( phase );
+        }
+        cardsMain.show( panMain, mainNames.get(name).toString() );
+        cardsSecondary.show( panSecondary,
+                             secondaryNames.get(name).toString() );
+
+        // Set the new panel's listeners
+    	if ( curPanel instanceof BoardViewListener ) {
+            bv.addBoardViewListener( (BoardViewListener) curPanel );
+    	}
+        if ( curPanel instanceof ActionListener ) {
+            menuBar.addActionListener( (ActionListener) curPanel );
+        }
+        if ( curPanel instanceof Distractable ) {
+            ( (Distractable) curPanel ).setIgnoringEvents( false );
+        }
+        if ( curPanel instanceof DoneButtoned ) {
+            Button done = ( (DoneButtoned) curPanel ).getDoneButton();
+            this.cb.setDoneButton( done );
+            done.setVisible( true );
+        }
+        if ( curPanel instanceof ReportDisplay ) {
+            ( (ReportDisplay) curPanel ).resetReadyButton();
+        }
+
+        // Make the new panel the focus.
         curPanel.requestFocus();
+    }
+
+    private Component initializePanel( int phase ) {
+
+        // Create the components for this phase.
+        String name = String.valueOf( phase );
+        Component component = null;
+        String secondary = null;
+        String main = null;
+        switch ( phase ) {
+        case Game.PHASE_LOUNGE:
+            component = new ChatLounge(this);
+            main = "ChatLounge";
+            secondary = main;
+            panMain.add( main, component );
+            panSecondary.add
+                ( secondary, ((ChatLounge) component).getSecondaryDisplay() );
+            break;
+        case Game.PHASE_STARTING_SCENARIO:
+            component = new Label("Starting scenario...");
+            main = "Label-StartingScenario";
+            secondary = main;
+            panMain.add( main, component );
+            panSecondary.add( secondary, new Label("") );
+            break;
+        case Game.PHASE_EXCHANGE:
+            component = new Label("Transmitting game data...");
+            main = "Label-Exchange";
+            secondary = main;
+            panMain.add( main, component );
+            panSecondary.add( secondary, new Label("") );
+            break;
+        case Game.PHASE_DEPLOY_MINEFIELDS:
+            component = new DeployMinefieldDisplay(this);
+            main = "BoardView";
+            secondary = "DeployMinefieldDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_DEPLOYMENT:
+            component = new DeploymentDisplay(this);
+            main = "BoardView";
+            secondary = "DeploymentDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_MOVEMENT:
+            component = new MovementDisplay(this);
+            main = "BoardView";
+            secondary = "MovementDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_FIRING:
+            component = new FiringDisplay(this);
+            main = "BoardView";
+            secondary = "FiringDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_PHYSICAL:
+            component = new PhysicalDisplay(this);
+            main = "BoardView";
+            secondary = "PhysicalDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_INITIATIVE:
+            component = new ReportDisplay
+                ( this, game.hasTacticalGenius(getLocalPlayer()) );
+            main = "ReportDisplay";
+            secondary = main;
+            panMain.add( main, component );
+            panSecondary.add
+                ( secondary, ((ReportDisplay) component).getSecondaryDisplay() );
+            break;
+        case Game.PHASE_MOVEMENT_REPORT:
+        case Game.PHASE_FIRING_REPORT:
+        case Game.PHASE_END:
+        case Game.PHASE_VICTORY:
+            // Reuse the ReportDisplay for other phases.
+            component = (Component) phaseComponents.get
+                ( String.valueOf(Game.PHASE_INITIATIVE) );
+            main = "ReportDisplay";
+            secondary = main;
+            break;
+        default:
+            component = new Label( "Waiting on the server..." );
+            main = "Label-Default";
+            secondary = main;
+            panMain.add( main, component );
+            panSecondary.add( secondary, new Label("") );
+        }
+        phaseComponents.put( name, component );
+        mainNames.put( name, main );
+        secondaryNames.put( name, secondary );
+
+        return component;
     }
 
     protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -941,10 +1136,52 @@ public class Client extends Panel
      * is it my turn?
      */
     public boolean isMyTurn() {
-        return game.getTurn() != null && game.getTurn().getPlayerNum() == local_pn;
+        return game.getTurn() != null &&
+            game.getTurn().isValid( local_pn, game );
     }
 
     /**
+     * Can I unload entities stranded on immobile transports?
+     */
+    public boolean canUnloadStranded() {
+        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn &&
+            game.getTurn().isValid( local_pn, game );
+    }
+
+    /**
+     * Send command to unload stranded entities to the server
+     */
+    public void sendUnloadStranded(int[] entityIds)
+    {
+        Object[] data = new Object[1];
+        data[0] = entityIds;
+        send(new Packet(Packet.COMMAND_UNLOAD_STRANDED, data));
+    }
+    
+    /**
+     * Pops up a dialog box giving the player a series of choices that
+     * are not mutually exclusive.
+     * 
+     * @param   title the <code>String</code> title of the dialog box.
+     * @param   question the <code>String</code> question that has a
+     *          "Yes" or "No" answer.  The question will be split across
+     *          multiple line on the '\n' characters.
+     * @param   choices the array of <code>String</code> choices that
+     *          the player can select from.
+     * @return  The array of the <code>int</code> indexes of the from the
+     *          input array that match the selected choices.  If no choices
+     *          were available, if the player did not select a choice, or
+     *          if the player canceled the choice, a <code>null</code> value
+     *          is returned.
+     */
+    public int[] doChoiceDialog( String title, String question,
+                                   String[] choices ) {
+        ChoiceDialog choice = new ChoiceDialog(frame,title,question,choices);
+        choice.show();
+        return choice.getChoices();
+    }
+
+    /** 
      * Change whose turn it is.
      */
     protected void changeTurnIndex(int index) {
@@ -974,7 +1211,7 @@ public class Client extends Panel
         ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
         confirm.show();
         return confirm.getAnswer();
-    };
+    }
     
     /**
      * Pops up a dialog box asking a yes/no question
@@ -997,7 +1234,7 @@ public class Client extends Panel
         ConfirmDialog confirm = new ConfirmDialog(frame,title,question,true);
         confirm.show();
         return confirm;
-    };
+    }
 
     /**
      * Send mode-change data to the server
@@ -1132,8 +1369,7 @@ public class Client extends Panel
      * Sends a "reroll initiative" message to the server.
      */
     public void sendRerollInitiativeRequest() {
-        Player player = game.getPlayer( local_pn );
-        send(new Packet(Packet.COMMAND_REROLL_INITIATIVE, player));
+        send(new Packet(Packet.COMMAND_REROLL_INITIATIVE));
     }
     
     /**
@@ -1570,6 +1806,12 @@ public class Client extends Panel
                 game.setVictoryTeam(c.getIntValue(2));
                 // save victory report
                 saveEntityStatus(sReport);
+
+                // Clean up the board settings.
+                this.game.board.select(null);
+                this.game.board.highlight(null);
+                this.game.board.cursor(null);
+                this.bv.clearMovementData();
 
                 // Make a list of the player's living units.
                 Vector living = game.getPlayerEntities( getLocalPlayer() );

@@ -49,10 +49,11 @@ public class Game implements Serializable
     public static final int PHASE_VICTORY           = 11;
     public static final int PHASE_DEPLOY_MINEFIELDS = 13;
     public static final int PHASE_STARTING_SCENARIO = 14;
+
     /**
-     * The number of Infantry platoons/Protomechs that have to move for
-     * every Mek or Vehicle, if the "inf_and_protos_move_multi" option
-     * is selected.
+     * The number of Infantry units/Protomechs that have to move for every
+     * Mek or Vehicle, if the "inf_move_multi" or the "protos_move_multi"
+     * option is selected.
      */
     public static final int INF_AND_PROTOS_MOVE_MULTI          = 3;
 
@@ -256,12 +257,12 @@ public class Game implements Serializable
      * Return an enumeration of teams in the game
      */
     public Enumeration getTeams() {
-  return teams.elements();
+        return teams.elements();
     }
 
     /** Return the teams vector */
     public Vector getTeamsVector() {
-  return teams;
+        return teams;
     }
 
     /**
@@ -1211,31 +1212,36 @@ public class Game implements Serializable
     }
 
     /**
-     * THIS METHOD NOT USED ANYWHERE
-     * Determines if the indicated player has any remaining selectable infanty.
+     * Determines if the indicated entity is stranded on a transport that
+     * can't move.
+     * <p/>
+     * According to <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">
+     * Randall Bills</a>, the "minimum move" rule allow stranded units to
+     * dismount at the start of the turn.
      *
-     * @param playerId - the <code>int</code> ID of the player
-     * @return  <code>true</code> if the player has any remaining
-     *    active infantry, <code>false</code> otherwise.
+     * @param   entity the <code>Entity</code> that may be stranded
+     * @return  <code>true</code> if the entity is stranded
+     *          <code>false</code> otherwise.
      */
-    public boolean hasInfantry( int playerId ) {
-  Player player = this.getPlayer( playerId );
+    public boolean isEntityStranded( Entity entity ) {
 
-        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            if ( player.equals(entity.getOwner()) &&
-     entity.isSelectableThisTurn(this) &&
-     entity instanceof Infantry ) {
+        // Is the entity being transported?
+        final int transportId = entity.getTransportId();
+        Entity transport = getEntity( transportId );
+        if ( Entity.NONE != transportId && null != transport ) {
+
+            // Can that transport unload the unit?
+            if ( transport.isImmobile() || 0 == transport.getWalkMP() ) {
                 return true;
             }
-        }
+        }          
         return false;
     }
 
     /**
-     * Returns the number of remaining selectable infantry/protomechs owned by a player.
+     * Returns the number of remaining selectable infantry owned by a player.
      */
-    public int infantryAndProtomechsLeft(int playerId) {
+    public int getInfantryLeft(int playerId) {
         Player player = this.getPlayer( playerId );
         int remaining = 0;
         
@@ -1243,7 +1249,26 @@ public class Game implements Serializable
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
                  entity.isSelectableThisTurn(this) &&
-                 (entity instanceof Infantry || entity instanceof Protomech)) {
+                 entity instanceof Infantry ) {
+                remaining++;
+            }          
+        }
+        
+        return remaining;
+    }
+
+    /**
+     * Returns the number of remaining selectable Protomechs owned by a player.
+     */
+    public int getProtomechsLeft(int playerId) {
+        Player player = this.getPlayer( playerId );
+        int remaining = 0;
+        
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if ( player.equals(entity.getOwner()) &&
+                 entity.isSelectableThisTurn(this) &&
+                 entity instanceof Protomech ) {
                 remaining++;
             }
         }
@@ -1396,17 +1421,6 @@ public class Game implements Serializable
 
     public Vector getInitiativeRerollRequests() {
         return initiativeRerollRequests;
-    }
-
-    /** Used to determine whether a "Reroll" button should be
-     * displayed on the initiative ReportDisplay panel.
-     */
-    public boolean showRerollInitiativeButton(Player p) {
-        if (phase == Game.PHASE_INITIATIVE &&
-            hasTacticalGenius(p)) {
-            return true;
-        }
-        return false;
     }
 
     /** Adds a pending displacement attack to the list for this phase. */
@@ -1566,4 +1580,105 @@ public class Game implements Serializable
     public boolean isPlayerVictor(int playerId) {
         return isPlayerVictor(getPlayer(playerId));
     }
+
+    /**
+     * Get all <code>Entity</code>s that pass the given selection criteria.
+     *
+     * @param   selector the <code>EntitySelector</code> that implements
+     *          test that an entity must pass to be included.
+     *          This value may be <code>null</code> (in which case all
+     *          entities in the game will be returned).
+     * @return  an <code>Enumeration</code> of all entities that the
+     *          selector accepts.  This value will not be <code>null</code>
+     *          but it may be empty.
+     */
+    public Enumeration getSelectedEntities( EntitySelector selector ) {
+        Enumeration retVal;
+
+        // If no selector was supplied, return all entities.
+        if ( null == selector ) {
+            retVal = this.getEntities();
+        }
+
+        // Otherwise, return an anonymous Enumeration
+        // that selects entities in this game.
+        else {
+            final EntitySelector entry = selector;
+            retVal = new Enumeration() {
+                    private EntitySelector selector = entry;
+                    private Entity current = null;
+                    private Enumeration iter = Game.this.getEntities();
+
+                    // Do any more entities meet the selection criteria?
+                    public boolean hasMoreElements() {
+                        // See if we have a pre-approved entity.
+                        if ( null == current ) {
+
+                            // Find the first acceptable entity
+                            while ( null == current &&
+                                    iter.hasMoreElements() ) {
+                                current = (Entity) iter.nextElement();
+                                if ( !selector.accept( current ) ) {
+                                    current = null;
+                                }
+                            }
+                        }
+                        return ( null != current );
+                    }
+
+                    // Get the next entity that meets the selection criteria.
+                    public Object nextElement() {
+                        // Pre-approve an entity.
+                        if ( !this.hasMoreElements() ) {
+                            return null;
+                        }
+
+                        // Use the pre-approved entity, and null out our reference.
+                        Entity next = this.current;
+                        this.current = null;
+                        return next;
+                    }
+                };
+
+        } // End use-selector
+
+        // Return the selected entities.
+        return retVal;
+
+    }
+
+    /**
+     * Count all <code>Entity</code>s that pass the given selection criteria.
+     *
+     * @param   selector the <code>EntitySelector</code> that implements
+     *          test that an entity must pass to be included.
+     *          This value may be <code>null</code> (in which case the
+     *          count of all entities in the game will be returned).
+     * @return  the <code>int</code> count of all entities that the
+     *          selector accepts.  This value will not be <code>null</code>
+     *          but it may be empty.
+     */
+    public int getSelectedEntityCount( EntitySelector selector ) {
+        int retVal = 0;
+
+        // If no selector was supplied, return the count of all game entities.
+        if ( null == selector ) {
+            retVal = this.getNoOfEntities();
+        }
+
+        // Otherwise, count the entities that meet the selection criteria.
+        else {
+            Enumeration iter = this.getEntities();
+            while ( iter.hasMoreElements() ) {
+                if ( selector.accept((Entity) iter.nextElement()) ) {
+                    retVal++;
+                }
+            }
+
+        } // End use-selector
+
+        // Return the number of selected entities.
+        return retVal;
+    }
+
 }

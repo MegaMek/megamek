@@ -1093,8 +1093,9 @@ class SystemPanel
             Mounted m = getSelectedEquipment();
 
             boolean bOwner = (client.getLocalPlayer() == en.getOwner());
-            if (m != null && bOwner && m.getType() instanceof AmmoType
-                && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
+            if ( m != null && bOwner && m.getType() instanceof AmmoType
+                 && Game.PHASE_DEPLOYMENT != client.game.getPhase()
+                 && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive() ) {
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && bOwner && m.getType().hasModes()) {
@@ -1121,10 +1122,10 @@ class SystemPanel
 
                 // notify the player
                 if (m.getType().hasInstantModeSwitch()) {
-                    client.cb.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+                    client.systemMessage("Switched " + m.getName() + " to " + m.curMode());
                 }
                 else {
-                    client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
+                    client.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
                             " at end of turn.");
                 }
                 displaySlots();

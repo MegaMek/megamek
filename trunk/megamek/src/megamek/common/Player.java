@@ -57,11 +57,7 @@ public final class Player extends TurnOrdered
     // these are game-specific, and maybe should be seperate from the player object
     private int             startingPos = 0;
 
-    private int num_mechs    = 0;
-    private int num_tanks    = 0;
-    private int num_infantry_and_protomechs = 0;
-
-	// number of minefields
+    // number of minefields
     private int num_mf_conv  = 0;
     private int num_mf_cmd   = 0;
     private int num_mf_vibra = 0;
@@ -152,45 +148,6 @@ public final class Player extends TurnOrdered
     
     public String getCamoFileName() {
       return camoFileName;
-    }
-
-    public void resetMechCount() {
-        num_mechs = 0;
-    }
-
-    public void resetTankCount() {
-        num_tanks = 0;
-    }
-
-    public void resetInfantryAndProtomechCount() {
-        num_infantry_and_protomechs = 0;
-    }
-
-    public int incrementMechCount() {
-        return ++num_mechs;
-    }
-
-    public int incrementTankCount() {
-        return ++num_tanks;
-    }
-
-    public int incrementInfantryAndProtomechCount() {
-        return ++num_infantry_and_protomechs;
-    }
-
-    public void updateTurnCount()
-    {
-        // This assumes that all unit counts are correct
-        boolean infAndProtosMulti = game.getOptions().booleanOption("inf_and_protos_move_multi");
-
-        if (infAndProtosMulti)
-            turns_infantry_and_protomechs = (int)Math.ceil( ((double)num_infantry_and_protomechs) /
-                                             ((double)Game.INF_AND_PROTOS_MOVE_MULTI) );
-        else
-            turns_infantry_and_protomechs = num_infantry_and_protomechs;
-
-        turns_tank = num_tanks;
-        turns_mech = num_mechs;
     }
 
     public Player(int id, String name) {

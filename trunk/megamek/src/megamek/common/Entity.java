@@ -211,6 +211,15 @@ public abstract class Entity
     private boolean deployed = false;
 
     /**
+     * The unit number of this entity.  All entities which are
+     * members of the same low-level unit are expected to share
+     * the same unit number.  Future implementations may store
+     * multiple unit designations in the same unit number (e.g.
+     * battalion, company, platoon, and lance).
+     */
+    private char unitNumber     = (char) Entity.NONE;
+
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -460,6 +469,8 @@ public abstract class Entity
     /**
      * Returns true if this entity is selectable for action.  Transported
      * entities can not be selected.
+     * <p/>
+     * TODO : remove the input parameter to this function.
      */
     public boolean isSelectableThisTurn(Game game) {
         return !done && (conveyance == Entity.NONE) &&
@@ -3376,4 +3387,27 @@ public abstract class Entity
     public boolean isSelected() {
     	return selected;
     }
+
+    /**
+     * Set the unit number for this entity.
+     *
+     * @param   unit the <code>char</code> number for the low-level unit
+     *          that this entity belongs to.  This entity can be removed from
+     *          its unit by passing the value, <code>(char) Entity.NONE</code>.
+     */
+    public void setUnitNumber( char unit ) {
+        this.unitNumber = unit;
+    }
+
+    /**
+     * Get the unit number of this entity.
+     *
+     * @return  the <code>char</code> unit number.  If the entity does
+     *          not belong to a unit, <code>(char) Entity.NONE</code>
+     *          will be returned.
+     */
+    public char getUnitNumber() {
+        return this.unitNumber;
+    }
+
 }

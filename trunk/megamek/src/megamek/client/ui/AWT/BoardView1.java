@@ -89,7 +89,7 @@ public class BoardView1
     private boolean isTipPossible = false;
     private long lastIdle;
 
-    private TilesetManager tileManager = new TilesetManager(this);
+    private TilesetManager tileManager = null;
     
     // polygons for a few things
     private Polygon              hexPoly;
@@ -129,6 +129,8 @@ public class BoardView1
     public BoardView1(Game game, Frame frame) throws java.io.IOException {
         this.game = game;
         this.frame = frame;
+
+        tileManager = new TilesetManager(this);
 
         game.getBoard().addBoardListener(this);
         scroller.start();
@@ -218,9 +220,9 @@ public class BoardView1
         offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
-			g.drawString("loading images...", 20, 50);
+            g.drawString("loading images...", 20, 50);
             if (!tileManager.isStarted()) {
-                System.out.println("boardview1: load all images called");
+                System.out.println("boardview1: loadinf images for board");
                 tileManager.loadNeededImages(game);
             }
             return;
@@ -1017,6 +1019,7 @@ public class BoardView1
 
 
     public void centerOnHex(Coords c) {
+        if ( null == c ) return;
         scroll.setLocation(getHexLocation(c));
         scroll.translate(42 - (view.width / 2), 36 - (view.height / 2));
 
@@ -1595,13 +1598,16 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
+        if ( null == me.getPoint() ) {
+            return;
+        }
         isTipPossible = false;
-		for (int i = 0; i < displayables.size(); i++) {
-			Displayable disp = (Displayable) displayables.elementAt(i);
-			if (disp.isHit(me.getPoint(), backSize)) {
-				return;
-			}
-		}
+        for (int i = 0; i < displayables.size(); i++) {
+            Displayable disp = (Displayable) displayables.elementAt(i);
+            if (disp.isHit(me.getPoint(), backSize)) {
+                return;
+            }
+        }
         isScrolling = true;
         if (isTipShowing()) {
             hideTooltip();

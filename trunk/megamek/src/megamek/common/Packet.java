@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -33,6 +33,7 @@ implements Serializable {
     public static final int        COMMAND_PLAYER_REMOVE        = 5;
     public static final int        COMMAND_PLAYER_UPDATE        = 6;
     public static final int        COMMAND_PLAYER_READY         = 7;
+    public static final int        COMMAND_PLAYER_DISMOUNT      = 40;  // reorder me
     
     public static final int        COMMAND_CHAT                 = 8;
     
@@ -72,7 +73,8 @@ implements Serializable {
     public static final int        COMMAND_REMOVE_MINEFIELD     = 37;
     public static final int        COMMAND_SENDING_MINEFIELDS   = 38;
 
-    public static final int        COMMAND_REROLL_INITIATIVE   = 39;    
+    public static final int        COMMAND_REROLL_INITIATIVE    = 39;    
+    public static final int        COMMAND_UNLOAD_STRANDED      = 40;    
     
     private int command;
     private Object[] data;

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -33,6 +33,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    soundMute;
     private Checkbox    showMapHexPopup;
     private TextField   tooltipDelay;
+    private Choice      unitStartChar;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -50,6 +51,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         this.setLayout( new GridLayout(0, 1) );
 
         // Add the setting controls.
+        Panel panSetting;
         minimapEnabled
             = new Checkbox( "The minimap can be shown." );
         this.add( minimapEnabled );
@@ -77,11 +79,24 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         showMapHexPopup
             = new Checkbox( "Show map hex popup." );
         this.add( showMapHexPopup );
-        Label labelShowMapHexPopup = new Label("Tooltip popup delay:");
-        this.add( labelShowMapHexPopup );
+        panSetting = new Panel();
         tooltipDelay
             = new TextField(4);
-        this.add( tooltipDelay );
+        panSetting.add( tooltipDelay );
+        panSetting.add( new Label("Tooltip popup delay.") );
+        this.add( panSetting );
+        panSetting = new Panel();
+        unitStartChar
+            = new Choice();
+        // Add option for "A, B, C, D..."
+        unitStartChar.addItem( "\u0041, \u0042, \u0043, \u0044..." );
+        // Add option for "ALPHA, BETA, GAMMA, DELTA..."
+        unitStartChar.addItem( "\u0391, \u0392, \u0393, \u0394..." );
+        // Add option for "alpha, beta, gamma, delta..."
+        unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
+        panSetting.add( unitStartChar );
+        panSetting.add( new Label("ProtoMech unit codes.") );
+        this.add( panSetting );
 
         // Add the dialog controls.
         Panel buttons = new Panel();
@@ -128,6 +143,16 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         soundMute.setState( Settings.soundMute );
         showMapHexPopup.setState( Settings.showMapHexPopup );
         tooltipDelay.setText( Integer.toString(Settings.tooltipDelay ) );
+
+        // Select the correct char set (give a nice default to start).
+        unitStartChar.select(0);
+        for ( int loop = 0; loop < unitStartChar.getItemCount(); loop++ ) {
+            if ( unitStartChar.getItem(loop).charAt(0) ==
+                 Settings.unitStartChar ) {
+                unitStartChar.select(loop);
+                break;
+            }
+        }
         super.show();
     }
 
@@ -152,6 +177,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.soundMute =      soundMute.getState();
         Settings.showMapHexPopup= showMapHexPopup.getState();
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
+        Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
         Settings.save();
         this.setVisible( false );
     }

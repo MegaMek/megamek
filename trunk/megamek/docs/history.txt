@@ -74,6 +74,7 @@ VERSION HISTORY:
 v (next)
 + implemented autosaving every turn and loading from saved games
 + bots can now attach to players in mid-game
++ Suvarov454's infantry patch applied
 
 v 0.27.0 (09-27-02, 3:00pm)
 + 574898: bots don't instantly logout with double-blind

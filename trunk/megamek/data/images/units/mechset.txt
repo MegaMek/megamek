@@ -23,6 +23,11 @@ mech "default_assault" "default_assault.gif"
 mech "default_quad" "default_quad.gif"
 mech "default_tank" "default_tank.gif"
 
+# by vestifex
+mech "default_infantry" "default_infantry.gif"
+mech "INF_M-*" "motorized_infantry.gif"
+mech "INF_J-*" "jump_infantry.gif"
+
 # put custom pictures here:
 
 # special variant pics

@@ -202,6 +202,16 @@ public class MovementDisplay
             panButtons.add(butFlee);
             panButtons.add(butMore);
             panButtons.add(butDone);
+
+	    // Disable DFA and Charge for Infantry.
+	    if ( ce() instanceof Infantry ) {
+		butDfa.setEnabled(false);
+		butCharge.setEnabled(false);
+	    } else {
+		butDfa.setEnabled(true);
+		butCharge.setEnabled(true);
+	    }
+
             break;
         }
         
@@ -212,6 +222,7 @@ public class MovementDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
+	boolean isInfantry;
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
@@ -221,14 +232,21 @@ public class MovementDisplay
         }
         // okay.
         this.cen = en;
+	isInfantry = (ce() instanceof Infantry);
         md = new MovementData();
         cmd = new MovementData();
         gear = Compute.GEAR_LAND;
         butWalk.setEnabled(ce().getWalkMP() > 0);
         butJump.setEnabled(ce().getJumpMP() > 0);
         butBackup.setEnabled(ce().getWalkMP() > 0);
+	// Infantry can't charge or DFA.
+	if ( isInfantry ) {
+	    butCharge.setEnabled(false);
+	    butDfa.setEnabled(false);
+	} else {
         butCharge.setEnabled(ce().getWalkMP() > 0);
         butDfa.setEnabled(ce().getJumpMP() > 0);
+	}
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
         
         if (ce().isProne()) {
@@ -555,6 +573,7 @@ public class MovementDisplay
             md.addStep(MovementData.STEP_FLEE);
             moveTo(md);
         }
+
     }
     
 

@@ -70,6 +70,9 @@ public class MechFileParser {
                 if (sType.equals("Tank")) {
                     loader = new BLKTankFile(bb);
                 }
+                else if (sType.equals("Infantry")) {
+                    loader = new BLKInfantryFile(bb);
+                }
                 else if (sType.equals("Mech")) {
                     loader = new BLKMechFile(bb);
                 }

@@ -28,6 +28,10 @@ public class WeaponType extends EquipmentType {
     public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
     public static final int     F_PPC           = 0x0008; //              "
     
+    // Need to distinguish infantry weapons from their bigger,
+    // vehicle- and mech-mounted cousins.
+    public static final int	F_INFANTRY	= 0x0F00; // there's no 0x0BAR
+    
     private int     heat;
     private int     damage;
     private int     rackSize; // or AC size, or whatever
@@ -96,6 +100,16 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSRM2());
         EquipmentType.addType(createSRM4());
         EquipmentType.addType(createSRM6());
+        
+	// Start of Infantry weapons (Level1)
+	EquipmentType.addType(createInfRifle());
+	EquipmentType.addType(createInfMG());
+	EquipmentType.addType(createInfSRM());
+	/* Need more detail on INF LRM.
+	EquipmentType.addType(createInfLRM());
+	*/
+	EquipmentType.addType(createInfLaser());
+	EquipmentType.addType(createInfFlamer());
         
         // Start of Inner Sphere Level2 weapons
         EquipmentType.addType(createISERPPC());
@@ -1883,6 +1897,138 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
+    public static WeaponType createInfRifle() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry Rifle";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry Rifle";
+        weapon.mtfName = "ISInfantryRifle";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_AC;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2; // No long range.
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
+    public static WeaponType createInfMG() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry MG";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry MG";
+        weapon.mtfName = "ISInfantryMG";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
+    public static WeaponType createInfSRM() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry SRM";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry SRM";
+        weapon.mtfName = "ISInfantrySRM";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
+    public static WeaponType createInfLRM() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry LRM";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry LRM";
+        weapon.mtfName = "ISInfantryLRM";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_LRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
+    public static WeaponType createInfLaser() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry Laser";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry Laser";
+        weapon.mtfName = "ISInfantryLaser";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
+    public static WeaponType createInfFlamer() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Infantry Flamer";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Infantry Flamer";
+        weapon.mtfName = "ISInfantryFlamer";
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2; // No long range.
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY;
+        weapon.bv = 4; // ???
+        
+        return weapon;
+    }
+
     public String toString() {
         return "WeaponType: " + name;
     }

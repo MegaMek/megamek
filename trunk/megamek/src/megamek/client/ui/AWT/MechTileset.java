@@ -39,6 +39,7 @@ public class MechTileset {
     private String ASSAULT_STRING = "default_assault";
     private String QUAD_STRING = "default_quad";
     private String TANK_STRING = "default_tank";
+    private String INF_STRING = "default_infantry";
     
     
     private MechEntry default_light;
@@ -47,6 +48,7 @@ public class MechTileset {
     private MechEntry default_assault;
     private MechEntry default_quad;
     private MechEntry default_tank;
+    private MechEntry default_inf;
     
     private HashMap exact = new HashMap();
     private HashMap wildcard = new HashMap();
@@ -90,6 +92,9 @@ public class MechTileset {
         }
         if (entity instanceof Tank) {
             return default_tank;
+        }
+        if (entity instanceof Infantry) {
+            return default_inf;
         }
         // weight?
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
@@ -139,6 +144,7 @@ public class MechTileset {
         default_assault = (MechEntry)exact.get(ASSAULT_STRING);
         default_quad = (MechEntry)exact.get(QUAD_STRING);
         default_tank = (MechEntry)exact.get(TANK_STRING);
+        default_inf = (MechEntry)exact.get(INF_STRING);
     }
     
     private void addEntry(String model, String imageName) {

@@ -1556,7 +1556,9 @@ public abstract class Entity
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
 
-            if (wtype.getAmmoType() != AmmoType.T_NA) {
+	    if ( wtype.getAmmoType() != AmmoType.T_NA &&
+		 (wtype.getFlags() & WeaponType.F_INFANTRY) !=
+		 WeaponType.F_INFANTRY ) { 
                 if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
                     loadWeapon(mounted);
                 }
@@ -1628,7 +1630,6 @@ public abstract class Entity
      * The maximum elevation change the entity can cross
      */
     public abstract int getMaxElevationChange();
-    
     
 }
 

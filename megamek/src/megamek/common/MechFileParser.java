@@ -185,11 +185,6 @@ public class MechFileParser {
 
         } // Check the next piece of equipment.
 
-        // Add BattleArmorHandles to OmniMechs.
-        if ( ent.isOmni() && ent instanceof Mech ) {
-            ent.addTransporter( new BattleArmorHandles() );
-        }
-
     } // End private void postLoadInit(Entity) throws EntityLoadingException
 
 

@@ -6,6 +6,7 @@ v 0.29.25 (CVS)
 + Data 887869: added all changes that coralbeach submitted (images by Vertigo)
 + Added test to confirm correctness of BoardEncoder.java.
 + Added marker in MechDisplay's weapon panel to note fired OS weapons.
++ Moved adding BattleArmorHandles from MechFileParser to Mech#setOmni(boolean)
 
 v 0.29.24 (2004-01-31 12:45pm)
 + V minor change (a bit more readable) to suvarov's fix for my AMS null vector :)

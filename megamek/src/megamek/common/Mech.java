@@ -219,7 +219,23 @@ public abstract class Mech
         }
         return false;
     }
-    
+
+    /**
+     * OmniMechs have handles for Battle Armor squads to latch onto. Please
+     * note, this method should only be called during this Mech's construction.
+     * <p/>
+     * Overrides <code>Entity#setOmni(boolean)</code>
+     */
+    protected void setOmni( boolean omni ) {
+
+        // Perform the superclass' action.
+        super.setOmni( omni );
+
+        // Add BattleArmorHandles to OmniMechs.
+        if ( omni ) {
+            this.addTransporter( new BattleArmorHandles() );
+        }
+    }
 
     /**
      * Returns the number of locations in the entity

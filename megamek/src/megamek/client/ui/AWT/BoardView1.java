@@ -924,10 +924,9 @@ public class BoardView1
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
         Vector newWrecks = new Vector();
         
-        Enumeration e = game.getGraveyardEntities();
+        Enumeration e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
         	Entity entity = (Entity) e.nextElement();
-        	System.out.println(entity.getShortName() + " is a wreck!");
         	if (!(entity instanceof Infantry)) {
 	        	WreckSprite ws = new WreckSprite(entity);
 	        	newWrecks.addElement(ws);

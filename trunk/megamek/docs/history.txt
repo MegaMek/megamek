@@ -120,7 +120,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.14-dev
+v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).
 + Infantry should be moving last again when the option is selected.
 + MovementData.Step.clearAllFlags() should be working now.

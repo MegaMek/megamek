@@ -504,26 +504,66 @@ scan:
     private void paintUnit (Graphics g, Entity entity, boolean border) {
         int baseX = entity.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
         int baseY = (2*entity.getPosition().y + 1 + entity.getPosition().x%2)* hexSideByCos30[zoom] + topMargin;
-        int [] xPoints = new int[3];
-        int [] yPoints = new int[3];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY - unitSize;
-        xPoints[1] = baseX - unitSize;
-        yPoints[1] = baseY + unitSize/2;
-        xPoints[2] = baseX + unitSize;
-        yPoints[2] = baseY + unitSize/2;
+        int [] xPoints;
+        int [] yPoints;
+
+        if (entity instanceof Mech) {
+            xPoints = new int[3];
+            yPoints = new int[3];
+            xPoints[0] = baseX;
+            yPoints[0] = baseY - unitSize;
+            xPoints[1] = baseX - unitSize;
+            yPoints[1] = baseY + unitSize / 2;
+            xPoints[2] = baseX + unitSize;
+            yPoints[2] = baseY + unitSize / 2;
+        }
+        else if (entity instanceof Tank) {
+            xPoints = new int[4];
+            yPoints = new int[4];
+            xPoints[0] = baseX - unitSize * 2 / 3;
+            yPoints[0] = baseY - unitSize * 2 / 3;
+            xPoints[1] = baseX - unitSize * 2 / 3;
+            yPoints[1] = baseY + unitSize * 2 / 3;
+            xPoints[2] = baseX + unitSize * 2 / 3;
+            yPoints[2] = baseY + unitSize * 2 / 3;
+            xPoints[3] = baseX + unitSize * 2 / 3;
+            yPoints[3] = baseY - unitSize * 2 / 3;
+        }
+        else if (entity instanceof Protomech) {
+            xPoints = new int[3];
+            yPoints = new int[3];
+            xPoints[0] = baseX;
+            yPoints[0] = baseY + unitSize;
+            xPoints[1] = baseX + unitSize;
+            yPoints[1] = baseY - unitSize / 2;
+            xPoints[2] = baseX - unitSize;
+            yPoints[2] = baseY - unitSize / 2;
+        }
+        // entity instanceof Infantry
+        else {
+            xPoints = new int[4];
+            yPoints = new int[4];
+            xPoints[0] = baseX;
+            yPoints[0] = baseY - unitSize;
+            xPoints[1] = baseX - unitSize;
+            yPoints[1] = baseY;
+            xPoints[2] = baseX;
+            yPoints[2] = baseY + unitSize;
+            xPoints[3] = baseX + unitSize;
+            yPoints[3] = baseY;
+        }
 
         g.setColor(entity.getOwner().getColor());
         if (! entity.isSelectableThisTurn(m_game)) {
             // entity has moved (or whatever) already
             g.setColor(g.getColor().darker());
         };
-        g.fillPolygon(xPoints,yPoints,3);
+        g.fillPolygon( xPoints, yPoints, xPoints.length );
 
         if (border) {
             Color oldColor = g.getColor();
             g.setColor(oldColor.darker().darker().darker());
-            g.drawPolygon(xPoints,yPoints,3);
+            g.drawPolygon( xPoints, yPoints, xPoints.length );
             g.setColor(oldColor);
         };
     }

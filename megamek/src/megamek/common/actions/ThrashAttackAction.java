@@ -126,4 +126,15 @@ public class ThrashAttackAction extends AbstractAttackAction {
 		return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "thrash attacks always hit");
     }
 
+    /**
+     * Damage caused by a successfull thrashing attack.
+     *
+     * @param   entity - the <code>Entity</code> conducting the thrash attack.
+     * @return  The <code>int</code> amount of damage caused by this attack.
+     */
+    public static int getThrashDamageFor( Entity entity ) {
+        int nDamage = Math.round( entity.getWeight() / 3.0f );
+        return nDamage;
+    }
+
 }

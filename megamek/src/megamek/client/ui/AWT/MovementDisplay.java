@@ -528,7 +528,7 @@ public class MovementDisplay
         PilotingRollData rollTarget;
         
         // Compile the move
-        md.compile();
+        md.compileLastStep();
 
         overallMoveType = md.getLastStepMovementType();
         

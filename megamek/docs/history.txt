@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.41 (CVS)
+v0.29.41 (2004-07-18 5:30pm)
 + Bug 985884: Attempt #2 at fixing this bug.
 + Track Kills for use in MegamekNET and in the end-of-game report.
 + Bug 991967: Magshot Gauss Rifles should not be able to start fires.

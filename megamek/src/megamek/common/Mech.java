@@ -117,6 +117,10 @@ public abstract class Mech
         setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
         setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+
+        // Player setting specify whether their Meks' automatic
+        // ejection systems are disabled by default or not.
+        this.autoEject = !Settings.defaultAutoejectDisabled;
     }
 
     public static int getInnerLocation(int location)

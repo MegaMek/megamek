@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -14,20 +14,15 @@
 
 package megamek.common;
 
-import java.util.*;
-
 /**
  * A type of mech or vehicle weapon.  There is only one instance of this
  * weapon for all weapons of this type.
  */
-public class Weapon
+public class WeaponType extends EquipmentType
 {
     public static final int     DAMAGE_MISSILE = -2;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
 
-    private String  name;
-    private String  mepName;
-        
     private int     heat;
     private int     damage;
     private int     rackSize; // or AC size, or whatever
@@ -38,28 +33,10 @@ public class Weapon
     private int     mediumRange;
     private int     longRange;
         
-    private float   tonnage;
-    private int     criticals;
-      
-    private int     bv; // battle value point system
-    
-    // static stuff:
-    private static Vector allWeapons = new Vector();
-    private static Hashtable weaponsByName = new Hashtable();
-    private static Hashtable weaponsByMepName = new Hashtable();
-    
-    private Weapon() {
+    private WeaponType() {
         ;
     }
     
-    public String getName() {
-        return name;
-    }
-  
-    public String getMepName() {
-        return mepName;
-    }
-  
     public int getHeat() {
         return heat;
     }
@@ -92,106 +69,39 @@ public class Weapon
         return longRange;
     }
     
-    public int getCriticals() {
-        return criticals;
-    }
-  
-    public int getBV() {
-        return bv;
-    }
-    
-    
     /**
-     * Add all the types of weapons we can create to the allWeapons list
+     * Add all the types of weapons we can create to the list
      */
-    private static void initializeAllWeapons() {
-        allWeapons.removeAllElements();
-        
+    public static void initializeTypes() {
         // all tech level 1 weapons
-        allWeapons.addElement(createFlamer());
-        allWeapons.addElement(createSmallLaser());
-        allWeapons.addElement(createMediumLaser());
-        allWeapons.addElement(createLargeLaser());
-        allWeapons.addElement(createPPC());
-        allWeapons.addElement(createAC2());
-        allWeapons.addElement(createAC5());
-        allWeapons.addElement(createAC10());
-        allWeapons.addElement(createAC20());
-        allWeapons.addElement(createMG());
-        allWeapons.addElement(createLRM5());
-        allWeapons.addElement(createLRM10());
-        allWeapons.addElement(createLRM15());
-        allWeapons.addElement(createLRM20());
-        allWeapons.addElement(createSRM2());
-        allWeapons.addElement(createSRM4());
-        allWeapons.addElement(createSRM6());
+        EquipmentType.addType(createFlamer());
+        EquipmentType.addType(createSmallLaser());
+        EquipmentType.addType(createMediumLaser());
+        EquipmentType.addType(createLargeLaser());
+        EquipmentType.addType(createPPC());
+        EquipmentType.addType(createAC2());
+        EquipmentType.addType(createAC5());
+        EquipmentType.addType(createAC10());
+        EquipmentType.addType(createAC20());
+        EquipmentType.addType(createMG());
+        EquipmentType.addType(createLRM5());
+        EquipmentType.addType(createLRM10());
+        EquipmentType.addType(createLRM15());
+        EquipmentType.addType(createLRM20());
+        EquipmentType.addType(createSRM2());
+        EquipmentType.addType(createSRM4());
+        EquipmentType.addType(createSRM6());
     }
-    
-    /**
-     * Initialize the table of weapons keyed by name
-     */
-    private static void initializeWeaponsByName() {
-        if (allWeapons.size() == 0) {
-            initializeAllWeapons();
-        }
-        
-        weaponsByName.clear();
-        
-        for (Enumeration i = allWeapons.elements(); i.hasMoreElements();) {
-            Weapon weapon = (Weapon)i.nextElement();
-            
-            weaponsByName.put(weapon.getName(), weapon);
-        }
-    }
-    
-    /**
-     * Gets the weapon by its name
-     */
-    public static Weapon getWeaponByName(String name) {
-        if (weaponsByName.size() == 0) {
-            initializeWeaponsByName();
-        }
-        
-        return (Weapon)weaponsByName.get(name);
-    }
-  
-    /**
-     * Initialize the table of weapons keyed by .mep name
-     */
-    private static void initializeWeaponsByMepName() {
-        if (allWeapons.size() == 0) {
-            initializeAllWeapons();
-        }
-        
-        weaponsByMepName.clear();
-        
-        for (Enumeration i = allWeapons.elements(); i.hasMoreElements();) {
-            Weapon weapon = (Weapon)i.nextElement();
-            
-            weaponsByMepName.put(weapon.getMepName(), weapon);
-        }
-    }
-    
-    /**
-     * Gets the weapon by its .MEP name
-     */
-    public static Weapon getWeaponByMepName(String mepName) {
-        if (weaponsByMepName.size() == 0) {
-            initializeWeaponsByMepName();
-        }
-        
-        return (Weapon)weaponsByMepName.get(mepName);
-    }
-  
-    
-    public static Weapon createFlamer() {
-        Weapon weapon = new Weapon();
+
+    public static WeaponType createFlamer() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Flamer";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 2;
-        weapon.ammoType = Ammo.TYPE_NA;
+        weapon.ammoType = AmmoType.TYPE_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
@@ -203,14 +113,15 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createLargeLaser() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createLargeLaser() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Large Laser";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 8;
         weapon.damage = 8;
-        weapon.ammoType = Ammo.TYPE_NA;
+        weapon.ammoType = AmmoType.TYPE_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
@@ -222,14 +133,15 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createMediumLaser() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createMediumLaser() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Medium Laser";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 5;
-        weapon.ammoType = Ammo.TYPE_NA;
+        weapon.ammoType = AmmoType.TYPE_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -241,14 +153,15 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createSmallLaser() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createSmallLaser() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Small Laser";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 1;
         weapon.damage = 3;
-        weapon.ammoType = Ammo.TYPE_NA;
+        weapon.ammoType = AmmoType.TYPE_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
@@ -260,14 +173,15 @@ public class Weapon
         return weapon;
     }
     
-     public static Weapon createPPC() {
-        Weapon weapon = new Weapon();
+     public static WeaponType createPPC() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Particle Cannon";
+        weapon.internalName = weapon.name;
         weapon.mepName = "PPC";
         weapon.heat = 10;
         weapon.damage = 10;
-        weapon.ammoType = Ammo.TYPE_NA;
+        weapon.ammoType = AmmoType.TYPE_NA;
         weapon.minimumRange = 3;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
@@ -279,15 +193,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createMG() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createMG() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Machine Gun";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 0;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = Ammo.TYPE_MG;
+        weapon.ammoType = AmmoType.TYPE_MG;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
@@ -299,15 +214,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createAC2() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createAC2() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Auto Cannon/2";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = Ammo.TYPE_AC;
+        weapon.ammoType = AmmoType.TYPE_AC;
         weapon.minimumRange = 4;
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
@@ -319,15 +235,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createAC5() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createAC5() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Auto Cannon/5";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = Ammo.TYPE_AC;
+        weapon.ammoType = AmmoType.TYPE_AC;
         weapon.minimumRange = 3;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
@@ -339,15 +256,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createAC10() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createAC10() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Auto Cannon/10";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = Ammo.TYPE_AC;
+        weapon.ammoType = AmmoType.TYPE_AC;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
@@ -359,15 +277,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createAC20() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createAC20() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "Auto Cannon/20";
+        weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = Ammo.TYPE_AC;
+        weapon.ammoType = AmmoType.TYPE_AC;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -379,15 +298,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createLRM5() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createLRM5() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "LRM 5";
+        weapon.internalName = weapon.name;
         weapon.mepName = "LRM-5";
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
-        weapon.ammoType = Ammo.TYPE_LRM;
+        weapon.ammoType = AmmoType.TYPE_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -399,15 +319,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createLRM10() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createLRM10() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "LRM 10";
+        weapon.internalName = weapon.name;
         weapon.mepName = "LRM-10";
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
-        weapon.ammoType = Ammo.TYPE_LRM;
+        weapon.ammoType = AmmoType.TYPE_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -419,15 +340,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createLRM15() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createLRM15() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "LRM 15";
+        weapon.internalName = weapon.name;
         weapon.mepName = "LRM-15";
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
-        weapon.ammoType = Ammo.TYPE_LRM;
+        weapon.ammoType = AmmoType.TYPE_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -439,15 +361,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createLRM20() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createLRM20() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "LRM 20";
+        weapon.internalName = weapon.name;
         weapon.mepName = "LRM-20";
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
-        weapon.ammoType = Ammo.TYPE_LRM;
+        weapon.ammoType = AmmoType.TYPE_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -459,15 +382,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createSRM2() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createSRM2() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "SRM 2";
+        weapon.internalName = weapon.name;
         weapon.mepName = "SRM-2";
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
-        weapon.ammoType = Ammo.TYPE_SRM;
+        weapon.ammoType = AmmoType.TYPE_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -479,15 +403,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createSRM4() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createSRM4() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "SRM 4";
+        weapon.internalName = weapon.name;
         weapon.mepName = "SRM-4";
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
-        weapon.ammoType = Ammo.TYPE_SRM;
+        weapon.ammoType = AmmoType.TYPE_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -499,15 +424,16 @@ public class Weapon
         return weapon;
     }
     
-    public static Weapon createSRM6() {
-        Weapon weapon = new Weapon();
+    public static WeaponType createSRM6() {
+        WeaponType weapon = new WeaponType();
         
         weapon.name = "SRM 6";
+        weapon.internalName = weapon.name;
         weapon.mepName = "SRM-6";
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
-        weapon.ammoType = Ammo.TYPE_SRM;
+        weapon.ammoType = AmmoType.TYPE_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -521,6 +447,6 @@ public class Weapon
     
   
   public String toString() {
-        return "Weapon: " + name;
+        return "WeaponType: " + name;
   }
 }

@@ -198,32 +198,22 @@ public class MepFile
             boolean rearMounted = false;
             String critName = critData[i].substring(7).trim();
       
-            // is it a weapon?
             if (critName.startsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(3).trim();
             }
-            Weapon weaponType = Weapon.getWeaponByMepName(critName);
-            if (weaponType != null) {
-                mech.addWeapon(new MountedWeapon(weaponType, rearMounted), loc);
+            
+            EquipmentType etype = EquipmentType.getByMepName(critName);
+            if (etype instanceof WeaponType) {
+                mech.addWeapon(new Mounted(etype), loc, rearMounted);
+            } else if (etype instanceof AmmoType) {
+                mech.addAmmo(new Mounted(etype), loc);
+            } else if (etype instanceof MiscType) {
+                mech.addMisc(new Mounted(etype), loc);
+            } else {
+//                System.out.println("mepfile: could not find equipment " + critName);
             }
-      
-            // ammo?
-            Ammo ammo = Ammo.makeAmmo(critName);
-            if (ammo != null) {
-                mech.addAmmo(ammo, loc);
-            }
-      
-            // heat sink?
-            if (critName.equals("Heat Sink")) {
-                mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                                       Mech.SYSTEM_HEAT_SINK));
-            }
-            // jump jet?
-            if (critName.equals("Jump Jet")) {
-                mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                                       Mech.SYSTEM_JUMP_JET));
-            }
+            
         }
     
     return mech;

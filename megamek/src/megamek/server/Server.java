@@ -240,15 +240,16 @@ public class Server
     public void validatePlayerInfo(int playerId) {
         final Player player = getPlayer(playerId);
         
-        // replace characters we don't like with "X"
-        StringBuffer nameBuff = new StringBuffer(player.getName());
-        for (int i = 0; i < nameBuff.length(); i++) {
-            int chr = nameBuff.charAt(i);
-            if (LEGAL_CHARS.indexOf(chr) == -1) {
-                nameBuff.setCharAt(i, 'X');
-            }
-        }
-        player.setName(nameBuff.toString());
+//        maybe this isn't actually useful
+//        // replace characters we don't like with "X"
+//        StringBuffer nameBuff = new StringBuffer(player.getName());
+//        for (int i = 0; i < nameBuff.length(); i++) {
+//            int chr = nameBuff.charAt(i);
+//            if (LEGAL_CHARS.indexOf(chr) == -1) {
+//                nameBuff.setCharAt(i, 'X');
+//            }
+//        }
+//        player.setName(nameBuff.toString());
         
         //TODO: check for duplicate or reserved names
 
@@ -444,9 +445,9 @@ public class Server
 
             entity.crew.setKoThisRound(false);
 
-            for (Enumeration i = entity.weapons.elements(); i.hasMoreElements();) {
-                MountedWeapon w = (MountedWeapon)i.nextElement();
-                w.setFiredThisRound(false);
+            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+                Mounted mounted = (Mounted)i.nextElement();
+                mounted.setUsedThisTurn(false);
             }
         }
     }
@@ -472,35 +473,30 @@ public class Server
             final Entity entity = (Entity)e.nextElement();
 
             // if ammo has exploded, empty the bin
-            for (Enumeration i = entity.ammo.elements(); i.hasMoreElements();) {
-                final Ammo a = (Ammo)i.nextElement();
-                if (a.exploded) {
-                    a.shots = 0;
-                    a.exploded = false;
+            for (Enumeration i = entity.getAmmo(); i.hasMoreElements();) {
+                Mounted mounted = (Mounted)i.nextElement();
+                if (mounted.isHit() || mounted.isMissing()) {
+                    mounted.setShotsLeft(0);
+                    mounted.setDestroyed(true);
                 }
+                mounted.setUsedThisTurn(false);
             }
 
             // weapons are readied, except destroyed ones.
-            for (Enumeration i = entity.weapons.elements(); i.hasMoreElements();) {
-               final MountedWeapon w = (MountedWeapon)i.nextElement();
+            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+               Mounted mounted = (Mounted)i.nextElement();
+               WeaponType wtype = (WeaponType)mounted.getType();
+               if (mounted.isHit() || mounted.isMissing()) {
+                    mounted.setDestroyed(true);
+               }
 
-                // first, if a weapon isn't destroyed, it's okay.
-                boolean weaponOK = !w.isDestroyed();
-
-                // does the weapon use ammo?
-                if (weaponOK && w.getType().getAmmoType() != Ammo.TYPE_NA) {
-                    // try to reload if needed
-                    if (w.getAmmoFeed() == null || w.getAmmoFeed().shots <= 0) {
-                        entity.loadWeapon(w);
-                    }
-                    // if still out of shots, weapon is useless
-                    if (w.getAmmoFeed() == null || w.getAmmoFeed().shots <= 0) {
-                        weaponOK = false;
-                    }
-                }
-
-                // ready it if it's still okay
-                w.setReady(weaponOK);
+               // try to reload if needed
+               if (wtype.getAmmoType() != AmmoType.TYPE_NA) {
+                   if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
+                       entity.loadWeapon(mounted);
+                   }
+               }              
+               mounted.setUsedThisTurn(false);
             }
 
             // destroy criticals that were hit last phase
@@ -1581,33 +1577,34 @@ public class Server
     private void resolveWeaponAttack(WeaponAttackAction waa, int lastEntityId) {
         final Entity ae = game.getEntity(waa.getEntityId());
         final Entity te = game.getEntity(waa.getTargetId());
-        final MountedWeapon w = ae.getWeapon(waa.getWeaponId());
+        final Mounted mounted = ae.getWeapon(waa.getWeaponId());
+        final WeaponType wtype = (WeaponType)mounted.getType();
 
         if (lastEntityId != waa.getEntityId()) {
             phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");
         }
 
-        phaseReport.append("    " + w.getType().getName() + " at "
+        phaseReport.append("    " + wtype.getName() + " at "
                    + te.getDisplayName());
 
         // check ammo
-        if (w.getAmmoFeed() != null) {
-            if (w.getAmmoFeed().shots == 0) {
+        if (mounted.getLinked() != null) {
+            if (mounted.getLinked().getShotsLeft() == 0) {
                 // try reloading?
-                ae.loadWeapon(w);
+                ae.loadWeapon(mounted);
             }
-            if (w.getAmmoFeed().shots == 0) {
+            if (mounted.getLinked().getShotsLeft() == 0) {
                 phaseReport.append(" but the weapon is out of ammo");
                 return;
             }
-            w.getAmmoFeed().shots--;
+            mounted.getLinked().setShotsLeft(mounted.getLinked().getShotsLeft() - 1);
         }
 
         // build up some heat
-        ae.heatBuildup += w.getType().getHeat();
+        ae.heatBuildup += wtype.getHeat();
 
         // set the weapon as having fired
-        w.setFiredThisRound(true);
+        mounted.setUsedThisTurn(true);
 
         // should we even bother?
         if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -1633,24 +1630,24 @@ public class Server
             return;
         }
         // are we attacks normal weapons or missiles?
-        if (w.getType().getDamage() != Weapon.DAMAGE_MISSILE) {
+        if (wtype.getDamage() != WeaponType.DAMAGE_MISSILE) {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
             phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
-            phaseReport.append(damageEntity(te, hit, w.getType().getDamage()));
+            phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
         } else {
             // missiles; determine number of missiles hitting
-            int hits = Compute.missilesHit(w.getType().getRackSize());
+            int hits = Compute.missilesHit(wtype.getRackSize());
             phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
             // for SRMs, do each missile seperately
-            if (w.getType().getAmmoType() == Ammo.TYPE_SRM) {
+            if (wtype.getAmmoType() == AmmoType.TYPE_SRM) {
                 for (int j = 0; j < hits; j++) {
                     HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                     phaseReport.append(damageEntity(te, hit, 2));
                 }
             }
             // LRMs, do salvos of 5
-                if (w.getType().getAmmoType() == Ammo.TYPE_LRM) {
+                if (wtype.getAmmoType() == AmmoType.TYPE_LRM) {
                     while (hits > 0) {
                         int salvo = Math.min(5, hits);
                         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -2545,7 +2542,7 @@ public class Server
                     }
                     break;
                 case CriticalSlot.TYPE_WEAPON :
-                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getWeapon(cs.getIndex()).getType().getName() + ".";
+                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getWeapon(cs.getIndex()).getName() + ".";
                     en.getWeapon(cs.getIndex()).setDestroyed(true);
                     break;
                 case CriticalSlot.TYPE_AMMO :
@@ -2572,16 +2569,18 @@ public class Server
         if (en.hasRearArmor(loc)) {
             en.setArmor(Entity.ARMOR_DOOMED, loc, true);
         }
-        // weapons destroyed
-        for (int i = 0; i < en.weapons.size(); i++) {
-            if (en.getWeapon(i).getLocation() == loc) {
-                en.getWeapon(i).setDestroyed(true);
+        // weapons marked missing
+        for (Enumeration i = en.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc) {
+                mounted.setMissing(true);
             }
         }
-        // ammo destroyed
-        for (int i = 0; i < en.ammo.size(); i++) {
-            if (en.getAmmo(i).location == loc) {
-                en.getAmmo(i).exploded = true;
+        // ammo marked missing
+        for (Enumeration i = en.getAmmo(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getLocation() == loc) {
+                mounted.setMissing(true);
             }
         }
         // all critical slots set as missing
@@ -2608,19 +2607,20 @@ public class Server
             return "";
         }
         // check amount of damage
-        Ammo ammo = en.getAmmo(en.getCritical(loc, slot).getIndex());
-        if (ammo.exploded) {
-            System.err.println("server: explodeAmmo called already exploded ammo"
+        Mounted mounted = en.getAmmo(en.getCritical(loc, slot).getIndex());
+        AmmoType atype = (AmmoType)mounted.getType();
+        if (mounted.isHit()) {
+            System.err.println("server: explodeAmmo called on already exploded ammo"
                                + " crititical slot (" + loc + " , " + slot + ")");
             return "";
         }
-        int damage = ammo.damagePerShot * ammo.rackSize * ammo.shots;
+        int damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
         if (damage <= 0) {
             return "";
         }
         // if there is damage, it's probably a lot
         desc += "\n*** AMMO EXPLOSION!  " + damage + " DAMAGE! ***";
-        ammo.exploded = true;
+        mounted.setHit(true);
         desc += damageEntity(en, new HitData(loc), damage) + "\n\n";
         // if the mech survives, the pilot takes damage
         if (!en.isDoomed() && !en.isDestroyed()) {
@@ -2642,16 +2642,17 @@ public class Server
         for (int j = 0; j < entity.locations(); j++) {
             for (int k = 0; k < entity.getNumberOfCriticals(j); k++) {
                 CriticalSlot cs = entity.getCritical(j, k);
-                    if (cs != null && !cs.isDestroyed()
-                        && cs.getType() == CriticalSlot.TYPE_AMMO) {
-                      Ammo a = entity.getAmmo(cs.getIndex());
-                      if (!a.exploded && (rack < a.damagePerShot * a.rackSize
-                            || damage < a.damagePerShot * a.rackSize * a.shots)) {
-                            rack = a.damagePerShot * a.rackSize;
-                            damage = a.damagePerShot * a.rackSize * a.shots;
-                            boomloc = j;
-                            boomslot = k;
-                      }
+                if (cs != null && !cs.isDestroyed()
+                && cs.getType() == CriticalSlot.TYPE_AMMO) {
+                    Mounted mounted = entity.getAmmo(entity.getCritical(j, k).getIndex());
+                    AmmoType atype = (AmmoType)mounted.getType();
+                    if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
+                    || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
+                        rack = atype.getDamagePerShot() * atype.getRackSize();
+                        damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
+                        boomloc = j;
+                        boomslot = k;
+                    }
                 }
             }
         }

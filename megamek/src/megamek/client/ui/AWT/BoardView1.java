@@ -1433,9 +1433,9 @@ public class BoardView1
          */
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
-            final Weapon weapon = entity.getWeapon(attack.getWeaponId()).getType();
+            final WeaponType wtype = (WeaponType)entity.getWeapon(attack.getWeaponId()).getType();
             final int roll = Compute.toHitWeapon(game, attack, attacks).getValue();
-            weaponDescs.addElement(weapon.getName() + "; needs " + roll);
+            weaponDescs.addElement(wtype.getName() + "; needs " + roll);
         }
         
         public String[] getTooltip() {

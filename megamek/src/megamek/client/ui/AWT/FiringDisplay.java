@@ -230,7 +230,7 @@ public class FiringDisplay
     
         attacks.addElement(new WeaponAttackAction(cen, ten, wn));
     
-        ce().getWeapon(wn).setReady(false);
+        ce().getWeapon(wn).setUsedThisTurn(true);
         selectedWeapon = ce().getNextWeapon(wn);
         // check; if there are no ready weapons, you're done.
         if(selectedWeapon == -1) {
@@ -252,7 +252,7 @@ public class FiringDisplay
                 Object o = i.nextElement();
                 if (o instanceof WeaponAttackAction) {
                     WeaponAttackAction waa = (WeaponAttackAction)o;
-                    ce().getWeapon(waa.getWeaponId()).setReady(true);
+                    ce().getWeapon(waa.getWeaponId()).setUsedThisTurn(false);
                 }
             }
             attacks.removeAllElements();

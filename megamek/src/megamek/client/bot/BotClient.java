@@ -183,14 +183,14 @@ public class BotClient extends Client
     }
      
     public static class FiringOption {
-        public FiringOption(Entity target, double value, MountedWeapon weap) {
+        public FiringOption(Entity target, double value, Mounted weapon) {
             this.target = target;
             this.value = value;
-            this.weapon = weap;
+            this.weapon = weapon;
         }
         public Entity target;
         public double value;
-        public MountedWeapon weapon;
+        public Mounted weapon;
     }
 
     public static class PhysicalOption {
@@ -529,14 +529,14 @@ public class BotClient extends Client
         double total = 0.0;
         do {
             // if it can target To...
-            MountedWeapon w = fen.getWeapon(weap);
+            Mounted w = fen.getWeapon(weap);
             ToHitData th = Compute.toHitWeapon(game, from, to, weap, new Vector(0));    
             // TODO: try all secondary facings for firer; take the best
             
              // calculate expected value of attack
             if (th.getValue() != ToHitData.IMPOSSIBLE) {
                 double odds = Compute.oddsAbove(th.getValue())/ 100.0;
-                double expectedDmg = getExpectedDamage(w.getType());
+                double expectedDmg = getExpectedDamage((WeaponType)w.getType());
                 total += odds * expectedDmg;
 
 //                sendChat(" -> threat " + w.getType().getName() + " needs " + th.getValue() + ": " + (odds*expectedDmg));                                   
@@ -559,8 +559,8 @@ public class BotClient extends Client
         Entity en = game.getEntity(entNum);
 
         Vector firV = new Vector();
-        for (Enumeration i = en.weapons.elements();i.hasMoreElements();) {
-            MountedWeapon mw = (MountedWeapon)i.nextElement();
+        for (Enumeration i = en.getWeapons();i.hasMoreElements();) {
+            Mounted mw = (Mounted)i.nextElement();
              FiringOption fo = calculateOneWeaponDamagePotential(entNum, mw);
              if (fo != null) firV.addElement(fo);
         }        
@@ -578,11 +578,11 @@ public class BotClient extends Client
 
         Vector attacks = new Vector();
         for (int i = 0;i<firOpts.length;i++) {
-            if (currentHeat + firOpts[i].weapon.getType().getHeat() - capacity <= allowableHeatLevel) {
+            if (currentHeat + ((WeaponType)firOpts[i].weapon.getType()).getHeat() - capacity <= allowableHeatLevel) {
                 attacks.addElement(new WeaponAttackAction(
                         entNum, 
                         game.getEntityID(firOpts[i].target), en.getWeaponNum(firOpts[i].weapon)));
-                currentHeat += firOpts[i].weapon.getType().getHeat();
+                currentHeat += ((WeaponType)firOpts[i].weapon.getType()).getHeat();
             }
         }
         sendAttackData(entNum, attacks);
@@ -621,8 +621,8 @@ public class BotClient extends Client
          en.setSecondaryFacing(en.getFacing());
          
         // for each weapon
-        for (Enumeration i = en.weapons.elements();i.hasMoreElements();) {
-            MountedWeapon mw = (MountedWeapon)i.nextElement();
+        for (Enumeration i = en.getWeapons();i.hasMoreElements();) {
+            Mounted mw = (Mounted)i.nextElement();
             FiringOption val = calculateOneWeaponDamagePotential(from, mw);
             if (val != null)
                 total += val.value;            
@@ -634,7 +634,7 @@ public class BotClient extends Client
      /** Calculates the optimal damage potential of attacks
       * that could be made by entity "from" from its current location.
       */
-     protected FiringOption calculateOneWeaponDamagePotential(int from, MountedWeapon mw)
+     protected FiringOption calculateOneWeaponDamagePotential(int from, Mounted mw)
      {
          // for now assume I'm facing front
          Entity en = game.getEntity(from);
@@ -652,7 +652,7 @@ public class BotClient extends Client
                 ToHitData th = Compute.toHitWeapon(game, from, game.getEntityID(e), weaponID, new Vector(0));    
                 if (th.getValue() != ToHitData.IMPOSSIBLE) {
                     double odds = Compute.oddsAbove(th.getValue())/ 100.0;
-                    double expectedDmg = odds * getExpectedDamage(mw.getType());
+                    double expectedDmg = odds * getExpectedDamage((WeaponType)mw.getType());
                     if (expectedDmg > bestValue) {
                         bestTarget = e;
                         bestValue = expectedDmg;
@@ -665,9 +665,9 @@ public class BotClient extends Client
      }
           
      
-     protected double getExpectedDamage(Weapon weap)
+     protected double getExpectedDamage(WeaponType weap)
      {
-        if (weap.getDamage() != Weapon.DAMAGE_MISSILE) {
+        if (weap.getDamage() != WeaponType.DAMAGE_MISSILE) {
             // normal weapon
             return  weap.getDamage();
         } else {
@@ -676,7 +676,7 @@ public class BotClient extends Client
             
             // AIOPT: penalize missile damage because it has less penetrative power?
             //        or enhance it, if the enemy has holes in their armor?  hmm.
-            if (weap.getAmmoType() == Ammo.TYPE_SRM) {
+            if (weap.getAmmoType() == AmmoType.TYPE_SRM) {
                 switch (weap.getRackSize()) {
                     case 2:return 1.41666*2;
                     case 4:return 2.63888*2;

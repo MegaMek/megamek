@@ -707,12 +707,22 @@ public class BoardView1
         // check to make sure image is big enough
         if (boardGraph == null || view.width > boardRect.width
             || view.height > boardRect.height) {
-            //boardImage = createImage(view.width, view.height);
-            boardImage = createImage(boardSize.width, boardSize.height);
-            boardGraph = boardImage.getGraphics();
+            /* Ok, some history here.  Before the zoom patch, the
+               boardImage was created with the same size as the view.
+               After the zoom patch, the boardImage was created with
+               the same size as the entire board (all maps).  This
+               change ate up a hideous amount of memory (eg: in a 3x3
+               map set test with one mech, memory usage went from
+               about 15MB to 60MB).  I have now changed it back to the
+               old way, and the zoom feature *seems* to still work.
+               Why the zoom author made the change, I cannot say. */
+            boardImage = createImage(view.width, view.height);
+            //boardImage = createImage(boardSize.width, boardSize.height);
+            /* ----- */
 
-            System.out.println("boardview1: made a new board buffer " + boardRect);
+            boardGraph = boardImage.getGraphics();
             boardRect = new Rectangle(view);
+            System.out.println("boardview1: made a new board buffer " + boardRect);
             drawHexes(view);
         }
         if (!boardRect.union(view).equals(boardRect)) {

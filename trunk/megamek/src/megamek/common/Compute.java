@@ -1072,11 +1072,6 @@ public class Compute
         // check LOS
         LosEffects los = calculateLos(game, attackerId, targetId);
         ToHitData losMods = losModifiers(los);
-        
-        // if LOS is blocked, return that
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
-            return losMods;
-        }
 
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
@@ -1147,8 +1142,13 @@ public class Compute
             }
         }
 
-        // add in intervening terrain modifiers around now
-        toHit.append(losMods);
+        
+        // if LOS is blocked, return that.  otherwise, just add them in
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+            return losMods;
+        } else {
+            toHit.append(losMods);
+        }
         
         // secondary targets modifier...
         int primaryTarget = Entity.NONE;
@@ -1334,7 +1334,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");
         }
         
-        if (los.lightWoods + (los.heavyWoods * 2) > 3) {
+        if (los.lightWoods + (los.heavyWoods * 2) > 2) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
         }
         
@@ -2820,7 +2820,7 @@ public class Compute
         while(!dest.equals(current)) {
             current = nextHex(current, src, iSrc, iDest, directions);
             hexes.addElement(current);
-         }
+        }
         
         Coords[] hexArray = new Coords[hexes.size()];
         hexes.copyInto(hexArray);

@@ -107,7 +107,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 		requiredHeight = (2*m_game.board.height + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
-        m_dialog.show();
+        //m_dialog.show();
         m_mapImage = createImage(getSize().width,getSize().height);
         if (getSize().width > requiredWidth) leftMargin = (int) ((getSize().width - requiredWidth)/2) + margin;
         if (getSize().height > requiredHeight) topMargin = (int) ((getSize().height - requiredHeight)/2) + margin;

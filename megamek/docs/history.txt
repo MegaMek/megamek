@@ -71,7 +71,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.26.12 (09-07-02, 10am)
+v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon
 + mech selector now additionally looks inside .zip files
 + fixed crash bug with new ammo selector under MS Java

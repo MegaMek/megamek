@@ -6,6 +6,7 @@ v 0.29.24 (CVS)
 + Rewrote RL/OS code for friendliness;while other OS missile racks aren't supported yet, the code is ready to take them.
 + Bug 849862: Heat Calculator no longer cropped.
 + Bug 868218: Fixed bug in backwards lateral shifts
++ Bug 885742, 885825: correctly handle null or "No Camo" categories
 
 v 0.29.23 (2004-01-25 9:45pm)
 + Bug 828741: jumping bypasses fire, but not on the first step. Also optimised

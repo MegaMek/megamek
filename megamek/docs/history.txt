@@ -39,7 +39,7 @@ v0.29.53 (2004-10-17 3:00pm)
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.
 + Patch 1040096: PPC Field Inhibitor Disengaging (MaxTech Rule)
-+ Implementede designated artillery targets, any artillery targeting
++ Implemented designated artillery targets, any artillery targeting
     any of these up to 5 hexes per player automatically hits.
 + Bug 1040426: Artemis bonus to non-standard missile ammo
 + Bug 1040547: Arctic Fox B & C have incorrect heatsinks

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.17 (CVS)
+v 0.29.17 (2003-11-12, 8:30pm)
 + Patch 832885: use alternate LOS tool.
 + Marked data/sounds/call.wav as a binary file.
 + Bug 833851 -PARTIAL FIX-

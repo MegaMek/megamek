@@ -174,8 +174,10 @@ public class MovementData
                 break;
             case STEP_LATERAL_LEFT :
                 curPos = curPos.translated((curFacing + 5) % 6);
+                break;
             case STEP_LATERAL_RIGHT :
                 curPos = curPos.translated((curFacing + 1) % 6);
+                break;
             }
         }
         return curPos;

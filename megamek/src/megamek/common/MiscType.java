@@ -1085,7 +1085,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "IS AP Pod";
-        misc.internalName = "ISAPPod";
+        misc.internalName = "ISAntiPersonnelPod";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tdbName = "IS A-Pod";

@@ -178,8 +178,8 @@ public abstract class MMRandom {
             
             // alakazam!
             for (int i = 0; i < NUM_SHUFFLES; i++) {
-                src = randomInt(pool.length);
-                dest = randomInt(pool.length);
+                src = this.randomInt(pool.length);
+                dest = this.randomInt(pool.length);
                 
                 temp = pool[src];
                 pool[src] = pool[dest];

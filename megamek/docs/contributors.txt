@@ -27,6 +27,7 @@ Lot of people have contributed to the MegaMek project.
      Michael Newcomb <mnewcomb@users.sourceforge.net>
      Wirianto Djunaidi
      Dirk Wilhelm <wayne07@users.sourceforge.net>
+     David Smith <xylaan@users.sourceforge.net>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

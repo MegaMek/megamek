@@ -994,6 +994,8 @@ implements Runnable {
         switch (phase) {
             case Game.PHASE_EXCHANGE :
                 resetPlayersDone();
+                // Build teams vector
+                setupTeams();        
                 applyBoardSettings();
                 game.setHasDeployed(false);
                 game.determineWindDirection();
@@ -1323,203 +1325,159 @@ implements Runnable {
                 return new Coords(1, game.board.height / 2);
         }
     }
-    
+
+    /**
+       Set up the teams vector.  Each player on a team (Team 1 .. Team X) is
+       placed in the appropriate vector.  Any player on 'No Team', is placed
+       in their own object
+    */
+    private void setupTeams()
+    {
+        Vector teams = game.getTeamsVector();
+        boolean useTeamInit =
+            game.getOptions().getOption("team_initiative").booleanValue();
+
+        // This is a reference to THE team vector,
+        // so we need to clear it before use.
+        teams.removeAllElements();
+
+        // Get all NO_TEAM players.  If team_initiative is false, all
+        // players are on their own teams for initiative purposes.
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if ( !useTeamInit || player.getTeam() == Player.TEAM_NONE ) {
+                Team new_team = new Team(Player.TEAM_NONE);
+                new_team.addPlayer(player);
+                teams.addElement(new_team);
+            }
+        }
+
+        // If useTeamInit is false, all players have been placed
+        if (!useTeamInit) {
+            return;
+        }
+
+        // Now, go through all the teams, and add the apropriate player
+        for (int t = Player.TEAM_NONE + 1; t < Player.MAX_TEAMS; t++) {
+            Team new_team = null;
+            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+                final Player player = (Player)i.nextElement();
+                if (player.getTeam() == t) {
+                    if (new_team == null) {
+                        new_team = new Team(t);
+                    }
+                    new_team.addPlayer(player);
+                }
+            }
+
+            if (new_team != null) {
+                teams.addElement(new_team);
+            }
+        }
+    }
+
     /**
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
         game.incrementRoundCount();
-        
-        // roll the dice for each player
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            player.getInitiative().clear();
-        }
-        
-        // roll off all ties
-        resolveInitTies(game.getPlayersVector());
-        
+
+        // Roll for initative on the teams.
+        TurnOrdered.rollInitiative(game.getTeamsVector());
+
         transmitAllPlayerUpdates();
     }
-    
-    /**
-     * This goes thru and adds a roll on to the end of the intiative "stack"
-     * for all players involved.  Then it checks the list again for ties, and
-     * recursively resolves all further ties.
-     */
-    private void resolveInitTies(Vector players) {
-        // add a roll for all players
-        for (Enumeration i = players.elements(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            player.getInitiative().addRoll();
-        }
-        // check for further ties
-        Vector ties = new Vector();
-        for (Enumeration i = players.elements(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            ties.removeAllElements();
-            ties.addElement(player);
-            for (Enumeration j = game.getPlayers(); j.hasMoreElements();) {
-                final Player other = (Player)j.nextElement();
-                if (player != other && player.getInitiative().equals(other.getInitiative())) {
-                    ties.addElement(other);
-                }
-            }
-            if (ties.size() > 1) {
-                resolveInitTies(ties);
-            }
-        }
-        
-    }
-    
-    
-    /**
-     * Determine turn order by number of entities that are selectable this phase
-     *
-     * TODO: this is a real mess
-     */
+
     private void determineTurnOrder() {
-        // sort players
-        com.sun.java.util.collections.ArrayList plist = new com.sun.java.util.collections.ArrayList(game.getNoOfPlayers());
+
+        // Reset all of the turn counts
+
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            plist.add(player);
+            player.resetTankCount();
+            player.resetInfantryCount();
+            player.resetMechCount();
         }
-        com.sun.java.util.collections.Collections.sort(plist, new com.sun.java.util.collections.Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((Player)o1).getInitiative().compareTo(((Player)o2).getInitiative());
-            }
-        });
-        
-        // determine turn order
-        int[] order = new int[game.getNoOfPlayers()];
-        int oi = 0;
-        for (com.sun.java.util.collections.Iterator i = plist.iterator(); i.hasNext();) {
-            final Player player = (Player)i.next();
-            order[oi++] = player.getId();
-        }
-        
-        // count how many entities each player controls, and how many turns we have to assign
-        int MAX_PLAYERS = 255; //XXX HACK HACK HACK!
-        int[] noe = new int[MAX_PLAYERS];
-        int playerId = 0;
-        int noOfTurns = 0;
-        int[] noi = new int[MAX_PLAYERS]; // The number of Infantry for player.
-        int noOfInfTurns = 0;
-        boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
-        boolean infLast = game.getOptions().booleanOption("inf_move_last");
+
+        // Go through all entities, and update the player objects
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             if (entity.isSelectable()) {
-                playerId = entity.getOwner().getId();
-
-                // Special handling for infantry for certain game options.
-                if ( entity instanceof Infantry ) {
-                    noi[playerId]++;
-
-                    // If multiple Infantry move per Mek and Vehicle and this
-                    // is NOT the start of a new block of infantry for the
-                    // player do NOT add a turn.
-                    if ( infMulti &&
-                         1 != (noi[playerId] % Game.INF_MOVE_MULTI) ) {
-                        continue;
-                    }
-
-                    // If Infantry move after Meks and Vehicles, we'll
-                    // delay calculating the infantry turns.
-                    else if ( infLast ) {
-                        noOfInfTurns++;
-                        continue;
-                    }
-                }
-                noe[playerId]++;
-                noOfTurns++;
+                final Player player = entity.getOwner();
+                if ( entity instanceof Infantry )
+                    player.incrementInfantryCount();
+                else if (entity instanceof Tank )
+                    player.incrementTankCount();
+                else       
+                    player.incrementMechCount();
             }
         }
-        
-        // generate turn list
-        Vector turns = new Vector(noOfTurns + noOfInfTurns);
-        int turnIndex = 0;
 
-        // Handle all "mainline entities".  I.E. Meks, Vehicles, and
-        // (unless overrided by the "inf_move_last" option) Infantry.
-        while (turnIndex < noOfTurns) {
-            // get lowest number of entities, minimum 1.
-            int hnoe = 1;
-            int lnoe = Integer.MAX_VALUE;
-            for (int i = 0; i < MAX_PLAYERS; i++) {
-                if (noe[i] > 0 && noe[i] < lnoe) {
-                    lnoe = noe[i];
-                }
-                if (noe[i] > hnoe) {
-                    hnoe = noe[i];
-                }
-            }
-            // cycle through order list
-            for (int i = 0; i < order.length; i++) {
-                if (noe[order[i]] <= 0) {
-                    continue;
-                }
-                /* if you have less than twice the next lowest,
-                 * move 1, otherwise, move more.
-                 * if you have less than half the maximum,
-                 * move none
-                 */
-                int ntm = Math.max(1, (int)Math.floor(noe[order[i]] / lnoe));
-                for (int j = 0; j < ntm; j++) {
-                    GameTurn turn;
-                    if (infLast) {
-                        turn = new GameTurn.NotInfantryTurn(order[i]);
-                    } else {
-                        turn = new GameTurn(order[i]);
-                    }
-                    turns.addElement(turn);
-                    turnIndex++;
-                    noe[order[i]]--;
-                }
-            }
-        } // Handle the next "mainline entity"
+        // Go through each team, update the turn count,
+        // and then generate the team order on each team.
+        boolean infLast = game.getOptions().booleanOption("inf_move_last");
+        TurnVectors team_order;
+        for (Enumeration t = game.getTeams(); t.hasMoreElements(); ) {
+            final Team team = (Team)t.nextElement();
+            team.updateTurnCount();
+            team.determineTeamOrder(infLast);
+        }
 
-        // Now handle all Infantry (the "inf_move_last" option must be on).
-        while (turnIndex < turns.size()) {
-            // get lowest number of entities, minimum 1.
-            int hnoi = 1;
-            int lnoi = Integer.MAX_VALUE;
-            for (int i = 0; i < MAX_PLAYERS; i++) {
-                if (noi[i] > 0 && noi[i] < lnoi) {
-                    lnoi = noi[i];
-                }
-                if (noi[i] > hnoi) {
-                    hnoi = noi[i];
-                }
+        // Now, generate the order that the teams go in
+        team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(),
+                                                   infLast);
+
+        // Now, we have the order that the teams
+        // go in, and the order team goes in.
+        Vector turns = new Vector(team_order.infantry.size() +
+                                  team_order.non_infantry.size() );
+
+        // First, the non_infantry.  We will do this by looking at
+        // first element on the team_order vector, then looking at
+        // the first element on THAT team's order list.  We will create
+        // a new turn, then remove the entry from the team's order list and
+        // the uber-turn-order list here.
+        while ( !team_order.non_infantry.isEmpty() ) {
+            GameTurn turn = null;
+            Team t = (Team)team_order.non_infantry.firstElement();
+            Player p = (Player)t.getTurnOrder().non_infantry.firstElement();
+
+            if (infLast) {
+                turn = new GameTurn.NotInfantryTurn(p.getId());
+            } else {
+                turn = new GameTurn(p.getId());
             }
-            // cycle through order list
-            for (int i = 0; i < order.length; i++) {
-                if (noi[order[i]] <= 0) {
-                    continue;
-                }
-                /* if you have less than twice the next lowest,
-                 * move 1, otherwise, move more.
-                 * if you have less than half the maximum,
-                 * move none
-                 */
-                int ntm = Math.max(1, (int)Math.floor(noi[order[i]] / lnoi));
-                for (int j = 0; j < ntm; j++) {
-                    turns.addElement(new GameTurn.OnlyInfantryTurn(order[i]));
-                    turnIndex++;
-                    noi[order[i]]--;
-                }
-            }
-        } // Handle the next infantry platoon
-        
+            turns.addElement(turn);
+
+            // Now, remove the entry
+            t.getTurnOrder().non_infantry.removeElement(p);
+            team_order.non_infantry.removeElement(t);
+        }
+
+        // Now, repeat for the infantry
+        while ( !team_order.infantry.isEmpty() ) {
+            GameTurn turn = null;
+            Team t = (Team)team_order.infantry.firstElement();
+            Player p = (Player)t.getTurnOrder().infantry.firstElement();
+
+            turn = new GameTurn.OnlyInfantryTurn(p.getId());
+            turns.addElement(turn);
+
+            // Now, remove the entry
+            t.getTurnOrder().infantry.removeElement(p);
+            team_order.infantry.removeElement(t);
+
+        }
+
         // set fields in game
         game.setTurnVector(turns);
         game.resetTurnIndex();
-        
+
         // send turns to all players
         send(createTurnVectorPacket());
+
     }
-    
+
     /**
      * Write the initiative results to the report
      */

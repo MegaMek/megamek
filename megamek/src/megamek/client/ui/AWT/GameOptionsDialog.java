@@ -163,7 +163,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
         
-        optionComps.add(optionComp);
+        optionComps.addElement(optionComp);
     }
     
     

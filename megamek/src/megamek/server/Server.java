@@ -8202,7 +8202,9 @@ implements Runnable, ConnectionHandler {
                 desc.append( "\n            Movement system damaged!" );
                 int nMP = te.getOriginalWalkMP();
                 if (nMP <= 1) {
-                    ((Tank)te).immobilize();
+                    // From http://www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
+                    // page 19, tanks are only immobile if they take that critical hit.
+                    // ((Tank)te).immobilize();
                     // Does the hovercraft sink?
                     te_hex = game.board.getHex( te.getPosition() );
                     if ( te.getMovementType() == Entity.MovementType.HOVER &&

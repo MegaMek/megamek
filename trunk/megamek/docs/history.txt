@@ -1,13 +1,12 @@
 VERSION HISTORY:
 ----------------
-v0.29.63 (CVS)
+v0.29.63 (2005-01-30 2:00pm)
 + Bug 1107959: ejected pilot moves same turn
 + Bug 1089323: Atillery Freezes Game if destroyed/fled
 + Provide a non-HACKish way of getting destroyed/fled arty units.
 + Bug 1109829: DFA's ignore all terrain modifiers, including PC for water.
 + Data 1108467: Added Lawyers, Guns, and Money.
 + Bug 1110014: Units *can* jump over enemies, and **can't** run through them.
-+ RFE 1112483: CTL+R shortcut added to Turn Report menu command
 
 v0.29.62 (2005-01-23 2:30pm)
 + Additional Batchall.de-Mechs

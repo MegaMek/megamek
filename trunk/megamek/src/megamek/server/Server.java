@@ -27,12 +27,13 @@ import megamek.common.actions.*;
 public class Server
     implements Runnable
 {
-    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.";
+    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     
     // server setup
     private String              name;
     private ServerSocket        serverSocket;
+    private ServerLog           log = new ServerLog();
 
     // game info
     private Vector              connections = new Vector(4);
@@ -255,6 +256,27 @@ public class Server
         sendChatToAll("***Server", player.getName() + " disconnected.");
     }
     
+    /**
+     * Reset the game back to the lounge.
+     *
+     * TODO: couldn't this be a hazard if there are other things executing at 
+     *  the same time?
+     */
+    private void resetGame() {
+        // remove all entities
+        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+            final Entity entity = (Entity)e.nextElement();
+            game.removeEntity(entity.getId());
+        }
+        
+        //TODO: remove ghosts
+        
+        // reset all players
+        resetPlayerReady();
+        
+        changePhase(Game.PHASE_LOUNGE);
+    }
+    
 
     /**
      * Shortcut to game.getPlayer(id)
@@ -328,15 +350,6 @@ public class Server
             }
         }
         return null;
-    }
-
-
-    /**
-     * Resets the server back to the lounge
-     */
-    private void resetServer() {
-        //game.entities.removeAllElements();
-        changePhase(Game.PHASE_LOUNGE);
     }
 
     /**
@@ -618,6 +631,7 @@ public class Server
             if (phaseReport.length() > 0) {
                 roundReport.append(phaseReport.toString());
             }
+            log.append("\n" + roundReport.toString());
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
             resetActivePlayersReady();
@@ -2909,8 +2923,17 @@ public class Server
     /**
      * Transmits a chat message to all players
      */
+    private void sendChatTo(int connId, String origin, String message) {
+        send(connId, new Packet(Packet.COMMAND_CHAT, origin + ": " + message));
+    }
+
+    /**
+     * Transmits a chat message to all players
+     */
     private void sendChatToAll(String origin, String message) {
-        send(new Packet(Packet.COMMAND_CHAT, origin + ": " + message));
+        String chat = origin + ": " + message;
+        send(new Packet(Packet.COMMAND_CHAT, chat));
+        log.append(chat);
     }
 
     /**
@@ -2945,6 +2968,35 @@ public class Server
     }
     
     /**
+     * Process an in-game command
+     */
+    private void processInGame(int connId, String command) {
+        // figure out which command this is
+        String commandName;
+        if (command.indexOf(' ') != -1) {
+            commandName = command.substring(1, command.indexOf(' '));
+        } else {
+            commandName = command.substring(1);
+        }
+        
+        // process it
+        if (commandName.equals("connlist")) {
+            sendChatTo(connId, "Server", "Listing connections...");
+            sendChatTo(connId, "Server", "[id] : [name], [address], [pending]");
+            for (Enumeration i = connections.elements(); i.hasMoreElements();) {
+                final Connection conn = (Connection)i.nextElement();
+                sendChatTo(connId, "Server", conn.getId() + " : " + getPlayer(conn.getId()).getName() + ", " + conn.getSocket().getInetAddress() + ", " + conn.hasPending());
+            }
+            sendChatTo(connId, "Server", "end");
+        } else if (commandName.equals("reset")) {
+            sendChatToAll("Server", getPlayer(connId).getName() + " reset the game.");
+            resetGame();
+        } else {
+            sendChatTo(connId, "Server", "Unknown command: \"" + commandName + "\".");
+        }
+    }
+    
+    /**
      * Process a packet
      */
     void handle(int connId, Packet packet) {
@@ -2974,7 +3026,11 @@ public class Server
             break;
         case Packet.COMMAND_CHAT :
             String chat = (String)packet.getObject(0);
-            sendChatToAll(getPlayer(connId).getName(), chat);
+            if (chat.startsWith("/")) {
+                processInGame(connId, chat);
+            } else {
+                sendChatToAll(getPlayer(connId).getName(), chat);
+            }
             break;
         case Packet.COMMAND_ENTITY_MOVE :
             doEntityMovement(packet, connId);

@@ -89,7 +89,7 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map
 + prone mechs are at the terrain elevation for LOS, not 1 higher
 + hex graphics brighter, flatter, renamed; added reddish sinkhole hexes
@@ -100,6 +100,8 @@ v next
 + added MegaMek.cfg option to set map text color
 + map selector now handles custom boards
 + experimental ai client from Michael Hanson
++ some commands for the server (documentation to come)
++ basic server log to serverlog.txt (windows users, open with wordpad)
 
 v 0.24.4 (03-27-02, 10:20pm)
 + 534490: hitting back up should not clear movement if you are not jumping

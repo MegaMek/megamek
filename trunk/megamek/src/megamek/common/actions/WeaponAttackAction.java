@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -29,6 +29,7 @@ public class WeaponAttackAction
     private int ammoId = -1;
     private int aimedLocation = Mech.LOC_NONE;
     private int aimMode = FiringDisplay.AIM_MODE_NONE;
+    private int otherAttackInfo = -1;	// 
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -86,5 +87,13 @@ public class WeaponAttackAction
             vCounterEquipment = new Vector();
         }
         vCounterEquipment.addElement(m);
+    }
+
+    public void setOtherAttackInfo(int newInfo) {
+    	otherAttackInfo = newInfo;
+    }
+
+    public int getOtherAttackInfo() {
+    	return otherAttackInfo;
     }
 }

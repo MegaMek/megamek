@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -446,6 +446,14 @@ public class BoardView1
 				    			case (Minefield.TYPE_THUNDER) :
 						        backGraph.setColor(Color.black);
 						        backGraph.drawString("Thunder (" + mf.getDamage() + ")", p.x + 15, p.y + 51);
+				    			break;
+				    			case (Minefield.TYPE_THUNDER_INFERNO) :
+						        backGraph.setColor(Color.black);
+						        backGraph.drawString("Thunder-Inf (" + mf.getDamage() + ")", p.x + 9, p.y + 51);
+				    			break;
+				    			case (Minefield.TYPE_THUNDER_ACTIVE) :
+						        backGraph.setColor(Color.black);
+						        backGraph.drawString("Thunder-Actv (" + mf.getDamage() + ")", p.x + 8, p.y + 51);
 				    			break;
 				    			case (Minefield.TYPE_COMMAND_DETONATED) :
 						        backGraph.setColor(Color.black);

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -29,28 +29,46 @@ public class HitData
     private boolean rear;
     private int effect;
     private boolean hitAimedLocation = false;
+    private int specCritMod = 0;
     
     public HitData(int location) {
-        this(location, false, EFFECT_NONE, false);
+        this(location, false, EFFECT_NONE, false, 0);
     }
     
     public HitData(int location, boolean rear) {
-        this(location, rear, EFFECT_NONE, false);
+        this(location, rear, EFFECT_NONE, false, 0);
     }
     
     public HitData(int location, boolean rear, int effects) {
-        this(location, rear, effects, false);
+        this(location, rear, effects, false, 0);
     }
     
     public HitData(int location, boolean rear, boolean hitAimedLocation) {
-        this(location, rear, EFFECT_NONE, hitAimedLocation);
+        this(location, rear, EFFECT_NONE, hitAimedLocation, 0);
     }
     
-    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation) {
+    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
         this.hitAimedLocation = hitAimedLocation;
+        this.specCritMod = specCrit;
+    }
+    
+    public void makeArmorPiercing(AmmoType inType)
+    {
+        if (inType.getRackSize() == 2)
+                specCritMod = -4;
+        else if (inType.getRackSize() == 5)
+                specCritMod = -3;
+        else if (inType.getRackSize() == 10)
+                specCritMod = -2;
+        else if (inType.getRackSize() == 20)
+                specCritMod = -1;
+    }
+    
+    public int getSpecCritMod() {
+        return specCritMod;
     }
     
     public int getLocation() {

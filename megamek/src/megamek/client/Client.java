@@ -153,13 +153,12 @@ public class Client extends Panel
         mechW.setResizable(true);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
-        if (Settings.minimapEnabled) {
-            minimapW = new Dialog(frame, "MiniMap", false);
-            minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-            minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-            minimap = new MiniMap(minimapW, this, bv);
-            minimapW.add(minimap);
-        }
+        // minimap
+        minimapW = new Dialog(frame, "MiniMap", false);
+        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+        minimap = new MiniMap(minimapW, this, bv);
+        minimapW.add(minimap);
         
         mechSelectorDialog = new MechSelectorDialog(this);
             
@@ -362,6 +361,9 @@ public class Client extends Panel
             break;
         case Game.PHASE_DEPLOYMENT :
             switchPanel(new DeploymentDisplay(this));
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
             break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));

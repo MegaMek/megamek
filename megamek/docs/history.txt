@@ -85,6 +85,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.11-dev
++ 708743: minimap now initialized correctly even if "disabled"
+
 v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar
 + attacks now clear correctly again if there is no physical attack phase

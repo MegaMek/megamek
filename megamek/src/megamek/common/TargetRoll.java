@@ -201,7 +201,7 @@ public class TargetRoll implements Serializable {
         }
     }
     
-    private class Modifier {
+    private class Modifier implements Serializable {
         int value;
         String desc;
         

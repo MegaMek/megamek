@@ -31,6 +31,7 @@ import megamek.client.util.widget.BufferedPanel;
 import megamek.common.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -546,6 +547,7 @@ public class ClientGUI
     }
 
     private void switchPanel(int phase) {
+
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -590,6 +592,7 @@ public class ClientGUI
     }
 
     private Component initializePanel(int phase) {
+
         // Create the components for this phase.
         String name = String.valueOf(phase);
         Component component = null;
@@ -1258,6 +1261,7 @@ public class ClientGUI
     }
 
     public void gamePhaseChange(GameEvent e) {
+
         boolean showRerollButton = false;
         bv.hideTooltip();
 

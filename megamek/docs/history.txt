@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.29.53 (CVS)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except
    for rear mounted weapons)
++ Bug 1043230: Tooltip doesn't show T-Active or T-Inferno info
++ Bug 1039781: TCs and immobile targets
 + Bug 1044357: MS JRE doesn't support Vector#add
 
 v0.29.52 (2004-01-10 8:15pm)
@@ -25,8 +27,6 @@ v0.29.52 (2004-01-10 8:15pm)
 + Bug 1042169: Incorrect jumping PSR at low gravity
 + Bug 1042185: Battlearmor MP not reduced for extreme temperatures
 + Bug 1042152: Charges & DFAs bypass PSR at low gravity
-+ Bug 1043230: Tooltip doesn't show T-Active or T-Inferno info
-+ Bug 1039781: TCs and immobile targets
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

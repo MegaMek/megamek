@@ -95,6 +95,10 @@ public class Game implements Serializable
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
 	
+    // Settings for the LOS tool.
+    private boolean mechInFirstHex = true;
+    private boolean mechInSecondHex = true;
+
     /**
      * Constructor
      */
@@ -102,6 +106,26 @@ public class Game implements Serializable
         ;
     }
     
+    // If it's a mech in the first hex used by the LOS tool
+    public boolean getMechInFirst() {
+    	return mechInFirstHex;
+    }
+
+    // If it's a mech in the second hex used by the LOS tool
+    public boolean getMechInSecond() {
+    	return mechInSecondHex;
+    }
+
+    // If it's a mech in the first hex used by the LOS tool
+    public void setMechInFirst(boolean mech) {
+    	mechInFirstHex = mech;
+    }
+
+    // If it's a mech in the second hex used by the LOS tool
+    public void setMechInSecond(boolean mech) {
+    	mechInSecondHex = mech;
+    }
+
     public GameOptions getOptions() {
         return options;
     }

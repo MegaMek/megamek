@@ -1157,7 +1157,8 @@ public class BoardView1
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
-        EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
+        Integer entityId = new Integer( entity.getId() );
+        EntitySprite sprite = (EntitySprite) entitySpriteIds.get( entityId );
         Vector newSprites;
         Hashtable newSpriteIds;
 
@@ -1171,7 +1172,8 @@ public class BoardView1
             entitySpriteIds = newSpriteIds;
         }
 
-        MovingEntitySprite mSprite = (MovingEntitySprite)movingEntitySpriteIds.get(new Integer(entity.getId()));
+        MovingEntitySprite mSprite =
+            (MovingEntitySprite) movingEntitySpriteIds.get( entityId );
         newSprites = new Vector(movingEntitySprites);
         newSpriteIds = new Hashtable(movingEntitySpriteIds);
 
@@ -1183,7 +1185,7 @@ public class BoardView1
         if (entity.getPosition() != null) {
             mSprite = new MovingEntitySprite(entity, position, facing);
             newSprites.addElement(mSprite);
-            newSpriteIds.put(new Integer(entity.getId()), mSprite);
+            newSpriteIds.put( entityId, mSprite );
         }
 
         movingEntitySprites = newSprites;
@@ -1201,7 +1203,8 @@ public class BoardView1
      *  Try to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity) {
-        EntitySprite sprite = (EntitySprite)entitySpriteIds.get(new Integer(entity.getId()));
+        Integer entityId = new Integer( entity.getId() );
+        EntitySprite sprite = (EntitySprite)entitySpriteIds.get( entityId );
         Vector newSprites = new Vector(entitySprites);
         Hashtable newSpriteIds = new Hashtable(entitySpriteIds);
 
@@ -1213,7 +1216,7 @@ public class BoardView1
         if (entity.getPosition() != null) {
             sprite = new EntitySprite(entity);
             newSprites.addElement(sprite);
-            newSpriteIds.put(new Integer(entity.getId()), sprite);
+            newSpriteIds.put( entityId, sprite );
         }
 
         entitySprites = newSprites;
@@ -1224,7 +1227,9 @@ public class BoardView1
             if (c3sprite.entityId == entity.getId())
                 C3Sprites.removeElement(c3sprite);
             else if(c3sprite.masterId == entity.getId()) {
-                if(entity.hasC3()) { // only redraw client-to-master; otherwise we leave stray lines when we move
+                // Only redraw client-to-master; otherwise
+                // we leave stray lines when we move.
+                if(entity.hasC3()) {
                     C3Sprites.addElement(new C3Sprite(game.getEntity(c3sprite.entityId), game.getEntity(c3sprite.masterId)));
                 }
                 C3Sprites.removeElement(c3sprite);
@@ -2818,17 +2823,45 @@ public class BoardView1
 
         private String[] getTooltip() {
             String[] tipStrings = new String[3];
-            tipStrings[0] = entity.getChassis() + " (" + entity.getOwner().getName() + "); "
-                + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
-            if (entity.getCrew().countAdvantages() > 0) {
-                tipStrings[0] = tipStrings[0].concat(" <"+new Integer(entity.getCrew().countAdvantages()).toString()+" advs>");
-            };
+            StringBuffer buffer;
 
-            tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance
-                + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");"
-                + " Heat " + entity.heat;
-            tipStrings[2] = "Armor " + entity.getTotalArmor()
-                + "; Internal " + entity.getTotalInternal();
+            buffer = new StringBuffer();
+            buffer.append( entity.getChassis() )
+                .append( " (" )
+                .append( entity.getOwner().getName() )
+                .append( "); " )
+                .append( entity.getCrew().getGunnery() )
+                .append( "/" )
+                .append( entity.getCrew().getPiloting() )
+                .append( " pilot" );
+            int numAdv = entity.getCrew().countAdvantages();
+            if (numAdv > 0) {
+                buffer.append( " <" )
+                    .append( numAdv )
+                    .append( " advs>" );
+            }
+            tipStrings[0] = buffer.toString();
+
+            buffer = new StringBuffer();
+            buffer.append( "Move " )
+                .append( entity.getMovementAbbr(entity.moved) )
+                .append( ":" )
+                .append( entity.delta_distance )
+                .append( " (+" )
+                .append( Compute.getTargetMovementModifier
+                         (game, entity.getId()).getValue() )
+                .append( ");" )
+                .append( " Heat " )
+                .append( entity.heat );
+            tipStrings[1] = buffer.toString();
+
+            buffer = new StringBuffer();
+            buffer.append( "Armor " )
+                .append( entity.getTotalArmor() )
+                .append( "; Internal " )
+                .append( entity.getTotalInternal() );
+            tipStrings[2] = buffer.toString();
+
             return tipStrings;
         }
     }

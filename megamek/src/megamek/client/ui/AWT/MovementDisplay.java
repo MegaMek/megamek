@@ -30,7 +30,7 @@ public class MovementDisplay
 	public Client client;
 	
 	// displays
-	private BoardView		bv;
+	private BoardView1		bv;
 	private Label			statusL;
 	
 	private	boolean			mechdOn;

@@ -49,7 +49,7 @@ public class Client extends Panel
     	
     // keep me
     public ChatterBox			cb;
-    public BoardView			bv;
+    public BoardView1			bv;
     public Window               mechW;
     public MechDisplay          mechD;
     	
@@ -77,7 +77,7 @@ public class Client extends Panel
         		
         game = new Game();
 
-        bv = new BoardView(game);
+        bv = new BoardView1(game);
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 320);

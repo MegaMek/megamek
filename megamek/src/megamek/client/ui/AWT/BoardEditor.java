@@ -264,7 +264,6 @@ public class BoardEditor extends Container
 
         minimapW = new Dialog(frame, "MiniMap", false);
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
         minimapW.addWindowListener(this);
         try {
             minimap = new MiniMap(minimapW, game, bv);

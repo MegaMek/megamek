@@ -1,5 +1,6 @@
 package megamek.client.bot;
 
+import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.common.Compute;
@@ -20,7 +21,6 @@ import com.sun.java.util.collections.ArrayList;
 import com.sun.java.util.collections.Comparator;
 import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.List;
-import com.sun.java.util.collections.Vector;
 
 /**
  * TODO: The hashcode/equals must be over the movement set and the initial

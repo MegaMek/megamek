@@ -154,7 +154,8 @@ v 0.29.2 (06-07-03, 12am)
 + Extracted multiple version of status bar code to one StatusBarPhaseDisplay 
   class and changed all phase display subclasses to extend this. This allows 
   changes to the status bar to happen in one and only one place.
-  
++ Added save/load of advantages for unit list
+
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.
 

@@ -21,6 +21,7 @@
 package megamek.server.commands;
 
 import megamek.server.*;
+import megamek.common.Player;
 
 /**
  * Causes automatic victory at the end of the current turn.
@@ -32,7 +33,7 @@ public class VictoryCommand extends ServerCommand {
 
     /** Creates new VictoryCommand */
     public VictoryCommand(Server server) {
-        super(server, "victory", "Causes automatic victory at the end of this turn.  Usage: /victory <password>");
+        super(server, "victory", "Causes automatic victory for the issuing player or his/her team at the end of this turn.  Usage: /victory <password>");
     }
 
     /**
@@ -47,8 +48,20 @@ public class VictoryCommand extends ServerCommand {
     }
     
     private void reset(int connId) {
-        server.sendServerChat(server.getPlayer(connId).getName() + " declares force victory at the end of the turn.");
-        server.forceVictory();
+        Player player = server.getPlayer(connId);
+        // are we cancelling victory?
+        if (server.getGame().isForceVictory()) {
+            server.sendServerChat(player.getName() + " cancels the force victory.");
+            server.cancelVictory();
+            return;
+        }
+        // okay, declare force victory
+        if (player.getTeam() == Player.TEAM_NONE) {
+            server.sendServerChat(player.getName() + " declares individual victory at the end of the turn.  Any other player may cancel this with another use of the /victory command.");
+        } else {
+            server.sendServerChat(player.getName() + " declares team victory at the end of the turn.  Any other player may cancel this with another use of the /victory command.");
+        }
+        server.forceVictory(player);
     }
     
 }

@@ -87,6 +87,7 @@ VERSION HISTORY:
 ----------------
 v 0.28.11-dev
 + 708743: minimap now initialized correctly even if "disabled"
++ winning player or team tracked during normal or force victories
 
 v 0.28.10 (03-22-02, 2pm)
 + updated build.xml, build.bat for TinyXML.jar

@@ -24,6 +24,7 @@ import java.util.*;
 public final class Player
     implements Serializable
 {
+    public static final int     PLAYER_NONE = -1;
     public static final int     TEAM_NONE = 0;
     
     public static final int     colorRGBs[] = {0x8686BF, 0xF2F261, 0xCC6666,

@@ -141,7 +141,7 @@
   </target>
 
   <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ *.txt" excludes="*.jar"/>
+    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-media-${DSTAMP}.zip" includes="${datadir}/ *.txt stats.pl" excludes="*.jar"/>
   </target>
 
   <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsdev-init"> 

@@ -261,7 +261,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
 		// If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo
                 int muniType = atCheck.getMunitionType();
-                if ( client.game.getOptions().booleanOption("clan_ignore_eq_limits")
+                if ( !client.game.getOptions().booleanOption("clan_ignore_eq_limits")
                      && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
                      && ( muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 7th January 2004.  MegaMek Version 0.22.60. Best viewed in 1024x768.
+The Great MegaMek Feature list. 12th February 2004.  MegaMek Version 0.22.65. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -336,7 +336,7 @@ Equipment
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Yes		None
-- iNarc				Partial		Nemesis Pods not implemented, 'Mechs cannot try to 'brush off' iNarc Pods.
+- iNarc				Partial		Nemesis Pods not implemented.
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -502,57 +502,57 @@ public class FiringDisplay
         client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
     }
-    
-	/**
-	 * The entity spends the rest of its turn finding a club
-	 */
-	private void findClub() {
-		if (ce() == null) {
-			return;
-		}
-        
-		// comfirm this action
-		String title = "Find A Club?";
-		String body = "Do you want to find a club?\n\n" +
-			"Finding a club is an exclusive action.  If you choose\n" +
-			"to find a club, any declared attacks will be cancelled,\n" +
-			"and you may declare no further attacks.\n\n" +
-			"Pressing 'Yes' will confirm, and end your turn.";
-		if (!client.doYesNoDialog(title, body)) {
-			return;
-		}
+
+    /**
+     * The entity spends the rest of its turn finding a club
+     */
+    private void findClub() {
+        if (ce() == null) {
+            return;
+        }
+
+        // comfirm this action
+        String title = "Find A Club?";
+        String body = "Do you want to find a club?\n\n" +
+            "Finding a club is an exclusive action.  If you choose\n" +
+            "to find a club, any declared attacks will be cancelled,\n" +
+            "and you may declare no further attacks.\n\n" +
+            "Pressing 'Yes' will confirm, and end your turn.";
+        if (!client.doYesNoDialog(title, body)) {
+            return;
+        }
 		
-		attacks.removeAllElements();
-		attacks.addElement(new FindClubAction(cen));
+        attacks.removeAllElements();
+        attacks.addElement(new FindClubAction(cen));
         
-		ready();
-	}
-  
-	/**
-	 * The entity spends the rest of its turn spotting
-	 */
-	private void doSpot() {
-		if (ce() == null) {
-			return;
-		}
+        ready();
+    }
+
+    /**
+     * The entity spends the rest of its turn spotting
+     */
+    private void doSpot() {
+        if (ce() == null) {
+            return;
+        }
 		
-		// comfirm this action
-		String title = "Spot For Indirect Fire?";
-		String body = "Do you want to spot for indirect fire?\n\n" +
-			"Spotting is an exclusive action.  If you choose\n" +
-			"to spot, any declared attacks will be cancelled,\n" +
-			"and you may declare no further attacks.\n\n" +
-			"Pressing 'Yes' will confirm, and end your turn.";
-		if (!client.doYesNoDialog(title, body)) {
-			return;
-		}
+        // comfirm this action
+        String title = "Spot For Indirect Fire?";
+        String body = "Do you want to spot for indirect fire?\n\n" +
+            "Spotting is an exclusive action.  If you choose\n" +
+            "to spot, any declared attacks will be cancelled,\n" +
+            "and you may declare no further attacks.\n\n" +
+            "Pressing 'Yes' will confirm, and end your turn.";
+        if (!client.doYesNoDialog(title, body)) {
+            return;
+        }
         
-		attacks.removeAllElements();
-		attacks.addElement(new SpotAction(cen));
+        attacks.removeAllElements();
+        attacks.addElement(new SpotAction(cen));
         
-		ready();
-	}
-  
+        ready();
+    }
+
     /**
      * Removes all current fire
      */
@@ -688,6 +688,10 @@ public class FiringDisplay
     public void boardHexMoused(BoardEvent b) {
         // ignore buttons other than 1
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+            return;
+        }
+        // control pressed means a line of sight check.
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
             return;
         }
         // check for shifty goodness

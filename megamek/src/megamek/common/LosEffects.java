@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -52,6 +52,21 @@ public class LosEffects {
         }
     }
     
+    public int getLightWoods() {
+    	return lightWoods;
+    }
+    
+    public int getHeavyWoods() {
+    	return heavyWoods;
+    }
+    
+    public int getSmoke() {
+    	return smoke;
+    }
+    
+    public boolean isBlocked() {
+    	return blocked;
+    }
     /** Getter for property targetCover.
      * @return Value of property targetCover.
      */

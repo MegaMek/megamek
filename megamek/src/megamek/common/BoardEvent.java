@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -30,7 +30,10 @@ public class BoardEvent
     
     public static final int        BOARD_CHANGED_HEX        = 9;
     //public static final int        BOARD_CHANGED_ENTITY    = 10;
-    
+
+    public static final int        BOARD_FIRST_LOS_HEX        = 11;
+    public static final int        BOARD_SECOND_LOS_HEX        = 12;
+
     private Coords        c;
     private Entity            entity;
     private int                type;

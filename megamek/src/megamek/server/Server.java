@@ -1533,7 +1533,9 @@ implements Runnable, ConnectionHandler {
      * are skippable, and a turn should be skipped if there's nothing to move.
      */
     public boolean isTurnSkippable() {
-        Player player = getPlayer( game.getTurn().getPlayerNum() );
+        GameTurn turn = game.getTurn();
+        if (null == turn) return false;
+        Player player = getPlayer( turn.getPlayerNum() );
         return ( null == player || player.isGhost()
                  || game.getFirstEntity() == null );
     }

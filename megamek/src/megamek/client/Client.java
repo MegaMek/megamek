@@ -219,6 +219,20 @@ public class Client extends Panel
     }
 
     /**
+     * Called when the user selects the "View->Game Options" menu item.
+     */
+    private void showOptions() {
+        if ( game.getPhase() == Game.PHASE_LOUNGE) {
+            getGameOptionsDialog().setEditable( true );
+        } else {
+            getGameOptionsDialog().setEditable( false );
+        }
+        // Display the game options dialog.
+        getGameOptionsDialog().update(game.getOptions());
+        getGameOptionsDialog().show();
+	}
+
+    /**
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
@@ -230,6 +244,9 @@ public class Client extends Panel
         }
         if(event.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
             showSettings();
+        }
+        if(event.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
+            showOptions();
         }
     }
     
@@ -263,6 +280,7 @@ public class Client extends Panel
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         mechSelectorDialogThread = new Thread(mechSelectorDialog);
         mechSelectorDialogThread.start();
+
     }
 
     /**

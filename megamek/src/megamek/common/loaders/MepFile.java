@@ -251,10 +251,10 @@ public class MepFile implements MechLoader {
                     critName = "Double Heat Sink";
                 }
                 
-                EquipmentType etype = EquipmentType.get(critName);
+                EquipmentType etype = EquipmentType.get(prefix + critName);
                 if (etype == null) {
-                    // try w/ prefix
-                    etype = EquipmentType.get(prefix + critName);
+                    // try w/o prefix
+                    etype = EquipmentType.get(critName);
                 }
                 if (etype != null) {
                     try {

@@ -516,25 +516,26 @@ public class TdbFile implements MechLoader {
                 critName = critName.substring(4);
             }
             try {
-                EquipmentType etype = EquipmentType.get(critName);
+                String hashPrefix;
+                if (critName.startsWith("(C)")) {
+                    //equipment specifically marked as clan
+                    hashPrefix = "Clan ";
+                    critName = critName.substring(4);
+                } else if (critName.startsWith("(IS)")) {
+                    //equipment specifically marked as inner sphere
+                    hashPrefix = "IS ";
+                    critName = critName.substring(5);
+                } else if (mech.isClan()) {
+                    //assume equipment is clan because mech is clan
+                    hashPrefix = "Clan ";
+                } else {
+                    //assume equipment is inner sphere
+                    hashPrefix = "IS ";
+                }
+                EquipmentType etype = EquipmentType.get(hashPrefix + critName);
                 if (etype == null) {
-                    String hashPrefix;
-                    if (critName.startsWith("(C)")) {
-                        //equipment specifically marked as clan
-                        hashPrefix = "Clan ";
-                        critName = critName.substring(4);
-                    } else if (critName.startsWith("(IS)")) {
-                        //equipment specifically marked as inner sphere
-                        hashPrefix = "IS ";
-                        critName = critName.substring(5);
-                    } else if (mech.isClan()) {
-                        //assume equipment is clan because mech is clan
-                        hashPrefix = "Clan ";
-                    } else {
-                        //assume equipment is inner sphere
-                        hashPrefix = "IS ";
-                    }
-                    etype = EquipmentType.get(hashPrefix + critName);
+                    //try without prefix
+                    etype = EquipmentType.get(critName);
                 }
                 if (etype != null) {
                     if (etype.isSpreadable()) {

@@ -17,11 +17,11 @@
 package megamek.common;
 
 public class BipedMech extends Mech {
-    private static final String[] LOCATION_NAMES = {"Head",
+    public static final String[] LOCATION_NAMES = {"Head",
     "Center Torso", "Right Torso", "Left Torso",
     "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
     
-    private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
+    public static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
     "LT", "RA", "LA", "RL", "LL"};
     
     private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};

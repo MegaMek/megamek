@@ -28,19 +28,29 @@ public class HitData
     private int location;
     private boolean rear;
     private int effect;
+    private boolean hitAimedLocation = false;
     
     public HitData(int location) {
-        this(location, false, EFFECT_NONE);
+        this(location, false, EFFECT_NONE, false);
     }
     
     public HitData(int location, boolean rear) {
-        this(location, rear, EFFECT_NONE);
+        this(location, rear, EFFECT_NONE, false);
     }
     
-    public HitData(int location, boolean rear, int effect) {
+    public HitData(int location, boolean rear, int effects) {
+        this(location, rear, effects, false);
+    }
+    
+    public HitData(int location, boolean rear, boolean hitAimedLocation) {
+        this(location, rear, EFFECT_NONE, hitAimedLocation);
+    }
+    
+    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
+        this.hitAimedLocation = hitAimedLocation;
     }
     
     public int getLocation() {
@@ -53,5 +63,9 @@ public class HitData
     
     public int getEffect() {
         return effect;
+    }
+
+    public boolean hitAimedLocation() {
+        return hitAimedLocation;
     }
 }

@@ -331,6 +331,10 @@ public class Infantry
     /**
      * Infantry only have one hit location.
      */
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    	return rollHitLocation(table, side);
+    }     
+     
     public HitData rollHitLocation( int table, int side ) {
         return new HitData( 0 );
     }

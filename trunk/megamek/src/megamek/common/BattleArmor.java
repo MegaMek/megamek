@@ -307,6 +307,10 @@ public class BattleArmor
     /**
      * Battle Armor units can only get hit in undestroyed troopers.
      */
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    	return rollHitLocation(table, side);
+    }     
+     
     public HitData rollHitLocation( int table, int side ) {
 
         // If this squad was killed, target trooper 1 (just because).

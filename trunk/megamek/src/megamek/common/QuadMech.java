@@ -18,11 +18,11 @@ package megamek.common;
 
 public class QuadMech extends Mech
 {
-  private static final String[] LOCATION_NAMES = {"Head",
+  public static final String[] LOCATION_NAMES = {"Head",
       "Center Torso", "Right Torso", "Left Torso", 
       "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg"};
   
-  private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
+  public static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
       "LT", "FRL", "FLL", "RRL", "RLL"};
   
   private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 6, 6, 6, 6};

@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.*;
 import java.util.Enumeration;
+import megamek.client.FiringDisplay;
 
 /**
  * You know what mechs are, silly.
@@ -24,7 +25,7 @@ public abstract class Mech
     extends Entity
     implements Serializable
 {
-    private static final int      NUM_MECH_LOCATIONS = 8;
+    public static final int      NUM_MECH_LOCATIONS = 8;
     
     // weight class limits
     public static final int        WEIGHT_LIGHT        = 35;
@@ -824,7 +825,26 @@ public abstract class Mech
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
+    	return rollHitLocation(table, side, LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+    }     
+     
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
+        
+        if ((aimedLocation != LOC_NONE) &&
+        	(aimingMode == FiringDisplay.AIM_MODE_TARG_COMP)) {
+            	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);        		
+        }
+        
+    	if ((aimedLocation != LOC_NONE) &&
+    		(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+            roll = Compute.d6(2);
+            
+            if ((5 < roll) && (roll < 9)) {
+            	return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
+            }
+    	}
+
         if(table == ToHitData.HIT_NORMAL) {
             roll = Compute.d6(2);
             try {

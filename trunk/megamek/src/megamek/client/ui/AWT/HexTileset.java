@@ -230,7 +230,7 @@ public class HexTileset {
         if (com.getElevation() == Terrain.WILDCARD) {
             elevation = 1.0;
         } else {
-            elevation = 1.0 / (Math.abs(org.getElevation() - com.getElevation()) + 1.0);
+            elevation = 1.01 / (Math.abs(org.getElevation() - com.getElevation()) + 1.01);
         }
         
         // check terrain

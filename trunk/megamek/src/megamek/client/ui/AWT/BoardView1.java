@@ -1376,7 +1376,7 @@ public class BoardView1
             if (entity.isImmobile()) {
                 col = Color.black;
                 bcol = Color.lightGray;
-            } else if (!entity.ready) {
+            } else if (entity.isDone()) {
                 col = Color.darkGray;
                 bcol = Color.black;
             } else {
@@ -1389,7 +1389,7 @@ public class BoardView1
             modelRect.translate(-1, -1);
             graph.setColor(col);
             graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            graph.setColor(entity.ready ? Color.black : Color.lightGray);
+            graph.setColor(entity.isDone() ? Color.lightGray : Color.black);
             graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
             
             // draw facing

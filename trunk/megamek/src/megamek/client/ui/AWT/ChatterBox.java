@@ -73,11 +73,11 @@ implements GameListener, KeyListener {
             final Player player = (Player)e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
-                playerDisplay.append(" (ghost)");
+                playerDisplay.append(" [ghost]");
             } else if (player.isObserver()) {
-                playerDisplay.append(" (observer)");
-            } else if (player.isReady()) {
-                playerDisplay.append(" (ready)");
+                playerDisplay.append(" [observer]");
+            } else if (player.isDone()) {
+                playerDisplay.append(" (done)");
             }
             playerList.add(playerDisplay.toString());
         }

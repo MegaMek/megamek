@@ -202,6 +202,22 @@ public class Game implements Serializable
     }
     
     /**
+     * Returns true if this phase has turns.  If false, the phase is simply
+     * waiting for everybody to declare "done".
+     */
+    public boolean phaseHasTurns(int phase) {
+        switch (phase) {
+            case PHASE_DEPLOYMENT :
+            case PHASE_MOVEMENT :
+            case PHASE_FIRING :
+            case PHASE_PHYSICAL :
+                return true;
+            default :
+                return false;
+        }
+    }
+    
+    /**
      * Returns the current GameTurn object
      */
     public GameTurn getTurn() {

@@ -44,7 +44,7 @@ public final class Player
     
     private int             team = TEAM_NONE;
 
-    private boolean         ready = false;
+    private boolean         done = false; // done with phase
     private boolean         ghost = false; // disconnected player
     private boolean         observer = false;
     private int             colorIndex = 0;
@@ -82,12 +82,12 @@ public final class Player
         this.team = team;
     }
   
-    public boolean isReady() {
-        return ready;
+    public boolean isDone() {
+        return done;
     }
   
-    public void setReady(boolean ready) {
-        this.ready = ready;
+    public void setDone(boolean done) {
+        this.done = done;
     }
   
     public boolean isGhost() {

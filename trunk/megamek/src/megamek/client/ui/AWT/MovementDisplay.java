@@ -270,7 +270,7 @@ public class MovementDisplay
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
             System.err.println("MovementDisplay: sending ready signal...");
-            client.sendReady(true);
+            moveTo(new MovementData());
             return;
         }
         // okay.
@@ -436,7 +436,6 @@ public class MovementDisplay
         if ( ce() instanceof Infantry ) {
             turnInfMoved++;
         }
-        client.sendReady(true);
     }
 
     /**

@@ -303,7 +303,7 @@ implements Runnable {
             case Game.PHASE_VICTORY :
                 send(createReportPacket());
             default :
-                getPlayer(connId).setReady(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
+                getPlayer(connId).setDone(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
                 send(connId, createBoardPacket());
                 break;
         }
@@ -375,7 +375,7 @@ implements Runnable {
         // if a player has active entities, he becomes a ghost
         if (game.getEntitiesOwnedBy(player) > 0) {
             player.setGhost(true);
-            player.setReady(true);
+            player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));
             checkReady();
         } else {
@@ -405,8 +405,8 @@ implements Runnable {
         //TODO: remove ghosts
         
         // reset all players
-        resetPlayerReady();
-        transmitAllPlayerReadys();
+        resetPlayersDone();
+        transmitAllPlayerDones();
         
         pilotRolls.removeAllElements();
         
@@ -601,8 +601,8 @@ implements Runnable {
             // reset damage this phase
             entity.damageThisPhase = 0;
             
-            // reset ready to true
-            entity.ready = entity.isActive();
+            // reset done to false
+            entity.setDone(!entity.isActive());
         }
     }
     
@@ -610,10 +610,10 @@ implements Runnable {
      * Called at the beginning of certain phases to make
      * every player not ready.
      */
-    private void resetPlayerReady() {
+    private void resetPlayersDone() {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            player.setReady(false);
+            player.setDone(false);
         }
     }
     
@@ -621,14 +621,14 @@ implements Runnable {
      * Called at the beginning of certain phases to make
      * every active player not ready.
      */
-    private void resetActivePlayersReady() {
+    private void resetActivePlayersDone() {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             
-            player.setReady(game.getEntitiesOwnedBy(player) <= 0);
+            player.setDone(game.getEntitiesOwnedBy(player) <= 0);
             
         }
-        transmitAllPlayerReadys();
+        transmitAllPlayerDones();
     }
     
     /**
@@ -749,41 +749,30 @@ implements Runnable {
     }
     
     /**
-     * Called when a player is "ready".  Handles any moving
-     * to the next turn or phase or that stuff.
+     * Called when a player declares that he is "done."  Checks to see if all
+     * players are done, and if so, moves on to the next phase.
      */
     private void checkReady() {
         // are there any active players?
         boolean allAboard = countActivePlayers() > 0;
-        // check if all active players are ready
+        // check if all active players are done
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (!player.isGhost() && !player.isReady()) {
+            if (!player.isGhost() && !player.isDone()) {
                 allAboard = false;
             }
         }
-        // now, do something about it.
-        switch(game.phase) {
-            case Game.PHASE_LOUNGE :
-            case Game.PHASE_EXCHANGE :
-            case Game.PHASE_INITIATIVE :
-            case Game.PHASE_MOVEMENT_REPORT :
-            case Game.PHASE_FIRING_REPORT :
-            case Game.PHASE_END :
-            case Game.PHASE_VICTORY :
-                if (allAboard) {
-                    endCurrentPhase();
-                }
-                break;
-            case Game.PHASE_DEPLOYMENT :
-            case Game.PHASE_MOVEMENT :
-            case Game.PHASE_FIRING :
-            case Game.PHASE_PHYSICAL :
-                if(getPlayer(game.getTurn().getPlayerNum()).isReady()) {
-                    changeToNextTurn();
-                }
-                break;
+        if (allAboard && !game.phaseHasTurns(game.phase)) {
+            endCurrentPhase();
         }
+    }
+    
+    /**
+     * Called when the current player has done his current turn and the turn
+     * counter needs to be advanced.
+     */
+    private void endCurrentTurn() {
+        changeToNextTurn();
     }
     
     /**
@@ -819,7 +808,7 @@ implements Runnable {
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 break;
             case Game.PHASE_EXCHANGE :
-                resetPlayerReady();
+                resetPlayersDone();
                 // apply board layout settings to produce a mega-board
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
@@ -854,7 +843,7 @@ implements Runnable {
                 resetEntityRound();
                 resetEntityPhase();
                 // roll 'em
-                resetActivePlayersReady();
+                resetActivePlayersDone();
                 rollInitiative();
                 setIneligible(phase);
                 determineTurnOrder();
@@ -868,7 +857,7 @@ implements Runnable {
                 resetEntityPhase();
                 setIneligible(phase);
                 determineTurnOrder();
-                resetActivePlayersReady();
+                resetActivePlayersDone();
                 //send(createEntitiesPacket());
                 entityAllUpdate();
                 phaseReport = new StringBuffer();
@@ -889,7 +878,7 @@ implements Runnable {
                 log.append( roundReport.toString() );
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_FIRING_REPORT :
-                resetActivePlayersReady();
+                resetActivePlayersDone();
                 send(createReportPacket());
                 break;
             case Game.PHASE_VICTORY :
@@ -1032,7 +1021,9 @@ implements Runnable {
     }
     
     /**
-     * Changes to the next turn, if that player is connected
+     * Tries to change to the next turn.  If there are no more turns, ends the
+     * current phase.  If the player whose turn it is next is not connected,
+     * we skip that player.
      */
     private void changeToNextTurn() {
         // if there aren't any more turns, end the phase
@@ -1055,7 +1046,7 @@ implements Runnable {
         final Player player = getPlayer(turn.getPlayerNum());
         game.setTurn(turn);
         if (player != null) {
-            player.setReady(false);
+            player.setDone(false);
         }
         send(new Packet(Packet.COMMAND_TURN, turn));
     }
@@ -1388,7 +1379,7 @@ implements Runnable {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity entity = (Entity)e.nextElement();
             if (!isEligibleFor(entity, phase)) {
-                entity.ready = false;
+                entity.setDone(true);
             }
         }
     }
@@ -1584,7 +1575,7 @@ implements Runnable {
             return;
         }
 
-        if (!entity.ready) {
+        if (entity.isDone()) {
             // the entity has already moved, apparently
             return;
         }
@@ -1939,7 +1930,7 @@ implements Runnable {
 			    if ( target.isDoomed() ) {
 
 				// Has the target taken a turn?
-				if ( target.ready ) {
+				if ( !target.isDone() ) {
 
 				    // Dead entities don't take turns.
 				    int targetOwnerId = target.getOwner().getId();
@@ -2368,10 +2359,10 @@ implements Runnable {
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
             entity.applyDamage();
-            entity.ready = true;
+            entity.setDone(false);
             turns.insertElementAt(new GameTurn(entity.getOwner().getId(), entity.getId()), turnIndex);
         } else {
-            entity.ready = false;
+            entity.setDone(true);
         }
         
         // Is the entity Infantry?
@@ -2760,7 +2751,7 @@ implements Runnable {
             e.setPosition(c);
             e.setFacing(nFacing);
             e.setSecondaryFacing(nFacing);
-            e.ready = false;
+            e.setDone(true);
             entityUpdate(e.getId());
         }
         else {
@@ -2828,7 +2819,8 @@ implements Runnable {
             // send an outgoing packet to everybody
             send(createAttackPacket(ea));
         }
-        //send(createEntityPacket(entity.getId()));
+        // this entity is done for the round
+        entity.setDone(true);
         entityUpdate(entity.getId());
     }
     
@@ -6210,7 +6202,7 @@ implements Runnable {
 	    }        
 
 	    // We passed the cheat checks.
-            entity.ready = false;
+            entity.setDone(true);
 
 	    // Is the entity Infantry?
 	    if ( entity instanceof Infantry ) {
@@ -6317,14 +6309,14 @@ implements Runnable {
     /**
      * Sets a player's ready status
      */
-    private void receivePlayerReady(Packet pkt, int connIndex) {
+    private void receivePlayerDone(Packet pkt, int connIndex) {
         boolean ready = pkt.getBooleanValue(0);
         // don't let them enter the game with no entities
         if (ready && game.phase == Game.PHASE_LOUNGE
         && game.getEntitiesOwnedBy(getPlayer(connIndex)) < 1) {
             ready = false;
         }
-        getPlayer(connIndex).setReady(ready);
+        getPlayer(connIndex).setDone(ready);
     }
     
     /**
@@ -6427,21 +6419,21 @@ implements Runnable {
     /**
      * Sends out the player ready stats for all players to all connections
      */
-    private void transmitAllPlayerReadys() {
+    private void transmitAllPlayerDones() {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             
-            send(createPlayerReadyPacket(player.getId()));
+            send(createPlayerDonePacket(player.getId()));
         }
     }
     
     /**
      * Creates a packet containing the player ready status
      */
-    private Packet createPlayerReadyPacket(int playerId) {
+    private Packet createPlayerDonePacket(int playerId) {
         Object[] data = new Object[2];
         data[0] = new Integer(playerId);
-        data[1] = new Boolean(getPlayer(playerId).isReady());
+        data[1] = new Boolean(getPlayer(playerId).isDone());
         return new Packet(Packet.COMMAND_PLAYER_READY, data);
     }
     
@@ -6698,14 +6690,9 @@ implements Runnable {
                 validatePlayerInfo(connId);
                 send(createPlayerUpdatePacket(connId));
                 break;
-            case Packet.COMMAND_ENTITY_READY :
-                receiveEntityReady(packet, connId);
-                //send(createEntityPacket(packet.getIntValue(0)));
-                entityUpdate(packet.getIntValue(0));
-                break;
             case Packet.COMMAND_PLAYER_READY :
-                receivePlayerReady(packet, connId);
-                send(createPlayerReadyPacket(connId));
+                receivePlayerDone(packet, connId);
+                send(createPlayerDonePacket(connId));
                 checkReady();
                 break;
             case Packet.COMMAND_CHAT :
@@ -6718,43 +6705,46 @@ implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_MOVE :
                 doEntityMovement(packet, connId);
+                endCurrentTurn();
                 break;
             case Packet.COMMAND_ENTITY_DEPLOY :
                 receiveDeployment(packet);
+                endCurrentTurn();
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
                 receiveAttack(packet);
+                endCurrentTurn();
                 break;
             case Packet.COMMAND_ENTITY_ADD :
                 receiveEntityAdd(packet, connId);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
+                resetPlayersDone();
+                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_ENTITY_UPDATE :
                 receiveEntityUpdate(packet, connId);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
+                resetPlayersDone();
+                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_ENTITY_MODECHANGE :
                 receiveEntityModeChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_REMOVE :
                 receiveEntityDelete(packet, connId);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
+                resetPlayersDone();
+                transmitAllPlayerDones();
                 break;
             case Packet.COMMAND_SENDING_GAME_SETTINGS :
                 if (receiveGameOptions(packet, connId)) {
-                    resetPlayerReady();
-                    transmitAllPlayerReadys();
+                    resetPlayersDone();
+                    transmitAllPlayerDones();
                     send(createGameSettingsPacket());
                 }
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :
                 mapSettings = (MapSettings)packet.getObject(0);
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-                resetPlayerReady();
-                transmitAllPlayerReadys();
+                resetPlayersDone();
+                transmitAllPlayerDones();
                 send(createMapSettingsPacket());
                 break;
             case Packet.COMMAND_QUERY_MAP_SETTINGS :

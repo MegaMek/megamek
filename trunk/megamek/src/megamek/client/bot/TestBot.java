@@ -250,7 +250,7 @@ public class TestBot extends BotClientWrapper {
             } else if (right) {
               bestAttack.type = PhysicalOption.PUNCH_RIGHT;
             } else {
-              sendReady(true);
+              sendAttackData(entNum, new java.util.Vector(0));
               return;
             }
           }
@@ -258,13 +258,10 @@ public class TestBot extends BotClientWrapper {
         java.util.Vector v = new java.util.Vector();
         v.addElement(bestAttack.toAction(game, entNum));
         sendAttackData(entNum, v);
-        sendEntityReady(entNum);
-        sendReady(true);
         return;
       }
       entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
     } while (entNum != -1 && entNum != first);
-    sendReady(true);
   }
   
   public Vector getEntitiesOwned() {
@@ -462,7 +459,6 @@ public class TestBot extends BotClientWrapper {
     min.centity.moved = true;
     min.centity.old = min;
     min.centity.last = min;
-    sendReady(true);
   }
   
   class MoveThread extends Thread {
@@ -1393,8 +1389,6 @@ public class TestBot extends BotClientWrapper {
     }
     //System.out.println(max);
     sendAttackData(best_entity, av);
-    sendEntityReady(best_entity);
-    sendReady(true);
   }
   
   boolean initMovement = false;

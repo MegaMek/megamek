@@ -93,7 +93,7 @@ public abstract class Entity
     protected int               walkMP = 0;
     protected int               jumpMP = 0;
 
-    public boolean              ready = false;    
+    protected boolean           done = false;    
 
     protected boolean           prone = false;
     protected boolean           findingClub = false;
@@ -350,6 +350,14 @@ public abstract class Entity
     public int getHeight() { return height(); }
     // End Targetable interface
     
+    public boolean isDone() {
+        return done;
+    }
+    
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+    
     /**
      * Determine if this entity participate in the current game phase.
      *
@@ -361,13 +369,13 @@ public abstract class Entity
         return !shutDown && !destroyed &&
             getCrew().isActive() && !this.unloadedThisTurn;
     }
-  
+    
     /**
      * Returns true if this entity is selectable for action.  Transported
      * entities can not be selected.
      */
     public boolean isSelectable() {
-        return ready && isActive() && (conveyance == Entity.NONE) ;
+        return !done && isActive() && (conveyance == Entity.NONE) ;
     }
 
     /**
@@ -1866,7 +1874,7 @@ public abstract class Entity
     public void newRound()
     {
         unloadedThisTurn = false;
-        ready = this.isActive();
+        done = !this.isActive();
         delta_distance = 0;
         mpUsed = 0;
         moved = Entity.MOVE_NONE;
@@ -2269,7 +2277,7 @@ public abstract class Entity
         // If we were unloaded, set the appropriate flags.
         if ( transportId == Entity.NONE ) {
             this.unloadedThisTurn = true;
-            this.ready = false;
+            this.done = true;
         }
     }
 
@@ -2346,7 +2354,7 @@ public abstract class Entity
         // This entity can neither move nor attack for the rest of this turn.
         if ( id == Entity.NONE ) {
             this.unloadedThisTurn = true;
-            this.ready = false;
+            this.done = true;
         }
     }
 

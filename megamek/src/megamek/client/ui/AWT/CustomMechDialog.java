@@ -254,11 +254,11 @@ extends Dialog implements ActionListener {
             
             // change entity
             entity.crew = new Pilot(name, gunnery, piloting);
-            if(entity.hasC3() ) {
+            if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
                 //new AlertDialog(client.frame, "Setting C3", "Set C3 Master to " + entity.getC3Master().getDisplayName()).show();
             }
-            else if(entity.hasC3i()) {
+            else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetID(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
 // = HentaiZonga

@@ -37,7 +37,8 @@ public class WeaponType extends EquipmentType {
     public static final int     F_BALLISTIC     = 0x20000; // For Gunnery/Ballistic skill
     public static final int     F_ENERGY        = 0x40000; // For Gunnery/Energy skill
     public static final int     F_MISSILE       = 0x80000; // For Gunnery/Missile skill
-    
+    public static final int     F_SPLITABLE     = 0x100; // Weapons that can be split between locations
+
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
     public static final int     F_INFERNO       = 0x0400; // Inferno weapon
@@ -637,7 +638,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 12;
         weapon.tonnage = 14.0f;
         weapon.criticals = 10;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 178;
 
         return weapon;
@@ -1276,7 +1277,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 14.0f;
         weapon.criticals = 11;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 237;
 
         return weapon;
@@ -1344,7 +1345,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 26;
         weapon.tonnage = 18.0f;
         weapon.criticals = 11;
-        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SPLITABLE;
         weapon.explosive = true;
         weapon.bv = 346;
 
@@ -1443,7 +1444,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 14;
         weapon.tonnage = 15.0f;
         weapon.criticals = 10;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 282;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
@@ -2881,7 +2882,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 12.0f;
         weapon.criticals = 9;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 237;
 
         return weapon;
@@ -3002,7 +3003,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 16;
         weapon.tonnage = 12.0f;
         weapon.criticals = 8;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 337;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
@@ -4796,7 +4797,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 171;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 
@@ -4819,7 +4820,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 12f;
         weapon.criticals = 12;
         weapon.bv = 171;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 
@@ -4885,7 +4886,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 20f;
         weapon.criticals = 20;
         weapon.bv = 86;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 
@@ -4907,7 +4908,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 20f;
         weapon.criticals = 20;
         weapon.bv = 86;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 
@@ -4929,7 +4930,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 40;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 
@@ -4951,7 +4952,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 15f;
         weapon.criticals = 15;
         weapon.bv = 40;
-        weapon.flags |= F_ARTILLERY;
+        weapon.flags |= F_ARTILLERY | F_SPLITABLE;
         return weapon;
     }
 

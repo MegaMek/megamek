@@ -36,8 +36,6 @@ public class MechView {
     private boolean isInf;
     private boolean isVehicle;
     private boolean isProto;
-    private boolean hasEndoSteel;
-    private boolean hasFerroFibrous;
 
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
@@ -48,8 +46,6 @@ public class MechView {
         isInf = entity instanceof Infantry;
         isVehicle = entity instanceof Tank;
         isProto = entity instanceof Protomech;
-        hasEndoSteel = false;
-        hasFerroFibrous = false;
 
         sLoadout.append( getWeapons() )
             .append("\n")
@@ -128,7 +124,7 @@ public class MechView {
         int maxArmor = mech.getTotalInternal() * 2 + 3;
         sIntArm.append( "Internal: " )
             .append( mech.getTotalInternal() );
-        if (hasEndoSteel) {
+        if (isMech && ((Mech)mech).hasEndo()) {
             sIntArm.append(" (Endo Steel)");
         }
         sIntArm.append( "\n" );
@@ -137,7 +133,7 @@ public class MechView {
         if ( isMech ) {
             sIntArm.append( "/" )
                 .append( maxArmor );
-            if (hasFerroFibrous) {
+            if (((Mech)mech).hasFerro()) {
                 sIntArm.append(" (Ferro-Fibrous)");
             }
         }
@@ -228,12 +224,7 @@ public class MechView {
                  mounted.getDesc().indexOf("Heat Sink") != -1  ||
                  mounted.getDesc().indexOf("Endo Steel") != -1 ||
                  mounted.getDesc().indexOf("Ferro-Fibrous") != -1) {
-                if (mounted.getDesc().indexOf("Endo Steel") != -1) {
-                    hasEndoSteel = true;
-                }
-                if (mounted.getDesc().indexOf("Ferro-Fibrous") != -1) {
-                    hasFerroFibrous = true;
-                }
+                // These items are displayed elsewhere, so skip them here.
                 continue;
             }
             sMisc.append( mounted.getDesc() )

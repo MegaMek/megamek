@@ -447,7 +447,39 @@ public abstract class Mech
             setCritical(LOC_LT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
         }
     }
-    
+
+    public boolean hasEndo() {
+        Enumeration eMisc = getMisc();
+        while (eMisc.hasMoreElements()) {
+            Mounted mounted = (Mounted)eMisc.nextElement();
+            if (mounted.getDesc().indexOf(MiscType.ENDO_STEEL) != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasFerro() {
+        Enumeration eMisc = getMisc();
+        while (eMisc.hasMoreElements()) {
+            Mounted mounted = (Mounted)eMisc.nextElement();
+            if (mounted.getDesc().indexOf(MiscType.FERRO_FIBROUS) != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasMASC() {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
+            if (mtype.hasFlag(MiscType.F_MASC)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Checks if a mech has an armed MASC system. Note
      *  that the mech will have to exceed its normal run to actually
@@ -472,6 +504,18 @@ public abstract class Mech
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
             if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TSM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasStealth() {
+        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
+            Mounted mEquip = (Mounted) equips.nextElement();
+            MiscType mtype = (MiscType) mEquip.getType();
+            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
+                // The Mek has Stealth Armor.
                 return true;
             }
         }
@@ -1441,16 +1485,7 @@ public abstract class Mech
         double obv = 0; // offensive bv
 
         // Try to find a Mek Stealth system.
-        boolean bHasStealthArmor = false;
-        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
-            Mounted mEquip = (Mounted) equips.nextElement();
-            MiscType mtype = (MiscType) mEquip.getType();
-            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
-                // The Mek has Stealth Armor.
-                bHasStealthArmor = true;
-                break;
-            }
-        }
+        boolean bHasStealthArmor = hasStealth();
 
         // total armor points
         dbv += getTotalArmor() * 2.0;
@@ -1602,16 +1637,11 @@ public abstract class Mech
         // adjust for target movement modifier
         int runMP = getRunMPwithoutMASC();
         // factor in masc or tsm
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
-            // assumption: there are no mechs with 1 MP and MASC and TSM both
-            if (mtype.hasFlag(MiscType.F_MASC)) {
-                runMP = getWalkMP() * 2;
-                break;
-            }
-            if (mtype.hasFlag(MiscType.F_TSM)) {
-                runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
-            }
+        if (hasMASC()) {
+            runMP = getWalkMP() * 2;
+        }
+        if (hasTSM()) {
+            runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true).getValue();
@@ -1729,13 +1759,9 @@ public abstract class Mech
         
         // adjust further for speed factor
         double speedFactor = getRunMPwithoutMASC() + getJumpMP() - 5;
-        // +1 for MASC or TSM
-        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
-            MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
-            if (mtype.hasFlag(MiscType.F_MASC) || mtype.hasFlag(MiscType.F_TSM)) {
-                speedFactor++;
-                break; // they seem not to be cumulative
-            }
+        // +1 for MASC or TSM, you may not have both
+        if (hasMASC() || hasTSM()) {
+            speedFactor++;
         }
         speedFactor /= 10;
         speedFactor++;

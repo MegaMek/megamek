@@ -17,6 +17,10 @@ v0.29.53 (CVS)
 + Bug 1047450: heat and leg damage movement point modifiers
     should be applied before gravity modifiers
 + Bug 1036351: scroll problems
++ Native HMP parser now supports mixed tech.  Also, hmpread and the native
+    parser now use the same code base.  An updated version of hmpread has
+    been created (see files->utilities section of SF).  Thanks go out
+    to Ian Hamilton for all his help with this.
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

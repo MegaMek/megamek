@@ -8379,7 +8379,7 @@ implements Runnable, ConnectionHandler {
                 roundReport.append("Added 10 heat from Stealth Armor...\n");
             }
 
-            // If a Mek is in extreme Temperatures, add or substract one
+            // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
             if ( entity instanceof Mech && game.getTemperatureDifference() != 0) {
@@ -8391,7 +8391,7 @@ implements Runnable, ConnectionHandler {
                 }
                 else {
                     entity.heatBuildup -= game.getTemperatureDifference();
-                    roundReport.append( "Substracted " )
+                    roundReport.append( "Subtracted " )
                         .append( game.getTemperatureDifference() )
                         .append( " heat due to extreme temperatures...\n" );
                 }

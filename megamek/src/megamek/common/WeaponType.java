@@ -1000,7 +1000,10 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 118;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
-        
+
+        // explosive when jammed
+        weapon.explosive = true;
+                
         return weapon;
     }
     
@@ -1025,6 +1028,9 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 247;
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         weapon.setModes(modes);
+
+        // explosive when jammed
+        weapon.explosive = true;
         
         return weapon;
     }

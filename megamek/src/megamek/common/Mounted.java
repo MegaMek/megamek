@@ -34,6 +34,7 @@ public class Mounted implements Serializable{
     private boolean destroyed = false;
     private boolean hit = false;
     private boolean missing = false;
+    private boolean jammed = false;
     
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
@@ -153,6 +154,8 @@ public class Mounted implements Serializable{
             desc.insert(0, "*");
         } else if (usedThisRound) {
             desc.insert(0, "+");
+        } else if (jammed) {
+            desc.insert(0, "j ");
         }
         if (rearMounted) {
             desc.append(" (R)");
@@ -166,7 +169,7 @@ public class Mounted implements Serializable{
     }
     
     public boolean isReady() {
-        return !usedThisRound && !destroyed;
+        return !usedThisRound && !destroyed && !jammed;
     }
     
     public boolean isUsedThisRound() {
@@ -199,6 +202,14 @@ public class Mounted implements Serializable{
     
     public void setMissing(boolean missing) {
         this.missing = missing;
+    }
+    
+    public boolean isJammed() {
+        return jammed;
+    }
+    
+    public void setJammed(boolean j) {
+        jammed = j;
     }
     
     public int getShotsLeft() {
@@ -280,6 +291,8 @@ public class Mounted implements Serializable{
                 return 16;
             } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
                 return 25;
+            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                return wtype.getDamage();
             }
         }
         // um, otherwise, I'm not sure

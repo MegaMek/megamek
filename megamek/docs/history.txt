@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.68 (CVS)
+v0.29.68 (2005-03-06 4:45pm)
 + Bug 1153269 "configure unit" not remembering burst fire mg setup.
 + MGs in burst fire mode didn't use ammo when missing.
 + Bug 1145944, Patch 1156358: "client options" windows larger than screen size

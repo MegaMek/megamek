@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,6 +26,7 @@ import java.awt.Window;
 public class ClientDialog extends Dialog {
 
     private static final int SCREEN_BORDER = 10;
+    private static final int CONTAINER_BUFFER = 10;
 
     /**
      * @param owner -
@@ -42,18 +43,35 @@ public class ClientDialog extends Dialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     * 
-     * @param panel
-     *            the main panel of this dialog to that needs to be viewed
+     *
+     * @param desiredX
+     *            the desired width of this dialog (you might not get it)
+     * @param desiredY
+     *            the desired height of this dialog (you might not get it)
      */
-    protected void setLocationAndSize(Panel panel) {
+    public void setLocationAndSize(int desiredX, int desiredY){
+    	setLocationAndSize(new Dimension(desiredX,desiredY));
+    }
+
+    /**
+     * Set the size and location to something sane (always within the screen).
+     * We try to fit the dialog in the middle of its owner, if it is smaller,
+     * but allow it to eclipse the parent if it is larger, still keeping all on
+     * the screen.
+     *
+     * @param desiredDimension
+     *            the desired dimension of this dialog (you might not get it)
+     */
+    protected void setLocationAndSize(Dimension desiredDimension) {
         int yLoc, xLoc, height, width;
 
         Window owner = this.getOwner();
         Dimension screenSize = owner.getToolkit().getScreenSize();
 
-        width = Math.min(panel.getSize().width + 50, screenSize.width);
-        height = Math.min(panel.getSize().height + 100, screenSize.height);
+        width = Math.min( desiredDimension.width + CONTAINER_BUFFER,
+                          screenSize.width );
+        height = Math.min( desiredDimension.height + CONTAINER_BUFFER,
+                           screenSize.height );
 
         //shrink the dialog if it will go bigger than page:
         if (height > screenSize.height)
@@ -70,9 +88,12 @@ public class ClientDialog extends Dialog {
         if (xLoc < SCREEN_BORDER)
             xLoc = SCREEN_BORDER;
 
-        //now check if the bottom goes past the end of the screen
+        //now check if the window goes past the end of the screen
         if ((yLoc + height) > screenSize.height) {
             yLoc = (screenSize.height - SCREEN_BORDER) - height;
+        }
+        if ((xLoc + width) > screenSize.width) {
+            xLoc = (screenSize.width - SCREEN_BORDER) - width;
         }
 
         setSize(width, height);

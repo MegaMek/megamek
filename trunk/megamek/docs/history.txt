@@ -23,6 +23,7 @@ v0.29.33 (CVS)
 + Mech loading delay reduced, startup is now quicker.
 + Start to fix bugs with running under SableVM and Kaffe.
 + Java 1.1 compatibility fixes.
++ Bug 944134: seperated query and new map events
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

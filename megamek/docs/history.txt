@@ -7,9 +7,9 @@ v0.29.49 (CVS)
 + Bug 915460: Pilots should not stop taking damage when Mek dies to ammo explosion
 + Bug 875317: Protomechs should not be able to be charged.
 + Bug 1028154: Calculation of weight of jumpjets was false
-+ New pictures for Direwolf, Fire Moth/Dasher, Gargoyle/Man O' War, Grendel, Hatamoto-Chi,
-    Hellbringer/Loki, Ice Ferret/Fenris, Linebacker, Mad Dog/Vulture, Rifleman IIC, Shootist,
-    Summoner/Thor, Timberwolf/Mad Cat, Vanquisher and Viper/Dragonfly
++ New pictures for Direwolf/Daishi Prime and Widowmaker, Fire Moth/Dasher, Gargoyle/Man O' War,
+    Grendel, Hatamoto-Chi, Hellbringer/Loki, Ice Ferret/Fenris, Linebacker, Mad Dog/Vulture,
+    Rifleman IIC, Shootist, Summoner/Thor, Timberwolf/Mad Cat, Vanquisher and Viper/Dragonfly
 
 v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.

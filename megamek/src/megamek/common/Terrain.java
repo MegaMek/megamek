@@ -130,6 +130,96 @@ implements Serializable {
         }
     }
     
+    /**
+     * Flips the exits around the vertical axis (North-for-South) and/or
+     * the horizontal axis (East-for-West).
+     *
+     * @param   horiz - a <code>boolean</code> value that, if <code>true</code>,
+     *          indicates that the exits are being flipped North-for-South.
+     * @param   vert - a <code>boolean</code> value that, if <code>true</code>,
+     *          indicates that the exits are being flipped East-for-West.
+     */
+    public void flipExits( boolean horiz, boolean vert ) {
+        // Do nothing if no flips are defined.
+        if ( !horiz && !vert ) {
+            return;
+        }
+
+        // Determine the new exits.
+        int newExits = 0;
+
+        // Is there a North exit?
+        if ( 0 != (exits & 0x0001) ) {
+            if ( vert ) {
+                // Becomes South.
+                newExits |= 0x08;
+            }
+        }
+        // Is there a North-East exit?
+        if ( 0 != (exits & 0x0002) ) {
+            if ( vert && horiz ) {
+                // Becomes South-West
+                newExits |= 0x10;
+            } else if ( horiz ) {
+                // Becomes North-West.
+                newExits |= 0x20;
+            } else if ( vert ) {
+                // Becomes South-East.
+                newExits |= 0x04;
+            }
+        }
+        // Is there a South-East exit?
+        if ( 0 != (exits & 0x0004) ) {
+            if ( vert && horiz ) {
+                // Becomes North-West
+                newExits |= 0x20;
+            } else if ( horiz ) {
+                // Becomes South-West.
+                newExits |= 0x10;
+            } else if ( vert ) {
+                // Becomes North-East.
+                newExits |= 0x02;
+            }
+        }
+        // Is there a South exit?
+        if ( 0 != (exits & 0x0008) ) {
+            if ( vert ) {
+                // Becomes North.
+                newExits |= 0x01;
+            }
+        }
+        // Is there a South-West exit?
+        if ( 0 != (exits & 0x0010) ) {
+            if ( vert && horiz ) {
+                // Becomes North-East
+                newExits |= 0x02;
+            } else if ( horiz ) {
+                // Becomes South-East.
+                newExits |= 0x04;
+            } else if ( vert ) {
+                // Becomes North-West.
+                newExits |= 0x20;
+            }
+        }
+        // Is there a North-West exit?
+        if ( 0 != (exits & 0x0020) ) {
+            if ( vert && horiz ) {
+                // Becomes South-East
+                newExits |= 0x04;
+            } else if ( horiz ) {
+                // Becomes North-East.
+                newExits |= 0x02;
+            } else if ( vert ) {
+                // Becomes South-West.
+                newExits |= 0x10;
+            }
+        }
+
+        // Update the exits.
+        this.setExits( newExits );
+
+    } // End public void flipExits( boolean, boolean )
+
     public static int parse(String name) {
         for (int i = 0; i < names.length; i++) {
             if (names[i].equals(name)) {

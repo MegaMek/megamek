@@ -858,7 +858,7 @@ public class TestBot extends BotClientWrapper {
             if (enemy_move_array.length < compare) {
               to_check.add(enemy_move_array[k]);
             } else {
-              int value = Compute.random.nextInt(enemy_move_array.length);
+              int value = Compute.randomInt(enemy_move_array.length);
               if (value%2 == 1) {
                 to_check.add(enemy_move_array[value]);
               } else {
@@ -1512,7 +1512,7 @@ public class TestBot extends BotClientWrapper {
         if (friend_sum - foe_sum >=
         .9*(((Double)this.unit_values.getLast()).doubleValue() -
         ((Double)this.enemy_values.getLast()).doubleValue())) {
-          if (Compute.random.nextInt(2) == 1) {
+          if (Compute.randomInt(2) == 1) {
             centity.strategy.target += .3;
           }
         //lost that turn, but still in the fight, just get a little more aggressive
@@ -1711,7 +1711,7 @@ class ConnectionThread extends Thread {
           return name.endsWith(".MEP");
         }
       });
-      f = reqs[Compute.random.nextInt(reqs.length)];
+      f = reqs[Compute.randomInt(reqs.length)];
       Mech mech = new MepFile(f.getAbsolutePath()).getMech();*/
       //Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/more/EXT-4A Exterminator.MEP").getMech();
       //Mech mech = (Mech)(new BLKMechFile("d:/Projects/current_megamek/data/blk/Warhammer WHM-6K.blk").getEntity());

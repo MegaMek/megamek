@@ -31,8 +31,6 @@ public class ToHitData extends TargetRoll
   
     private int             hitTable = HIT_NORMAL;
     private int             sideTable = SIDE_FRONT;
-
-    private com.sun.java.util.collections.Random random = null;
     
     /**
      * Construct default.
@@ -66,15 +64,6 @@ public class ToHitData extends TargetRoll
     }
 
     /**
-     * Set the random number generator for this to-hit roll.
-     *
-     * @param   rand - the <code>Random</code> number generator.
-     */
-    public void setRandom( com.sun.java.util.collections.Random rand ) {
-        this.random = rand;
-    }
-
-    /**
      * Get the side being targeted.  If the targeted side is determined
      * randomly, the calculation occurs each time the side is requested.
      *
@@ -85,12 +74,7 @@ public class ToHitData extends TargetRoll
     public int getSideTable() {
         int side = this.sideTable;
         if ( side == SIDE_RANDOM ) {
-            if ( random == null ) {
-                System.err.println
-                    ( "ToHitData#getSideTable has to get its own random." );
-                random = new com.sun.java.util.collections.Random();
-            }
-            side = random.nextInt(4);
+            side = Compute.randomInt(4);
         }
         return side;
     }

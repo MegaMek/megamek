@@ -54,7 +54,7 @@ Movement (Modes)
 
 Movement (Actions)
 
-- Facing Change			Yes		When standing on board edge cannot turn to face off the board.
+- Facing Change			Yes		When standing on board edge, use Shift key + Arrow key to face off the board.
 - Dropping to the Ground	Yes		None
 - Standing Up			Yes		None
 

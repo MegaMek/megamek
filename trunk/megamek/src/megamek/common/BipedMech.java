@@ -151,13 +151,6 @@ public class BipedMech extends Mech {
             return getWalkMP(gravity);
         }
     }
-
-    /**
-     * Returns true is the location is a leg
-     */
-    public boolean locationIsLeg(int loc) {
-        return ((loc == Mech.LOC_RLEG) || (loc == Mech.LOC_LLEG));
-    }
     
     /**
      * Sets the internal structure for the mech.

@@ -4028,6 +4028,14 @@ implements Runnable, ConnectionHandler {
                         (breachCheck(entity, Mech.LOC_RLEG, hex));
                     phaseReport.append
                         (breachCheck(entity, Mech.LOC_LLEG, hex));
+                    if (entity instanceof QuadMech) {
+                        entity.setLocationStatus(Mech.LOC_RARM, Entity.LOC_WET);
+                        entity.setLocationStatus(Mech.LOC_LARM, Entity.LOC_WET);
+                        phaseReport.append
+                            (breachCheck(entity, Mech.LOC_RARM, hex));
+                        phaseReport.append
+                            (breachCheck(entity, Mech.LOC_LARM, hex));
+                    }
                 }
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
@@ -9650,7 +9658,7 @@ implements Runnable, ConnectionHandler {
         }
 
         //if it's a leg, apply PSRs for actuators
-        if (null != hex && (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG)) {
+        if (null != hex && entity.locationIsLeg(loc)) {
             // Record the results to the phase report before resolving the PSR
             phaseReport.append (desc.toString());
             desc = new StringBuffer();
@@ -9704,7 +9712,8 @@ implements Runnable, ConnectionHandler {
             }
         }
         // if it's a leg, the entity falls
-        if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
+        
+        if (en instanceof Mech && en.locationIsLeg(loc)) {
             game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
         // dependent locations destroyed

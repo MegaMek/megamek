@@ -85,6 +85,7 @@ v (next)
 + TSM added
 + 624368: LBX AC's use shots, not missles.
 + fixed a slight bug with the new LOS changes and woods
++ 612729: units should no longer be displaced into prohibited hexes
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

@@ -848,10 +848,16 @@ public class Compute
             return false;
         }
 
-        // can't go up 2+ levels
+        // can't be displaced into prohibited terrain
+        if (entity.isHexProhibited(destHex)) {
+            return false;
+        }
+        
+        // can't go up more levels than normally possible
         for (int i = 0; i < intervening.length; i++) {
             final Hex hex = game.board.getHex(intervening[i]);
-            if (entity.elevationOccupied(hex) - entity.elevationOccupied(srcHex) > 1) {
+            int change = entity.elevationOccupied(hex) - entity.elevationOccupied(srcHex);
+            if (change > entity.getMaxElevationChange()) {
                 return false;
             }
         }

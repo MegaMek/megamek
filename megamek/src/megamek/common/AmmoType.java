@@ -59,6 +59,7 @@ public class AmmoType extends EquipmentType {
     // ammo flags
     public static final int     F_MG                = 0x0001;
     public static final int     F_BATTLEARMOR       = 0x1000; // only used by BA squads
+    public static final int     F_PROTOMECH         = 0x0010; //No protomech ammos/mech weaps/vise versa
 
     // ammo munitions, used for custom loadouts
     public static final int     M_STANDARD          = 0;
@@ -317,6 +318,40 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType( createBACompactNarcAmmo() );
         EquipmentType.addType( createBAMineLauncherAmmo() );
         EquipmentType.addType( createBALRM5Ammo() );
+
+        //Protomech ammo
+        EquipmentType.addType(createCLPROSRM1Ammo());
+        EquipmentType.addType(createCLPROStreakSRM1Ammo());
+        EquipmentType.addType(createCLPROSRM2Ammo());
+        EquipmentType.addType(createCLPROStreakSRM2Ammo());
+        EquipmentType.addType(createCLPROSRM3Ammo());
+        EquipmentType.addType(createCLPROStreakSRM3Ammo());
+        EquipmentType.addType(createCLPROSRM4Ammo());
+        EquipmentType.addType(createCLPROStreakSRM4Ammo());
+        EquipmentType.addType(createCLPROSRM5Ammo());
+        EquipmentType.addType(createCLPROStreakSRM5Ammo());
+        EquipmentType.addType(createCLPROSRM6Ammo());
+        EquipmentType.addType(createCLPROStreakSRM6Ammo());
+        EquipmentType.addType(createCLPROLRM1Ammo());
+        EquipmentType.addType(createCLPROLRM2Ammo());
+        EquipmentType.addType(createCLPROLRM3Ammo());
+        EquipmentType.addType(createCLPROLRM4Ammo());
+        EquipmentType.addType(createCLPROLRM5Ammo());
+        EquipmentType.addType(createCLPROLRM6Ammo());
+        EquipmentType.addType(createCLPROLRM7Ammo());
+        EquipmentType.addType(createCLPROLRM8Ammo());
+        EquipmentType.addType(createCLPROLRM9Ammo());
+        EquipmentType.addType(createCLPROLRM10Ammo());
+        EquipmentType.addType(createCLPROLRM11Ammo());
+        EquipmentType.addType(createCLPROLRM12Ammo());
+        EquipmentType.addType(createCLPROLRM13Ammo());
+        EquipmentType.addType(createCLPROLRM14Ammo());
+        EquipmentType.addType(createCLPROLRM15Ammo());
+        EquipmentType.addType(createCLPROLRM16Ammo());
+        EquipmentType.addType(createCLPROLRM17Ammo());
+        EquipmentType.addType(createCLPROLRM18Ammo());
+        EquipmentType.addType(createCLPROLRM19Ammo());
+        EquipmentType.addType(createCLPROLRM20Ammo());
         
         // cache types that share a launcher for loadout purposes
         for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
@@ -2433,32 +2468,530 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    //Proto Ammos
+    public static AmmoType createCLPROLRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 1 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-1";
+        ammo.mtfName = "CLPRMLRM1 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 2;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 2 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-2";
+        ammo.mtfName = "CLPRMLRM2 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 3;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 3 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-3";
+        ammo.mtfName = "CLPRMLRM3 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 4;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 4 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-4";
+        ammo.mtfName = "CLPRMLRM4 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 5;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 5 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-5";
+        ammo.mtfName = "CLPRMLRM5 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 6;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 6 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-6";
+        ammo.mtfName = "CLPRMLRM6 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 7;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM7Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 7 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-7";
+        ammo.mtfName = "CLPRMLRM7 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 7;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 1245104;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM8Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 8 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-8";
+        ammo.mtfName = "CLPRMLRM8 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 4328425;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM9Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 9 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-9";
+        ammo.mtfName = "CLPRMLRM9 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 0;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 10 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-10";
+        ammo.mtfName = "CLPRMLRM10 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 1245120;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM11Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 11 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-11";
+        ammo.mtfName = "CLPRMLRM11 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 11;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 4241785;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM12Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 12 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-12";
+        ammo.mtfName = "CLPRMLRM12 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 1;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM13Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 13 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-13";
+        ammo.mtfName = "CLPRMLRM13 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 13;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 4460144;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM14Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 14 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-14";
+        ammo.mtfName = "CLPRMLRM14 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 14;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 4459952;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 15 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-15";
+        ammo.mtfName = "CLPRMLRM15 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 34603536;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM16Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 16 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-16";
+        ammo.mtfName = "CLPRMLRM16 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 16;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 58851856;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM17Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 17 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-17";
+        ammo.mtfName = "CLPRMLRM17 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 17;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 2147348480;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM18Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 18 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-18";
+        ammo.mtfName = "CLPRMLRM18 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 18;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 0;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM19Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 19 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-19";
+        ammo.mtfName = "CLPRMLRM19 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 19;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = -2141754256;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+    public static AmmoType createCLPROLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "LRM 20 Ammo";
+        ammo.internalName ="Clan Ammo Protomech LRM-20";
+        ammo.mtfName = "CLPRMLRM20 Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 100;
+        ammo.bv = 1245076;
+        ammo.flags |=F_PROTOMECH;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        return ammo;
+
+    }
+
+
+
+
+    public static AmmoType createCLPROSRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 1 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-1";
+        ammo.mtfName = "CLPRMSRM1 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 2;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 2 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-2";
+        ammo.mtfName = "CLPRMSRM2 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROSRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 3 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-3";
+        ammo.mtfName = "CLPRMSRM3 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 4;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 4 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-4";
+        ammo.mtfName = "CLPRMSRM4 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 5 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-5";
+        ammo.mtfName = "CLPRMSRM5 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 6;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "SRM 6 Ammo";
+        ammo.internalName = "Clan Ammo Protomech SRM-6";
+        ammo.mtfName = "CLPRMSRM6 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.shots = 100;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+    public static AmmoType createCLPROStreakSRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 1 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 1 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM1 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLPROStreakSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 2 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 2 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM2 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLPROStreakSRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 3 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 3 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM3 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 8;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLPROStreakSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 4 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 4 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM4 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 10;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLPROStreakSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 5 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 5 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM5 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 13;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLPROStreakSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+        ammo.name = "Streak SRM 6 Ammo";
+        ammo.internalName = "Clan Protomech Streak SRM 6 Ammo";
+        ammo.mtfName = "CLPRMStreakSRM6 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
+        ammo.shots = 100;
+        ammo.bv = 15;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
     public String toString() {
         return "Ammo: " + name;
     }
 
-	public static boolean canClearMinefield(AmmoType at) {
+    public static boolean canClearMinefield(AmmoType at) {
 	
-		if (at != null &&
-			(at.getAmmoType() == T_LRM ||
-			at.getAmmoType() == T_MRM) &&
-			at.getRackSize() >= 20 &&
-			at.getMunitionType() == M_STANDARD) {
-			return true;
-		}
+        if (at != null &&
+            (at.getAmmoType() == T_LRM ||
+             at.getAmmoType() == T_MRM) &&
+            at.getRackSize() >= 20 &&
+            at.getMunitionType() == M_STANDARD) {
+            return true;
+        }
 		
-		return false;
-	}
+        return false;
+    }
 
-	public static boolean canDeliverMinefield(AmmoType at) {
+    public static boolean canDeliverMinefield(AmmoType at) {
 	
-		if (at != null &&
-			at.getAmmoType() == T_LRM &&
-			at.getMunitionType() == M_THUNDER) {
-			return true;
-		}
+        if (at != null &&
+            at.getAmmoType() == T_LRM &&
+            at.getMunitionType() == M_THUNDER) {
+            return true;
+        }
 		
-		return false;
-	}
+        return false;
+    }
 
 }

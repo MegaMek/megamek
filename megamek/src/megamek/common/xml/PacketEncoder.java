@@ -135,52 +135,68 @@ public class PacketEncoder {
         out.write( Integer.toString(packet.getCommand()) );
         out.write( "\" >" );
 
+        // Is the packet zipped?
+        boolean zipped = packet.isZipped();
+
         // Do we have any data in this packet?
         // N.B. this action will unzip the packet.
         Object[] data = packet.getData();
         if ( null != data ) {
 
-            // XML encode the data and GZIP it.
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Writer zipOut = new BufferedWriter
-                ( new OutputStreamWriter
-                    ( new GZIPOutputStream(baos) )
-                    );
-            PacketEncoder.encodeData( packet, zipOut );
-            zipOut.close();
+            // Should we compress the data?
+            if ( zipped ) {
 
-            // Base64 encode the commpressed data.
-            // Please note, I couldn't get anything other than a
-            // straight stream-to-stream encoding to work.
-            byte[] zipData = baos.toByteArray();
-            ByteArrayOutputStream base64 = new ByteArrayOutputStream
-                ( (4*zipData.length+2)/3 );
-            Base64.encode( new ByteArrayInputStream(zipData), base64, false );
+                // XML encode the data and GZIP it.
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Writer zipOut = new BufferedWriter
+                    ( new OutputStreamWriter
+                      ( new GZIPOutputStream(baos) )
+                      );
+                PacketEncoder.encodeData( packet, zipOut );
+                zipOut.close();
 
-            /* begin debug code **
-            int loop;
-            for ( loop = 0; loop < zipData.length; loop++ ) {
-                System.out.print( (char) zipData[loop] );
-            }
-            System.out.println( "" );
-            String zipStr = baos.toString();
-            for ( loop = 0; loop < zipStr.length(); loop++ ) {
-                System.out.print( zipStr.charAt(loop) );
-            }
-            System.out.println( "" );
-            zipStr = base64.toString();
-            for ( loop = 0; loop < zipStr.length(); loop++ ) {
-                System.out.print( zipStr.charAt(loop) );
-            }
-            System.out.println( "" );
-            **  end  debug code */
+                // Base64 encode the commpressed data.
+                // Please note, I couldn't get anything other than a
+                // straight stream-to-stream encoding to work.
+                byte[] zipData = baos.toByteArray();
+                ByteArrayOutputStream base64 = new ByteArrayOutputStream
+                    ( (4*zipData.length+2)/3 );
+                Base64.encode( new ByteArrayInputStream(zipData), base64, false );
 
-            // Save the compressed data as the packetData CDATA.
-            out.write( "<packetData count=\"" );
-            out.write( Integer.toString(data.length) );
-            out.write( "\" isGzipped=\"true\" >" );
-            out.write( base64.toString() );
-            out.write( "</packetData>" );
+                /* begin debug code **
+                   int loop;
+                   for ( loop = 0; loop < zipData.length; loop++ ) {
+                   System.out.print( (char) zipData[loop] );
+                   }
+                   System.out.println( "" );
+                   String zipStr = baos.toString();
+                   for ( loop = 0; loop < zipStr.length(); loop++ ) {
+                   System.out.print( zipStr.charAt(loop) );
+                   }
+                   System.out.println( "" );
+                   zipStr = base64.toString();
+                   for ( loop = 0; loop < zipStr.length(); loop++ ) {
+                   System.out.print( zipStr.charAt(loop) );
+                   }
+                   System.out.println( "" );
+                   **  end  debug code */
+
+                // Save the compressed data as the packetData CDATA.
+                out.write( "<packetData count=\"" );
+                out.write( Integer.toString(data.length) );
+                out.write( "\" isGzipped=\"true\" >" );
+                out.write( base64.toString() );
+                out.write( "</packetData>" );
+
+            } // End packet-is-zipped
+            else {
+                // Don't compress the XML.
+                out.write( "<packetData count=\"" );
+                out.write( Integer.toString(data.length) );
+                out.write( "\" isGzipped=\"false\" >" );
+                PacketEncoder.encodeData( packet, out );
+                out.write( "</packetData>" );
+            }
 
         } // End have-data
 

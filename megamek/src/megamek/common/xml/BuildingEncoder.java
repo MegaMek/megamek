@@ -61,13 +61,13 @@ public class BuildingEncoder {
 
         // Write the hex array to the stream.
         out.write( "<buildingData id=\"" );
-        out.write( bldg.getId() );
+        out.write( Integer.toString(bldg.getId()) );
         out.write( "\" type=\"" );
-        out.write( bldg.getType() );
+        out.write( Integer.toString(bldg.getType()) );
         out.write( "\" currentCF=\"" );
-        out.write( bldg.getCurrentCF() );
+        out.write( Integer.toString(bldg.getCurrentCF()) );
         out.write( "\" phaseCF=\"" );
-        out.write( bldg.getPhaseCF() );
+        out.write( Integer.toString(bldg.getPhaseCF()) );
         out.write( "\" name=\"" );
         out.write( bldg.getName() );
         out.write( "\" isBurning=\"" );

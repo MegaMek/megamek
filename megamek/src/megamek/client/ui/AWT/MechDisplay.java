@@ -301,7 +301,7 @@ class MovementPanel
         this.weightR.setText(Integer.toString((int)en.getWeight()));
         this.pilotR.setText(en.crew.getDesc());
 
-        this.mpR.setText(Integer.toString(en.getWalkMP()) + "/" + Integer.toString(en.getRunMP()) + "/" + Integer.toString(en.getJumpMP()));
+        this.mpR.setText(Integer.toString(en.getWalkMP()) + "/" + Integer.toString(en.getRunMP()) + "/" + Integer.toString(en.getJumpMPWithTerrain()));
         this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();

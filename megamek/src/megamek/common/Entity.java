@@ -592,6 +592,14 @@ public abstract class Entity
     public int getJumpMP() {
         return jumpMP;
     }
+    
+    /**
+     * Returns this entity's current jumping MP, effected by terrain (like 
+     * water.)
+     */
+    public int getJumpMPWithTerrain() {
+        return jumpMP;
+    }
 
     /**
      * Returns the name of the type of movement used.

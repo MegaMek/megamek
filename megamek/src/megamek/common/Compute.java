@@ -419,7 +419,7 @@ public class Compute
             
             // check for valid jump mp
             if (overallMoveType == Entity.MOVE_JUMP 
-                && step.getMpUsed() <= entity.getJumpMP()
+                && step.getMpUsed() <= entity.getJumpMPWithTerrain()
                 && !entity.isProne()) {
                 moveType = Entity.MOVE_JUMP;
             }
@@ -632,12 +632,6 @@ public class Compute
             && destHex.levelOf(Terrain.WATER) > 0 && !firstStep) {
             return false;
         }
-        // can't jump out of water
-        if (entityMoveType == Entity.MOVE_JUMP 
-            && entity.getPosition().equals(src)
-            && srcHex.levelOf(Terrain.WATER) > 0) {
-            return false;
-        }
         // can't move into a hex with an enemy unit, unless charging or jumping
         if (entityMoveType != Entity.MOVE_JUMP
             && stepType != MovementData.STEP_CHARGE
@@ -650,7 +644,7 @@ public class Compute
         if (entityMoveType == Entity.MOVE_JUMP
             && destHex.getElevation() 
                > (entity.elevation() +
-                  entity.getJumpMP())) {
+                  entity.getJumpMPWithTerrain())) {
             return false;
         }
         

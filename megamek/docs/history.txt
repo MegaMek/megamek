@@ -130,6 +130,7 @@ v 0.28.15-dev
 + "/skip" command should handle NULL entities.
 + RFE 658785: config file now has a setting to not auto-confirm weapons fire 
 + 725772: possible fix for NPE in C3Sprite#drawOnto
++ Added support for mechs created with The Drawing Board.
 
 v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).

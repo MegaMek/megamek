@@ -9,6 +9,7 @@ v0.29.38 (CVS)
 + Bug 915168: Legless protos can no longer jump and turn more than one hexside
 + Use StringBuffer.append() instead of a bunch of String + operators.
 + RFE 941437: Oopsie -- mis-placed the "(n used)" line on the mechW
++ Bug 975512: extreme gravity PSR when using minimum movement rule
 
 v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl

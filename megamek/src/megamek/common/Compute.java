@@ -721,11 +721,13 @@ public class Compute
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
         }
         
-        if (atype != null && 
-        	atype.getAmmoType() == AmmoType.T_LRM &&
-        	atype.getMunitionType() == AmmoType.M_THUNDER &&
-        	target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can only deliver minefields");        	
+        if ( atype != null && 
+             atype.getAmmoType() == AmmoType.T_LRM &&
+             ( atype.getMunitionType() == AmmoType.M_THUNDER ||
+               atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED ) &&
+             target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Weapon can only deliver minefields" );
         }
         
         // make sure weapon can clear minefield

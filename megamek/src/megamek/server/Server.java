@@ -3280,6 +3280,66 @@ implements Runnable, ConnectionHandler {
 		revealMinefield(minefield);
 	}
 
+    // Delivers a thunder-aug shot to the targetted hex area.
+    // Thunder-Augs are 7 hexes, though, so...
+    private void deliverThunderAugMinefield( Coords coords,
+                                             int playerId, int damage ) {
+        Coords mfCoord = null;
+        for (int dir=0; dir < 7; dir++) {
+            switch (dir) {
+            case 6:
+                // The targeted hex.
+                mfCoord = new Coords(coords);
+                break;
+            default:
+                // The hex in the dir direction from the targeted hex.
+                mfCoord = coords.translated(dir);
+                break;
+            }
+
+            // Only if this is on the board...
+            if ( game.board.contains(mfCoord) ) {
+                Minefield minefield = null;
+                Enumeration minefields = game.getMinefields(mfCoord).elements();
+                // Check if there already are Thunder minefields in the hex.
+                while (minefields.hasMoreElements()) {
+                    Minefield mf = (Minefield) minefields.nextElement();
+                    if (mf.getType() == Minefield.TYPE_THUNDER) {
+                        minefield = mf;
+                        break;
+                    }
+                }
+
+                // Did we find a Thunder minefield in the hex?
+                // N.B. damage Thunder minefields equals the number of
+                //      missiles, divided by two, rounded up.
+                if (minefield == null) {
+                    // Nope.  Create a new Thunder minefield
+                    minefield = Minefield.createThunderMF
+                        ( mfCoord, playerId, (int)(damage/2 + damage%2) );
+                } else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+                    // Yup.  Replace the old one.
+                    removeMinefield(minefield);
+                    int newDamage = (int)(damage/2 + damage%2);
+                    newDamage += minefield.getDamage();
+
+                    // Damage from Thunder minefields are capped.
+                    if ( newDamage > Minefield.MAX_DAMAGE ) {
+                        newDamage = Minefield.MAX_DAMAGE;
+                    } else {
+                        newDamage = newDamage;
+                    }
+                    minefield.setDamage(newDamage);
+                }
+                game.addMinefield(minefield);
+                revealMinefield(minefield);
+
+            } // End coords-on-board
+
+        } // Handle the next coords
+
+    }
+
 	// When an entity enters a conventional or Thunder minefield.
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
 		switch (mf.getType()) {
@@ -4672,22 +4732,46 @@ implements Runnable, ConnectionHandler {
         
         // do we hit?
         boolean bMissed = wr.roll < toHit.getValue();
+
         // special case minefield delivery, no damage and scatters if misses.
         if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
-        	Coords coords = target.getPosition();
-        	if (!bMissed) {
-        		phaseReport.append("hits the intended hex " + coords.getBoardNum() + "\n");
-        	} else {
-        		coords = Compute.scatter(coords);
-        		if (game.board.contains(coords)) {
-	        		phaseReport.append("misses and scatters to hex " + coords.getBoardNum() + "\n");
-        		} else {
-	        		phaseReport.append("misses and scatters off the board\n");
-	        		return;
-        		}
-        	}
-        	deliverThunderMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
-        	return;
+            Coords coords = target.getPosition();
+            if (!bMissed) {
+                phaseReport.append( "hits the intended hex " )
+                    .append( coords.getBoardNum() )
+                    .append( "\n" );
+            } else {
+                coords = Compute.scatter(coords);
+                if ( game.board.contains(coords) ) {
+                    phaseReport.append("misses and scatters to hex " )
+                        .append( coords.getBoardNum() )
+                        .append( "\n" );
+                } else {
+                    phaseReport.append("misses and scatters off the board\n");
+                    return;
+                }
+            }
+
+            // Handle the thunder munitions.
+            if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
+                deliverThunderAugMinefield( coords, ae.getOwner().getId(),
+                                            atype.getRackSize() );
+            }
+            else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
+                deliverThunderMinefield( coords, ae.getOwner().getId(),
+                                         atype.getRackSize() );
+            }
+            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+            //	deliverThunderInfernoMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+            //	deliverThunderVibraMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            //else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+            //	deliverThunderActiveMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+            //else
+            //{
+            //...This is an error, but I'll just ignore it for now.
+            //}
+            return;
         }
 
         if (bMissed) {

@@ -245,7 +245,6 @@ extends Dialog implements ActionListener, DialogOptionListener {
             
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
-                
                 boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
                 if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 && 
                         atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
@@ -259,16 +258,29 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     bTechMatch = true;
                 }
 
-                if (!client.game.getOptions().booleanOption("minefields") &&
-                	AmmoType.canDeliverMinefield(atCheck)) {
-                	continue;
+		// If clan_ignore_eq_limits is unchecked,
+                // do NOT allow Clans to use IS-only ammo
+                int muniType = atCheck.getMunitionType();
+                if ( client.game.getOptions().booleanOption("clan_ignore_eq_limits")
+                     && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
+                     && ( muniType == AmmoType.M_THUNDER_AUGMENTED ||
+                          muniType == AmmoType.M_THUNDER_INFERNO   ||
+                          muniType == AmmoType.M_THUNDER_VIBRABOMB ||
+                          muniType == AmmoType.M_THUNDER_ACTIVE)) {
+                    bTechMatch = false;
+		}
+
+                if ( !client.game.getOptions().booleanOption("minefields") &&
+                	AmmoType.canDeliverMinefield(atCheck) ) {
+                    continue;
                 }
 
                 // Battle Armor ammo can't be selected, nor can proto ammo by non protos.
                 if ( bTechMatch &&
                      atCheck.getRackSize() == at.getRackSize() &&
                      !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
-                     (!atCheck.hasFlag(AmmoType.F_PROTOMECH) || entity instanceof Protomech) &&
+                     ( !atCheck.hasFlag(AmmoType.F_PROTOMECH) ||
+                       entity instanceof Protomech ) &&
                      atCheck.getTonnage(entity) == at.getTonnage(entity) ) {
                     vTypes.addElement(atCheck);
                 }

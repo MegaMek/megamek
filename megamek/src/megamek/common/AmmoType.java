@@ -253,6 +253,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISThunderLRM10Ammo());
         EquipmentType.addType(createISThunderLRM15Ammo());
         EquipmentType.addType(createISThunderLRM20Ammo());
+        EquipmentType.addType(createISThunderAugmentedLRM5Ammo());
+        EquipmentType.addType(createISThunderAugmentedLRM10Ammo());
+        EquipmentType.addType(createISThunderAugmentedLRM15Ammo());
+        EquipmentType.addType(createISThunderAugmentedLRM20Ammo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -306,6 +310,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLThunderLRM10Ammo());
         EquipmentType.addType(createCLThunderLRM15Ammo());
         EquipmentType.addType(createCLThunderLRM20Ammo());
+        EquipmentType.addType(createCLThunderAugmentedLRM5Ammo());
+        EquipmentType.addType(createCLThunderAugmentedLRM10Ammo());
+        EquipmentType.addType(createCLThunderAugmentedLRM15Ammo());
+        EquipmentType.addType(createCLThunderAugmentedLRM20Ammo());
 
         // Start of BattleArmor ammo
         EquipmentType.addType( createBASRM2Ammo() );
@@ -525,6 +533,25 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
+    
+    public static AmmoType createISThunderAugmentedLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 5 Ammo";
+        ammo.internalName = "IS Ammo Thunder Augmented LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 12;
+        ammo.bv = 6;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
 
     public static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
@@ -556,6 +583,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 12;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISThunderAugmentedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 10 Ammo";
+        ammo.internalName = "IS Ammo Thunder Augmented LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 6;
         ammo.bv = 11;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
@@ -597,7 +643,26 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+     
+    public static AmmoType createISThunderAugmentedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 15 Ammo";
+        ammo.internalName = "IS Ammo Thunder Augmented LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 4;
+        ammo.bv = 17;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+   
     public static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -628,6 +693,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 6;
+        ammo.bv = 23;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+        
+        return ammo;
+    }
+
+    public static AmmoType createISThunderAugmentedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 20 Ammo";
+        ammo.internalName = "IS Ammo Thunder Augmented LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 3;
         ammo.bv = 23;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
@@ -1733,6 +1817,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLThunderAugmentedLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 5 Ammo";
+        ammo.internalName = "Clan Ammo Thunder Augmented LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 12;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1764,6 +1867,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 12;
+        ammo.bv = 14;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createCLThunderAugmentedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 10 Ammo";
+        ammo.internalName = "Clan Ammo Thunder Augmented LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 6;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         
@@ -1807,6 +1929,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLThunderAugmentedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 15 Ammo";
+        ammo.internalName = "Clan Ammo Thunder Augmented LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 4;
+        ammo.bv = 21;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1838,6 +1979,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.munitionType = AmmoType.M_THUNDER;
         ammo.shots = 6;
+        ammo.bv = 27;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createCLThunderAugmentedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Thunder Augmented LRM 20 Ammo";
+        ammo.internalName = "Clan Ammo Thunder Augmented LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_THUNDER_AUGMENTED;
+        ammo.shots = 3;
         ammo.bv = 27;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         

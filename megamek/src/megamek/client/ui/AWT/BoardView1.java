@@ -1650,8 +1650,8 @@ public class BoardView1
     public boolean doScroll() {
         final Point oldScroll = new Point(scroll);
         boolean s = false;
-
-        if (Settings.rightDragScroll) {
+        
+        if ( isScrolling && Settings.rightDragScroll) {
             if (! (oldMousePosition == null || mousePos.equals(oldMousePosition)) ) {
                 scroll.x -= Settings.scrollSensitivity * (mousePos.x - oldMousePosition.x);
                 scroll.y -= Settings.scrollSensitivity * (mousePos.y - oldMousePosition.y);
@@ -1661,7 +1661,7 @@ public class BoardView1
                 scrolled = scrolled || s;
             };
         };
-        
+
         if (isScrolling && (Settings.clickEdgeScroll || Settings.autoEdgeScroll) ) {
             final int sf = Settings.scrollSensitivity; // scroll factor
             // adjust x scroll
@@ -1983,9 +1983,18 @@ public class BoardView1
             mask |= InputEvent.BUTTON3_MASK;
         };
         
+        if ( Settings.rightDragScroll ) {
+System.out.println("trying to turn off left and middle mouse buttons in mousePressed()");
+//            mask |= InputEvent.BUTTON1_MASK;
+            mask |= InputEvent.BUTTON2_MASK;
+        };
+
         if ( (me.getModifiers() & mask ) == 0 ) {
+System.out.println("gonna scroll in mousePressed()");
             isScrolling = true; //activate scrolling
-        }
+        } else {
+            isScrolling = false; //activate scrolling
+        };
 
         if (isTipShowing()) {
             hideTooltip();
@@ -2043,6 +2052,7 @@ public class BoardView1
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
+
         if ( !Settings.rightDragScroll &&
             game.getPhase() == Game.PHASE_FIRING) {
             // In the firing phase, also disable scrolling if
@@ -2052,18 +2062,27 @@ public class BoardView1
             mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
         };
 
+        if ( Settings.rightDragScroll ) {
+System.out.println("trying to turn off left and middle mouse buttons in mouseDragged()");
+            mask |= InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK;
+        };
+
         // disable auto--edge-scrolling if no option set
         if ( !Settings.autoEdgeScroll ) {
             mask |= InputEvent.BUTTON1_MASK;
         };
+
         // disable edge-scrolling if no option set
         if ( !Settings.clickEdgeScroll ) {
             mask |= InputEvent.BUTTON3_MASK;
         };
         
         if ( (me.getModifiers() & mask ) == 0 ) {
+System.out.println("gonna scroll in mouseDragged()");
             isScrolling = true; //activate scrolling
-        }
+        } else {
+            isScrolling = false; //activate scrolling
+        };
 
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
     }

@@ -3727,6 +3727,8 @@ implements Runnable, ConnectionHandler {
 
 	// When an entity enters a conventional or Thunder minefield.
 	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow, int hitMod) {
+		// Bug 954272: Mines shouldn't work underwater
+		if (game.board.getHex(dest).contains(Terrain.WATER) && !game.board.getHex(dest).contains(Terrain.PAVEMENT)) {
 		switch (mf.getType()) {
 			case (Minefield.TYPE_CONVENTIONAL) :
 			case (Minefield.TYPE_THUNDER) :
@@ -3780,6 +3782,7 @@ implements Runnable, ConnectionHandler {
 	                    sendChangedHex(dest);
 				break;
 	     }
+		} else return;
 	}
 
 	// Checks to see if an entity sets off any vibrabombs.
@@ -3800,6 +3803,12 @@ implements Runnable, ConnectionHandler {
 		while (e.hasMoreElements()) {
 			Minefield mf = (Minefield) e.nextElement();
 
+			
+            // Bug 954272: Mines shouldn't work underwater, and BMRr says Vibrabombs are mines
+			if (game.board.getHex(mf.getCoords()).contains(Terrain.WATER) && !game.board.getHex(mf.getCoords()).contains(Terrain.PAVEMENT)) {
+				continue;
+			}
+			
 			// Mech weighing 10 tons or less can't set off the bomb
 			if (mass <= mf.getSetting() - 10) {
 				continue;

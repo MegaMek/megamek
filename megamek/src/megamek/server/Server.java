@@ -1744,9 +1744,7 @@ implements Runnable {
                     doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
                 } else {
                     // ack!  automatic death!
-                    phaseReport.append("*** " + violation.getDisplayName()
-                    + " DESTROYED due to impossible displacement! ***");
-                    violation.setDoomed(true);
+                    phaseReport.append(destroyEntity(violation, "impossible displacement"));
                 }
             } else {
                 phaseReport.append(", misses.\n");
@@ -1756,9 +1754,7 @@ implements Runnable {
                     doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"));
                 } else {
                     // ack!  automatic death!
-                    phaseReport.append("*** " + entity.getDisplayName()
-                    + " DESTROYED due to impossible displacement! ***");
-                    entity.setDoomed(true);
+                    phaseReport.append(destroyEntity(entity, "impossible displacement"));
                 }
             }
             return;
@@ -1898,11 +1894,11 @@ implements Runnable {
             ammo = weapon.getLinked();
         }
         
-        // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
-            return;
-        }
+//        // should we even bother?
+//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+//            phaseReport.append(" but the target is already destroyed!\n");
+//            return;
+//        }
         
         // compute to-hit
         ToHitData toHit = Compute.toHitWeapon(game, waa, attacks);
@@ -2176,11 +2172,11 @@ implements Runnable {
         
         phaseReport.append("    Punch (" +armName + ") at " + te.getDisplayName());
         
-        // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
-            return;
-        }
+//        // should we even bother?
+//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+//            phaseReport.append(" but the target is already destroyed!\n");
+//            return;
+//        }
         // compute to-hit
         ToHitData toHit = Compute.toHitPunch(game, paa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
@@ -2223,11 +2219,11 @@ implements Runnable {
         
         phaseReport.append("    Kick (" + legName + ") at " + te.getDisplayName());
         
-        // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
-            return;
-        }
+//        // should we even bother?
+//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+//            phaseReport.append(" but the target is already destroyed!\n");
+//            return;
+//        }
         // compute to-hit
         ToHitData toHit = Compute.toHitKick(game, kaa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
@@ -2278,11 +2274,11 @@ implements Runnable {
         
         phaseReport.append("    " + caa.getClub().getName() + " attack on " + te.getDisplayName());
         
-        // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
-            return;
-        }
+//        // should we even bother?
+//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+//            phaseReport.append(" but the target is already destroyed!\n");
+//            return;
+//        }
         // compute to-hit
         ToHitData toHit = Compute.toHitClub(game, caa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
@@ -2327,11 +2323,11 @@ implements Runnable {
         
         phaseReport.append("    Pushing " + te.getDisplayName());
         
-        // should we even bother?
-        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append(" but the target is already destroyed!\n");
-            return;
-        }
+//        // should we even bother?
+//        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+//            phaseReport.append(" but the target is already destroyed!\n");
+//            return;
+//        }
         
         // compute to-hit
         ToHitData toHit = Compute.toHitPush(game, paa);
@@ -2569,9 +2565,7 @@ implements Runnable {
                 doEntityFall(ae, dest, 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
             } else {
                 // attacker destroyed
-                phaseReport.append("*** " + ae.getDisplayName()
-                + " DESTROYED due to impossible displacement! ***");
-                ae.setDoomed(true);
+                phaseReport.append(destroyEntity(ae, "impossible displacement"));
             }
             return;
         }
@@ -2611,8 +2605,7 @@ implements Runnable {
                 doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
             } else {
                 // ack!  automatic death!
-                phaseReport.append("*** " + te.getDisplayName() + " DESTROYED due to impossible displacement! ***");
-                te.setDoomed(true);
+                phaseReport.append(destroyEntity(te, "impossible displacement"));
             }
         }
         doEntityDisplacement(ae, src, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
@@ -2927,7 +2920,7 @@ implements Runnable {
  	}
 
  	// Allocate the damage
-        while (damage > 0 && !te.isDestroyed() && !te.isDoomed()) {
+        while (damage > 0) {
             // let's resolve some damage!
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
             
@@ -2993,8 +2986,7 @@ implements Runnable {
                             numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
                             if (numEngineHits > 2) {
                                 // third engine hit
-                                te.setDoomed(true);
-                                desc += "\n*** " + te.getDisplayName() + " ENGINE DESTROYED! ***";
+                                phaseReport.append(destroyEntity(te, "engine destruction"));
                             }
                         }
                     }
@@ -3005,12 +2997,9 @@ implements Runnable {
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
-                        desc += " Entity destroyed!\n";
-                        desc += "*** " + te.getDisplayName() + " DESTROYED! ***";
-                        te.setDoomed(true);
-                        // no need for further damage
+                        desc += destroyEntity(te, "damage");
+                        // nowhere for further damage to go
                         damage = 0;
-                        crits = 0;
                     } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
                         // remaining damage prevented
                         desc += " remaining " + damage + " damage prevented by CASE.";
@@ -3061,9 +3050,7 @@ implements Runnable {
     }
     
     /**
-     * Rolls and resolves critical hits
-     *
-     * Currently mech only
+     * Rolls and resolves critical hits on mechs or vehicles.
      */
     private String criticalEntity(Entity en, int loc) {
         String desc = "        Critical hit on " + en.getLocationAbbr(loc) + ". ";
@@ -3133,18 +3120,15 @@ implements Runnable {
                         break;
                     case 4 :
                         desc += "\n            <<<CRITICAL HIT>>> Crew killed";
-                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
-                        tank.setDoomed(true);
+                        desc += destroyEntity(en, "crew death");
                         break;
                     case 5 :
                         desc += "\n            <<<CRITICAL HIT>>> Fuel tank hit.  BOOM!";
-                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
-                        tank.setDoomed(true);
-                        break;
+                        desc += destroyEntity(en, "fuel tank explosion");
+                       break;
                     case 6 :
                         desc += "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!";
-                        desc += "\n*** " + en.getDisplayName() + " DESTROYED! ***";
-                        tank.setDoomed(true);
+                        desc += destroyEntity(en, "power plant destruction");
                         break;
                 }
             }
@@ -3191,8 +3175,7 @@ implements Runnable {
                                 numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
                                 if (numEngineHits > 2) {
                                     // third engine hit
-                                    en.setDoomed(true);
-                                    desc += "\n*** " + en.getDisplayName() + " ENGINE DESTROYED! ***";
+                                    desc += destroyEntity(en, "engine destruction");
                                 }
                                 break;
                             case Mech.SYSTEM_GYRO :
@@ -3270,6 +3253,26 @@ implements Runnable {
         // dependent locations destroyed
         if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
+        }
+    }
+    
+    /**
+     * Marks a unit as destroyed!
+     */
+    private String destroyEntity(Entity entity, String reason) {
+        if (!entity.isDoomed() && !entity.isDestroyed()) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("\n*** ");
+            sb.append(entity.getDisplayName());
+            sb.append(" DESTROYED by ");
+            sb.append(reason);
+            sb.append("! ***\n");
+            
+            entity.setDoomed(true);
+            
+            return sb.toString();
+        } else {
+            return "";
         }
     }
     

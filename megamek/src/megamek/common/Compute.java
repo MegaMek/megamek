@@ -531,7 +531,7 @@ public class Compute
             // then any other mech in the hex is a violation
             for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
                 final Entity inHex = (Entity)i.nextElement();
-                if (inHex instanceof Mech) {
+                if (inHex instanceof Mech && !inHex.equals(entering)) {
                     return inHex;
                 }
             }
@@ -543,7 +543,7 @@ public class Compute
         Entity firstEntity = null;
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-            if (inHex.getOwner().equals(entering.getOwner())) {
+            if (inHex.getOwner().equals(entering.getOwner()) && !inHex.equals(entering)) {
                 if (firstEntity == null) {
                     firstEntity = inHex;
                 } else {

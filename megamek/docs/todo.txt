@@ -103,3 +103,10 @@ FUTURE VERSION PLANS:
 - any remaining level 1 rules without bugs
 - level 2!
 - level 3!
+
+Forward Error Correction:
+-------------------------
+Ranselix on the irc.evilnet.net#megamek IRC said to look at the following
+pages to learn about a way to guard against bit errors on transimissions:
+- http://www.eccpage.com/
+- http://www.ka9q.net/code/fec

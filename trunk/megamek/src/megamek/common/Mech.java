@@ -1409,7 +1409,7 @@ public abstract class Mech
         
         // check criticals for space
         if(getEmptyCriticals(loc) < crits) {
-            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName());
+            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + crits);
         }
         
         // add it

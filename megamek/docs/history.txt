@@ -80,6 +80,7 @@ v next
 + 565005: latecomers see the report if joining during a report phase
 + damage taken during a fall modifies later get-up attempts
 + added no-tac and floating-tac game options for mechs (thx John Rowat)
++ 612180: vehicles use their slightly different damage arcs
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

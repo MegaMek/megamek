@@ -167,7 +167,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         mpR2.setString(en.getRunMPasString());
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
 
-        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
+        curMoveR.setString(en.getMovementString(en.moved) + (en.moved == Entity.MOVE_NONE ? "" : " " + en.delta_distance));
         
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -28,8 +28,8 @@ public class Client extends Panel
     // a frame, to show stuff in
     public Frame                frame;
     
-    // another frame for the report
-    public Frame                reportFrame;
+//    // another frame for the report
+//    public Frame                reportFrame;
         
     // we need these to communicate with the server
     private String              name;
@@ -54,7 +54,7 @@ public class Client extends Panel
     public ChatterBox           cb;
     public BoardView1           bv;
     public BoardComponent       bc;
-    public Window               mechW;
+    public Dialog               mechW;
     public MechDisplay          mechD;
         
     protected Panel                curPanel;
@@ -89,7 +89,8 @@ public class Client extends Panel
 //        bc = new BoardComponent(bv);
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
-        mechW.setSize(210, 320);
+        mechW.setSize(210, 340);
+        mechW.setResizable(false);
         mechD = new MechDisplay();
         mechW.add(mechD);
             
@@ -101,10 +102,10 @@ public class Client extends Panel
         setLayout(new BorderLayout());
         frame.setTitle(playername + " - MegaMek");
         
-        // report frame
-        reportFrame = new Frame("MegaMek Reports");
-        reportFrame.setSize(400, 600);
-        //reportFrame.setVisible(true);
+//        // report frame
+//        reportFrame = new Frame("MegaMek Reports");
+//        reportFrame.setSize(420, 600);
+//        //reportFrame.setVisible(true);
     }
     
     /**

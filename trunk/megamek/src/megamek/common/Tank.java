@@ -105,7 +105,11 @@ public class Tank
     
     public boolean isImmobile()
     {
-        return super.isImmobile() || m_bImmobile;
+        if (game.getOptions().booleanOption("no_immobile_vehicles")) {
+            return super.isImmobile();
+        } else {
+            return super.isImmobile() || m_bImmobile;
+        }
     }
     
     /**

@@ -884,6 +884,22 @@ public class Compute
                            waa.getWeaponId(), prevAttacks);
     }
     
+
+    //makes it so that parallel hexes will be next to one another
+    public static Coords[] toLineOrder(Coords[] in, final Coords root) {
+      if (in.length <= 1) return in;
+      Arrays.sort(in, new Comparator() {
+        public int compare(Object obj, Object obj1) {
+          Coords coord = (Coords)obj;
+          Coords coord1 = (Coords)obj1;
+          if (coord1.distance(root) < coord.distance(root)) {
+            return 1;
+          }
+          return -1;
+        }});
+      return in;
+    }
+    
     /**
      * To-hit number for attacker firing a weapon at the target.
      * 
@@ -899,7 +915,7 @@ public class Compute
         final Entity te = game.getEntity(targetId);
         final Mounted weapon = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)weapon.getType();
-        final Coords[] in = intervening(ae.getPosition(), te.getPosition());
+        Coords[] in = intervening(ae.getPosition(), te.getPosition());
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
@@ -938,6 +954,93 @@ public class Compute
         
         int ilw = 0;  // intervening light woods
         int ihw = 0;  // intervening heavy woods
+        
+        /* check to see if LOS is on the hex line
+         * it seems like a lot of work, but the following 
+         * assumes that the defender will want to have the highest
+         * modifier possible.
+         */ 
+        double degree = ae.getPosition().degree(te.getPosition());
+        if (degree > 180) degree = (degree + 180)%360;
+        if (degree == 30 || degree == 90 || degree == 150) {
+          Vector result = new Vector();
+          in = toLineOrder(in, ae.getPosition());
+          result.addElement(in[0]); //attacker spot
+          int w_total = 0;
+          for (int i = 1; i < in.length - 2; i+=3) {
+            Coords c1 = in[i];
+            Coords c2 = in[i+1];
+            result.addElement(in[i+2]);
+            if (!game.board.contains(c1)) {
+              result.add(c2);
+            } else if (!game.board.contains(c2)) {
+              result.add(c1);
+            } else { 
+              final Hex h = game.board.getHex(c1);
+              final int hexEl = h.floor();   
+              final Hex h1 = game.board.getHex(c2);
+              final int hexEl1 = h1.floor();   
+              int w = 0;
+              int w1 = 0;
+              if ((hexEl > attEl && hexEl > targEl) 
+                    || (i == 1 && hexEl > attEl)
+                    || (i == in.length - 3 && hexEl > targEl)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");                
+              } else if ((hexEl1 > attEl && hexEl1 > targEl) 
+                    || (i == 1 && hexEl1 > attEl)
+                    || (i == in.length - 3 && hexEl1 > targEl)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain");                
+              } else { 
+                if (h.levelOf(Terrain.WOODS) > 0) {
+                  if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
+                        || (i == 1 && hexEl + 2 > attEl) 
+                        || (i == in.length - 3 && hexEl + 2 > targEl)) {
+                    w = (h.levelOf(Terrain.WOODS) == 1)?1:2;
+                  }
+                }
+                if (h1.levelOf(Terrain.WOODS) > 0) {
+                  if ((hexEl1 + 2 > attEl && hexEl1 + 2 > targEl) 
+                        || (i == 1 && hexEl1 + 2 > attEl) 
+                        || (i == in.length - 3 && hexEl1 + 2 > targEl)) {
+                    w1 = (h1.levelOf(Terrain.WOODS)==1)?1:2;
+                  }
+                }
+                if (i == 1) { //give the attacker pc if possible
+                  if (hexEl == attEl && attEl >= targEl && ae.height() > 0) {
+                    result.addElement(c1);
+                    continue;
+                  } else if (hexEl1 == attEl && attEl >= targEl && ae.height() > 0) {
+                    result.addElement(c2);
+                    continue;
+                  }
+                } else if (i == in.length -3) { //give the target pc, or block los
+                  if (w1 + w_total > 2) {
+                    result.addElement(c2);
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
+                  } else if (w + w_total > 2) {
+                    result.addElement(c1);
+                    return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods");
+                  } else if (hexEl == targEl && attEl <= targEl && te.height() > 0) {
+                    result.addElement(c1);
+                    continue;
+                  } else if (hexEl1 == targEl && attEl <= targEl && te.height() > 0) {
+                    result.addElement(c2);
+                    continue;
+                  }
+                } 
+                if (w1 > w) {
+                  result.addElement(c2);
+                  w_total += w1;
+                } else {
+                  result.addElement(c1);
+                  w_total += w;
+                }
+              }
+            }
+          }
+          in = new Coords[result.size()];
+          result.copyInto(in);
+        }
         
         // LOS?
         for (int i = 0; i < in.length; i++) {

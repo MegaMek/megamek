@@ -613,8 +613,8 @@ public class Tank
     /**
      * Tanks don't have MASC
      */
-    public int getRunMPwithoutMASC() {
-        return getRunMP();
+    public int getRunMPwithoutMASC(boolean gravity) {
+        return getRunMP(gravity);
     }
     
     public int getHeatCapacity() {

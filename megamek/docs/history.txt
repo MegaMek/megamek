@@ -71,6 +71,12 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v next
++ 574898: bots don't instantly logout with double-blind
++ 612248: bots work tolerably with vehicles
++ 612429: turretless vehicles have their secondary facing set correctly
++ 613606: locked turrets should no longer cause a crash
+
 v 0.26.14 (09-14-02, 9:30pm)
 + 609840: immobilized vehicles can't complete their charges
 + 609356: vehicles do not make piloting skill rolls to avoid falling
@@ -81,10 +87,7 @@ v 0.26.14 (09-14-02, 9:30pm)
 + damage taken during a fall modifies later get-up attempts
 + added no-tac and floating-tac game options for mechs (thx John Rowat)
 + 612180: vehicles use their slightly different damage arcs
-+ 610616: immobile vehicle critss don't apply the to-hit mod in the same phase
-+ 574898: bots don't instantly logout with double-blind
-+ 612248: bots work tolerably with vehicles
-+ 612429: turretless vehicles have their secondary facing set correctly
++ 610616: immobile vehicle crits don't apply the to-hit mod in the same phase
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

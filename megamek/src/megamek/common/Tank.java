@@ -92,8 +92,7 @@ public class Tank
     public void setFacing(int facing) {
         super.setFacing(facing);
         if (m_bTurretLocked) {
-            int nTurretFacing = facing + m_nTurretOffset;
-            if (nTurretFacing < 0) nTurretFacing += 6;
+            int nTurretFacing = (facing + m_nTurretOffset + 6) % 6;
             super.setSecondaryFacing(nTurretFacing);
         }
     }

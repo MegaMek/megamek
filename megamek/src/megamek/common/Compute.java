@@ -972,9 +972,9 @@ public class Compute
             Coords c2 = in[i+1];
             result.addElement(in[i+2]);
             if (!game.board.contains(c1)) {
-              result.add(c2);
+              result.addElement(c2);
             } else if (!game.board.contains(c2)) {
-              result.add(c1);
+              result.addElement(c1);
             } else { 
               final Hex h = game.board.getHex(c1);
               final int hexEl = h.floor();   

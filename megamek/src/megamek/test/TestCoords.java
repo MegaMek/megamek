@@ -39,6 +39,13 @@ public class TestCoords {
 
         System.out.println( "The coords for a hash of 258 is: " +
                             Coords.getFromHashCode(258) );
+
+        Coords neg_coords = new Coords( -11, -22 );
+        System.out.println( "The hash of " + neg_coords + " is: " +
+                            neg_coords.hashCode() );
+
+        System.out.println( "The coords for a hash of 2794 is: " +
+                            Coords.getFromHashCode(2794) );
     }
 
 }

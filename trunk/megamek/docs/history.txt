@@ -22,7 +22,8 @@ v0.29.59 (CVS)
 + Bug 1018871: gravity PSR when losing movement points in movement phase
 + Bug 1093083: falling in water, BMRr errata
 + Removed check_leg_breaches option, it was clarified on the Ask the PM board 
-   that legbreaches should be checked when a mech stands in lvl1 water 
+   that legbreaches should be checked when a mech stands in lvl1 water
++ Bug 1094473: thunder vibrabomb mines should deal damage in 5 point packs
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

@@ -3973,9 +3973,21 @@ implements Runnable, ConnectionHandler {
             Entity entity = (Entity) targets.nextElement();
 
             phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
-            HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
-            phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
-
+            if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
+                // normal vibrabombs do all damage in one pack
+                HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+            } else if (mf.getType() == Minefield.TYPE_THUNDER_VIBRABOMB) {
+                // thunder vibrabombs do damage in 5 point packs
+                int damage = mf.getDamage();
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                    phaseReport.append(damageEntity(entity, hit, cluster));
+                    damage -= cluster;
+                }
+            }
+            
             resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
             // we need to apply Damage now, in case the entity lost a leg,
             // otherwise it won't get a leg missing mod if it hasn't yet

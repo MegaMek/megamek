@@ -511,7 +511,7 @@ public class BotClient extends Client
                 Coords targetHex = en.getPosition().translated(en.getFacing());
                 if (game.board.getHex(targetHex) != null) {
                     int cost = Compute.getMovementCostFor(game, entity, en.getPosition(),
-                            targetHex, Entity.MOVE_WALK);
+                            targetHex, false);
         
                     // make sure we can afford the move
                     if (mpsUsed + cost <= en.getRunMP()) {

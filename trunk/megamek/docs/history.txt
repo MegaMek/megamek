@@ -126,6 +126,7 @@ v 0.29.9-dev
 + Fixed repeating "Player X disconnected" problem
 + Bug 794377: fixed main menu not reappearing when client disconnected
 + Fixed MSJDK compatibility issues
++ Continue movement state refactoring (some PSR warnings broken, watch out)
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

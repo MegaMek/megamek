@@ -84,6 +84,8 @@ public class MechFileParser {
             loader = new HmpFile(is);           
         } else if (lowerName.endsWith(".xml")) {
             loader = new TdbFile(is);
+        } else if (lowerName.endsWith(".ptf")) {
+            loader = new PtfFile(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {

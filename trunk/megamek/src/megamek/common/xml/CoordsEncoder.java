@@ -53,7 +53,7 @@ public class CoordsEncoder {
 
         // Encode the coords object to the stream.
         out.write( "<coords version=\"1.0\" hash=\"" );
-        out.write( coords.hashCode() );
+        out.write( Integer.toString(coords.hashCode()) );
         out.write( "\" />" );
     }
 

@@ -9887,23 +9887,25 @@ implements Runnable, ConnectionHandler {
             if (cs != null) {
                 // for every undamaged actuator destroyed by breaching,
                 // we make a PSR (see bug 1040858)
-                if (cs.isHittable()) {
-                    switch(cs.getIndex()) {
-                        case Mech.ACTUATOR_UPPER_LEG :
-                        case Mech.ACTUATOR_LOWER_LEG :
-                        case Mech.ACTUATOR_FOOT :
-                            // leg/foot actuator piloting roll
-                            game.addPSR( new PilotingRollData
-                                (entity.getId(), 1, "leg/foot actuator hit") );
-                            break;
-                        case Mech.ACTUATOR_HIP :
-                            // hip piloting roll (at +0, because we get the +2
-                            // anyway because the location is breached
-                            // phase report will look a bit weird, but the roll
-                            // is correct
-                            game.addPSR( new PilotingRollData
-                                (entity.getId(), 0, "hip actuator hit") );
-                            break;
+                if (entity.locationIsLeg(loc)) {
+                    if (cs.isHittable()) {
+                        switch(cs.getIndex()) {
+                            case Mech.ACTUATOR_UPPER_LEG :
+                            case Mech.ACTUATOR_LOWER_LEG :
+                            case Mech.ACTUATOR_FOOT :
+                                // leg/foot actuator piloting roll
+                                game.addPSR( new PilotingRollData
+                                    (entity.getId(), 1, "leg/foot actuator hit") );
+                                break;
+                            case Mech.ACTUATOR_HIP :
+                                // hip piloting roll (at +0, because we get the +2
+                                // anyway because the location is breached
+                                // phase report will look a bit weird, but the roll
+                                // is correct
+                                game.addPSR( new PilotingRollData
+                                    (entity.getId(), 0, "hip actuator hit") );
+                                break;
+                        }
                     }
                 }
                 cs.setBreached(true);

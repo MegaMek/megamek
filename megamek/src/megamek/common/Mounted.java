@@ -278,6 +278,8 @@ public class Mounted implements Serializable{
                 return 20;
             } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_LIGHT) {
                 return 16;
+            } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
+                return 25;
             }
         }
         // um, otherwise, I'm not sure

@@ -121,7 +121,7 @@ public class QuadMech extends Mech
      */
     public int getRunMPwithoutMASC() {
         if ( countDestroyedLegs() <= 1 ) {
-            return super.getRunMP();
+            return super.getRunMPwithoutMASC();
         } else {
             return getWalkMP();
         }

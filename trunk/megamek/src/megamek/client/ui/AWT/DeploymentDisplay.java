@@ -192,11 +192,9 @@ public class DeploymentDisplay
         selectEntity(client.getFirstDeployableEntityNum());
         setNextEnabled(true);
         Player p = client.getLocalPlayer();
-        // mark deployment hexes if not 'All'
-        if (p.getStartingPos() != 0) {
-            client.bv.markDeploymentHexesFor(p);
-            client.bv.repaint(100);
-        }
+        // mark deployment hexes
+        client.bv.markDeploymentHexesFor(p);
+        client.bv.repaint(100);
     }
 
     /**

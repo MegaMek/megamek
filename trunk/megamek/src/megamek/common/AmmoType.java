@@ -150,69 +150,49 @@ public class AmmoType extends EquipmentType {
         return munitionType;
     }
 
-    // 2003-07-13 Suvarov454 : Added xylaan's weapon refactoring
-
     protected int heat;
     protected RangeType range;
     protected int tech;
 
-        //override removed, most != all.  Not sure what the intent is...--LDE 2003-09-02
-    // Most ammo is explosive
-//    public boolean isExplosive() {
-//	return true;
-//    }
-
     public int getHeat() {
-	return heat;
+        return heat;
     }
+    
     public int getShotDamage(Entity en, Targetable targ) {
-	return damagePerShot;
+        return damagePerShot;
     }
 
     public RangeType getRange() {
-	return range;
+        return range;
     }
 
     // By default, all ballistic type weapons are 9.  If some are impossible
-    // (i.e. Gauss Rifle or SRM-2, they will override)
+    // (i.e. Gauss Rifle or SRM-2) they will override
     public int getFireTN() {
-	return 9;
+        return 9;
     }
 
     // By default, adds no new modifiers (these are for ammo based modifiers)
     public TargetRoll getModifiersFor(Game game, Entity en, Targetable targ) {
-	return new TargetRoll();
+        return new TargetRoll();
     }
-
-    // Note, we don't do any pre-stuff here, as that's done by the weapon
-/* TODO: uncomment me delete the empty method.
-    public abstract void resolveAttack(Game game,
-				       WeaponResult wr,
-				       UsesAmmoType weap,
-				       EquipmentState weap_state);
-*/
-    public void resolveAttack(Game game,
-				       WeaponResult wr,
-				       UsesAmmoType weap,
-        EquipmentState weap_state) {}
 
     // Created using the base type, using the default number of shots
     public EquipmentState getNewState(Mounted location) {
-	return new AmmoState(location, this, shots);
+        return new AmmoState(location, this, shots);
     }
 
     // Be default, all ammo explodes, with shots remaining * damagePerShot
     public void doCriticalDamage(EquipmentState state) {
-	if (isExplosive()) {
-	    AmmoState as = (AmmoState)state;
-	    // Get the amount of damage.
-	    int damage = this.getDamagePerShot() * as.shotsLeft();
+        if (isExplosive()) {
+	        AmmoState as = (AmmoState)state;
+	        // Get the amount of damage.
+            int damage = this.getDamagePerShot() * as.shotsLeft();
 /* TODO : implement me
-	    super.doCriticalDamage(state); // Set it as destroyed
+	        super.doCriticalDamage(state); // Set it as destroyed
 */
-	    // Do weapon explosion damage
-// ###########
-	}
+            // Do weapon explosion damage
+        }
     }
 
     public int getDamagePerShot() {

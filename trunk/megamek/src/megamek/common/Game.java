@@ -1383,7 +1383,7 @@ public class Game implements Serializable
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
-                 entity.isSelectableThisTurn(this) &&
+                 entity.isSelectableThisTurn() &&
                  entity instanceof Infantry ) {
                 remaining++;
             }
@@ -1402,7 +1402,7 @@ public class Game implements Serializable
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
-                 entity.isSelectableThisTurn(this) &&
+                 entity.isSelectableThisTurn() &&
                  entity instanceof Protomech ) {
                 remaining++;
             }

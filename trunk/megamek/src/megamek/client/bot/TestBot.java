@@ -79,7 +79,7 @@ public class TestBot extends BotClient {
         //first check and that someone else has moved so we don't replan
         Object[] enemy_array = this.getEnemyEntities().toArray();
         for (int j = 0; j < enemy_array.length; j++) {
-            if (!((Entity) enemy_array[j]).isSelectableThisTurn(game)) {
+            if (!((Entity) enemy_array[j]).isSelectableThisTurn()) {
                 initiative++;
             }
         }
@@ -206,7 +206,7 @@ public class TestBot extends BotClient {
     public void firstPass(CEntity self) {
         ArrayList enemies = getEnemyEntities();
         Object[] move_array;
-        if (self.getEntity().isSelectableThisTurn(game) && !self.moved) {
+        if (self.getEntity().isSelectableThisTurn() && !self.moved) {
             move_array = self.getAllMoves().values().toArray();
         } else {
             move_array = new Object[] { self.current };
@@ -242,7 +242,7 @@ public class TestBot extends BotClient {
                     self.engaged = true;
                     int mod = modifiers[MoveOption.DEFENCE_MOD];
                     double max = option.getMaxModifiedDamage(enemy.current, mod, modifiers[MoveOption.DEFENCE_PC]);
-                    if (en.isSelectableThisTurn(game)) {
+                    if (en.isSelectableThisTurn()) {
                         enemy.current.addStep(MovePath.STEP_TURN_RIGHT);
                         max =
                             Math.max(

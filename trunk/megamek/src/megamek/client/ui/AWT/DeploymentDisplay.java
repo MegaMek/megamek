@@ -402,7 +402,7 @@ public class DeploymentDisplay
             Entity other;
             while ( entities.hasMoreElements() ) {
                 other = (Entity) entities.nextElement();
-                if ( other.isSelectableThisTurn(client.game)
+                if ( other.isSelectableThisTurn()
                      && ce().canLoad(other) ) {
                     choices.addElement( other );
                 }

@@ -511,13 +511,10 @@ public abstract class Entity
     /**
      * Returns true if this entity is selectable for action.  Transported
      * entities can not be selected.
-     * <p/>
-     * TODO : remove the input parameter to this function.
      */
-    public boolean isSelectableThisTurn(Game game) {
+    public boolean isSelectableThisTurn() {
         return !done && (conveyance == Entity.NONE) &&
             !this.unloadedThisTurn && !isClearingMinefield();
-        //&& isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1)
     }
 
     /**

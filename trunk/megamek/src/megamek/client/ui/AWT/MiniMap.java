@@ -622,7 +622,7 @@ public class MiniMap extends Canvas
         }
 
         g.setColor (entity.getOwner().getColor());
-        if (! entity.isSelectableThisTurn(m_game)) {
+        if (! entity.isSelectableThisTurn()) {
             // entity has moved (or whatever) already
             g.setColor (g.getColor().darker());
         }

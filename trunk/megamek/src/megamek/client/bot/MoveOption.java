@@ -218,7 +218,7 @@ public class MoveOption extends MovePath implements Cloneable {
         //TODO: this just takes the first target
         while (e.hasMoreElements()) {
             Entity en = (Entity) e.nextElement();
-            if (!en.isSelectableThisTurn(game) && en.isEnemyOf(this.entity)) {
+            if (!en.isSelectableThisTurn() && en.isEnemyOf(this.entity)) {
                 this.isPhysical = true;
                 this.removeLastStep();
                 if (isJumping()) {

@@ -8140,6 +8140,12 @@ implements Runnable, ConnectionHandler {
                     roundReport.append("Added 5 heat from a fire...\n");
                 }
             }
+            
+            // if heatbuildup is negative due to temperature, set it to 0
+            // for prettier turnreports
+            if (entity.heatBuildup < 0) {
+                entity.heatBuildup = 0;
+            }
 
             // add the heat we've built up so far.
             roundReport.append( entity.getDisplayName() )

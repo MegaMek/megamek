@@ -116,6 +116,9 @@ public class BoardView1
     private Vector ghostEntitySprites = new Vector();
     protected transient Vector boardViewListeners = new Vector();
 
+    // wreck sprites
+    private Vector wreckSprites = new Vector();
+
     /**
      * Construct a new board view for the specified game
      */
@@ -236,6 +239,11 @@ public class BoardView1
 
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
+
+		// draw wrecks
+		if (Settings.showWrecks) {
+			drawSprites(wreckSprites);
+		}
 
 		// Minefield signs all over the place!
         drawMinefields();
@@ -914,6 +922,17 @@ public class BoardView1
     private void redrawAllEntities() {
         Vector newSprites = new Vector(game.getNoOfEntities());
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
+        Vector newWrecks = new Vector();
+        
+        Enumeration e = game.getGraveyardEntities();
+        while (e.hasMoreElements()) {
+        	Entity entity = (Entity) e.nextElement();
+        	System.out.println(entity.getShortName() + " is a wreck!");
+        	if (!(entity instanceof Infantry)) {
+	        	WreckSprite ws = new WreckSprite(entity);
+	        	newWrecks.addElement(ws);
+        	}
+	    }
 
         clearC3Networks();
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
@@ -929,6 +948,7 @@ public class BoardView1
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
+        wreckSprites = newWrecks;
 
         repaint(100);
     }
@@ -1887,6 +1907,89 @@ public class BoardView1
         }
 	}
 
+
+    /**
+     * Sprite for an wreck.  Consists
+     * of an image, drawn from the Tile Manager and an identification label.
+     */
+    private class WreckSprite extends Sprite
+    {
+        private Entity entity;
+        private Rectangle entityRect;
+
+        public WreckSprite(Entity entity) {
+            this.entity = entity;
+
+            String shortName = entity.getShortName();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
+                                 getFontMetrics(font).getAscent());
+            Rectangle tempBounds = new Rectangle(HEX_SIZE).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+
+            this.bounds = tempBounds;
+            this.entityRect = new Rectangle(bounds.x + 20, bounds.y + 14, 44, 44);
+            this.image = null;
+        }
+
+        /**
+         * Creates the sprite for this entity.  It is an extra pain to
+         * create transparent images in AWT.
+         */
+        public void prepare() {
+            // figure out size
+            String shortName = entity.getShortName();
+            Font font = new Font("SansSerif", Font.PLAIN, 10);
+            Rectangle modelRect = new Rectangle(47, 55,
+                                 getFontMetrics(font).stringWidth(shortName) + 1,
+                                 getFontMetrics(font).getAscent());
+
+            // create image for buffer
+            Image tempImage;
+            Graphics graph;
+            try {
+                tempImage = createImage(bounds.width, bounds.height);
+                graph = tempImage.getGraphics();
+            } catch (NullPointerException ex) {
+                // argh!  but I want it!
+                return;
+            }
+
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+
+            // draw entity image
+            graph.drawImage(tileManager.wreckMarkerFor(entity), 0, 0, this);
+
+            // draw box with shortName
+            Color text = Color.lightGray;
+            Color bkgd = Color.darkGray;
+            Color bord = Color.black;
+
+            graph.setFont(font);
+            graph.setColor(bord);
+            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            modelRect.translate(-1, -1);
+            graph.setColor(bkgd);
+            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            graph.setColor(text);
+            graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
+
+            // create final image
+            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
+        }
+
+        /**
+         * Overrides to provide for a smaller sensitive area.
+         */
+        public boolean isInside(Point point) {
+            return false;
+        }
+
+    }
     /**
      * Sprite for an entity.  Changes whenever the entity changes.  Consists
      * of an image, drawn from the Tile Manager; facing and possibly secondary

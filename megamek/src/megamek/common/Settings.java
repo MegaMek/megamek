@@ -45,6 +45,7 @@ public class Settings
     
     public static boolean   showMoveStep            = true;
     public static int       moveStepDelay           = 500;
+    public static boolean   showWrecks              = true;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
@@ -219,6 +220,10 @@ scan:
                         st.nextToken();
                         moveStepDelay = (int)st.nval;
                     }
+                    else if(key.equals("showwrecks")) {
+                        st.nextToken();
+                        showWrecks = Boolean.valueOf(st.sval).booleanValue();
+                    }
                 }
             }
             
@@ -288,6 +293,7 @@ scan:
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
             cw.write("showmovestep " + showMoveStep + "\r\n");
             cw.write("movestepdelay " + moveStepDelay + "\r\n");
+            cw.write("showwrecks " + showWrecks + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

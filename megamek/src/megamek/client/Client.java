@@ -572,6 +572,7 @@ public class Client extends Panel
         switch(phase) {
         case Game.PHASE_LOUNGE :
             switchPanel(new ChatLounge(this));
+           	game.reset();
             break;
         case Game.PHASE_STARTING_SCENARIO :
             switchPanel(new Label("Starting scenario..."));
@@ -1089,10 +1090,12 @@ public class Client extends Panel
     protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
         Vector newOutOfGame = (Vector)c.getObject(1);
-
+        
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
-        game.setOutOfGameEntitiesVector(newOutOfGame);
+        if (newOutOfGame != null) {
+	        game.setOutOfGameEntitiesVector(newOutOfGame);
+        }
         
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!

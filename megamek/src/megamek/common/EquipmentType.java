@@ -53,6 +53,12 @@ public class EquipmentType {
       
     protected float     bv = 0; // battle value point system
     
+    // what modes can this equipment be in?
+    protected String[] m_saModes = null;
+    
+    // can modes be switched instantly, or at end of turn?
+    protected boolean m_bInstantModeSwitch = true;
+    
     // static list of eq
     protected static Vector allTypes;
     protected static Hashtable internalNameHash;
@@ -114,6 +120,26 @@ public class EquipmentType {
 
     public float getBV(Entity entity) {
         return bv;
+    }
+    
+    public String[] getModes() {
+        return m_saModes;
+    }
+    
+    public void setModes(String[] sa) {
+        m_saModes = sa;
+    }
+    
+    public boolean hasModes() {
+        return m_saModes != null;
+    }
+    
+    public void setInstantModeSwitch(boolean b) {
+        m_bInstantModeSwitch = b;
+    }
+    
+    public boolean hasInstantModeSwitch() {
+        return m_bInstantModeSwitch;
     }
 
     public static void initializeTypes() {

@@ -126,9 +126,9 @@ public class FiringDisplay
         butSpace1.setEnabled(false);
 
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
-        butFireMode = new Button("Fire Mode");
+        butFireMode = new Button("Mode");
         butFireMode.addActionListener(this);
-	butFireMode.setEnabled(false);
+        butFireMode.setEnabled(false);
 
         butDone = new Button("Done");
         butDone.addActionListener(this);
@@ -250,7 +250,7 @@ public class FiringDisplay
         butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-	butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.mechW.setVisible(true);
+        butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.mechW.setVisible(true);
         client.mechW.setVisible(true);
         moveMechDisplay();
         client.game.board.select(null);
@@ -290,28 +290,30 @@ public class FiringDisplay
         butDone.setEnabled(false);
         butNextTarg.setEnabled(false);
         butFlipArms.setEnabled(false);
-	butFireMode.setEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
+        butFireMode.setEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
     }
     
    /**
     * Fire Mode - Adds a Fire Mode Change to the current Attack Action
-    * Currently swaps between a 1 and 2, easily changeable if multiple Fire Modes are needed
     */
-   private void changeFireMode() {
-	int wn = client.mechD.wPan.getSelectedWeaponNum();
-	int fm = ce().getEquipment(wn).getFiringMode();	
-   	if (fm == 1) {
-		ce().getEquipment(wn).setFiringMode(2);
-		fm = 2;
-	} else {
-		ce().getEquipment(wn).setFiringMode(1);
-		fm = 1;
-	}
-	attacks.addElement(new FiringModeChangeAction(cen, wn, fm));
-	client.mechD.wPan.displayMech(ce());
-	client.mechD.wPan.selectWeapon(wn);
-
-   }
+    private void changeMode() {
+        int wn = client.mechD.wPan.getSelectedWeaponNum();
+        Mounted m = ce().getEquipment(wn);
+        m.switchMode();
+        
+        attacks.addElement(new FiringModeChangeAction(cen, wn));
+        client.mechD.wPan.displayMech(ce());
+        client.mechD.wPan.selectWeapon(wn);
+        
+        // notify the player
+        if (m.getType().hasInstantModeSwitch()) {
+            client.cb.systemMessage("Switched " + m.getName() + " to " + m.curMode());
+        }
+        else {
+            client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
+                    " at end of turn.");
+        }
+    }
 
    /**
      * Cache the list of visible targets. This is used for the 'next target' button.
@@ -686,10 +688,10 @@ public class FiringDisplay
           jumpToNextTarget();
         } else if (ev.getSource() == butFlipArms) {
           updateFlipArms(!ce().getArmsFlipped());
-  	// Fire Mode - More Fire Mode button handling - Rasia
+        // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getSource() == butFireMode) {
-	   changeFireMode();
-	}
+            changeMode();
+        }
     }
     
     private void updateFlipArms(boolean armsFlipped) {

@@ -20,31 +20,20 @@ package megamek.common.actions;
 public class FiringModeChangeAction
     extends AbstractEntityAction
 {
-    private int weaponId;
-    private int firingMode;
+    private int equipmentId;
+    private int mode;
     
-    public FiringModeChangeAction(int entityId, int weaponId, int firingMode) {
+    public FiringModeChangeAction(int entityId, int equipmentId) {
         super(entityId);
-        this.weaponId = weaponId;
-	this.firingMode = firingMode;
+        this.equipmentId = equipmentId;
     }
     
-    public int getWeaponId() {
-        return weaponId;
+    public int getEquipmentId() {
+        return equipmentId;
     }
     
-    public void setWeaponId(int weaponId) {
-        this.weaponId = weaponId;
-    }
-
-    public int getFiringMode() {
-	return firingMode;
-    }
-
-    public void setFiringMode(int firingMode) {
-        this.firingMode = firingMode;
-    }
-
-    
+    public void setEquipmentId(int equipmentId) {
+        this.equipmentId = equipmentId;
+    }    
 }
 

@@ -874,6 +874,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 56;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -897,6 +899,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 113;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -920,6 +924,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 253;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -943,6 +949,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 282;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -1126,6 +1134,9 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 32;
         weapon.flags |= F_AUTO_TARGET;
+        String[] modes = { "On", "Off" };
+        weapon.setModes(modes);
+        weapon.setInstantModeSwitch(false);
         
         return weapon;
     }
@@ -1780,6 +1791,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 62;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -1803,6 +1816,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 123;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -1826,6 +1841,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 211;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -1849,6 +1866,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 8;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 337;
+        String[] modes = { "Single", "Ultra" };
+        weapon.setModes(modes);
         
         return weapon;
     }
@@ -2066,6 +2085,9 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 63;
         weapon.flags |= F_AUTO_TARGET;
+        String[] modes = { "On", "Off" };
+        weapon.setModes(modes);
+        weapon.setInstantModeSwitch(false);
         
         return weapon;
     }

@@ -90,6 +90,10 @@ implements GameListener, KeyListener {
         return chatPanel;
     }
     
+    public void systemMessage(String s) {
+        chatArea.append("\nMegaMek: " + s);
+    }
+    
     //
     // GameListener
     //

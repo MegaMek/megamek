@@ -430,6 +430,7 @@ public class MovementDisplay
         disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);
+        client.moveEntity(cen, md);
         // If we've moved an Infantry platoon, increment our turn counter.
         if ( ce() instanceof Infantry ) {
             turnInfMoved++;

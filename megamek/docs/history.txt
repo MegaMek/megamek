@@ -17,7 +17,7 @@ v0.29.42 (CVS)
 + Updates to support FLOSS Java hackers.
 + Bug 820500: When a hull breach happens, show which mech got breached,
     not only the location that got breached.
-+ Bug 827083: Mech with Breeched IS XL engine should be destroyed by engine
++ Bug 827083: Mech with breached IS XL engine should be destroyed by engine
     destruction
 
 v0.29.41 (2004-07-18 5:30pm)

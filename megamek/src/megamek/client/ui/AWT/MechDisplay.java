@@ -903,6 +903,7 @@ class WeaponPanel extends BufferedPanel
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
+                wExtR.setText("28 - 36");
             }
             else if(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
             {
@@ -910,6 +911,7 @@ class WeaponPanel extends BufferedPanel
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
                 wLongR.setText("7 - 9");
+                wExtR.setText("10 - 12");
             }
             else
             {
@@ -917,6 +919,7 @@ class WeaponPanel extends BufferedPanel
                 wShortR.setText("1 - 5");
                 wMedR.setText("6 - 10");
                 wLongR.setText("11 - 15");
+                wExtR.setText("16 - 20");
             }
         } // End weapon-is-ATM
 

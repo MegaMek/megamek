@@ -4,6 +4,7 @@ v0.29.39
 + Bug 982019: Fix for Hauptmann HA1-OA and Templar Grayson and Tancred pics.
 + RFE 899893: Use old Marauder IIC image
 + Patch 979497: lvl3 Diagramming LOS rule from MaxTech, thanks hentaizonga
++ Bug 830715: Breach locations when Mechs are displaced into water
 
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages

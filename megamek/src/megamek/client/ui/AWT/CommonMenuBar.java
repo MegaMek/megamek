@@ -246,12 +246,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         viewClientSettings.addActionListener( this );
         menu.add( viewClientSettings );
 
-        /* begin killme
-        ** Remove this block when implementing the client settings.
-        */
-        viewClientSettings.setEnabled( false );
-        /* end killme */
-
         // *** Create the deployo menu.
         menu = new Menu( "Deploy" );
         this.add( menu );

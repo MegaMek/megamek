@@ -34,6 +34,7 @@ public class Client extends Panel
     private CommonMenuBar       menuBar = new CommonMenuBar();
     private CommonAboutDialog   about   = null;
     private CommonHelpDialog    help    = null;
+    private CommonSettingsDialog        setdlg = null;
 
     // we need these to communicate with the server
     private String              name;
@@ -205,6 +206,19 @@ public class Client extends Panel
     }
 
     /**
+     * Called when the user selects the "View->Client Settings" menu item.
+     */
+    private void showSettings() {
+        // Do we need to create the "settings" dialog?
+        if ( this.setdlg == null ) {
+            this.setdlg = new CommonSettingsDialog( this.frame );
+        }
+
+        // Show the settings dialog.
+        this.setdlg.show();
+    }
+
+    /**
      * Implement the <code>ActionListener</code> interface.
      */
     public void actionPerformed(ActionEvent event) {
@@ -213,6 +227,9 @@ public class Client extends Panel
         }
         if(event.getActionCommand().equalsIgnoreCase("helpContents")) {
             showHelp();
+        }
+        if(event.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+            showSettings();
         }
     }
     

@@ -33,6 +33,7 @@ public class BoardEditor extends Container
     private CommonMenuBar       menuBar = new CommonMenuBar();
     private CommonAboutDialog   about  = null;
     private CommonHelpDialog    help   = null;
+    private CommonSettingsDialog        setdlg = null;
 
     private Hex                 curHex = new Hex();
 
@@ -598,6 +599,19 @@ public class BoardEditor extends Container
         this.help.show();
     }
 
+    /**
+     * Called when the user selects the "View->Client Settings" menu item.
+     */
+    private void showSettings() {
+        // Do we need to create the "settings" dialog?
+        if ( this.setdlg == null ) {
+            this.setdlg = new CommonSettingsDialog( this.frame );
+        }
+
+        // Show the settings dialog.
+        this.setdlg.show();
+    }
+
     //
     // ActionListener
     //
@@ -638,6 +652,8 @@ public class BoardEditor extends Container
             showAbout();
         } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) {
             showHelp();
+        } else if (ae.getActionCommand().equalsIgnoreCase("viewClientSettings")) {
+            showSettings();
         }
     }
 

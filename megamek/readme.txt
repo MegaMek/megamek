@@ -77,10 +77,10 @@ To back up, click the "Back Up" button before clicking a hex in the arc behind
 the unit.  To jump, click the "Jump" button before the destination hex.  
 Facing changes during jumps are free.
 
-Prone units can change facing without getting up.  To get up, click the 
-"Get Up" button, then the desired destination hex and/or facing; facing 
-changes within the same hex are free to a unit trying to get up.  To get up 
-and back up, click "Get Up," then "Back Up," then the destination hex and/or 
+Prone units can change facing without getting up at the normal cost.  To get up, 
+click the "Get Up" button, then the desired destination hex and/or facing.  
+Facing changes performed immediately after getting up are free.  To get up and 
+back up, click "Get Up," then "Back Up," then the destination hex and/or 
 facing.  You cannot get up and jump in the same turn.
 
 Charging and death from above attacks are also declared during the movement 

@@ -35,7 +35,8 @@ public class RACWeapon extends UACWeapon {
         //TODO: inefficient due to the ultra mode setting?
         String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
         this.setModes(modes);
-        
+        // explosive when jammed
+        this.explosive = true;
 	}
 	
 	/* (non-Javadoc)

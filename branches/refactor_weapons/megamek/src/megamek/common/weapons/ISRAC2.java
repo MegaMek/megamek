@@ -40,7 +40,5 @@ public class ISRAC2 extends RACWeapon {
         this.tonnage = 8.0f;
         this.criticals = 3;
         this.bv = 118;
-        // explosive when jammed
-        this.explosive = true;
 	}
 }

@@ -244,7 +244,14 @@ public class EquipmentType {
     	addType(new CLLB5XAC());
     	addType(new CLLB10XAC());
     	addType(new CLLB20XAC());
-    	
+    	//RACs
+        addType(new ISRAC2());
+        addType(new ISRAC5());
+        //Gausses
+        addType(new ISGaussRifle());
+        addType(new CLGaussRifle());
+        addType(new ISLGaussRifle());
+        addType(new ISHGaussRifle());
     }
     
 }

@@ -16,7 +16,7 @@
  *
  */
 package megamek.common.weapons;
-
+import megamek.common.AmmoType;
 /**
  * @author Andrew Hunter
  *

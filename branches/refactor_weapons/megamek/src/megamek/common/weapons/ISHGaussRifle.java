@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -41,4 +43,13 @@ public class ISHGaussRifle extends GaussWeapon {
         this.criticals = 11;
         this.bv = 346;
 	}
+	
+    
+    /* (non-Javadoc)
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.Game, megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, Game game, Server server) {
+        return new HGRHandler(toHit, waa, game, server);
+    }
 }

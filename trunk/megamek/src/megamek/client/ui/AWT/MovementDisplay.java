@@ -362,10 +362,18 @@ public class MovementDisplay
      * resets it.
      */
     private void clearAllMoves() {
+        // clear board cursors
         client.game.board.select(null);
         client.game.board.cursor(null);
+        
+        // create new current and considered paths
         md = new MovePath();
         cmd = new MovePath();
+        
+        // set to "walk," or the equivalent
+        gear = Compute.GEAR_LAND;
+        
+        // update some GUI elements
         client.bv.clearMovementData();
         butDone.setLabel("Done");
         updateProneButtons();
@@ -665,7 +673,6 @@ public class MovementDisplay
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform charge", "No target!");
                     clearAllMoves();
-                    gear = Compute.GEAR_LAND;
                     return;
                 }
 
@@ -714,7 +721,6 @@ public class MovementDisplay
                     client.doAlertDialog( "Can't perform charge",
                                           toHit.getDesc() );
                     clearAllMoves();
-                    gear = Compute.GEAR_LAND;
                     return;
                 }
             } else if (gear == Compute.GEAR_DFA) {
@@ -723,7 +729,6 @@ public class MovementDisplay
                 if (target == null || target.equals(ce())) {
                     client.doAlertDialog("Can't perform D.F.A.", "No target!");
                     clearAllMoves();
-                    gear = Compute.GEAR_LAND;
                     return;
                 }
 
@@ -759,7 +764,6 @@ public class MovementDisplay
                     client.doAlertDialog( "Can't perform D.F.A.",
                                           toHit.getDesc() );
                     clearAllMoves();
-                    gear = Compute.GEAR_LAND;
                     return;
                 }
             }
@@ -1041,7 +1045,6 @@ public class MovementDisplay
 			clearAllMoves();
 			if (!client.game.containsMinefield(ce().getPosition())) {
 				client.doAlertDialog("Can't clear minefield", "No minefield in hex!");
-				gear = Compute.GEAR_LAND;
 				return;
 			}
 			if (client.doYesNoDialog("Clear the minefield?", "The unit successfully clears the\nminefield on " +
@@ -1065,7 +1068,6 @@ public class MovementDisplay
             }
         } else if (ev.getSource() == butUp) {
             clearAllMoves();
-            gear = Compute.GEAR_LAND;
             if (md.getFinalProne(ce().isProne())) {
                 md.addStep(MovePath.STEP_GET_UP);
             }

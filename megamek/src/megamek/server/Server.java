@@ -67,6 +67,8 @@ implements Runnable, ConnectionHandler {
     /**
      * Construct a new GameHost and begin listening for
      * incoming clients.
+     * @param   password the <code>String</code> that is set as a password
+     * @param   port the <code>int</code> value that specifies the port that used
      */
     public Server(String password, int port) {
         this.password = password.length() > 0 ? password : null;
@@ -4037,6 +4039,10 @@ implements Runnable, ConnectionHandler {
     /**
      * Do a piloting skill check while standing still (during the
      *  movement phase).
+     * 
+     * @param entity The <code>Entity</code> that should make the PSR
+     * @param roll   The <code>PilotingRollData</code> to be used for this PSR. 
+     * 
      */
     private void doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -4065,6 +4071,14 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    /**
+     * Do a Piloting Skill check to dislogde swarming infantry.
+     * 
+     * @param   entity The <code>Entity</code> that is doing the dislodging.
+     * @param   roll The <code>PilotingRollData</code> for this PSR.   
+     * @param   curPos The <code>Coords</code> the entity is at.
+     * @return  <code>true</code> if the dislodging is successful.
+     */
     private boolean doDislodgeSwarmerSkillCheck(Entity entity, PilotingRollData roll, Coords curPos) {
         // okay, print the info
         phaseReport.append("\n" ).append( entity.getDisplayName() )
@@ -4159,9 +4173,16 @@ implements Runnable, ConnectionHandler {
         return result;
     }
 
+
     /**
      * The entity falls into the hex specified.  Check for any conflicts and
      * resolve them.  Deal damage to faller.
+     * 
+     * @param entity The <code>Entity</code> that is falling.
+     * @param src The <code>Coords</code> of the source hex.
+     * @param dest The <code>Coords</code> of the destination hex.
+     * @param roll The <code>PilotingRollData</code> to be used for PSRs induced 
+     * by the falling.
      */
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll) {
         final Hex srcHex = game.board.getHex(src);
@@ -8041,6 +8062,9 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Inflict damage on a pilot
+     * 
+     * @param en     The <code>Entity</code> who's pilot gets damaged.
+     * @param damage The <code>int</code> amount of damage.
      */
     private String damageCrew(Entity en, int damage) {
         StringBuffer desc = new StringBuffer();

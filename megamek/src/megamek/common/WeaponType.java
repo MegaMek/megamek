@@ -153,6 +153,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMRM30());
         EquipmentType.addType(createISMRM40());
         EquipmentType.addType(createISAMS());
+        EquipmentType.addType(createISNarc());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -191,6 +192,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
         EquipmentType.addType(createCLAMS());
+        EquipmentType.addType(createCLNarc());
     }
     
     public static WeaponType createFlamer() {
@@ -1236,6 +1238,28 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
+    public static WeaponType createISNarc() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Narc";
+        weapon.internalName = "ISNarcBeacon";
+        weapon.mepName = weapon.internalName; // ?
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.rackSize = 1; 
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 2;
+        weapon.bv = 30;
+        weapon.flags |= F_NO_FIRES;
+        
+        return weapon;
+    }
+    
     
     // Start of Clan Level2 weapons
     
@@ -2185,6 +2209,28 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
+        
+        return weapon;
+    }
+    
+    public static WeaponType createCLNarc() {
+        WeaponType weapon = new WeaponType();
+        
+        weapon.name = "Narc";
+        weapon.internalName = "CLNarcBeacon";
+        weapon.mepName = weapon.internalName; // ?
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.rackSize = 1; 
+        weapon.ammoType = AmmoType.T_NARC;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.tonnage = 2.0f;
+        weapon.criticals = 1;
+        weapon.bv = 30;
+        weapon.flags |= F_NO_FIRES;
         
         return weapon;
     }

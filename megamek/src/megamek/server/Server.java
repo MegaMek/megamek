@@ -2566,7 +2566,7 @@ implements Runnable {
             int nAvail = ae.getTotalAmmoOfType(atype);
             if (nAvail < nShots) {
                 phaseReport.append("(Not enough ammo for " + weapon.curMode() + ". ");
-                phaseReport.append("Firing at single rate");
+                phaseReport.append("Firing at single rate)");
                 nShots = 1;
             }
         }
@@ -2662,8 +2662,15 @@ implements Runnable {
             return;
         }
         
+        // special case NARC hits.  No damage, but a beacon is appended
+        if (wtype.getAmmoType() == AmmoType.T_NARC) {
+            te.setNarcedBy(ae.getOwner().getTeam());
+            phaseReport.append("hits.  Pod attached.\n");
+            return;
+        }
+        
         // yeech.  handle damage. . different weapons do this in very different ways
-        int hits = 1, amsHits = 0, nCluster = 1;
+        int hits = 1, amsHits = 0, nCluster = 1, nSalvoBonus = 0;
         int nDamPerHit = wtype.getDamage();
         boolean bSalvo = false;
         String sSalvoType = " shot(s) ";
@@ -2683,14 +2690,22 @@ implements Runnable {
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
                 nCluster = 5;
             }
-                        
+            
+            // calculate # of missiles hitting
+            if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_SRM) {
+                // check for narc (and eventually artemis)
+                if (te.isNarcedBy(ae.getOwner().getTeam())) {
+                    nSalvoBonus += 2;
+                }
+            }
+            
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                 hits = wtype.getRackSize();
             } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
                 // I'm going to assume these are MRMs
                 hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
             } else {
-                hits = Compute.missilesHit(wtype.getRackSize());
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus);
             }
             
             // adjust for AMS
@@ -2751,7 +2766,11 @@ implements Runnable {
 
         // Report the number of hits.
         if (bSalvo) {
-            phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc() + ".");
+            phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc());
+            if (nSalvoBonus > 0) {
+                phaseReport.append(" (w/ +").append(nSalvoBonus).append(" bonus)");
+            }
+            phaseReport.append(".");
             
             if (amsHits > 0) {
                 phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");

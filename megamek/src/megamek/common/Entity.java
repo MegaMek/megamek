@@ -115,6 +115,10 @@ public abstract class Entity
     protected Vector            weaponList = new Vector();
     protected Vector            ammoList = new Vector();
     protected Vector            miscList = new Vector();
+    
+    // which teams have NARCd us?  a long allows for 64 teams.
+    protected long              m_lNarcedBy = 0;
+    protected long              m_lPendingNarc = 0;
 
     protected CriticalSlot[][]  crits; // [loc][slot]
 
@@ -1753,6 +1757,7 @@ public abstract class Entity
         setFindingClub(false);
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
+        m_lNarcedBy |= m_lPendingNarc;
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
             ((Mounted)i.nextElement()).newRound();
@@ -1852,6 +1857,21 @@ public abstract class Entity
                 }
             }
         }
+    }
+    
+    // add a narc pod from this team to the mech.  Unremovable
+    public void setNarcedBy(int nTeamID) {
+        // avoid overflow in ridiculous battles
+        if (nTeamID > 63) {
+            System.out.println("Narc system can't handle team IDs this high!");
+            return;
+        }
+        m_lPendingNarc |= (long)(Math.pow(2.0, (double)nTeamID));
+    }
+    
+    // has the team attached a narc pod to me?
+    public boolean isNarcedBy(int nTeamID) {
+        return (m_lNarcedBy & (long)(Math.pow(2.0, (double)nTeamID))) > 0;
     }
                 
   

@@ -122,6 +122,7 @@ v 0.29.9-dev
 + Found and fixed an NPE when hit "done" in movement phase.
 + MSJDK compatibility changes(Vector issues). No net change.
 + Mech preview image in Select Mech... dialog and Mech Quick View dialog.
++ Bug 796081: updated "BMRr Feature List.txt" to indicate how to face off-board
 
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.

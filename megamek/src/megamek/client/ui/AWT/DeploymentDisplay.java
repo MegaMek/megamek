@@ -126,7 +126,7 @@ public class DeploymentDisplay
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
 //         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(client.bv, gridbag, c);
+//         addBag(clientgui.bv, gridbag, c);
 
 //         c.weightx = 1.0;    c.weighty = 0;
 //         c.gridwidth = 1;

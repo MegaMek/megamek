@@ -2869,12 +2869,9 @@ implements Runnable, ConnectionHandler {
                                 bldgSuffered = true;
 
                                 // The skid ends here if the target lives.
-                                // TODO : we should keep skiding if the target
-                                //        is pushed off the board as it has
-                                //        been "destroyed" according to the
-                                //        MegaMek interpretation of the rules.
                                 if ( !target.isDoomed() &&
-                                     !target.isDestroyed() ) {
+                                     !target.isDestroyed() &&
+                                     !game.isOutOfGame(target) ) {
                                     stopTheSkid = true;
                                 }
                                 

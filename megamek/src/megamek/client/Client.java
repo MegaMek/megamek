@@ -417,7 +417,11 @@ public class Client extends Panel
 	private void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
         Player newPlayer = (Player)c.getObject(1);
-        game.addPlayer(pindex, newPlayer);
+        if (getPlayer(newPlayer.getId()) != null) {
+            game.setPlayer(pindex, newPlayer);
+        } else {
+            game.addPlayer(pindex, newPlayer);
+        }
 		processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
 	}
 
@@ -434,7 +438,7 @@ public class Client extends Panel
 	 * Loads the entities from the data in the net command.
 	 */
 	private void receiveEntities(Packet c) {
-        Hashtable newEntities = (Hashtable)c.getObject(0);
+        Vector newEntities = (Vector)c.getObject(0);
         // re-link player in each entity
         for(Enumeration i = newEntities.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
@@ -442,7 +446,7 @@ public class Client extends Panel
             entity.setOwner(getPlayer(entity.getOwnerId()));
         }
     
-        game.setEntitiesHash(newEntities);
+        game.setEntitiesVector(newEntities);
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
 	    bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX

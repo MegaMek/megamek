@@ -2193,7 +2193,7 @@ public class Server
      * Creates a packet containing all current entities
      */
     private Packet createEntitiesPacket() {
-        return new Packet(Packet.COMMAND_SENDING_ENTITIES, game.getEntitiesHash());
+        return new Packet(Packet.COMMAND_SENDING_ENTITIES, game.getEntitiesVector());
     }
   
     /**

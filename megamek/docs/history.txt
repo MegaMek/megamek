@@ -10,6 +10,8 @@ could almost be combined:
 
 - clean up report generation in Server.java
 
+- clean up the stupidness in BaordView.java
+
 - improve code readibility, commenting; break up 80+ character lines, etc.
 - make fields private, classes encapsulated
 
@@ -36,7 +38,6 @@ board display:
 ? show dead mechs as rubble?
 ? some way to resize chat to be bigger or smaller
 ? hex numbers are hard to read on dark tiles
-? seperate client and GUI
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
 - bug: movement arrows dissappear when scrolled off the screen
 - mechs not disappearing properly when moved/dead
@@ -49,6 +50,7 @@ mechs:
 initiative:
 ? ineligible units should actually count in the action queue, but be skipped
 - roll-off ties
+- possibly stagger within packs
 
 movement:
 ? a better pathfinder
@@ -106,6 +108,7 @@ v next
 + falling does damage again (oops)
 + changed torso twisting a little
 + attempted to get initiative working again
++ changed the way players and entities are stored in the game
 
 v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server

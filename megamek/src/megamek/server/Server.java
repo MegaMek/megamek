@@ -81,6 +81,11 @@ public class Server
         // display server start text
         System.out.println("s: starting a new server...");
         System.out.println("s: address = " + serverSocket.getInetAddress().getHostAddress() + " port = " + serverSocket.getLocalPort());
+        InetAddress inet = serverSocket.getInetAddress();
+        try {
+            System.out.println("s: address = " + InetAddress.getAllByName("127.0.0.1").length);
+        } catch (UnknownHostException ex) {
+        }
 
         connector = new Thread(this);
         connector.start();

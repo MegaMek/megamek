@@ -73,20 +73,24 @@ public class FiringDisplay
         butFire = new Button("Fire");
         butFire.setActionCommand("fire");
         butFire.addActionListener(this);
+        butFire.addKeyListener(this);
         butFire.setEnabled(false);
         
         butReady = new Button("Done");
         butReady.setActionCommand("ready");
         butReady.addActionListener(this);
+        butReady.addKeyListener(this);
         
         butNext = new Button("Next Unit");
         butNext.setActionCommand("next");
         butNext.addActionListener(this);
+        butNext.addKeyListener(this);
         butNext.setEnabled(false);
         
         butMenu = new Button("?");
         butMenu.setActionCommand("menu");
         butMenu.addActionListener(this);
+        butMenu.addKeyListener(this);
         butMenu.setEnabled(false);
         
         // layout button grid
@@ -126,6 +130,7 @@ public class FiringDisplay
         // mech display.
         client.mechD.addMouseListener(this);
         client.mechD.wPan.weaponList.addItemListener(this);
+        client.mechD.wPan.weaponList.addKeyListener(this);
         client.frame.addComponentListener(this);
     
     }
@@ -389,6 +394,7 @@ public class FiringDisplay
             client.game.board.removeBoardListener(this);
             client.mechD.removeMouseListener(this);
             client.mechD.wPan.weaponList.removeItemListener(this);
+            client.mechD.wPan.weaponList.removeKeyListener(this);
             client.frame.removeComponentListener(this);
             client.bv.removeKeyListener(this);
             client.cb.getComponent().removeKeyListener(this);

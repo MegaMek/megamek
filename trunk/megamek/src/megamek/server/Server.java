@@ -1195,8 +1195,9 @@ implements Runnable, ConnectionHandler {
 		        // send turns to all players
 		        send(createTurnVectorPacket());
                 break;
-            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
+                roundReport.append("\nMovement Phase\n-------------------\n");
+            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
             case Game.PHASE_TARGETING:
@@ -1341,7 +1342,6 @@ implements Runnable, ConnectionHandler {
                 }
                 break;
             case Game.PHASE_MOVEMENT :
-                roundReport.append("\nMovement Phase\n-------------------\n");
                 addMovementHeat();
                 checkFor20Damage();
                 resolveCrewDamage();
@@ -3420,6 +3420,11 @@ implements Runnable, ConnectionHandler {
             game.insertNextTurn(newTurn);
             // brief everybody on the turn update
             send(createTurnVectorPacket());
+            // let everyone know about what just happened
+            roundReport.append(phaseReport.toString());
+            game.resetPhaseReport();
+            phaseReport = game.getPhaseReport(); //HACK
+            send(createReportPacket());
         } else {
             entity.setDone(true);
         }

@@ -15,6 +15,7 @@
 package megamek.client;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -69,6 +70,41 @@ public class Client extends Panel
         
     // I send out game events!
     private Vector                gameListeners;
+    
+    /**
+     * Construct w/o frame
+     */
+    public Client(String playername) {
+        this(new Frame("MegaMek Client"), playername);
+
+        Settings.load();
+        
+        if(Settings.windowSizeHeight != 0) {
+            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
+            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
+        } else {
+            frame.setSize(800, 600);
+        }
+        
+        frame.setBackground(SystemColor.menu);
+        frame.setForeground(SystemColor.menuText);
+        
+        frame.addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) { setVisible(false);
+                // feed last window position to settings
+                Settings.windowPosX = frame.getLocation().x;
+                Settings.windowPosY = frame.getLocation().y;
+                Settings.windowSizeWidth = frame.getSize().width;
+                Settings.windowSizeHeight = frame.getSize().height;
+
+                // save settings
+                Settings.save();
+
+                // okay, exit program
+                System.exit(0);
+            }
+	});
+    }
     
     /**
      * Constructor

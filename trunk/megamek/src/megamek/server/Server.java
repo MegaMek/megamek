@@ -63,6 +63,9 @@ implements Runnable, ConnectionHandler {
 
     // Track buildings that are affected by an entity's movement.
     private Hashtable           affectedBldgs = new Hashtable();
+    
+    // Track Physical Action results, HACK to deal with opposing pushes canceling each other
+    private Vector              physicalResults = new Vector();
 
     /**
      * Construct a new GameHost and begin listening for
@@ -6592,8 +6595,6 @@ implements Runnable, ConnectionHandler {
 
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
-
-        Vector results = new Vector(game.actionsSize());
         
         // loop thru received attack actions
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
@@ -6606,14 +6607,15 @@ implements Runnable, ConnectionHandler {
                 continue;
             }
             AbstractAttackAction aaa = (AbstractAttackAction)o;
-            results.addElement(preTreatPhysicalAttack(aaa));
+            physicalResults.addElement(preTreatPhysicalAttack(aaa));
         }
         int cen = Entity.NONE;
-        for (Enumeration i = results.elements(); i.hasMoreElements();) {
+        for (Enumeration i = physicalResults.elements(); i.hasMoreElements();) {
             PhysicalResult pr = (PhysicalResult)i.nextElement();
             resolvePhysicalAttack(pr, cen);
             cen = pr.aaa.getEntityId();
         }
+        physicalResults.clear();
     }
 
     /**
@@ -7285,6 +7287,11 @@ implements Runnable, ConnectionHandler {
         int roll = pr.roll;
         final ToHitData toHit = pr.toHit;
         
+        // was this push resolved earlier?
+        if (pr.pushBackResolved) {
+        	return;
+        }
+        
         if (lastEntityId != paa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
@@ -7306,6 +7313,44 @@ implements Runnable, ConnectionHandler {
         // report the roll
         phaseReport.append("rolls " ).append( roll ).append( " : ");
 
+        // check if our target has a push against us, too, and get it
+        PhysicalResult targetPushResult = null;
+        for (Enumeration i = physicalResults.elements(); i.hasMoreElements();) {
+            PhysicalResult tpr = (PhysicalResult)i.nextElement();
+            if (tpr.aaa.getEntityId() == te.getId() &&
+                tpr.aaa instanceof PushAttackAction &&
+				tpr.aaa.getTargetId() == ae.getId() ) {
+            	targetPushResult = tpr;
+            }
+        }
+        // if our target has a push against us, we need to resolve both now
+        if (targetPushResult != null) {
+        	// do both hit?
+        	if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
+        		roll >= toHit.getValue()) {
+        		phaseReport.append("succeeds: but ")
+				           .append(te.getDisplayName())
+						   .append("  pushed back!.\n")
+        		           .append("\nPhysical attacks for " )
+				           .append( te.getDisplayName() ).append( "\n")
+        		           .append("    Pushing " ).append( ae.getDisplayName())
+                           .append("; needs " ).append( toHit.getValue() )
+						   .append( ", ")
+						   .append("rolls " ).append( roll ).append( " : ")
+                           .append("succeeds: but ")
+                           .append(ae.getDisplayName())
+                           .append("  pushed back!.\n");
+        		PilotingRollData targetPushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
+                targetPushPRD.setCumulative(false); // see Bug# 811987 for more info
+                PilotingRollData pushPRD = new PilotingRollData(ae.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
+                pushPRD.setCumulative(false); // see Bug# 811987 for more info
+                game.addPSR(pushPRD);
+                game.addPSR(targetPushPRD);
+                targetPushResult.pushBackResolved = true;
+                return;
+        	}
+        }      
+        
         // do we hit?
         if (roll < toHit.getValue()) {
             phaseReport.append("misses.\n");
@@ -12592,4 +12637,5 @@ implements Runnable, ConnectionHandler {
             creditKill( (Entity) target, game.getEntity(cen) );
         }
     }
+
 }

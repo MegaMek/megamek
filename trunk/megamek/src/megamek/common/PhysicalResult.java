@@ -28,4 +28,5 @@ implements Serializable {
     public int rollRight = -1;
     public int damage = 0;
     public int damageRight = 0;
+    public boolean pushBackResolved = false;
 }

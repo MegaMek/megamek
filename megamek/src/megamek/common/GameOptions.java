@@ -51,6 +51,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level2, new GameOption("flamer_heat", "Flamers can deal heat instead of damage", "If checked, flamers can increase the heat of their target by 2 instead of dealing 2 damage.\n\nChecked by default.", true));
 		addOption(level2, new GameOption("fire", "Fire and smoke", "If checked, fires may be set accidentally or intentionally.\n\nChecked by default.", true));
 		addOption(level2, new GameOption("indirect_fire", "Indirect fire", "If checked, LRMs may be fire indirectly, and players may choose to spot for indirect fire instead of attacking.\n\nChecked by default.", true));
+		addOption(level2, new GameOption("minefields", "Minefields", "If checked, minefields can be used.\n\nChecked by default.", true));
 
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);

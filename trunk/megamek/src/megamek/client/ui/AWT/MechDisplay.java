@@ -91,8 +91,8 @@ public class MechDisplay extends Panel
     /**
      * Displays the specified mech in the panel.
      */
-    public void displayMech(Entity en) {
-        mPan.displayMech(en);
+    public void displayMech(Game game, Entity en) {
+        mPan.displayMech(game, en);
         aPan.displayMech(en);
         wPan.displayMech(en);
         sPan.displayMech(en);
@@ -292,7 +292,7 @@ class MovementPanel
     /**
      * updates fields for the specified mech
      */
-    public void displayMech(Entity en) {
+    public void displayMech(Game game, Entity en) {
         this.mechTypeL.setText(en.getModel() + " " + en.getName());
 
         this.statusR.setText(en.isProne() ? "prone" : "normal");
@@ -303,7 +303,16 @@ class MovementPanel
 
         this.mpR.setText(Integer.toString(en.getWalkMP()) + "/" + Integer.toString(en.getRunMP()) + "/" + Integer.toString(en.getJumpMP()));
         this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
-        this.heatR.setText(Integer.toString(en.heat) + " (" + en.getHeatCapacity() + " capacity)");
+        
+        int heatCap = en.getHeatCapacity();
+        int heatCapWater = en.getHeatCapacityWithWater(game);
+        String heatCapacityStr = Integer.toString(heatCap);
+        
+        if ( heatCap < heatCapWater ) {
+          heatCapacityStr = heatCap + " [" + heatCapWater + "]";
+        }
+        
+        this.heatR.setText(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
         
         validate();
     }
@@ -721,7 +730,7 @@ class SystemPanel
         locList.removeAll();
         for(int i = 0; i < en.locations(); i++) {
             if(en.getNumberOfCriticals(i) > 0) {
-                locList.add(Mech.locationNames[i], i);
+                locList.add(en.getLocationName(i), i);
             }
         }
         locList.select(0);

@@ -83,9 +83,9 @@ public class MechTileset {
         }
         
         // next, the generic model
-//        if (entity is a quad) {
-//            return default_quad;
-//        }
+        if (entity.entityIsQuad()) {
+            return default_quad;
+        }
         // weight?
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
             return default_light;

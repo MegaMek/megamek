@@ -155,8 +155,6 @@ public class Compute
         return md;
     }
     
-    
-    
     /**
      * Backwards walking pathfinder.  Note that this will let you do impossible
      * things, like run backwards.
@@ -343,12 +341,8 @@ public class Compute
         
         // running with gyro or hip hit is dangerous!
         if (!isRunProhibited && overallMoveType == Entity.MOVE_RUN
-            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
-                                             Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
-                || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0
-                || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0)) {
+            && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
+                || entity.hasHipCrit())) {
             md.getStep(0).setDanger(true);
         }
         
@@ -784,8 +778,12 @@ public class Compute
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
         // both legs present?
-        if (entity.isLocationDestroyed(Mech.LOC_RLEG) && entity.isLocationDestroyed(Mech.LOC_LLEG)) {
+        if ( entity instanceof BipedMech ) {
+          if ( ((BipedMech)entity).countDestroyedLegs() == 2 )
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+        } else if ( entity instanceof QuadMech ) {
+          if ( ((QuadMech)entity).countDestroyedLegs() >= 3 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)entity).countDestroyedLegs() + " legs destroyed");
         }
         // entity shut down?
         if (entity.isShutDown()) {
@@ -799,54 +797,9 @@ public class Compute
         // okay, let's figure out the stuff then
         roll = new PilotingRollData(entityId, entity.getCrew().getPiloting(), "Base piloting skill");
         
-        // right leg destroyed?
-        if (entity.isLocationDestroyed(Mech.LOC_RLEG)) {
-            roll.addModifier(5, "Right Leg destroyed");
-        } else {
-            // check for damaged hip actuators
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_RLEG) > 0) {
-                roll.addModifier(2, "Right Hip Actuator destroyed");
-            } else {
-                // upper leg actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_RLEG) > 0) {
-                    roll.addModifier(1, "Right Upper Leg Actuator destroyed");
-                }
-                // lower leg actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_RLEG) > 0) {
-                    roll.addModifier(1, "Right Lower Leg Actuator destroyed");
-                }
-                // foot actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_RLEG) > 0) {
-                    roll.addModifier(1, "Right Foot Actuator destroyed");
-                }
-            }
-        }
-        // left leg destroyed?
-        if (entity.isLocationDestroyed(Mech.LOC_LLEG)) {
-            roll.addModifier(5, "Left Leg destroyed");
-        } else {
-            // check for damaged hip actuators
-            if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0) {
-                roll.addModifier(2, "Left Hip Actuator destroyed");
-            } else {
-                // upper leg actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, Mech.LOC_LLEG) > 0) {
-                    roll.addModifier(1, "Left Upper Leg Actuator destroyed");
-                }
-                // lower leg actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG) > 0) {
-                    roll.addModifier(1, "Left Lower Leg Actuator destroyed");
-                }
-                // foot actuators?
-                if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, Mech.LOC_LLEG) > 0) {
-                    roll.addModifier(1, "Left Foot Actuator destroyed");
-                }
-            }
-        }
-        // gyro hit?
-        if (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
-            roll.addModifier(3, "Gyro damaged");
-        }
+        //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
+        //object and adjust as necessary
+          roll = entity.addEntityBonuses(roll);
         
         return roll;
     }
@@ -1113,6 +1066,44 @@ public class Compute
         
         // attacker prone
         if (ae.isProne()) {
+          if ( ae.entityIsQuad() ) {
+            int legsDead = ((Mech)ae).countDestroyedLegs();
+            
+            //No legs destroyed: no penalty and can fire all weapons
+            if ( (legsDead == 1) || (legsDead == 2) ) {
+              // Need an intact front leg
+              if (ae.isLocationDestroyed(Mech.LOC_RARM) && ae.isLocationDestroyed(Mech.LOC_LARM)) {
+                  return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with both front legs destroyed");
+              }
+              
+              // arm-mounted weapons have addidional trouble
+              if (mounted.getLocation() == Mech.LOC_RARM || mounted.getLocation() == Mech.LOC_LARM) {
+                  int otherArm = mounted.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+                  // check previous attacks for weapons fire from the other arm
+                  for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
+                      Object o = i.nextElement();
+                      if (!(o instanceof WeaponAttackAction)) {
+                          continue;
+                      }
+                      WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                      // stop when we get to this weaponattack (does this always work?)
+                      if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+                          break;
+                      }
+                      if (prevAttack.getEntityId() == attackerId && ae.getEquipment(prevAttack.getWeaponId()).getLocation() == otherArm) {
+                          return new ToHitData(ToHitData.IMPOSSIBLE, "Prone and firing from other front leg already");
+                      }
+                  }
+              }
+              // can't fire leg weapons
+              if (mounted.getLocation() == Mech.LOC_LLEG && mounted.getLocation() == Mech.LOC_RLEG) {
+                  return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs");
+              }
+              toHit.addModifier(2, "attacker prone");
+            } else if ( legsDead >= 3 ) {
+              return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with three or more legs destroyed");
+            }
+          } else {
             // must have an arm intact
             if (ae.isLocationDestroyed(Mech.LOC_RARM) || ae.isLocationDestroyed(Mech.LOC_LARM)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed");
@@ -1141,6 +1132,7 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone");
             }
             toHit.addModifier(2, "attacker prone");
+        }
         }
         
         // target prone
@@ -1203,6 +1195,16 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+        //Quads can't punch
+        if ( ae.entityIsQuad() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        //Can't punch with flipped arms
+        if (ae.getArmsFlipped()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
+        }
+
         // check if arm is present
         if (ae.isLocationDestroyed(armLoc)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
@@ -1335,8 +1337,17 @@ public class Compute
         final Entity te = game.getEntity(targetId);
         final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
         final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
-        final int legLoc = (leg == KickAttackAction.RIGHT)
-                           ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+        int[] kickLegs = new int[2];
+        if ( ae.entityIsQuad() ) {
+          kickLegs[0] = Mech.LOC_RARM;
+          kickLegs[1] = Mech.LOC_LARM;
+        } else {
+          kickLegs[0] = Mech.LOC_RLEG;
+          kickLegs[1] = Mech.LOC_LLEG;
+        }
+
+        final int legLoc = (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
+        
         ToHitData toHit;
 
         // arguments legal?
@@ -1348,14 +1359,14 @@ public class Compute
         }
         
         // check if both legs are present
-        if (ae.isLocationDestroyed(Mech.LOC_RLEG)
-            || ae.isLocationDestroyed(Mech.LOC_LLEG)) {
+        if (ae.isLocationDestroyed(kickLegs[0])
+            || ae.isLocationDestroyed(kickLegs[1])) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
         }
         
         // check if both hips are operational
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RLEG)
-            || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LLEG)) {
+        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[0])
+            || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[1])) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Hip destroyed");
         }  
         
@@ -1454,8 +1465,16 @@ public class Compute
      * Damage that the specified mech does with a kick
      */
     public static int getKickDamageFor(Entity entity, int leg) {
-        final int legLoc = (leg == KickAttackAction.RIGHT)
-                           ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+        int[] kickLegs = new int[2];
+        if ( entity.entityIsQuad() ) {
+          kickLegs[0] = Mech.LOC_RARM;
+          kickLegs[1] = Mech.LOC_LARM;
+        } else {
+          kickLegs[0] = Mech.LOC_RLEG;
+          kickLegs[1] = Mech.LOC_LLEG;
+        }
+
+        final int legLoc = (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
         int damage = (int)Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
         
@@ -1491,6 +1510,11 @@ public class Compute
         // arguments legal?
         if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+
+        //Quads can't club
+        if ( ae.entityIsQuad() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
 
         if (bothArms) {
@@ -1657,6 +1681,16 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+        //Quads can't push
+        if ( ae.entityIsQuad() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        //Can't push with flipped arms
+        if (ae.getArmsFlipped()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not push.");
+        }
+
         // check if both arms are present
         if (ae.isLocationDestroyed(Mech.LOC_RARM)
             || ae.isLocationDestroyed(Mech.LOC_LARM)) {
@@ -2381,6 +2415,10 @@ public class Compute
         final Entity entity = game.getEntity(entityId);
         final Hex hex = game.board.getHex(entity.getPosition());
         
+        //Non bipeds can't
+          if ( entity.getMovementType() != Entity.MovementType.BIPED )
+            return false;
+          
         // need woods for now
         //TODO: building rubble, possibly missing limbs
         if (hex.getTerrainType() != Terrain.FOREST_HVY && hex.getTerrainType() != Terrain.FOREST_LITE) {
@@ -2402,6 +2440,7 @@ public class Compute
         
         return true;
     }
+    
     
     /**
      * Returns the club a mech possesses, or null if none.

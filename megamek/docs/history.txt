@@ -70,7 +70,6 @@ physical attacks:
 - dfa should violate stacking
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
-- if a leg is kicked off, that leg should still be able to kick (theBlind)
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
@@ -90,7 +89,6 @@ v 0.25
 - players that connect with the same name as a "ghost" take control of that player
 - game handles "ghost" players properly (skips them)
 ? map selection
-? custom pilots
 
 VERSION HISTORY:
 ----------------
@@ -102,7 +100,7 @@ v next
 + 532908: fire button no longer enabled when it shouldn't be, AFAIK
 + 532066: limb destruction should not prevent physical attacks in the same phase
 + 532073: criticals should no longer transfer incorrectly
-+ pilot damage resulting from falling during fire phase resolved immediatly
++ pilot damage resulting from falling during fire phase resolved immediately
 
 v 0.24.2 (03-20-02, 10pm)
 + .mep files load weapons with no space between "(R)" and the weapon name now
@@ -114,6 +112,7 @@ v 0.24.2 (03-20-02, 10pm)
 - significantly changed how rear locations and weapons work:
 + weapons can now be rear-mounted anywhere legal (head, legs)
 + 532068: rear limb hits now transfer to rear torso locations (thx bdee)
++ 531825: initiative now sorts ties correctly
 
 v 0.24.1 (03-17-02, 11pm)
 + changed RNG routine to avoid very unlikely chance of rounding errors (:-P)

@@ -202,6 +202,7 @@ public class ChatLounge
         lisPlayerInfo = new List(5);
         lisPlayerInfo.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+                butRemoveBot.setEnabled(false);
                 Client c = getPlayerListSelected(lisPlayerInfo);
                 if (c == null) {
                     lisPlayerInfo.select(-1);
@@ -209,9 +210,7 @@ public class ChatLounge
                 }
                 if (c instanceof BotClient) {
                     butRemoveBot.setEnabled(true);
-                } else {
-                    butRemoveBot.setEnabled(false);
-                }
+                } 
 				choTeam.select(c.getLocalPlayer().getTeam());
             }
         });
@@ -1334,7 +1333,16 @@ public class ChatLounge
         } else if (ev.getSource() == butCamo) {
             camoDialog.show();
         } else if (ev.getSource() == butAddBot) {
-            String name = "Bot" + lisPlayerInfo.getItemCount();
+            String name = name = "Bot" + lisPlayerInfo.getItemCount();
+            Prompt p = new Prompt(clientgui.frame, "Choose Bot Name", "Name:", name, 15);
+            if (!p.showDialog()){
+                return;
+            }
+            if (p.getText().trim().equals("")) {
+                name = "Bot" + lisPlayerInfo.getItemCount();
+            } else {
+                name = p.getText();
+            }
 			BotClient c = new TestBot(name, client.getHost(), client.getPort());
 			c.addGameListener(new BotGUI(c));
 			try {

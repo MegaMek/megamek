@@ -88,10 +88,11 @@ v 0.26
 VERSION HISTORY:
 ----------------
 v next
++ minor changes to the client & server for Helge
++ added Cord Awtry's mega-patch for quads, flipping arms, small bugfixes
 + fixed a few new clubbing bugs
 + added flags for equipment
-+ added Cord Awtry's mega-patch for quads, flipping arms, small bugfixes
-+ minor changes to the client & server for Helge
++ fixed logic with needing a roll to stand up
 
 v 0.25.4 (05-03-02, 8:20pm)
 + use ammo and build heat for automatic misses, none for impossible shots

@@ -116,6 +116,9 @@ VERSION HISTORY:
 v 0.29.7 (CVS)
 + Data 779006: Added BH-21's resized mech images
 + Minefields(no command-detonated, but Thunders). LOS setting button back.
++ Bug 782105: Can't make physical attacks while spotting
++ Bug 775122: Map editor load button now never disabled
++ Bug 777415: No Artemis IV bonus while using IDF
 
 v 0.29.6 (08-03-03, 7pm)
 + Merge of underwater patch undid the Inferno SRM2 fix.

@@ -35,7 +35,6 @@ RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 general:
 - There are 2 report when firing phase happens and physical phase is skipped.
   A little logic here could avoid that.
-  
 - In Mech Selection dialog, implement an "advanced filters and sorts" pane
 
 mechs:
@@ -58,7 +57,6 @@ physical attacks:
 
 displacement issues:
 - domino effect: mechs with movement available can roll to step out of the way
-
 
 infantry:
 - implement the following special rules:
@@ -87,9 +85,9 @@ buildings:
 
 FUTURE VERSION PLANS:
 ---------------------
-- any remaining level 1 rules without bugs
-- level 2!
+- any remaining level 1 or 2 rules without bugs
 - level 3!
+- AeroSpace fighter strafing & bombing
 
 Forward Error Correction:
 -------------------------

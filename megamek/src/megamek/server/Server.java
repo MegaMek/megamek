@@ -10471,7 +10471,7 @@ implements Runnable, ConnectionHandler {
             entityUpdate( swarmerId );
         } // End dislodge-infantry
 
-        // clear all PSRs after a fall -- the 'Mech has already failed ONE and fallen, it'd be cruel to make it fail some more!
+        // clear all PSRs after a fall -- the Mek has already failed ONE and fallen, it'd be cruel to make it fail some more!
         game.resetPSRs(entity);
     }
 

@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -52,7 +52,7 @@ public class Settings
 
     public static boolean   nagForMASC              = true;
     public static boolean   nagForPSR               = true;
-    public static boolean   nagForNoAction          = false;
+    public static boolean   nagForNoAction          = true;
     
     public static boolean   showMoveStep            = true;
     public static int       moveStepDelay           = 500;

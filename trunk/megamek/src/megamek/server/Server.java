@@ -65,7 +65,7 @@ implements Runnable, ConnectionHandler {
 
     // Track buildings that are affected by an entity's movement.
     private Hashtable           affectedBldgs = new Hashtable();
-    
+
     // Track Physical Action results, HACK to deal with opposing pushes canceling each other
     private Vector              physicalResults = new Vector();
 
@@ -364,7 +364,7 @@ implements Runnable, ConnectionHandler {
         // Send the port we're listening on. Only useful for the player
         // on the server machine to check.
         sendServerChat(connId, "Listening on port "+serverSocket.getLocalPort());
-        
+
         // Get the player *again*, because they may have disconnected.
         player = getPlayer( connId );
         if ( null != player ) {
@@ -1323,7 +1323,7 @@ implements Runnable, ConnectionHandler {
      */
     private boolean isPhasePlayable(int phase) {
         switch (phase) {
-            case Game.PHASE_SET_ARTYAUTOHITHEXES : 
+            case Game.PHASE_SET_ARTYAUTOHITHEXES :
             case Game.PHASE_DEPLOY_MINEFIELDS :
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
@@ -2202,7 +2202,7 @@ implements Runnable, ConnectionHandler {
             || entity.isMakingDfa()) {
             return false;
         }
-        
+
         // if you're offboard, no shooting
         if (entity.isOffBoard()) {
             return false;
@@ -2422,7 +2422,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Receives an entity movement packet, and if valid, executes it and ends
      * the current turn.
-     * 
+     *
      */
     private void receiveMovement(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
@@ -2483,7 +2483,7 @@ implements Runnable, ConnectionHandler {
                 }
             }
 
-            // Handle any picked up MechWarriors            
+            // Handle any picked up MechWarriors
             Enumeration iter = entity.getPickedUpMechWarriors().elements();
             while (iter.hasMoreElements() ) {
                 Integer mechWarriorId = (Integer)iter.nextElement();
@@ -2554,7 +2554,7 @@ implements Runnable, ConnectionHandler {
         int mpUsed = 0;
         int moveType = Entity.MOVE_NONE;
         int overallMoveType = Entity.MOVE_NONE;
-        // if the entity already used some MPs, 
+        // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
         // and overallMoveType accordingly
@@ -2840,7 +2840,7 @@ implements Runnable, ConnectionHandler {
                             if ( !(target instanceof Infantry) ) {
                                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                                 ToHitData toHit = caa.toHit(game, true);
-                                
+
                                 // Calculate hit location.
                                 if ( entity instanceof Tank &&
                                      entity.getMovementType() ==
@@ -2906,7 +2906,7 @@ implements Runnable, ConnectionHandler {
                                      !game.isOutOfGame(target) ) {
                                     stopTheSkid = true;
                                 }
-                                
+
                                 // if we don't do this here,
                                 // we can have a mech without a leg
                                 // standing on the field and moving
@@ -2918,7 +2918,7 @@ implements Runnable, ConnectionHandler {
                                     target.applyDamage();
                                     phaseReport.append("\n");
                                 }
-                                
+
                             }
 
                             // Resolve "move-through" damage on infantry.
@@ -2987,7 +2987,7 @@ implements Runnable, ConnectionHandler {
                             // back earlier for the other targets
                             entity.setPosition(nextPos);
                         }
-                        
+
                         // Handle the building in the hex.
                         // TODO : BMRr pg. 22, only count buildings that are
                         //      higher than our starting terrain height.
@@ -3154,7 +3154,7 @@ implements Runnable, ConnectionHandler {
                 doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          true);
             }
-            
+
             // check if we've moved into a swamp
             rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -3200,7 +3200,7 @@ implements Runnable, ConnectionHandler {
             // check for minefields.
             if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
                 || ((overallMoveType == Entity.MOVE_JUMP) && (!i.hasMoreElements()))) {
-                checkVibrabombs(entity, curPos, false, lastPos, curPos); 
+                checkVibrabombs(entity, curPos, false, lastPos, curPos);
                 if (game.containsMinefield(curPos)) {
                     Enumeration minefields = game.getMinefields(curPos).elements();
                     while (minefields.hasMoreElements()) {
@@ -3222,7 +3222,7 @@ implements Runnable, ConnectionHandler {
                                 break;
                         }
                     }
-                }            
+                }
             }
 
             // infantry discovers minefields if they end their move
@@ -3430,7 +3430,7 @@ implements Runnable, ConnectionHandler {
                 prevFacing = curFacing;
             }
             prevHex = curHex;
-            
+
             firstStep = false;
         }
 
@@ -3465,7 +3465,7 @@ implements Runnable, ConnectionHandler {
                 // Any swarming infantry will be destroyed.
                 drownSwarmer(entity, curPos);
             }
-            
+
             // jumped into swamp? maybe stuck!
             if (game.board.getHex(curPos).contains(Terrain.SWAMP)) {
                 if (entity instanceof Mech) {
@@ -3616,7 +3616,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Delivers a thunder-aug shot to the targetted hex area.
      * Thunder-Augs are 7 hexes, though, so...
-     */ 
+     */
     private void deliverThunderAugMinefield( Coords coords,
                                              int playerId, int damage ) {
         Coords mfCoord = null;
@@ -3673,7 +3673,7 @@ implements Runnable, ConnectionHandler {
 
     }
 
-    /** 
+    /**
      * Adds a Thunder minefield to the hex.
      * @param coords
      * @param playerId
@@ -3740,7 +3740,7 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    /** 
+    /**
      *Delivers a Arrow IV FASCAM shot to the targetted hex area.
      */
     private void deliverFASCAMMinefield( Coords coords, int playerId) {
@@ -3796,7 +3796,7 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    /** 
+    /**
      * Adds a Thunder-Vibrabomb minefield to the hex.
      */
     private void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity) {
@@ -3826,7 +3826,7 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
 
-    /** 
+    /**
      * When an entity enters a conventional or Thunder minefield.
      */
     private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
@@ -3836,7 +3836,7 @@ implements Runnable, ConnectionHandler {
     /**
      * When an entity enters a conventional or Thunder minefield.
      * @param entity
-     * 
+     *
      * @param mf
      * @param src
      * @param dest
@@ -3884,7 +3884,7 @@ implements Runnable, ConnectionHandler {
                            .append( " now on fire for ")
                            .append( entity.infernos.getTurnsLeftToBurn() )
                            .append(" turns.\n");
-                
+
                 // start a fire in the targets hex
                 Hex h = game.getBoard().getHex(dest);
 
@@ -3904,7 +3904,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Checks to see if an entity sets off any vibrabombs.
-     */ 
+     */
     private void checkVibrabombs(Entity entity, Coords coords, boolean displaced) {
         checkVibrabombs(entity, coords, displaced, null, null);
     }
@@ -3950,7 +3950,7 @@ implements Runnable, ConnectionHandler {
                 // we need to apply Damage now, in case the entity lost a leg,
                 // otherwise it won't get a leg missing mod if it hasn't yet
                 // moved and lost a leg, see bug 1071434 for an example
-                entity.applyDamage();                
+                entity.applyDamage();
             }
         }
     }
@@ -3958,7 +3958,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Removes the minefield from the game.
      * @param mf The <code>Minefield</code> to remove
-     */ 
+     */
     private void removeMinefield(Minefield mf) {
         if (game.containsVibrabomb(mf)) {
             game.removeVibrabomb(mf);
@@ -3972,7 +3972,7 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /** 
+    /**
      * Removes the minfield from a player.
      * @param player The <code>Player</code> who's minefiled should be removed
      * @param mf The <code>Minefield</code> to be removed
@@ -3985,7 +3985,7 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Reveals a minefield for all players. 
+     * Reveals a minefield for all players.
      * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Minefield mf) {
@@ -4011,7 +4011,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Explodes a vibrabomb.
      * @param mf The <code>Minefield</code> to explode
-     */ 
+     */
     private void explodeVibrabomb(Minefield mf) {
         Enumeration targets = game.getEntities(mf.getCoords());
 
@@ -4040,7 +4040,7 @@ implements Runnable, ConnectionHandler {
                     damage -= cluster;
                 }
             }
-            
+
             resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
             // we need to apply Damage now, in case the entity lost a leg,
             // otherwise it won't get a leg missing mod if it hasn't yet
@@ -4083,7 +4083,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Checks to see if we may have just washed off infernos.  Call after
      * a step which may have done this.
-     * 
+     *
      * @param entity The <code>Entity</code> that is being checked
      * @param coords The <code>Coords</code> the entity is at
      */
@@ -4102,7 +4102,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Washes off an inferno from a mech and adds it to the (water) hex.
-     * 
+     *
      * @param entity The <code>Entity</code> that is taking a bath
      * @param coords The <code>Coords</code> the entity is at
      */
@@ -4142,14 +4142,14 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Set the locationsexposure of an entity
-     * 
+     *
      * @param entity The <code>Entity</code> who's exposure is being set
-     * @param hex The <code>Hex</code> the entity is in 
-     * @param isPavementStep a <code>boolean</code> value wether 
+     * @param hex The <code>Hex</code> the entity is in
+     * @param isPavementStep a <code>boolean</code> value wether
      *                       the entity is moving on a road
      * @param isJump a <code>boolean</code> value wether the entity is jumping
      */
-    
+
     public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep, boolean isJump) {
         if ( hex.levelOf(Terrain.WATER) > 0
             && entity.getMovementType() != Entity.MovementType.HOVER
@@ -4188,16 +4188,16 @@ implements Runnable, ConnectionHandler {
                 else entity.setLocationStatus(loop, Entity.LOC_NORMAL);
             }
         }
-        
+
     }
 
     /**
      * Do a piloting skill check while standing still (during the
      *  movement phase).
-     * 
+     *
      * @param entity The <code>Entity</code> that should make the PSR
-     * @param roll   The <code>PilotingRollData</code> to be used for this PSR. 
-     * 
+     * @param roll   The <code>PilotingRollData</code> to be used for this PSR.
+     *
      */
     private void doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -4228,9 +4228,9 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Do a Piloting Skill check to dislogde swarming infantry.
-     * 
+     *
      * @param   entity The <code>Entity</code> that is doing the dislodging.
-     * @param   roll The <code>PilotingRollData</code> for this PSR.   
+     * @param   roll The <code>PilotingRollData</code> for this PSR.
      * @param   curPos The <code>Coords</code> the entity is at.
      * @return  <code>true</code> if the dislodging is successful.
      */
@@ -4332,29 +4332,29 @@ implements Runnable, ConnectionHandler {
     /**
      * The entity falls into the hex specified.  Check for any conflicts and
      * resolve them.  Deal damage to faller.
-     * 
+     *
      * @param entity The <code>Entity</code> that is falling.
      * @param src The <code>Coords</code> of the source hex.
      * @param dest The <code>Coords</code> of the destination hex.
-     * @param roll The <code>PilotingRollData</code> to be used for PSRs induced 
+     * @param roll The <code>PilotingRollData</code> to be used for PSRs induced
      * by the falling.
      */
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll) {
         doEntityFallsInto(entity, src, dest, roll, true);
     }
-    
+
     /**
     * The entity falls into the hex specified.  Check for any conflicts and
     * resolve them.  Deal damage to faller.
-    * 
+    *
     * @param entity The <code>Entity</code> that is falling.
     * @param src The <code>Coords</code> of the source hex.
     * @param dest The <code>Coords</code> of the destination hex.
-    * @param roll The <code>PilotingRollData</code> to be used for PSRs induced 
+    * @param roll The <code>PilotingRollData</code> to be used for PSRs induced
     * by the falling.
-    * @param causeAffa The <code>boolean</code> value wether this fall should 
+    * @param causeAffa The <code>boolean</code> value wether this fall should
     * be able to cause an accidental fall from above
-    */        
+    */
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll, boolean causeAffa) {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
@@ -4605,13 +4605,13 @@ implements Runnable, ConnectionHandler {
         entity.setDeployed(true);
         entityUpdate(entity.getId());
     }
-    
+
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
         Vector artyAutoHitHexes = (Vector) packet.getObject(0);
-        
+
         Integer playerId = (Integer)artyAutoHitHexes.firstElement();
         artyAutoHitHexes.removeElementAt(0);
-        
+
         // is this the right phase?
         if (game.getPhase() != Game.PHASE_SET_ARTYAUTOHITHEXES) {
             System.err.println("error: server got set artyautohithexespacket in wrong phase");
@@ -4973,7 +4973,7 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /** 
+    /**
      * Called during the fire phase to resolve all (and only) weapon attacks
      */
     private void resolveOnlyWeaponAttacks() {
@@ -5235,6 +5235,12 @@ implements Runnable, ConnectionHandler {
         WeaponResult wr = new WeaponResult();
         wr.waa = waa;
 
+        // If it's an artillery attack, stick the entity into
+        // the weaponresult, so we can resolve the attack
+        // if the attacker dies while the shell is in flight
+        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+		    wr.artyEntity = ae;
+	    }
         // has this weapon fired already?
         if (weapon.isUsedThisRound()) {
             wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
@@ -5465,7 +5471,13 @@ implements Runnable, ConnectionHandler {
      */
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
         //      System.out.println("rwa");
-      final Entity ae = game.getEntity(wr.waa.getEntityId());
+      // Check if we have an entity stored in the wr,
+      // then it's an offboard shot and the shootign entity
+      // might have died in the meantime
+      Entity ae = wr.artyEntity;
+      if (ae == null) {
+          ae = game.getEntity(wr.waa.getEntityId());
+      }
       final Targetable target = game.getTarget(wr.waa.getTargetType(),
                                                wr.waa.getTargetId());
       Entity entityTarget = null;
@@ -5495,7 +5507,7 @@ implements Runnable, ConnectionHandler {
       boolean glancing = false; // For Glancing Hits Rule
       int glancingMissileMod = 0;
       int glancingCritMod = 0;
-      
+
       if (!bInferno) {
         // also check for inferno infantry
         bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
@@ -5668,7 +5680,7 @@ implements Runnable, ConnectionHandler {
         glancingMissileMod = 0;
         glancingCritMod = 0;
       }
-      
+
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
         Coords coords = target.getPosition();
@@ -6162,7 +6174,7 @@ implements Runnable, ConnectionHandler {
                     if (!bECMAffected&& !bMekStealthActive
                         && (!weapon.getType().hasModes()
                             || !weapon.curMode().equals("Indirect"))
-                        && (atype.getMunitionType() == AmmoType.M_STANDARD 
+                        && (atype.getMunitionType() == AmmoType.M_STANDARD
                             || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE
                             || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) {
                         nSalvoBonus += 2;
@@ -6820,7 +6832,7 @@ implements Runnable, ConnectionHandler {
 
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
-        
+
         // loop thru received attack actions
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
@@ -7138,7 +7150,7 @@ implements Runnable, ConnectionHandler {
     /**
      * Handle a Protomech physicalattack
      */
-    
+
     private void resolveProtoAttack(PhysicalResult pr, int lastEntityId) {
         final ProtomechPhysicalAttackAction ppaa = (ProtomechPhysicalAttackAction)pr.aaa;
         final Entity ae = game.getEntity(ppaa.getEntityId());
@@ -7162,7 +7174,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("    Protomech physical attack" ).append( " at " ).append( target.getDisplayName());
-        
+
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
@@ -7234,11 +7246,11 @@ implements Runnable, ConnectionHandler {
             }
             phaseReport.append( damageEntity(te, hit, damage) );
         }
-        
+
         phaseReport.append("\n");
     }
 
-    
+
     /**
      * Handle a brush off attack
      */
@@ -7259,7 +7271,7 @@ implements Runnable, ConnectionHandler {
         ? pr.toHit : pr.toHitRight;
         int roll = baa.getArm() == BrushOffAttackAction.LEFT
         ? pr.roll : pr.rollRight;
-        
+
         if (lastEntityId != baa.getEntityId()) {
             phaseReport.append( "\nPhysical attacks for " )
                 .append( ae.getDisplayName() )
@@ -7323,13 +7335,13 @@ implements Runnable, ConnectionHandler {
                                         int lastEntityId ) {
         final ThrashAttackAction taa = (ThrashAttackAction)pr.aaa;
         final Entity ae = game.getEntity(taa.getEntityId());
-        
+
         // get damage, ToHitData and roll from the PhysicalResult
         int hits = pr.damage;
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean glancing = (game.getOptions().booleanOption("maxtech_glancing_blows") && (roll == toHit.getValue()));
-        
+
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
         final Entity te = game.getEntity(taa.getTargetId());
 
@@ -7529,19 +7541,19 @@ implements Runnable, ConnectionHandler {
      * Handle a push attack
      */
     private void resolvePushAttack(PhysicalResult pr, int lastEntityId) {
-        final PushAttackAction paa = (PushAttackAction)pr.aaa;    	
+        final PushAttackAction paa = (PushAttackAction)pr.aaa;
         final Entity ae = game.getEntity(paa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "push".
         final Entity te = game.getEntity(paa.getTargetId());
         // get roll and ToHitData from the PhysicalResult
         int roll = pr.roll;
         final ToHitData toHit = pr.toHit;
-        
+
         // was this push resolved earlier?
         if (pr.pushBackResolved) {
         	return;
         }
-        
+
         if (lastEntityId != paa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
@@ -7599,8 +7611,8 @@ implements Runnable, ConnectionHandler {
                 targetPushResult.pushBackResolved = true;
                 return;
         	}
-        }      
-        
+        }
+
         // do we hit?
         if (roll < toHit.getValue()) {
             phaseReport.append("misses.\n");
@@ -7696,7 +7708,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("    Charge cancelled as the attacker has been immobilized.\n");
             return;
         }
-        
+
         if (te.isProne()) {
             phaseReport.append("    Charge cancelled as the target has fallen.\n");
             return;
@@ -8108,7 +8120,7 @@ implements Runnable, ConnectionHandler {
                 entity.heatBuildup += 10;
                 roundReport.append("Added 10 heat from Stealth Armor...\n");
             }
-            
+
             // If a Mek is in extreme Temperatures, add or substract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
@@ -8126,7 +8138,7 @@ implements Runnable, ConnectionHandler {
                         .append( " heat due to extreme temperatures...\n" );
                 }
             }
-            
+
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {
@@ -8284,14 +8296,14 @@ implements Runnable, ConnectionHandler {
             }
         }
     }
-    
+
     /**
      * check to see if unarmored infantry is outside in extreme temperatures
      * (crude fix because infantry shouldn't be able to be deployed
      * outside of vehicles or buildings, but we can't do that because
      * we don't know wether the map has buildings or not or wether the
-     * player has an apc 
-     */   
+     * player has an apc
+     */
     private void resolveExtremeTempInfantryDeath() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
@@ -8305,7 +8317,7 @@ implements Runnable, ConnectionHandler {
                     !(entityHex.contains(Terrain.BUILDING))) {
                 phaseReport.append(entity.getDisplayName() )
                            .append( " is in extreme temperatures and dies.\n" );
-                phaseReport.append(destroyEntity(entity, "heat/cold", false, false));                     
+                phaseReport.append(destroyEntity(entity, "heat/cold", false, false));
             }
         }
     }
@@ -8522,7 +8534,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Inflict damage on a pilot
-     * 
+     *
      * @param en     The <code>Entity</code> who's pilot gets damaged.
      * @param damage The <code>int</code> amount of damage.
      */
@@ -8567,11 +8579,11 @@ implements Runnable, ConnectionHandler {
             phaseReport.append("\n");
         }
     }
-    
+
     /**
-     * resolves consciousness rolls for one entity 
+     * resolves consciousness rolls for one entity
      */
-    
+
     private boolean resolveCrewDamage(Entity e, boolean anyRolls) {
         final int totalHits = e.getCrew().getHits();
         final int rollsNeeded = e.getCrew().getRollsNeeded();
@@ -8651,13 +8663,13 @@ implements Runnable, ConnectionHandler {
         return damageEntity(te, hit, damage, false, 0,
                             false, false);
     }
-    
+
     public String damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag,
                             false, false);
     }
-    
+
     public String damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS) {
@@ -8727,7 +8739,7 @@ implements Runnable, ConnectionHandler {
             }
         }
         // Is the infantry in vacuum?
-        if ( (isPlatoon || isBattleArmor ) && !te.isDestroyed() 
+        if ( (isPlatoon || isBattleArmor ) && !te.isDestroyed()
                 && !te.isDoomed() && game.getOptions().booleanOption("vacuum")) {
             // PBI. Double damage.
             damage = damage * 2;
@@ -8771,7 +8783,7 @@ implements Runnable, ConnectionHandler {
                 .append( " takes " )
                 .append( damage )
                 .append( " damage to " );
-                
+
             if (damageIS) desc.append ( "Internal Structure of ");
 
             desc.append(te.getLocationAbbr(hit) )
@@ -8908,7 +8920,7 @@ implements Runnable, ConnectionHandler {
                                       Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
-                        
+
                         // Infantry have only one section.
                         if ( isPlatoon ) {
                             desc.append( " <<<PLATOON KILLED>>>," );
@@ -8916,11 +8928,11 @@ implements Runnable, ConnectionHandler {
                             desc.append( " <<<TROOPER KILLED>>>," );
                         } else {
                             desc.append( " <<<SECTION DESTROYED>>>," );
-                        }     
-                        
+                        }
+
                         // If a sidetorso got destroyed, and the corresponding arm
                         // is not yet destroyed, add it as a club to that hex (p.35 BMRr)
-                        
+
                         if (te instanceof Mech &&
                                 (hit.getLocation() == Mech.LOC_RT ||
                                  hit.getLocation() == Mech.LOC_LT)) {
@@ -8957,7 +8969,7 @@ implements Runnable, ConnectionHandler {
                                     sendChangedHex(te.getPosition());
                                 }
                         }
-                    
+
                         // Destroy the location.
                         destroyLocation(te, hit.getLocation());
                         te.damageThisPhase += absorbed;
@@ -9067,7 +9079,7 @@ implements Runnable, ConnectionHandler {
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 desc.append( "\n            Movement system damaged!" );
-                
+
                 int nMP = te.getOriginalWalkMP();
                 if (nMP > 0) {
                     te.setOriginalWalkMP(nMP - 1);
@@ -9222,7 +9234,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Apply a single critical hit.
-     * 
+     *
      * The following private member of Server are accessed from this function,
      * preventing it from being factored out of the Server class:
      * destroyEntity()
@@ -9249,7 +9261,7 @@ implements Runnable, ConnectionHandler {
      *          normally <code>true</code>, but it will be <code>false</code>
      *          when the hit is being applied from a saved game or scenario.
      */
-    
+
     public String applyCriticalHit( Entity en, int loc, CriticalSlot cs,
                                     boolean secondaryEffects ) {
         StringBuffer desc = new StringBuffer();
@@ -9861,7 +9873,7 @@ implements Runnable, ConnectionHandler {
             }
         }
         // if it's a leg, the entity falls
-        
+
         if (en instanceof Mech && en.locationIsLeg(loc)) {
             game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
@@ -9938,8 +9950,8 @@ implements Runnable, ConnectionHandler {
             sb.append("! ***\n");
 
             entity.setDoomed(true);
-            
-            // Kill any picked up MechWarriors            
+
+            // Kill any picked up MechWarriors
             Enumeration iter = entity.getPickedUpMechWarriors().elements();
             while (iter.hasMoreElements() ) {
                 Integer mechWarriorId = (Integer)iter.nextElement();
@@ -9947,7 +9959,7 @@ implements Runnable, ConnectionHandler {
                 mw.setDestroyed(true);
                 game.removeEntity( mw.getId(), condition );
                 send( createRemoveEntityPacket(mw.getId(), condition) );
-                sb.append("\n*** " ).append( mw.getDisplayName() + 
+                sb.append("\n*** " ).append( mw.getDisplayName() +
                           " died in the wreckage. ***\n");
             }
 
@@ -10180,7 +10192,7 @@ implements Runnable, ConnectionHandler {
         int waterDepth = fallHex.levelOf(Terrain.WATER);
         int damageHeight = height;
 
-        
+
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
         if (waterDepth > 0) {
@@ -10217,7 +10229,7 @@ implements Runnable, ConnectionHandler {
         } else {
             phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( waterDamage ).append( " damage.");
         }
-        
+
         damage += waterDamage;
 
         // Any swarming infantry will be dislodged, but we don't want to
@@ -10246,7 +10258,7 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(damageEntity(entity, hit, cluster));
             damage -= cluster;
         }
-        
+
         //check for location exposure
         doSetLocationsExposure(entity, fallHex, fallHex.hasPavement(), false);
 
@@ -10364,7 +10376,7 @@ implements Runnable, ConnectionHandler {
         }
     }
 
-    /** 
+    /**
      * Make fires spread, smoke spread, and make sure that all fires
      * started this turn are marked as "burning" for next turn.
      *
@@ -10435,11 +10447,11 @@ implements Runnable, ConnectionHandler {
                                                   currentYCoord);
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
                 boolean infernoBurning = board.burnInferno( currentCoords );
-                
+
                 // optional rule, woods burn down
                 if (currentHex.contains(Terrain.WOODS) && currentHex.levelOf(Terrain.FIRE) == 2 && game.getOptions().booleanOption("woods_burn_down")) {
                     burnDownWoods(currentCoords);
-                }                
+                }
 
                 // If the woods has been cleared, or the building
                 // has collapsed put non-inferno fires out.
@@ -10661,7 +10673,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex
-     */ 
+     */
     public void addSmoke(int x, int y, int windDir) {
         Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
         Hex nextHex = game.getBoard().getHex(smokeCoords);
@@ -11917,8 +11929,8 @@ implements Runnable, ConnectionHandler {
     /**
      * Makes one slot of inferno ammo, determined
      * by certain rules, explode on a mech.
-     * 
-     * @param entity  The <code>Entity</code> that should suffer an 
+     *
+     * @param entity  The <code>Entity</code> that should suffer an
      *                inferno ammo explosion.
      */
     private String explodeInfernoAmmoFromHeat(Entity entity) {
@@ -12706,7 +12718,7 @@ implements Runnable, ConnectionHandler {
     private boolean isEligibleForOffboard(Entity entity) {
         return false;//only things w/ tag are, and we don't yet have TAG.
     }
-    
+
     /**
      * resolve Indirect Artillery Attacks for this turn
      */
@@ -12876,11 +12888,11 @@ implements Runnable, ConnectionHandler {
         }
         game.resetActions();
     }
-    
+
     /**
      * Credits a Kill for an entity, if the target got killed.
-     * 
-     * @param target   The <code>Entity</code> that got killed. 
+     *
+     * @param target   The <code>Entity</code> that got killed.
      * @param attacker The <code>Entity</code> that did the killing.
      */
     private void creditKill(Entity target, Entity attacker) {
@@ -12888,16 +12900,16 @@ implements Runnable, ConnectionHandler {
             attacker.addKill(target);
         }
     }
-    
+
     /**
      * pre-treats a physical attack
-     * 
-     * @param aaa The <code>AbstractAttackAction</code> of the physical attack 
+     *
+     * @param aaa The <code>AbstractAttackAction</code> of the physical attack
      *            to pre-treat
-     * 
+     *
      * @return    The <code>PhysicalResult</code> of that action, including
      *            possible damage.
-     */     
+     */
     private PhysicalResult preTreatPhysicalAttack(AbstractAttackAction aaa) {
         final Entity ae = game.getEntity(aaa.getEntityId());
         int damage = 0;
@@ -12955,7 +12967,7 @@ implements Runnable, ConnectionHandler {
                 // Use the best attack.
                 if (  oddsLeft*damage > oddsRight*damageRight ) {
                     paa.setArm(PunchAttackAction.LEFT);
-                } else paa.setArm(PunchAttackAction.RIGHT);   
+                } else paa.setArm(PunchAttackAction.RIGHT);
             }
             pr.damageRight = damageRight;
             pr.toHitRight = toHitRight;
@@ -12972,14 +12984,14 @@ implements Runnable, ConnectionHandler {
         pr.damage = damage;
         return pr;
     }
-    
+
     /**
      * Resolve a Physical Attack
-     * 
+     *
      * @param pr  The <code>PhysicalResult</code> of the physical attack
      * @param cen The <code>int</code> Entity Id of the entit's whose
      *            physical attack was last resolved
-     */    
+     */
     private void resolvePhysicalAttack(PhysicalResult pr, int cen) {
         AbstractAttackAction aaa = pr.aaa;
         int roll = pr.roll;
@@ -12996,7 +13008,7 @@ implements Runnable, ConnectionHandler {
             } else {
                 resolvePunchAttack(pr, cen);
                 cen = paa.getEntityId();
-            }            
+            }
         } else if (aaa instanceof KickAttackAction) {
             resolveKickAttack(pr, cen);
             cen = aaa.getEntityId();
@@ -13042,14 +13054,14 @@ implements Runnable, ConnectionHandler {
             creditKill( (Entity) target, game.getEntity(cen) );
         }
     }
-    
+
     /**
      * Do any extreme gravity PSRs the entity gets due to its movement
-     * 
+     *
      * @param entity The <code>Entity</code> to check.
      * @param step   The last <code>MoveStep</code> of this entity
      * @param curPos The current <code>Coords</code> of this entity
-     */    
+     */
     private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
         HitData hit;
         PilotingRollData rollTarget;
@@ -13115,7 +13127,7 @@ implements Runnable, ConnectionHandler {
                                 }
                                 doExtremeGravityDamage(entity, damage);
                             }
-                        }    
+                        }
                     } else if (step.getMovementType() == Entity.MOVE_WALK) {
                         // If the tank was just cruising, he got a flat +1 road bonus
                         if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
@@ -13134,7 +13146,7 @@ implements Runnable, ConnectionHandler {
                         }
                     } else if (step.getMovementType() == Entity.MOVE_RUN) {
                         // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
-                        // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
+                        // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to
                         // cruising speed, thus possibly gaining 2 flanking MPs
                         int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
                         if (step.getMpUsed() > entity.getRunMP(false) + k) {
@@ -13152,11 +13164,11 @@ implements Runnable, ConnectionHandler {
                             }
                         }
                     }
-                }   
+                }
             }
         }
     }
-    
+
     /**
      * Damage the inner structure of a mech's leg / a tank's front.
      * This only happens when the Entity fails an extreme Gravity PSR.
@@ -13177,10 +13189,10 @@ implements Runnable, ConnectionHandler {
             }
         } else if (entity instanceof Tank) {
             hit = new HitData (Tank.LOC_FRONT);
-            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));            
+            phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
         }
     }
-    
+
     /**
      * Eject an Entity.
      * @param entity    The <code>Entity</code> to eject.
@@ -13189,10 +13201,10 @@ implements Runnable, ConnectionHandler {
      * @return a <code>String</code> description for the serverlog.
      */
     public String ejectEntity(Entity entity, boolean autoEject) {
-        
+
         StringBuffer desc = new StringBuffer();
         // An entity can only eject it's crew once.
-        if (entity.getCrew().isEjected()) 
+        if (entity.getCrew().isEjected())
             return "";
 
         // Mek pilots may get hurt during ejection,
@@ -13209,7 +13221,7 @@ implements Runnable, ConnectionHandler {
                 rollTarget.addModifier(1, "automatic ejection");
             }
             if (entity.getInternal(Mech.LOC_HEAD) < 3) {
-                rollTarget.addModifier(Math.min(3 - entity.getInternal(Mech.LOC_HEAD),2), "Head Internal Structure Damage"); 
+                rollTarget.addModifier(Math.min(3 - entity.getInternal(Mech.LOC_HEAD),2), "Head Internal Structure Damage");
             }
             int facing = entity.getFacing();
             Coords targetCoords = entity.getPosition().translated((facing + 3)%6);
@@ -13233,7 +13245,7 @@ implements Runnable, ConnectionHandler {
             }
             if (autoEject) {
                 desc.append("\n").append(entity.getDisplayName())
-                    .append(" suffers an ammunition explosion, but the autoeject system was engaged.");     
+                    .append(" suffers an ammunition explosion, but the autoeject system was engaged.");
             }
             // okay, print the info
             desc.append("\n" ).append( entity.getDisplayName() )
@@ -13271,7 +13283,7 @@ implements Runnable, ConnectionHandler {
             else {
                 // Add the pilot as an infantry unit on the battlefield.
                 if (game.board.contains(targetCoords)) {
-                    pilot.setPosition(targetCoords);                    
+                    pilot.setPosition(targetCoords);
 /* Can pilots eject into water???
    ASSUMPTION : They can (because they get a -1 mod to the PSR.
                     // Did the pilot land in water?
@@ -13312,7 +13324,7 @@ implements Runnable, ConnectionHandler {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
-        desc.append(destroyEntity(entity, "ejection", true, true));        
+        desc.append(destroyEntity(entity, "ejection", true, true));
 
         // only remove the unit that ejected in the movement phase
         if (game.getPhase() == Game.PHASE_MOVEMENT) {
@@ -13321,9 +13333,9 @@ implements Runnable, ConnectionHandler {
         }
         return desc.toString();
     }
-    
+
     /**
-     * Checks if ejected Mechwarriors are eligible to be picked up, 
+     * Checks if ejected Mechwarriors are eligible to be picked up,
      * and if so, captures them or picks them up
      */
     private void resolveMechWarriorPickUp() {
@@ -13393,23 +13405,23 @@ implements Runnable, ConnectionHandler {
         }
     }
     /**
-     * destroy all wheeled and tracked Tanks that got displaced into water 
+     * destroy all wheeled and tracked Tanks that got displaced into water
      */
     private void resolveSinkVees() {
-        Enumeration sinkableTanks = 
+        Enumeration sinkableTanks =
             game.getSelectedEntities( new EntitySelector() {
             public boolean accept(Entity entity) {
                 if (entity.isOffBoard()) {
                     return false;
                 }
                 // TODO : correctly handle bridges.
-                if (entity instanceof Tank && 
+                if (entity instanceof Tank &&
                     (entity.getMovementType() == Entity.MovementType.TRACKED ||
                      entity.getMovementType() == Entity.MovementType.WHEELED ) &&
-                    game.board.getHex(entity.getPosition()).levelOf(Terrain.WATER) > 0) {                        
+                    game.board.getHex(entity.getPosition()).levelOf(Terrain.WATER) > 0) {
                         return true;
                 }
-                return false;            
+                return false;
             }
         });
         while (sinkableTanks.hasMoreElements()) {
@@ -13417,17 +13429,17 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(destroyEntity(e, "a watery grave", false));
         }
     }
-    
+
     /**
      * let all Entities make their "break-free-of-swamp-stickyness" PSR
      */
     private void doTryUnstuck() {
-        Enumeration stuckEntities = 
+        Enumeration stuckEntities =
             game.getSelectedEntities( new EntitySelector() {
             public boolean accept(Entity entity) {
-                if (entity.isStuck()) {                        
+                if (entity.isStuck()) {
                     return true;
-                } else return false;            
+                } else return false;
             }
         });
         PilotingRollData rollTarget;

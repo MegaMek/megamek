@@ -627,7 +627,7 @@ public class Client extends Panel
             connected = false;
             AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
             alert.show();
-            
+
             frame.setVisible(false);
             die();
         }
@@ -791,11 +791,23 @@ public class Client extends Panel
             }
             memDump( "entering deployment phase" );
             break;
+        case Game.PHASE_TARGETING:
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
+            memDump( "entering targeting phase" );
+            break;
         case Game.PHASE_MOVEMENT :
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
             memDump( "entering movement phase" );
+            break;
+        case Game.PHASE_OFFBOARD:
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
+            memDump( "entering offboard phase" );
             break;
         case Game.PHASE_FIRING :
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
@@ -817,6 +829,7 @@ public class Client extends Panel
             bv.clearAllAttacks();
             showRerollButton = game.hasTacticalGenius( getLocalPlayer() );
         case Game.PHASE_MOVEMENT_REPORT :
+        case Game.PHASE_OFFBOARD_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
         case Game.PHASE_VICTORY :
@@ -932,6 +945,15 @@ public class Client extends Panel
             }
             panSecondary.add( secondary, component );
             break;
+        case Game.PHASE_TARGETING:
+            component = new TargetingPhaseDisplay(this);
+            main = "BoardView";
+            secondary = "TargetingPhaseDisplay";
+            if ( !mainNames.contains( main ) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add( secondary, component );
+            break;
         case Game.PHASE_MOVEMENT:
             component = new MovementDisplay(this);
             main = "BoardView";
@@ -940,6 +962,15 @@ public class Client extends Panel
                 panMain.add( main, this.bv );
             }
             panSecondary.add( secondary, component );
+            break;
+        case Game.PHASE_OFFBOARD:
+            component = new OffboardAttackPhaseDisplay(this);
+            main = "BoardView";
+            secondary = "OffboardDisplay";
+            if ( !mainNames.contains(main) ) {
+                panMain.add( main, this.bv );
+            }
+            panSecondary.add(secondary, component);
             break;
         case Game.PHASE_FIRING:
             component = new FiringDisplay(this);
@@ -969,6 +1000,7 @@ public class Client extends Panel
                 ( secondary, ((ReportDisplay) component).getSecondaryDisplay() );
             break;
         case Game.PHASE_MOVEMENT_REPORT:
+        case Game.PHASE_OFFBOARD_REPORT:
         case Game.PHASE_FIRING_REPORT:
         case Game.PHASE_END:
         case Game.PHASE_VICTORY:
@@ -1007,13 +1039,15 @@ public class Client extends Panel
 
     private boolean canTargetEntities() {
         return isMyTurn() && (curPanel instanceof FiringDisplay
-                              || curPanel instanceof PhysicalDisplay);
+                              || curPanel instanceof PhysicalDisplay
+                              || curPanel instanceof TargetingPhaseDisplay);
     }
 
     private boolean canSelectEntities() {
         return isMyTurn() && (curPanel instanceof FiringDisplay
                               || curPanel instanceof PhysicalDisplay
-                              || curPanel instanceof MovementDisplay);
+                              || curPanel instanceof MovementDisplay
+                              || curPanel instanceof TargetingPhaseDisplay);
     }
 
     /** Toggles the entity display window
@@ -1098,7 +1132,8 @@ public class Client extends Panel
             // Can target weapons at the hex if it contains woods or building.
             // Can target physical attacks at the hex if it contains building.
             if ( curPanel instanceof FiringDisplay ||
-                 curPanel instanceof PhysicalDisplay ) {
+                 curPanel instanceof PhysicalDisplay ||
+                 curPanel instanceof TargetingPhaseDisplay) {
                 Hex h = game.board.getHex(coords);
                 if (h != null && h.contains(Terrain.WOODS) &&
                     curPanel instanceof FiringDisplay ) {
@@ -1128,10 +1163,14 @@ public class Client extends Panel
                 if (h != null && curPanel instanceof FiringDisplay) {
                                         popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_HEX_ARTILLERY) ) );
                                }
+                if (h != null && curPanel instanceof TargetingPhaseDisplay) {
+                                        popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_HEX_ARTILLERY) ) );
+                }
+                }
 
             }
         }
-    }
+
 
 
     /**
@@ -1230,11 +1269,11 @@ public class Client extends Panel
         data[0] = entityIds;
         send(new Packet(Packet.COMMAND_UNLOAD_STRANDED, data));
     }
-    
+
     /**
      * Pops up a dialog box giving the player a series of choices that
      * are not mutually exclusive.
-     * 
+     *
      * @param   title the <code>String</code> title of the dialog box.
      * @param   question the <code>String</code> question that has a
      *          "Yes" or "No" answer.  The question will be split across
@@ -1254,7 +1293,7 @@ public class Client extends Panel
         return choice.getChoices();
     }
 
-    /** 
+    /**
      * Change whose turn it is.
      */
     protected void changeTurnIndex(int index) {
@@ -1273,7 +1312,7 @@ public class Client extends Panel
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * 
+     *
      * @param   title the <code>String</code> title of the dialog box.
      * @param   question the <code>String</code> question that has a
      *          "Yes" or "No" answer.  The question will be split across
@@ -1285,7 +1324,7 @@ public class Client extends Panel
         confirm.show();
         return confirm.getAnswer();
     }
-    
+
     /**
      * Pops up a dialog box asking a yes/no question
      * <p/>
@@ -1298,10 +1337,10 @@ public class Client extends Panel
      * @param   bother a <code>Boolean</code> that will be set to match
      *          the player's response to "Do not bother me again".
      * @return  the <code>ConfirmDialog</code> containing the player's
-     *          responses.  The dialog will already have been shown to 
+     *          responses.  The dialog will already have been shown to
      *          the player, and is only being returned so the calling
      *          function can see the answer to the question and the state
-     *          of the "Show again?" question. 
+     *          of the "Show again?" question.
      */
     public ConfirmDialog doYesNoBotherDialog( String title, String question ) {
         ConfirmDialog confirm = new ConfirmDialog(frame,title,question,true);
@@ -1444,7 +1483,7 @@ public class Client extends Panel
     public void sendRerollInitiativeRequest() {
         send(new Packet(Packet.COMMAND_REROLL_INITIATIVE));
     }
-    
+
     /**
      * Sends the info associated with the local player.
      */
@@ -2145,6 +2184,8 @@ public class Client extends Panel
                 ((FiringDisplay)curPanel).target(target);
             } else if (curPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay)curPanel).target(target);
+            } else if (curPanel instanceof TargetingPhaseDisplay) {
+                ((TargetingPhaseDisplay)curPanel).target(target);
             }
         }
     }

@@ -1,9 +1,9 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
  *
  *  This program is distributed in the hope that it will be useful, but
@@ -37,18 +37,20 @@ public class Game implements Serializable
     public static final int PHASE_LOUNGE            = 1;
     public static final int PHASE_SELECTION         = 2;
     public static final int PHASE_EXCHANGE          = 3;
-    public static final int PHASE_DEPLOYMENT        = 12;  // reorder someday
+    public static final int PHASE_DEPLOYMENT        = 15;  // reorder someday
     public static final int PHASE_INITIATIVE        = 4;
-    public static final int PHASE_MOVEMENT          = 5;
-    public static final int PHASE_MOVEMENT_REPORT   = 6;
-    public static final int PHASE_FIRING            = 7;
-    public static final int PHASE_FIRING_REPORT     = 8;
-    public static final int PHASE_PHYSICAL          = 9;
-    public static final int PHASE_END               = 10;
-    public static final int PHASE_VICTORY           = 11;
-    public static final int PHASE_DEPLOY_MINEFIELDS = 13;
-    public static final int PHASE_STARTING_SCENARIO = 14;
-
+    public static final int PHASE_TARGETING         = 5;
+    public static final int PHASE_MOVEMENT          = 6;
+    public static final int PHASE_MOVEMENT_REPORT   = 7;
+    public static final int PHASE_OFFBOARD          = 8;
+    public static final int PHASE_OFFBOARD_REPORT   = 9;
+    public static final int PHASE_FIRING            = 10;
+    public static final int PHASE_FIRING_REPORT     = 11;
+    public static final int PHASE_PHYSICAL          = 12;
+    public static final int PHASE_END               = 13;
+    public static final int PHASE_VICTORY           = 14;
+    public static final int PHASE_DEPLOY_MINEFIELDS = 16;
+    public static final int PHASE_STARTING_SCENARIO = 17;
     /**
      * The number of Infantry units/Protomechs that have to move for every
      * Mek or Vehicle, if the "inf_move_multi" or the "protos_move_multi"
@@ -102,6 +104,7 @@ public class Game implements Serializable
     private Vector pilotRolls = new Vector();
     private Vector initiativeRerollRequests = new Vector();
 
+
     // reports
     private StringBuffer roundReport = new StringBuffer();
     private StringBuffer phaseReport = new StringBuffer();
@@ -119,6 +122,7 @@ public class Game implements Serializable
 
     private Hashtable minefields = new Hashtable();
     private Vector vibrabombs = new Vector();
+    private Vector offboardArtilleryAttacks = new Vector();
 
     /**
      * Constructor
@@ -415,6 +419,8 @@ public class Game implements Serializable
             case PHASE_MOVEMENT :
             case PHASE_FIRING :
             case PHASE_PHYSICAL :
+            case PHASE_TARGETING :
+            case PHASE_OFFBOARD :
                 return true;
             default :
                 return false;
@@ -1231,7 +1237,7 @@ public class Game implements Serializable
             if ( transport.isImmobile() || 0 == transport.getWalkMP() ) {
                 return true;
             }
-        }          
+        }
         return false;
     }
 
@@ -1241,16 +1247,16 @@ public class Game implements Serializable
     public int getInfantryLeft(int playerId) {
         Player player = this.getPlayer( playerId );
         int remaining = 0;
-        
+
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
                  entity.isSelectableThisTurn(this) &&
                  entity instanceof Infantry ) {
                 remaining++;
-            }          
+            }
         }
-        
+
         return remaining;
     }
 
@@ -1260,7 +1266,7 @@ public class Game implements Serializable
     public int getProtomechsLeft(int playerId) {
         Player player = this.getPlayer( playerId );
         int remaining = 0;
-        
+
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
@@ -1377,6 +1383,19 @@ public class Game implements Serializable
     public void addAction(EntityAction ea) {
         actions.addElement(ea);
     }
+    public void addArtilleryAttack(ArtilleryAttackAction aaa) {
+        offboardArtilleryAttacks.addElement(aaa);
+    }
+    public Vector getArtilleryVector() {
+        return offboardArtilleryAttacks;
+    }
+    public Enumeration getArtilleryAttacks() {
+        return offboardArtilleryAttacks.elements(); //Fix?
+    }
+    public int getArtillerySize() {
+        return offboardArtilleryAttacks.size();
+    }
+
 
     /** Returns an Enumeration of actions scheduled for this phase. */
     public Enumeration getActions() {

@@ -40,6 +40,7 @@ v 0.29.27 (CVS)
 + Bug 781250: MASC bug rises from the grave to attack quad mechs, buried again.
 + Made NARC missile beacon indidcation more obvious in extras tab.
 + Bug 905261: missing minimapcolours no longer NPEs. Also, better exception handling in Client#initializeDialogs()
++ New "SINKHOLE" MiniMap colour/setting
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

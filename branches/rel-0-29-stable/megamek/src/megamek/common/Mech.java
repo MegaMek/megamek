@@ -1038,11 +1038,13 @@ public abstract class Mech
                 case 1:
                 case 2:
                 case 3:
-                    return new HitData(Mech.LOC_RLEG);
+                    return new HitData(Mech.LOC_RLEG,
+                                    (side == ToHitData.SIDE_REAR));
                 case 4:
                 case 5:
                 case 6:
-                    return new HitData(Mech.LOC_LLEG);
+                    return new HitData(Mech.LOC_LLEG,
+                                    (side == ToHitData.SIDE_REAR));
                 }
             }
             if(side == ToHitData.SIDE_LEFT) {
@@ -1120,7 +1122,8 @@ public abstract class Mech
             // Hits from above.
             switch( roll ) {
             case 1:
-                return new HitData( Mech.LOC_LARM );
+                return new HitData( Mech.LOC_LARM,
+                                    (side == ToHitData.SIDE_REAR) );
             case 2:
                 return new HitData( Mech.LOC_LT,
                                     (side == ToHitData.SIDE_REAR) );
@@ -1131,9 +1134,11 @@ public abstract class Mech
                 return new HitData( Mech.LOC_RT,
                                     (side == ToHitData.SIDE_REAR) );
             case 5:
-                return new HitData( Mech.LOC_RARM );
+                return new HitData( Mech.LOC_RARM,
+                                    (side == ToHitData.SIDE_REAR) );
             case 6:
-                return new HitData( Mech.LOC_HEAD );
+                return new HitData( Mech.LOC_HEAD,
+                                    (side == ToHitData.SIDE_REAR) );
             }
         }
         if(table == ToHitData.HIT_BELOW) {
@@ -1152,9 +1157,11 @@ public abstract class Mech
             // Hits from below.
             switch( roll ) {
             case 1:
-                return new HitData( Mech.LOC_LLEG );
+                return new HitData( Mech.LOC_LLEG,
+                                    (side == ToHitData.SIDE_REAR) );
             case 2:
-                return new HitData( Mech.LOC_LLEG );
+                return new HitData( Mech.LOC_LLEG,
+                                    (side == ToHitData.SIDE_REAR) );
             case 3:
                 return new HitData( Mech.LOC_LT,
                                     (side == ToHitData.SIDE_REAR) );
@@ -1162,9 +1169,11 @@ public abstract class Mech
                 return new HitData( Mech.LOC_RT,
                                     (side == ToHitData.SIDE_REAR) );
             case 5:
-                return new HitData( Mech.LOC_RLEG );
+                return new HitData( Mech.LOC_RLEG,
+                                    (side == ToHitData.SIDE_REAR) );
             case 6:
-                return new HitData( Mech.LOC_RLEG );
+                return new HitData( Mech.LOC_RLEG,
+                                    (side == ToHitData.SIDE_REAR) );
             }
         }
         return null;

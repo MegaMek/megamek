@@ -1,11 +1,11 @@
-The Great MegaMek Feature list. 5th August 2003. MegaMek Version 29.6. Best viewed in 1024x768.
+The Great MegaMek Feature list. 8th February 2004. MegaMek Version 29.26. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
 Components (Units)
 
 - Battlemechs			Yes		None
-- Protomechs			No		None
+- Protomechs			Partial         Missing: fire declaration as a point, Physicals, Bot support
 - Vehicles			Partial		No VTOL's or Naval Units.
 - Infantry			Yes		None
 
@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			No		None
+- Protomechs			Mostly		Fire declaration *should* be as a point
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -128,6 +128,7 @@ Physical Attacks
 - Death From Above		Yes		Buildings may not be DFA'd
 - Different Elevations		Yes		None
 - Prone Battlemechs		Yes		None
+- Protomech Physical            No              None
 
 Heat (Heat Points)
 
@@ -168,13 +169,13 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			No		None
+- ProtoMechs			Partial		Missing: fire declaration as a point, Physicals, Bot support
 
 ProtoMechs (Combat)
 
-- Weapon Attacks		No		None
-- Hit Locations			No		None
-- Damage			No		None
+- Weapon Attacks		Yes		None
+- Hit Locations			Yes		None
+- Damage			Yes		None
 - Physical Attacks		No		None
 
 Vehicles (Movement)
@@ -210,7 +211,7 @@ Clan Battle Armor Variants
 Innersphere Battle Armor Variants
 
 - Achileus			Yes		None
-- Fa Shih			Partial		Cannot lay or clear minefields
+- Fa Shih			Partial		Cannot lay minefields
 - Fenrir			Yes		None
 - Gray Death Light		Yes		None
 - Infiltrator			Yes		None
@@ -313,12 +314,12 @@ Special Case Rules (Underwater Operations)
 Equipment
 
 - Active Probe			Yes		Hidden units is not implemented.
-- Anti-Missile System		Yes		All AMS fire is reported in one line; AMS target is selected for the player.
+- Anti-Missile System		Yes		AMS target is selected for the player.
 - Anti-Personal Pods		No		None
 - Artemis IV FCS		Yes		None
 - Artillery Weapons		No		None
-- Autocannon Munitions		Partial		Precision AC Ammo implemented.
-- C3 Computers			Partial		Proper network configuration not yet enabled. 13 units allowed in network.
+- Autocannon Munitions		Partial		Incendiary Ammo notlemented.
+- C3 Computers			Yes    		All bug reports on C3 need to be re-confirmed
 - Cargo Space			No		None
 - CASE				Yes		None
 - ECM				Yes		None
@@ -328,11 +329,11 @@ Equipment
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
 - Missile Lanchers		Yes		None
-- Missile Munitions		Partial		Many ammo types not yet implemented.
+- Missile Munitions		Partial		One Shot, Incendiary, Semiguided, Swarm, and Swarm-I not implemented
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Partial		iNarc not yet implemented.
-- Rocket Lauchers		No		None
+- Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate /Disable on the systems tab.
 - Sword				Yes		None
 - TAG				Yes		Requires Arrows IV implementation to work.

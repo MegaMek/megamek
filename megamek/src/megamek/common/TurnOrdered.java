@@ -41,14 +41,70 @@ public abstract class TurnOrdered implements Serializable
     public InitiativeRoll getInitiative() {
         return initiative;
     }
+
+    public static void rollInitiative(Vector v)
+    {
+        // Clear all rolls
+	for (Enumeration i = v.elements(); i.hasMoreElements();) {
+	    final TurnOrdered item = (TurnOrdered)i.nextElement();
+	    item.getInitiative().clear();
+	}
+
+	rollInitAndResolveTies(v, null);
+
+        //This is the *auto-reroll* code for the Tactical Genius (lvl 3)
+        // pilot ability.  It is NOT CURRENTLY IMPLEMENTED.  This code may
+        // be incomplete/buggy/just plain wrong.
+        /**
+        if (v.firstElement() instanceof Team) {
+            //find highest init roll
+            int highestInit = 2;
+            for (Enumeration i = v.elements(); i.hasMoreElements();) {
+                final TurnOrdered item = (TurnOrdered)i.nextElement();
+                highestInit = Math.max(item.getInitiative().getRoll(item.getInitiative().size() - 1), highestInit);
+            }
+            System.out.println("\n\n--->HIGH INIT ROLL: " + highestInit);
+            //loop through teams
+            for (Enumeration i = v.elements(); i.hasMoreElements();) {
+                final TurnOrdered item = (TurnOrdered)i.nextElement();
+                //loop through players
+                for (Enumeration j = ((Team)item).getPlayers(); j.hasMoreElements();) {
+                    final Player player = (Player)j.nextElement();
+                    if (player.getGame().hasTacticalGenius(player) &&
+                        item.getInitiative().getRoll(item.getInitiative().size() - 1) < highestInit && v.size() < 3) {
+                        System.out.println("-->AUTO REROLL: " + player.getName());
+                        Vector rv = new Vector();
+                        rv.addElement(item);
+                        rollInitAndResolveTies(v, rv);
+                    }
+                }
+            } 
+        }
+        */
+
+    }
     
-    private static void resolveInitTies(Vector v) {
-        // add a roll for all in the vector
+    // This takes a vector of TurnOrdered (Teams or Players), rolls
+    //  initiative, and resolves ties.  The second argument is used
+    //  when a specific teams initiative should be re-rolled.
+    public static void rollInitAndResolveTies(Vector v, Vector rerollRequests) {
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = (TurnOrdered)i.nextElement();
-            item.getInitiative().addRoll();
+            if (rerollRequests == null) { //normal init roll
+                item.getInitiative().addRoll(); // add a roll for all teams
+            } else {
+                //Resolve Tactical Genius (lvl 3) pilot ability
+                for (Enumeration j = rerollRequests.elements(); j.hasMoreElements();) {
+                    final TurnOrdered rerollItem = (TurnOrdered)j.nextElement();
+                    if (item == rerollItem) { // this is the team re-rolling
+                        item.getInitiative().replaceRoll();
+                        break; // each team only needs one reroll
+                    }
+                }
+            }
         }
-        // check for further ties
+
+        // check for ties
         Vector ties = new Vector();
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = (TurnOrdered)i.nextElement();
@@ -61,23 +117,13 @@ public abstract class TurnOrdered implements Serializable
                 }
             }
             if (ties.size() > 1) {
-                resolveInitTies(ties);
+                System.out.println("->TIE: " + ((Team)item).getId());
+                rollInitAndResolveTies(ties, null); // null should be reroll? debug
             }
         }
-        
     }
 
 
-    // This takes a vector of TurnOrdered, rolls initiative, and resolves ties
-    public static void rollInitiative(Vector v)
-    {
-	for (Enumeration i = v.elements(); i.hasMoreElements();) {
-	    final TurnOrdered item = (TurnOrdered)i.nextElement();
-	    item.getInitiative().clear();
-	}
-
-	resolveInitTies(v);
-    }
 
     // This takes a vector of TurnOrdered, and generates a new vector. 
     public static TurnVectors generateTurnOrder(Vector v, boolean infLast)

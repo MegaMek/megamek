@@ -383,6 +383,7 @@ implements Runnable, ConnectionHandler {
      * Sends a player the info they need to look at the current phase
      */
     private void sendCurrentInfo(int connId) {
+        //why are these two outside the player != null check below?
         transmitAllPlayerConnects(connId);
         send(connId, createGameSettingsPacket());
 
@@ -408,7 +409,6 @@ implements Runnable, ConnectionHandler {
                 send(connId, createReportPacket());
 
                 // Send Entites *before* other phase changes.
-                send(connId, createGameSettingsPacket());
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player));
                 }

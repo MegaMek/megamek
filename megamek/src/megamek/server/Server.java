@@ -2538,6 +2538,9 @@ implements Runnable {
         // compute to-hit
         wr.toHit = Compute.toHitWeapon(game, waa, attacks);
         
+        // roll dice
+        wr.roll = Compute.d6(2);
+        
         // if the shot is impossible, or a streak miss, stop processing
         if (wr.toHit.getValue() == TargetRoll.IMPOSSIBLE
         || (wtype.getAmmoType() == AmmoType.T_SRM_STREAK && wr.roll < wr.toHit.getValue())) {
@@ -2572,9 +2575,6 @@ implements Runnable {
         
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
-        
-        // roll dice
-        wr.roll = Compute.d6(2);
         
         // if the attack misses, stop processing
         if (wr.roll < wr.toHit.getValue()) {

@@ -38,6 +38,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private TextField   maxPathfinderTime;
     private Checkbox    explicitScrollOnly;
     private Checkbox    alwaysScrollOnRightClick;
+    private Checkbox    getFocus;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -134,6 +135,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         panSetting.add( maxPathfinderTime );
         panSetting.add( new Label("Pathfinder time limit (milliseconds).") );
         tempPanel.add( panSetting );
+        getFocus
+            = new Checkbox( "Get Focus when a new phase begins.");
+        tempPanel.add( getFocus );
 
         scrOptions.add(tempPanel);
 
@@ -219,6 +223,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
 
         maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
 
+        getFocus.setState( Settings.getFocus );
         super.show();
     }
 
@@ -250,6 +255,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
 
         Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
 
+        Settings.getFocus =       getFocus.getState();
         Settings.save();
         this.setVisible( false );
     }

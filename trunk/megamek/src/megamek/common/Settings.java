@@ -65,6 +65,8 @@ public class Settings
 
     public static int       shiftScrollSensitivity  = 3;
     
+    public static boolean   getFocus                = false;
+    
     /**
      * Controls whether the main window scrolls whenever we approach its edge (implicit)
      * or only when we use the Shift key (explicit)
@@ -441,6 +443,10 @@ scan:
                         st.nextToken();
                         alwaysScrollOnRightClick = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("getfocus")) {
+                        st.nextToken();
+                        getFocus = Boolean.valueOf(st.sval).booleanValue();
+                    }                    
                     else {
                         // Store the key and value in our saved settings.
                         st.nextToken();
@@ -545,6 +551,7 @@ scan:
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
             cw.write("explicitscrollonly " + explicitScrollOnly + "\r\n");
             cw.write("alwaysscrollonrightclick " + alwaysScrollOnRightClick + "\r\n");
+            cw.write("getfocus " + getFocus + "\r\n");
 
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

@@ -172,10 +172,9 @@ public class WeaponAttackAction
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
-                atype.getMunitionType() == AmmoType.M_STANDARD &&
+                atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
                 (wtype.getAmmoType() == AmmoType.T_LRM ||
-                 wtype.getAmmoType() == AmmoType.T_SRM ||
-                 wtype.getAmmoType() == AmmoType.T_ATM )) {
+                 wtype.getAmmoType() == AmmoType.T_SRM)) {
                 isINarcGuided = true;
             }
         }

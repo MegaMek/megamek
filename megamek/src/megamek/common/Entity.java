@@ -67,6 +67,8 @@ public abstract class Entity
     protected boolean           prone = false;
     protected boolean           charging = false;
     protected boolean           makingDfa = false;
+    protected boolean           findingClub = false;  //TODO: put this somehwere else, maybe
+    
     public int                  heat = 0;
     public int                  heatBuildup = 0;
     public int                  delta_distance = 0;
@@ -177,6 +179,10 @@ public abstract class Entity
     public int getOwnerId() {
         return ownerId;
     }
+    
+    public boolean isEnemyOf(Entity other) {
+        return owner.isEnemyOf(other.getOwner());
+    }
   
     public Pilot getCrew() {
         return crew;
@@ -261,6 +267,14 @@ public abstract class Entity
 
     public void setMakingDfa(boolean makingDfa) {
         this.makingDfa = makingDfa;
+    }
+        
+    public boolean isFindingClub() {
+        return findingClub;
+    }
+
+    public void setFindingClub(boolean findingClub) {
+        this.findingClub = findingClub;
     }
         
     /**
@@ -762,7 +776,7 @@ public abstract class Entity
      */
     public void addMisc(Mounted misc, int loc) {
         misc.setLocation(loc);
-        this.miscList.addElement(misc);
+        miscList.addElement(misc);
     }
     
     public Enumeration getMisc() {
@@ -781,6 +795,20 @@ public abstract class Entity
     
     public int getMiscNum(Mounted mounted) {
         return miscList.indexOf(mounted);
+    }
+    
+    /**
+     * Removes the first misc eq. whose name equals the specified string.  Used
+     * for removing broken tree clubs.
+     */
+    public void removeMisc(String toRemove) {
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.getName().equals(toRemove)) {
+                miscList.removeElement(mounted);
+                break;
+            }
+        }
     }
     
     
@@ -958,6 +986,21 @@ public abstract class Entity
         }
         
         return num;
+    }
+    
+    /**
+     * Returns true if there is at least 1 functional system of the type
+     * specified in the location
+     */
+    public boolean hasWorkingSystem(int system, int loc) {
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            CriticalSlot ccs = getCritical(loc, i);
+            if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
+            && ccs.getIndex() == system && !ccs.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**

@@ -144,6 +144,10 @@ public final class Player
         return colorRGBs[colorIndex];
     }
     
+    public boolean isEnemyOf(Player other) {
+        return id != other.getId();
+    }
+    
     /**
      * Two players are equal if their ids are equal
      */

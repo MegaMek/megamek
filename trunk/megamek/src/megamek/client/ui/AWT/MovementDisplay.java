@@ -35,11 +35,15 @@ public class MovementDisplay
     private boolean                    mechdOn;
 
     // buttons
-    private Panel                       panButtons;
+    private Panel             panButtons;
     private Button            butWalk;
     private Button            butJump;
     private Button            butBackup;
+    private Button            butGetup;
     private Button            butProne;
+    private Button            butCharge;
+    private Button            butDFA;
+    private Button            butOther;
     private Button            butNext;
     private Button            butMove;
 
@@ -86,15 +90,35 @@ public class MovementDisplay
         butBackup.addActionListener(this);
         butBackup.setEnabled(false);
 
+        butGetup = new Button("Get Up");
+        butGetup.setActionCommand("getup");
+        butGetup.addActionListener(this);
+        butGetup.setEnabled(false);
+
         butProne = new Button("Go Prone");
         butProne.setActionCommand("prone");
         butProne.addActionListener(this);
         butProne.setEnabled(false);
 
+        butCharge = new Button("Charge");
+        butCharge.setActionCommand("charge");
+        butCharge.addActionListener(this);
+        butCharge.setEnabled(false);
+
+        butDFA = new Button("D.F.A.");
+        butDFA.setActionCommand("dfa");
+        butDFA.addActionListener(this);
+        butDFA.setEnabled(false);
+
         butNext = new Button("Next Unit");
         butNext.setActionCommand("next");
         butNext.addActionListener(this);
         butNext.setEnabled(false);
+
+        butOther = new Button("Other...");
+        butOther.setActionCommand("other");
+        butOther.addActionListener(this);
+        butOther.setEnabled(false);
 
         butMove = new Button("Move");
         butMove.setActionCommand("move");
@@ -106,8 +130,12 @@ public class MovementDisplay
         panButtons.setLayout(new GridLayout(2, 3));
         panButtons.add(butWalk);
         panButtons.add(butJump);
-        panButtons.add(butNext);
         panButtons.add(butBackup);
+        panButtons.add(butGetup);
+        panButtons.add(butNext);
+        panButtons.add(butCharge);
+        panButtons.add(butDFA);
+        panButtons.add(butOther);
         panButtons.add(butProne);
         panButtons.add(butMove);
 
@@ -183,7 +211,7 @@ public class MovementDisplay
     }
 
     /**
-     * Does turn start stuff
+     * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
         butMove.setLabel("Done");
@@ -196,7 +224,7 @@ public class MovementDisplay
     }
 
     /**
-     * Does end turn stuff.
+     * Clears out old movement data and disables relevant buttons.
      */
     private void endMyTurn() {
         // end my turn, then.
@@ -293,23 +321,29 @@ public class MovementDisplay
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);
             md = new MovementData(cmd);
-            butMove.setLabel("Move");
-            butMove.setEnabled(true);
-
+            
             // check for charge/dfa
             if (target != null && !target.equals(ce())
-                && (!target.getOwner().equals(ce().getOwner())
-                    || client.gameSettings.friendlyFire)) {
+                    && (!target.getOwner().equals(ce().getOwner())
+                        || client.gameSettings.friendlyFire)) {
                 if (gear == Compute.GEAR_JUMP 
-                    && Compute.isValidDFA(client.game, cen,  md)) {
+                        && Compute.isValidDFA(client.game, cen,  md)) {
                     // prompt for DFA
                     client.doAlertDialog("Death From Above!", "Do you want to execute a DFA?");
                 } else if (gear == Compute.GEAR_LAND 
-                           && Compute.isValidCharge(client.game, md)) {
+                        && Compute.isValidCharge(client.game, cen, md)) {
                     // prompt for charge
                     client.doAlertDialog("Charge!", "Do you want to charge?");
+                    md.clipToPossible();
+                    md.addStep(MovementData.STEP_CHARGE);
+                    moveTo(md);
                 }
             }
+            
+
+            butMove.setLabel("Move");
+            butMove.setEnabled(true);
+
         }
     }
 

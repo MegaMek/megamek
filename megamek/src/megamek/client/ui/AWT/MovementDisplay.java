@@ -47,7 +47,11 @@ public class MovementDisplay
     private Button            butCharge;
     private Button            butDfa;
     private Button            butFlee;
-    
+
+// + HentaiZonga
+    private Button            butRAC; // Hentai - for unjamming RAC (sets to Walk only)
+// - HentaiZonga
+
     private Button            butSpace;
    
     private Button            butNext;
@@ -124,9 +128,11 @@ public class MovementDisplay
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
         
-        butSpace = new Button(".");
-        butSpace.setEnabled(false);
-
+// + HentaiZonga
+        butRAC = new Button(".");
+        butRAC.addActionListener(this);
+        butRAC.setEnabled(false);
+// - HentaiZonga
         butMore = new Button("More...");
         butMore.addActionListener(this);
         butMore.setEnabled(false);
@@ -192,7 +198,9 @@ public class MovementDisplay
             panButtons.add(butBackup);
             panButtons.add(butNext);
             panButtons.add(butTurn);
-            panButtons.add(butSpace);
+// + HentaiZonga
+            panButtons.add(butRAC);
+// - HentaiZonga
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -214,6 +222,10 @@ public class MovementDisplay
 		butDfa.setEnabled(true);
 		butCharge.setEnabled(true);
 	    }
+
+// + HentaiZonga
+            UpdateRACButton();
+// - HentaiZonga
 
             break;
         }
@@ -312,6 +324,9 @@ public class MovementDisplay
         } else {
             butDown.setEnabled(false);
         }
+// + HentaiZonga
+        UpdateRACButton();
+// - HentaiZonga
         butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
@@ -358,6 +373,9 @@ public class MovementDisplay
         butBackup.setEnabled(false);
         butTurn.setEnabled(false);
         butFlee.setEnabled(false);
+// + HentaiZonga
+        butRAC.setEnabled(false);
+// - HentaiZonga
         butUp.setEnabled(false);
         butDown.setEnabled(false);
         butCharge.setEnabled(false);
@@ -377,6 +395,9 @@ public class MovementDisplay
         cmd = new MovementData();
         client.bv.clearMovementData();
         butDone.setLabel("Done");;
+// + HentaiZonga
+        UpdateRACButton();
+// - HentaiZonga
     }
 
     /**
@@ -536,8 +557,16 @@ public class MovementDisplay
             }
             
             butDone.setLabel("Move");
+// + HentaiZonga
+            UpdateRACButton();
         }
     }
+
+    private void UpdateRACButton() {
+            butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
+            butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
+    }
+// - HentaiZonga
 
     //
     // GameListener
@@ -591,6 +620,18 @@ public class MovementDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
+// + HentaiZonga
+        } else if (ev.getSource() == butRAC) {
+            if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
+                //clearAllMoves();
+                //gear = Compute.GEAR_LAND;
+                butRAC.setEnabled(false);
+            }
+            else {
+              md.addStep(MovementData.STEP_UNJAM_RAC);
+              moveTo(md);
+            }
+// - HentaiZonga
         } else if (ev.getSource() == butWalk) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
@@ -637,7 +678,9 @@ public class MovementDisplay
             md.addStep(MovementData.STEP_FLEE);
             moveTo(md);
         }
-
+// + HentaiZonga
+        UpdateRACButton(); 
+// - HentaiZonga
     }
     
 

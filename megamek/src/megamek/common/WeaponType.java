@@ -52,6 +52,19 @@ public class WeaponType extends EquipmentType {
         return heat;
     }
     
+// + HentaiZonga
+    public int getFireTN() {
+        if(hasFlag(F_FLAMER))
+          return 4;
+        else if(hasFlag(F_PPC) || hasFlag(F_LASER))
+          return 7;
+        else if(ammoType == AmmoType.T_MG || ammoType == AmmoType.T_GAUSS_LIGHT || ammoType == AmmoType.T_GAUSS || ammoType == AmmoType.T_GAUSS_HEAVY )
+          return TargetRoll.IMPOSSIBLE;
+        else
+          return 9;
+    }
+// - HentaiZonga
+ 
     public int getDamage() {
         return damage;
     }

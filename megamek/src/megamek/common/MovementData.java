@@ -38,6 +38,7 @@ public class MovementData
     public static final int        STEP_LATERAL_RIGHT            = 12;
     public static final int        STEP_LATERAL_LEFT_BACKWARDS   = 13;
     public static final int        STEP_LATERAL_RIGHT_BACKWARDS  = 14;
+    public static final int        STEP_UNJAM_RAC                = 15;
 
     private Vector steps = new Vector();
     
@@ -469,6 +470,9 @@ public class MovementData
             case MovementData.STEP_LATERAL_RIGHT:return "ShR";	
             case MovementData.STEP_LATERAL_LEFT_BACKWARDS:return "ShLB";	
             case MovementData.STEP_LATERAL_RIGHT_BACKWARDS:return "ShRB";	
+// + HentaiZonga
+            case MovementData.STEP_UNJAM_RAC:return "Unjam";	
+// - HentaiZonga
             }
             return"";
         }

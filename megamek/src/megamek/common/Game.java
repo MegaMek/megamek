@@ -237,10 +237,39 @@ public class Game implements Serializable
     /**
      * Returns the entity with the given id number, if any.
      */
+
+// + HentaiZonga
+    /* The Entity ID space has been polluted; negative ID's below -1000 are targeted coordinates */
+
+    public static Coords IdToCoords(int id) {
+        System.out.print(id);
+        if (id > -1000) {
+            return null;
+        }
+        Coords c = new Coords((-id - 1000) & 16383, (-id - 1000) / 16384);
+//        System.out.println(" -> (" + c.x + ", " + c.y + ")");
+        return c;
+    }
+
+    public static int CoordsToId(Coords c) {
+        int id = -1000 - c.x - c.y * 16384;
+//        System.out.println("(" + c.x + ", " + c.y + ") -> " + id);
+        return id;
+    }
+
+// - HentaiZonga
+
     public Entity getEntity(int id) {
+// + HentaiZonga
+        if(id <= -1000) {
+           final Entity te = new HexEntity(IdToCoords(id));
+           te.setGame(this);
+           return te;
+        }
+// - HentaiZonga
         return (Entity)entityIds.get(new Integer(id));
     }
-  
+ 
     public void addEntity(int id, Entity entity) {
         entity.setGame(this);
         entities.addElement(entity);

@@ -809,7 +809,7 @@ implements Runnable {
                 checkForSuffocation();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
-				resolveFire();
+                resolveFire();
                 autoSave();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1339,6 +1339,9 @@ implements Runnable {
      */
     private boolean isEligibleForFiring(Entity entity, int phase) {
         // if you're charging, no shooting
+// + HentaiZonga
+        if (entity.isUnjammingRAC()) return false;
+// - HentaiZonga
         if (entity.isCharging() || entity.isMakingDfa()) {
             return false;
         }
@@ -1361,6 +1364,9 @@ implements Runnable {
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
         
         // if you're charging or finding a club, it's already declared
+// + HentaiZonga
+        if (entity.isUnjammingRAC()) return false;
+// - HentaiZonga
         if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
             return false;
         }
@@ -1835,6 +1841,15 @@ implements Runnable {
 		}
             }
             
+// + HentaiZonga
+            if (step.getType() == MovementData.STEP_UNJAM_RAC) {
+                entity.setUnjammingRAC(true);
+                attacks.addElement(new UnjamAction(entity.getId()));
+
+                break;
+            }
+// - HentaiZonga
+
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
                 //FIXME: find the acutal target, not just the likely target
@@ -2412,6 +2427,10 @@ implements Runnable {
                     // unlikely...
                 }
                 phaseReport.append("\n" + entity.getDisplayName() + " uproots a tree for use as a club.\n");
+// + HentaiZonga
+            } else if (o instanceof UnjamAction) {
+                resolveUnjam(entity.getId());
+// - HentaiZonga
             } else {
                 // hmm, error
             }
@@ -2421,6 +2440,35 @@ implements Runnable {
         attacks.removeAllElements();
     }
     
+// + HentaiZonga
+    /**
+     * Resolve an Unjam Action object
+     */
+    private void resolveUnjam(int EntityId) {
+        final Entity ae = game.getEntity(EntityId);
+        final int TN = ae.crew.getGunnery() + 3;
+        phaseReport.append("\nRAC unjam attempts for " + ae.getDisplayName() + "\n");
+        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if(mounted.isJammed()) {
+                WeaponType wtype = (WeaponType)mounted.getType();
+                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    phaseReport.append("  Unjamming " + wtype.getName() + "; needs " + TN + ", ");
+                    int roll = Compute.d6(2);
+                    phaseReport.append("rolls " + roll + " : ");
+                    if(roll >= TN) {
+                        phaseReport.append(" Successfully unjammed!\n");
+                        mounted.setJammed(false);
+                    }
+                    else {
+                        phaseReport.append(" Still jammed!\n");
+                    }
+                }
+            }
+        }
+    }
+// - HentaiZonga
+
     /**
      * Resolve a single Weapon Attack object
      */
@@ -2717,6 +2765,56 @@ implements Runnable {
         while (hits > 0) {
             int nDamage;
 
+// + HentaiZonga
+            // if we're targeting a hex, then 
+            if(te instanceof HexEntity) {
+              nDamage = nDamPerHit * hits;
+              phaseReport.append("hits!\n");
+              phaseReport.append("    Terrain takes " + nDamage + " damage.\n");
+              Coords c = te.getPosition();
+              Hex h = game.getBoard().getHex(c);
+              if(!h.contains(Terrain.WOODS)) return; // only woods can be lit on fire or cleared at the moment
+              int TN = 14 - nDamage;
+              if(!wtype.hasFlag(WeaponType.F_FLAMER)) {
+                int Woods = h.levelOf(Terrain.WOODS);
+                if(Woods < 1) return;
+                roll = Compute.d6(2);
+                phaseReport.append("    Checking to clear woods; needs " + TN + ", rolls " + roll + ": ");
+
+
+                if(roll >= TN) {
+                  if(Woods > 1) {
+                     h.removeTerrain(Terrain.WOODS);
+                     h.addTerrain(new Terrain(Terrain.WOODS, Woods - 1));
+                     phaseReport.append(" Heavy Woods converted to Light Woods!\n");
+                  }
+                  else if(Woods == 1) {
+                     h.removeTerrain(Terrain.WOODS);
+                     h.addTerrain(new Terrain(Terrain.ROUGH, 1));
+                     phaseReport.append(" Light Woods converted to Rough!\n");
+                  }
+                  sendChangedHex(c);
+                } else {
+                  phaseReport.append(" fails!\n");
+                }
+              }
+
+
+              TN = wtype.getFireTN();
+              phaseReport.append("    Checking to start fire in hex; needs " + TN + ", ");
+              roll = Compute.d6(2);
+              phaseReport.append("rolls " + roll + " : ");
+              if(roll >= TN) {
+                 phaseReport.append(" Fire started!\n");
+                 h.addTerrain(new Terrain(Terrain.FIRE, 2));
+                 sendChangedHex(c);
+              }
+              else {
+                 phaseReport.append(" No fire.\n");
+              }             
+              return;
+            }
+// - HentaiZonga
             // Flamers do heat, not damage.
             if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
                 nDamage = nDamPerHit * hits;

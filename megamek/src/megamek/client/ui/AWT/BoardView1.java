@@ -76,6 +76,10 @@ public class BoardView1
     // vector of sprites for all firing lines
     private Vector attackSprites = new Vector();
     
+// + HentaiZonga
+    // vector of sprites for C3 network lines
+    private Vector C3Sprites = new Vector();
+// - HentaiZonga
     // tooltip stuff
     private Window tipWindow;
     private boolean isTipPossible = false;
@@ -163,6 +167,11 @@ public class BoardView1
         // draw highlight border
         drawSprite(highlightSprite);
         
+// + HentaiZonga
+        // draw C3 links
+        drawSprites(C3Sprites);
+// - HentaiZonga
+
         // draw onscreen entities
         drawSprites(entitySprites);
         
@@ -640,6 +649,22 @@ public class BoardView1
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
+// + HentaiZonga
+        for (java.util.Enumeration i = C3Sprites.elements(); i.hasMoreElements();) {
+          final C3Sprite c3sprite = (C3Sprite)i.nextElement();
+          if (c3sprite.entityId == entity.getId()) 
+              C3Sprites.removeElement(c3sprite);
+          else if(c3sprite.masterId == entity.getId()) {
+              if(entity.hasC3()) { // only redraw client-to-master; otherwise we leave stray lines when we move
+                  C3Sprites.addElement(new C3Sprite(game.getEntity(c3sprite.entityId), game.getEntity(c3sprite.masterId)));
+              }
+              C3Sprites.removeElement(c3sprite);
+
+          }
+        }
+        
+        if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
+// - HentaiZonga
         repaint(100);
     }
     
@@ -650,6 +675,9 @@ public class BoardView1
         Vector newSprites = new Vector(game.getNoOfEntities());
         Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
         
+// + HentaiZonga
+        clearC3Networks();      
+// - HentaiZonga
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if (entity.getPosition() == null) continue;
@@ -657,6 +685,10 @@ public class BoardView1
             EntitySprite sprite = new EntitySprite(entity);
             newSprites.add(sprite);
             newSpriteIds.put(new Integer(entity.getId()), sprite);
+
+// + HentaiZonga
+            if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
+// - HentaiZonga
         }
         
         entitySprites = newSprites;
@@ -737,6 +769,25 @@ public class BoardView1
         m_plDeployer = p;
     }
     
+// + HentaiZonga
+    /**
+     * Adds a c3 line to the sprite list.
+     */
+    public void addC3Link(Entity e) {
+        if(e.hasC3i()) {
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity fe = (Entity)i.nextElement();
+                if ( e.OnSameC3NetworkAs(fe)) {
+                    C3Sprites.addElement(new C3Sprite(e, fe));
+                }
+            }
+        }
+        else if(e.getC3Master() != null) {
+            C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
+        }
+    }
+// - HentaiZonga
+
     /**
      * Adds an attack to the sprite list.
      */
@@ -765,6 +816,11 @@ public class BoardView1
         attackSprites.addElement(new AttackSprite(aa));
     }
     
+// + HentaiZonga
+    public void clearC3Networks() {
+        C3Sprites.removeAllElements();
+    }
+// - HentaiZonga
     /**
      * Clears out all attacks that were being drawn
      */
@@ -1514,6 +1570,83 @@ public class BoardView1
         }
     }
     
+// + HentaiZonga
+    /**
+     * Sprite and info for a C3 network.  Does not actually use the image buffer
+     * as this can be horribly inefficient for long diagonal lines.
+     */
+    private class C3Sprite extends Sprite
+    {
+        private Polygon C3Poly;
+        
+        protected int entityId;
+        protected int masterId;
+        
+        public C3Sprite(Entity e, Entity m) {
+            this.entityId = e.getId();
+            this.masterId = m.getId();
+
+            Coords mp = m.getPosition();
+            if(e.getPosition() == null || m.getPosition() == null) {
+                 C3Poly = new Polygon();
+                 this.bounds = new Rectangle(C3Poly.getBounds());
+                 return;
+            }
+            final Point a = getHexLocation(e.getPosition());
+            final Point t = getHexLocation(m.getPosition());
+        
+            final double an = (e.getPosition().radian(m.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            final double lw = 1; // line width
+        
+            // make a polygon
+            C3Poly = new Polygon();
+            C3Poly.addPoint(a.x + 42 - (int)Math.round(Math.sin(an) * lw), a.y + 36 + (int)Math.round(Math.cos(an) * lw));
+            C3Poly.addPoint(a.x + 42 + (int)Math.round(Math.sin(an) * lw), a.y + 36 - (int)Math.round(Math.cos(an) * lw));
+            C3Poly.addPoint(t.x + 42 + (int)Math.round(Math.sin(an) * lw), t.y + 36 - (int)Math.round(Math.cos(an) * lw));
+            C3Poly.addPoint(t.x + 42 - (int)Math.round(Math.sin(an) * lw), t.y + 36 + (int)Math.round(Math.cos(an) * lw));
+            
+            // set bounds
+            this.bounds = new Rectangle(C3Poly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+            
+            // move poly to upper right of image
+            C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            
+            // set names & stuff
+            
+            // nullify image
+            this.image = null;
+        }
+
+        public void prepare() {
+            ;
+        }
+        
+        public boolean isReady() {
+            return true;
+        }
+        
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
+            drawPoly.translate(x, y);
+            
+            g.setColor(game.getEntity(entityId).getOwner().getColor());
+            g.fillPolygon(drawPoly);
+            g.setColor(Color.black);
+            g.drawPolygon(drawPoly);
+        }
+        
+        /**
+         * Return true if the point is inside our polygon
+         */
+        public boolean isInside(Point point) {
+            return C3Poly.contains(point.x + view.x - bounds.x - offset.x, 
+                                          point.y + view.y - bounds.y - offset.y);
+        }
+
+    }
+// - HentaiZonga
+
     /**
      * Sprite and info for an attack.  Does not actually use the image buffer
      * as this can be horribly inefficient for long diagonal lines.

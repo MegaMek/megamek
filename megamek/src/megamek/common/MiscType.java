@@ -37,6 +37,13 @@ public class MiscType extends EquipmentType {
     public static final int     F_CASE              = 0x0040;
     public static final int     F_MASC              = 0x0080;
     public static final int     F_TSM               = 0x0100;
+// + HentaiZonga
+    public static final int     F_C3M               = 0x0200;
+    public static final int     F_C3S               = 0x0400;
+    public static final int     F_C3I               = 0x0800;
+
+    public static final int     F_ECM               = 0x1000;
+// - HentaiZonga
     
     /** Creates new MiscType */
     public MiscType() {
@@ -128,6 +135,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISMASC());
         EquipmentType.addType(createCLMASC());
         EquipmentType.addType(createTSM());
+        EquipmentType.addType(createC3S());
+        EquipmentType.addType(createC3M());
+        EquipmentType.addType(createC3I());
+// + HentaiZonga
+// - HentaiZonga
     }
     
     public static MiscType createHeatSink() {
@@ -356,5 +368,91 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    
+
+// + HentaiZonga    
+    public static MiscType createC3S() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "C3 Slave";
+        misc.internalName = "ISC3SlaveUnit";
+        misc.mepName = misc.name;
+        misc.mtfName = "ISC3SlaveUnit";
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_C3S;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createC3M() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "C3 Master";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = "ISC3MasterComputer";
+        misc.tonnage = 5;
+        misc.criticals = 5;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_C3M;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createC3I() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "C3i Computer";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = "ISImprovedC3CPU";
+        misc.tonnage = 2.5f;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_C3I;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createGECM() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Guardian ECM Suite";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = "ISGuardianECM";
+        misc.tonnage = 1.5f;
+        misc.criticals = 2;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_ECM;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createECM() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "ECM Suite";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = "CLECMSuite";
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = false;
+        misc.flags |= F_ECM;
+        misc.bv = 0;
+        
+        return misc;
+    }
+// - HentaiZonga
 }

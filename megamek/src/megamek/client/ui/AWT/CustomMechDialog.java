@@ -22,6 +22,9 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+// + HentaiZonga
+import java.util.Enumeration;
+// - HentaiZonga
 
 import megamek.common.*;
 
@@ -43,21 +46,27 @@ extends Dialog implements ActionListener {
     private TextField fldGunnery = new TextField(3);
     private Label labPiloting = new Label("Piloting: ", Label.RIGHT);;
     private TextField fldPiloting = new TextField(3);
-    
+// + HentaiZonga    
+    private Label labC3 = new Label("C3 Network: ", Label.RIGHT);;
+    private Choice choC3 = new Choice();
+    private int[] entityCorrespondance;
+// - HentaiZonga    
+
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
     
     private Entity entity;
     private boolean okay = false;
-    private Frame frame;
-
+// + HentaiZonga
+    private Client client;
     /** Creates new CustomMechDialog */
-    public CustomMechDialog(Frame frame, Entity entity, boolean editable) {
-        super(frame, "Customize pilot stats...", true);
+    public CustomMechDialog(Client client, Entity entity, boolean editable) {
+        super(client.frame, "Customize pilot/mech stats...", true);
         
         this.entity = entity;
-        this.frame = frame;
+        this.client = client;
+// - HentaiZonga
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -102,6 +111,22 @@ extends Dialog implements ActionListener {
         gridbag.setConstraints(fldPiloting, c);
         add(fldPiloting);
         
+// + HentaiZonga
+        if(entity.hasC3() || entity.hasC3i())
+        {        
+          c.gridwidth = 1;
+          c.anchor = GridBagConstraints.EAST;
+          gridbag.setConstraints(labC3, c);
+          add(labC3);
+        
+          c.gridwidth = GridBagConstraints.REMAINDER;
+          c.anchor = GridBagConstraints.WEST;
+          gridbag.setConstraints(choC3, c);
+          add(choC3);
+          refreshC3();
+        }
+// - HentaiZonga
+
         setupButtons();
         
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -117,6 +142,9 @@ extends Dialog implements ActionListener {
             fldName.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldPiloting.setEnabled(false);
+// + HentaiZonga
+            choC3.setEnabled(false);
+// - HentaiZonga
         }
         
         addWindowListener(new WindowAdapter() {
@@ -125,8 +153,10 @@ extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+// + HentaiZonga
+        setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
+                    client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
+// - HentaiZonga
     }
     
     private void setupButtons() {
@@ -156,6 +186,66 @@ extends Dialog implements ActionListener {
         return okay;
     }
 
+// + HentaiZonga
+    private void refreshC3() {
+        choC3.removeAll();
+        int listIndex = 0;
+        entityCorrespondance = new int[client.game.getNoOfEntities() + 2];
+
+        if(entity.hasC3i()) {
+            choC3.add("Create new network (6 free)");
+            if(entity.getC3Master() == null) choC3.select(listIndex);
+            entityCorrespondance[listIndex++] = entity.getId();
+        }
+        else if(entity.hasC3M()) {
+            int nodes = entity.calculateFreeC3Nodes();
+
+            choC3.add("Set as company-level master (" + nodes + " free)");
+            if(entity.C3MasterIs(entity)) choC3.select(listIndex);
+            entityCorrespondance[listIndex++] = entity.getId();
+
+            choC3.add("Set as independant master (" + nodes + " free)");
+            if(entity.getC3Master() == null) choC3.select(listIndex);
+            entityCorrespondance[listIndex++] = -1;
+
+        }
+        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
+            final Entity e = (Entity)i.nextElement();
+            if(!entity.isEnemyOf(e) && !entity.equals(e)) {
+                int nodes = e.calculateFreeC3Nodes();
+                if (entity.C3MasterIs(e) && !entity.equals(e)) nodes++;
+                if(entity.hasC3i() && (entity.OnSameC3NetworkAs(e) || entity.equals(e))) nodes++;
+                if(entity.hasC3i() != e.hasC3i()) nodes = 0;
+                if(nodes > 0) {
+                    if(e.hasC3i()) {
+                        if (entity.OnSameC3NetworkAs(e)) {
+                            choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetID() + ": " + (nodes - 1)  + " free]");
+                            choC3.select(listIndex);                    
+                        }
+                        else
+                            choC3.add("Join " + e.getDisplayName() + " (netid " + e.getC3NetID() + ": " + nodes + " free)");
+                        entityCorrespondance[listIndex++] = e.getId();
+                    }
+                    else if (e.C3MasterIs(e) != entity.hasC3M()) {
+                      // if we're a slave-unit, we can only connect to sub-masters, not main masters
+                      // likewise, if we're a master unit, we can only connect to main master units, not sub-masters
+                    }
+                    else if (entity.C3MasterIs(e)) {
+                        choC3.add("Connect to " + e.getDisplayName() + " [" + (nodes - 1) + " free]");
+                        choC3.select(listIndex);
+                        entityCorrespondance[listIndex++] = e.getId();
+                    }
+                    else {
+                        choC3.add("Connect to " + e.getDisplayName() + " (" + nodes + " free)");
+                        entityCorrespondance[listIndex++] = e.getId();
+                    }
+                }
+            }
+        }
+    }
+
+// - HentaiZonga
+
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOkay) {
             // get values
@@ -166,18 +256,31 @@ extends Dialog implements ActionListener {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
+// + HentaiZonga
+                new AlertDialog(client.frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
+// - HentaiZonga
                 return;
             }
             
             // keep these reasonable, please
             if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
-                new AlertDialog(frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
+// + HentaiZonga
+                new AlertDialog(client.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
+// - HentaiZonga
                 return;
             }
             
             // change entity
             entity.crew = new Pilot(name, gunnery, piloting);
+// + HentaiZonga
+            if(entity.hasC3() ) {
+                entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+                //new AlertDialog(client.frame, "Setting C3", "Set C3 Master to " + entity.getC3Master().getDisplayName()).show();
+            }
+            else if(entity.hasC3i()) {
+                entity.setC3NetID(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+            }
+// = HentaiZonga
             okay = true;
         }
         

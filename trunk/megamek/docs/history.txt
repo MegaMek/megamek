@@ -75,6 +75,7 @@ v (next)
 + C3 factored in BV
 + Narc implemented
 + ArtemisIV implemented
++ fixed bug in pilot skill-setting with c3 mechs
 
 v 0.27.10 (12-06-02, 11:25pm)
 + new naming system for mechset.txt, allowing omnimechs, etc

@@ -611,7 +611,6 @@ public class Server
      * Ends this phase and moves on to the next.
      */
     private void endCurrentPhase() {
-        System.err.println("server: ending phase " + game.phase + "...");
         switch (game.phase) {
         case Game.PHASE_LOUNGE :
             changePhase(Game.PHASE_EXCHANGE);
@@ -775,17 +774,44 @@ public class Server
         transmitAllPlayerUpdates();
     }
     
-    private boolean isInitTie(int init, int index) {
+    /**
+     * Returns true if there is a tie at this initiative level
+     */
+    private boolean isInitTie(int init, int level) {
         int playersAt = 0;
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (player.getInitiativeSize() > index && player.getInitiative(index) == init) {
+            if (player.getInitiativeSize() > level && player.getInitiative(level) == init) {
                 playersAt++;
             }
         }
         return playersAt > 1;
     }
     
+    /**
+     * Recursively places players into order by initiative
+     */
+    private int orderByInit(int previousInit, int init, int level, int[] order, int oi) {
+        if (isInitTie(init, level)) {
+            for (int j = 2; j <= 12; j++) {
+               oi = orderByInit(init, j, level + 1, order, oi); 
+            }
+            return oi;
+        }
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if (level > 0) {
+                // check previous initiative and that the player is on this level
+                if (player.getInitiativeSize() <= level || player.getInitiative(level - 1) != previousInit) {
+                    continue;
+                }
+            }
+            if (player.getInitiative(level) == init) {
+                order[oi++] = player.getId();
+            }
+        }
+        return oi;
+    }
     
     /**
      * Determine turn order by number of entities that are selectable this phase
@@ -796,15 +822,8 @@ public class Server
         // determine turn order
         int[] order = new int[game.getNoOfPlayers()];
         int oi = 0;
-        for (int i = 0; i < 5; i++) {
-            for (int j = 2; j <= 12; j++) {
-                for (Enumeration k = game.getPlayers(); k.hasMoreElements();) {
-                    final Player player = (Player)k.nextElement();
-                    if (player.getInitiativeSize() > i && player.getInitiative(i) == j && !isInitTie(j, i)) {
-                        order[oi++] = player.getId();
-                    }
-                }
-            }
+        for (int i = 2; i <= 12; i++) {
+            oi = orderByInit(0, i, 0, order, oi);
         }
         
         // count how many entities each player controls, and how many turns we have to assign
@@ -839,10 +858,11 @@ public class Server
                 if (noe[order[i]] <= 0) {
                     continue;
                 }
-                // if you have less than twice the next lowest,
-                // move 1, otherwise, move more.
-                // if you have less than half the maximum,
-                // move none
+                /* if you have less than twice the next lowest,
+                 * move 1, otherwise, move more.
+                 * if you have less than half the maximum,
+                 * move none
+                 */
                 int ntm = Math.max(1, (int)Math.floor(noe[order[i]] / lnoe));
                 for (int j = 0; j < ntm; j++) {
                     turns[ti++] = order[i];

@@ -1218,17 +1218,20 @@ class ExtraPanel
         
         FontMetrics fm = getFontMetrics(FONT_VALUE);
         
-        narcLabel = new TransparentLabel("NARCed By:", fm, Color.white,TransparentLabel.CENTER);
+        narcLabel = new TransparentLabel
+            ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
         
         narcList = new List(3, false);
 
         // transport stuff
         //unusedL = new Label( "Unused Space:", Label.CENTER );
                 
-        unusedL = new TransparentLabel("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
+        unusedL = new TransparentLabel
+            ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
-        carrysL = new TransparentLabel( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
+        carrysL = new TransparentLabel
+            ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
 
@@ -1348,18 +1351,62 @@ class ExtraPanel
      */
     public void displayMech(Entity en) {
 
+        // Clear the "Affected By" list.
+        narcList.removeAll();
+
         // Walk through the list of teams.  There
         // can't be more teams than players.
+        StringBuffer buff = null;
         Enumeration loop = client.game.getPlayers();
         while ( loop.hasMoreElements() ) {
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
             if ( !player.equals(client.getLocalPlayer()) &&
                  en.isNarcedBy( team ) ) {
-                StringBuffer buff = new StringBuffer( player.getName() );
+                buff = new StringBuffer( player.getName() );
                 buff.append( " [" )
                     .append( Player.teamNames[team] )
                     .append( "]" );
+                narcList.add( buff.toString() );
+            }
+        }
+
+        // Show inferno track.
+        if ( en.infernos.isStillBurning() ) {
+            buff = new StringBuffer( "Inferno burn remaining: " );
+            buff.append( en.infernos.getTurnsLeftToBurn() );
+            narcList.add( buff.toString() );
+        }
+
+        // Show ECM affect.
+        Coords pos = en.getPosition();
+        if ( Compute.isAffectedByECM( en, pos, pos ) ) {
+            narcList.add( "In enemy ECM field." );
+        }
+
+        // Show Turret Locked.
+        if ( en instanceof Tank &&
+             !( (Tank) en ).hasNoTurret() &&
+             !en.canChangeSecondaryFacing() ) {
+            narcList.add( "Turret locked" );
+        }
+
+        // Show jammed weapons.
+        Enumeration weaps = en.getWeapons();
+        while ( weaps.hasMoreElements() ) {
+            Mounted weapon = (Mounted) weaps.nextElement();
+            if ( weapon.isJammed() ) {
+                buff = new StringBuffer( weapon.getName() );
+                buff.append( " is Jammed" );
+                narcList.add( buff.toString() );
+            }
+        }
+
+        // Show breached locations.
+        for ( int loc = 0; loc < en.locations(); loc++ ) {
+            if ( Entity.LOC_BREACHED == en.getLocationStatus(loc) ) {
+                buff = new StringBuffer( en.getLocationName(loc) );
+                buff.append( " Breached" );
                 narcList.add( buff.toString() );
             }
         }
@@ -1370,11 +1417,22 @@ class ExtraPanel
         this.unusedR.setText( unused );
         Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
+        boolean hasText = false;
         while ( iter.hasMoreElements() ) {
             carrysR.append( ((Entity)iter.nextElement()).getShortName() );
+            hasText = true;
             if ( iter.hasMoreElements() ) {
                 carrysR.append( "\n" );
             }
+        }
+
+        // Show club.
+        Mounted club = Compute.clubMechHas( en );
+        if ( null != club ) {
+            if ( hasText ) {
+                carrysR.append( "\n" );
+            }
+            carrysR.append( club.getName() );
         }
 
     } // End public void displayMech( Entity )

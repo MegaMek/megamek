@@ -29,7 +29,7 @@ import java.util.Enumeration;
  */
 public class MiscType extends EquipmentType {
     // equipment flags (okay, like every type of equipment has its own flag)
-    // TODO: l2 equipment flags
+    // TODO: need more than l6 equipment flags
     public static final int     F_HEAT_SINK         = 0x0001;
     public static final int     F_DOUBLE_HEAT_SINK  = 0x0002;
     public static final int     F_JUMP_JET          = 0x0004;
@@ -46,6 +46,11 @@ public class MiscType extends EquipmentType {
     public static final int     F_ECM               = 0x2000;
     public static final int     F_TARGCOMP          = 0x4000;
     public static final int     F_OTHER             = 0x8000;
+
+    // Define constants for Ferro-Fibrous and Endo-Steel.
+    public static final String  FERRO_FIBROUS       = "Ferro-Fibrous";
+    public static final String  ENDO_STEEL          = "Endo Steel";
+
     
     /** Creates new MiscType */
     public MiscType() {
@@ -91,6 +96,21 @@ public class MiscType extends EquipmentType {
             else {
                 return (float)Math.ceil(fTons / 4.0f);
             }
+        } else if ( MiscType.FERRO_FIBROUS.equals(internalName) ) {
+            double tons = 0.0;
+            if ( entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2 ) {
+                tons = entity.getTotalOArmor() / ( 16 * 1.2 );
+            } else {
+                tons = entity.getTotalOArmor() / ( 16 * 1.12 );
+            }
+            tons = (double) Math.ceil( tons * 2.0 ) / 2.0;
+            System.err.println( "Ferro-fibrous for " + entity.getTotalOArmor() + " armor is " + tons );//killme
+            return (float) tons;
+        } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
+            double tons = 0.0;
+            tons = (double)Math.ceil( entity.getWeight() / 10.0 ) / 2.0;
+            System.err.println( "Endo steel for " + entity.getWeight() + " ton mech is " + tons );//killme
+            return (float) tons;
         }
         
         // okay, I'm out of ideas
@@ -104,10 +124,12 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
             return (int)Math.ceil(entity.getWeight() / 15.0);
-        } else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() != TechConstants.T_CLAN_LEVEL_2) {
-            return 3;
-		} else if (hasFlag(F_DOUBLE_HEAT_SINK) && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
-			return 2;
+        } else if ( hasFlag(F_DOUBLE_HEAT_SINK) ) {
+            if ( entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2 ) {
+                return 2;
+            } else {
+                return 3;
+            }
         } else if (hasFlag(F_MASC)) {
             if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
                 return Math.round(entity.getWeight() / 25.0f);
@@ -130,6 +152,18 @@ public class MiscType extends EquipmentType {
             }
             else {
                 return (int)Math.ceil(fTons / 4.0f);
+            }
+        } else if ( MiscType.FERRO_FIBROUS.equals(internalName) ) {
+            if ( entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2 ) {
+                return 7;
+            } else {
+                return 14;
+            }
+        } else if ( MiscType.ENDO_STEEL.equals(internalName) ) {
+            if ( entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2 ) {
+                return 7;
+            } else {
+                return 14;
             }
         }
         // right, well I'll just guess then
@@ -199,6 +233,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISTargComp());
         EquipmentType.addType(createCLTargComp());
         EquipmentType.addType(createMekStealth());
+        EquipmentType.addType(createFerroFibrous());
+        EquipmentType.addType(createEndoSteel());
+        EquipmentType.addType(createISEndoSteel());
 
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
@@ -804,6 +841,57 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
+        misc.bv = 0;            //???
+        
+        return misc;
+    }
+
+    public static MiscType createFerroFibrous() {
+        MiscType misc = new MiscType();
+        
+        misc.name = MiscType.FERRO_FIBROUS;
+        misc.internalName = MiscType.FERRO_FIBROUS;
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;            //???
+        
+        return misc;
+    }
+
+    public static MiscType createEndoSteel() {
+        MiscType misc = new MiscType();
+        
+        misc.name = MiscType.ENDO_STEEL;
+        misc.internalName = MiscType.ENDO_STEEL;
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_OTHER;
+        misc.bv = 0;            //???
+        
+        return misc;
+    }
+
+    public static MiscType createISEndoSteel() {
+        MiscType misc = new MiscType();
+        
+        misc.name = MiscType.ENDO_STEEL;
+        misc.internalName = MiscType.ENDO_STEEL;
+        misc.mepName = misc.internalName;
+        misc.mtfName = "Endo-Steel";
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_OTHER;
         misc.bv = 0;            //???
         
         return misc;

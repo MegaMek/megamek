@@ -757,12 +757,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else if (ev.getSource() == lisEntities) {
             boolean selected = lisEntities.getSelectedIndex() != -1;
             butCustom.setEnabled(selected);
-            if (client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]) instanceof Mech) {
-                //Can only display mechs right now, future upgrade for vehicles?
-                butMechReadout.setEnabled(selected);
-            } else {
-                butMechReadout.setEnabled(false);
-            }
+            butMechReadout.setEnabled(selected);
             butDelete.setEnabled(selected);
         }
         

@@ -1354,9 +1354,33 @@ public class Compute
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
+
+            // If the attacker has Assault claws, give a -1 modifier.
+            // We can stop looking when we find our first match.
+            for ( Enumeration iter = ae.getMisc(); iter.hasMoreElements(); ) {
+                Mounted mount = (Mounted) iter.nextElement();
+                EquipmentType equip = mount.getType();
+                if ( BattleArmor.ASSAULT_CLAW.equals
+                     (equip.getInternalName()) ) {
+                    toHit.addModifier( -1, "attacker has assault claws" );
+                    break;
+                }
+            }
         }
         else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
+
+            // If the attacker has Assault claws, give a -1 modifier.
+            // We can stop looking when we find our first match.
+            for ( Enumeration iter = ae.getMisc(); iter.hasMoreElements(); ) {
+                Mounted mount = (Mounted) iter.nextElement();
+                EquipmentType equip = mount.getType();
+                if ( BattleArmor.ASSAULT_CLAW.equals
+                     (equip.getInternalName()) ) {
+                    toHit.addModifier( -1, "attacker has assault claws" );
+                    break;
+                }
+            }
         }
         else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
             // Can't stop if we're not swarming, otherwise automatic.
@@ -4368,6 +4392,18 @@ public class Compute
         }
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, armLoc)) {
             toHit.addModifier(1, "Hand actuator missing or destroyed");
+        }
+
+        // If the target has Assault claws, give a 1 modifier.
+        // We can stop looking when we find our first match.
+        for ( Enumeration iter = te.getMisc(); iter.hasMoreElements(); ) {
+            Mounted mount = (Mounted) iter.nextElement();
+            EquipmentType equip = mount.getType();
+            if ( BattleArmor.ASSAULT_CLAW.equals
+                 (equip.getInternalName()) ) {
+                toHit.addModifier( 1, "defender has assault claws" );
+                break;
+            }
         }
 
         // done!

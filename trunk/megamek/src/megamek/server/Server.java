@@ -667,7 +667,7 @@ implements Runnable {
         
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             Player p = (Player)i.nextElement();
-            sb.append("++++++++++ " + p.getName() + " ++++++++++\n");
+            sb.append("++++++++++ " ).append( p.getName() ).append( " ++++++++++\n");
             for (int x = 0; x < vAllUnits.size(); x++) {
                 Entity e = (Entity)vAllUnits.elementAt(x);
                 if (e.getOwner() == p) {
@@ -823,7 +823,8 @@ implements Runnable {
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                 }
-                log.append("\n" + roundReport.toString());
+                log.append( "\n" );
+                log.append( roundReport.toString() );
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_FIRING_REPORT :
                 resetActivePlayersReady();
@@ -1295,7 +1296,7 @@ implements Runnable {
         roundReport.append("\n------------------------------\n");
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            roundReport.append(player.getName() + " rolls a ");
+            roundReport.append(player.getName() ).append( " rolls a ");
             for (int j = 0; j < player.getInitiative().size(); j++) {
                 if (j != 0) {
                     roundReport.append(" / ");
@@ -1308,7 +1309,7 @@ implements Runnable {
         boolean firstTurn = true;
         for (Enumeration i = turns.elements(); i.hasMoreElements();) {
             GameTurn turn = (GameTurn)i.nextElement();
-            roundReport.append((firstTurn ? "" : ", ") + getPlayer(turn.getPlayerNum()).getName());
+            roundReport.append((firstTurn ? "" : ", ") ).append( getPlayer(turn.getPlayerNum()).getName());
             firstTurn = false;
         }
         roundReport.append("\n\n");
@@ -1548,8 +1549,8 @@ implements Runnable {
 
 	// check for fleeing
         if (md.contains(MovementData.STEP_FLEE)) {
-            phaseReport.append("\n" + entity.getDisplayName()
-            + " flees the battlefield.\n");
+            phaseReport.append("\n" ).append( entity.getDisplayName()
+            ).append( " flees the battlefield.\n");
             // Is the unit carrying passengers?
             final Vector passengers = entity.getLoadedUnits();
             if ( !passengers.isEmpty() ) {
@@ -1751,7 +1752,7 @@ implements Runnable {
 				// Yup.  One dead entity.
 				game.moveToGraveyard(entity.getId());
 				send(createRemoveEntityPacket(entity.getId()));
-				phaseReport.append("*** " + entity.getDisplayName() + " has skidded off the field. ***\n");
+				phaseReport.append("*** " ).append( entity.getDisplayName() ).append( " has skidded off the field. ***\n");
 
 			    } else {
 				// Nope.  Update the report.
@@ -1764,7 +1765,7 @@ implements Runnable {
 			// Can the skiding entity enter the hex?
 			if ( entity.isHexProhibited(nextHex) ) {
 			    // Update report.
-			    phaseReport.append( "   Can't skid into hex " + 
+			    phaseReport.append( "   Can't skid into hex " ).append( 
 						nextPos.getBoardNum() +
 						".\n" );
 
@@ -1795,7 +1796,7 @@ implements Runnable {
 			if ( curElevation < nextElevation ) {
 			    phaseReport.append
                                 ( "   Can not skid uphill into hex " +
-                                  nextPos.getBoardNum() + ".\n" );
+                                  nextPos.getBoardNum() ).append( ".\n" );
 
 			    // Stay in the current hex and stop skidding.
 			    break;
@@ -1923,8 +1924,8 @@ implements Runnable {
 			// Update the position and keep skidding.
 			curPos = nextPos;
 			entity.setPosition( curPos );
-			phaseReport.append( "   Skids into hex " + 
-					    curPos.getBoardNum() + ".\n" );
+			phaseReport.append( "   Skids into hex " ).append( 
+					    curPos.getBoardNum() ).append( ".\n" );
 
 			// Get the next hex in the skid?
 			nextPos = nextPos.translated( prevFacing );
@@ -1971,7 +1972,7 @@ implements Runnable {
 			int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
 
 			// report skid damage
-			phaseReport.append("    " + entity.getDisplayName() + " suffers " + damage + " damage from the skid.");
+			phaseReport.append("    " ).append( entity.getDisplayName() ).append( " suffers " ).append( damage ).append( " damage from the skid.");
 
 			// standard damage loop
 			// All skid damage is to the front.
@@ -2018,8 +2019,8 @@ implements Runnable {
             && game.board.getHex(lastPos).contains(Terrain.FIRE)) {
                 if (entity instanceof Mech) {
                     entity.heatBuildup+=2;
-                    phaseReport.append("\n" + entity.getDisplayName()
-                    + " passes through a fire.  It will generate 2 more heat this round.\n");
+                    phaseReport.append("\n" ).append( entity.getDisplayName()
+                    ).append( " passes through a fire.  It will generate 2 more heat this round.\n");
                 }
             }	
             
@@ -2072,6 +2073,29 @@ implements Runnable {
                         entityUpdate( swarmerId );
                     }
                 }
+
+                // Mech on fire with infernos can wash them off.
+                // Check if enterning depth 2 water or prone in depth 1.
+                if ( entity instanceof Mech &&
+                     entity.infernos.isStillBurning() ) {
+                    if ( ( 1 == curHex.levelOf(Terrain.WATER) &&
+                           entity.isProne() ) ||
+                         ( 2 <= curHex.levelOf(Terrain.WATER) ) ) {
+
+                        // Wash off inferno from mech and add one to hex.
+                        game.board.addInfernoTo
+                            ( curPos, InfernoTracker.STANDARD_ROUND, 1 );
+                        entity.infernos.clear();
+
+                        // start a fire in the hex
+                        phaseReport.append( " Inferno removed from " )
+                            .append( entity.getDisplayName() )
+                            .append( " and fire started in hex!\n" );
+                        curHex.addTerrain(new Terrain(Terrain.FIRE, 1));
+                        sendChangedHex(curPos);
+                    }
+                }
+
             }
 
             // Handle loading units.
@@ -2212,6 +2236,19 @@ implements Runnable {
                 // Add a +4 modifier.
                 roll.addModifier( 4, "dislodge swarming infantry" );
 
+                // If the swarmer has Assault claws, give a 1 modifier.
+                // We can stop looking when we find our first match.
+                for ( Enumeration iter = swarmer.getMisc();
+                      iter.hasMoreElements(); ) {
+                    Mounted mount = (Mounted) iter.nextElement();
+                    EquipmentType equip = mount.getType();
+                    if ( BattleArmor.ASSAULT_CLAW.equals
+                         (equip.getInternalName()) ) {
+                        roll.addModifier( 1, "swarmer has assault claws" );
+                        break;
+                    }
+                }
+
                 // okay, print the info
                 phaseReport.append("\n")
                     .append( entity.getDisplayName() )
@@ -2219,9 +2256,9 @@ implements Runnable {
 
                 // roll
                 final int diceRoll = Compute.d6(2);
-                phaseReport.append("Needs " + roll.getValueAsString()
-                                   + " [" + roll.getDesc() + "]"
-                                   + ", rolls " + diceRoll + " : ");
+                phaseReport.append("Needs " ).append( roll.getValueAsString()
+                                   ).append( " [" ).append( roll.getDesc() ).append( "]"
+                                   ).append( ", rolls " ).append( diceRoll ).append( " : ");
                 if (diceRoll < roll.getValue()) {
                     phaseReport.append("fails.\n");
                 } else {
@@ -2351,8 +2388,8 @@ implements Runnable {
         }
         
         if (gettingUp && !entity.needsRollToStand() && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
-            phaseReport.append("\n" + entity.getDisplayName() + " does not need to make "
-            + "a piloting skill check to stand up because it has all four of its legs.");
+            phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " does not need to make "
+            ).append( "a piloting skill check to stand up because it has all four of its legs.");
             return;
         }
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
@@ -2361,14 +2398,14 @@ implements Runnable {
         roll.append(reason);
         
         // okay, print the info
-        phaseReport.append("\n" + entity.getDisplayName()
-        + " must make a piloting skill check (" + reason.getPlainDesc() + ")"
-        + ".\n");
+        phaseReport.append("\n" ).append( entity.getDisplayName()
+        ).append( " must make a piloting skill check (" ).append( reason.getPlainDesc() ).append( ")"
+        ).append( ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
-        phaseReport.append("Needs " + roll.getValueAsString()
-        + " [" + roll.getDesc() + "]"
-        + ", rolls " + diceRoll + " : ");
+        phaseReport.append("Needs " ).append( roll.getValueAsString()
+        ).append( " [" ).append( roll.getDesc() ).append( "]"
+        ).append( ", rolls " ).append( diceRoll ).append( " : ");
         if (diceRoll < roll.getValue()) {
             phaseReport.append("falls.\n");
             doEntityFall(entity, roll);
@@ -2412,16 +2449,16 @@ implements Runnable {
         fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         
         // okay, print the info
-        phaseReport.append("\n" + entity.getDisplayName()
-        + " must make a piloting skill check"
-        + " while moving from hex " + src.getBoardNum()
-        + " to hex " + dest.getBoardNum()
-        + " (" + reason.getPlainDesc() + ")" + ".\n");
+        phaseReport.append("\n" ).append( entity.getDisplayName()
+        ).append( " must make a piloting skill check"
+        ).append( " while moving from hex " ).append( src.getBoardNum()
+        ).append( " to hex " ).append( dest.getBoardNum()
+        ).append( " (" ).append( reason.getPlainDesc() ).append( ")" ).append( ".\n");
         // roll
         final int diceRoll = Compute.d6(2);
-        phaseReport.append("Needs " + roll.getValueAsString()
-        + " [" + roll.getDesc() + "]"
-        + ", rolls " + diceRoll + " : ");
+        phaseReport.append("Needs " ).append( roll.getValueAsString()
+        ).append( " [" ).append( roll.getDesc() ).append( "]"
+        ).append( ", rolls " ).append( diceRoll ).append( " : ");
         if (diceRoll < roll.getValue()) {
 	    // Vehicles don't fall, they fail
 	    if ( entity instanceof Mech ) {
@@ -2461,9 +2498,9 @@ implements Runnable {
         }
         
         // falling mech falls
-        phaseReport.append(entity.getDisplayName() + " falls "
-        + fallElevation + " level(s) into hex "
-        + dest.getBoardNum() + ".\n");
+        phaseReport.append(entity.getDisplayName() ).append( " falls "
+        ).append( fallElevation ).append( " level(s) into hex "
+        ).append( dest.getBoardNum() ).append( ".\n");
         
         // if hex was empty, deal damage and we're done
         if (violation == null) {
@@ -2514,8 +2551,8 @@ implements Runnable {
             if (fallElevation < 2) {
                 // no cliff: move and roll normally
                 phaseReport.append(entity.getDisplayName()
-                + " is displaced into hex "
-                + dest.getBoardNum() + ".\n");
+                ).append( " is displaced into hex "
+                ).append( dest.getBoardNum() ).append( ".\n");
                 entity.setPosition(dest);
                 if (roll != null) {
                     pilotRolls.addElement(roll);
@@ -2526,9 +2563,9 @@ implements Runnable {
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
-                phaseReport.append(entity.getDisplayName() + " falls "
-                + fallElevation + " levels into hex "
-                + dest.getBoardNum() + ".\n");
+                phaseReport.append(entity.getDisplayName() ).append( " falls "
+                ).append( fallElevation ).append( " levels into hex "
+                ).append( dest.getBoardNum() ).append( ".\n");
                 // only given a modifier, so flesh out into a full piloting roll
                 PilotingRollData pilotRoll = Compute.getBasePilotingRoll(game, entity.getId());
                 if (roll != null) {
@@ -2544,9 +2581,9 @@ implements Runnable {
         if (fallElevation < 2) {
             // domino effect: move & displace target
             phaseReport.append(entity.getDisplayName()
-            + " is displaced into hex "
-            + dest.getBoardNum() + ", violating stacking with "
-            + violation.getDisplayName() + ".\n");
+            ).append( " is displaced into hex "
+            ).append( dest.getBoardNum() ).append( ", violating stacking with "
+            ).append( violation.getDisplayName() ).append( ".\n");
             entity.setPosition(dest);
             if (roll != null) {
                 pilotRolls.addElement(roll);
@@ -2557,10 +2594,10 @@ implements Runnable {
             return;
         } else {
             // accidental fall from above: havoc!
-            phaseReport.append(entity.getDisplayName() + " falls "
-            + fallElevation + " levels into hex "
-            + dest.getBoardNum() + ", violating stacking with "
-            + violation.getDisplayName() + ".\n");
+            phaseReport.append(entity.getDisplayName() ).append( " falls "
+            ).append( fallElevation ).append( " levels into hex "
+            ).append( dest.getBoardNum() ).append( ", violating stacking with "
+            ).append( violation.getDisplayName() ).append( ".\n");
             
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
@@ -2569,14 +2606,14 @@ implements Runnable {
             
             // roll dice
             final int diceRoll = Compute.d6(2);
-            phaseReport.append("Collision occurs on a " + toHit.getValue()
-            + " or greater.  Rolls " + diceRoll);
+            phaseReport.append("Collision occurs on a " ).append( toHit.getValue()
+            ).append( " or greater.  Rolls " ).append( diceRoll);
             if (diceRoll >= toHit.getValue()) {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
                 int damage = (int)Math.ceil(entity.getWeight() / 10);
-                phaseReport.append(violation.getDisplayName() + " takes "
-                + damage + " from the collision.");
+                phaseReport.append(violation.getDisplayName() ).append( " takes "
+                ).append( damage ).append( " from the collision.");
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
                     HitData hit = violation.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
@@ -2787,7 +2824,7 @@ implements Runnable {
                 } catch (LocationFullException ex) {
                     // unlikely...
                 }
-                phaseReport.append("\n" + entity.getDisplayName() + " uproots a tree for use as a club.\n");
+                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " uproots a tree for use as a club.\n");
             } else if (o instanceof UnjamAction) {
                 resolveUnjam(entity.getId());
             } else {
@@ -2813,15 +2850,15 @@ implements Runnable {
     private void resolveUnjam(int EntityId) {
         final Entity ae = game.getEntity(EntityId);
         final int TN = ae.crew.getGunnery() + 3;
-        phaseReport.append("\nRAC unjam attempts for " + ae.getDisplayName() + "\n");
+        phaseReport.append("\nRAC unjam attempts for " ).append( ae.getDisplayName() ).append( "\n");
         for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             if(mounted.isJammed()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
                 if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                    phaseReport.append("  Unjamming " + wtype.getName() + "; needs " + TN + ", ");
+                    phaseReport.append("  Unjamming " ).append( wtype.getName() ).append( "; needs " ).append( TN ).append( ", ");
                     int roll = Compute.d6(2);
-                    phaseReport.append("rolls " + roll + " : ");
+                    phaseReport.append("rolls " ).append( roll ).append( " : ");
                     if(roll >= TN) {
                         phaseReport.append(" Successfully unjammed!\n");
                         mounted.setJammed(false);
@@ -3051,7 +3088,7 @@ implements Runnable {
         ToHitData toHit = wr.toHit;
         
         if (lastEntityId != ae.getId()) {
-            phaseReport.append("\nWeapons fire for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nWeapons fire for " ).append( ae.getDisplayName() ).append( "\n");
         }
 
         // Swarming infantry can stop during any weapons phase after start.
@@ -3059,7 +3096,7 @@ implements Runnable {
             // ... but only as their *only* attack action.
             if ( toHit.getValue() == ToHitData.IMPOSSIBLE ) {
                 phaseReport.append( "Swarm attack can not be ended (" +
-                                    toHit.getDesc() + ")\n" );
+                                    toHit.getDesc() ).append( ")\n" );
                 return;
             } else {
                 phaseReport.append( "Swarm attack ended.\n" );
@@ -3076,16 +3113,16 @@ implements Runnable {
         }
 
         // Report weapon attack and its to-hit value.
-        phaseReport.append("    " + wtype.getName() + " at " + te.getDisplayName());
+        phaseReport.append("    " ).append( wtype.getName() ).append( " at " ).append( te.getDisplayName());
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
+            phaseReport.append(", but the shot is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-            phaseReport.append(", the shot is an automatic miss (" + toHit.getDesc() + "), ");
+            phaseReport.append(", the shot is an automatic miss (" ).append( toHit.getDesc() ).append( "), ");
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-            phaseReport.append(", the shot is an automatic hit (" + toHit.getDesc() + "), ");
+            phaseReport.append(", the shot is an automatic hit (" ).append( toHit.getDesc() ).append( "), ");
         } else {
-            phaseReport.append("; needs " + toHit.getValue() + ", ");
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         }
         
         // if firing an HGR unbraced, schedule a PSR
@@ -3106,7 +3143,7 @@ implements Runnable {
         }
         
         // dice have been rolled, thanks
-        phaseReport.append("rolls " + wr.roll + " : ");
+        phaseReport.append("rolls " ).append( wr.roll ).append( " : ");
         
         // check for AC jams
         int nShots = howManyShots(weapon, ammo);
@@ -3142,14 +3179,36 @@ implements Runnable {
             // miss
             phaseReport.append("misses.\n");
             if (wr.amsShotDown > 0) {
-                phaseReport.append("\tAMS activates, firing " + wr.amsShotDown + " shot(s).\n");
+                phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
             }
             
             // If the target is in the woods and the weapon misses,
             // and the weapon is a large weapon, set the woods on fire,
             // unless the weapon is a Streak SRM.
-            Hex targetHex = game.getBoard().getHex(te.getPosition());
-            if ( targetHex.contains(Terrain.WOODS) &&
+            Coords targetCoords = te.getPosition();
+            Hex targetHex = game.getBoard().getHex(targetCoords);
+
+            // Inferno rounds always cause fires.
+            if ( usesAmmo && atype.hasFlag(AmmoType.F_INFERNO) ) {
+                game.board.addInfernoTo( targetCoords,
+                                         InfernoTracker.STANDARD_ROUND,
+                                         1 );
+                if ( !targetHex.contains(Terrain.FIRE) ) {
+                    phaseReport.append
+                        ("           Missed inferno shot sets the hex on fire! \n");
+                }
+            }
+            // Handle Inferno SRM-equipped infantry.
+            if ( isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO) ) {
+                game.board.addInfernoTo( targetCoords,
+                                         InfernoTracker.STANDARD_ROUND,
+                                         1 );
+                if ( !targetHex.contains(Terrain.FIRE) ) {
+                    phaseReport.append
+                        ("           Missed inferno shot sets the hex on fire! \n");
+                }
+            }
+            else if ( targetHex.contains(Terrain.WOODS) &&
                  !(targetHex.contains(Terrain.FIRE)) &&
                  toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
                  wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {
@@ -3181,6 +3240,7 @@ implements Runnable {
         boolean bECMAffected = false;
         boolean bMekStealthActive = false;
         String sSalvoType = " shot(s) ";
+        boolean bInfernoRound = false;
 
         // Mek swarms attach the attacker to the target.
         if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
@@ -3218,6 +3278,16 @@ implements Runnable {
             if ( ae.getSwarmTargetId() != wr.waa.getTargetId() ) {
                 hits = Compute.getBattleArmorHits( hits );
             }
+
+            // Handle Inferno SRM squads.
+            if ( wtype.hasFlag(WeaponType.F_INFERNO) ) {
+                nCluster = hits;
+                nDamPerHit = 0;
+                sSalvoType = " Inferno missle(s) ";
+                bInfernoRound = true;
+                bSalvo = false;
+            }
+
         }
 
         // Infantry damage depends on # men left in platoon.
@@ -3227,6 +3297,15 @@ implements Runnable {
             nCluster = 5;
             nDamPerHit = 1;
             hits = platoon.getDamage(platoon.getShootingStrength());
+
+            // Handle Inferno SRM infantry.
+            if ( wtype.hasFlag(WeaponType.F_INFERNO) ) {
+                nCluster = hits;
+                nDamPerHit = 0;
+                sSalvoType = " Inferno missle(s) ";
+                bInfernoRound = true;
+                bSalvo = false;
+            }
         } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE ||
                    wtype.hasFlag(WeaponType.F_MISSILE_HITS) ) {
             bSalvo = true;
@@ -3290,12 +3369,24 @@ implements Runnable {
                     }
                 }
             }
-            
+
+            // If dealing with Inferno rounds set damage to zero and reset
+            // all salvo bonuses (cannot mix with other special munitions).
+            if (usesAmmo && atype.hasFlag(AmmoType.F_INFERNO)) {
+                    nDamPerHit = 0;
+                    nSalvoBonus = 0;
+                    sSalvoType = " inferno missile(s) ";
+                    bInfernoRound = true;
+                    bSalvo = false;
+            }
+
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
                 hits = wtype.getRackSize();
-            } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
+            } else if ( wtype.getRackSize() == 30 ||
+                        wtype.getRackSize() == 40 ) {
                 // I'm going to assume these are MRMs
-                hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2) +
+                    Compute.missilesHit(wtype.getRackSize() / 2);
             } else if ( ae instanceof BattleArmor ) {
 
                 // Battle Armor units multiply their racksize by the
@@ -3343,8 +3434,8 @@ implements Runnable {
             // Mech and Vehicle MGs do *DICE* of damage to PBI.
             // 2002-10-24 Suvarov454 : no need for so many lines in the report.
             nDamPerHit = Compute.d6(wtype.getDamage());
-            phaseReport.append( "riddles the target with " + 
-                nDamPerHit + sSalvoType + "and " );
+            phaseReport.append( "riddles the target with " ).append( 
+                nDamPerHit ).append( sSalvoType ).append( "and " );
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
             // HGR does range-dependent damage
@@ -3374,15 +3465,15 @@ implements Runnable {
         if ( wtype.getAmmoType() == AmmoType.T_BA_MG &&
              (te instanceof Infantry) && !(te instanceof BattleArmor) ) {
             nDamPerHit = Compute.d6(hits);
-            phaseReport.append( "riddles the target with " + 
-                nDamPerHit + sSalvoType + "and " );
+            phaseReport.append( "riddles the target with " ).append( 
+                nDamPerHit ).append( sSalvoType ).append( "and " );
             hits = 1;
             bSalvo = false;
         }
 
         // Report the number of hits.
         if (bSalvo) {
-            phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc());
+            phaseReport.append(hits ).append( sSalvoType ).append( "hit" ).append( toHit.getTableDesc());
             if (bECMAffected) {
                 phaseReport.append(" (ECM prevents bonus)");
             }
@@ -3390,12 +3481,16 @@ implements Runnable {
                 phaseReport.append(" (active Stealth prevents bonus)");
             }
             if (nSalvoBonus > 0) {
-                phaseReport.append(" (w/ +").append(nSalvoBonus).append(" bonus)");
+                phaseReport.append(" (w/ +")
+                    .append(nSalvoBonus)
+                    .append(" bonus)");
             }
             phaseReport.append(".");
             
             if (wr.amsShotDown > 0) {
-                phaseReport.append("\n\tAMS shoots down " + wr.amsShotDown + " missile(s).");
+                phaseReport.append("\n\tAMS shoots down " )
+                    .append( wr.amsShotDown )
+                    .append( " missile(s).");
                 hits -= wr.amsShotDown;
             }
         }
@@ -3408,15 +3503,83 @@ implements Runnable {
             nDamPerHit = 1;
         }
 
+        // Make sure the player knows when his attack causes no damage.
+        if ( hits == 0 ) {
+            phaseReport.append( "attack deals zero damage.\n" );
+        }
+
         // for each cluster of hits, do a chunk of damage
         while (hits > 0) {
             int nDamage;
+
+            // If the attack was with inferno rounds then
+            // do heat and fire instead of damage.
+            if ( bInfernoRound ) {
+                // TODO: remove this block and make infantry invalid
+                //       targets for Infernos in Compute#toHitWeapon()
+                // Infernos cannot attack infantry directly so instead
+                // they attack hits the hex and sets it on fire.
+                if ( (te instanceof Infantry) ) {
+                    Coords c = te.getPosition();
+                    Hex h = game.getBoard().getHex(c);
+                    phaseReport.append("hits!\n");
+                    phaseReport.append(" Fire started in hex!\n");
+                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    game.board.addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+                    return;
+                }
+
+                // targeting a hex
+                if(te instanceof HexEntity) {
+                    Coords c = te.getPosition();
+                    Hex h = game.getBoard().getHex(c);
+
+                    phaseReport.append( "hits with " )
+                        .append( hits )
+                        .append( " inferno missles.\n" );
+                    phaseReport.append(" Fire started in hex!\n");
+                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    game.board.addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+                    return;
+                }
+                // Targeting something other than infantry or a hex.
+                else {
+                    te.infernos.add( InfernoTracker.STANDARD_ROUND,
+                                     hits );
+                    if ( !bSalvo ) {
+                        phaseReport.append( "hits with " )
+                            .append( hits )
+                            .append( " inferno missles." );
+                    }
+                    phaseReport.append("\n        " )
+                        .append( te.getDisplayName() )
+                        .append( " now on fire for ")
+                        .append( te.infernos.getTurnsLeftToBurn() )
+                        .append(" turns.\n");
+
+                    // start a fire in the targets hex
+                    Coords c = te.getPosition();
+                    Hex h = game.getBoard().getHex(c);
+
+                    phaseReport.append(" Fire started in hex!\n");
+                    h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                    game.board.addInfernoTo
+                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                    sendChangedHex(c);
+
+                    return;
+                }
+            } // End is-inferno
 
             // if we're targeting a hex, then 
             if(te instanceof HexEntity) {
               nDamage = nDamPerHit * hits;
               phaseReport.append("hits!\n");
-              phaseReport.append("    Terrain takes " + nDamage + " damage.\n");
+              phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
               Coords c = te.getPosition();
               Hex h = game.getBoard().getHex(c);
               if(!h.contains(Terrain.WOODS)) return; // only woods can be lit on fire or cleared at the moment
@@ -3425,7 +3588,7 @@ implements Runnable {
                 int Woods = h.levelOf(Terrain.WOODS);
                 if(Woods < 1) return;
                 int woodsRoll = Compute.d6(2);
-                phaseReport.append("    Checking to clear woods; needs " + TN + ", rolls " + woodsRoll + ": ");
+                phaseReport.append("    Checking to clear woods; needs " ).append( TN ).append( ", rolls " ).append( woodsRoll ).append( ": ");
 
 
                 if(woodsRoll >= TN) {
@@ -3447,9 +3610,9 @@ implements Runnable {
 
 
               TN = wtype.getFireTN();
-              phaseReport.append("    Checking to start fire in hex; needs " + TN + ", ");
+              phaseReport.append("    Checking to start fire in hex; needs " ).append( TN ).append( ", ");
               int fireRoll = Compute.d6(2);
-              phaseReport.append("rolls " + fireRoll + " : ");
+              phaseReport.append("rolls " ).append( fireRoll ).append( " : ");
               if(fireRoll >= TN) {
                  phaseReport.append(" Fire started!\n");
                  h.addTerrain(new Terrain(Terrain.FIRE, 1));
@@ -3460,8 +3623,27 @@ implements Runnable {
               }             
               return;
             }
+
+            // Battle Armor squads equipped with fire protection
+            // gear automatically avoid flaming death.
+            if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
+                 te instanceof BattleArmor ) {
+                for ( Enumeration iter = te.getMisc();
+                      iter.hasMoreElements(); ) {
+                    Mounted mount = (Mounted) iter.nextElement();
+                    EquipmentType equip = mount.getType();
+                    if ( BattleArmor.ASSAULT_CLAW.equals
+                         (equip.getInternalName()) ) {
+                        phaseReport.append( "hits, but " )
+                            .append(te.getDisplayName() )
+                            .append( " is protected from the flamer by its gear.\n" );
+                        return;
+                    }
+                }
+            } // End target-may-be-immune
+
             // Flamers do heat, not damage.
-            if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+            else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
                 nDamage = nDamPerHit * hits;
                 phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
                 te.heatBuildup += nDamage;
@@ -3495,7 +3677,7 @@ implements Runnable {
 
                 // Each hit in the salvo get's its own hit location.
                 if (!bSalvo) {
-                    phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+                    phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
                 }
 
                 // Special weapons do criticals instead of damage.
@@ -3522,6 +3704,7 @@ implements Runnable {
                 hits -= nCluster;
             }
         } // Handle the next cluster.
+
         phaseReport.append("\n");
     }
     
@@ -3716,10 +3899,10 @@ implements Runnable {
         ? "Left Arm" : "Right Arm";
         
         if (lastEntityId != paa.getEntityId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    Punch (" +armName + ") at " + te.getDisplayName());
+        phaseReport.append("    Punch (" +armName ).append( ") at " ).append( te.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -3729,14 +3912,14 @@ implements Runnable {
         // compute to-hit
         ToHitData toHit = Compute.toHitPunch(game, paa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the punch is impossible (" + toHit.getDesc() + ")\n");
+            phaseReport.append(", but the punch is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
         }
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
+        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         
         // roll
         int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        phaseReport.append("rolls " ).append( roll ).append( " : ");
         
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -3746,7 +3929,7 @@ implements Runnable {
         int damage = Compute.getPunchDamageFor(ae, paa.getArm());
         
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+        phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
         
         phaseReport.append("\n");
@@ -3763,10 +3946,10 @@ implements Runnable {
         : "Right Leg";
         
         if (lastEntityId != ae.getId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    Kick (" + legName + ") at " + te.getDisplayName());
+        phaseReport.append("    Kick (" ).append( legName ).append( ") at " ).append( te.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -3776,15 +3959,15 @@ implements Runnable {
         // compute to-hit
         ToHitData toHit = Compute.toHitKick(game, kaa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the kick is impossible (" + toHit.getDesc() + ")\n");
+            phaseReport.append(", but the kick is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             pilotRolls.addElement(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
         }
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
+        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         
         // roll
         int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        phaseReport.append("rolls " ).append( roll ).append( " : ");
         
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -3797,7 +3980,7 @@ implements Runnable {
         int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
         
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+        phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
         
         if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
@@ -3975,10 +4158,10 @@ implements Runnable {
         caa.getClub().restore();
         
         if (lastEntityId != caa.getEntityId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    " + caa.getClub().getName() + " attack on " + te.getDisplayName());
+        phaseReport.append("    " ).append( caa.getClub().getName() ).append( " attack on " ).append( te.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -3988,14 +4171,14 @@ implements Runnable {
         // compute to-hit
         ToHitData toHit = Compute.toHitClub(game, caa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the attack is impossible (" + toHit.getDesc() + ")\n");
+            phaseReport.append(", but the attack is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
         }
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
+        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         
         // roll
         int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        phaseReport.append("rolls " ).append( roll ).append( " : ");
         
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -4005,13 +4188,13 @@ implements Runnable {
         int damage = Compute.getClubDamageFor(ae, caa.getClub());
         
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+        phaseReport.append("hits" ).append( toHit.getTableDesc() ).append( " " ).append( te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
         
         phaseReport.append("\n");
         
         if (caa.getClub().getType().hasFlag(MiscType.F_TREE_CLUB)) {
-            phaseReport.append("The " + caa.getClub().getName() + " breaks.\n");
+            phaseReport.append("The " ).append( caa.getClub().getName() ).append( " breaks.\n");
             ae.removeMisc(caa.getClub().getName());
         }
     }
@@ -4024,10 +4207,10 @@ implements Runnable {
         final Entity te = game.getEntity(paa.getTargetId());
         
         if (lastEntityId != paa.getEntityId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
-        phaseReport.append("    Pushing " + te.getDisplayName());
+        phaseReport.append("    Pushing " ).append( te.getDisplayName());
         
 //        // should we even bother?
 //        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -4038,14 +4221,14 @@ implements Runnable {
         // compute to-hit
         ToHitData toHit = Compute.toHitPush(game, paa);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-            phaseReport.append(", but the push is impossible (" + toHit.getDesc() + ")\n");
+            phaseReport.append(", but the push is impossible (" ).append( toHit.getDesc() ).append( ")\n");
             return;
         }
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
+        phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
         
         // roll
         int roll = Compute.d6(2);
-        phaseReport.append("rolls " + roll + " : ");
+        phaseReport.append("rolls " ).append( roll ).append( " : ");
         
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -4061,8 +4244,8 @@ implements Runnable {
         
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
             phaseReport.append("succeeds: target is pushed into hex "
-            + dest.getBoardNum()
-            + "\n");
+            ).append( dest.getBoardNum()
+            ).append( "\n");
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
             
             // if push actually moved the target, attacker follows thru
@@ -4073,7 +4256,7 @@ implements Runnable {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.moveToGraveyard(te.getId());
                 send(createRemoveEntityPacket(te.getId()));
-                phaseReport.append("\n*** " + te.getDisplayName() + " has been forced from the field. ***\n");
+                phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " has been forced from the field. ***\n");
                 ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
@@ -4103,7 +4286,7 @@ implements Runnable {
         ae.setDisplacementAttack(null);
         
         if (lastEntityId != caa.getEntityId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
         // should we even bother?
@@ -4124,7 +4307,7 @@ implements Runnable {
             return;
         }
         
-        phaseReport.append("    Charging " + te.getDisplayName());
+        phaseReport.append("    Charging " ).append( te.getDisplayName());
         
         // target still in the same position?
         if (!te.getPosition().equals(caa.getTargetPos())) {
@@ -4139,12 +4322,12 @@ implements Runnable {
         int roll;
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
-            phaseReport.append(", but the charge is impossible (" + toHit.getDesc() + ") : ");
+            phaseReport.append(", but the charge is impossible (" ).append( toHit.getDesc() ).append( ") : ");
         } else {
             // roll
             roll = Compute.d6(2);
-            phaseReport.append("; needs " + toHit.getValue() + ", ");
-            phaseReport.append("rolls " + roll + " : ");
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
         
         // do we hit?
@@ -4178,14 +4361,14 @@ implements Runnable {
 	}
         
         phaseReport.append("hits.");
-        phaseReport.append("\n  Defender takes " + damage + " damage" + toHit.getTableDesc() + ".");
+        phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
             phaseReport.append(damageEntity(te, hit, cluster));
             damage -= cluster;
         }
-        phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
+        phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, toHit.SIDE_FRONT);
@@ -4204,7 +4387,7 @@ implements Runnable {
             if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest)) {
                 game.moveToGraveyard(te.getId());
                 send(createRemoveEntityPacket(te.getId()));
-                phaseReport.append("\n*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
+                phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
                 doEntityDisplacement(ae, ae.getPosition(), src, chargePSR);
             } else {
                 // they stil have to roll
@@ -4232,7 +4415,7 @@ implements Runnable {
         final int direction = ae.getFacing();
         
         if (lastEntityId != daa.getEntityId()) {
-            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+            phaseReport.append("\nPhysical attacks for " ).append( ae.getDisplayName() ).append( "\n");
         }
         
         // entity isn't charging any more
@@ -4251,7 +4434,7 @@ implements Runnable {
             return;
         }
         
-        phaseReport.append("    Attempting death from above on " + te.getDisplayName());
+        phaseReport.append("    Attempting death from above on " ).append( te.getDisplayName());
         
         // target still in the same position?
         if (!te.getPosition().equals(daa.getTargetPos())) {
@@ -4269,12 +4452,12 @@ implements Runnable {
             phaseReport.append(" but the attacker is prone or incapacitated : ");
         } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             roll = -12;
-            phaseReport.append(" but the attack is impossible (" + toHit.getDesc() + ") : ");
+            phaseReport.append(" but the attack is impossible (" ).append( toHit.getDesc() ).append( ") : ");
         } else {
             // roll
             roll = Compute.d6(2);
-            phaseReport.append("; needs " + toHit.getValue() + ", ");
-            phaseReport.append("rolls " + roll + " : ");
+            phaseReport.append("; needs " ).append( toHit.getValue() ).append( ", ");
+            phaseReport.append("rolls " ).append( roll ).append( " : ");
         }
         
         // do we hit?
@@ -4287,7 +4470,7 @@ implements Runnable {
                 // move target to preferred hex
                 doEntityDisplacement(te, dest, targetDest, null);
                 // attacker falls into destination hex
-                phaseReport.append(ae.getDisplayName() + " falls into hex " + dest.getBoardNum() + ".\n");
+                phaseReport.append(ae.getDisplayName() ).append( " falls into hex " ).append( dest.getBoardNum() ).append( ".\n");
                 doEntityFall(ae, dest, 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
             } else {
                 // attacker destroyed
@@ -4302,14 +4485,14 @@ implements Runnable {
         
         phaseReport.append("hits.");
         
-        phaseReport.append("\n  Defender takes " + damage + " damage" + toHit.getTableDesc() + ".");
+        phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
             phaseReport.append(damageEntity(te, hit, cluster));
             damage -= cluster;
         }
-        phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
+        phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, toHit.SIDE_FRONT);
@@ -4325,7 +4508,7 @@ implements Runnable {
         if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
             game.moveToGraveyard(te.getId());
             send(createRemoveEntityPacket(te.getId()));
-            phaseReport.append("\n*** " + te.getDisplayName() + " target has been forced from the field. ***\n");
+            phaseReport.append("\n*** " ).append( te.getDisplayName() ).append( " target has been forced from the field. ***\n");
         } else {
             if (targetDest != null) {
                 doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
@@ -4354,12 +4537,30 @@ implements Runnable {
             // heat doesn't matter for non-mechs
             if (!(entity instanceof Mech)) {
                 entity.heatBuildup = 0;
+
+                // If the unit is hit with an Inferno, do flaming death test.
+                if ( entity.infernos.isStillBurning() ) {
+                    doFlamingDeath(entity);
+                }
                 continue;
             }
+            else {
+                // Meks gain heat from inferno hits.
+                if ( entity.infernos.isStillBurning() ) {
+                    int infernoHeat = entity.infernos.getHeat();
+                    entity.heatBuildup += infernoHeat;
+                    roundReport.append( "Added " )
+                        .append( infernoHeat )
+                        .append( " from a burning inferno round...\n" );
+                }
+            }
+
             // should we even bother?
-            if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDead()) {
+            if ( entity.isDestroyed() || entity.isDoomed() ||
+                 entity.crew.isDead() ) {
                 continue;
             }
+
             // engine hits add a lot of heat, provided the engine is on
             if (!entity.isShutDown()) {
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
@@ -4373,32 +4574,72 @@ implements Runnable {
                 roundReport.append("Added 10 heat from Stealth Armor...\n");
             }
 
-            // add +5 Heat if the hex you're in is on fire and was on fire for the full round
+            // Add +5 Heat if the hex you're in is on fire
+            // and was on fire for the full round.
             if (entityHex.levelOf(Terrain.FIRE) == 2) {
                 entity.heatBuildup += 5;
                 roundReport.append("Added 5 heat from a fire...\n");
             }
             
             // add the heat we've built up so far.
-            roundReport.append(entity.getDisplayName() + " gains " + entity.heatBuildup + " heat,");
+            roundReport.append( entity.getDisplayName() )
+                .append( " gains " )
+                .append( entity.heatBuildup )
+                .append( " heat,");
             entity.heat += entity.heatBuildup;
             entity.heatBuildup = 0;
 
             // how much heat can we sink?
-            int tosink = Math.min(entity.getHeatCapacityWithWater(), entity.heat);
+            int tosink = Math.min( entity.getHeatCapacityWithWater(),
+                                   entity.heat );
             
             entity.heat -= tosink;
-            roundReport.append(" sinks " + tosink + " heat and is now at " + entity.heat + " heat.\n");
+            roundReport.append( " sinks " )
+                .append( tosink )
+                .append( " heat and is now at " )
+                .append( entity.heat )
+                .append( " heat.\n");
+
+            // Does the unit have inferno ammo?
+            if( entity.hasInfernoAmmo() ) {
+
+                // Apply the inferno ammo explosion.
+                if (entity.heat >= 10) {
+                    int boom = 4 + (entity.heat >= 14 ? 2 : 0) + 
+                        (entity.heat >= 19 ? 2 : 0) + 
+                        (entity.heat >= 23 ? 2 : 0) + 
+                        (entity.heat >= 28 ? 2 : 0);
+                    int boomroll = Compute.d6(2);
+                    roundReport.append(entity.getDisplayName() )
+                        .append( " needs a " )
+                        .append( boom )
+                        .append( "+ to avoid inferno ammo explosion, rolls " )
+                        .append( boomroll )
+                        .append( " : " );
+                    if (boomroll >= boom) {
+                        roundReport.append("avoids successfully!\n");
+                    } else {
+                        roundReport.append("fails to avoid explosion.\n");
+                        roundReport.append(explodeInfernoAmmoFromHeat(entity));
+                    }
+                }
+            } // End avoid-inferno-explosion
 
             // heat effects: start up
             if (entity.heat < 30 && entity.isShutDown()) {
                 if (entity.heat < 14) {
                     entity.setShutDown(false);
-                    roundReport.append(entity.getDisplayName() + " automatically starts up.\n");
+                    roundReport.append( entity.getDisplayName() )
+                        .append( " automatically starts up.\n" );
                 } else {
                     int startup = 4 + (((entity.heat - 14) / 4) * 2);
                     int suroll = Compute.d6(2);
-                    roundReport.append(entity.getDisplayName() + " needs a " + startup + "+ to start up, rolls " + suroll + " : ");
+                    roundReport.append( entity.getDisplayName() )
+                        .append( " needs a " )
+                        .append( startup )
+                        .append( "+ to start up, rolls " )
+                        .append( suroll )
+                        .append( " : " );
                     if (suroll >= startup) {
                         entity.setShutDown(false);
                         roundReport.append("successful!\n");
@@ -4409,36 +4650,51 @@ implements Runnable {
             }
 
             // heat effects: shutdown!
-            if (entity.heat >= 14 && !entity.isShutDown()) {
+            // 2003-01-26 JAD - Don't shut down if you just restarted.
+            else if (entity.heat >= 14 && !entity.isShutDown()) {
                 if (entity.heat >= 30) {
-                    roundReport.append(entity.getDisplayName() + " automatically shuts down.\n");
+                    roundReport.append( entity.getDisplayName() )
+                        .append( " automatically shuts down.\n" );
                     // add a piloting roll and resolve immediately
-                    pilotRolls.addElement(new PilotingRollData(entity.getId(), 3, "reactor shutdown"));
+                    pilotRolls.addElement(new PilotingRollData
+                        ( entity.getId(), 3, "reactor shutdown" ));
                     resolvePilotingRolls();
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
                     int shutdown = 4 + (((entity.heat - 14) / 4) * 2);
                     int sdroll = Compute.d6(2);
-                    roundReport.append(entity.getDisplayName() + " needs a " + shutdown + "+ to avoid shutdown, rolls " + sdroll + " : ");
+                    roundReport.append(entity.getDisplayName() )
+                        .append( " needs a " )
+                        .append( shutdown )
+                        .append( "+ to avoid shutdown, rolls " )
+                        .append( sdroll )
+                        .append( " : ");
                     if (sdroll >= shutdown) {
                         roundReport.append("avoids successfully!\n");
                     } else {
                         roundReport.append("shuts down.\n");
                         // add a piloting roll and resolve immediately
-                        pilotRolls.addElement(new PilotingRollData(entity.getId(), 3, "reactor shutdown"));
+                        pilotRolls.addElement(new PilotingRollData
+                            ( entity.getId(), 3, "reactor shutdown" ));
                         resolvePilotingRolls();
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     }
                 }
             }
-            
+
             // heat effects: ammo explosion!
             if (entity.heat >= 19) {
-                int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0);
+                int boom = 4 + (entity.heat >= 23 ? 2 : 0) +
+                    (entity.heat >= 28 ? 2 : 0);
                 int boomroll = Compute.d6(2);
-                roundReport.append(entity.getDisplayName() + " needs a " + boom + "+ to avoid ammo explosion, rolls " + boomroll + " : ");
+                roundReport.append( entity.getDisplayName() )
+                        .append( " needs a " )
+                        .append( boom )
+                        .append( "+ to avoid ammo explosion, rolls " )
+                        .append( boomroll )
+                        .append( " : ");
                 if (boomroll >= boom) {
                     roundReport.append("avoids successfully!\n");
                 } else {
@@ -4448,21 +4704,24 @@ implements Runnable {
             }
             
             // heat effects: mechwarrior damage
-            if (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0
-            && entity.heat >= 15) {
+            if (entity.getHitCriticals( CriticalSlot.TYPE_SYSTEM,
+                                        Mech.SYSTEM_LIFE_SUPPORT,
+                                        Mech.LOC_HEAD ) > 0
+                && entity.heat >= 15) {
                 if (entity.heat >= 25) {
                     // mechwarrior takes 2 damage
-                    roundReport.append(entity.getDisplayName() + " has 25 or higher heat and damaged life support.  Mechwarrior takes 2 damage.\n");
+                    roundReport.append(entity.getDisplayName() ).append( " has 25 or higher heat and damaged life support.  Mechwarrior takes 2 damage.\n");
                     damageCrew(entity, 2);
                 } else {
                     // mechwarrior takes 1 damage
-                    roundReport.append(entity.getDisplayName() + " has 15 or higher heat and damaged life support.  Mechwarrior takes 1 damage.\n");
+                    roundReport.append(entity.getDisplayName() ).append( " has 15 or higher heat and damaged life support.  Mechwarrior takes 1 damage.\n");
                     damageCrew(entity, 1);
                 }
                 // The pilot may have just expired.
                 if ( entity.crew.isDead() ) {
-                    roundReport.append( "*** " + entity.getDisplayName() +
-                                        " PILOT BAKES TO DEATH! ***" );
+                    roundReport.append( "*** " )
+                        .append( entity.getDisplayName() )
+                        .append( " PILOT BAKES TO DEATH! ***" );
                 }
             }
 
@@ -4475,7 +4734,22 @@ implements Runnable {
         if ( Entity.NONE != entity.getSwarmTargetId() ) {
             return;
         }
-        phaseReport.append(entity.getDisplayName() + " is on fire.  Needs an 8+ to avoid destruction, rolls " + boomroll + " : ");
+        // Battle Armor squads equipped with fire protection
+        // gear automatically avoid flaming death.
+        for ( Enumeration iter = entity.getMisc(); iter.hasMoreElements(); ) {
+            Mounted mount = (Mounted) iter.nextElement();
+            EquipmentType equip = mount.getType();
+            if ( BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName()) ) {
+                phaseReport.append(entity.getDisplayName() )
+                    .append( " is on fire, but is protected by its gear.\n" );
+                return;
+            }
+        }
+
+        phaseReport.append( entity.getDisplayName() )
+            .append( " is on fire.  Needs an 8+ to avoid destruction, rolls " )
+            .append( boomroll )
+            .append( " : ");
         if (boomroll >= 8) {
             phaseReport.append("avoids successfully!\n");
         } else {
@@ -4535,7 +4809,7 @@ implements Runnable {
             if ((curHex.levelOf(Terrain.WATER) > 1
             || (curHex.levelOf(Terrain.WATER) == 1 && entity.isProne()))
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
-                roundReport.append("\n" + entity.getDisplayName() + " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
+                roundReport.append("\n" ).append( entity.getDisplayName() ).append( " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
                 damageCrew(entity, 1);
             }
         }
@@ -4570,15 +4844,15 @@ implements Runnable {
                 continue;
             }
             if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL || roll.getValue() == PilotingRollData.IMPOSSIBLE) {
-                phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) and automatically fails (" + roll.getDesc() + ").\n");
+                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) and automatically fails (" ).append( roll.getDesc() ).append( ").\n");
                 doEntityFall(entity, roll);
             } else {
-                phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
-                phaseReport.append("The target is " + roll.getValueAsString() + " [" + roll.getDesc() + "].\n");
+                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) (" ).append( reasons ).append( ").\n");
+                phaseReport.append("The target is " ).append( roll.getValueAsString() ).append( " [" ).append( roll.getDesc() ).append( "].\n");
                 for (int j = 0; j < rolls; j++) {
                     final int diceRoll = Compute.d6(2);
-                    phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValueAsString() + ", rolls " + diceRoll + " : ");
-                    phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
+                    phaseReport.append("    " ).append( entity.getDisplayName() ).append( " needs " ).append( roll.getValueAsString() ).append( ", rolls " ).append( diceRoll ).append( " : ");
+                    phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") ).append( ".\n");
                     if (diceRoll < roll.getValue()) {
                         doEntityFall(entity, roll);
                         // break rolling loop
@@ -4630,11 +4904,11 @@ implements Runnable {
             for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
                 int roll = Compute.d6(2);
 		int rollTarget = Compute.getConciousnessNumber( hit );
-                phaseReport.append("\nPilot of " + e.getDisplayName()
-				   + " \"" + e.getCrew().getName()
-				   + "\" needs a " + rollTarget
-				   + " to stay concious.  Rolls " + roll
-				   + " : ");
+                phaseReport.append("\nPilot of " ).append( e.getDisplayName()
+				   ).append( " \"" ).append( e.getCrew().getName()
+				   ).append( "\" needs a " ).append( rollTarget
+				   ).append( " to stay concious.  Rolls " ).append( roll
+				   ).append( " : ");
                 if (roll >= rollTarget) {
                     phaseReport.append("successful!");
                 } else {
@@ -4666,11 +4940,11 @@ implements Runnable {
             anyRolls = true;
             int roll = Compute.d6(2);
 	    int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
-            roundReport.append("\nPilot of " + e.getDisplayName()
-			       + " \"" + e.crew.getName()
-			       + "\" needs a " + rollTarget
-			       + " to regain conciousness.  Rolls " + roll
-			       + " : ");
+            roundReport.append("\nPilot of " ).append( e.getDisplayName()
+			       ).append( " \"" ).append( e.crew.getName()
+			       ).append( "\" needs a " ).append( rollTarget
+			       ).append( " to regain conciousness.  Rolls " ).append( roll
+			       ).append( " : ");
 	    if (roll >= rollTarget) {
                 roundReport.append("successful!");
                 e.crew.setUnconcious(false);
@@ -5106,7 +5380,7 @@ implements Runnable {
                         break;
                 }
                 hits--;
-                //                System.err.println("s: critical loop, " + hits + " remaining");
+
             }
         }
         
@@ -5208,7 +5482,7 @@ implements Runnable {
                         // Nope.
                         game.moveToGraveyard( other.getId() );
                         send( createRemoveEntityPacket(other.getId()) );
-                        sb.append("\n*** " + other.getDisplayName() +
+                        sb.append("\n*** " ).append( other.getDisplayName() +
                                   " was trapped in the wreckage. ***\n");
 
                     }
@@ -5219,7 +5493,7 @@ implements Runnable {
                         // Nope.
                         game.moveToGraveyard( other.getId() );
                         send( createRemoveEntityPacket(other.getId()) );
-                        sb.append("\n*** " + other.getDisplayName() +
+                        sb.append("\n*** " ).append( other.getDisplayName() +
                                   " tried to escape the wreckage, but couldn't. ***\n");
                     } // End can-not-unload
                     else {
@@ -5283,7 +5557,13 @@ implements Runnable {
                 return "";
             }
         }
-        
+
+        // Inferno ammo causes heat buildup as well as the damage
+        if ( mounted.getType() instanceof AmmoType &&
+             ((AmmoType)mounted.getType()).hasFlag(AmmoType.F_INFERNO) ) {
+            en.heatBuildup += 30;
+        }
+
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
         
@@ -5329,11 +5609,14 @@ implements Runnable {
                 if (!atype.isExplosive()) {
                     continue;
                 }
-                if (!mounted.isHit() 
-                && (rack < atype.getDamagePerShot() * atype.getRackSize()
-                || damage < mounted.getExplosionDamage())) {
-                    rack = atype.getDamagePerShot() * atype.getRackSize();
-                    damage = mounted.getExplosionDamage();
+                // BMRr, pg. 48, compare one rack's
+                // damage.  Ties go to most rounds. 
+                int newRack = atype.getDamagePerShot() * atype.getRackSize();
+                int newDamage = mounted.getExplosionDamage();
+                if ( !mounted.isHit() && ( rack < newRack ||
+                       (rack == newRack && damage < newDamage) ) ) {
+                    rack = newRack;
+                    damage = newDamage;
                     boomloc = j;
                     boomslot = k;
                 }
@@ -5392,7 +5675,7 @@ implements Runnable {
         }
         
         // report falling
-        phaseReport.append("    " + entity.getDisplayName() + " falls on its " + side + ", suffering " + damage + " damage.");
+        phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");
 
         // Any swarming infantry will be dislodged, but we don't want to
         // interrupt the fall's report.  We have to get the ID now because
@@ -5415,20 +5698,19 @@ implements Runnable {
         }
         
         if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
-            phaseReport.append("\nPilot of " + entity.getDisplayName()
-            + " \"" + entity.crew.getName() + "\" cannot avoid damage.\n");
-            phaseReport.append(damageCrew(entity, 1) + "\n");
+            phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
+            ).append( " \"" ).append( entity.crew.getName() ).append( "\" cannot avoid damage.\n");
+            phaseReport.append(damageCrew(entity, 1) ).append( "\n");
         } else {
             int diceRoll = Compute.d6(2);
-            phaseReport.append("\nPilot of " + entity.getDisplayName()
-            + " \"" + entity.crew.getName() + "\" must roll " + roll.getValueAsString()
-            //            + " [" + roll.getDesc() + "]";
-            + " to avoid damage; rolls " + diceRoll + " : ");
+            phaseReport.append("\nPilot of " ).append( entity.getDisplayName()
+            ).append( " \"" ).append( entity.crew.getName() ).append( "\" must roll " ).append( roll.getValueAsString()
+            ).append( " to avoid damage; rolls " ).append( diceRoll ).append( " : ");
             if (diceRoll >= roll.getValue()) {
                 phaseReport.append("succeeds.\n");
             } else {
                 phaseReport.append("fails.\n");
-                phaseReport.append(damageCrew(entity, 1) + "\n");
+                phaseReport.append(damageCrew(entity, 1) ).append( "\n");
             }
         }
          
@@ -5510,20 +5792,32 @@ implements Runnable {
         int windDirection = game.getWindDirection();
         
         phaseReport.append("\n\nResolving fire movement \n ------------------------\n");
-        // cycle through all hexes, checking for fire.
+        // Cycle through all hexes, checking for fire.
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
             
-            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
-                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+            for (int currentYCoord = 0; currentYCoord < height;
+                 currentYCoord++) {
+                Coords currentCoords = new Coords(currentXCoord,
+                                                  currentYCoord);
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
-                // if the woods has been cleared, put the fires out.
-                if (currentHex.contains(Terrain.FIRE) && !(currentHex.contains(Terrain.WOODS))) {
+                boolean infernoBurning = board.burnInferno( currentCoords );
+
+                // If the woods has been cleared, put non-inferno fires out.
+                if ( currentHex.contains(Terrain.FIRE) && !infernoBurning &&
+                     !(currentHex.contains(Terrain.WOODS))) {
                     removeFire(currentXCoord, currentYCoord, currentHex);
                 }
-                if (currentHex.levelOf(Terrain.FIRE) == 2)  //Fire was started on a previous turn
+
+                // Was the fire was started on a previous turn?
+                else if (currentHex.levelOf(Terrain.FIRE) == 2)
                 {
-                    phaseReport.append("Fire at " + currentCoords.getBoardNum() + " is burning brightly.\n");
-                    //spread fire...
+                    if ( infernoBurning ) {
+                        phaseReport.append( "Inferno fire at " );
+                    } else {
+                        phaseReport.append( "Fire at " );
+                    }
+                    phaseReport.append( currentCoords.getBoardNum() )
+                        .append( " is burning brightly.\n" );
                     spreadFire(currentXCoord, currentYCoord, windDirection);
                 }  // End the Else If Hex was on fire previously
             }  // end the loop through Y coordinates
@@ -5539,7 +5833,9 @@ implements Runnable {
                     currentHex.removeTerrain(Terrain.FIRE);
                     currentHex.addTerrain(new Terrain(Terrain.FIRE, 2));
                     sendChangedHex(currentCoords);
-                    phaseReport.append("Fire at " + currentCoords.getBoardNum() + " was started this round.\n");
+                    phaseReport.append( "Fire at " )
+                        .append( currentCoords.getBoardNum() )
+                        .append( " was started this round.\n" );
                 }
                 if (currentHex.contains(Terrain.FIRE)) {
                     addSmoke(currentXCoord, currentYCoord, windDirection);
@@ -5583,7 +5879,7 @@ implements Runnable {
         Hex hex = game.getBoard().getHex(coords);
         if (burn(hex, roll)) {
             sendChangedHex(coords);
-            phaseReport.append("Fire spreads to " + coords.getBoardNum() + "!\n");
+            phaseReport.append("Fire spreads to " ).append( coords.getBoardNum() ).append( "!\n");
         }
     }
     
@@ -5614,7 +5910,7 @@ implements Runnable {
         removeSmoke(x, y, windDir);
         removeSmoke(x, y, (windDir + 1) % 6);
         removeSmoke(x, y, (windDir + 5) % 6);
-        phaseReport.append("Fire at " + fireCoords.getBoardNum() + " goes out due to lack of fuel!\n");
+        phaseReport.append("Fire at " ).append( fireCoords.getBoardNum() ).append( " goes out due to lack of fuel!\n");
     }
     
     // called when a fire is burning.  Adds smoke to hex in the direction specified.  Called 3 times per fire hex,
@@ -5624,7 +5920,7 @@ implements Runnable {
         if (nextHex != null && !(nextHex.contains(Terrain.SMOKE))) {
             nextHex.addTerrain(new Terrain(Terrain.SMOKE, 1));
             sendChangedHex(smokeCoords);
-            phaseReport.append("Smoke fills " + smokeCoords.getBoardNum() + "!\n");
+            phaseReport.append("Smoke fills " ).append( smokeCoords.getBoardNum() ).append( "!\n");
         }
     }
     
@@ -5634,7 +5930,7 @@ implements Runnable {
         if (nextHex != null && nextHex.contains(Terrain.SMOKE)) {
             nextHex.removeTerrain(Terrain.SMOKE);
             sendChangedHex(smokeCoords);
-            phaseReport.append("Smoke clears from " + smokeCoords.getBoardNum() + "!\n");
+            phaseReport.append("Smoke clears from " ).append( smokeCoords.getBoardNum() ).append( "!\n");
         }
     }
     
@@ -6338,6 +6634,71 @@ implements Runnable {
                 ;
             }
         }
+    }
+
+    /**
+     * Makes one slot of inferno ammo, determined
+     * by certain rules, explode on a mech.
+     */
+    private String explodeInfernoAmmoFromHeat(Entity entity) {
+        int damage = 0;
+        int rack = 0;
+        int boomloc = -1;
+        int boomslot = -1;
+        StringBuffer result = new StringBuffer();
+
+        // Find the most destructive Inferno ammo.
+        for (int j = 0; j < entity.locations(); j++) {
+            for (int k = 0; k < entity.getNumberOfCriticals(j); k++) {
+                CriticalSlot cs = entity.getCritical(j, k);
+                // Ignore empty, destroyed, hit, and structure slots.
+                if ( cs == null || cs.isDestroyed() || cs.isHit() ||
+                     cs.getType() != CriticalSlot.TYPE_EQUIPMENT ) {
+                    continue;
+                }
+                // Ignore everything but weapons slots.
+                Mounted mounted = entity.getEquipment
+                    ( entity.getCritical(j, k).getIndex() );
+                if (!(mounted.getType() instanceof AmmoType)) {
+                    continue;
+                }
+                // Ignore everything but Inferno ammo.
+                AmmoType atype = (AmmoType)mounted.getType();
+                if ( !atype.isExplosive() ||
+                     !atype.hasFlag(AmmoType.F_INFERNO) ) {
+                    continue;
+                }
+                // Find the most destructive undamaged ammo.
+                // BMRr, pg. 48, compare one rack's
+                // damage.  Ties go to most rounds. 
+                int newRack = atype.getDamagePerShot() * atype.getRackSize();
+                int newDamage = mounted.getExplosionDamage();
+                if ( !mounted.isHit() && ( rack < newRack ||
+                       (rack == newRack && damage < newDamage) ) ) {
+                    rack = newRack;
+                    damage = newDamage;
+                    boomloc = j;
+                    boomslot = k;
+                }
+            }
+        }
+        // Did we find anything to explode?
+        if (boomloc != -1 && boomslot != -1) {
+            CriticalSlot slot = entity.getCritical(boomloc, boomslot);
+            slot.setHit(true);
+            entity.getEquipment(slot.getIndex()).setHit(true);
+            // We've allocated heatBuildup to heat in resolveHeat(),
+            // so need to add to the entity's heat instead.
+            result.append( explodeEquipment(entity, boomloc, boomslot) );
+            entity.heat += 30;
+            result.append( "   Gains 30 heat and is now at " )
+                .append( entity.heat )
+                .append( " heat.\n" );
+            entity.heatBuildup = 0;
+        } else {
+            result.append("  Luckily, there is no inferno ammo to explode.\n");
+        }
+        return result.toString();
     }
 
 }

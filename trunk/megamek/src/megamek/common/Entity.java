@@ -114,6 +114,11 @@ public abstract class Entity
     private int[]               orig_internal;
     public int                  damageThisPhase;
 
+    /**
+     * The object that tracks this unit's Inferno round hits.
+     */
+    public InfernoTracker       infernos = new InfernoTracker();
+
     protected String            C3NetIDString = null;
     protected int               C3Master = NONE;
 
@@ -1864,6 +1869,9 @@ public abstract class Entity
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {
             ((Mounted)i.nextElement()).newRound();
         }
+
+        // Update the inferno tracker.
+        this.infernos.newRound();
     }
     
     /**
@@ -2363,6 +2371,28 @@ public abstract class Entity
      */
     public int getSwarmAttackerId() {
         return this.swarmAttackerId;
+    }
+
+    /**
+     * Scans through the ammo on the unit for any inferno rounds.
+     *
+     * @return  <code>true</code> if the unit is still loaded with Inferno
+     *          rounds.  <code>false</code> if no rounds were ever loaded
+     *          or if they have all been fired.
+     */
+    public boolean hasInfernoAmmo() {
+        boolean found = false;
+
+        // Walk through the unit's ammo, stop when we find a match.
+        for (Enumeration j = getAmmo(); j.hasMoreElements() && !found;) {
+            Mounted amounted = (Mounted)j.nextElement();
+            AmmoType atype = (AmmoType)amounted.getType();
+            if ( atype.hasFlag(AmmoType.F_INFERNO) &&
+                 amounted.getShotsLeft() > 0 ) {
+                found = true;
+            }
+        }
+        return found;
     }
 
 }

@@ -1960,7 +1960,7 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         
         // good time to ensure hex cache
-        IdealHex.ensureCacheSize(game.board.width, game.board.height);
+        IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
         
         // LOS fails if one of the entities is not deployed.
         if (null == ae.getPosition() || null == target.getPosition()) {
@@ -3629,7 +3629,14 @@ public class Compute
         
         hexes.addElement(current);
         while(!dest.equals(current)) {
-            current = nextHex(current, iSrc, iDest, directions);
+            try {
+                current = nextHex(current, iSrc, iDest, directions);
+            } catch(RuntimeException ex) {
+                System.err.println("ERROR: no next hex");
+                System.err.println("src = " + src + ", dest = " + dest);
+                System.err.println("current = " + current + ", pri dir = " + directions[2]);
+                throw(ex);
+            }
             hexes.addElement(current);
         }
         

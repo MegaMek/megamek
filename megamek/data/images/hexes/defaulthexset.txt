@@ -1,10 +1,10 @@
 # default hex tileset
 #
 # format is:
-# base/super [elevation] [terrains] [theme] [image]
+# base/super <elevation> <terrains> <theme> <image>
 #
-# Terrains can have an X instead of a level number indicating
-# that the image should not be used if the terrain is present
+
+super * "building:1" "" "buildingl2.gif"
 
 super * "road:1:00" "" "boring/road00.gif"
 super * "road:1:01" "" "boring/road01.gif"
@@ -107,7 +107,5 @@ base * "water:1" "" "boring/blue_water_1.gif"
 base * "water:2" "" "boring/blue_water_2.gif"
 base * "water:3" "" "boring/blue_water_3.gif"
 base * "water:4" "" "boring/blue_water_4.gif"
-
-base * "river:1" "" "boring/blue_water_1.gif"
 
 base 0 "pavement:1" "" "boring/grey_pavement_0.gif"

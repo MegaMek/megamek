@@ -422,10 +422,14 @@ public class Client extends Panel
         if (canSelectEntities()) {
             for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = (Entity)i.nextElement();
-                if (entity.getOwnerId() == local_pn) {
+                if (game.getTurn().isValidEntity(entity)) {
                     popup.add(new SelectMenuItem(entity));
                 }
             }
+        }
+        
+        if (popup.getItemCount() > 0) {
+            popup.addSeparator();
         }
         
         // add view options

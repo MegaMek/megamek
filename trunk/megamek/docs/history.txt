@@ -25,6 +25,7 @@ v0.29.36 (CVS)
 + Updated readme-German.txt and fixed some typos in readme.txt
 + Removed a lot of unnecessary imports
 + RFE 826274: game option to stop Hover vehicles charging
++ access static fields only in a static way
 
 v0.29.35 (2004-05-20, 2pm)
 + Time to start tracking memory usage in the log file.  Where is it all going?

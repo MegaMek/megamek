@@ -151,10 +151,6 @@ public class MechPanelTabStrip extends PicMap {
 	}
 	
 	private void drawIdleImage(int tab){
-        if (tabs[tab] == null) {
-            // hmm, display not initialized yet...
-            return;
-        }
 		Graphics g = tabs[tab].getIdleImage().getGraphics();
 		
 		if( activeTab == tab){

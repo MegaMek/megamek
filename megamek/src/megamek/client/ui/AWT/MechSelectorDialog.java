@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
+ * MechSelectorDialog.java - Copyright (C) 2002 Josh Yockey
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -24,7 +24,6 @@ import java.util.Vector;
 import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Arrays;
 import megamek.common.*;
-import megamek.client.util.widget.*;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -64,9 +63,6 @@ public class MechSelectorDialog
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
 
-    private Panel m_pUpper = new Panel();
-	BufferedPanel m_pPreview = new BufferedPanel();
-
     public MechSelectorDialog(Client cl, UnitLoadingDialog uld)
     {
         super(cl.frame, "Select Mech...", true);
@@ -90,13 +86,8 @@ public class MechSelectorDialog
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bCancel);
         
-        m_pUpper.setLayout(new BorderLayout());
-		m_pPreview.setPreferredSize(84, 72);
-		m_pUpper.add(m_pParams, BorderLayout.WEST);
-		m_pUpper.add(m_pPreview, BorderLayout.CENTER);
-
         m_pLeft.setLayout(new BorderLayout());
-        m_pLeft.add(m_pUpper, BorderLayout.NORTH);
+        m_pLeft.add(m_pParams, BorderLayout.NORTH);
         m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12));
         m_mechList.addKeyListener(this);
         m_pLeft.add(m_mechList, BorderLayout.CENTER);
@@ -149,13 +140,11 @@ public class MechSelectorDialog
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);
         }
-        m_chType.addItem("IS All");
         m_chType.addItem("All");
 
         m_chUnitType.addItem("Mek");
         m_chUnitType.addItem("Tank");
         m_chUnitType.addItem("Infantry");
-        m_chUnitType.addItem("ProtoMek");
         m_chUnitType.addItem("All");
     }
     
@@ -189,10 +178,7 @@ public class MechSelectorDialog
         for (int x = 0; x < mechs.length; x++) {
             // watch out for hard-coded constants below
             if ( (nWeight == 0 || mechs[x].getWeightClass() == nWeight) && 
-                 (nType == 5
-                  || (nType == 4
-                      && mechs[x].getType() <= TechConstants.T_IS_LEVEL_2 )
-                  || mechs[x].getType() == nType) && 
+                 (nType == 4 || mechs[x].getType() == nType) && 
                  ( sUnitType.equals( "All" ) ||
                    mechs[x].getUnitType().equals(sUnitType) ) ) {
                 vMechs.addElement(mechs[x]);
@@ -265,11 +251,9 @@ public class MechSelectorDialog
     public void itemStateChanged(ItemEvent ie)
     {
         if (ie.getSource() == m_chSort) {
-			clearMechPreview();
             sortMechs();
         }
         else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType || ie.getSource() == m_chUnitType) {
-			clearMechPreview();
             filterMechs();
         } else if (ie.getSource() == m_mechList) {
             int selected = m_mechList.getSelectedIndex();
@@ -297,12 +281,6 @@ public class MechSelectorDialog
         m_mechViewRight.setEditable(false);
         m_mechViewLeft.setText("");
         m_mechViewRight.setText("");
-
-		// Remove preview image.        
-		if (!unitLoadingDialog.isVisible()) {
-        	m_pPreview.removeBgDrawers();
-			m_pPreview.paint(m_pPreview.getGraphics());
-		}
     }
     
     void previewMech(Entity entity) {
@@ -313,10 +291,6 @@ public class MechSelectorDialog
         m_mechViewRight.setText(mechView.getMechReadoutLoadout());
         m_mechViewLeft.setCaretPosition(0);
         m_mechViewRight.setCaretPosition(0);
-
-		// Preview image of the unit...
-		m_client.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
-		m_pPreview.paint(m_pPreview.getGraphics());
     }
     
     private static final String SPACES = "                        ";

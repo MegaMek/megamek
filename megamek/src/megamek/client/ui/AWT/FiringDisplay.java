@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,40 +16,27 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
-import megamek.client.util.*;
 import megamek.common.*;
 import megamek.common.actions.*;
 
 public class FiringDisplay 
-    extends StatusBarPhaseDisplay
+    extends AbstractPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
-    KeyListener, ItemListener, BoardViewListener
+    KeyListener, ItemListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 2;
-
-    public static final int    AIM_MODE_NONE = 0;
-    public static final int    AIM_MODE_IMMOBILE = 1;
-    public static final int    AIM_MODE_TARG_COMP = 2;
     
-    // Action command names
-	public static final String FIRE_AIM        = "fireAim";
-	public static final String FIRE_FIND_CLUB  = "fireFindClub";
-	public static final String FIRE_FIRE       = "fireFire";
-	public static final String FIRE_MODE       = "fireMode";
-	public static final String FIRE_FLIP_ARMS  = "fireFlipArms";
-	public static final String FIRE_MORE       = "fireMore";
-	public static final String FIRE_NEXT       = "fireNext";
-	public static final String FIRE_NEXT_TARG  = "fireNextTarg";
-	public static final String FIRE_SKIP       = "fireSkip";
-	public static final String FIRE_SPOT       = "fireSpot";
-	public static final String FIRE_TWIST      = "fireTwist";
-	public static final String FIRE_CANCEL     = "fireCancel";
-	public static final String FIRE_REPORT     = "fireReport";
-
     // parent game
     public Client client;
+    
+    // displays
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
     
     // buttons
     private Container        panButtons;
@@ -58,12 +45,12 @@ public class FiringDisplay
     private Button            butTwist;
     private Button            butSkip;
     
+    private Button            butAim;
     private Button            butFindClub;
     private Button            butNextTarg;
     private Button            butFlipArms;
-    private Button            butSpot;
     
-//    private Button            butReport;
+    private Button            butReport;
     private Button            butSpace;
     private Button            butFireMode; // Fire Mode - Add a Fire Mode Button - Rasia
     
@@ -86,8 +73,6 @@ public class FiringDisplay
 
     private Entity[]            visibleTargets  = null;
     private int                 lastTargetID    = -1;
-    
-    private AimedShotHandler   ash;
 
     /**
      * Creates and lays out a new firing phase display 
@@ -104,43 +89,40 @@ public class FiringDisplay
         // fire
         attacks = new Vector();
 
-        setupStatusBar("Waiting to begin Firing phase...");
+        setupStatusBar();
         
         butFire = new Button("Fire");
         butFire.addActionListener(this);
-        butFire.setActionCommand(FIRE_FIRE);
         butFire.setEnabled(false);
         
         butSkip = new Button("Skip");
         butSkip.addActionListener(this);
-        butSkip.setActionCommand(FIRE_SKIP);
         butSkip.setEnabled(false);
         
         butTwist = new Button("Twist");
         butTwist.addActionListener(this);
-        butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
         
 
         butFindClub = new Button("Find Club");
         butFindClub.addActionListener(this);
-        butFindClub.setActionCommand(FIRE_FIND_CLUB);
         butFindClub.setEnabled(false);
+        
+        butAim = new Button("Aim");
+        butAim.addActionListener(this);
+        butAim.setEnabled(false);
         
         butNextTarg = new Button("Next Target");
         butNextTarg.addActionListener(this);
-        butNextTarg.setActionCommand(FIRE_NEXT_TARG);
         butNextTarg.setEnabled(false);
         
         butFlipArms = new Button("Flip Arms");
         butFlipArms.addActionListener(this);
-        butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
         
-        butSpot = new Button("Spot");
-        butSpot.addActionListener(this);
-        butSpot.setActionCommand(FIRE_SPOT);
-        butSpot.setEnabled(false);
+        butReport = new Button("Report..");
+        butReport.addActionListener(this);
+        butReport.setEnabled(true);
         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
@@ -148,7 +130,6 @@ public class FiringDisplay
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
         butFireMode = new Button("Mode");
         butFireMode.addActionListener(this);
-        butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
 
         butDone = new Button("Done");
@@ -157,12 +138,10 @@ public class FiringDisplay
         
         butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
-        butNext.setActionCommand(FIRE_NEXT);
         butNext.setEnabled(false);
         
         butMore = new Button("More...");
         butMore.addActionListener(this);
-        butMore.setActionCommand(FIRE_MORE);
         butMore.setEnabled(false);
         
         // layout button grid
@@ -185,8 +164,8 @@ public class FiringDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0;
         c.gridwidth = 1;
+        c.weightx = 1.0;    c.weighty = 0.0;
         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -198,8 +177,6 @@ public class FiringDisplay
         // mech display.
         client.mechD.wPan.weaponList.addItemListener(this);
         client.mechD.wPan.weaponList.addKeyListener(this);
-        
-        ash = new AimedShotHandler();
     
     }
     
@@ -208,6 +185,40 @@ public class FiringDisplay
         add(comp);
         comp.addKeyListener(this);
     }
+    
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Firing phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
 
     private void setupButtonPanel() {
         panButtons.removeAll();
@@ -215,22 +226,26 @@ public class FiringDisplay
         
         switch (buttonLayout) {
         case 0 :
-            panButtons.add(butNext);
             panButtons.add(butFire);
             panButtons.add(butSkip);
             panButtons.add(butNextTarg);
+            panButtons.add(butNext);
             panButtons.add(butTwist);
-            panButtons.add(butFireMode);
+            panButtons.add(butReport);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
-            panButtons.add(butNext);
             panButtons.add(butFire);
-            panButtons.add(butFlipArms);
             panButtons.add(butFindClub);
-            panButtons.add(butSpot);
+            panButtons.add(butFlipArms);
+            panButtons.add(butNext);
+            panButtons.add(butAim);
+            /* 2003-03-30 Suvarov454: I'd rather see the "Fire"
+            **            button on this panel than a spaceholder.
             panButtons.add(butSpace);
+            */
+            panButtons.add(butFireMode);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -249,25 +264,21 @@ public class FiringDisplay
         }
 
         if (client.game.getEntity(en) != null) {
-	        if (ce() != null) {
-	        	ce().setSelected(false);
-	        }
-	        this.cen = en;
-	        ce().setSelected(true);
+            this.cen = en;
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
             if ( null == ce().getPosition() ) {
 
-			    // Walk through the list of entities for this player.
-			    for ( int nextId = client.getNextEntityNum(en);
-			    	nextId != en;
-			        nextId = client.getNextEntityNum(nextId) ) {
-			
-			        if (null != client.game.getEntity(nextId).getPosition()) {
-			      		this.cen = nextId;
-			      		break;
-			        }
+		// Walk through the list of entities for this player.
+		for ( int nextId = client.getNextEntityNum(en);
+		      nextId != en;
+		      nextId = client.getNextEntityNum(nextId) ) {
+
+		    if (null != client.game.getEntity(nextId).getPosition()) {
+			this.cen = nextId;
+			break;
+		    }
 
                 } // Check the player's next entity.
 
@@ -289,20 +300,11 @@ public class FiringDisplay
             refreshAll();
             cacheVisibleTargets();
 
-            if (!client.bv.isMovingUnits()) {
-                client.bv.centerOnHex(ce().getPosition());
-            }
-
-            // Update the menu bar.
-            client.getMenuBar().setEntity( ce() );
+            client.bv.centerOnHex(ce().getPosition());
             
-		// 2003-12-29, nemchenk -- only twist if crew conscious
-            setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
-
-            setFindClubEnabled(Compute.canMechFindClub(client.game, en));
-            setSpotEnabled(ce().canSpot()
-              && client.game.getOptions().booleanOption("indirect_fire"));
-            setFlipArmsEnabled(ce().canFlipArms());
+            butTwist.setEnabled(ce().canChangeSecondaryFacing());
+            butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
+            butFlipArms.setEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
         }
@@ -313,19 +315,14 @@ public class FiringDisplay
      */
     private void beginMyTurn() {
         target = null;
-
-        selectEntity(client.getFirstEntityNum());
-
-        setNextEnabled(true);
+        butNext.setEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
-        setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+        butFireMode.setEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+        client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
-
-        if (!client.bv.isMovingUnits()) {
-            client.setDisplayVisible(true);
-        }
+        selectEntity(client.getFirstEntityNum());
     }
     
     /**
@@ -349,17 +346,17 @@ public class FiringDisplay
      * Disables all buttons in the interface
      */
     private void disableButtons() {
-        setFireEnabled(false);
-        setSkipEnabled(false);
-        setTwistEnabled(false);
-        setSpotEnabled(false);
-        setFindClubEnabled(false);
+        butFire.setEnabled(false);
+        butSkip.setEnabled(false);
+        butTwist.setEnabled(false);
+        butAim.setEnabled(false);
+        butFindClub.setEnabled(false);
         butMore.setEnabled(false);
-        setNextEnabled(false);
+        butNext.setEnabled(false);
         butDone.setEnabled(false);
-        setNextTargetEnabled(false);
-        setFlipArmsEnabled(false);
-        setFireModeEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
+        butNextTarg.setEnabled(false);
+        butFlipArms.setEnabled(false);
+        butFireMode.setEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
     }
     
    /**
@@ -367,21 +364,11 @@ public class FiringDisplay
     */
     private void changeMode() {
         int wn = client.mechD.wPan.getSelectedWeaponNum();
-
-        // Do nothing we have no unit selected.
-        if ( null == ce() ) {
-            return;
-        }
-
-        // If the weapon does not have modes, just exit.
         Mounted m = ce().getEquipment(wn);
-        if ( m == null || !m.getType().hasModes() ) {
-            return;
-        }
+        int nMode = m.switchMode();
         
         // send change to the server
-        int nMode = m.switchMode();
-        client.sendModeChange(cen, wn, nMode);
+        client.sendModeChange(ce().getId(), wn, nMode);
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {
@@ -433,13 +420,13 @@ public class FiringDisplay
           visibleTargets[count++] = (Entity)it.next();
         }
 
-        setNextTargetEnabled(visibleTargets.length > 0);
+        butNextTarg.setEnabled(visibleTargets.length > 0);
       }
 
       private void clearVisibleTargets() {
         visibleTargets = null;
         lastTargetID = -1;
-        setNextTargetEnabled(false);
+        butNextTarg.setEnabled(false);
       }
       
     /**
@@ -450,7 +437,7 @@ public class FiringDisplay
           return null;
         
         lastTargetID++;
-
+        
         if ( lastTargetID >= visibleTargets.length )
           lastTargetID = 0;
         
@@ -476,16 +463,6 @@ public class FiringDisplay
      * queue to the server.
      */
     private void ready() {
-        if (attacks.isEmpty() && Settings.nagForNoAction) {
-            // comfirm this action
-            String title = "Don't fire?";
-            String body = "This unit has not fired any weapons.\n\n" +
-                "Are you really done?\n";
-            if (!client.doYesNoDialog(title, body)) {
-                return;
-            }
-        }
-
         // stop further input (hopefully)
         disableButtons();
 
@@ -497,13 +474,6 @@ public class FiringDisplay
         
         // clear queue
         attacks.removeAllElements();
-
-        // Clear the menu bar.
-        client.getMenuBar().setEntity( null );
-
-        // close aimed shot display, if any
-        ash.closeDialog();
-        ash.lockLocation(false);
     }
     
     /**
@@ -520,41 +490,17 @@ public class FiringDisplay
         || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
-
+        
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
                 target.getTargetId(), weaponNum);
-
-        if ( null != mounted.getLinked() && 
-             ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
-            Mounted ammoMount = mounted.getLinked();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if ( ((AmmoType)(ammoMount.getType())).getMunitionType() ==
-                 AmmoType.M_THUNDER_VIBRABOMB )
-            {
-                VibrabombSettingDialog vsd  =
-                    new VibrabombSettingDialog( client.frame );
-                vsd.show();
-                waa.setOtherAttackInfo(vsd.getSetting());
-            }
+        
+        if (((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+            waa.setAmmoId(ce().getEquipmentNum(mounted.getLinked()));
         }
-
-        if (ash.allowAimedShotWith(mounted) &&
-          ash.inAimingMode() && 
-          ash.isAimingAtLocation()) {
-          waa.setAimedLocation(ash.getAimingAt());
-          waa.setAimimgMode(ash.getAimingMode());
-
-          if (ash.getAimingMode() == AIM_MODE_TARG_COMP) {
-            ash.lockLocation(true);
-          }
-        } else {
-          waa.setAimedLocation(Mech.LOC_NONE);
-          waa.setAimimgMode(AIM_MODE_NONE);
-        }
-
+    
         // add the attack to our temporary queue
         attacks.addElement(waa);
-
+        
         // and add it into the game, temporarily
         client.game.addAction(waa);
         client.bv.addAttack(waa);
@@ -577,6 +523,7 @@ public class FiringDisplay
         client.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
         
+        butNext.setEnabled(false);
     }
     
     /**
@@ -593,56 +540,31 @@ public class FiringDisplay
         updateTarget();
     }
 
-  /**
-   * The entity spends the rest of its turn finding a club
-   */
-  private void findClub() {
-    if (ce() == null) {
-      return;
-    }
-        
-    // comfirm this action
-    String title = "Find A Club?";
-    String body = "Do you want to find a club?\n\n" +
-      "Finding a club is an exclusive action.  If you choose\n" +
-      "to find a club, any declared attacks will be cancelled,\n" +
-      "and you may declare no further attacks.\n\n" +
-      "Pressing 'Yes' will confirm, and end your turn.";
-    if (!client.doYesNoDialog(title, body)) {
-      return;
-        }
-    
-        attacks.removeAllElements();
-        attacks.addElement(new FindClubAction(cen));
-        
-        ready();
-  }
-  
     /**
-     * The entity spends the rest of its turn spotting
+     * The entity spends the rest of its turn finding a club
      */
-    private void doSpot() {
+    private void findClub() {
         if (ce() == null) {
             return;
         }
-    
+
         // comfirm this action
-        String title = "Spot For Indirect Fire?";
-        String body = "Do you want to spot for indirect fire?\n\n" +
-            "Spotting is an exclusive action.  If you choose\n" +
-            "to spot, any declared attacks will be cancelled,\n" +
+        String title = "Find A Club?";
+        String body = "Do you want to find a club?\n\n" +
+            "Finding a club is an exclusive action.  If you choose\n" +
+            "to find a club, any declared attacks will be cancelled,\n" +
             "and you may declare no further attacks.\n\n" +
             "Pressing 'Yes' will confirm, and end your turn.";
         if (!client.doYesNoDialog(title, body)) {
             return;
         }
-
+		
         attacks.removeAllElements();
-        attacks.addElement(new SpotAction(cen));
-
+        attacks.addElement(new FindClubAction(cen));
+        
         ready();
     }
-
+  
     /**
      * Removes all current fire
      */
@@ -669,7 +591,6 @@ public class FiringDisplay
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-        ash.lockLocation(false);
     }
     
     /**
@@ -702,16 +623,14 @@ public class FiringDisplay
      */
     void target(Targetable t) {
         this.target = t;
-        ash.setAimingMode();
         updateTarget();
-        ash.showDialog();
     }
     
     /**
      * Targets something
      */
     protected void updateTarget() {
-        setFireEnabled(false);
+        butFire.setEnabled(false);
         
         // make sure we're showing the current entity in the mech display
         if (ce() != null && !ce().equals(client.mechD.getCurrentEntity())) {
@@ -721,44 +640,28 @@ public class FiringDisplay
         // update target panel
         final int weaponId = client.mechD.wPan.getSelectedWeaponNum();
         if (target != null && weaponId != -1) {
-            ToHitData toHit;
-            if (ash.inAimingMode()) {
-            Mounted weapon = (Mounted) ce().getEquipment(weaponId);
-              boolean aiming = ash.isAimingAtLocation() && 
-                      ash.allowAimedShotWith(weapon);
-              ash.setEnableAll(aiming);
-              if (aiming) {
-                toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, ash.getAimingAt(), ash.getAimingMode());
-                client.mechD.wPan.wTargetR.setText(target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
-              } else {
-                toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
-                client.mechD.wPan.wTargetR.setText(target.getDisplayName());
-              }
-              ash.setPartialCover(toHit.getHitTable() == ToHitData.HIT_PUNCH);
-            } else {
-              toHit = Compute.toHitWeapon(client.game, cen, target, weaponId, Mech.LOC_NONE, AIM_MODE_NONE);
-              client.mechD.wPan.wTargetR.setText(target.getDisplayName());
-            }
+            ToHitData toHit = Compute.toHitWeapon(client.game, cen, target, weaponId);
+            client.mechD.wPan.wTargetR.setText(target.getDisplayName());
             client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()));
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 client.mechD.wPan.wToHitR.setText("Already fired");
-                setFireEnabled(false);
+                butFire.setEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 client.mechD.wPan.wToHitR.setText("Auto-firing weapon");
-                setFireEnabled(false);
+                butFire.setEnabled(false);
             } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
-                setFireEnabled(false);
+                butFire.setEnabled(false);
             } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
-                setFireEnabled(true);
+                butFire.setEnabled(true);
             } else {
                 client.mechD.wPan.wToHitR.setText(toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
-                setFireEnabled(true);
+                butFire.setEnabled(true);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());
-            setSkipEnabled(true);
+            butSkip.setEnabled(true);
         } else {
             client.mechD.wPan.wTargetR.setText("---");
             client.mechD.wPan.wRangeR.setText("---");
@@ -799,23 +702,18 @@ public class FiringDisplay
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
         }
-    // control pressed means a line of sight check.
-    // added ALT_MASK by kenn
-    if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
-      return;
-    }
         // check for shifty goodness
         if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
         
-        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() == b.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
             client.game.board.cursor(b.getCoords());
-        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+        } else if (b.getType() == b.BOARD_HEX_CLICKED) {
             twisting = false;
             client.game.board.select(b.getCoords());
         }
@@ -823,14 +721,11 @@ public class FiringDisplay
     
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire");
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
-            } else if (friendlyFire && client.game.getFirstEntity(b.getCoords()) != null) { 
+            } else if (client.game.getFirstEntity(b.getCoords()) != null) {
                 target(client.game.getFirstEntity(b.getCoords()));
-            } else if ( client.game.getFirstEnemyEntity(b.getCoords(), ce()) != null) {
-                target(client.game.getFirstEnemyEntity(b.getCoords(), ce()));
             }
         }
     }
@@ -839,23 +734,23 @@ public class FiringDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
-        if(client.game.getPhase() == Game.PHASE_FIRING) {
+        if(client.game.phase == Game.PHASE_FIRING) {
             endMyTurn();
             
             if(client.isMyTurn()) {
                 beginMyTurn();
-                setStatusBarText("It's your turn to fire.");
+                labStatus.setText("It's your turn to fire.");
             } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
+                labStatus.setText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
             }
         }
     }
     public void gamePhaseChange(GameEvent ev) {
-        if(client.isMyTurn() && client.game.getPhase() != Game.PHASE_FIRING) {
+        if(client.isMyTurn() && client.game.phase != Game.PHASE_FIRING) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if(client.game.getPhase() !=  Game.PHASE_FIRING) {
+        if(client.game.phase !=  Game.PHASE_FIRING) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.mechD.wPan.weaponList.removeItemListener(this);
@@ -870,54 +765,43 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             return;
         }
         
         if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getActionCommand().equals(FIRE_REPORT)) {
+        } else if (ev.getSource() == butReport) {
             new MiniReportDisplay(client.frame, client.eotr).show();
             return;
-        } else if (ev.getActionCommand().equalsIgnoreCase("viewGameOptions")) {
-            // Make sure the game options dialog is not editable.
-            if ( client.getGameOptionsDialog().isEditable() ) {
-                client.getGameOptionsDialog().setEditable( false );
-            }
-            // Display the game options dialog.
-            client.getGameOptionsDialog().update(client.game.getOptions());
-            client.getGameOptionsDialog().show();
-        } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
+        } else if (ev.getSource() == butFire) {
             fire();
-        } else if (ev.getActionCommand().equals(FIRE_SKIP)) {
+        } else if (ev.getSource() == butSkip) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(FIRE_TWIST)) {
+        } else if (ev.getSource() == butTwist) {
             twisting = true;
-        } else if (ev.getActionCommand().equals(FIRE_NEXT)) {
+        } else if (ev.getSource() == butNext) {
             selectEntity(client.getNextEntityNum(cen));
-        } else if (ev.getActionCommand().equals(FIRE_MORE)) {
+        } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-        } else if (ev.getActionCommand().equals(FIRE_FIND_CLUB)) {
+        } else if (ev.getSource() == butFindClub) {
             findClub();
-        } else if (ev.getActionCommand().equals(FIRE_SPOT)) {
-            doSpot();
-        } else if (ev.getActionCommand().equals(FIRE_NEXT_TARG)) {
-            jumpToNextTarget();
-        } else if (ev.getActionCommand().equals(FIRE_FLIP_ARMS)) {
-            updateFlipArms(!ce().getArmsFlipped());
+        } else if (ev.getSource() == butNextTarg) {
+          jumpToNextTarget();
+        } else if (ev.getSource() == butFlipArms) {
+          updateFlipArms(!ce().getArmsFlipped());
         // Fire Mode - More Fire Mode button handling - Rasia
-        } else if (ev.getActionCommand().equals(FIRE_MODE)) {
+        } else if (ev.getSource() == butFireMode) {
             changeMode();
-        } else if (ev.getActionCommand().equals(FIRE_CANCEL)) {
-            clearAttacks();
-            client.game.board.select(null);
-            client.game.board.cursor(null);
-            refreshAll();
         }
     }
     
@@ -936,55 +820,18 @@ public class FiringDisplay
       updateTarget();
       refreshAll();
     }
-
-	private void setFireEnabled(boolean enabled) {
-		butFire.setEnabled(enabled);
-        client.getMenuBar().setFireFireEnabled(enabled);
-	}
-	private void setTwistEnabled(boolean enabled) {
-		butTwist.setEnabled(enabled);
-        client.getMenuBar().setFireTwistEnabled(enabled);
-	}
-	private void setSkipEnabled(boolean enabled) {
-		butSkip.setEnabled(enabled);
-        client.getMenuBar().setFireSkipEnabled(enabled);
-	}
-	private void setFindClubEnabled(boolean enabled) {
-		butFindClub.setEnabled(enabled);
-        client.getMenuBar().setFireFindClubEnabled(enabled);
-	}
-	private void setNextTargetEnabled(boolean enabled) {
-		butNextTarg.setEnabled(enabled);
-        client.getMenuBar().setFireNextTargetEnabled(enabled);
-	}
-	private void setFlipArmsEnabled(boolean enabled) {
-		butFlipArms.setEnabled(enabled);
-        client.getMenuBar().setFireFlipArmsEnabled(enabled);
-	}
-	private void setSpotEnabled(boolean enabled) {
-		butSpot.setEnabled(enabled);
-        client.getMenuBar().setFireSpotEnabled(enabled);
-	}
-	private void setFireModeEnabled(boolean enabled) {
-		butFireMode.setEnabled(enabled);
-        client.getMenuBar().setFireModeEnabled(enabled);
-	}
-	private void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
-        client.getMenuBar().setFireNextEnabled(enabled);
-	}
     
     //
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if (ev.getKeyCode() == ev.VK_ESCAPE) {
             clearAttacks();
             client.game.board.select(null);
             client.game.board.cursor(null);
             refreshAll();
         }
-        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
+        if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 //
             }
@@ -996,10 +843,10 @@ public class FiringDisplay
                 torsoTwist(client.game.board.lastCursor);
             }
         }
-/*        if (ev.getKeyCode() == KeyEvent.VK_M) {
+        if (ev.getKeyCode() == ev.VK_M) {
             changeMode(); 
         }
-*/  }
+    }
     public void keyReleased(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;
@@ -1018,284 +865,5 @@ public class FiringDisplay
             updateTarget();
         }
     }
-    
-    // board view listener 
-	public void finishedMovingUnits(BoardViewEvent b) {
-		if (client.isMyTurn() && ce() != null) {
-	        client.setDisplayVisible(true);
-			client.bv.centerOnHex(ce().getPosition());
-		}
-	}
-    public void selectUnit(BoardViewEvent b) {
-    	Entity e = client.game.getEntity(b.getEntityId());
-    	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
-	            selectEntity(e.getId());
-    		}
-    	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
-            	client.bv.centerOnHex(e.getPosition());
-    		}
-    	}
-    }
-
-  private class AimedShotHandler implements ActionListener, ItemListener {  
-    private int aimingAt = Mech.LOC_NONE;
-    private int aimingMode = AIM_MODE_NONE;
-    private boolean partialCover = false;
-
-    private boolean lockedLocation = false;
-    private int lockedLoc = Mech.LOC_NONE;
-    private Targetable lockedTarget = null;
-
-    private AimedShotDialog asd;
-
-    public AimedShotHandler() {
-    }
-
-    public void showDialog() {
-      if (asd != null) {
-        int oldAimingMode = aimingMode;
-        closeDialog();
-        aimingMode = oldAimingMode;
-      }
-
-      if (inAimingMode()) {
-        String[] options;
-
-        if (target instanceof BipedMech) {
-          options = BipedMech.LOCATION_NAMES;
-        } else {
-          options = QuadMech.LOCATION_NAMES;
-        }
-        boolean[] enabled = createEnabledMask(options.length);
-
-        if (aimingMode == AIM_MODE_IMMOBILE) {
-          aimingAt = Mech.LOC_HEAD;
-        } else if (aimingMode == AIM_MODE_TARG_COMP) {
-          aimingAt = Mech.LOC_CT;
-        }
-        if (lockedLocation) {
-          aimingAt = lockedLoc;
-        }
-        asd = new AimedShotDialog(client.frame,
-                      "Aimed shot",
-                      "Aim at:",
-                      options,
-                      enabled,
-                      aimingAt,
-                      lockedLocation,
-                      this,
-                      this);
-
-        asd.show();
-        updateTarget();
-      }
-    }
-
-    private boolean[] createEnabledMask(int length) {
-      boolean[] mask = new boolean[length];
-
-      for (int i = 0; i < length; i++) {
-        mask[i] = true;
-      }
-
-      // Can't target legs if target  has partial cover.
-      if (partialCover) {
-        mask[Mech.LOC_RLEG] = false;
-        mask[Mech.LOC_LLEG] = false;
-      }
-
-      if (aimingMode == AIM_MODE_TARG_COMP) {
-        // Can't target head with Clan targeting computer.
-        mask[Mech.LOC_HEAD] = false;
-
-        int side = Compute.targetSideTable(ce(), target);
-
-        switch (side) {
-          case (ToHitData.SIDE_RIGHT) :
-          // Can't target left side when on the right
-          // with Clan targeting computer.
-          mask[Mech.LOC_LARM] = false;
-          mask[Mech.LOC_LT] = false;
-          mask[Mech.LOC_LLEG] = false;
-          break;
-          case (ToHitData.SIDE_LEFT) :
-          // Can't target right side when on the left
-          // with Clan targeting computer.
-          mask[Mech.LOC_RARM] = false;
-          mask[Mech.LOC_RT] = false;
-          mask[Mech.LOC_RLEG] = false;
-          break;
-        }
-      }
-      return mask;
-    }
-
-    public void closeDialog() {
-      if (asd != null) {
-        aimingAt = Mech.LOC_NONE;
-        aimingMode = AIM_MODE_NONE;
-        asd.hide();
-        asd = null;
-        updateTarget();
-      }
-    }
-
-    // Enables the radiobuttons in the dialog.    
-    public void setEnableAll(boolean enableAll) {
-      if (asd != null && !lockedLocation) {
-        asd.setEnableAll(enableAll);
-      }
-    }
-
-    // All aimed shots with a targeting computer
-    // must be at the same location.
-    public void lockLocation(boolean lock) {
-      if (lock) {
-        lockedTarget = target;
-        lockedLoc = aimingAt;
-        setEnableAll(false);
-        lockedLocation = true;
-      } else {
-        lockedTarget = null;
-        lockedLoc = Mech.LOC_NONE;
-        lockedLocation = false;
-        setEnableAll(true);
-      }
-    }
-
-    public void setPartialCover(boolean partialCover) {
-      this.partialCover = partialCover;
-    }
-
-    public int getAimingAt() {
-      return aimingAt;
-    }
-
-    public int getAimingMode() {
-      return aimingMode;
-    }
-
-    // Returns the name of aimed location.
-    public String getAimingLocation() {
-      if ((aimingAt != Mech.LOC_NONE) && (aimingMode != AIM_MODE_NONE)) {
-        if (target != null && target instanceof BipedMech) {
-          return BipedMech.LOCATION_NAMES[aimingAt];
-        } else if (target != null && target instanceof BipedMech){
-          return QuadMech.LOCATION_NAMES[aimingAt];
-        }
-      }
-      return null;
-    }
-
-    // Sets the aiming mode, depending on the target and
-    // the attacker. Against immobile mechs, targeting
-    // computer aiming mode will not be used.
-    public void setAimingMode() {
-      boolean allowAim;
-      allowAim = ((target != null) && target.isImmobile() && target instanceof Mech);
-      if (allowAim) {
-        aimingMode = AIM_MODE_IMMOBILE;
-        return;
-      }
-      allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
-      if (allowAim) {
-        if (lockedLocation) {
-          allowAim = ((Entity)target).equals((Entity)lockedTarget);
-          if (allowAim) {
-            aimingMode = AIM_MODE_TARG_COMP;
-            return;
-          }
-        } else {
-          aimingMode = AIM_MODE_TARG_COMP;
-          return;
-        }
-      }
-      aimingMode = AIM_MODE_NONE;
-    }
-
-    // If in aiming mode.
-    public boolean inAimingMode() {
-      return aimingMode != AIM_MODE_NONE;
-    }
-
-    // If a hit location is currently selected.
-    public boolean isAimingAtLocation() {
-      return aimingAt != Mech.LOC_NONE;
-    }
-
-    // Determines if a certain weapon may aimed at a specific
-    // hit location.
-      public boolean allowAimedShotWith(Mounted weapon) {
-      WeaponType wtype = (WeaponType)weapon.getType();
-      boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-      boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-        wtype.getAmmoType() != AmmoType.T_BA_MG &&
-        wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-      !isWeaponInfantry;
-      Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-      AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
-
-      switch (aimingMode) {
-        case (AIM_MODE_NONE) :
-        return false;
-        case (AIM_MODE_IMMOBILE) :
-        if (atype != null) {
-            switch (atype.getAmmoType()) {
-              case (AmmoType.T_SRM_STREAK) :
-              case (AmmoType.T_LRM) :
-              case (AmmoType.T_LRM_TORPEDO) :
-              case (AmmoType.T_SRM) :
-              case (AmmoType.T_SRM_TORPEDO) :
-              case (AmmoType.T_MRM) :
-              case (AmmoType.T_NARC) :
-              case (AmmoType.T_AMS) :
-              case (AmmoType.T_ARROW_IV) :
-              case (AmmoType.T_LONG_TOM) :
-              case (AmmoType.T_SNIPER) :
-              case (AmmoType.T_THUMPER) :
-              case (AmmoType.T_SRM_ADVANCED) :
-              case (AmmoType.T_BA_INFERNO) :
-              case (AmmoType.T_LRM_TORPEDO_COMBO) :
-              case (AmmoType.T_ATM) :
-              return false;
-            }
-            switch (atype.getMunitionType()) {
-              case (AmmoType.M_CLUSTER):
-              return false;
-            }
-          }
-          break;
-          case (AIM_MODE_TARG_COMP) :
-          if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-            return false;
-          }
-          if ((atype != null) && 
-            (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
-            return false;
-          }
-          break;
-        }
-        return true;
-      }
-
-    // ActionListener, listens to the button in the dialog.
-    public void actionPerformed(ActionEvent ev) {
-      closeDialog();
-    }
-
-    // ItemListener, listens to the radiobuttons in the dialog.
-    public void itemStateChanged(ItemEvent ev) {
-      IndexedCheckbox icb = (IndexedCheckbox) ev.getSource();
-      aimingAt = icb.getIndex();
-      updateTarget();
-    }
-  }
 }
+

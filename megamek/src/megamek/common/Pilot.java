@@ -14,10 +14,7 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
+import java.io.*;
 
 public class Pilot
     implements Serializable
@@ -35,8 +32,6 @@ public class Pilot
     private int rollsNeeded; // how many KO rolls needed this turn
     private boolean koThisRound; // did I go KO this game round?
     
-    private PilotOptions options = new PilotOptions();
-
     
     public Pilot() {
         this("Unnamed", 4, 5);
@@ -51,8 +46,6 @@ public class Pilot
         dead = false;
         rollsNeeded = 0;
         koThisRound = false;
-        
-        options.initialize();
     }
   
     public String getName() {
@@ -129,102 +122,6 @@ public class Pilot
         this.koThisRound = koThisRound;
     }
     
-    public void setOptions(PilotOptions options) { 
-      this.options = options; 
-    }
-    
-    public PilotOptions getOptions() { 
-      return options; 
-    }
-
-    public void clearAdvantages() {
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              option.clearValue();
-          }
-      }
-      
-    }
-    
-    public int countAdvantages() {
-      int count = 0;
-      
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-          OptionGroup group = (OptionGroup)i.nextElement();
-          
-          if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-            continue;
-            
-          for (Enumeration j = group.options(); j.hasMoreElements();) {
-              GameOption option = (GameOption)j.nextElement();
-              
-              if ( option.booleanValue() )
-                count++;
-          }
-      }
-      
-      return count;
-    }
-    
-    public String getAdvantageList(String sep) {
-      StringBuffer adv = new StringBuffer();
-      
-      if (null == sep) {
-        sep = "";
-      }
-      
-      for (Enumeration i = options.groups(); i.hasMoreElements();) {
-        OptionGroup group = (OptionGroup)i.nextElement();
-        
-        if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
-          continue;
-          
-        for (Enumeration j = group.options(); j.hasMoreElements();) {
-          GameOption option = (GameOption)j.nextElement();
-          
-          if ( option.booleanValue() ) {
-            if ( adv.length() > 0 ) {
-              adv.append(sep);
-            }
-            
-            adv.append(option.getShortName());
-            if (option.getType() == GameOption.STRING ||
-                option.getType() == GameOption.CHOICE) {
-                adv.append(" ").append(option.stringValue());
-            }
-          }
-        }
-      }
-      
-      return adv.toString();
-    }
-
-    // Helper function to reverse getAdvantageList() above
-    public static String parseAdvantageName(String s) {
-        s = s.trim();
-        int index = s.indexOf(" ");
-        if (index == -1)
-            index = s.length();
-        return s.substring(0,index);
-    }
-
-    // Helper function to reverse getAdvantageList() above
-    public static Object parseAdvantageValue(String s) {
-        s = s.trim();
-        int index = s.indexOf(" ");
-        if (index == -1)
-            return new Boolean(true);
-        else
-            return s.substring(index + 1,s.length());
-    }
-    
     public String getDesc() {
         String s = new String(name);
         if (hits > 0) {
@@ -256,7 +153,7 @@ public class Pilot
      */
     public double getBVSkillMultiplier() {
         double multiplier = 1.0;
-
+        
         if (gunnery < 4) {
             multiplier += 0.20 * (4 - gunnery);
         } else {
@@ -264,7 +161,7 @@ public class Pilot
         }
         
         multiplier += 0.05 * (5 - piloting);
-
+         
         return multiplier;
     }
 }

@@ -514,9 +514,6 @@ super * "smoke:1" "" "boring/smoke.gif"
 super * "fire:1" "" "boring/fire.gif"
 super * "fire:2" "" "boring/fire.gif"
 
-#super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
-#super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif"
-
 base 0 "" "" "boring/beige_plains_0.gif"
 base 1 "" "" "boring/beige_plains_1.gif"
 base 2 "" "" "boring/beige_plains_2.gif"

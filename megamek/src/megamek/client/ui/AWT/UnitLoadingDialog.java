@@ -57,11 +57,8 @@ public class UnitLoadingDialog extends Dialog {
         add(lZipCount);
 
         setSize(250,130);
-		// move to middle of screen
-		Dimension screenSize = frame.getToolkit().getScreenSize();
-        setLocation(
-            screenSize.width / 2 - getSize().width / 2,
-            screenSize.height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
     }
     
     public void incrementCacheCount() {

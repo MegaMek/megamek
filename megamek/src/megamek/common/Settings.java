@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -38,30 +38,12 @@ public class Settings
     public static int       displaySizeWidth        = 235;
     public static int       displaySizeHeight       = 370;
     
-    public static int       rulerPosX             = 0;
-    public static int       rulerPosY             = 0;
-    public static int       rulerSizeWidth        = 350;
-    public static int       rulerSizeHeight       = 240;
-    public static Color     rulerColor1           = Color.cyan;
-    public static Color     rulerColor2           = Color.magenta;
-
-    public static int       minimumSizeWidth        = 120;
-    public static int       minimumSizeHeight       = 200;
-
     public static boolean   autoEndFiring           = true;
 
     public static boolean   nagForMASC              = true;
-    public static boolean   nagForPSR               = true;
-    public static boolean   nagForNoAction          = false;
-    
-    public static boolean   showMoveStep            = true;
-    public static int       moveStepDelay           = 500;
-    public static boolean   showWrecks              = true;
     
     public static String    lastPlayerName          = "";
-    public static int       lastPlayerColor         = 0;
-    public static String    lastPlayerCamoName      = null;
-    public static String    lastPlayerCategory      = "";
+    public static int       lastPlayerColor;
     
     public static String    lastServerPass          = "";
     public static int       lastServerPort          = 2346;
@@ -80,49 +62,7 @@ public class Settings
     public static String    mapTileset              = "defaulthexset.txt";
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
-
-    public static boolean   soundMute               = false;
-
-    // I *intentionally* use a hardcoded "/" instead of File.separator.
-    // (a) I'm defining an "abstract pathname" that generates a URI, so it
-    //          works on systems which have "\" as File.separator.
-    // (b) Having "\" in the pathname **does not work**; for reasons that
-    //          are *not* obvious to me, the "\" disappears from the
-    //          MegaMek.cfg setting after repeated saves.
-    public static String    soundBingFilename       = "data/sounds/call.wav";
-
-    /**
-     * The player wants to track memory use. Setting this to <code>true</code>
-     * will cause the client to dump a snapshot of memory usage to the log
-     * file at the beginning of selected phases of each turn.  Very useful
-     * in performance analysis.
-     * 
-     * @see     megamek.client.Client#changePhase(int)
-     * @see     megamek.client.Client#memDump(String)
-     */
-    public static boolean   memoryDumpOn            = false;
     
-    /**
-     * Controls whether the hex info popup is shown when the mouse hovers over the main map
-     * 
-     * @see     megamek.client.BoardView1
-     */
-    public static boolean   showMapHexPopup          = true;
-
-    /**
-     * Controls whether the hex info popup is shown when the mouse hovers over the main map
-     * 
-     * @see     megamek.client.BoardView1
-     */
-    public static int       tooltipDelay             = 1000;
-
-    /**
-     * The MegaMek-standard "newline" string is that of Windows.  Basically,
-     * apps written for *nix or MacOS will know how to read Windows newlines,
-     * but Windows apps are (usually) unable to read *nix or MacOS newlines.
-     */
-    public static final String NL = "\r\n";
-
     private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
             "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
             
@@ -204,28 +144,6 @@ scan:
                         st.nextToken();
                         displaySizeHeight = (int)st.nval;
                     }
-                    else if(key.equals("rulerpos")) {
-                        st.nextToken();
-                        rulerPosX = (int)st.nval;
-                        st.nextToken();
-                        rulerPosY = (int)st.nval;
-                    }
-                    else if(key.equals("rulersize")) {
-                        st.nextToken();
-                        rulerSizeWidth = (int)st.nval;
-                        st.nextToken();
-                        rulerSizeHeight = (int)st.nval;
-                    }
-                    else if(key.equals("rulercolors")) {
-                        rulerColor1 = loadColor(st, rulerColor1);
-                        rulerColor2 = loadColor(st, rulerColor2);
-                    }
-                    else if(key.equals("minimumdialogsize")) {
-                        st.nextToken();
-                        minimumSizeWidth = (int)st.nval;
-                        st.nextToken();
-                        minimumSizeHeight = (int)st.nval;
-                    }
                     else if (key.equals("autoendfiring")) {
                         st.nextToken();
                         autoEndFiring = Boolean.valueOf(st.sval).booleanValue();
@@ -233,14 +151,6 @@ scan:
                     else if (key.equals("nagformasc")) {
                         st.nextToken();
                         nagForMASC = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if (key.equals("nagforpsr")) {
-                        st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if (key.equals("nagfornoaction")) {
-                        st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
                     }
                     else if(key.equals("playername")) {
                         st.nextToken();
@@ -292,38 +202,6 @@ scan:
                             thrown.printStackTrace();
                             mekHitLocLog = null;
                         }
-                    }
-                    else if ( key.equals("showmovestep")) {
-                        st.nextToken();
-                        showMoveStep = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("movestepdelay")) {
-                        st.nextToken();
-                        moveStepDelay = (int)st.nval;
-                    }
-                    else if(key.equals("showwrecks")) {
-                        st.nextToken();
-                        showWrecks = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("soundmute")) {
-                        st.nextToken();
-                        soundMute = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("soundbingfilename")) {
-                        st.nextToken();
-                        soundBingFilename = st.sval;
-                    }
-                    else if(key.equals("memorydumpon")) {
-                        st.nextToken();
-                        memoryDumpOn = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("showmaphexpopup")) {
-                        st.nextToken();
-                        showMapHexPopup = Boolean.valueOf(st.sval).booleanValue();
-                    }
-                    else if(key.equals("tooltipdelay")) {
-                        st.nextToken();
-                        tooltipDelay = (int)st.nval;
                     }
                 }
             }
@@ -379,13 +257,8 @@ scan:
             cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
-            cw.write("rulerpos " + rulerPosX + " " + rulerPosY + "\r\n");
-            cw.write("rulersize " + rulerSizeWidth + " " + rulerSizeHeight + "\r\n");
-            cw.write("rulercolors " + writeColor(rulerColor1) + " " + writeColor(rulerColor2) + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
-            cw.write("nagforpsr " + nagForPSR + "\r\n");
-            cw.write("nagfornoaction " + nagForNoAction + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
@@ -396,20 +269,12 @@ scan:
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
-            cw.write("showmovestep " + showMoveStep + "\r\n");
-            cw.write("movestepdelay " + moveStepDelay + "\r\n");
-            cw.write("showwrecks " + showWrecks + "\r\n");
-            cw.write("soundmute " + soundMute + "\r\n");
-            cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
-            cw.write("memorydumpon " + memoryDumpOn + "\r\n");
-            cw.write("minimumdialogsize " + minimumSizeWidth + " " + minimumSizeHeight + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();
                 cw.write("mekhitloclog \"" + mekHitLocLogName + "\"\r\n");
             }
-            cw.write("showmaphexpopup " + showMapHexPopup + "\r\n");
-            cw.write("tooltipdelay " + tooltipDelay + "\r\n");
+            
             cw.close();
         } catch(Exception e) {
             System.err.println(e.getMessage());

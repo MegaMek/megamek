@@ -29,22 +29,11 @@ Lot of people have contributed to the MegaMek project.
      Dirk Wilhelm <wayne07@users.sourceforge.net>
      David Smith <xylaan@users.sourceforge.net>
      David Taylor <dtaylor@swiftdsl.com.au>
-     Björn Olsson <nalleolsson@users.sourceforge.net>
-     Florian Stock <flolo@users.sourceforge.net>
-     Patrick Johnmeyer <pineconius@users.sourceforge.net>
-     Alexander Schoelling <schoelling@users.sourceforge.net>
-     Sebastian Brocks <beerockxs@users.sourceforge.net>
-     Robin D. Toll <neko128@users.sourceforge.net>
-
-  XML Parser:
-     Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
      Pierre Savard <xsurrealx@users.sourceforge.net>
      shockmilk <shockmilk@users.sourceforge.net>
-     Jan Ferdinand Rehse
-     Thomas "DarkViper" Wehner
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -52,11 +41,12 @@ Lot of people have contributed to the MegaMek project.
   Scenario Readme:
      Lee "T-Bolt" Smith
 
-  Mech, Vehicle, and Infantry Conversion and QA:
+  Mech Conversion:
      Hopalong
+
+  Vehicle Conversion:
      Martis Truesight
      Taerkar
-     coralbeach
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -80,17 +70,6 @@ Lot of people have contributed to the MegaMek project.
      <rakkasan@users.sourceforge.net>
      Blazindizzy
      Kurt Aronnax Kajal<kurt_kajal@users.sourceforge.net>
-     Martis Truesight <carpe_mortis@users.sourceforge.net>
-     Philip <rancherion@users.sourceforge.net>
-     Jeff Wrbelis <starcaptaintorc@users.sourceforge.net>
-     Fritz Ullmann <brandfuchs@users.sourceforge.net>
-     Brandon Robertson <majortom88@users.sourceforge.net>
-     James Lacy <freakboy2571@users.sourceforge.net>
-     Kolja Geldmacher <flashhawk2k@users.sourceforge.net>
-     Carlo Sta. Romana <marwynn@users.sourceforge.net>
-     Adam Lovatt <ekm@users.sourceforge.net>
-     Jan Hansen <felsen@users.sourceforge.net>
-     Brock Peterman <bh-21@users.sourceforge.net>
 
   And Of Course...
      FASA, WizKids and FanPro for creating and publishing the original game of 

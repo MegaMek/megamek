@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -15,18 +15,21 @@
 
 package megamek.server;
 
-import java.util.*;
-import megamek.common.*;
-
 import java.io.File;
 import java.io.FileInputStream;
-import megamek.client.ChatLounge;
-import megamek.common.options.GameOption;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.Enumeration;
+
+import megamek.common.*;
 
 public class ScenarioLoader 
 {
     private File m_scenFile;
     // copied from ChatLounge.java
+    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     private Vector m_vDamagePlans = new Vector();        
     
     public ScenarioLoader(File f)
@@ -120,7 +123,7 @@ public class ScenarioLoader
         // build the entities
         int nIndex = 0;
         for (int x = 0; x < players.length; x++) {
-            Entity[] entities = buildFactionEntities(p, players[x]);
+            Entity[] entities = buildFactionEntities(p, players[x].getName());
             for (int y = 0; y < entities.length; y++) {
                 entities[y].setOwner(players[x]);
                 entities[y].setId(nIndex++);
@@ -138,18 +141,13 @@ public class ScenarioLoader
   // Set up the teams (for initiative)
   setupTeams(g);
 
-        g.setPhase(Game.PHASE_STARTING_SCENARIO);
-        
-        g.setupRoundDeployment();
-        
+        g.phase = Game.PHASE_INITIATIVE;
         return g;
     }
     
-    private Entity[] buildFactionEntities(Properties p, Player player)
+    private Entity[] buildFactionEntities(Properties p, String sFaction)
         throws Exception
     {
-        String sFaction = player.getName();
-        
         Vector vEntities = new Vector();
         for (int i = 1; true; i++) {
             String s = p.getProperty("Unit_" + sFaction + "_" + i);
@@ -166,39 +164,6 @@ public class ScenarioLoader
                     int nBlocks = Integer.parseInt(s);
                     m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
                 }
-                
-                //Check for advantages
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
-                  if ( null != s ) {
-                    parseAdvantages(e, s);
-                  }
-                
-                //Check for deployment
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
-                  if ( null != s ) {
-                    int round = 0;
-                    
-                    try {
-                      round = Integer.parseInt(s);
-                    } catch ( Exception ex ) {
-                      throw new Exception("Bad deployment round setting (" + s + ") for unit " + sFaction + ":" + i);
-                    }
-                    
-                    if ( round < 0 ) {
-                      System.out.println("Deployment round setting of '" + round + "' for " + sFaction + ":" + i + " will be ignored and set to 0");
-                      round = 0;
-                    }
-                    
-                    if ( round > 0 ) {
-                      if ( player.getStartingPos() == 0 ) {
-                        throw new Exception("Can not combine a starting position of 'any' with delayed deployment.");
-                      }
-                      
-                      System.out.println(e.getDisplayName() + " will be deployed after round " + round);
-                      e.setDeployRound(round);
-                    }
-                  }
-                  
                 vEntities.addElement(e);
             }
         }        
@@ -230,23 +195,6 @@ public class ScenarioLoader
             e.printStackTrace();
             throw new Exception("Unparseable entity line: " + s + "\n   Unable to load mech: " + e.getMessage());
         }
-    }
-    
-    private void parseAdvantages(Entity entity, String adv) {
-      StringTokenizer st = new StringTokenizer(adv);
-      
-      while ( st.hasMoreTokens() ) {
-        String curAdv = st.nextToken();
-        
-        GameOption option = entity.getCrew().getOptions().getOption(curAdv);
-       
-        if ( null == option ) {
-          System.out.println("Ignoring invalid pilot advantage: " + curAdv);
-        } else {
-          System.out.println("Adding pilot advantage '" + curAdv + "' to " + entity.getDisplayName());
-          option.setValue(true);
-        }
-      }
     }
     
     private int findIndex(String[] sa, String s)
@@ -285,7 +233,7 @@ public class ScenarioLoader
                 s = "Any";
             }
             
-            int nDir = findIndex(ChatLounge.START_LOCATION_NAMES, s);
+            int nDir = findIndex(startNames, s);
             
             // if it's not set by now, make it any
             if (nDir == -1) {
@@ -304,21 +252,6 @@ public class ScenarioLoader
               }
               
             out[x].setTeam(team);
-
-            String minefields = p.getProperty("Minefields_" + out[x].getName());
-            if (minefields != null) {
-            	try {
-			        StringTokenizer mfs = new StringTokenizer(minefields, ",");
-			        out[x].setNbrMFConventional(Integer.parseInt(mfs.nextToken()));
-			        out[x].setNbrMFCommand(Integer.parseInt(mfs.nextToken()));
-			        out[x].setNbrMFVibra(Integer.parseInt(mfs.nextToken()));
-				} catch (Exception e) {
-			        out[x].setNbrMFConventional(0);
-			        out[x].setNbrMFCommand(0);
-			        out[x].setNbrMFVibra(0);
-			        System.err.println("Something wrong with " + out[x].getName() + "s minefields.");
-				}
-            }
         }
         
         return out;

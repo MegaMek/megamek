@@ -30,7 +30,7 @@ public class Settings
     public static String    lastPlayerName            = "";
     public static int        lastPlayerColor;
     
-    public static String    lastServerName            = "mek server";
+    public static String    lastServerPass            = "";
     public static int        lastServerPort            = 2346;
     
     public static String    lastConnectAddr            = "localhost";
@@ -84,7 +84,7 @@ scan:
                     }
                     if(key.equals("server")) {
                         st.nextToken();
-                        lastServerName = st.sval;
+                        lastServerPass = st.sval;
                         st.nextToken();
                         lastServerPort = (int)st.nval;
                     }
@@ -129,7 +129,7 @@ scan:
             cw.write("windowpos " + windowPosX + " " + windowPosY + "\r\n");
             cw.write("windowsize " + windowSizeWidth + " " + windowSizeHeight + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
-            cw.write("server " + "\"" + lastServerName + "\" " + lastServerPort + "\r\n");
+            cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");
             cw.write("maptext " + mapTextColor.getRed() + " " + mapTextColor.getGreen() + " " + mapTextColor.getBlue() + " " + "\r\n");
             

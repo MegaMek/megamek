@@ -32,13 +32,21 @@ public class ResetCommand extends ServerCommand {
 
     /** Creates new ResetCommand */
     public ResetCommand(Server server) {
-        super(server, "reset", "Resets the server back to the lobby.");
+        super(server, "reset", "Resets the server back to the lobby.  Usage: /reset <password>");
     }
 
     /**
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
+        if (!server.isPassworded() || (args.length > 1 && server.isPassword(args[1]))) {
+            reset(connId);
+        } else {
+            server.sendServerChat(connId, "The password is incorrect.  Usage: /reset <password>");
+        }
+    }
+    
+    private void reset(int connId) {
         server.sendServerChat(server.getPlayer(connId).getName() + " reset the server.");
         server.resetGame();
     }

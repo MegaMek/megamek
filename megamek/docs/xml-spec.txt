@@ -58,8 +58,8 @@ Drawing Board.
 <boardData> - Information about the current board.  Contains zero or more
         <hex> elements; the exact number of <hex> elements should be the
         product of the values of the width and height attributes of this
-        element.  The <hex> elements are presented by columns (i.e. hex
-        0101 is followed by hex 0102, and *not* hex 0201).
+        element.  The <hex> elements are presented by rows (i.e. hex
+        0101 is followed by hex 0201, and *not* hex 0102).
      The following attributes are defined for this element:
         width - required - the width of the board in hexes.  Any integer
                 between 0 and 8388607 is valid.  Expected values are between

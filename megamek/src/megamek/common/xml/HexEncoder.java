@@ -100,7 +100,95 @@ public class HexEncoder {
      *          contain a valid <code>Hex</code>.
      */
     public static Hex decode( ParsedXML node, Game game ) {
-        return null;
+        String attrStr = null;
+        int attrVal = 0;
+        Hex retVal = null;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The hex is null." );
+        }
+
+        // Make sure that the node is for a Hex object.
+        if ( !node.getName().equals( "hex" ) ) {
+            throw new IllegalStateException( "Not passed a hex node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Find the terrains node.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            if ( child.getName().equals( "terrains" ) ) {
+
+                // There should be only one terrains node.
+                if ( null != retVal ) {
+                    throw new IllegalStateException
+                        ( "More than one 'terrains' node in a hex node." );
+                }
+
+                // Create an array to hold all the terrains.
+                Terrain[] terrains = new Terrain[Terrain.SIZE];
+
+                // Walk through the subnodes, parsing out terrain nodes.
+                Enumeration subnodes = child.elements();
+                while ( subnodes.hasMoreElements() ) {
+
+                    // Is this a "terrain" node?
+                    ParsedXML subnode = (ParsedXML) subnodes.nextElement();
+                    if ( subnode.getName().equals( "terrain" ) ) {
+
+                        // Try to parse the terrain node.
+                        try {
+                            final int type = Integer.parseInt
+                                ( subnode.getAttribute( "type" ) );
+                            final boolean exitsSpecified = Boolean.getBoolean
+                                ( subnode.getAttribute( "exitsSpecified" ) );
+                            final int level = Integer.parseInt
+                                ( subnode.getAttribute( "level" ) );
+                            final int exits = Integer.parseInt
+                                ( subnode.getAttribute( "exits" ) );
+                            terrains[type] = new Terrain
+                                ( type, level, exitsSpecified, exits );
+                        }
+                        catch ( Throwable thrown ) {
+                            throw new IllegalStateException
+                                ( "Couldn't parse a terrain from a hex node." );
+                        }
+
+                    } // End found-"terrain"-node
+
+                } // Look at the next subnode.
+
+                // Get the elevation of the hex.
+                attrStr = child.getAttribute( "elevation" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the terrains for a hex node." );
+                }
+
+                // Try to pull the elevation from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Get the theme of the hex (if any).
+                attrStr = child.getAttribute( "theme" );
+
+                // Construct the hex.
+                retVal = new Hex( attrVal, terrains, attrStr );
+
+            } // End found-"terrains"-node
+
+        } // Look at the next child.
+
+        // Return the hex for this node.
+        return retVal;
     }
 
 }

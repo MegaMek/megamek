@@ -830,7 +830,7 @@ public class MovementDisplay
                     int toAttacker = 0;
                     if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
                         Entity te = (Entity) target;
-                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),te);
+                        toAttacker = ChargeAttackAction.getChargeDamageTakenBy(ce(),te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved());
                     }
                     else if ( target.getTargetType() ==
                               Targetable.TYPE_BUILDING ) {

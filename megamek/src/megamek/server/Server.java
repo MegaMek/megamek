@@ -7559,7 +7559,7 @@ implements Runnable, ConnectionHandler {
 
         // we hit...
         int damage = ChargeAttackAction.getChargeDamageFor(ae);
-        int damageTaken = ChargeAttackAction.getChargeDamageTakenBy(ae, te);
+        int damageTaken = ChargeAttackAction.getChargeDamageTakenBy(ae, te, game.getOptions().booleanOption("maxtech_charge_damage"));
         PilotingRollData chargePSR = null;
 
         // Is the target inside a building?

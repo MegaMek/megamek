@@ -393,19 +393,19 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     ToHitData toHita = new ToHitData();
     ToHitData toHitd = new ToHitData();
     
+    //it would seem that there was a bug here, pretty fundimental
     toHita.append(Compute.getAttackerMovementModifier(game, ae.getId()));
     this.offensive_mod = Compute.getAttackerMovementModifier(game, ae.getId()).getValue();
     toHita.append(Compute.getTargetMovementModifier(game, te.getId()));
-    toHita.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
-    this.offensive_mod += Compute.getAttackerTerrainModifier(game, ae.getId()).getValue();
     toHita.append(Compute.getTargetTerrainModifier(game, te.getId()));
+    
     toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
     toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
     this.defensive_mod = Compute.getTargetMovementModifier(game, ae.getId()).getValue();
-    toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
-    toHitd.append(Compute.getTargetTerrainModifier(game, ae.getId()));
-    this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
-    //Hex attackerHex = game.board.getHex(ae.getPosition());
+    if (!this.isPhysical) {
+      toHitd.append(Compute.getTargetTerrainModifier(game, ae.getId()));
+      this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
+    }
     Hex attHex = game.board.getHex(ae.getPosition());
     if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
       toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");

@@ -442,6 +442,7 @@ public class TestBot extends BotClientWrapper {
                 }
                 //these are always risky...
                 damage *= Math.pow(Compute.oddsAbove(toHit.getValue())/100, 2);
+                if (toHit.getValue() > 10) damage = 0;
                 option.damages[e] = damage;
                 option.min_damages[e] = damage;
                 option.damage = damage;

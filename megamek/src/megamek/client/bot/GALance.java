@@ -76,7 +76,7 @@ public class GALance extends GA {
       for(int m = 1; m < move_array.length; m++) {
         EntityState next = (EntityState)move_array[m];
         if (next.threats[e] > 0) {
-          if (next.threats[e] < .5*max.threats[e]) {
+          if (next.threats[e] < .25*max.threats[e]) {
             next.threats[e] = 0;
           } else {
             next.threats[e] = Math.pow(next.threats[e]/max.threats[e],2)*next.threats[e];
@@ -105,6 +105,49 @@ public class GALance extends GA {
         }
       }
     }
+    int difference = this.tb.NumEnemies - this.tb.NumFriends;
+    double distance_mod = 0;
+    //if outnumbered and loosing, clump together.
+    try {
+      int target_distance = Math.max(9 - difference, 1);
+      for(int m = 0; m < move_array.length; m++) {
+        EntityState next = (EntityState)move_array[m];
+        next.getUtility();
+        for(int j = 0; j < move_array.length; j++) {
+          EntityState other = (EntityState)move_array[j];
+          if (m != j) {
+            int distance = other.curPos.distance(next.curPos);
+            if (distance > target_distance) {
+              distance_mod += Math.pow(distance - target_distance, 2);
+            } else if (distance <= 3) {
+              boolean swarm = false;
+              CEntity target = null;
+              int target_index = 0;
+              for (int e = 0; e < enemy_array.length; e++) {
+                CEntity cen = tb.enemies.get((Entity)this.enemy_array[e]);
+                if (!cen.canMove()) {
+                  if ((cen.old.curPos.distance(next.curPos) == 1 && cen.old.curPos.distance(other.curPos) == 1)
+                    || (cen.old.curPos.distance(next.curPos) <= 3 && cen.old.curPos.distance(other.curPos) <= 3 && cen.old.isProne)  && !(next.inDanger || next.isProne)) {
+                    swarm = true;
+                    target = cen;
+                    target_index = e;
+                  }
+                }
+              }
+              if (swarm) {
+                if (target.entity.isProne()) {
+                  distance_mod -= target.bv/100;
+                }
+                distance_mod -= target.bv/50;
+                next.damages[target_index] *= 1.2;
+              }
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     int max_e = 0;
     double max = 0;
     //bonuses for endangering or dooming opponent mechs
@@ -127,54 +170,6 @@ public class GALance extends GA {
           max = damages[e];
         }
       }
-    }
-    int difference = this.tb.NumEnemies - this.tb.NumFriends;
-    double distance_mod = 0;
-    //if outnumbered and loosing, clump together.
-    try {
-      int target_distance = Math.max(9 - difference, 1);
-      for(int m = 0; m < move_array.length; m++) {
-        EntityState next = (EntityState)move_array[m];
-        next.getUtility();
-        for(int j = 0; j < move_array.length; j++) {
-          EntityState other = (EntityState)move_array[j];
-          if (m != j) {
-            int distance = other.curPos.distance(next.curPos);
-            if (distance > target_distance) {
-              distance_mod += Math.pow(distance - target_distance, 2);
-            } else if (distance <= 3) {
-              boolean swarm = false;
-              boolean physical_swarm = false;
-              CEntity target = null;
-              for (int e = 0; e < enemy_array.length; e++) {
-                CEntity cen = tb.enemies.get((Entity)this.enemy_array[e]);
-                if (!cen.canMove()) {
-                  if (cen.old.curPos.distance(next.curPos) <= 3 && cen.old.curPos.distance(other.curPos) <= 3
-                      && !(next.inDanger || next.isProne)) {
-                    swarm = true;
-                    target = cen;
-                    if (cen.old.curPos.distance(next.curPos) == 1 && cen.old.curPos.distance(other.curPos) == 1
-                      && !(next.Doomed)) {
-                      physical_swarm = true;
-                    }
-                  }
-                }
-              }
-              if (swarm) {
-                if (target.entity.isProne()) {
-                  distance_mod -= target.bv/150;
-                }
-                distance_mod -= target.bv/200;
-              }
-              if (physical_swarm) {
-                distance_mod -= target.bv/50;
-              }
-            }
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
     }
     distance_mod /= move_array.length*move_array.length;
     //less of a pull as you make moves

@@ -53,6 +53,9 @@ public abstract class UnitStatusFormatter
         sb.append("Pilot: ").append(e.crew.getName());
         sb.append(" (").append(e.crew.getGunnery()).append("/");
         sb.append(e.crew.getPiloting()).append(")\n");
+        if (e.isCaptured()) {
+            sb.append( "  *** CAPTURED BY THE ENEMY ***\n" );
+        }
         return sb.toString();
     }
 

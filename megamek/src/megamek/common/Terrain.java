@@ -37,20 +37,19 @@ implements Serializable {
     public static final int     WATER           = 4;
     public static final int     PAVEMENT        = 5;
     public static final int     ROAD            = 6;
-    public static final int     RIVER           = 7;
-    public static final int     FIRE            = 8;
-    public static final int     SMOKE           = 9; 
-    public static final int     SWAMP           = 10;
-    public static final int     BUILDING        = 11;
-    public static final int     BLDG_CF         = 12;
-    public static final int     BLDG_ELEV       = 13;
-    public static final int     BLDG_BASEMENT   = 14;
-    public static final int     BRIDGE          = 15;
-    public static final int     BRIDGE_CF       = 16;
-    public static final int     BRIDGE_ELEV     = 17;
+    public static final int     FIRE            = 7;
+    public static final int     SMOKE           = 8; 
+    public static final int     SWAMP           = 9; 
+    public static final int     BUILDING        = 10;
+    public static final int     BLDG_CF         = 11;
+    public static final int     BLDG_ELEV       = 12;
+    public static final int     BLDG_BASEMENT   = 13;
+    public static final int     BRIDGE          = 14;
+    public static final int     BRIDGE_CF       = 15;
+    public static final int     BRIDGE_ELEV     = 16;
     
     private static final String[] names = {"none", "woods", "rough", "rubble",
-    "water", "pavement", "road", "river", "fire", "smoke", "swamp",
+    "water", "pavement", "road", "fire", "smoke", "swamp",
     "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
     "bridge_elev"};
     

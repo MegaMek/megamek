@@ -527,44 +527,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.sendReady(!client.getLocalPlayer().isReady());
             refreshReadyButton();
         } else if (ev.getSource() == butLoad) {
-            // add (load) mech
-            FileDialog fd = new FileDialog(client.frame, 
-                                           "Select a .mep file...",
-                                           FileDialog.LOAD);
-            fd.setDirectory("data" + File.separator + "blk");
-            fd.show();
-            if (fd.getFile() == null) {
-                return;
-            }
-            
-            // access the file
-            File file = new File(fd.getDirectory(), fd.getFile());
-            if (!file.exists()) {
-                // error reading file
-                new AlertDialog(client.frame, "Open", "Error: could not read file or file not found.").show();
-                return;
-            }
-            
-            // read the file
-            Mech mech = null;
-            if (file.getName().toLowerCase().endsWith(".mep")) {
-//                System.out.println("trying mep file");
-                mech = new MepFile(file).getMech();
-            } else if (file.getName().toLowerCase().endsWith(".mtf")) {
-//                System.out.println("trying mtf file");
-                mech = new MtfFile(file).getMech();
-            } else if (file.getName().toLowerCase().endsWith(".blk")) {
-//                System.out.println("trying blk file");
-                mech = new BLKMechFile(file).getMech();
-            }
-
-            if (mech == null) {
-                // error making mech
-                new AlertDialog(client.frame, "Open", "Error: could not make mech from file (possibly not 3025.)").show();
-            } else {
-                mech.setOwner(client.getLocalPlayer());
-                client.sendAddEntity(mech);
-            }
+            client.getMechSelectorDialog().show();
         } else if (ev.getSource() == butCustom) {
             if (lisEntities.getSelectedIndex() != -1) {
                 Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);

@@ -1,5 +1,8 @@
 @echo off
 if "%JAVA_HOME%"=="" goto MicrosoftJRE
+rem Uncomment the next two lines to profile memory use.
+rem java -Xrunprof:depth=12 -jar MegaMek.jar
+rem goto done
 java -jar MegaMek.jar
 goto done
 

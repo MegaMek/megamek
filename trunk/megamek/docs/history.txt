@@ -71,6 +71,9 @@ VERSION HISTORY:
 ----------------
 v CVS
 + 642892: charging units don't move into the target's hex until resolution
++ Clearing fire now correctly clears flip arms.--LDE
++ Movement path colors now more colorblind friendly.--LDE
++ fix crash with C3i units
 
 v 0.27.8 (11-22-02, 11:41pm)
 + applied HentaiZonga's patch for C3, RAC unjamming and targetting hexes

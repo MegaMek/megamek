@@ -1595,7 +1595,10 @@ public class Client extends Panel
             dlgLoadList.setDirectory(".");
 
             // Default to the player's name.
-            dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
+            //dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
+            // Instead, use setFile as a windoze hack, see Server.java
+            //  (search for "setFile") for details.
+            dlgLoadList.setFile("*.mul");
         }
 
         // Display the "load unit" dialog.

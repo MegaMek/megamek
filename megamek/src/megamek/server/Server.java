@@ -8758,7 +8758,7 @@ implements Runnable, ConnectionHandler {
                           // Only ammo explosions in the CT are devastating.
                           desc.append( destroyEntity( te, "damage",
                                                       !ammoExplosion,
-                                                      !( ammoExplosion &&
+                                                      !( (ammoExplosion || areaSatArty) &&
                                                          hit.getLocation() ==
                                                          Mech.LOC_CT ) ) );
                           // If the head is destroyed, kill the crew.

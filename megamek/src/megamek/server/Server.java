@@ -847,6 +847,7 @@ implements Runnable {
             case Game.PHASE_LOUNGE :
                 mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
+                send(createMapSettingsPacket());
                 break;
             case Game.PHASE_INITIATIVE :
                 // remove the last traces of last round

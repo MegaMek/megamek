@@ -736,8 +736,14 @@ class WeaponPanel extends BufferedPanel
             wDamR.setText("Variable");
         } else if(wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
             wDamR.setText("Special");
+        } else if(wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
+            StringBuffer damage = new StringBuffer();
+            damage.append( Integer.toString(wtype.getRackSize()) )
+                .append( '/' )
+                .append( Integer.toString(wtype.getRackSize()/2) );
+            wDamR.setText( damage.toString() );
         } else {
-            wDamR.setText(new Integer(wtype.getDamage()).toString());
+            wDamR.setText( Integer.toString(wtype.getDamage()) );
         }
 
         // update range

@@ -2283,6 +2283,13 @@ implements Runnable {
                 break;
             }
             
+            // dropping prone intentionally?
+            if (step.getType() == MovementData.STEP_GO_PRONE) {
+                mpUsed = step.getMpUsed();
+                entity.setProne(true);
+                break;
+            }
+            
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             prevStep = step;

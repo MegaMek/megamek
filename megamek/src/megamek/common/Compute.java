@@ -340,8 +340,8 @@ public class Compute
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
         boolean isRunProhibited = false;
-	boolean isInfantry = (entity instanceof Infantry);
-	MovementData.Step prevStep = null;
+        boolean isInfantry = (entity instanceof Infantry);
+        MovementData.Step prevStep = null;
         boolean onlyPavement = false;   // Entire move on pavement or road
         boolean isPavementStep = false; // This step on pavement or road
 
@@ -385,14 +385,14 @@ public class Compute
 
             // 
             switch(step.getType()) {
-	    case MovementData.STEP_UNLOAD:
-		// TODO: Can immobilized transporters unload?
-	    case MovementData.STEP_LOAD:
-		stepMp = 1;
-		break;
+            case MovementData.STEP_UNLOAD:
+            // TODO: Can immobilized transporters unload?
+            case MovementData.STEP_LOAD:
+                stepMp = 1;
+                break;
             case MovementData.STEP_TURN_LEFT :
             case MovementData.STEP_TURN_RIGHT :
-		// Infantry can turn for free.
+                // Infantry can turn for free.
                 stepMp = (isJumping || hasJustStood || isInfantry) ? 0 : 1;
                 curFacing = MovementData.getAdjustedFacing(curFacing, step.getType());
                 break;
@@ -471,6 +471,9 @@ public class Compute
                 stepMp = entity.getWalkMP() == 1 ? 1 : 2;
                 hasJustStood = true;
                 break;
+            case MovementData.STEP_GO_PRONE :
+                stepMp = 1;
+                break;
             default :
                 stepMp = 0;
             }
@@ -539,10 +542,11 @@ public class Compute
         boolean danger = false;
         boolean pastDanger = false;
         boolean firstStep = true;
-	boolean isInfantry = (entity instanceof Infantry);
+        boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
-	boolean prevStepOnPavement = false;
+        boolean prevStepOnPavement = false;
+        boolean isProne = entity.isProne();
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -562,14 +566,14 @@ public class Compute
             // check for valid jump mp
             if (overallMoveType == Entity.MOVE_JUMP 
                 && step.getMpUsed() <= entity.getJumpMPWithTerrain()
-                && !entity.isProne()) {
+                && !isProne) {
                 moveType = Entity.MOVE_JUMP;
             }
             
             // check for valid walk/run mp
             if ( (overallMoveType == Entity.MOVE_WALK ||
                   overallMoveType == Entity.MOVE_RUN)
-                && (!entity.isProne() || md.contains(MovementData.STEP_GET_UP)
+                && (!isProne || md.contains(MovementData.STEP_GET_UP)
                     || stepType == MovementData.STEP_TURN_LEFT 
                     || stepType == MovementData.STEP_TURN_RIGHT)) {
 
@@ -630,6 +634,7 @@ public class Compute
                  || isUnloaded ) {
                 moveType = Entity.MOVE_ILLEGAL;
             }
+            
 
             // no legal moves past an illegal one
             if (moveType == Entity.MOVE_ILLEGAL) {
@@ -674,13 +679,20 @@ public class Compute
 
             firstStep = false;
 
-	    // Infantry can always move one hex in *any* direction.
-	    if ( isInfantry && step.getMpUsed() == 0 ) {
-		firstStep = true;
-	    }
+            // Infantry can always move one hex in *any* direction.
+            if ( isInfantry && step.getMpUsed() == 0 ) {
+                firstStep = true;
+            }
 
-	    // Record if the step just taken was along pavement or a road.
-	    prevStepOnPavement = step.isOnPavement();
+            // Record if the step just taken was along pavement or a road.
+            prevStepOnPavement = step.isOnPavement();
+            
+            // update prone state
+            if (stepType == MovementData.STEP_GO_PRONE) {
+                isProne = true;
+            } else if (stepType == MovementData.STEP_GET_UP) {
+                isProne = false;
+            }
         }
     }
     

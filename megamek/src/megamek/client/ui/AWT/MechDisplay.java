@@ -1534,7 +1534,8 @@ class ExtraPanel
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
             if ( !player.equals(clientgui.getClient().getLocalPlayer()) &&
-                 en.isNarcedBy( team ) ) {
+                 en.isNarcedBy( team ) &&
+                 !player.isObserver()) {
                 buff = new StringBuffer( "NARCed by " );
                 buff.append( player.getName() );
                 buff.append( " [" )

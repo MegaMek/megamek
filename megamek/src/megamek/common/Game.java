@@ -151,7 +151,7 @@ public class Game implements Serializable
   
     /**
      * Returns the number of entities owned by the player, regardless of
-     * their status.
+     * their status, as long as they are in the game.
      */
     public int getEntitiesOwnedBy(Player player) {
         int count = 0;

@@ -63,7 +63,7 @@ public class Client extends Panel
     public MiniMap		minimap;
     public PopupMenu            popup;
         
-    protected Panel             curPanel;
+    protected Component         curPanel;
     
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
@@ -358,6 +358,7 @@ public class Client extends Panel
             switchPanel(new ChatLounge(this));
             break;
         case Game.PHASE_EXCHANGE :
+            switchPanel(new Label("Transmitting game data..."));
             sendDone(true);
             break;
         case Game.PHASE_DEPLOYMENT :
@@ -386,7 +387,7 @@ public class Client extends Panel
         processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
     }
     
-    private void switchPanel(Panel panel) {
+    private void switchPanel(Component panel) {
         curPanel = panel;
         this.add(curPanel);
         curPanel.requestFocus();

@@ -265,12 +265,14 @@ public class Compute
      */
     public static boolean isMovementPossible(Game game, int entityId, 
                                              Coords src, Coords dest,
-                                             int entityMoveType,
-                                             int stepType, boolean firstStep) {
+                                             MoveStep step,
+                                             int entityMoveType) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final boolean isPavementStep = canMoveOnPavement( game, src, dest );
+        final int stepType = step.getType();
+        final boolean firstStep = step.isFirstStep();
         
         // arguments valid?
         if (entity == null) {
@@ -290,6 +292,13 @@ public class Compute
         }
         // another easy check
         if (!game.board.contains(dest)) {
+            return false;
+        }
+
+        // Can't back up across an elevation change.
+        if ( step.isThisStepBackwards() &&
+             entity.elevationOccupied(destHex) !=
+             entity.elevationOccupied(srcHex) ) {
             return false;
         }
 

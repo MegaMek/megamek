@@ -6,6 +6,7 @@ v 0.29.22 (CVS)
 + Bug 857284, Data 861076: Fixed Road Runner (and 10 and 15 ton Meks).
 + Data 872169, 872875: Added new mech images from majortom88.
 + Used splash screen submitted by freakboy2571.
++ Bug 874582: Can't back up across an elevation change.
 
 v 0.29.21 (2004-01-10 11:45am)
 + Patch 867652: cleaned up megamek-icon.gif

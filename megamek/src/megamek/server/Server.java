@@ -1685,7 +1685,7 @@ implements Runnable {
      */
     private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {
         // non-mechs should never get here
-        if (! (entity instanceof Mech)) {
+        if (! (entity instanceof Mech) || entity.isProne()) {
             return;
         }
         

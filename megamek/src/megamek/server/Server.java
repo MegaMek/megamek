@@ -2091,6 +2091,8 @@ implements Runnable {
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
+        /* Bug 754610: Revert fix for bug 702735. */
+        MovementData.Step prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             wasProne = entity.isProne();
@@ -2168,11 +2170,14 @@ implements Runnable {
             // Check for skid.
             // TODO: add check for elevation of pavement, road,
             //       or bridge matches entity elevation.
+            /* Bug 754610: Revert fix for bug 702735.
+               && ( prevHex.contains(Terrain.PAVEMENT) ||
+                    prevHex.contains(Terrain.ROAD) ||
+                    prevHex.contains(Terrain.BRIDGE) )
+            */
             if ( moveType != Entity.MOVE_JUMP
                  && prevHex != null
-                 && ( prevHex.contains(Terrain.PAVEMENT) ||
-                      prevHex.contains(Terrain.ROAD) ||
-                      prevHex.contains(Terrain.BRIDGE) )
+                 && prevStep.isOnPavement()
                  && overallMoveType == Entity.MOVE_RUN
                  && prevFacing != curFacing
                  && !lastPos.equals(curPos)
@@ -2796,9 +2801,13 @@ implements Runnable {
                 break;
             }
             
-            // update lastPos, prevFacing & prevHex
+            // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
+            prevStep = step;
+            /* Bug 754610: Revert fix for bug 702735.
             if (prevHex != null && !curHex.equals(prevHex)) {
+            */
+            if (!curHex.equals(prevHex)) {
                 prevFacing = curFacing;
             }
             prevHex = curHex;

@@ -479,6 +479,8 @@ public class Compute
         boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
+        /* Bug 754610: Revert fix for bug 702735. */
+        boolean prevStepOnPavement = false;
         boolean isProne = entity.isProne();
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
@@ -601,7 +603,11 @@ public class Compute
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
                                              curPos, moveType,
+                                             isTurning, overallMoveType,
+                                             prevStepOnPavement );
+            /* Bug 754610: Revert fix for bug 702735.
                                              isTurning, overallMoveType );
+            */
 
             // getting up is also danger
             if (stepType == MovementData.STEP_GET_UP) {
@@ -633,6 +639,11 @@ public class Compute
             }
 
             firstStep = false;
+ 
+                                          
+            /* Bug 754610: Revert fix for bug 702735. */
+            // Record if the step just taken was along pavement or a road.
+            prevStepOnPavement = step.isOnPavement();
 
             // Infantry can always move one hex in *any* direction.
             if ( isInfantry && step.getMpUsed() == 0 ) {
@@ -1077,7 +1088,11 @@ public class Compute
                                                 Coords src, Coords dest,
                                                 int movementType,
 						boolean isTurning,
+						int overallMoveType,
+                                                boolean prevStepIsOnPavement) {
+            /* Bug 754610: Revert fix for bug 702735.
 						int overallMoveType) {
+            */
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
@@ -1116,9 +1131,12 @@ public class Compute
         // current step, but starts from the previous step's location.
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
+        /* Bug 754610: Revert fix for bug 702735.
         if ( ( srcHex.contains(Terrain.PAVEMENT) ||
                srcHex.contains(Terrain.ROAD) ||
                srcHex.contains(Terrain.BRIDGE) ) 
+        */
+        if ( prevStepIsOnPavement
              && overallMoveType == Entity.MOVE_RUN
              && isTurning
              && !isInfantry ) {

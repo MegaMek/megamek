@@ -60,8 +60,7 @@ public class Coords
 	 * the parameter.
 	 */
 	public Coords(Coords c) {
-		this.x = c.x;
-		this.y = c.y;
+		this(c.x, c.y);
 	}
 	
 	/**
@@ -108,25 +107,21 @@ public class Coords
 	 */
 	public int direction(Coords d) {
 		int dir = degree(d);
-		if(dir > 330 || dir < 30) {
+		if (dir > 330 || dir < 30) {
 			return 0;
-		}
-		if(dir >= 30 && dir < 90) {
+		} else if (dir >= 30 && dir < 90) {
 			return 1;
-		}
-		if(dir >= 90 && dir <= 150) {
+		} else if (dir >= 90 && dir <= 150) {
 			return 2;
-		}
-		if(dir > 150 && dir < 210) {
+		} else if (dir > 150 && dir < 210) {
 			return 3;
-		}
-		if(dir >= 210 && dir <= 270) {
+		} else if (dir >= 210 && dir <= 270) {
 			return 4;
-		}
-		if(dir > 270 && dir < 330) {
+		} else if (dir > 270 && dir < 330) {
 			return 5;
-		}
-		return 0;
+        } else {
+            return 0;
+        }
 	}
 	
 	/**
@@ -139,26 +134,24 @@ public class Coords
 	 */
 	public int direction1(Coords d) {
 		int deltaX, deltaY;
-		if(x < d.x) {
-			if(y < d.y || (y == d.y && !isXOdd())) {
+		if (x < d.x) {
+			if (y < d.y || (y == d.y && !isXOdd())) {
 				return 2;
 			} else {
 				return 1;
 			}
-		} else {
-			if(x == d.x) {
-				if(y < d.y) {
-					return 3;
-				} else {
-					return 0;
-				}
+		} else if (x == d.x) {
+			if (y < d.y) {
+				return 3;
 			} else {
-				// x > d.x
-				if(y < d.y || (y == d.y && !isXOdd())) {
-					return 4;
-				} else {
-					return 5;
-				}
+				return 0;
+			}
+		} else {
+			// x > d.x
+			if (y < d.y || (y == d.y && !isXOdd())) {
+				return 4;
+			} else {
+				return 5;
 			}
 		}
 	}
@@ -171,15 +164,12 @@ public class Coords
 	 * @param d the destination coordinate.
 	 */
 	public double radian(Coords d) {
-		double hf = 1 / Math.cos(Math.PI / 6);
+        final IdealHex src = new IdealHex(this);
+        final IdealHex dst = new IdealHex(d);
 		
-		double ox = x * (hf * 1.5) + hf;
-		double oy = y * 2 + ((x & 1) == 1 ? 2 : 1);
-		double dx = d.x * (hf * 1.5) + hf;
-		double dy = d.y * 2 + ((d.x & 1) == 1 ? 2 : 1);
-		
-		double r = Math.atan((double)(dx - ox) / (double)(oy - dy));
-		if (oy < dy) {
+		double r = Math.atan((double)(dst.cx - src.cx) / (double)(src.cy - dst.cy));
+        // flip if we're upside down
+		if (src.cy < dst.cy) {
 			r = (r + Math.PI) % (Math.PI * 2 );
 		}
 		// account for negative angles
@@ -218,23 +208,27 @@ public class Coords
 			ym = c.y - ymax;
 		}
 		return xd + ym;
-		/* 
-		// my old formula: what's wrong?
+	}
+	
+	/**
+	 * Returns the distance to another coordinate.
+	 * 
+	 * My old, inaccurate formula (what's wrong?)
+	 */
+	public int distance1(Coords c) {
 		int dx, dy, xf;
 		dx = Math.abs(this.x - c.x);
 		dy = Math.abs(this.y - c.y);
 		xf = (dx / 2) + (isXOdd() == c.isXOdd() ? 0 : 1);
-		if(dy < xf) {
+		if (dy < xf) {
 			return dx;
 		} else {
 			return dx + dy - xf;
 		}
-		*/
-	}
-	
+    }
+    
 	/**
-	 * Returns a string representing a coordinate in "board
-	 * number" format.
+	 * Returns a string representing a coordinate in "board number" format.
 	 */
 	public String getBoardNum() {
         StringBuffer num = new StringBuffer();

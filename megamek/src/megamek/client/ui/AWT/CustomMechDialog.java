@@ -58,6 +58,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Label labDeployment = new Label("Deployment Round: ", Label.RIGHT);
     private Choice choDeployment = new Choice();
     
+    private Label labOffBoard = new Label("Deploy Offboard?", Label.RIGHT);
+    private Checkbox chOffBoard = new Checkbox();
+    private Label labOffBoardDirection = new Label("Offboard Direction:", Label.RIGHT);
+    private Choice choOffBoardDirection = new Choice();
+    private Label labOffBoardDistance = new Label("Offboard Distance in hexes:", Label.RIGHT);
+    private TextField fldOffBoardDistance = new TextField(2);
+    
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
@@ -170,6 +177,52 @@ extends Dialog implements ActionListener, DialogOptionListener {
           add(choC3);
           refreshC3();
         }
+        boolean eligibleForOffBoard = false;
+        for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                eligibleForOffBoard = true;
+            }
+        }
+        if (eligibleForOffBoard) {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labOffBoard, c);
+            add(labOffBoard);
+          
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(chOffBoard, c);
+            add(chOffBoard);
+            chOffBoard.setState(entity.isOffBoard());
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labOffBoardDirection, c);
+            add(labOffBoardDirection);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(choOffBoardDirection, c);
+            choOffBoardDirection.add("North");
+            choOffBoardDirection.add("South");
+            choOffBoardDirection.add("East");
+            choOffBoardDirection.add("West");
+            add(choOffBoardDirection);
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labOffBoardDistance, c);
+            add(labOffBoardDistance);
+
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldOffBoardDistance, c);
+            fldOffBoardDistance.setText(Integer.toString(entity.getOffBoardDistance()));
+            add(fldOffBoardDistance);
+        }
 
         if ( entity instanceof Protomech )
         {
@@ -246,6 +299,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
             disableMunitionEditing();
+            chOffBoard.setEnabled(false);
+            choOffBoardDirection.setEnabled(false);
+            fldOffBoardDistance.setEnabled(false);
         }
         
         addWindowListener(new WindowAdapter() {
@@ -735,11 +791,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
             String name = fldName.getText();
             int gunnery;
             int piloting;
+            int offBoardDistance;
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
+                offBoardDistance = Integer.parseInt(fldOffBoardDistance.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
+                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for skill values and off-board distance.").show();
                 return;
             }
             
@@ -748,9 +806,17 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 new AlertDialog(clientgui.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
                 return;
             }
-            
+            if (offBoardDistance < 17) {
+                new AlertDialog(clientgui.frame, "Number Format Error", "Offboard units need to be at least one mapsheet (17 hexes) away.").show();
+                return;
+            }
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
+            entity.setOffBoard(chOffBoard.getState());
+            entity.setDeployed(chOffBoard.getState());
+            entity.setOffBoardDistance(offBoardDistance);
+            entity.setOffBoardDirection(choOffBoardDirection.getSelectedIndex());
+            refreshOffBoard();
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 Entity chosen = client.getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );
@@ -810,4 +876,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
         this.setVisible(false);
     }
     
+    private void refreshOffBoard() {
+        if (entity.isOffBoard()) {
+            choOffBoardDirection.setEnabled(true);
+            fldOffBoardDistance.setEnabled(true);
+        }
+    }
 }

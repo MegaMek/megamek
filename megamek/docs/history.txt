@@ -25,6 +25,8 @@ v0.29.72 (CVS)
 + Bug 1023852: duplicate entries in gamelog.txt when playing against bot.
 + Patch 1174580, Bug 1174465: crew dies during movement, after that, unecessary
      PSRs.
++ Bug 1152126: More mixed-tech codes added to HMP parser and HMPread.
++ Bug 1152127: HMPread fix for mixed-tech chassis name.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

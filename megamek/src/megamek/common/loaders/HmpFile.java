@@ -766,6 +766,9 @@ public class HmpFile
     isCriticals.put(new Long(0xB4), "CLAntiMissileSystem");
     isCriticals.put(new Long(0xB5), "CLGaussRifle");
     isCriticals.put(new Long(0xB6), "CLLBXAC2");
+    isCriticals.put(new Long(0xB7), "CLLBXAC5");
+    isCriticals.put(new Long(0xB8), "CLLBXAC10");
+    isCriticals.put(new Long(0xB9), "CLLBXAC20");
 
     isCriticals.put(new Long(0xBA), "CLMG");
     isCriticals.put(new Long(0xBB), "CLUltraAC2");
@@ -1310,8 +1313,17 @@ public class HmpFile
         sb.append( "Config:" ).append( chassisType );
 	sb.append( nl );
         sb.append( "TechBase:" ).append( techType );
-        if (techType == TechType.MIXED)
-            sb.append( " (" ).append( mixedBaseTechType ).append( " Chassis)" );
+        if (techType == TechType.MIXED) {
+            sb.append( " (" );
+            if (mixedBaseTechType == TechType.INNER_SPHERE) {
+                //MtfFile expects abbreviated form of Inner Sphere if
+                // mixed tech is involved.
+                sb.append( "IS" );
+            } else {
+                sb.append( mixedBaseTechType );
+            }
+            sb.append( " Chassis)" );
+        }
         sb.append( nl );
 	sb.append( "Era:" ).append( year ).append( nl );
 	sb.append( "Rules Level:" ).append( rulesLevel );

@@ -59,4 +59,10 @@ public class DistractableAdapter implements Distractable, Serializable {
         this.isDistracted = distracted;
     }
 
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+    }
+
 }

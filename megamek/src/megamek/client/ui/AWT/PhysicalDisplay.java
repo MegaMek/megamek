@@ -44,7 +44,7 @@ public class PhysicalDisplay
     private Button            butBrush;
     private Button            butThrash;
     
-    private Button            butSpace;
+    private Button            butReport;
    
     private Button            butNext;
     private Button            butDone;
@@ -97,8 +97,9 @@ public class PhysicalDisplay
         butThrash.addActionListener(this);
         butThrash.setEnabled(false);
 
-        butSpace = new Button(".");
-        butSpace.setEnabled(false);
+        butReport = new Button("Report..");
+        butReport.addActionListener(this);
+        butReport.setEnabled(true);
         
         butDone = new Button("Done");
         butDone.addActionListener(this);
@@ -162,14 +163,14 @@ public class PhysicalDisplay
             panButtons.add(butPunch);
             panButtons.add(butKick);
             panButtons.add(butNext);
-            panButtons.add(butPush);
+            panButtons.add(butReport);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butBrush);
             panButtons.add(butThrash);
-            panButtons.add(butNext);
+            panButtons.add(butPush);
             panButtons.add(butClub);
             panButtons.add(butMore);
             panButtons.add(butDone);
@@ -742,6 +743,8 @@ public class PhysicalDisplay
         }
         if (ev.getSource() == butDone) {
             ready();
+        } else if (ev.getSource() == butReport) {
+            new MiniReportDisplay(client.frame, client.eotr).show(); 
         } else if (ev.getSource() == butPunch) {
             punch();
         } else if (ev.getSource() == butKick) {

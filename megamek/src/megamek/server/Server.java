@@ -3180,8 +3180,9 @@ implements Runnable {
         // figure out # of shots for variable-shot weapons
         if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
             nShots = 2;
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
-                   wtype.getInternalName().equals("BAMineLauncher") ) {
+        } else if ( wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
+                    wtype.getInternalName()
+                    .equals(BattleArmor.MINE_LAUNCHER) ) {
             if (weapon.curMode().equals("2-shot")) {
                 nShots = 2;
             } else if (weapon.curMode().equals("3-shot")) {
@@ -3416,7 +3417,7 @@ implements Runnable {
 
         // Magnetic Mine Launchers roll number of hits on battle armor
         // hits table but use # mines firing instead of men shooting.
-        else if ( wtype.getInternalName().equals("BAMineLauncher") ) {
+        else if ( wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER) ) {
             hits = Compute.getBattleArmorHits( nShots );
             bSalvo = true;
             sSalvoType = " mine(s) ";
@@ -3791,7 +3792,8 @@ implements Runnable {
 
                 // Mine Launchers automatically hit the
                 // CT of a Mech or the front of a Tank.
-                if ( wtype.getInternalName().equals("BAMineLauncher") ) {
+                if ( wtype.getInternalName()
+                     .equals(BattleArmor.MINE_LAUNCHER) ) {
                     if ( target instanceof Mech ) {
                         hit = new HitData( Mech.LOC_CT );
                     }

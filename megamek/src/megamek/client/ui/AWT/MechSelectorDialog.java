@@ -31,7 +31,7 @@ import megamek.common.*;
  */
 
 public class MechSelectorDialog 
-    extends Dialog implements ActionListener, ItemListener, KeyListener
+    extends Dialog implements ActionListener, ItemListener, KeyListener, Runnable
 {
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
@@ -41,6 +41,7 @@ public class MechSelectorDialog
     
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
+    private Dialog waitDialog;
         
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
@@ -61,11 +62,12 @@ public class MechSelectorDialog
     private TextArea m_mechViewLeft = new TextArea("",18,24,TextArea.SCROLLBARS_HORIZONTAL_ONLY);
     private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
-    
-    public MechSelectorDialog(Client cl)
+
+    public MechSelectorDialog(Client cl, Dialog wD)
     {
         super(cl.frame, "Select Mech...", true);
         m_client = cl;
+        waitDialog = wD;
         
         for (int x = 0; x < m_saSorts.length; x++) {
             m_chSort.addItem(m_saSorts[x]);
@@ -109,7 +111,14 @@ public class MechSelectorDialog
         setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
                     m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
         populateChoices();
+    }
+
+    public void run() {
+        // Loading mechs can take a while, so it will have its own thread.
+        // This prevents the UI from freezing, and allows the
+        // "Please wait..." dialog to behave properly on various Java VMs.
         filterMechs();
+        waitDialog.setVisible(false);
     }
     
     
@@ -151,7 +160,7 @@ public class MechSelectorDialog
         }
         int nType = m_chType.getSelectedIndex();
         String sUnitType = m_chUnitType.getSelectedItem();
-        MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
+        MechSummary[] mechs = MechSummaryCache.getInstance(waitDialog).getAllMechs();
         if ( mechs == null ) {
             System.err.println( "No units to filter!" );
             return;

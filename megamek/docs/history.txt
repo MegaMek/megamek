@@ -122,6 +122,8 @@ v 0.29.5-dev (CVS)
 + RFE 775704, Data 775984: Added starcaptaintorc's images.
 + Bug 776084: target partial cover now counts in indirect fire
 + Patch 726073: Applied bobthdull's updated patch for underwater rules
++ Bug 776522: Meks missing a leg should have a run MP of 1, not 2.
++ Bug 755001: Passengers with ECM should still affect enemy electronics.
 
 v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).

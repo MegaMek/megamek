@@ -1772,207 +1772,219 @@ public class Compute
     	Entity spotter = null;
     	ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
     	
-		for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-			Entity other = (Entity)i.nextElement();
-			if (!other.isSpotting() || attacker.isEnemyOf(other)) {
-				continue; // useless to us...
-			}
-			// what are this guy's mods to the attack?
-			LosEffects los = calculateLos(game, other.getId(), target);
-			ToHitData mods = losModifiers(los);
-			los.setTargetCover(false);
-			mods.append(getAttackerMovementModifier(game, other.getId()));
-			// is this guy a better spotter?
-			if (true || mods.getValue() < bestMods.getValue()) {
-				spotter = other;
-				bestMods = mods;
-			}
-		}
+        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity other = (Entity)i.nextElement();
+            if (!other.isSpotting() || attacker.isEnemyOf(other)) {
+                continue; // useless to us...
+            }
+            // what are this guy's mods to the attack?
+            LosEffects los = calculateLos(game, other.getId(), target);
+            ToHitData mods = losModifiers(los);
+            los.setTargetCover(false);
+            mods.append(getAttackerMovementModifier(game, other.getId()));
+            // is this guy a better spotter?
+            if (true || mods.getValue() < bestMods.getValue()) {
+                spotter = other;
+                bestMods = mods;
+            }
+        }
 		
-		return spotter;
+        return spotter;
     }
 	
-	private static ToHitData getImmobileMod(Targetable target) {
-		if (target.isImmobile()) {
+    private static ToHitData getImmobileMod(Targetable target) {
+        if (target.isImmobile()) {
             return new ToHitData(-4, "target immobile");
         } else {
-			return null;
+            return null;
         }
-	}
+    }
 
-	/**
-	 * Determines the to-hit modifier due to range for an attack with the 
-	 * specified parameters. Includes minimum range, infantry 0-range 
-	 * mods, and target stealth mods.  Accounts for friendly C3 units.
-	 * 
-	 * @return the modifiers
-	 */
-	private static ToHitData getRangeMods(Game game, Entity ae, int weaponId, Targetable target) {
-		Mounted weapon = ae.getEquipment(weaponId);
-		WeaponType wtype = (WeaponType)weapon.getType();
-		int[] weaponRanges = wtype.getRanges();
-		boolean isWeaponInfantry = (ae instanceof Infantry);
-		boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
-		boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
-			&& weapon.curMode().equals("Indirect");
+    /**
+     * Determines the to-hit modifier due to range for an attack with the 
+     * specified parameters. Includes minimum range, infantry 0-range 
+     * mods, and target stealth mods.  Accounts for friendly C3 units.
+     * 
+     * @return the modifiers
+     */
+    private static ToHitData getRangeMods(Game game, Entity ae, int weaponId, Targetable target) {
+        Mounted weapon = ae.getEquipment(weaponId);
+        WeaponType wtype = (WeaponType)weapon.getType();
+        int[] weaponRanges = wtype.getRanges();
+        boolean isAttackerInfantry = (ae instanceof Infantry);
+        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
+        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+            && weapon.curMode().equals("Indirect");
 		
-		ToHitData mods = new ToHitData();
+        ToHitData mods = new ToHitData();
 		
-		// modify the ranges for ATM missile systems based on the ammo selected
-		// TODO: this is not the right place to hardcode these
-		if (wtype.getAmmoType() == AmmoType.T_ATM) {
-			AmmoType atype = (AmmoType)weapon.getLinked().getType();
-			if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-				weaponRanges = new int[] {4, 9, 18, 27};
-			}
-			else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-				weaponRanges = new int[] {0, 3, 6, 9};
-			}
-		}
+        // modify the ranges for ATM missile systems based on the ammo selected
+        // TODO: this is not the right place to hardcode these
+        if (wtype.getAmmoType() == AmmoType.T_ATM) {
+            AmmoType atype = (AmmoType)weapon.getLinked().getType();
+            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                weaponRanges = new int[] {4, 9, 18, 27};
+            }
+            else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                weaponRanges = new int[] {0, 3, 6, 9};
+            }
+        }
 
-		//is water involved?
-		Hex attHex = game.board.getHex(ae.getPosition());
-		Hex targHex = game.board.getHex(target.getPosition());
-		int targEl;
-		if (target == null) {
-			targEl = game.board.getHex(target.getPosition()).floor();
-		} else {
+        //is water involved?
+        Hex attHex = game.board.getHex(ae.getPosition());
+        Hex targHex = game.board.getHex(target.getPosition());
+        int targEl;
+        if (target == null) {
+            targEl = game.board.getHex(target.getPosition()).floor();
+        } else {
 
-			targEl = target.absHeight();
-		}
+            targEl = target.absHeight();
+        }
 
-		if (ae.getLocationStatus(weapon.getLocation()) == ae.LOC_WET) {
-			weaponRanges = wtype.getWRanges(); //HACK on ranges: for those without underwater range, long == medium; iteration in rangeBracket() allows this
-			if (weaponRanges[RANGE_SHORT] == 0) {return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon cannot fire underwater."); }
-			if (!(targHex.contains(Terrain.WATER)) || targHex.surface() <= target.getElevation()) { //target on land or over water
-				return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon underwater, but not target.");
-			}
-		} else if (targHex.contains(Terrain.WATER) && targHex.surface() > targEl) { //target completely underwater, weapon not
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater, but not weapon.");
-		}
+        if (ae.getLocationStatus(weapon.getLocation()) == ae.LOC_WET) {
+            weaponRanges = wtype.getWRanges();
+            //HACK on ranges: for those without underwater range,
+            // long == medium; iteration in rangeBracket() allows this
+            if (weaponRanges[RANGE_SHORT] == 0) {
+                return new ToHitData(ToHitData.IMPOSSIBLE,
+                                     "Weapon cannot fire underwater."); 
+            }
+            if (!(targHex.contains(Terrain.WATER)) ||
+                targHex.surface() <= target.getElevation()) {
+                //target on land or over water
+                return new ToHitData(ToHitData.IMPOSSIBLE,
+                                     "Weapon underwater, but not target.");
+            }
+        } else if (targHex.contains(Terrain.WATER) &&
+                   targHex.surface() > targEl) {
+            //target completely underwater, weapon not
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Target underwater, but not weapon.");
+        }
 
-		// determine base distance & range bracket
-		int distance = effectiveDistance(game, ae, target);
-		int range = rangeBracket(distance, weaponRanges);
+        // determine base distance & range bracket
+        int distance = effectiveDistance(game, ae, target);
+        int range = rangeBracket(distance, weaponRanges);
         
-		// short circuit if at zero range or out of range
-		if (range == RANGE_OUT_OF) {
-			return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
-		}
-		if (distance == 0 && !isWeaponInfantry) {
-			return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
-		}
+        // short circuit if at zero range or out of range
+        if (range == RANGE_OUT_OF) {
+            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
+        }
+        if (distance == 0 && !isAttackerInfantry) {
+            return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
+        }
 
-		// find any c3 spotters that could help
-		Entity c3spotter = findC3Spotter(game, ae, target);
-		if (isIndirect) {
-			c3spotter = ae; // no c3 when using indirect fire
-		}
-		int c3dist = effectiveDistance(game, c3spotter, target);
-		int c3range = rangeBracket(c3dist, weaponRanges);
+        // find any c3 spotters that could help
+        Entity c3spotter = findC3Spotter(game, ae, target);
+        if (isIndirect) {
+            c3spotter = ae; // no c3 when using indirect fire
+        }
+        int c3dist = effectiveDistance(game, c3spotter, target);
+        int c3range = rangeBracket(c3dist, weaponRanges);
 		
-		// determine which range we're using
-		int usingRange = Math.min(range, c3range);
+        // determine which range we're using
+        int usingRange = Math.min(range, c3range);
          
-		// add range modifier
-		if (usingRange == range) {
-			// no c3 adjustment
-			if (range == RANGE_MEDIUM) {
-				mods.addModifier(2, "medium range");
-			}
-			else if (range == RANGE_LONG) {
-				mods.addModifier(4, "long range");
-			}
-		}
-		else {
-			// report c3 adjustment
-			if (c3range == RANGE_SHORT) {
-				mods.addModifier(0, "short range due to C3 spotter");
-			}
-			else if (c3range == RANGE_MEDIUM) {
-				mods.addModifier(2, "medium range due to C3 spotter");
-			}
-		}
+        // add range modifier
+        if (usingRange == range) {
+            // no c3 adjustment
+            if (range == RANGE_MEDIUM) {
+                mods.addModifier(2, "medium range");
+            }
+            else if (range == RANGE_LONG) {
+                mods.addModifier(4, "long range");
+            }
+        }
+        else {
+            // report c3 adjustment
+            if (c3range == RANGE_SHORT) {
+                mods.addModifier(0, "short range due to C3 spotter");
+            }
+            else if (c3range == RANGE_MEDIUM) {
+                mods.addModifier(2, "medium range due to C3 spotter");
+            }
+        }
         
-		// add infantry LRM maximum range penalty
-		if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
-			mods.addModifier(1, "infantry LRM maximum range");
-		}
+        // add infantry LRM maximum range penalty
+        if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
+            mods.addModifier(1, "infantry LRM maximum range");
+        }
         
-		// add infantry zero-range modifier
-		// TODO: this is not the right place to hardcode these
-		if (isWeaponInfantry && distance == 0) {
-			// Infantry platoons attacking with infantry weapons can attack
-			// in the same hex with a base of 2, except for flamers and
-			// SRMs, which have a base of 3 and LRMs, which suffer badly.
-			if (wtype.hasFlag(WeaponType.F_FLAMER)) {
-				mods.addModifier(-1, "infantry flamer assault");
-			} else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
-				mods.addModifier(-1, "infantry SRM assault");
-			} else if (wtype.getAmmoType() != AmmoType.T_LRM) {
-				mods.addModifier(-2, "infantry assault");
-			}
-		}
+        // add infantry zero-range modifier
+        // TODO: this is not the right place to hardcode these
+        if (isWeaponInfantry && distance == 0) {
+            // Infantry platoons attacking with infantry weapons can attack
+            // in the same hex with a base of 2, except for flamers and
+            // SRMs, which have a base of 3 and LRMs, which suffer badly.
+            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
+                mods.addModifier(-1, "infantry flamer assault");
+            } else if (wtype.getAmmoType() == AmmoType.T_SRM ) {
+                mods.addModifier(-1, "infantry SRM assault");
+            } else if (wtype.getAmmoType() != AmmoType.T_LRM) {
+                mods.addModifier(-2, "infantry assault");
+            }
+        }
         
-		// add minumum range modifier
-		int minRange = weaponRanges[RANGE_MINIMUM];
-		if (minRange > 0 && distance <= minRange) {
-			int minPenalty = (minRange - distance) + 1;
-			// Infantry LRMs suffer double minimum range penalties.
-			if (isLRMInfantry) {
-				mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
-			} else {
-				mods.addModifier(minPenalty, "minumum range");
-			}
-		}
+        // add minumum range modifier
+        int minRange = weaponRanges[RANGE_MINIMUM];
+        if (minRange > 0 && distance <= minRange) {
+            int minPenalty = (minRange - distance) + 1;
+            // Infantry LRMs suffer double minimum range penalties.
+            if (isLRMInfantry) {
+                mods.addModifier(minPenalty * 2, "infantry LRM minumum range");
+            } else {
+                mods.addModifier(minPenalty, "minumum range");
+            }
+        }
         
-		// add any target stealth modifier
-		if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
-			mods.append(((Entity)target).getStealthModifier(usingRange));
-		}
+        // add any target stealth modifier
+        if ((target instanceof Entity) && ((Entity)target).isStealthActive()) {
+            mods.append(((Entity)target).getStealthModifier(usingRange));
+        }
 
-		return mods;
-	}
+        return mods;
+    }
 	
-	/**
-	 * Finds the effective distance between an attacker and a target.
-	 * Includes the distance bonus if the attacker and target are in the
-	 * same building and on different levels.
-	 * 
-	 * @return the effective distance
-	 */
-	public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
-		int distance = attacker.getPosition().distance(target.getPosition());
+    /**
+     * Finds the effective distance between an attacker and a target.
+     * Includes the distance bonus if the attacker and target are in the
+     * same building and on different levels.
+     * 
+     * @return the effective distance
+     */
+    public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
+        int distance = attacker.getPosition().distance(target.getPosition());
 		
-		// If the attack is completely inside a building, add the difference
-		// in elevations between the attacker and target to the range.
-		// TODO: should the player be explcitly notified?
-		if ( isInSameBuilding(game, attacker, target) ) {
-			int aElev = attacker.getElevation();
-			int tElev = target.getElevation();
-			distance += Math.abs(aElev - tElev);
-		}
+        // If the attack is completely inside a building, add the difference
+        // in elevations between the attacker and target to the range.
+        // TODO: should the player be explcitly notified?
+        if ( isInSameBuilding(game, attacker, target) ) {
+            int aElev = attacker.getElevation();
+            int tElev = target.getElevation();
+            distance += Math.abs(aElev - tElev);
+        }
 
-		return distance;
-	}
+        return distance;
+    }
 
-	/**
-	 * Returns the range bracket a distance falls into.
-	 */
-	public static int rangeBracket(int distance, int[] ranges) {
-		if (null == ranges || distance > ranges[RANGE_LONG]) {
-			return RANGE_OUT_OF;
-		}
-		else if (distance > ranges[RANGE_MEDIUM]) {
-			return RANGE_LONG;
-		}
-		else if (distance > ranges[RANGE_SHORT]) {
-			return RANGE_MEDIUM;
-		}
-		else {
-			return RANGE_SHORT;
-		}
-	}
+    /**
+     * Returns the range bracket a distance falls into.
+     */
+    public static int rangeBracket(int distance, int[] ranges) {
+        if (null == ranges || distance > ranges[RANGE_LONG]) {
+            return RANGE_OUT_OF;
+        }
+        else if (distance > ranges[RANGE_MEDIUM]) {
+            return RANGE_LONG;
+        }
+        else if (distance > ranges[RANGE_SHORT]) {
+            return RANGE_MEDIUM;
+        }
+        else {
+            return RANGE_SHORT;
+        }
+    }
 
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
@@ -4995,11 +5007,25 @@ public class Compute
         Vector vECMRanges = new Vector(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements(); ) {
             Entity ent = (Entity)e.nextElement();
-            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && ent.getPosition() != null) {
+            Coords entPos = ent.getPosition();
+            if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(ent.getPosition());
+                vEnemyCoords.addElement( entPos );
                 vECMRanges.addElement( new Integer(ent.getECMRange()) );
             }
+
+            // Check the ECM effects of the entity's passengers.
+            Vector passengers = ent.getLoadedUnits();
+            Enumeration iter = passengers.elements();
+            while ( iter.hasMoreElements() ) {
+                Entity other = (Entity) iter.nextElement();
+                if (other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null) {
+                    // TODO : only use the best ECM range in a given Coords.
+                    vEnemyCoords.addElement( entPos );
+                    vECMRanges.addElement( new Integer(other.getECMRange()) );
+                }
+            }
+
         }
         
         // none?  get out of here

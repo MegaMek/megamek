@@ -1096,6 +1096,11 @@ public class Compute
         // check LOS
         LosEffects los = calculateLos(game, attackerId, targetId);
         ToHitData losMods = losModifiers(los);
+        
+        // if LOS is blocked, block the shot
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+            return losMods;
+        }
 
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
@@ -1171,13 +1176,8 @@ public class Compute
             }
         }
 
-        
-        // if LOS is blocked, return that.  otherwise, just add them in
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
-            return losMods;
-        } else {
-            toHit.append(losMods);
-        }
+        // add in LOS mods that we've been keeping
+        toHit.append(losMods);
         
         // secondary targets modifier...
         int primaryTarget = Entity.NONE;
@@ -2824,7 +2824,7 @@ public class Compute
     public static boolean canSee(Game game, Entity ae, Entity te)
     {
         LosEffects los = calculateLos(game, ae.getId(), te.getId());
-        return los.blocked || los.lightWoods + ((los.heavyWoods + los.smoke) * 2) > 3;
+        return !los.blocked && los.lightWoods + ((los.heavyWoods + los.smoke) * 2) < 3;
     }
     
     /**

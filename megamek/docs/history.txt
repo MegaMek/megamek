@@ -85,6 +85,11 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ scenarios now use new bot
++ formatting fixed in push-off-board notice
++ 583692: duplicate physical attacks prevented
+
 v 0.26.8 (07-26-02, 2:30pm)
 + Can now host a game from a user-editable scenario file
 + surviving and dead mechs listed in victory screen

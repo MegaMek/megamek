@@ -103,7 +103,6 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("woods_burn_down", "Woods have a chance to burn down", "If checked, woods will burn down as if cleared on a roll of 11+.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("vehicles_safe_from_infernos", "Vehicles may not be the target of an Inferno missile attack.", "If checked, Vehicles cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("protos_safe_from_infernos", "Protomechs may not be the target of an Inferno missile attack.", "If checked, Protomechs cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
-        addOption(ruleBreakers, new GameOption("check_leg_breaches", "Check for Leg breaches in Level 1 water", "If checked, a Mek standing in Level 1 water will check for hull breaches (which is **against** the rules on page 94 of the BMRr).\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("lobby_ammo_dump", "Allow Ammo Dumping in the Lobby", "If checked, Players may dump their Mech's ammo before the game starts.\n\nUnchecked by default.", false));
     }
 

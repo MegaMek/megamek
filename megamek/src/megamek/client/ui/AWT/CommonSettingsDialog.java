@@ -52,6 +52,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
+    
+    private static final int MIN_Y_LOCATION = 10;
 
     /**
      * Standard constructor.  There is no default constructor for this class.
@@ -239,8 +241,11 @@ public class CommonSettingsDialog extends Dialog implements ActionListener, Item
         Dimension screenSize = owner.getToolkit().getScreenSize();
         setSize(Math.min(tempPanel.getSize().width+50,screenSize.width), Math.min(tempPanel.getSize().height+100,screenSize.height));
 
-        setLocation(owner.getLocation().x + owner.getSize().width/2 - getSize().width/2,
-                    owner.getLocation().y + owner.getSize().height/2 - getSize().height/2);
+        int yLoc = owner.getLocation().y + owner.getSize().height/2 - getSize().height/2;
+        int xLoc = owner.getLocation().x + owner.getSize().width/2 - getSize().width/2;
+        if (yLoc < MIN_Y_LOCATION) yLoc = MIN_Y_LOCATION;
+        
+        setLocation(xLoc,yLoc);
 
     }
 

@@ -71,7 +71,7 @@ public class Tank
     }
     
     public boolean isValidSecondaryFacing(int n) {
-        return true;
+        return !m_bTurretLocked;
     }
     
     public int clipSecondaryFacing(int n) {
@@ -79,8 +79,10 @@ public class Tank
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        super.setSecondaryFacing(sec_facing);
-        m_nTurretOffset = sec_facing - getFacing();
+        if (canChangeSecondaryFacing()) {
+            super.setSecondaryFacing(sec_facing);
+            m_nTurretOffset = sec_facing - getFacing();
+        }
     }
     
     public void setFacing(int facing) {

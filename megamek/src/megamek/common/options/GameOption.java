@@ -23,9 +23,11 @@ package megamek.common.options;
 import java.io.*;
 
 /**
- * The base class for a game option.  Game options relate to game behavior and
- * are the same across all clients.  A game option's primary purpose is to 
- * store a value for the option.  Its secondary purpose is to give the game 
+ * The base class for a settable option. The settable option is used for game
+ * options which relate to game behavior and as well as pilot options which
+ * relate to specific stats about a pilot, such as advantages. Game options
+ * are the same across all clients. A settable option's primary purpose is to 
+ * store a value for the option.  Its secondary purpose is to give the desired 
  * options dialog enough data to allow the user to set the option.
  *
  * @author  Ben
@@ -36,17 +38,22 @@ public class GameOption implements Serializable {
     public static final int     BOOLEAN = 0;
     public static final int     INTEGER = 1;
     public static final int     FLOAT   = 2;
-    
+    public static final int     STRING  = 3;
     
     private String shortName;
     private String fullName;
     private String desc;
-    
+    private int textFieldLength = 2;
+    private boolean labelBeforeTextField = false;
+
     private int type;
     
     private Object defaultValue;
     private Object value;
 
+    public GameOption(String shortName, String fullName, String desc, String defaultValue) {
+        this(shortName, fullName, desc, STRING, defaultValue);
+    }
     public GameOption(String shortName, String fullName, String desc, boolean defaultValue) {
         this(shortName, fullName, desc, BOOLEAN, new Boolean(defaultValue));
     }
@@ -95,6 +102,22 @@ public class GameOption implements Serializable {
         return value;
     }
     
+    public void setTextFieldLength(int textFieldLength) {
+      this.textFieldLength = textFieldLength;
+    }
+    
+    public int getTextFieldLength() {
+      return textFieldLength;
+    }
+    
+    public void setLabelBeforeTextField(boolean labelBeforeTextField) {
+      this.labelBeforeTextField = labelBeforeTextField;
+    }
+    
+    public boolean isLabelBeforeTextField() {
+      return labelBeforeTextField;
+    }
+
     public boolean booleanValue() {
         return ((Boolean)value).booleanValue();
     }
@@ -119,6 +142,14 @@ public class GameOption implements Serializable {
         }
     }
     
+    public void setValue(String value) {
+        if (type == STRING) {
+            this.value = value;
+        } else {
+            throw new IllegalArgumentException("Tried to give String value to non-String option.");
+        }
+    }
+
     public void setValue(boolean value) {
         if (type == BOOLEAN) {
             this.value = new Boolean(value);
@@ -145,6 +176,8 @@ public class GameOption implements Serializable {
     
     private boolean isValidValue(Object object) {
         switch (type) {
+            case STRING : 
+                return object instanceof String;
             case BOOLEAN : 
                 return object instanceof Boolean;
             case INTEGER : 

@@ -82,7 +82,7 @@ public abstract class Entity
     protected String            chassis;
     protected String            model;
     protected int               year;
-    protected int		techLevel;
+    protected int   techLevel;
     
     protected String            displayName = null;
     protected String            shortName = null;
@@ -124,6 +124,9 @@ public abstract class Entity
     private int[]               orig_armor;
     private int[]               orig_internal;
     public int                  damageThisPhase;
+    public int                  engineHitsThisRound;
+    public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
+    public boolean              dodging;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -2146,10 +2149,10 @@ public abstract class Entity
      * Add a transportation component to this Entity. Please note, this
      * method should only be called during this entity's construction.
      *
-     * @param	component - One of this new entity's <code>Transporter</code>s.
+     * @param component - One of this new entity's <code>Transporter</code>s.
      */
     /* package */ void addTransporter( Transporter component ) {
-	transports.addElement( component );
+  transports.addElement( component );
     }
 
     /**
@@ -2161,18 +2164,18 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean canLoad( Entity unit ) {
-	// Walk through this entity's transport components;
-	// if one of them can load the unit, we can.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // if one of them can load the unit, we can.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-	    if ( next.canLoad( unit ) ) {
-		return true;
-	    }
-	}
+      if ( next.canLoad( unit ) ) {
+    return true;
+      }
+  }
 
-	// If we got here, none of our transports can carry the unit.
-	return false;
+  // If we got here, none of our transports can carry the unit.
+  return false;
     }
 
     /**
@@ -2183,22 +2186,22 @@ public abstract class Entity
      *          <code>IllegalArgumentException</code> exception will be thrown.
      */
     public void load( Entity unit ) throws IllegalArgumentException {
-	// Walk through this entity's transport components;
-	// find the one that can load the unit.
-	// Stop looking after the first match.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // find the one that can load the unit.
+  // Stop looking after the first match.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-	    if ( next.canLoad( unit ) ) {
-		next.load( unit );
-		return;
-	    }
-	}
+      if ( next.canLoad( unit ) ) {
+    next.load( unit );
+    return;
+      }
+  }
 
-	// If we got to this point, then we can't load the unit.
-	throw new IllegalArgumentException( this.getShortName() +
-					    " can not load " + 
-					    unit.getShortName() );
+  // If we got to this point, then we can't load the unit.
+  throw new IllegalArgumentException( this.getShortName() +
+              " can not load " + 
+              unit.getShortName() );
     }
 
     /**
@@ -2211,20 +2214,20 @@ public abstract class Entity
      *
      */
     public Vector getLoadedUnits() {
-	Vector result = new Vector();
+  Vector result = new Vector();
 
-	// Walk through this entity's transport components;
-	// add all of their lists to ours.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // add all of their lists to ours.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             for (Enumeration i = next.getLoadedUnits().elements(); i.hasMoreElements();) {
                 result.addElement(i.nextElement());
             }
-	}
+  }
 
-	// Return the list.
-	return result;
+  // Return the list.
+  return result;
     }
 
     /**
@@ -2235,19 +2238,19 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-	// Walk through this entity's transport components;
-	// try to remove the unit from each in turn.
-	// Stop after the first match.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // try to remove the unit from each in turn.
+  // Stop after the first match.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-	    if ( next.unload( unit ) ) {
-		return true;
-	    }
-	}
+      if ( next.unload( unit ) ) {
+    return true;
+      }
+  }
 
-	// If we got here, none of our transports currently carry the unit.
-	return false;
+  // If we got here, none of our transports currently carry the unit.
+  return false;
     }
 
     /**
@@ -2256,22 +2259,22 @@ public abstract class Entity
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-	StringBuffer result = new StringBuffer();
+  StringBuffer result = new StringBuffer();
 
-	// Walk through this entity's transport components;
-	// add all of their string to ours.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // add all of their string to ours.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-	    result.append( next.getUnusedString() );
+      result.append( next.getUnusedString() );
             // Add a newline character between strings.
             if ( iter.hasMoreElements() ) {
                 result.append( '\n' );
             }
-	}
+  }
 
-	// Return the String.
-	return result.toString();
+  // Return the String.
+  return result.toString();
     }
 
     /**
@@ -2286,20 +2289,20 @@ public abstract class Entity
      *          <code>false</code> if the weapon can fire.
      */
     public boolean isWeaponBlockedAt( int loc, boolean isRear ) {
-	// Walk through this entity's transport components;
-	// check each for blockage in turn.
-	// Stop after the first match.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // check each for blockage in turn.
+  // Stop after the first match.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-	    if ( next.isWeaponBlockedAt( loc, isRear ) ) {
-		return true;
-	    }
-	}
+      if ( next.isWeaponBlockedAt( loc, isRear ) ) {
+    return true;
+      }
+  }
 
-	// If we got here, none of our transports
+  // If we got here, none of our transports
         // carry a blocking unit at that location.
-	return false;
+  return false;
     }
 
     /**
@@ -2317,21 +2320,21 @@ public abstract class Entity
      *          if no unit is transported on the outside at that location.
      */
     public Entity getExteriorUnitAt( int loc, boolean isRear ) {
-	// Walk through this entity's transport components;
-	// check each for an exterior unit in turn.
-	// Stop after the first match.
-	Enumeration iter = this.transports.elements();
-	while ( iter.hasMoreElements() ) {
+  // Walk through this entity's transport components;
+  // check each for an exterior unit in turn.
+  // Stop after the first match.
+  Enumeration iter = this.transports.elements();
+  while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             Entity exterior = next.getExteriorUnitAt( loc, isRear );
-	    if ( null != exterior ) {
-		return exterior;
-	    }
-	}
+      if ( null != exterior ) {
+    return exterior;
+      }
+  }
 
-	// If we got here, none of our transports
+  // If we got here, none of our transports
         // carry an exterior unit at that location.
-	return null;
+  return null;
     }
 
     /**

@@ -101,7 +101,7 @@ v 0.28.2 (01-22-03, 3pm)
 + Fixed bug in determining "most destructive" ammo slot in explodeAmmo.
 + Added inferno-equipped IS SRM infantry platoons.
 + Added Clan Salamander Elemental point.
-+ Added ammo loadout selection system
++ Added ammo loadout selection to the lounge
 + Added Precision AC ammo
 
 v 0.28.1 (01-20-03, 7:19pm)

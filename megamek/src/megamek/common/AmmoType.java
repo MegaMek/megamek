@@ -14,13 +14,11 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 import megamek.common.equip.AmmoState;
 import megamek.common.equip.EquipmentState;
 import megamek.common.equip.UsesAmmoType;
-import megamek.common.equip.UsesAmmoState;
 
 public class AmmoType extends EquipmentType {
     // ammo types
@@ -1006,7 +1004,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 10;
-        ammo.bv = 5;
+        ammo.bv = 9;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
@@ -1025,7 +1023,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 5;
-        ammo.bv = 5;
+        ammo.bv = 15;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;
@@ -1044,7 +1042,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.munitionType = AmmoType.M_PRECISION;
         ammo.shots = 2;
-        ammo.bv = 5;
+        ammo.bv = 20;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
         
         return ammo;

@@ -22,7 +22,7 @@ import java.io.*;
 import megamek.common.*;
 
 public class BoardEditor extends Container
-    implements BoardListener, ItemListener, ActionListener,
+    implements BoardListener, ItemListener, ActionListener, TextListener,
     KeyListener
 {
     private Frame               frame;
@@ -88,6 +88,7 @@ public class BoardEditor extends Container
         labElev = new Label("Elev:", Label.RIGHT);
         texElev = new TextField("0", 1);
         texElev.addActionListener(this);
+        texElev.addTextListener(this);
         butElevUp = new Button("U");
         butElevUp.addActionListener(this);
         butElevDown = new Button("D");
@@ -283,7 +284,6 @@ public class BoardEditor extends Container
             for(int i = 0; i < board.data.length; i++) {
                 board.data[i] = new Hex();
             }
-            lisTerrain.select(bnd.getSelected());
             curpath = null;
             curfile = null;
             frame.setTitle("MegaMek Editor : Unnamed");
@@ -415,6 +415,24 @@ public class BoardEditor extends Container
     }
     
     //
+    // TextListener
+    //
+    public void textValueChanged(TextEvent te) {
+        if (te.getSource() == texElev) {
+            int value;
+            try {
+                value = Integer.parseInt(texElev.getText());
+            } catch (NumberFormatException ex) {
+                return;
+            }
+            if (value != curHex.getElevation()) {
+                curHex.setElevation(value);
+                canHex.repaint();
+            }
+        }
+    }
+    
+    //
     // KeyListener
     //
     public void keyPressed(KeyEvent ke) {
@@ -470,10 +488,6 @@ public class BoardEditor extends Container
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             canHex.repaint();
-        } else if (ae.getSource() == texElev) {
-            curHex.setElevation(Integer.parseInt(texElev.getText()));
-            texElev.setText(Integer.toString(curHex.getElevation()));
-            canHex.repaint();
         } else if (ae.getSource() == butTerrExits) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setState(true);
@@ -523,13 +537,10 @@ public class BoardEditor extends Container
  */
 class BoardNewDialog extends Dialog implements ActionListener {
     public int            xvalue, yvalue;
-    public int            selected;
     
-    protected Label        xL, yL;
-    protected Label        defaultL;
-    protected Choice    defaultC;
-    protected TextField    xT, yT;
-    protected Button        okayB, cancelB;
+    protected Label        labWidth, labHeight;
+    protected TextField    texWidth, texHeight;
+    protected Button        butOkay, butCancel;
     
     public BoardNewDialog(Frame frame, String[] hexList, int hexSelected) {
         super(frame, "Set Dimensions", true);
@@ -537,30 +548,21 @@ class BoardNewDialog extends Dialog implements ActionListener {
         xvalue = 0;
         yvalue = 0;
         
-        xL = new Label("Width:", Label.RIGHT);
-        yL = new Label("Height:", Label.RIGHT);
+        labWidth = new Label("Width:", Label.RIGHT);
+        labHeight = new Label("Height:", Label.RIGHT);
         
-        xT = new TextField("16", 2);
-        yT = new TextField("17", 2);
+        texWidth = new TextField("16", 2);
+        texHeight = new TextField("17", 2);
         
-        defaultL = new Label("Default:", Label.RIGHT);
-        defaultC = new Choice();
-        for(int i = 0; i < hexList.length; i++) {
-            defaultC.add(hexList[i]);
-        }
-        if(hexSelected != -1) {
-            defaultC.select(hexSelected);
-        }
-        
-        okayB = new Button("Okay");
-        okayB.setActionCommand("done");
-        okayB.addActionListener(this);
-        okayB.setSize(80, 24);
+        butOkay = new Button("Okay");
+        butOkay.setActionCommand("done");
+        butOkay.addActionListener(this);
+        butOkay.setSize(80, 24);
 
-        cancelB = new Button("Cancel");
-        cancelB.setActionCommand("cancel");
-        cancelB.addActionListener(this);
-        cancelB.setSize(80, 24);
+        butCancel = new Button("Cancel");
+        butCancel.setActionCommand("cancel");
+        butCancel.addActionListener(this);
+        butCancel.setSize(80, 24);
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -570,37 +572,29 @@ class BoardNewDialog extends Dialog implements ActionListener {
         c.weightx = 0.0;    c.weighty = 0.0;
         c.insets = new Insets(5, 5, 1, 1);
         
-        gridbag.setConstraints(xL, c);
-        add(xL);
+        gridbag.setConstraints(labWidth, c);
+        add(labWidth);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(xT, c);
-        add(xT);
+        gridbag.setConstraints(texWidth, c);
+        add(texWidth);
         
         c.gridwidth = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(yL, c);
-        add(yL);
+        gridbag.setConstraints(labHeight, c);
+        add(labHeight);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(yT, c);
-        add(yT);
-        
-        c.gridwidth = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(defaultL, c);
-        add(defaultL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(defaultC, c);
-        add(defaultC);
+        gridbag.setConstraints(texHeight, c);
+        add(texHeight);
         
         c.ipadx = 20;    c.ipady = 5;
         c.gridwidth = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints(okayB, c);
-        add(okayB);
+        gridbag.setConstraints(butOkay, c);
+        add(butOkay);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(cancelB, c);
-        add(cancelB);
+        gridbag.setConstraints(butCancel, c);
+        add(butCancel);
         
         pack();
         setResizable(false);
@@ -609,17 +603,15 @@ class BoardNewDialog extends Dialog implements ActionListener {
     }
     
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("done")) {
+        if (e.getSource() == butOkay) {
             try {
-                xvalue = Integer.decode(xT.getText()).intValue();
-                yvalue = Integer.decode(yT.getText()).intValue();
-                selected = defaultC.getSelectedIndex();
+                xvalue = Integer.decode(texWidth.getText()).intValue();
+                yvalue = Integer.decode(texHeight.getText()).intValue();
             } catch(NumberFormatException ex) {
                 System.err.println(ex.getMessage());
             }
             setVisible(false);
-        }
-        if(e.getActionCommand().equals("cancel")) {
+        } else if (e.getSource() == butCancel) {
             setVisible(false);
         }
     }
@@ -630,10 +622,6 @@ class BoardNewDialog extends Dialog implements ActionListener {
     
     public int getY() {
         return yvalue;
-    }
-    
-    public int getSelected() {
-        return selected;
     }
 }
 

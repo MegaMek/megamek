@@ -252,8 +252,8 @@ public class ScenarioLoader
             }
         }
         
-        // set wind direction
-        g.determineWindDirection();
+        // set wind
+        g.determineWind();
         
         // game's ready
         g.getOptions().initialize();

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.51 (CVS)
++ Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs
 
 v0.29.50 (2004-09-26 1:15pm)
 + Bug 1031414: location exposure should be checked after each fall

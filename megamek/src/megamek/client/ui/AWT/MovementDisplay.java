@@ -324,7 +324,9 @@ public class MovementDisplay
         setBackUpEnabled(butWalk.isEnabled());
         
         // Infantry and Protos can't charge or DFA.
-        if ( isInfantry || isProtomech ) {
+        if ( isInfantry || isProtomech || 
+             (client.game.getOptions().booleanOption("no_clan_physical") &&
+              ce().isClan())) {
             setChargeEnabled(false);
             setDFAEnabled(false);
             if(client.game.containsMinefield(ce().getPosition())) {

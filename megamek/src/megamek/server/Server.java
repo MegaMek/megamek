@@ -1849,6 +1849,10 @@ implements Runnable, ConnectionHandler {
         }
 
         // check game options
+        if (game.getOptions().booleanOption("no_clan_physical") &&
+            entity.isClan()) {
+            return false;
+        }
         if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
             return true;
         }

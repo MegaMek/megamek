@@ -3057,6 +3057,12 @@ public class Compute
             return false;
         }
 
+        //Check game options
+        if (game.getOptions().booleanOption("no_clan_physical") &&
+            entity.isClan()) {
+            return false;
+        }
+
         // The hex must contain woods or rubble from
         // a medium, heavy, or hardened building.
         //TODO: missing limbs are clubs.

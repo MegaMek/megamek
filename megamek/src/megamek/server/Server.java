@@ -299,6 +299,8 @@ public class Server
 
             entity.delta_distance = 0;
             entity.moved = Entity.MOVE_NONE;
+            
+            entity.setCharging(false);
 
             entity.crew.setKoThisRound(false);
 
@@ -2141,8 +2143,8 @@ public class Server
      * Currently mech only
      */
     private String criticalEntity(Entity en, int loc) {
-        if (Mech.isRearLocation(loc)) {
-            loc = Mech.getFrontLocation(loc);
+        if (en.isRearLocation(loc)) {
+            loc = en.getFrontLocation(loc);
         }
         String desc = "        Critical hit on " + en.getLocationAbbr(loc) + ". ";
         int hits = 0;
@@ -2247,24 +2249,32 @@ public class Server
      * Marks all equipment in a location on an entity as destroyed.
      */
     private void destroyLocation(Entity en, int loc) {
+        // mark armor, internal as destroyed
         en.setArmor(Entity.ARMOR_DESTROYED, loc);
         en.setInternal(Entity.ARMOR_DESTROYED, loc);
+        if (en.getRearLocation(loc) != loc) {
+            en.setArmor(Entity.ARMOR_DESTROYED, en.getRearLocation(loc));
+        }
+        // weapons destroyed
         for (int i = 0; i < en.weapons.size(); i++) {
             if (en.getWeapon(i).getLocation() == loc) {
                 en.getWeapon(i).setDestroyed(true);
             }
         }
+        // ammo destroyed
         for (int i = 0; i < en.ammo.size(); i++) {
             if (en.getAmmo(i).location == loc) {
                 en.getAmmo(i).exploded = true;
             }
         }
+        // all critical slots destroyed
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             if (cs != null) {
                 cs.setDoomed(true);
             }
         }
+        // dependent locations destroyed
         if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }

@@ -195,6 +195,15 @@ public class PhysicalDisplay
         client.game.board.cursor(null);
         client.mechW.setVisible(false);
         client.bv.clearMovementData();
+        disableButtons();
+    }
+    
+    /**
+     * Disables all buttons in the interface
+     */
+    private void disableButtons() {
+        butKick.setEnabled(false);
+        butPunch.setEnabled(false);
         butPush.setEnabled(false);
         butReady.setEnabled(false);
         butNext.setEnabled(false);
@@ -204,6 +213,7 @@ public class PhysicalDisplay
      * Called when the current entity is done firing.
      */
     private void ready() {
+        disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
         client.sendEntityReady(cen);
@@ -219,8 +229,6 @@ public class PhysicalDisplay
           attacks.removeAllElements();
         }
         client.mechD.wPan.displayMech(ce());
-        //selectedWeapon = ce().getFirstWeapon();
-        //client.mechD.wPan.selectWeapon(selectedWeapon);
         updateTarget();
     }
     
@@ -228,6 +236,7 @@ public class PhysicalDisplay
      * Punch the target!
      */
     private void punch() {
+        disableButtons();
         final ToHitData leftArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.LEFT);
         final ToHitData rightArm = Compute.toHitPunch(client.game, cen, ten, PunchAttackAction.RIGHT);
         if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
@@ -246,6 +255,7 @@ public class PhysicalDisplay
      * Kick the target!
      */
     private void kick() {
+        disableButtons();
         ToHitData leftLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.LEFT);
         ToHitData rightLeg = Compute.toHitKick(client.game, cen, ten, KickAttackAction.RIGHT);
         
@@ -261,6 +271,7 @@ public class PhysicalDisplay
      * Push that target!
      */
     private void push() {
+        disableButtons();
         attacks.addElement(new PushAttackAction(cen, ten));
         ready();
     }

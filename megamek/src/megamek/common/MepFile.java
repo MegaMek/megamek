@@ -202,7 +202,7 @@ public class MepFile
             Weapon weaponType = Weapon.getWeaponByMepName(critName);
             if (weaponType != null) {
                 if (rearMounted) {
-                    mech.addWeapon(new MountedWeapon(weaponType), Mech.getRearLocation(loc));
+                    mech.addWeapon(new MountedWeapon(weaponType), mech.getRearLocation(loc));
                 } else {
                     mech.addWeapon(new MountedWeapon(weaponType), loc);
                 }

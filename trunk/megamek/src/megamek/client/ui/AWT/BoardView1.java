@@ -242,6 +242,7 @@ public class BoardView1
             // check again
             if (sprite.getImage() == null) {
                 System.err.println("BoardView.drawSprite: could not acquire image; cancelling");
+                return;
             }
             backGraph.drawImage(sprite.getImage(), drawX, drawY, this);
         }

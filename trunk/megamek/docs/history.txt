@@ -100,16 +100,27 @@ v 0.24
  - edges cleared
  - handle where screen is bigger than map
  - redo movement path display to avoid memory thrashing
-- map selection
-- charging, dfa
+ - center on unit working
+- dfa
 - intiative ties re-rolled
 
 VERSION HISTORY:
 ----------------
 v next
++ charge flag reset properly
++ crash bug fixed in getMissedChargeDisplacement
++ can't charge charging mechs anymore
++ charge error messages a little better, maybe
+
+v 0.23.4 (03-14-02, 12pm)
 + charging
 + mechs can't fire in depth 2+ water
 + each starting position can handle many more mechs now
++ some client-side changes to try to prevent duplicate "readies"
++ rear side torso damage transfers to rear center torso (thx dave fanjoy)
++ rear armor destroyed when section destroyed (thx dave fanjoy again)
++ internal structure displays as "N/A" on rear locations
++ base punch damage rounded up, not down (thx Robert J Chverchko)
 
 v 0.23.3 (03-12-02, 1:30am)
 + slightly better dialogs

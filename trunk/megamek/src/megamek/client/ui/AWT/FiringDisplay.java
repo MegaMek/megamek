@@ -140,24 +140,24 @@ public class FiringDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
-    if (client.game.getEntity(en) != null) {
-          this.cen = en;
-          target(Entity.NONE);
-          client.game.board.highlight(ce().getPosition());
-          client.game.board.select(null);
-          client.game.board.cursor(null);
-      
-          client.mechD.displayMech(ce());
-          client.mechD.showPanel("weapons");
-      selectedWeapon = ce().getFirstWeapon();
-      client.mechD.wPan.selectWeapon(selectedWeapon);
-      
-          client.bv.centerOnHex(ce().getPosition());
-    } else {
-      System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
-      System.err.println("FiringDisplay: sending ready signal...");
-          client.sendReady(true);
-    }
+        if (client.game.getEntity(en) != null) {
+            this.cen = en;
+            target(Entity.NONE);
+            client.game.board.highlight(ce().getPosition());
+            client.game.board.select(null);
+            client.game.board.cursor(null);
+
+            client.mechD.displayMech(ce());
+            client.mechD.showPanel("weapons");
+            selectedWeapon = ce().getFirstWeapon();
+            client.mechD.wPan.selectWeapon(selectedWeapon);
+
+            client.bv.centerOnHex(ce().getPosition());
+        } else {
+            System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
+            System.err.println("FiringDisplay: sending ready signal...");
+            client.sendReady(true);
+        }
     }
     
     /**
@@ -187,6 +187,13 @@ public class FiringDisplay
         client.game.board.cursor(null);
         client.mechW.setVisible(false);
         client.bv.clearMovementData();
+        disableButtons();
+    }
+    
+    /**
+     * Disables all buttons in the interface
+     */
+    private void disableButtons() {
         butFire.setEnabled(false);
         butReady.setEnabled(false);
         butNext.setEnabled(false);
@@ -196,6 +203,7 @@ public class FiringDisplay
      * Called when the current entity is done firing.
      */
     private void ready() {
+        disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
         client.sendEntityReady(cen);
@@ -260,8 +268,9 @@ public class FiringDisplay
      */
     private void updateTarget() {
         // update target panel
-        if (ten != Entity.NONE && client.mechD.wPan.weaponList.getSelectedIndex() != -1) {
-            ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, client.mechD.wPan.weaponList.getSelectedIndex());
+        final int weaponId = client.mechD.wPan.weaponList.getSelectedIndex();
+        if (ten != Entity.NONE && weaponId != -1) {
+            ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, weaponId);
             client.mechD.wPan.wTargetR.setText(te().getDisplayName());
             client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(te().getPosition()));
             if (toHit.getValue() <= 12) {
@@ -340,16 +349,16 @@ public class FiringDisplay
         }
     }
     public void boardHexSelected(BoardEvent b) {
-    if (client.isMyTurn() && b.getCoords() != null && ce() != null
-        && !b.getCoords().equals(ce().getPosition())) {
-      if (shiftheld) {
-        // commit torso twist towards selected hex
-        doTorsoTwist(b.getCoords());
-      } else if (client.game.getEntity(b.getCoords()) != null 
-                 && client.game.getEntity(b.getCoords()).isTargetable()) {
-              target(client.game.getEntity(b.getCoords()).getId());
-          }
-    }
+        if (client.isMyTurn() && b.getCoords() != null && ce() != null
+            && !b.getCoords().equals(ce().getPosition())) {
+          if (shiftheld) {
+            // commit torso twist towards selected hex
+            doTorsoTwist(b.getCoords());
+          } else if (client.game.getEntity(b.getCoords()) != null 
+                     && client.game.getEntity(b.getCoords()).isTargetable()) {
+                  target(client.game.getEntity(b.getCoords()).getId());
+              }
+        }
     }
     
     //
@@ -471,13 +480,14 @@ public class FiringDisplay
     //
     public void itemStateChanged(ItemEvent ev) {
         if(ev.getItemSelectable() == client.mechD.wPan.weaponList) {
+            butFire.setEnabled(false);
             // update target data in weapon display
             updateTarget();
             // also, allow firing only if weapon is ready
             if (ce() != null) {
                 butFire.setEnabled(ce().getWeapon(client.mechD.wPan.weaponList.getSelectedIndex()).isReady());
             } else {
-                butFire.setEnabled(true);
+                butFire.setEnabled(false);
             }
         }
     }

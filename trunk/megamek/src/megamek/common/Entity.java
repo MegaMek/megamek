@@ -33,10 +33,10 @@ public abstract class Entity
     public static final int        MOVE_JUMP           = 3;
 
     public static final int        ARMOR_NA            = -1;
-    public static final int        ARMOR_DESTROYED        = -2;
+    public static final int        ARMOR_DESTROYED     = -2;
 
     public static final int        LOC_NONE            = -1;
-    public static final int        LOC_DESTROYED        = -2;
+    public static final int        LOC_DESTROYED       = -2;
 
     protected int               id;
 
@@ -149,6 +149,12 @@ public abstract class Entity
      * Returns the number of locations in the entity
      */
     public abstract int locations();
+    
+    public abstract boolean isRearLocation(int loc);
+
+    public abstract int getRearLocation(int loc);
+
+    public abstract int getFrontLocation(int loc);
 
     /**
      * Returns the player that "owns" this entity.

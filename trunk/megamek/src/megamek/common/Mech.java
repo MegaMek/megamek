@@ -136,44 +136,39 @@ public class Mech
     /**
      * @return true if this location is a rear location;
      */
-    public static boolean isRearLocation(int loc) {
-        if (loc == LOC_CTR || loc == LOC_RTR || loc == LOC_LTR) {
-            return true;
-        }
-    return false;
+    public boolean isRearLocation(int loc) {
+        return (loc == LOC_CTR || loc == LOC_RTR || loc == LOC_LTR);
     }
   
-  /**
-   * Returns the rear location for the specified front location
-   */
-  public static int getRearLocation(int loc) {
-    if (loc == LOC_CT) {
-      return LOC_CTR;
+    /**
+    * Returns the rear location for the specified front location
+    */
+    public int getRearLocation(int loc) {
+        if (loc == LOC_CT) {
+            return LOC_CTR;
+        } else if (loc == LOC_RT) {
+            return LOC_RTR;
+        } else if (loc == LOC_LT) {
+            return LOC_LTR;
+        } else {
+            return loc;
+        }
     }
-    if (loc == LOC_RT) {
-      return LOC_RTR;
-    }
-    if (loc == LOC_LT) {
-      return LOC_LTR;
-    }
-    return loc;
-  }
                                     
-  /**
-   * Returns the front location for the specified rear location
-   */
-  public static int getFrontLocation(int loc) {
-    if (loc == LOC_CTR) {
-      return LOC_CT;
+    /**
+    * Returns the front location for the specified rear location
+    */
+    public int getFrontLocation(int loc) {
+        if (loc == LOC_CTR) {
+            return LOC_CT;
+        } else if (loc == LOC_RTR) {
+            return LOC_RT;
+        } else if (loc == LOC_LTR) {
+            return LOC_LT;
+        } else {
+            return loc;
+        }
     }
-    if (loc == LOC_RTR) {
-      return LOC_RT;
-    }
-    if (loc == LOC_LTR) {
-      return LOC_LT;
-    }
-    return loc;
-  }
                                     
     /**
      * Returns this entity's walking/cruising mp, factored
@@ -648,9 +643,10 @@ public class Mech
         switch(loc) {
         case LOC_RT :
         case LOC_LT :
+            return LOC_CT;
         case LOC_RTR :
         case LOC_LTR :
-            return LOC_CT;
+            return LOC_CTR;
         case LOC_LLEG :
         case LOC_LARM :
             return LOC_LT;

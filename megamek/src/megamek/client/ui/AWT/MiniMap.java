@@ -34,6 +34,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
     private static Color HEAVY_WOODS;
     private static Color BACKGROUND;
+    private static Color SINKHOLE;
     
     private final static int SHOW_NO_HEIGHT = 0;
     private final static int SHOW_GROUND_HEIGHT = 1;
@@ -110,9 +111,10 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
 
         // set up defaults -- this might go away later...
         BACKGROUND                        = Color.black;
-        HEAVY_WOODS                       = new Color(160,200,100);
         m_terrainColors[0]                = new Color(218,215,170);
+        SINKHOLE                          = new Color(218,215,170);
         m_terrainColors[Terrain.WOODS]    = new Color(180,230,130);
+        HEAVY_WOODS                       = new Color(160,200,100);
         m_terrainColors[Terrain.ROUGH]    = new Color(215,181,0);
         m_terrainColors[Terrain.RUBBLE]   = new Color(200,200,200);
         m_terrainColors[Terrain.WATER]    = new Color(200,247,253);
@@ -176,6 +178,15 @@ scan:
                     blue = (int)st.nval;
 
                     HEAVY_WOODS = new Color(red,green,blue);
+                } else if (key.equals("sinkhole")) {
+                    st.nextToken();
+                    red = (int)st.nval;
+                    st.nextToken();
+                    green = (int)st.nval;
+                    st.nextToken();
+                    blue = (int)st.nval;
+
+                    SINKHOLE = new Color(red,green,blue);
                 } else {
                     st.nextToken();
                     red = (int)st.nval;
@@ -617,6 +628,11 @@ scan:
 
     private Color terrainColor(Hex x, int boardX, int boardY) {
         Color terrColor = m_terrainColors[0];
+        if (x.getElevation() < 0) {
+            // sinkholes have their own colour
+            terrColor = SINKHOLE;
+        };
+
         int level = 0;
         int terrain = 0;
         for (int j = m_terrainColors.length - 1; j >= 0; j--) {
@@ -631,43 +647,43 @@ scan:
                 // make heavy woods darker
                 if (j == Terrain.WOODS && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
-                }
+                };
                 break;
             }
         }
 
-    int r, g, b;
-    switch (terrain) {
-    case 0 :
-    case Terrain.WOODS :
-    case Terrain.ROUGH :
-    case Terrain.RUBBLE :
-    case Terrain.WATER :
-    case Terrain.PAVEMENT :
-      level = (int) Math.abs(x.floor());
-      // By experiment it is possible to make only 6 distinctive color steps
-      if (level > 10) level = 10;
-      r = terrColor.getRed()-level*15;
-      g = terrColor.getGreen()-level*15;
-      b = terrColor.getBlue()-level*15;
-      if (r < 0) r = 0;
-      if (g < 0) g = 0;
-      if (b < 0) b = 0;
-      return new Color(r, g, b);
-      
-    case Terrain.BUILDING :
-      level = (int) Math.abs(x.ceiling());
-      // By experiment it is possible to make only 6 distinctive color steps
-      if (level > 10) level = 10;
-      r = terrColor.getRed()-level*15;
-      g = terrColor.getGreen()-level*15;
-      b = terrColor.getBlue()-level*15;
-      if (r < 0) r = 0;
-      if (g < 0) g = 0;
-      if (b < 0) b = 0;
-      return new Color(r, g, b);
-      
-    }
+        int r, g, b;
+        switch (terrain) {
+        case 0 :
+        case Terrain.WOODS :
+        case Terrain.ROUGH :
+        case Terrain.RUBBLE :
+        case Terrain.WATER :
+        case Terrain.PAVEMENT :
+            level = (int) Math.abs(x.floor());
+            // By experiment it is possible to make only 6 distinctive color steps
+            if (level > 10) level = 10;
+            r = terrColor.getRed()-level*15;
+            g = terrColor.getGreen()-level*15;
+            b = terrColor.getBlue()-level*15;
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            return new Color(r, g, b);
+
+        case Terrain.BUILDING :
+            level = (int) Math.abs(x.ceiling());
+            // By experiment it is possible to make only 6 distinctive color steps
+            if (level > 10) level = 10;
+            r = terrColor.getRed()-level*15;
+            g = terrColor.getGreen()-level*15;
+            b = terrColor.getBlue()-level*15;
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            return new Color(r, g, b);
+
+        }
 /*
         if (terrain < 5){
              level = (int) Math.abs(x.floor());

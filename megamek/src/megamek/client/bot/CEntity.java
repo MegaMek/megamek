@@ -9,6 +9,7 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.MovePath;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -507,12 +508,16 @@ public class CEntity {
         ArrayList possible = new ArrayList();
         MoveOption.Table discovered = new MoveOption.Table();
 
+		if (entity.getJumpMPWithTerrain() > 0) {
+			possible.add(base.createMovePath(base).addStep(MovePath.STEP_START_JUMP));
+		}
+
         possible.add(base);
         discovered.put(base);
 
         while (possible.size() > 0) {
             MoveOption min = (MoveOption) possible.remove(0);
-            Iterator adjacent = min.getNextMoves().iterator();
+            Iterator adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
                 if (next.changeToPhysical() && next.isMoveLegal()) {
@@ -557,8 +562,8 @@ public class CEntity {
     public ArrayList findMoves(Coords dest) {
         ArrayList result = new ArrayList();
         for (int i = 0; i < 6; i++) {
-            for (int j = 1; j < 3; j++) {
-                MoveOption.Key key = new MoveOption.Key(dest, i, j);
+            for (int j = 0; j < 1; j++) {
+                MoveOption.Key key = new MoveOption.Key(dest, i, j==1);
                 MoveOption es = null;
                 if ((es = (MoveOption) moves.get(key)) != null) {
                     result.add(es);

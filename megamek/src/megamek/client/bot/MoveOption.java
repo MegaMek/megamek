@@ -4,7 +4,6 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -20,47 +19,15 @@ import megamek.common.ToHitData;
 import com.sun.java.util.collections.ArrayList;
 import com.sun.java.util.collections.Comparator;
 import com.sun.java.util.collections.HashMap;
-import com.sun.java.util.collections.List;
 
 /**
- * TODO: The hashcode/equals must be over the movement set and the initial
- * starting location/facing.
- * 
  * TODO: add the notion of a dependent state (at least a first pass estimate of
  * worst case threat) for when psr's are made.
  * 
  * TODO: add a notion of a blocked move, something that could open up after
  * another mech moves.
  */
-public class MoveOption extends MovePath {
-
-    public static final int STANDING = 1;
-    public static final int JUMPING = 2;
-    public static final int PRONE = 3;
-
-    public static class Key {
-        private Coords coords;
-        private int facing;
-        private int state;
-
-        public Key(Coords coords, int facing, int state) {
-            this.coords = coords;
-            this.facing = facing;
-            this.state = state;
-        }
-
-        public boolean equals(Object obj) {
-            Key s1 = (Key) obj;
-            if (s1 != null) {
-                return state == state && facing == s1.facing && coords.equals(s1.coords);
-            }
-            return false;
-        }
-
-        public int hashCode() {
-            return state + 7 * (facing + 31 * coords.hashCode());
-        }
-    }
+public class MoveOption extends MovePath implements Cloneable {
 
     public static class WeightedComparator implements Comparator {
 
@@ -154,9 +121,9 @@ public class MoveOption extends MovePath {
         this.isPhysical = base.isPhysical;
         this.self_damage = base.self_damage;
     }
-
-    public Key getKey() {
-        return new Key(getFinalCoords(), getFinalFacing(), getState());
+    
+    public Object clone() {
+        return new MoveOption(this);
     }
     
     public double getThreat(CEntity e) {
@@ -178,16 +145,6 @@ public class MoveOption extends MovePath {
 	public void setDamage(CEntity e, double value) {
 		getDamageInfo(e, true).damage = value;
 	}
-	
-    public int getState() {
-        if (isJumping()) {
-            return JUMPING;
-        }
-        if (getFinalProne()) {
-            return PRONE;
-        }
-        return STANDING;
-    }
 
     CEntity getCEntity() {
         return centity;
@@ -238,66 +195,11 @@ public class MoveOption extends MovePath {
         }
         return heat + move; // illegal?
     }
-
-    /**
-	 * Returns a list of possible moves that result in a
-	 * facing/position/(jumping|prone) change, special steps (mine clearing and
-	 * such) must be handled elsewhere.
-	 */
-    public List getNextMoves() {
-        ArrayList result = new ArrayList();
-        MoveStep last = getLastStep();
-        if (isJumping()) {
-            MoveOption next = new MoveOption(this);
-            for (int i = 0; i < 5; i++) {
-                result.add(next);
-                result.add(new MoveOption(next).addStep(MovePath.STEP_FORWARDS));
-                next = new MoveOption(next);
-                next.addStep(MovePath.STEP_TURN_RIGHT);
-            }
-            return result;
-        }
-        if (getFinalProne()) {
-            if (last != null && last.getType() != STEP_TURN_RIGHT) {
-                result.add(new MoveOption(this).addStep(MovePath.STEP_TURN_LEFT));
-            }
-            if (last != null && last.getType() != STEP_TURN_LEFT) {
-                result.add(new MoveOption(this).addStep(MovePath.STEP_TURN_RIGHT));
-            }
-            result.add(new MoveOption(this).addStep(MovePath.STEP_GET_UP));
-            return result;
-        } else if (last == null && entity.getJumpMPWithTerrain() > 0) {
-            result.add(new MoveOption(this).addStep(STEP_START_JUMP));
-        }
-        if (canShift()) {
-            if (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT) {
-                result.add(new MoveOption(this).addStep(STEP_LATERAL_RIGHT));
-            }
-            if (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT) {
-                result.add(new MoveOption(this).addStep(MovePath.STEP_LATERAL_LEFT));
-            }
-            if (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT_BACKWARDS) {
-                result.add(new MoveOption(this).addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS));
-            }
-            if (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT_BACKWARDS) {
-                result.add(new MoveOption(this).addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS));
-            }
-        }
-        if (last == null || last.getType() != MovePath.STEP_BACKWARDS) {
-            result.add(new MoveOption(this).addStep(MovePath.STEP_FORWARDS));
-        }
-        if (last == null || last.getType() != MovePath.STEP_TURN_LEFT) {
-            result.add(new MoveOption(this).addStep(MovePath.STEP_TURN_RIGHT));
-        }
-        if (last == null || last.getType() != MovePath.STEP_TURN_RIGHT) {
-            result.add(new MoveOption(this).addStep(MovePath.STEP_TURN_LEFT));
-        }
-        if (last == null || last.getType() != MovePath.STEP_FORWARDS) {
-            result.add(new MoveOption(this).addStep(MovePath.STEP_BACKWARDS));
-        }
-        return result;
+    
+    public MovePath createMovePath(MovePath path) {
+        return new MoveOption((MoveOption)path);
     }
-
+    
     public boolean changeToPhysical() {
         MoveStep last = getLastStep();
         if (last == null && last.getMovementType() == Entity.MOVE_ILLEGAL) {

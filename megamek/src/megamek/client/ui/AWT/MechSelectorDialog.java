@@ -310,7 +310,7 @@ public class MechSelectorDialog
         m_mechViewRight.setCaretPosition(0);
 
 		// Preview image of the unit...
-		m_client.loadPreviewImage(m_pPreview, entity);
+		m_client.loadPreviewImage(m_pPreview, entity, m_client.getLocalPlayer());
 		m_pPreview.paint(m_pPreview.getGraphics());
     }
     

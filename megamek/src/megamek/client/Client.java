@@ -1531,6 +1531,10 @@ public class Client extends Panel
     // Loads a preview image of the unit into the BufferedPanel.
     public void loadPreviewImage(BufferedPanel bp, Entity entity) {
 		Player player = game.getPlayer(entity.getOwnerId());
+		loadPreviewImage(bp, entity, player);
+    }
+
+    public void loadPreviewImage(BufferedPanel bp, Entity entity, Player player) {
 		String camo = player.getCamoFileName();
 		int tint = player.getColorRGB();
 		bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);

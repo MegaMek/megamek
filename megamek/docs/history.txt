@@ -12,6 +12,7 @@ v0.29.66 (CVS)
 + Bug 1066354: Ejected MW represented with wrong graphic & color.
 + Don't make leg actuator hit PSRs when breaching a Torso
 + Bug 1115590: MMS: Initial vee crits not working correctly
++ Implemented iNarc Nemesis Pods.
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

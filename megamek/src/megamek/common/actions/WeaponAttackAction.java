@@ -51,6 +51,7 @@ public class WeaponAttackAction
     private int aimedLocation = Mech.LOC_NONE;
     private int aimMode = FiringDisplay.AIM_MODE_NONE;
     private int otherAttackInfo = -1;	// 
+    private boolean nemesisConfused = false;
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -123,17 +124,21 @@ public class WeaponAttackAction
                            game.getTarget(getTargetType(), getTargetId()),
                            getWeaponId(),
                            getAimedLocation(),
-                           getAimingMode());
+                           getAimingMode(), nemesisConfused);
     }
 
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId) {
-        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE, false);
       }
+    
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
+        return toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false);
+    }
 
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode, boolean isNemesisConfused) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -642,8 +647,11 @@ public class WeaponAttackAction
         // add in LOS mods that we've been keeping
         toHit.append(losMods);
     
-        // secondary targets modifier...
-        toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+        // secondary targets modifier,
+        // if this is not a iNarc Nemesis confused attack
+        if (!isNemesisConfused) {
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+        }        
     
         // heat
         if (ae.getHeatFiringModifier() != 0) {
@@ -750,5 +758,17 @@ public class WeaponAttackAction
     
         // okay!
         return toHit;
+    }
+    /**
+     * @return Returns the nemesisConfused.
+     */
+    public boolean isNemesisConfused() {
+        return nemesisConfused;
+    }
+    /**
+     * @param nemesisConfused The nemesisConfused to set.
+     */
+    public void setNemesisConfused(boolean nemesisConfused) {
+        this.nemesisConfused = nemesisConfused;
     }
 }

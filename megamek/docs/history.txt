@@ -43,6 +43,7 @@ mech display:
 - weapons panel doesn't fit right under sun java
 
 mechs:
+- split criticals for large weapons
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
 
@@ -68,17 +69,18 @@ weapon attacks:
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
+- transfer of damage from rear limb should go to rear torso (bob dee)
 
 physical attacks:
 - clubbing
-- charging
-- death from above!
-- show the to-hit numbers
+- dfa should violate stacking
+- show the to-hit numbers, somehow
 - opposing pushes should counter each other
-- underwater should be 1/2 damage
+- if a leg is kicked off, that leg should still be able to kick (theBlind)
 
 pilots:
-- successive conciousness checks should be made from low rolls to high
+- successive consciousness checks should be made from low rolls to high
+- making too many consciousness rolls? 
 
 falling:
 - only fall to surface of water
@@ -94,19 +96,34 @@ v 0.25
 - observer mode
 - players that connect with the same name as a "ghost" take control of that player
 - game handles "ghost" players properly (skips them)
+? map selection
+? custom pilots
 
 v 0.24
-- new display system
- - needs edges cleared
- - needs to be able to handle where screen is bigger than map
- - needs redo of movement path display to avoid memory thrashing
- - needs center on unit working
-- dfa
-- intiative ties re-rolled
+? dunno, release it?
 
 VERSION HISTORY:
 ----------------
 v next
++ mechs making a dfa attack can't be physically attacked
++ prone mechs automatically miss charging and DFA attacks
++ falling damage for mechs doing DFA is saved until they miss the DFA
++ invalid domino effect prevented
++ mechs making DFA attacks don't get the benefit of terrain modifiers
+
+v 0.23.6 (03-17-02, 8:15pm)
++ center on unit works in new display
++ new display works when screen is bigger than board
++ highlight border appears under mech instead of on top (subtle)
++ initiative ties rolled off (up to 5 times--sort of a hack)
++ edges cleared in new display
++ charging attacker takes damage on normal front table
++ death from above implemented
++ movement path display redone to reduce memory thrashing
++ some error boxes for errors reading mepfiles
++ pilot consciousness checks made before piloting skill rolls
+
+v 0.23.5 (03-14-02, 6pm)
 + charge flag reset properly
 + crash bug fixed in getMissedChargeDisplacement
 + can't charge charging mechs anymore

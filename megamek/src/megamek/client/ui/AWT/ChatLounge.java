@@ -501,17 +501,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                                               
             fd.setDirectory("data" + File.separator + "mep");
             fd.show();
-            MepFile mf = new MepFile(fd.getDirectory() + File.separator + fd.getFile());
-            if (mf == null || fd.getFile() == null) {
+            File file = new File(fd.getDirectory(), fd.getFile());
+            MepFile mf = new MepFile(file);
+            if (!file.exists()) {
                 // error reading mech
-                //TODO: display error in a dialog
-                System.err.println("chatlounge: could not read mepfile.");
+                new AlertDialog(client.frame, "Open", "Error: could not read file or file not found.").show();
             } else {
                 Mech mech = mf.getMech();
                 if (mech == null) {
                     // error reading mech
-                    //TODO: display error in a dialog
-                    System.err.println("chatlounge: could not make a mech from mepfile.  (probably not 3025)");
+                    new AlertDialog(client.frame, "Open", "Error: could not make mech from file (possibly not 3025.)").show();
                 } else {
                     mech.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(mech);

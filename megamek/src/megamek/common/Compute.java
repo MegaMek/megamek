@@ -609,6 +609,7 @@ public class Compute
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final Coords[] intervening = intervening(src, dest);
+        final int direction = src.direction(dest);
         
         // arguments valid?
         if (entity == null) {
@@ -619,12 +620,19 @@ public class Compute
         if (!game.board.contains(dest)) {
             return false;
         }
+
+        // can't go up 2+ levels
         for (int i = 0; i < intervening.length; i++) {
             final Hex hex = game.board.getHex(intervening[i]);
-            // can't go up 2+ levels
             if (hex.getElevation() - srcHex.getElevation() > 1) {
                 return false;
             }
+        }
+        
+        // if there's an entity in the way, can they be displaced in that direction?
+        Entity inTheWay = game.getEntity(dest);
+        if (inTheWay != null) {
+            return isValidDisplacement(game, inTheWay.getId(), inTheWay.getPosition(), direction);
         }
         
         // okay, that's about all the checks
@@ -848,12 +856,18 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
-        // LOS?
-        final int ael = ae.getElevation(game.board) + 1;
-        final int tel = te.getElevation(game.board) + 1;
+        int ael = ae.getElevation(game.board) + 1;
+        int tel = te.getElevation(game.board) + 1;
+        
+        // count elevation funny for DFA
+        if (ae.isMakingDfa()) {
+            ael = Math.max(ael, tel) + 1;
+        }
+        
         int ilw = 0;  // intervening light woods
         int ihw = 0;  // intervening heavy woods
         
+        // LOS?
         for (int i = 0; i < in.length; i++) {
             // don't count attacker or target hexes
             if (in[i].equals(ae.getPosition()) || in[i].equals(te.getPosition())) {
@@ -1101,6 +1115,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
         
+        // can't physically attack mechs making dfa attacks
+        if (te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        }
+
         // check facing
         if (!isInArc(ae.getPosition(), ae.getSecondaryFacing(), 
                      te.getPosition(), armArc)) {
@@ -1256,6 +1275,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
         
+        // can't physically attack mechs making dfa attacks
+        if (te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+        }
+
         // check facing
         if (!isInArc(ae.getPosition(), ae.getFacing(), 
                      te.getPosition(), Compute.ARC_FORWARD)) {
@@ -1394,6 +1418,11 @@ public class Compute
         // target must be at same elevation
         if (attackerElevation != targetElevation) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not at same elevation");
+        }
+        
+        // can't physically attack mechs making dfa attacks
+        if (te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
         }
         
         // check facing
@@ -1540,8 +1569,8 @@ public class Compute
         }
         
         // can't charge charging mechs
-        if (te.isCharging()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already charging");
+        if (te.isCharging() || te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is charging");
         }
         
         // okay, modifiers...
@@ -1665,8 +1694,8 @@ public class Compute
         }
         
         // can't charge charging mechs
-        if (te.isCharging()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already charging");
+        if (te.isCharging() || te.isMakingDfa()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is charging");
         }
         
         // okay, modifiers...
@@ -1784,7 +1813,14 @@ public class Compute
      * Modifier to attacks due to target terrain
      */
     public static ToHitData getTargetTerrainModifier(Game game, int entityId) {
-        final Hex hex = game.board.getHex(game.getEntity(entityId).getPosition());
+        final Entity target = game.getEntity(entityId);
+        final Hex hex = game.board.getHex(target.getPosition());
+        
+        // you don't get terrain modifiers in midair
+        if (target.isMakingDfa()) {
+            return new ToHitData(0, "");
+        }
+        
         ToHitData toHit = new ToHitData(0, "");
 
         switch (hex.getTerrainType()) {

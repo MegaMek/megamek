@@ -98,6 +98,11 @@ v CVS
 + Allow players to save lists of units (includes damage) at end-of-game.
 + 678795: Possible fix -- can't test
 + Don't allocate AMS for non-entity targets.
++ Clearing and Igniting hexes have separate logic
++ 643816: Clear/Ignite implementation brought into line with canon
++ Only woods hexes can be targeted
++ 663535: Targeted smoky hexes don't get their own smoke bonus
++ Dedicated servers load password/port settings from .cfg file correctly
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

@@ -531,15 +531,14 @@ public class CEntity {
                         if (next.isJumping()) {
                             MovePath left = (MoveOption) next.clone();
                             MovePath right = (MoveOption) next.clone();
-                            discovered.put(((MoveOption) next.clone()).addStep(MovePath.STEP_FORWARDS));
                             for (int turn = 0; turn < 2; turn++) {
                                 left.addStep(MovePath.STEP_TURN_LEFT);
                                 right.addStep(MovePath.STEP_TURN_RIGHT);
-                                discovered.put(((MovePath) left.clone()).addStep(MovePath.STEP_FORWARDS));
-                                discovered.put(((MovePath) right.clone()).addStep(MovePath.STEP_FORWARDS));
+                                discovered.put(((MovePath) left.clone()));
+                                discovered.put(((MovePath) right.clone()));
                             }
                             right.addStep(MovePath.STEP_TURN_RIGHT);
-                            discovered.put(right.addStep(MovePath.STEP_FORWARDS));
+                            discovered.put(right);
                         }
                         int index = Collections.binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
                         if (index < 0) {

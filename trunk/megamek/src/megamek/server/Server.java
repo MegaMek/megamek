@@ -7944,8 +7944,9 @@ implements Runnable, ConnectionHandler {
                         } else {
                             desc.append( " <<<SECTION DESTROYED>>>," );
                         }
-                        if (hit.getLocation() == Mech.LOC_RT ||
-                            hit.getLocation() == Mech.LOC_LT) {
+                        if (te instanceof Mech &&
+                            (hit.getLocation() == Mech.LOC_RT ||
+                             hit.getLocation() == Mech.LOC_LT)) {
                             te.engineHitsThisRound +=
                                 te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
                                                     Mech.SYSTEM_ENGINE,
@@ -7985,7 +7986,9 @@ implements Runnable, ConnectionHandler {
                 if (te.getInternal(hit) <= 0) {
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
-                        te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                        if (te instanceof Mech) {
+                            te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                        }
 
                         boolean engineExploded = false;
 

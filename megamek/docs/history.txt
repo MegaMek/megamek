@@ -124,6 +124,7 @@ v 0.28.22-dev (CVS)
 + Bug 705806: the bot doesn't outright crash when fighting battle armor
 + Bug 748959: possible fix for moved units not updating
 + fix for SpecificEntityTurns being granted
++ Applied patch #748127 to the main menu buttons in MegaMek.java
 
 v 0.28.21 (06-01-03, 10pm)
 + Bug 743355, Data 742085: applied updated infantry.zip from Hopalong.

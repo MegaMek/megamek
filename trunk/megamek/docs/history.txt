@@ -26,6 +26,8 @@ v0.29.43 (CVS)
 + Show vehicle type on general tab.
 + Omit team from general tab if it is "No Team".
 + Included updates to boards from Endreffy Janos.
++ Bug 1001237: Accidental Ignition of woods when trying to clear woods did not
+    work correctly.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

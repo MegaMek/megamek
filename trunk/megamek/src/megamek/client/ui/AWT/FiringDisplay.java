@@ -221,6 +221,7 @@ public class FiringDisplay
             client.bv.centerOnHex(ce().getPosition());
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
+            butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
@@ -288,7 +289,7 @@ public class FiringDisplay
      */
     private void fire() {
         int wn = client.mechD.wPan.weaponList.getSelectedIndex();
-        if(ce() == null || te() == null || ce().getWeapon(wn) == null) {
+        if (ce() == null || te() == null || ce().getWeapon(wn) == null) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
     
@@ -305,6 +306,20 @@ public class FiringDisplay
         client.mechD.wPan.selectWeapon(selectedWeapon);
         updateTarget();
         butNext.setEnabled(false);
+    }
+    
+    /**
+     * The entity spends the rest of its turn finding a club
+     */
+    private void findClub() {
+        if (ce() == null) {
+            return;
+        }
+        
+        attacks.removeAllElements();
+        attacks.addElement(new FindClubAction(cen));
+        
+        ready();
     }
   
     /**
@@ -425,16 +440,16 @@ public class FiringDisplay
             twisting = false;
             client.game.board.select(b.getCoords());
         }
-     }
+    }
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null
-            && !b.getCoords().equals(ce().getPosition())) {
-          if (shiftheld) {
-            torsoTwist(b.getCoords());
-          } else if (client.game.getEntity(b.getCoords()) != null 
-                     && client.game.getEntity(b.getCoords()).isTargetable()) {
-                  target(client.game.getEntity(b.getCoords()).getId());
-              }
+        && !b.getCoords().equals(ce().getPosition())) {
+            if (shiftheld) {
+                torsoTwist(b.getCoords());
+            } else if (client.game.getEntity(b.getCoords()) != null
+            && client.game.getEntity(b.getCoords()).isTargetable()) {
+                target(client.game.getEntity(b.getCoords()).getId());
+            }
         }
     }
     
@@ -444,8 +459,8 @@ public class FiringDisplay
     public void gameTurnChange(GameEvent ev) {
         if(client.game.phase == Game.PHASE_FIRING) {
             endMyTurn();
-
-      if(client.isMyTurn()) {
+            
+            if(client.isMyTurn()) {
                 beginMyTurn();
                 labStatus.setText("It's your turn to fire.");
             } else {
@@ -492,6 +507,8 @@ public class FiringDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
+        } else if (ev.getSource() == butFindClub) {
+            findClub();
         }
     }
     

@@ -13040,9 +13040,7 @@ implements Runnable, ConnectionHandler {
                 // Add the pilot as an infantry unit on the battlefield.
                 MechWarrior pilot = new MechWarrior(entity);
                 pilot.setDeployed(true);
-                if ( Entity.NONE == pilot.getId() ) {
-                    pilot.setId(getFreeEntityId());
-                }
+                pilot.setId(getFreeEntityId());
                 game.addEntity(pilot.getId(), pilot);
                 send(createAddEntityPacket(pilot.getId()));
                 if (game.board.contains(targetCoords)) {

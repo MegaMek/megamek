@@ -601,6 +601,8 @@ public class Tank
         report.append('\n');
         report.append("Driver : " + crew.getDesc());
         report.append('\n');
+        report.append("Kills: " + getKillNumber());
+        report.append('\n');
         
         return report.toString();
     }

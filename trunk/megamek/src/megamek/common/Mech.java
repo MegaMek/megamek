@@ -1771,6 +1771,8 @@ public abstract class Mech
         report.append('\n');
         report.append("Pilot : " + crew.getDesc());
         report.append('\n');
+        report.append("Kills: " + getKillNumber());
+        report.append('\n');
         
         return report.toString();
     }

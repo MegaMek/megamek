@@ -21,6 +21,7 @@
 package megamek.client;
 
 import megamek.common.*;
+import megamek.server.Server;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -148,6 +149,48 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
             if (ev.getSource() == butStartPos[i]) {
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
+                // If the gameoption set_arty_player_homeedge is set,
+                // set all the player's offboard arty units to be behind the newly
+                // selected home edge.
+                if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) {
+                    int direction = -1;
+                    switch(i) {
+                        case 0:
+                            break;
+                        case 1:
+                        case 2:
+                        case 3:
+                            direction = Entity.NORTH;
+                            break;
+                        case 4:
+                            direction = Entity.EAST;
+                            break;
+                        case 5:
+                        case 6:
+                        case 7:
+                            direction = Entity.SOUTH;
+                            break;
+                        case 8:
+                            direction = Entity.WEST;
+                            break;
+                    }
+                    Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
+                    ( new EntitySelector() {
+                            public boolean accept( Entity entity ) {
+                                if ( entity.getOwnerId() == client.getLocalPlayer().getId() )
+                                    return true;
+                                return false;
+                            }
+                        } );
+                    while (thisPlayerArtyUnits.hasMoreElements()) {
+                        Entity entity = (Entity) thisPlayerArtyUnits.nextElement();
+                        if (entity.getOffBoardDirection() != Entity.NONE) {
+                            if (direction > -1) {
+                                entity.setOffBoard(entity.getOffBoardDistance(), direction);
+                            }
+                        }
+                    }
+                }
             }
         }
         setVisible(false);

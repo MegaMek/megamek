@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.5-dev (CVS)
 + Bug 759032: fixed NPE in MovementDisplay
++ Bug 774767: attacks at 0 range prohibited again for non-infantry
 
 v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).

@@ -24,6 +24,8 @@ v0.29.32 (CVS)
 + RFE 923247: Bot and Map Editor now have "stop nagging me" options
 + RFE 937330: HelpDialog no longer eating empty lines (nicer formating for
 	the radmes)
++ Bug 934527: "Board" menu no longer enabled in Client. Also tidied up some
+	other menu items.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

@@ -466,7 +466,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      */
     private synchronized void manageMenu() {
         // If we have a game, we can't join a new one, but we can save it.
-        if ( this.game != null ) {
+        // Also, no Game menu in the editor (where (this.hasBoard && null==this.client)).
+        if ( this.game != null || (this.hasBoard && null==this.client)) {
             fileGameNew.setEnabled( false );
             fileGameOpen.setEnabled( false );
             fileGameScenario.setEnabled( false );
@@ -485,25 +486,46 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             }
         }
         // If we have no game, we can't save, but we can create or join one.
-        else {
-            fileGameNew.setEnabled( true );
-            fileGameOpen.setEnabled( true );
-            fileGameSave.setEnabled( false );
-            fileGameScenario.setEnabled( true );
-            fileGameConnectBot.setEnabled( true );
-            fileGameConnect.setEnabled( true );
+        else { 
+                fileGameNew.setEnabled( true );
+                fileGameOpen.setEnabled( true );
+                fileGameSave.setEnabled( false );
+                fileGameScenario.setEnabled( true );
+                fileGameConnectBot.setEnabled( true );
+                fileGameConnect.setEnabled( true );
         }
+
+        // can view Game Opts if we have a game
+        if ( this.game != null ) {
+            viewGameOptions.setEnabled( true );
+        } else {
+            viewGameOptions.setEnabled( false );
+        };
 
         // As of 2003-09-04, we can't ever print.
         filePrint.setEnabled( false );
 
-        // If we have a board, we can still perform all board actions.
-        // We can also view the mini map.
-        if ( this.hasBoard ) {
+        // the Client doesn't have any board actions
+        if (null!=client) {
+                fileBoardNew.setEnabled( false );
+                fileBoardOpen.setEnabled( false );
+                fileBoardSave.setEnabled( false );
+                fileBoardSaveAs.setEnabled( false );            
+        // but the main window and map editor do
+        } else {
             fileBoardNew.setEnabled( true );
             fileBoardOpen.setEnabled( true );
-            fileBoardSave.setEnabled( true );
-            fileBoardSaveAs.setEnabled( true );
+            fileBoardSave.setEnabled( false );
+            fileBoardSaveAs.setEnabled( false );
+        };
+
+        // If we have a board, we can perform board actions and view the mini map.
+        if ( this.hasBoard ) {
+            // Save boards only in BoardEditor
+            if (null==client) {
+                fileBoardSave.setEnabled( true );
+                fileBoardSaveAs.setEnabled( true );
+            };
             viewMiniMap.setEnabled( true );
             if ( isJ2RE ){
             	viewZoomIn.setEnabled( true );
@@ -513,13 +535,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
             	viewZoomOut.setEnabled( false );
             }
         }
-        // If we don't have a board, then we can't save it.
-        // Also, we can't view the mini map.
+        // If we don't have a board we can't view the mini map.
         else {
-            fileBoardNew.setEnabled( true );
-            fileBoardOpen.setEnabled( true );
-            fileBoardSave.setEnabled( false );
-            fileBoardSaveAs.setEnabled( false );
             viewMiniMap.setEnabled( false );
             viewZoomIn.setEnabled( false );
             viewZoomOut.setEnabled( false );
@@ -595,9 +612,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         // As of 2003-09-04, we can't ever view the initiative report.
         viewInitiativeReport.setEnabled( false );
 
-        // As of 2003-09-04, we can always at least look at the
-        // game options and client settings.
-        viewGameOptions.setEnabled( true );
+        // As of 2003-09-04, we can always at least look at the client settings.
         viewClientSettings.setEnabled( true );
 
        if ( this.phase != Game.PHASE_FIRING || entity == null ) {

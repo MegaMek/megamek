@@ -232,7 +232,12 @@ public class BLKMechFile implements MechLoader {
                 critName = critName.substring(4);
             }
             
-            EquipmentType etype = EquipmentType.getByMepName(critName);
+            EquipmentType etype = EquipmentType.getByMtfName(critName);
+            
+            if (etype == null) {
+                etype = EquipmentType.getByMepName(critName);
+            }
+            
             if (etype == null) {
                 // try w/ prefix
                 etype = EquipmentType.getByMepName(prefix + critName);

@@ -851,6 +851,11 @@ public abstract class Entity
      * location inwards.
      */
     public abstract HitData getTransferLocation(HitData hit);
+    
+    /** int version */
+    public int getTransferLocation(int loc) {
+        return getTransferLocation(new HitData(loc)).getLocation();
+    }
                                                     
     /**
      * Gets the location that is destroyed recursively.  That is, one location
@@ -1424,18 +1429,19 @@ public abstract class Entity
     }
     
     /**
-     * Slightly different from getHittableCriticals; returns true if this 
-     * location can be critically hit this phase, false if criticals should
-     * transfer.
+     * Returns true if this location should transfer criticals to the next
+     * location inwards.  Checks to see that every critical in this location
+     * is either already totally destroyed (not just hit) or was never
+     * hittable to begin with.
      */
-    public boolean hasHittableCriticals(int loc) {
+    public boolean canTransferCriticals(int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            if (getCritical(loc, i) != null 
-               && getCritical(loc, i).isDestroyed() == false) {
-                return true;
+            CriticalSlot crit = getCritical(loc, i);
+            if (crit != null && !crit.isDestroyed() && crit.isEverHittable()) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
     
     /**

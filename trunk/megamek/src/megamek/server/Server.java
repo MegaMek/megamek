@@ -5458,17 +5458,10 @@ implements Runnable {
         }
         else {
             // transfer criticals, if needed
-            if (hits > 0 && !en.hasHittableCriticals(loc)
-            && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
-                loc = en.getTransferLocation(new HitData(loc)).getLocation();
+            while (hits > 0 && en.canTransferCriticals(loc)
+            && en.getTransferLocation(loc) != Entity.LOC_DESTROYED) {
+                loc = en.getTransferLocation(loc);
                 desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
-                
-                // may need to transfer crits twice--if you are shooting a CDA-3C Cicada and get lucky on the left arm two turns in a row
-                if (hits > 0 && !en.hasHittableCriticals(loc)
-                && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
-                    loc = en.getTransferLocation(new HitData(loc)).getLocation();
-                    desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
-                }
             }
             // roll criticals
             while (hits > 0) {

@@ -86,6 +86,13 @@ public class CriticalSlot
     }
     
     /**
+     * Was this critical slot ever hittable?
+     */
+    public boolean isEverHittable() {
+        return hittable;
+    }
+    
+    /**
      * Two CriticalSlots are equal if their type and index are equal
      */
     public boolean equals(Object object) {

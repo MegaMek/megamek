@@ -1,6 +1,6 @@
 Lot of people have contributed to the MegaMek project.
 
-  Original and present author:
+  Original author and present maintainer:
      Ben Mazur <bmazur@sev.org>
 
   Bot Code:
@@ -25,7 +25,7 @@ Lot of people have contributed to the MegaMek project.
      Matt Trumbull
      Hugh "TigerWraith" Peeples
      Bob Dee
-     Douglas Moore
+     Doug Moore
      
 
   And Of Course...

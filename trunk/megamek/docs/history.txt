@@ -1,5 +1,11 @@
 VERSION HISTORY:
 ----------------
+v 0.29.18 (CVS)
++ Bug 843723, Patch 842834: fix race condition with "Done" button
++ Data 841109: applied Hopalong's updated mechfiles and mex set.
++ Bug 841393: Blackjack BJ-1 should have lower arm actuator
++ Bug 825836: Gurkas and Firestarter FS9-OE should have swords.
+
 v 0.29.17 (2003-11-12, 8:30pm)
 + Patch 832885: use alternate LOS tool.
 + Marked data/sounds/call.wav as a binary file.

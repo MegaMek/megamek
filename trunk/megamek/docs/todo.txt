@@ -26,10 +26,6 @@ BoardView1.java:
 -- target displacement hex after a failed DFA attack
 -- many other things the server auto-picks right now...
 
-- The megamek.common.Board needs a deserialization method that will restore
-  the transient bldgByCoords from the buildings member; then remove the
-  game.board.newData(game.board) call from Server#setGame().
-
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
@@ -39,20 +35,15 @@ general:
 - In Mech Selection dialog, implement an "advanced filters and sorts" pane
 
 board display:
-? show dead mechs as rubble?
 - zooming and/or scrollbars
 - display blown off limbs, and make available for clubs
 
 mechs:
 -- Find out how to get M$ .exe to allow UTF-8 encoding.
--- handle template XML files
 -- handle "slottless" equipment
 -- enforce ammo loading restrictions
 
 initiative:
-- Possibly stagger within packs, so >2 player battles with unequal numbers of
-    units are more fair.  Right now, players might move AAAAABBBBCDDD, when
-    ABABABAABCDDD would be slightly more fair.
 - might show whole initiative sequence somewhere
 
 movement:
@@ -60,7 +51,6 @@ movement:
 
 weapon attacks:
 ? option to step thru roll by roll
-- eliminate leg weapons & kicks in level 1 water under level 1 rules
 - warn player when weapon fire will negate a Solo Attack
 
 physical attacks:

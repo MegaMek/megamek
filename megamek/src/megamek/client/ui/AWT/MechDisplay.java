@@ -523,11 +523,12 @@ class WeaponPanel
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;    c.weighty = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout)getLayout()).setConstraints(weaponList, c);
         add(weaponList);
         
+        c.weightx = 1.0;    c.weighty = 0.0;
         ((GridBagLayout)getLayout()).setConstraints(displayP, c);
         add(displayP);
         

@@ -415,6 +415,11 @@ public abstract class Entity
     public abstract String getMovementString(int mtype);
 
     /**
+     * Returns the abbreviation of the name of the type of movement used.
+     */
+    public abstract String getMovementAbbr(int mtype);
+
+    /**
      * Returns the name of the location specified.
      */
     public abstract String getLocationName(HitData hit);

@@ -1160,10 +1160,20 @@ public abstract class Mech
         
         obv = weaponBV * speedFactor;
         
+        // we get extra bv from c3 networks. a valid network requires at least 2 members
+        // some hackery and magic numbers here.  could be better
+        // also, each 'has' loops through all equipment.  inefficient to do it 3 times
+        double xbv = 0.0;
+        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
+            (hasC3S() && C3Master > NONE) ||
+            (hasC3i() && calculateFreeC3Nodes() < 5)) {
+                xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
+        }
+        
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
         
-        return (int)Math.round((dbv + obv) * pilotFactor);
+        return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
     
     /**

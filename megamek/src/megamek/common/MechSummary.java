@@ -15,12 +15,13 @@
  package megamek.common;
  
  import java.io.File;
+ import java.io.Serializable;
  
  /* 
   * Contains minimal information about a single mech
   */
  
- public class MechSummary
+ public class MechSummary implements Serializable
  {
  	private String m_sName;
  	private String m_sChassis;

@@ -408,6 +408,8 @@ implements Runnable {
         resetPlayerReady();
         transmitAllPlayerReadys();
         
+        pilotRolls.removeAllElements();
+        
         changePhase(Game.PHASE_LOUNGE);
     }
     
@@ -3517,12 +3519,6 @@ implements Runnable {
                     damageCrew(entity, 1);
                 }
             }
-            
-            // heat effects:  Horrible flaming vehicle death!  BWAHAHAHAHAHAHAHAHA!
-            if (entity instanceof Tank && (entityHex.contains(Terrain.FIRE))) {
-                doFlamingDeath(entity);
-            }
-
         }
     }
     
@@ -5014,6 +5010,9 @@ implements Runnable {
      * Send a packet to all connected clients.
      */
     private void send(Packet packet) {
+        if (connections == null) {
+            return;
+        }
         packet.zipData();
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();

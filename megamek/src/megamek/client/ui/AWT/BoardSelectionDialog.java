@@ -32,7 +32,7 @@ import megamek.common.*;
  * @version 
  */
 public class BoardSelectionDialog 
-    extends Dialog implements ActionListener, ItemListener
+    extends Dialog implements ActionListener, ItemListener, KeyListener
 {
     private ClientGUI client;
     private MapSettings mapSettings;
@@ -56,7 +56,7 @@ public class BoardSelectionDialog
     
     private Panel panBoardsSelected = new Panel();
     private Label labBoardsSelected = new Label("Maps Selected:", Label.CENTER);
-    private java.awt.List lisBoardsSelected = new java.awt.List(10, true);
+    private java.awt.List lisBoardsSelected = new java.awt.List(10);
     private Checkbox chkSelectAll = new Checkbox("Select All");
 
     private Button butChange = new Button("<<");
@@ -72,6 +72,8 @@ public class BoardSelectionDialog
     private Label labButtonSpace = new Label("", Label.CENTER);
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
+    
+    private boolean bDelayedSingleSelect = false;
     
 
     /** Creates new BoardSelectionDialog */
@@ -181,6 +183,7 @@ public class BoardSelectionDialog
     private void setupSelected() {
         refreshBoardsSelected();
         lisBoardsSelected.addItemListener(this);
+        lisBoardsSelected.addKeyListener(this);
         chkSelectAll.addItemListener(this);
         
         panBoardsSelected.setLayout(new BorderLayout());
@@ -400,25 +403,12 @@ public class BoardSelectionDialog
             this.setVisible(false);
         } else if (e.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
-        } else {
-            // number button?
-            try {
-                // TODO: can't this be easier?
-                if (e.getModifiers() == 0) {
-                    final int[] selected = lisBoardsSelected.getSelectedIndexes();
-                    for (int i = 0; i < selected.length; i++) {
-                        lisBoardsSelected.deselect(selected[i]);
-                    }
-                }
-                lisBoardsSelected.select(Integer.parseInt(e.getActionCommand()));
-                refreshSelectAllCheck();
-            } catch (NumberFormatException ex) {
-            }
-        }
+        } 
     }
 
     public void itemStateChanged(java.awt.event.ItemEvent itemEvent) {
         if (itemEvent.getSource() == chkSelectAll) {
+        	lisBoardsSelected.setMultipleMode(chkSelectAll.getState());
             for (int i = 0; i < lisBoardsSelected.getItemCount(); i++) {
                 if (chkSelectAll.getState()) {
                     lisBoardsSelected.select(i);
@@ -427,6 +417,16 @@ public class BoardSelectionDialog
                 }
             }
         } else if (itemEvent.getSource() == lisBoardsSelected) {
+//            System.out.println(itemEvent.paramString());
+//            System.out.flush();
+//            final int[] selected = lisBoardsSelected.getSelectedIndexes();
+//            for (int i = 0; i < selected.length; i++) {
+//                lisBoardsSelected.deselect(selected[i]);
+//            }
+        	System.out.println("Selected!");
+        	if (bDelayedSingleSelect) {
+        		lisBoardsSelected.setMultipleMode(false);
+        	}
             refreshSelectAllCheck();
         }
     }
@@ -444,4 +444,35 @@ public class BoardSelectionDialog
         
         client.getClient().sendMapQuery(mapSettings);
     }
+    
+    /**
+     * I hate AWT. -jy
+     * This is a hacked up version of a simple select list that supports
+     * holding control down to select multiple items.  AWT Lists don't
+     * support this natively.
+     * 
+     * The trick is to turn on multiple mode on the list if the user presses
+     * control.  But we can't turn multi mode off as soon as they release, or
+     * any existing multi-select will be wiped out.  Instead we set a flag
+     * to indicate any later selection should trigger a set to single-select 
+     */
+
+	public void keyPressed(KeyEvent ev) {
+		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
+			System.out.println("Multiple on!");
+			lisBoardsSelected.setMultipleMode(true);
+			bDelayedSingleSelect = false;
+		}
+	}
+
+
+	public void keyReleased(KeyEvent ev) {
+		if (ev.getKeyCode() == KeyEvent.VK_CONTROL) {
+			System.out.println("Multiple off!");
+			bDelayedSingleSelect = true;
+		}
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+	}
 }

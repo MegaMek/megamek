@@ -34,17 +34,31 @@ import megamek.common.Targetable;
 import megamek.common.Terrain;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.TargetRoll;
 
-import java.util.Enumeration;
 import megamek.common.actions.*;
-import megamek.client.FiringDisplay;
 /**
  * @author Andrew Hunter
  * A class representing a weapon.
  */
 public abstract class Weapon extends WeaponType {
-	public AttackHandler fire(WeaponAttackAction waa, Game g) {
-		ToHitData toHit=this.toHit(waa,g);
+	public AttackHandler fire(WeaponAttackAction waa, Game game) {
+		ToHitData toHit=this.toHit(waa,game);
+		Entity ae = game.getEntity(waa.getEntityId());
+		Mounted weapon=ae.getEquipment(waa.getWeaponId());
+//		 has this weapon fired already?
+        if (weapon.isUsedThisRound()) {
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
+        }
+        // is the weapon functional?
+        if (weapon.isDestroyed() || weapon.isBreached() || weapon.isMissing()) {
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
+        }
+        // is it jammed?
+        if (weapon.isJammed()) {
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
+        }
+		return new WeaponHandler(toHit,waa,game);
 		
 	}
 	public ToHitData toHit(WeaponAttackAction waa, Game game) {

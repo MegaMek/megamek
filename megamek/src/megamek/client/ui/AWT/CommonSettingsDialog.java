@@ -35,6 +35,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private TextField   tooltipDelay;
     private TextField   shiftScrollSensitivity;
     private Choice      unitStartChar;
+    private TextField   maxPathfinderTime;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -108,6 +109,15 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         panSetting.add( new Label("Shift-Scroll sensitivity.") );
         this.add( panSetting );
 
+        /* restore me when pathfinder is working. *
+        panSetting = new Panel();
+        maxPathfinderTime
+            = new TextField(5);
+        panSetting.add( maxPathfinderTime );
+        panSetting.add( new Label("Pathfinder time limit.") );
+        this.add( panSetting );
+        /* restore me when pathfinder is working. */
+
         // Add the dialog controls.
         Panel buttons = new Panel();
         buttons.setLayout( new GridLayout(1, 0) );
@@ -153,6 +163,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         soundMute.setState( Settings.soundMute );
         showMapHexPopup.setState( Settings.showMapHexPopup );
         tooltipDelay.setText( Integer.toString(Settings.tooltipDelay ) );
+        /* restore me when pathfinder is working. *
+        maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
+        /* restore me when pathfinder is working. */
 
         // Select the correct char set (give a nice default to start).
         unitStartChar.select(0);
@@ -192,6 +205,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
         Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
+        /* restore me when pathfinder is working. *
+        Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
+        /* restore me when pathfinder is working. */
         Settings.save();
         this.setVisible( false );
     }

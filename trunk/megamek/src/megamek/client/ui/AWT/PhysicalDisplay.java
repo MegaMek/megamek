@@ -40,6 +40,7 @@ public class PhysicalDisplay
     public static final String PHYSICAL_DODGE = "dodge";
     public static final String PHYSICAL_PUSH = "push";
     public static final String PHYSICAL_NEXT = "next";
+    public static final String PHYSICAL_PROTO = "protoPhysical";
 
     private static final int    NUM_BUTTON_LAYOUTS = 2;
     // parent game
@@ -56,6 +57,7 @@ public class PhysicalDisplay
     private Button            butBrush;
     private Button            butThrash;
     private Button            butDodge;
+    private Button            butProto;
     
     private Button            butNext;
     private Button            butDone;
@@ -63,7 +65,6 @@ public class PhysicalDisplay
     
     private Button            butSpace;
     private Button            butSpace2;
-    private Button            butSpace3;
 
     private int               buttonLayout;
         
@@ -94,9 +95,6 @@ public class PhysicalDisplay
 
         butSpace2 = new Button(".");
         butSpace2.setEnabled(false);
-
-        butSpace3 = new Button(".");
-        butSpace3.setEnabled(false);
 
         butPunch = new Button("Punch");
         butPunch.addActionListener(this);
@@ -132,6 +130,11 @@ public class PhysicalDisplay
         butDodge.addActionListener(this);
         butDodge.setEnabled(false);
         butDodge.setActionCommand(PHYSICAL_DODGE);
+        
+        butProto = new Button("Proto-Physical");
+        butProto.addActionListener(this);
+        butProto.setEnabled(false);
+        butProto.setActionCommand(PHYSICAL_PROTO);
 
         butDone = new Button("Done");
         butDone.addActionListener(this);
@@ -204,9 +207,9 @@ public class PhysicalDisplay
             panButtons.add(butBrush);
             panButtons.add(butThrash);
             panButtons.add(butDodge);
+            panButtons.add(butProto);
             panButtons.add(butSpace);
             panButtons.add(butSpace2);
-            panButtons.add(butSpace3);
             panButtons.add(butMore);
 //             panButtons.add(butDone);
             break;
@@ -303,6 +306,7 @@ public class PhysicalDisplay
         setBrushOffEnabled(false);
         setThrashEnabled(false);
         setDodgeEnabled(false);
+        setProtoEnabled(false);
         butDone.setEnabled(false);
         setNextEnabled(false);
     }
@@ -431,6 +435,23 @@ public class PhysicalDisplay
   };
     }
 
+    /**
+     * Make a protomech physical attack on the target.
+     */
+    
+    private void proto() {
+    	ToHitData proto = Compute.toHitProto(client.game, cen, target);
+
+    	if (clientgui.doYesNoDialog( "Protomech physical attack at " + target.getDisplayName() + "?",
+    	    "To Hit: " + proto.getValueAsString() + " (" + Compute.oddsAbove(proto.getValue()) + "%)   (" + proto.getDesc() + ")"
+    	    + "\nDamage: "+Compute.getProtoPhysicalDamageFor(ce())+proto.getTableDesc()
+    	) ) {
+    		disableButtons();
+    	    attacks.addElement(new ProtomechPhysicalAttackAction(cen, target.getTargetType(), target.getTargetId()));
+    	    ready();
+    	  };
+    }
+    
     /**
      * Sweep off the target with the arms that the player selects.
      */
@@ -669,6 +690,11 @@ public class PhysicalDisplay
             // Thrash at infantry?
             ToHitData thrash = new ThrashAttackAction(cen, target).toHit(client.game);
             setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
+            
+            // make a Protomech physical attack?
+            ToHitData proto = Compute.toHitProto
+			   ( client.game, cen, target);
+            setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
         } else {
             setPunchEnabled(false);
             setPushEnabled(false);
@@ -676,6 +702,7 @@ public class PhysicalDisplay
             setClubEnabled(false);
             setBrushOffEnabled(false);
             setThrashEnabled(false);
+			setProtoEnabled(false);
         }
     }
     
@@ -865,6 +892,8 @@ public class PhysicalDisplay
             thrash();
         } else if (ev.getActionCommand().equals(PHYSICAL_DODGE)) {
             dodge();
+        } else if (ev.getActionCommand().equals(PHYSICAL_PROTO)) {
+        	proto();
         } else if (ev.getActionCommand().equals(PHYSICAL_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
@@ -957,6 +986,10 @@ public class PhysicalDisplay
     public void setDodgeEnabled(boolean enabled) {
         butDodge.setEnabled(enabled);
         clientgui.getMenuBar().setPhysicalDodgeEnabled(enabled);
+    }
+    public void setProtoEnabled(boolean enabled) {
+    	butProto.setEnabled(enabled);
+    	clientgui.getMenuBar().setPhysicalProtoEnabled(enabled);
     }
     public void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);

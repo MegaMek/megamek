@@ -1,11 +1,11 @@
-The Great MegaMek Feature list. 3nd June 2004.  MegaMek Version 29.36. Best viewed in 1024x768.
+The Great MegaMek Feature list. 21st July 2004.  MegaMek Version 42. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
 Components (Units)
 
 - Battlemechs			Yes		None
-- Protomechs			Partial         Missing: Physicals, Bot support
+- Protomechs			Partial         Missing: Bot support
 - Vehicles			Partial		No VTOL's or Naval Units.
 - Infantry			Yes		None
 
@@ -89,7 +89,7 @@ Weapon Attacks
 
 - Ammunition Expenditure	Yes		None
 - Firing Arcs			Yes		None
-- Rotating the Firing Arcs	Yes		When standing on board edge cannot rotate to face off the board.
+- Rotating the Firing Arcs	Yes		None
 
 Weapon Attacks (Firing Weapons)
 
@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			Yes             Fire declaration *is* as a point (report a bug if it's not).
+- Protomechs			Yes 	Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -128,7 +128,7 @@ Physical Attacks
 - Death From Above		Yes		Buildings may not be DFA'd
 - Different Elevations		Yes		None
 - Prone Battlemechs		Yes		None
-- Protomech Physical            No              None
+- Protomech Physical 	Yes 	None
 
 Heat (Heat Points)
 
@@ -169,7 +169,7 @@ Building (Emplacements)
 
 ProtoMechs
 
-- ProtoMechs			Partial		Missing: Physicals, Bot support
+- ProtoMechs			Partial		Missing: Bot support
 
 ProtoMechs (Combat)
 
@@ -334,7 +334,7 @@ Equipment
 - Narc				Yes		None
 - Narc Munitions		Partial		iNarc not yet implemented.
 - Rocket Lauchers		Yes		None
-- Stealth Armor System		Yes		Activate /Disable on the systems tab.
+- Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None
 - TAG				Yes		Requires Arrows IV implementation to work.
 - Targeting Computers		Yes		None

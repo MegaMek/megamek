@@ -128,6 +128,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem physicalBrushOff   = null;
     private MenuItem physicalDodge      = null;
     private MenuItem physicalThrash     = null;
+    private MenuItem physicalProto      = null;
 
     private Client client;
 
@@ -384,6 +385,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         physicalClub = createMenuItem(menu, "Club", PhysicalDisplay.PHYSICAL_CLUB);
         physicalBrushOff = createMenuItem(menu, "Brush Off", PhysicalDisplay.PHYSICAL_BRUSH_OFF);
         physicalThrash = createMenuItem(menu, "Thrash", PhysicalDisplay.PHYSICAL_THRASH);
+        physicalProto = createMenuItem(menu, "Protomech Physical", PhysicalDisplay.PHYSICAL_PROTO);
         physicalDodge = createMenuItem(menu, "Dodge", PhysicalDisplay.PHYSICAL_DODGE);
         physicalNext = createMenuItem(menu, "Next Unit", PhysicalDisplay.PHYSICAL_NEXT, KeyEvent.VK_N);
 
@@ -786,7 +788,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 	public synchronized void setPhysicalThrashEnabled(boolean enabled) {
     	physicalThrash.setEnabled(enabled);
 	}
-
+	public synchronized void setPhysicalProtoEnabled(boolean enabled) {
+    	physicalProto.setEnabled(enabled);
+	}
 	//Manages fire menu items...
 
 	public synchronized void setFireFireEnabled(boolean enabled) {

@@ -242,7 +242,7 @@ public class MegaMek
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == sd.T_BOT) {
                 Frame f = new Frame("MegaMek Bot");
-                Client c = BotFactory.getBot(BotFactory.TEST, frame, cd.name);
+                Client c = BotFactory.getBot(BotFactory.TEST, f, pa[x].getName());
                 c.connect("localhost", hd.port);
                 c.retrieveServerInfo();
                 //f.hide();

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -20,30 +20,30 @@ public class HexTarget implements Targetable
     private boolean m_bIgnite;
     private int m_elev;
     private int m_type;
-    
+
     public HexTarget(Coords c, Board board, int nType) {
         m_coords = c;
         m_elev = board.getHex(m_coords).getElevation();
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
-    
-    public int getTargetType() { 
+
+    public int getTargetType() {
         return m_type;
     }
-    
+
     public int getTargetId() {
         return coordsToId(m_coords);
     }
-    
+
     public Coords getPosition() {
         return m_coords;
     }
-    
+
     public int absHeight() {
         return getHeight() + getElevation();
     }
-    
+
     public int getHeight() {
         return 0;
     }
@@ -51,7 +51,7 @@ public class HexTarget implements Targetable
     public int getElevation() {
         return m_elev;
     }
-    
+
     public boolean isImmobile() {
         return m_type != Targetable.TYPE_MINEFIELD_DELIVER;
     }
@@ -68,10 +68,12 @@ public class HexTarget implements Targetable
 		case (Targetable.TYPE_HEX_IGNITE) :
 			name = " (Ignite)";
 			break;
+                case (Targetable.TYPE_HEX_ARTILLERY) :
+                        name = " (Artillery)";
     	}
         return "Hex: " + m_coords.getBoardNum() + name;
     }
-    
+
     public boolean isIgniting() {
         return m_bIgnite;
     }
@@ -82,15 +84,15 @@ public class HexTarget implements Targetable
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
-     
+
     // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
         return c.y * 100000 + c.x;
     }
-    
+
     // decode 1 number into 2
     public static Coords idToCoords(int id) {
         int y = id / 100000;
         return new Coords(id - (y * 100000), y);
-    }    
+    }
 }

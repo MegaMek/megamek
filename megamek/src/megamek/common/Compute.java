@@ -474,6 +474,7 @@ public class Compute
               atype.getMunitionType() == AmmoType.M_INFERNO ) ||
             ( isWeaponInfantry &&
               wtype.hasFlag(WeaponType.F_INFERNO) );
+        boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == game.PHASE_FIRING;
 
         ToHitData toHit = null;
 
@@ -500,6 +501,14 @@ public class Compute
 			!AmmoType.canClearMinefield(atype)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
 		}
+        // Arty shots have to be with arty, non arty shots with non arty.
+               if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY && !wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+               return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't make artillery attacks.");
+               }
+               if (!(target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) && wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+               return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon must make artillery attacks.");
+               }
+
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -753,6 +762,36 @@ public class Compute
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
         int distance = effectiveDistance(game, ae, target);
+
+
+        // Handle direct artillery attacks.
+        if(isArtilleryDirect) {
+          toHit.addModifier(5, "onboard artillery modifer");
+          toHit.append(getAttackerMovementModifier(game, attackerId));
+          toHit.append(losMods);
+          toHit.append(getSecondaryTargetMod(game, ae, target));
+          // actuator & sensor damage to attacker
+          toHit.append(getDamageWeaponMods(ae, weapon));
+          // heat
+          if (ae.getHeatFiringModifier() != 0) {
+            toHit.addModifier(ae.getHeatFiringModifier(), "heat");
+          }
+          // weapon to-hit modifier
+          if (wtype.getToHitModifier() != 0) {
+            toHit.addModifier(wtype.getToHitModifier(), "weapon to-hit modifier");
+          }
+
+          // ammo to-hit modifier
+          if (usesAmmo && atype.getToHitModifier() != 0) {
+            toHit.addModifier(atype.getToHitModifier(),
+                              "ammunition to-hit modifier");
+          }
+          if (distance >17) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Direct artillery attack at range >17 hexes.");
+          }
+          return toHit;
+
+        }
 
         // Attacks against adjacent buildings automatically hit.
         if ( distance == 1 &&
@@ -1839,7 +1878,7 @@ public class Compute
         //Set the base BTH
         int base = 3;
 
-        // Level 3 rule: the BTH is PSR - 2 
+        // Level 3 rule: the BTH is PSR - 2
         if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
             base = ae.getCrew().getPiloting() - 2;
         }
@@ -2716,7 +2755,7 @@ public class Compute
           toHit.addModifier(-1, "melee specialist");
         }
 
-        if (  (target instanceof Mech) && 
+        if (  (target instanceof Mech) &&
               target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
               (target.dodging || noClanPhysicals) ) { //auto-dodge if approp.
           toHit.addModifier(2, "target is dodging");

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -53,14 +53,14 @@ public class Client extends Panel
     // some info about us and the server
     private boolean             connected = false;
     public int                  local_pn = -1;
-        
+
     // the game state object
     public Game                 game = new Game();
-        
+
     // here's some game phase stuff
     private MapSettings         mapSettings;
     public String               eotr;
-        
+
     // keep me
     public ChatterBox           cb;
     public BoardView1           bv;
@@ -73,7 +73,7 @@ public class Client extends Panel
     private UnitOverview 		uo;
     public Ruler                ruler; // added by kenn
     protected Component         curPanel;
-    
+
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
     private GameOptionsDialog       gameOptionsDialog;
@@ -84,7 +84,7 @@ public class Client extends Panel
 
     // message pump listening to the server
     private Thread              pump;
-        
+
     // I send out game events!
     private Vector              gameListeners = new Vector();
 
@@ -102,7 +102,7 @@ public class Client extends Panel
 	/**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
-     * 
+     *
      * @param name the player name for this client
      * @param host the hostname
      * @param port the host port
@@ -110,7 +110,7 @@ public class Client extends Panel
     public Client(String name, String host, int port) {
     	// construct new client
     	this(name);
-    	
+
     	// try to connect
         if(!connect(host, port)) {
             StringBuffer error = new StringBuffer();
@@ -123,7 +123,7 @@ public class Client extends Panel
             frame.setVisible(false);
             die();
         }
-		
+
         // wait for full connection
         retrieveServerInfo();
 
@@ -138,7 +138,7 @@ public class Client extends Panel
         }
 
     }
-    
+
     /**
      * Construct a client which will display itself in a new frame.  It will
      * not try to connect to a server yet.  When the frame closes, this client
@@ -168,7 +168,7 @@ public class Client extends Panel
 
         frame.setVisible(true);
     }
-    
+
     /**
      * Initializes a number of things about this frame.
      */
@@ -186,7 +186,7 @@ public class Client extends Panel
 
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        
+
 		frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
 		// when frame closes, save settings and clean up.
@@ -198,7 +198,7 @@ public class Client extends Panel
             }
         });
     }
-    
+
     /**
      * Lays out the frame by setting this Client object to take up the full
      * frame display area.
@@ -322,7 +322,7 @@ public class Client extends Panel
 			showLOSSettingDialog();
 		}
     }
-    
+
     /**
      * Initializes dialogs and some displays for this client.
      */
@@ -336,7 +336,7 @@ public class Client extends Panel
 		bv.addDisplayable(cb2);
         addGameListener(cb2);
         bv.addKeyListener(cb2);
-*/        
+*/
         uo = new UnitOverview(this);
 		bv.addDisplayable(uo);
 
@@ -351,7 +351,7 @@ public class Client extends Panel
         mechW.addWindowListener(this);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
-        
+
         // added by kenn
         Ruler.color1 = Settings.rulerColor1;
         Ruler.color2 = Settings.rulerColor2;
@@ -385,13 +385,13 @@ public class Client extends Panel
         } catch(IOException ex) {
             return false;
         }
-        
+
         pump = new Thread(this);
         pump.start();
-    
+
         return true;
     }
-    
+
     /**
      * Saves the current settings to the cfg file.
      */
@@ -433,14 +433,14 @@ public class Client extends Panel
         // save settings to disk
         Settings.save();
     }
-    
+
     /**
      * Shuts down threads and sockets
      */
     public void die() {
         connected = false;
         pump = null;
-        
+
         // shut down threads & sockets
         try {
             frame.removeAll();
@@ -452,7 +452,7 @@ public class Client extends Panel
         } catch (NullPointerException e) {
             // not a big deal, just never connected
         }
-        
+
         frame.setVisible(false);
 /* Avoid the infinite loop until we can fix this bug!!!
         boolean disposed = false;
@@ -477,28 +477,28 @@ public class Client extends Panel
                 }
             }
         }
-        
+
         System.out.println("client: died");
     }
-    
+
     /**
      * The client has become disconnected from the server
      */
     protected void disconnected() {
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
         alert.show();
-        
+
         frame.setVisible(false);
         die();
     }
-    
+
     /**
      * Return an enumeration of the players in the game
      */
     public Enumeration getPlayers() {
         return game.getPlayers();
     }
-    
+
     /**
      * Return the current number of players the client knows about
      */
@@ -511,7 +511,7 @@ public class Client extends Panel
         }
         return count;
     }
-    
+
     public Entity getEntity(int enum) {
         return game.getEntity(enum);
     }
@@ -523,60 +523,60 @@ public class Client extends Panel
     public Player getPlayer(int idx) {
         return (Player)game.getPlayer(idx);
     }
-  
+
     /**
      * Return the local player
      */
     public Player getLocalPlayer() {
         return getPlayer(local_pn);
     }
-    
+
     /**
      * Returns the number of first selectable entity
      */
     public int getFirstEntityNum() {
         return game.getFirstEntityNum();
     }
-    
+
     /**
      * Returns the number of the next selectable entity after the one given
      */
     public int getNextEntityNum(int entityId) {
         return game.getNextEntityNum(entityId);
     }
-  
+
     /**
      * Returns the number of the first deployable entity
      */
     public int getFirstDeployableEntityNum() {
       return game.getFirstDeployableEntityNum();
     }
-    
+
     /**
      * Returns the number of the next deployable entity
      */
     public int getNextDeployableEntityNum(int entityId) {
       return game.getNextDeployableEntityNum(entityId);
     }
-    
+
     /**
      * Shortcut to game.board
      */
     public Board getBoard() {
         return game.board;
     }
-    
+
     /**
      * Returns an emumeration of the entities in game.entities
      */
     public Enumeration getEntities() {
         return game.getEntities();
     }
-    
+
     public MapSettings getMapSettings() {
         return mapSettings;
     }
-    
+
     /**
      * Returns the board selection dialog, creating it on the first call
      */
@@ -586,18 +586,18 @@ public class Client extends Panel
         }
         return boardSelectionDialog;
     }
-    
+
     public GameOptionsDialog getGameOptionsDialog() {
         if (gameOptionsDialog == null) {
             gameOptionsDialog = new GameOptionsDialog(this);
         }
         return gameOptionsDialog;
     }
-    
+
     public MechSelectorDialog getMechSelectorDialog() {
       return mechSelectorDialog;
     }
-    
+
     public StartingPositionDialog getStartingPositionDialog() {
         if (startingPositionDialog == null) {
             startingPositionDialog = new StartingPositionDialog(this);
@@ -614,15 +614,15 @@ public class Client extends Panel
     	if ( curPanel instanceof BoardViewListener ) {
     		bv.removeBoardViewListener((BoardViewListener) curPanel);
     	}
-    	
+
         if ( curPanel instanceof ActionListener ) {
             menuBar.removeActionListener( (ActionListener) curPanel );
         }
 
         this.game.setPhase(phase);
-        
+
         bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
-        
+
         // remove the current panel
         curPanel = null;
         this.removeAll();
@@ -703,7 +703,7 @@ public class Client extends Panel
         this.cb.moveToEnd();
         processGameEvent(new GameEvent(this, GameEvent.GAME_PHASE_CHANGE, null, ""));
     }
-    
+
     private void switchPanel(Component panel) {
         if ( panel instanceof ActionListener ) {
             menuBar.addActionListener( (ActionListener) panel );
@@ -713,31 +713,31 @@ public class Client extends Panel
         this.add(curPanel);
         curPanel.requestFocus();
     }
-    
+
     protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
-    
+
     protected void showBoardPopup(Point point) {
         fillPopup(bv.getCoordsAt(point));
-        
+
         if (popup.getItemCount() > 0) {
             popup.show(bv, point.x, point.y);
         }
     }
-    
+
     private boolean canTargetEntities() {
-        return isMyTurn() && (curPanel instanceof FiringDisplay 
+        return isMyTurn() && (curPanel instanceof FiringDisplay
                               || curPanel instanceof PhysicalDisplay);
     }
-    
+
     private boolean canSelectEntities() {
-        return isMyTurn() && (curPanel instanceof FiringDisplay 
+        return isMyTurn() && (curPanel instanceof FiringDisplay
                               || curPanel instanceof PhysicalDisplay
                               || curPanel instanceof MovementDisplay);
     }
-    
+
     /** Toggles the entity display window
      */
     public void toggleDisplay() {
@@ -746,7 +746,7 @@ public class Client extends Panel
         	frame.requestFocus();
         }
     }
-    
+
     /** Sets the visibility of the entity display window
      */
     public void setDisplayVisible(boolean visible) {
@@ -755,7 +755,7 @@ public class Client extends Panel
         	frame.requestFocus();
         }
     }
-    
+
 	public void toggleUnitOverview() {
 		uo.setVisible(!uo.isVisible());
 		bv.repaint();
@@ -775,7 +775,7 @@ public class Client extends Panel
         	frame.requestFocus();
         }
     }
-    
+
     /** Sets the visibility of the minimap window
      */
     public void setMapVisible(boolean visible) {
@@ -784,10 +784,10 @@ public class Client extends Panel
         	frame.requestFocus();
         }
     }
-    
+
     protected void fillPopup(Coords coords) {
         popup.removeAll();
-        
+
         // add select options
         if (canSelectEntities()) {
             for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
@@ -797,17 +797,17 @@ public class Client extends Panel
                 }
             }
         }
-        
+
         if (popup.getItemCount() > 0) {
             popup.addSeparator();
         }
-        
+
         // add view options
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
-        
+
         // add target options
         if (canTargetEntities()) {
             if (popup.getItemCount() > 0) {
@@ -847,35 +847,39 @@ public class Client extends Panel
                 if (h != null && curPanel instanceof FiringDisplay) {
 					popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_MINEFIELD_DELIVER) ) );
 				}
+                if (h != null && curPanel instanceof FiringDisplay) {
+                                        popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_HEX_ARTILLERY) ) );
+                               }
+
             }
         }
     }
-    
-    
+
+
     /**
-     * Adds the specified game listener to receive 
+     * Adds the specified game listener to receive
      * board events from this board.
-     * 
+     *
      * @param l            the game listener.
      */
     public void addGameListener(GameListener l) {
         gameListeners.addElement(l);
     }
-    
+
     /**
      * Removes the specified game listener.
-     * 
+     *
      * @param l            the game listener.
      */
     public void removeGameListener(GameListener l) {
         gameListeners.removeElement(l);
     }
-    
+
     /**
-     * Processes game events occurring on this 
-     * connection by dispatching them to any registered 
-     * GameListener objects. 
-     * 
+     * Processes game events occurring on this
+     * connection by dispatching them to any registered
+     * GameListener objects.
+     *
      * @param be        the board event.
      */
     protected void processGameEvent(GameEvent ge) {
@@ -906,9 +910,9 @@ public class Client extends Panel
         	playerListDialog.refreshPlayerList();
         }
     }
-    
+
     /**
-     * 
+     *
      */
     public void retrieveServerInfo() {
         int retry = 50;
@@ -922,15 +926,15 @@ public class Client extends Panel
             }
         }
     }
-    
+
     /**
      * is it my turn?
      */
     public boolean isMyTurn() {
         return game.getTurn() != null && game.getTurn().getPlayerNum() == local_pn;
     }
-    
-    /** 
+
+    /**
      * Change whose turn it is.
      */
     protected void changeTurnIndex(int index) {
@@ -938,7 +942,7 @@ public class Client extends Panel
         Player player = getPlayer(game.getTurn().getPlayerNum());
         processGameEvent(new GameEvent(this, GameEvent.GAME_TURN_CHANGE, player, ""));
     }
-    
+
     /**
      * Pops up a dialog box showing an alert
      */
@@ -946,7 +950,7 @@ public class Client extends Panel
         AlertDialog alert = new AlertDialog(frame, title, message);
         alert.show();
     }
-    
+
     /**
      * Pops up a dialog box asking a yes/no question
      * 
@@ -990,7 +994,7 @@ public class Client extends Panel
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode)
     {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), 
+        Object[] data = { new Integer(nEntity), new Integer(nEquip),
                           new Integer(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
@@ -1000,7 +1004,7 @@ public class Client extends Panel
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo)
     {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon), 
+        Object[] data = { new Integer(nEntity), new Integer(nWeapon),
                           new Integer(nAmmo) };
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
@@ -1010,10 +1014,10 @@ public class Client extends Panel
      */
     public void moveEntity(int enum, MovePath md) {
         Object[] data = new Object[2];
-    
+
         data[0] = new Integer(enum);
         data[1] = md;
-    
+
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
     }
 
@@ -1052,21 +1056,21 @@ public class Client extends Panel
         while ( iter.hasMoreElements() ) {
             data[index++] = new Integer( ((Entity) iter.nextElement()).getId() );
         }
-        
+
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
     }
-    
+
     /**
      * Send a weapon fire command to the server.
      */
     public void sendAttackData(int aen, Vector attacks) {
         Object[] data = new Object[2];
-                
+
         data[0] = new Integer(aen);
         data[1] = attacks;
-                
+
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
-                
+
         /* DEBUG:
         System.out.println("client: sent fire:");
         for (Enumeration i = fire.elements(); i.hasMoreElements();) {
@@ -1075,7 +1079,7 @@ public class Client extends Panel
         }
         */
     }
-    
+
     /**
      * Send the game options to the server
      */
@@ -1085,28 +1089,28 @@ public class Client extends Panel
         data[1] = options;
         send(new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, data));
     }
-    
+
     /**
      * Send the game settings to the server
      */
     public void sendMapSettings(MapSettings mapSettings) {
         send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings));
     }
-    
+
     /**
      * Send the game settings to the server
      */
     public void sendMapQuery(MapSettings query) {
         send(new Packet(Packet.COMMAND_QUERY_MAP_SETTINGS, query));
     }
-    
+
     /**
      * Broadcast a general chat message from the local player
      */
     public void sendChat(String message) {
         send(new Packet(Packet.COMMAND_CHAT, message));
     }
-    
+
     /**
      * Sends a "player done" message to the server.
      */
@@ -1132,28 +1136,28 @@ public class Client extends Panel
         Settings.lastPlayerCamoName = player.getCamoFileName();
         send( new Packet(Packet.COMMAND_PLAYER_UPDATE, player) );
     }
-  
+
     /**
      * Sends an "add entity" packet
      */
     public void sendAddEntity(Entity entity) {
         send(new Packet(Packet.COMMAND_ENTITY_ADD, entity));
     }
-      
+
     /**
      * Sends an "deploy minefields" packet
      */
     public void sendDeployMinefields(Vector minefields) {
         send(new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
     }
-      
+
     /**
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(Packet.COMMAND_ENTITY_UPDATE, entity));
     }
-      
+
     /**
      * Sends a "delete entity" packet
      */
@@ -1161,7 +1165,7 @@ public class Client extends Panel
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(enum)));
     }
 
-    
+
     /**
      * Receives player information from the message packet.
      */
@@ -1178,7 +1182,7 @@ public class Client extends Panel
         Settings.lastPlayerCamoName = newPlayer.getCamoFileName();
         processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
     }
-    
+
     /**
      * Loads the turn list from the data in the packet
      */
@@ -1193,26 +1197,26 @@ public class Client extends Panel
         Board newBoard = (Board)c.getObject(0);
         game.board.newData( newBoard );
     }
-    
+
     /**
      * Loads the entities from the data in the net command.
      */
     protected void receiveEntities(Packet c) {
         Vector newEntities = (Vector)c.getObject(0);
         Vector newOutOfGame = (Vector)c.getObject(1);
-        
+
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
 	        game.setOutOfGameEntitiesVector(newOutOfGame);
         }
-        
+
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
         //XXX
     }
-    
+
     /**
      * Loads entity update data from the data in the net command.
      */
@@ -1234,20 +1238,20 @@ public class Client extends Panel
 	    }
         //XXX
     }
-    
+
     protected void receiveEntityAdd(Packet packet) {
         int entityId = packet.getIntValue(0);
         Entity entity = (Entity)packet.getObject(1);
 
         // Add the entity to the game.
         game.addEntity(entityId, entity);
-        
+
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
         //XXX
     }
-    
+
     protected void receiveEntityRemove(Packet packet) {
         int entityId = packet.getIntValue(0);
         int condition = packet.getIntValue(1);
@@ -1266,7 +1270,7 @@ public class Client extends Panel
 
     	for (int i = 0; i < minefields.size(); i++) {
     		Minefield mf = (Minefield) minefields.elementAt(i);
-    		
+
     		game.addMinefield(mf);
     	}
     	bv.update(bv.getGraphics());
@@ -1278,21 +1282,21 @@ public class Client extends Panel
 
     	for (int i = 0; i < minefields.size(); i++) {
     		Minefield mf = (Minefield) minefields.elementAt(i);
-    		
+
     		game.addMinefield(mf);
 	   	}
     }
 
     protected void receiveRevealMinefield(Packet packet) {
 		Minefield mf = (Minefield) packet.getObject(0);
-		
+
 		game.addMinefield(mf);
     	bv.update(bv.getGraphics());
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
 		Minefield mf = (Minefield) packet.getObject(0);
-		
+
 		game.removeMinefield(mf);
     	bv.update(bv.getGraphics());
     }
@@ -1338,7 +1342,7 @@ public class Client extends Panel
             } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
                 Entity entity = game.getEntity(entityId);
                 entity.dodging = true;
-                
+
                 addAction = false;
             } else if (ea instanceof AttackAction) {
                 if ( ea instanceof ClubAttackAction ) {
@@ -1348,7 +1352,7 @@ public class Client extends Panel
                 }
                 bv.addAttack((AttackAction)ea);
             }
-            
+
             if ( addAction ) {
               // track in the appropriate list
               if (charge) {
@@ -1359,7 +1363,7 @@ public class Client extends Panel
             }
         }
     }
-    
+
     /**
      * Saves server entity status data to a local file
      */
@@ -1374,8 +1378,8 @@ public class Client extends Panel
             e.printStackTrace();
         }
     }
-    
-    
+
+
     /**
      * Reads a complete net command from the given input stream
      */
@@ -1402,7 +1406,7 @@ public class Client extends Panel
             return null;
         }
     }
-    
+
     /**
      * send the message to the server
      */
@@ -1528,7 +1532,7 @@ public class Client extends Panel
                 	ChatLounge cl = (ChatLounge) curPanel;
                 	boolean useMinefields = game.getOptions().booleanOption("minefields");
                 	cl.enableMinefields(useMinefields);
-                	
+
                 	if (!useMinefields) {
 						getLocalPlayer().setNbrMFConventional(0);
 						getLocalPlayer().setNbrMFCommand(0);
@@ -1582,28 +1586,28 @@ public class Client extends Panel
             }
         }
     }
-    
+
     public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
     }
-    
+
     public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
     }
-    
+
     public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
     }
-    
+
     public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
         if (mouseEvent.isPopupTrigger()) {
             showBoardPopup(mouseEvent.getPoint());
         }
     }
-    
+
     public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
         if (mouseEvent.isPopupTrigger()) {
             showBoardPopup(mouseEvent.getPoint());
         }
     }
-    
+
 
     /**
      * Allow the player to select a MegaMek Unit List file to load.  The
@@ -1697,7 +1701,7 @@ public class Client extends Panel
 
             // use base directory by default
             dlgSaveList.setDirectory(".");
-                
+
             // Default to the player's name.
             dlgSaveList.setFile( getLocalPlayer().getName() + ".mul" );
         }
@@ -1718,14 +1722,14 @@ public class Client extends Panel
             }
         }
     }
-    
+
     //
     // WindowListener
     //
     public void windowActivated(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
         if (windowEvent.getWindow() == minimapW) {
             setMapVisible(false);
@@ -1733,34 +1737,34 @@ public class Client extends Panel
         else if (windowEvent.getWindow() == mechW) {
             setDisplayVisible(false);
         }
-    }    
+    }
     public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowIconified(java.awt.event.WindowEvent windowEvent) {
-    }    
+    }
     public void windowOpened(java.awt.event.WindowEvent windowEvent) {
     }
-    
+
     /**
      * A menu item that lives to view an entity.
      */
     private class ViewMenuItem extends MenuItem implements ActionListener {
         Entity entity;
-        
+
         public ViewMenuItem(Entity entity) {
             super("View " + entity.getDisplayName());
             this.entity = entity;
             addActionListener(this);
         }
-        
+
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             setDisplayVisible(true);
             mechD.displayEntity(entity);
-        }        
+        }
     }
-    
+
     /**
      * A menu item that would really like to select an entity.  You can use
      * this during movement, firing & physical phases.  (Deployment would
@@ -1768,13 +1772,13 @@ public class Client extends Panel
      */
     private class SelectMenuItem extends MenuItem implements ActionListener {
         Entity entity;
-        
+
         public SelectMenuItem(Entity entity) {
             super("Select " + entity.getDisplayName());
             this.entity = entity;
             addActionListener(this);
         }
-        
+
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             if (curPanel instanceof MovementDisplay) {
                 ((MovementDisplay)curPanel).selectEntity(entity.getId());
@@ -1783,31 +1787,31 @@ public class Client extends Panel
             } else if (curPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay)curPanel).selectEntity(entity.getId());
             }
-        }        
+        }
     }
-    
+
     /**
      * A menu item that will target an entity, provided that it's sensible to
      * do so
      */
     private class TargetMenuItem extends MenuItem implements ActionListener {
         Targetable target;
-        
+
         public TargetMenuItem(Targetable t) {
             super("Target " + t.getDisplayName());
             target = t;
             addActionListener(this);
         }
-        
+
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
             if (curPanel instanceof FiringDisplay) {
                 ((FiringDisplay)curPanel).target(target);
             } else if (curPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay)curPanel).target(target);
             }
-        }        
+        }
     }
-    
+
     /**
      * @return the frame this client is displayed in
      */
@@ -1815,16 +1819,16 @@ public class Client extends Panel
         return frame;
     }
 
-    // Shows a dialg where the player can select the entity types 
+    // Shows a dialg where the player can select the entity types
     // used in the LOS tool.
     public void showLOSSettingDialog() {
       	LOSDialog ld = new LOSDialog(frame, game.getMechInFirst(), game.getMechInSecond());
       	ld.show();
-      	
+
       	game.setMechInFirst(ld.getMechInFirst());
       	game.setMechInSecond(ld.getMechInSecond());
     }
-    
+
     // Loads a preview image of the unit into the BufferedPanel.
     public void loadPreviewImage(BufferedPanel bp, Entity entity) {
 		Player player = game.getPlayer(entity.getOwnerId());

@@ -73,24 +73,20 @@ public class FiringDisplay
 		butFire = new Button("Fire");
 		butFire.setActionCommand("fire");
 		butFire.addActionListener(this);
-		butFire.addKeyListener(this);
 		butFire.setEnabled(false);
 		
 		butReady = new Button("Done");
 		butReady.setActionCommand("ready");
 		butReady.addActionListener(this);
-		butReady.addKeyListener(this);
 		
 		butNext = new Button("Next Unit");
 		butNext.setActionCommand("next");
 		butNext.addActionListener(this);
-		butNext.addKeyListener(this);
 		butNext.setEnabled(false);
 		
 		butMenu = new Button("?");
 		butMenu.setActionCommand("menu");
 		butMenu.addActionListener(this);
-		butMenu.addKeyListener(this);
 		butMenu.setEnabled(false);
 		
 		// layout button grid

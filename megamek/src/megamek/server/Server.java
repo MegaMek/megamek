@@ -404,14 +404,9 @@ implements Runnable, ConnectionHandler {
                     send(connId, createFullEntitiesPacket());
                 }
                 break;
-            case Game.PHASE_INITIATIVE :
-            case Game.PHASE_MOVEMENT_REPORT :
-            case Game.PHASE_OFFBOARD_REPORT:
-            case Game.PHASE_FIRING_REPORT :
-            case Game.PHASE_END :
-            case Game.PHASE_VICTORY :
-                send(connId, createReportPacket());
             default :
+                send(connId, createReportPacket());
+
                 // Send Entites *before* other phase changes.
                 send(connId, createGameSettingsPacket());
                 if (doBlind()) {

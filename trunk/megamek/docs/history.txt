@@ -11,6 +11,7 @@ v0.29.48 (CVS)
     options like "-dedicated".  Also fixed problems the MS JVM was having with
     some of the new features.  Finally, the default memory size for the Sun
     JVM was rasied from 64 to 128MB.
++ Bug 1018169: Incorrect loading of TDB mixed-tech double heat sinks fixed.
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

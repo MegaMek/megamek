@@ -248,8 +248,10 @@ public class WeaponHandler implements AttackHandler {
 	                            .append( entityTarget.getDisplayName() )
 	                            .append( " suffers no damage." );
 	                    } else {
-	                    	phaseReport.append
-                            ( server.damageEntity(entityTarget, hit, nDamage) );
+	                    	if(server==null) { System.out.println("serverN");}
+	                    	if(phaseReport==null) { System.out.println("phaseReportN");}
+	                    	if(entityTarget==null) { System.out.println("entityTargetN");}	                    	
+	                    	phaseReport.append( server.damageEntity(entityTarget, hit, nDamage) );
 	                    }
 	                
 	                hits -= nCluster;

@@ -536,6 +536,7 @@ public class FiringDisplay
         // close aimed shot display, if any
         ash.closeDialog();
         ash.lockLocation(false);
+        System.out.println("finished firingDisplay#ready");
     }
     
     /**

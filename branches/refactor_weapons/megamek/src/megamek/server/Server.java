@@ -4625,6 +4625,7 @@ implements Runnable, ConnectionHandler {
                 Weapon w=(Weapon)m.getType();
                 AttackHandler ah=w.fire(waa,game);
                 if(ah!=null) {
+                	ah.setServer(this);
                 	game.addAttack(ah);
                 }
                 
@@ -10810,6 +10811,7 @@ implements Runnable, ConnectionHandler {
                 receiveDeployMinefields(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
+            	System.out.println("got attack packet");
                 receiveAttack(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_ADD :

@@ -4,6 +4,7 @@ v0.29.44 (CVS)
 + Bug 1003021: Could not clear burning woods.
 + Bug 1003688: Bot wasn't ignoring loaded units (patch from weaselflink).
 + Bug 1002304: tooltips hide when phase changes
++ Board Editor "Save as Image" now supports MS VM and has wait dialog.
 
 v0.29.43 (2004-08-01 9:15pm)
 + Extra light woods hex in Citytech board.

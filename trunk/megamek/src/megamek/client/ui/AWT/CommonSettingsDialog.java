@@ -23,6 +23,8 @@ import megamek.common.Settings;
 
 public class CommonSettingsDialog extends Dialog implements ActionListener {
 
+    private ScrollPane  scrOptions = new ScrollPane();
+
     private Checkbox    minimapEnabled;
     private Checkbox    autoEndFiring;
     private Checkbox    nagForMASC;
@@ -52,52 +54,53 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         super( owner, "Client Settings" );
 
         // Lay out this dialog.
-        this.setLayout( new GridLayout(0, 1) );
+        Panel tempPanel = new Panel();
+        tempPanel.setLayout( new GridLayout(0, 1) );
 
         // Add the setting controls.
         Panel panSetting;
         minimapEnabled
             = new Checkbox( "The minimap can be shown." );
-        this.add( minimapEnabled );
+        tempPanel.add( minimapEnabled );
         
         autoEndFiring
             = new Checkbox( "Skip 'Done' when firing all weapons." );
-        this.add( autoEndFiring );
+        tempPanel.add( autoEndFiring );
         
         nagForMASC
             = new Checkbox( "Confirm all movement that uses MASC." );
-        this.add( nagForMASC );
+        tempPanel.add( nagForMASC );
         
         nagForPSR
             = new Checkbox( "Confirm all movement that requires a PSR." );
-        this.add( nagForPSR );
+        tempPanel.add( nagForPSR );
         
         nagForNoAction
             = new Checkbox( "Confirm done when no movement/firing/physicals declared." );
-        this.add( nagForNoAction );
+        tempPanel.add( nagForNoAction );
         
         animateMove
             = new Checkbox( "Animate movement." );
-        this.add( animateMove );
+        tempPanel.add( animateMove );
         
         showWrecks
             = new Checkbox( "Show wrecks." );
-        this.add( showWrecks );
+        tempPanel.add( showWrecks );
         
         soundMute
             = new Checkbox( "Mute sound." );
-        this.add( soundMute );
+        tempPanel.add( soundMute );
         
         showMapHexPopup
             = new Checkbox( "Show map hex popup." );
-        this.add( showMapHexPopup );
+        tempPanel.add( showMapHexPopup );
 
         panSetting = new Panel();
         tooltipDelay
             = new TextField(4);
         panSetting.add( tooltipDelay );
         panSetting.add( new Label("Tooltip popup delay.") );
-        this.add( panSetting );
+        tempPanel.add( panSetting );
 
         panSetting = new Panel();
         unitStartChar
@@ -110,29 +113,43 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." );
         panSetting.add( unitStartChar );
         panSetting.add( new Label("ProtoMech unit codes.") );
-        this.add( panSetting );
+        tempPanel.add( panSetting );
 
         panSetting = new Panel();
         shiftScrollSensitivity
             = new TextField(4);
         panSetting.add( shiftScrollSensitivity );
         panSetting.add( new Label("Shift-Scroll sensitivity.") );
-        this.add( panSetting );
+        tempPanel.add( panSetting );
 
         explicitScrollOnly
             = new Checkbox( "Only scroll using Shift key and MiniMap." );
-        this.add( explicitScrollOnly );
+        tempPanel.add( explicitScrollOnly );
 
         alwaysScrollOnRightClick
             = new Checkbox( "Right click always scrolls the map." );
-        this.add( alwaysScrollOnRightClick );
+        tempPanel.add( alwaysScrollOnRightClick );
 
         panSetting = new Panel();
         maxPathfinderTime
             = new TextField(5);
         panSetting.add( maxPathfinderTime );
         panSetting.add( new Label("Pathfinder time limit (milliseconds).") );
-        this.add( panSetting );
+        tempPanel.add( panSetting );
+
+        scrOptions.add(tempPanel);
+
+        // add the scrollable panel
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+            
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;    c.weighty = 1.0;
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(scrOptions, c);
+        this.add(scrOptions);
 
         // Add the dialog controls.
         Panel buttons = new Panel();
@@ -148,6 +165,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         cancel.addActionListener( this );
         buttons.add( cancel );
         buttons.add( new Label() );
+
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(buttons, c);
         this.add( buttons );
 
         // Close this dialog when the window manager says to.
@@ -157,7 +177,10 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
 
         // Center this dialog.
         pack();
-        setResizable(false);
+
+        Dimension screenSize = owner.getToolkit().getScreenSize();
+        setSize(Math.min(tempPanel.getSize().width+50,screenSize.width), Math.min(tempPanel.getSize().height+100,screenSize.height));
+
         setLocation(owner.getLocation().x + owner.getSize().width/2 - getSize().width/2,
                     owner.getLocation().y + owner.getSize().height/2 - getSize().height/2);
 

@@ -6009,22 +6009,26 @@ implements Runnable, ConnectionHandler {
             } else if (entityTarget == null) {
                 phaseReport.append("hits, but doesn't do anything.\n");
             } else {
-                INarcPod pod = new INarcPod(ae.getOwner().getTeam());
+                INarcPod pod = null;
                 switch (atype.getMunitionType()) {
                 case AmmoType.M_ECM:
-                    pod.setType(INarcPod.ECM);
+                    pod = new INarcPod( ae.getOwner().getTeam(),
+                                        INarcPod.ECM );
                     phaseReport.append("hits.  ECM Pod attached.\n");
                     break;
                 case AmmoType.M_HAYWIRE:
-                    pod.setType(INarcPod.HAYWIRE);
+                    pod = new INarcPod( ae.getOwner().getTeam(),
+                                        INarcPod.HAYWIRE );
                     phaseReport.append("hits.  Haywire Pod attached.\n");
                     break;
                 case AmmoType.M_NEMESIS:
-                    pod.setType(INarcPod.NEMESIS);
+                    pod = new INarcPod( ae.getOwner().getTeam(),
+                                        INarcPod.NEMESIS );
                     phaseReport.append("hits.  Nemesis Pod attached.\n");
                     break;
                 default:
-                    pod.setType(INarcPod.HOMING);
+                    pod = new INarcPod( ae.getOwner().getTeam(),
+                                        INarcPod.HOMING );
                     phaseReport.append("hits.  Homing Pod attached.\n");
                 }
                 entityTarget.attachINarcPod(pod);
@@ -7292,10 +7296,17 @@ implements Runnable, ConnectionHandler {
                                         int lastEntityId ) {
         final BrushOffAttackAction baa = (BrushOffAttackAction)pr.aaa;
         final Entity ae = game.getEntity(baa.getEntityId());
-        // PLEASE NOTE: buildings are *never* the target of a "brush off".
-        final Entity te = game.getEntity(baa.getTargetId());
+        // PLEASE NOTE: buildings are *never* the target
+        // of a "brush off", but iNarc pods **are**.
+        Targetable target = game.getTarget( baa.getTargetType(),
+                                            baa.getTargetId() );
+        Entity te = null;
         final String armName = baa.getArm() == BrushOffAttackAction.LEFT
             ? "Left Arm" : "Right Arm";
+
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = game.getEntity(baa.getTargetId());
+        }
 
         // get damage, ToHitData and roll from the PhysicalResult
         // ASSUMPTION: buildings can't absorb *this* damage.
@@ -7313,7 +7324,7 @@ implements Runnable, ConnectionHandler {
         }
 
         phaseReport.append("    Brush Off " )
-            .append( te.getDisplayName() )
+            .append( target.getDisplayName() )
             .append( " with " )
             .append( armName );
 
@@ -7345,21 +7356,37 @@ implements Runnable, ConnectionHandler {
             return;
         }
 
-        HitData hit = te.rollHitLocation( toHit.getHitTable(),
-                                          toHit.getSideTable() );
-        phaseReport.append("hits")
-            .append( toHit.getTableDesc() )
-            .append( " " )
-            .append( te.getLocationAbbr(hit) );
-        phaseReport.append(damageEntity(te, hit, damage));
+        // Different target types get different handling.
+        switch ( target.getTargetType() ) {
+        case Targetable.TYPE_ENTITY:
+            // Handle Entity targets.
+            HitData hit = te.rollHitLocation( toHit.getHitTable(),
+                                              toHit.getSideTable() );
+            phaseReport.append("hits")
+                .append( toHit.getTableDesc() )
+                .append( " " )
+                .append( te.getLocationAbbr(hit) );
+            phaseReport.append(damageEntity(te, hit, damage));
 
-        phaseReport.append("\n");
+            phaseReport.append("\n");
 
-        // Dislodge the swarming infantry.
-        ae.setSwarmAttackerId( Entity.NONE );
-        te.setSwarmTargetId( Entity.NONE );
-        phaseReport.append( te.getDisplayName() )
-            .append( " is dislodged.\n" );
+            // Dislodge the swarming infantry.
+            ae.setSwarmAttackerId( Entity.NONE );
+            te.setSwarmTargetId( Entity.NONE );
+            phaseReport.append( te.getDisplayName() )
+                .append( " is dislodged.\n" );
+            break;
+        case Targetable.TYPE_INARC_POD:
+            // Handle iNarc pod targets.
+            // TODO : check the return code and handle false appropriately.
+            ae.removeINarcPod( (INarcPod) target );
+//             // TODO : confirm that we don't need to update the attacker. //killme
+//             entityUpdate( ae.getId() ); // killme
+            phaseReport.append( target.getDisplayName() )
+                .append( " is destroyed.\n" );
+            break;
+            // TODO : add a default: case and handle it appropriately.
+        }
     }
 
     /**

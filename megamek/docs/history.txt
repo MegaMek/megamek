@@ -11,8 +11,7 @@ v0.29.65 (CVS)
 + Bug 1060000: Pilot losing consciousness should live through the ejection
 + Bug 1100983: Grand Titan and Black Watch pictures not working.
 + Bug 1112541: PSR reporting when autoejecting in wrong place.
-+ RFE 734061: implemented iNarc, Nemesis Pods and ability to brush off Pods
-    still missing.
++ RFE 734061: implemented iNarc, except for Nemesis Pods.
 + Bug 1118804: Measure distance from previous step, not starting position.
 + Bug 1120487: ATM alternate ammo and MaxTech extreme range
 

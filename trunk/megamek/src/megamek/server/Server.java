@@ -64,6 +64,8 @@ public class Server
     private StringBuffer        roundReport = new StringBuffer();
     private StringBuffer        phaseReport = new StringBuffer();
     
+    private boolean             forceVictory = false;
+    
     // commands
     private Hashtable           commandsHash = new Hashtable();
 
@@ -105,6 +107,7 @@ public class Server
         registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
+        registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
     }
     
@@ -130,7 +133,7 @@ public class Server
     /**
      * @return true if the server has a password
      */
-    public boolean isPassworded() {
+public boolean isPassworded() {
         return password != null;
     }
     
@@ -622,6 +625,22 @@ public class Server
         }
         transmitAllPlayerReadys();
     }
+    
+    /**
+     * Writes the victory report
+     */
+    private void prepareVictoryReport() {
+        roundReport = new StringBuffer();
+        
+        roundReport.append("\nVictory!\n-------------------\n");
+    }
+    
+    /**
+     * Forces victory at then end of the turn.
+     */
+    public void forceVictory() {
+        forceVictory = true;
+    }
 
     /**
      * Called when a player is "ready".  Handles any moving
@@ -645,6 +664,7 @@ public class Server
         case Game.PHASE_MOVEMENT_REPORT :
         case Game.PHASE_FIRING_REPORT :
         case Game.PHASE_END :
+        case Game.PHASE_VICTORY :
             if (allAboard) {
                 endCurrentPhase();
             }
@@ -752,6 +772,10 @@ public class Server
             resetActivePlayersReady();
             send(createReportPacket());
             break;
+        case Game.PHASE_VICTORY :
+            prepareVictoryReport();
+            send(createReportPacket());
+            break;
         }
     }
 
@@ -852,7 +876,15 @@ public class Server
             changePhase(Game.PHASE_END);
             break;
         case Game.PHASE_END :
-            changePhase(Game.PHASE_INITIATIVE);
+            if (victory()) {
+                changePhase(Game.PHASE_VICTORY);
+            } else {
+                changePhase(Game.PHASE_INITIATIVE);
+            }
+            break;
+        case Game.PHASE_VICTORY :
+            forceVictory = false;
+            resetGame();
             break;
         }
     }
@@ -883,6 +915,38 @@ public class Server
         game.setTurn(turn);
         player.setReady(false);
         send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));
+    }
+    
+    /**
+     * Returns true if victory conditions have been met.  Victory conditions
+     * are when there is only one player left with mechs or only one team.
+     */
+    public boolean victory() {
+        if (forceVictory) {
+            return true;
+        }
+        
+        if (!game.getOptions().booleanOption("check_victory")) {
+            return false;
+        }
+        
+        // is there only one player left with mechs?
+        int playersAlive = 0;
+        int teamsAlive = 0;
+        boolean teamKnownAlive[] = new boolean[Player.MAX_TEAMS];
+        for (Enumeration e = game.getPlayers(); e.hasMoreElements();) {
+            Player player = (Player)e.nextElement();
+            int team = player.getTeam();
+            if (game.getLiveEntitiesOwnedBy(player) > 0) {
+                playersAlive++;
+                if (team != Player.TEAM_NONE && !teamKnownAlive[team]) {
+                    teamsAlive++;
+                    teamKnownAlive[team] = true;
+                }
+            }
+        }
+        
+        return playersAlive == 1 || teamsAlive == 1;
     }
 
     /**
@@ -1675,7 +1739,7 @@ public class Server
         }
 
     }
-
+    
     /**
      * Resolve a single Weapon Attack object
      */

@@ -35,6 +35,7 @@ public class Game
     public static final int PHASE_FIRING_REPORT     = 8;
     public static final int PHASE_PHYSICAL          = 9;
     public static final int PHASE_END               = 10;
+    public static final int PHASE_VICTORY           = 11;
     
     public int phase = PHASE_UNKNOWN;
     private int turn; // whose turn it is
@@ -131,6 +132,20 @@ public class Game
         }
         return count;
     }
+    
+    /**
+     * Returns the number of non-destroyed entityes owned by the player
+     */
+    public int getLiveEntitiesOwnedBy(Player player) {
+        int count = 0;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getOwner().equals(player) && !entity.isDestroyed()) {
+                count++;
+            }
+        }
+        return count;
+    }    
   
     /**
      * Get a vector of entity objects that are "acceptable" to attack with this entity

@@ -441,11 +441,9 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void setupTeams() {
         choTeam.removeAll();
         choTeam.add("No Team");
-        choTeam.add("Team 1");
-        choTeam.add("Team 2");
-        choTeam.add("Team 3");
-        choTeam.add("Team 4");
-        choTeam.add("Team 5");
+        for (int i = 1; i < Player.MAX_TEAMS; i++) {
+            choTeam.add("Team " + i);
+        }
         choTeam.select(client.getLocalPlayer().getTeam());
     }
   

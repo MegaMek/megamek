@@ -100,6 +100,10 @@ public class MechDisplay extends BufferedPanel
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
+
+        // 2003-12-30, nemchenk
+        client.mechW.setTitle(en.getShortName());
+
         this.currentlyDisplaying = en;
 
         mPan.displayMech(en);

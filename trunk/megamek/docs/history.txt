@@ -95,6 +95,7 @@ v next
 + added CASE equipment
 + added fields for entity year, tech level, omni
 + MEP weapon loading works (a little) better
++ 567973: fixed small bug (Clan DHS were 1 crit, now 2)
 
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified

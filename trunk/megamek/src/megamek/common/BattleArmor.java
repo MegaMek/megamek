@@ -133,7 +133,7 @@ public class BattleArmor
     /**
      * The internal name for Fire Protection equipment.
      */
-    public static final String FIRE_PROTECTION = "BA-Fire Protection";
+    public static final String FIRE_PROTECTION = "BA-Fire Resistant Armor";
 
     /**
      * The internal name for Magnetic Clamp equipment.
@@ -148,22 +148,22 @@ public class BattleArmor
     /**
      * The internal name for Stealth equipment.
      */
-    public static final String STEALTH = "Stealth";
+    public static final String STEALTH = "Basic Stealth";
 
     /**
      * The internal name for Advanced Stealth equipment.
      */
-    public static final String ADVANCED_STEALTH = "Advanced Stealth";
+    public static final String ADVANCED_STEALTH = "Standard Stealth";
 
     /**
      * The internal name for Expert Stealth equipment.
      */
-    public static final String EXPERT_STEALTH = "Expert Stealth";
+    public static final String EXPERT_STEALTH = "Improved Stealth";
 
     /**
      * The internal name for Mimetic Camo equipment.
      */
-    public static final String MIMETIC_CAMO = "Mimetic Camo";
+    public static final String MIMETIC_CAMO = "Mimetic Armor";
 
     /**
      * The internal name for Single-Hex ECM equipment.
@@ -468,21 +468,21 @@ public class BattleArmor
             this.shortStealthMod  = 0;
             this.mediumStealthMod = 1;
             this.longStealthMod   = 2;
-            this.stealthName = "stealth";
+            this.stealthName = "basic stealth";
         }
         else if ( BattleArmor.ADVANCED_STEALTH.equals( name ) ) {
             this.isStealthy = true;
             this.shortStealthMod  = 1;
             this.mediumStealthMod = 1;
             this.longStealthMod   = 2;
-            this.stealthName = "advanced stealth";
+            this.stealthName = "standard stealth";
         }
         else if ( BattleArmor.EXPERT_STEALTH.equals( name ) ) {
             this.isStealthy = true;
             this.shortStealthMod  = 1;
             this.mediumStealthMod = 2;
             this.longStealthMod   = 3;
-            this.stealthName = "expert stealth";
+            this.stealthName = "improved stealth";
         }
         else if ( BattleArmor.MIMETIC_CAMO.equals( name ) ) {
             this.isMimetic = true;
@@ -635,7 +635,7 @@ public class BattleArmor
         // Mimetic camo works on the amount this unit moved.
         else if ( isMimetic ) {
             result = new TargetRoll( 3 - this.delta_distance,
-                                     "mimetic camoflage" );
+                                     "mimetic armor" );
         }
         
         // Stealthy units alreay have their to-hit mods defined.

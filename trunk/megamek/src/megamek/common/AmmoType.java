@@ -56,7 +56,8 @@ public class AmmoType extends EquipmentType {
 
     // ammo flags
     public static final int     F_MG                = 0x0001;
-    
+    public static final int     F_BATTLEARMOR       = 0x1000; // only used by BA squads
+
     // ammo munitions, used for custom loadouts
     public static final int     M_STANDARD          = 0;
     public static final int     M_CLUSTER           = 1;
@@ -245,7 +246,7 @@ public class AmmoType extends EquipmentType {
             AmmoType at = (AmmoType)et;
             int nType = at.getAmmoType();
             if (m_vaMunitions[nType] == null) {
-                m_vaMunitions[nType] = new Vector(1);
+                m_vaMunitions[nType] = new Vector();
             }
             m_vaMunitions[nType].addElement(at);
         }   
@@ -1865,6 +1866,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1875,12 +1877,13 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "SRM 2 Ammo";
-        ammo.internalName = "BA-SRM2 (one shot) Ammo";
+        ammo.internalName = BattleArmor.IS_DISPOSABLE_SRM2_AMMO;
         ammo.mepName = ammo.internalName;
         ammo.mtfName = "BASRM2OS Ammo";
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1897,6 +1900,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_BA_INFERNO;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1914,6 +1918,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1930,6 +1935,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1946,6 +1952,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1962,6 +1969,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 4;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1972,12 +1980,13 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "Compact Narc Ammo";
-        ammo.internalName = "BA-Compact Narc Ammo";
+        ammo.internalName = BattleArmor.IS_DISPOSABLE_NARC_AMMO;
         ammo.mepName = ammo.internalName;
         ammo.mtfName = "BACompactNarc Ammo";
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_NARC;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
         ammo.hittable = false;
         ammo.bv = 0;
@@ -1994,6 +2003,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MINE;
+        ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
         ammo.bv = 0;
         

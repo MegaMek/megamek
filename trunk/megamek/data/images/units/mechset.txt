@@ -58,6 +58,7 @@ chassis "Marauder" "marauder.gif"
 # these pics by vestifex
 chassis "Urbanmech" "urbanmech.gif"
 chassis "Jagermech" "jagermech.gif"
+chassis "JagerMech" "jagermech.gif"
 chassis "Firestarter" "firestarter.gif"
 chassis "Raven" "raven.gif"
 chassis "Catapult" "catapult.gif"
@@ -176,7 +177,11 @@ chassis "Schrek PPC Carrier" "schrek.gif"
 chassis "Warhawk" "masakari.gif"
 chassis "Dire Wolf" "direwolf.gif"
 
-# by Cyric
+# Fix broken Scorpion tank images.
+exact "Scorpion Light Tank" "default_tank.gif"
+exact "Scorpion (SRM Variant)" "default_tank.gif"
+
+# by Cyric27
 chassis "Anvil" "anvil.gif"
 chassis "Apollo" "apollo.gif"
 chassis "Arctic Fox" "arctic fox.gif"
@@ -245,7 +250,41 @@ chassis "Tempest" "tempest.gif"
 chassis "Thunder" "thunder.gif"
 chassis "Venom" "venom.gif"
 chassis "Watchman" "watchman.gif"
+#too big#chassis "Avatar" "avatar.gif"
+chassis "Cestus" "cestus.gif"
+chassis "Dragon Fire" "dragon_fire.gif"
+#too big#chassis "Excalibur" "excalibur.gif"
+chassis "Falconer" "falconer.gif"
+#too big#chassis "Penetrator" "penetrator.gif"
+chassis "Rakshasa" "rakshasa.gif"
+chassis "Shootist" "shootist.gif"
+#too big#chassis "War Dog" "war_dog.gif"
+chassis "Wraith" "wraith.gif"
+chassis "Axman" "axeman.gif"
+chassis "Barghest" "barghest.gif"
+#too big#chassis "Caesar" "caesar.gif"
+#too big#exact "Cataphract ???" "cataphract2.gif"
+#too big#chassis "Helios" "helios.gif"
+chassis "JagerMech III" "jagermech_III.gif"
+#too big#chassis "Jinggau" "jinggau.gif"
+chassis "Shugenja" "shugenja.gif"
+chassis "Tarantula" "tarantula.gif"
+chassis "Ti Ts'ang" "ti_ts-ang.gif"
+#too big#chassis "Toyama" "toyama.gif"
+chassis "Wolf Trap" "wolftrap.gif"
 
-# Fix broken Scorpion tank images.
-exact "Scorpion Light Tank" "default_tank.gif"
-exact "Scorpion (SRM Variant)" "default_tank.gif"
+# by Charlie Brown
+exact "Locust ???"  "locust2.gif" 
+chassis "Perseus" "yeoman.gif" 
+chassis "Yeoman"  "perseus.gif"
+
+# by rakkasan@users.sourceforge.net
+exact "Black Knight ???" "blackknight2.gif"
+exact "Timber Wolf ???" "madcat2.gif"
+chassis "Nova Cat" "novacat.gif"
+chassis "Summoner" "summoner.gif"
+chassis "Thanatos" "thanatos.gif"
+chassis "Cauldron-Born" "cauldronborn.gif"
+
+# by Sung Mehta
+exact "Champion CHP-2N" "champion2.gif"

@@ -23,6 +23,7 @@ RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 general:
 - double reports when firing phase happens and physical phase is skipped
 - in the lobby, perhaps the mech name could be hidden and only show the BV
+- in Mech Selection dialog, implement an "advanced filters and sorts" pane
 
 board display:
 ? show dead mechs as rubble?
@@ -49,6 +50,7 @@ movement:
 weapon attacks:
 ? option to step thru roll by roll
 - eliminate leg weapons & kicks in level 1 water under level 1 rules
+- warn player when weapon fire will negate a Solo Attack
 
 physical attacks:
 - dfa should violate stacking, charging should not
@@ -69,6 +71,8 @@ infantry:
 -- Minesweepers
 - implement BattleArmor units as their special rules are implemented
         (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
+- change BattleArmor names from "X (Y) Battle Armor" to "X Battle Armor (Y)"
+        (after Mech Selection's "advanced filters and sorts" is implemented)
 
 
 FUTURE VERSION PLANS:
@@ -95,6 +99,12 @@ v 0.28.6-dev (CVS)
 + 675633: NullPointerException squashed
 + disconnected players must be manually skipped (with new /skip command)
 + added zipp32's minimap overhaul patch
++ 679061 Don't allow Battle Armor Ammo on Tanks or Meks.
++ 688389 BMRr states that you can't change ammo loads on infantry (Inferno
+         SRM platoons have their own unit file).
++ 681414 renamed various systems to match David McCulloch's names.
++ Added Kage battle armor squads.
++ Added submitted unit image files.
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

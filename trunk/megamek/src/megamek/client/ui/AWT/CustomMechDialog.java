@@ -122,12 +122,14 @@ extends Dialog implements ActionListener {
           add(choC3);
           refreshC3();
         }
-        
-        setupMunitions();
-        c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(panMunitions, c);
-        add(panMunitions);
-        
+
+        // Can't set up munitions on infantry.
+        if ( !(entity instanceof Infantry) ) {
+            setupMunitions();
+            c.anchor = GridBagConstraints.CENTER;
+            gridbag.setConstraints(panMunitions, c);
+            add(panMunitions);
+        }
 
         setupButtons();
         
@@ -204,9 +206,12 @@ extends Dialog implements ActionListener {
                         atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
                 }
-                
-                if (bTechMatch && atCheck.getRackSize() == at.getRackSize() &&
-                        atCheck.getTonnage(entity) == at.getTonnage(entity)) {
+
+                // Battle Armor ammo can't be selected.
+                if ( bTechMatch &&
+                     atCheck.getRackSize() == at.getRackSize() &&
+                     !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
+                     atCheck.getTonnage(entity) == at.getTonnage(entity) ) {
                     vTypes.addElement(atCheck);
                 }
             }

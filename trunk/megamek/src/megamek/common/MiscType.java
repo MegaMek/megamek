@@ -240,10 +240,10 @@ public class MiscType extends EquipmentType {
         // Start BattleArmor equipment
         EquipmentType.addType( createBABoardingClaw() );
         EquipmentType.addType( createBAAssaultClaws() );
-        EquipmentType.addType( createBAFireProtection() );
-        EquipmentType.addType( createStealth() );
-        EquipmentType.addType( createAdvancedStealth() );
-        EquipmentType.addType( createExpertStealth() );
+        EquipmentType.addType( createBAFireResistantArmor() );
+        EquipmentType.addType( createBasicStealth() );
+        EquipmentType.addType( createStandardStealth() );
+        EquipmentType.addType( createImprovedStealth() );
         EquipmentType.addType( createMine() );
         EquipmentType.addType( createMinesweeper() );
         EquipmentType.addType( createBAMagneticClamp() );
@@ -665,10 +665,10 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    public static MiscType createBAFireProtection() {
+    public static MiscType createBAFireResistantArmor() {
         MiscType misc = new MiscType();
         
-        misc.name = "Fire Protection";
+        misc.name = "Fire Resistant Armor";
         misc.internalName = BattleArmor.FIRE_PROTECTION;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
@@ -681,11 +681,11 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    public static MiscType createStealth() {
+    public static MiscType createBasicStealth() {
         MiscType misc = new MiscType();
         
-        misc.name = "Stealth";
-        misc.internalName = "Stealth";
+        misc.name = BattleArmor.STEALTH;
+        misc.internalName = BattleArmor.STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;
@@ -697,11 +697,11 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    public static MiscType createAdvancedStealth() {
+    public static MiscType createStandardStealth() {
         MiscType misc = new MiscType();
         
-        misc.name = "Advanced Stealth";
-        misc.internalName = "Advanced Stealth";
+        misc.name = BattleArmor.ADVANCED_STEALTH;
+        misc.internalName = BattleArmor.ADVANCED_STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;
@@ -713,11 +713,11 @@ public class MiscType extends EquipmentType {
         
         return misc;
     }
-    public static MiscType createExpertStealth() {
+    public static MiscType createImprovedStealth() {
         MiscType misc = new MiscType();
         
-        misc.name = "Expert Stealth";
-        misc.internalName = "Expert Stealth";
+        misc.name = BattleArmor.EXPERT_STEALTH;
+        misc.internalName = BattleArmor.EXPERT_STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;
@@ -780,8 +780,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createSingleHexECM() {
         MiscType misc = new MiscType();
         
-        misc.name = "Single-Hex ECM";
-        misc.internalName = "Single-Hex ECM";
+        misc.name = BattleArmor.SINGLE_HEX_ECM;
+        misc.internalName = BattleArmor.SINGLE_HEX_ECM;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;
@@ -796,8 +796,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createMimeticCamo() {
         MiscType misc = new MiscType();
         
-        misc.name = "Mimetic Camoflage";
-        misc.internalName = "Mimetic Camo";
+        misc.name = BattleArmor.MIMETIC_CAMO;
+        misc.internalName = BattleArmor.MIMETIC_CAMO;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
         misc.tonnage = 0;

@@ -54,6 +54,8 @@ public class LBXHandler extends AmmoWeaponHandler {
 	 * @see megamek.common.weapons.WeaponHandler#calcHits()
 	 */
 	protected int calcHits() {
-		return allShotsHit()? wtype.getRackSize() : Compute.missilesHit(wtype.getRackSize());
+		int shotsHit= allShotsHit()? wtype.getRackSize() : Compute.missilesHit(wtype.getRackSize());
+		game.getPhaseReport().append("Hits with " + shotsHit + " shot(s)\n");
+		return shotsHit;
 	}
 }

@@ -14,10 +14,9 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.Vector;
-import megamek.common.util.SequenceEnumeration;
+
+import com.sun.java.util.collections.Vector;
 
 /**
  * A handy utility class for collecting <code>Vectors</code> of
@@ -37,8 +36,10 @@ public class TurnVectors implements Enumeration {
      */
     private synchronized Enumeration getTurnEnum() {
         if ( null == turnEnum ) {
-            turnEnum = new SequenceEnumeration( normal_turns.elements(),
-                                                last_turns.elements() );
+            Vector v = new Vector();
+            v.addAll(normal_turns);
+            v.addAll(last_turns);
+            turnEnum = v.elements();
         }
         return turnEnum;
     }

@@ -43,7 +43,7 @@ public class Building implements Serializable {
      */
     private int         type            = Building.UNKNOWN;
 
-    /**
+   /**
      * The current construction factor of the building.
      * Any damage immediately updates this value.
      */

@@ -149,10 +149,7 @@ class MovementPanel extends PicMap{
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
     
-    
-    
-    public void addNotify(){
-        super.addNotify();
+    public MovementPanel() {
         gi = new GeneralInfoMapSet(this);
         addElement(gi.getContentGroup());
         Vector v = gi.getBackgroundDrawers();
@@ -161,6 +158,10 @@ class MovementPanel extends PicMap{
           addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
+    }
+
+    public void addNotify(){
+        super.addNotify();
         update();
     }
     
@@ -180,9 +181,7 @@ class MovementPanel extends PicMap{
        gi.setEntity(en);
        onResize();
        update();
-    }     
-
-
+    }
     
 }
     
@@ -208,16 +207,15 @@ class ArmorPanel  extends PicMap
     private static final int minMechRightMargin = 0;
     private static final int minInfTopMargin = 8;
     private static final int minInfLeftMargin = 8;
-    
-    
-    public void addNotify(){
+
+    public void addNotify() {
         super.addNotify();
         tank = new TankMapSet(this);
         mech = new MechMapSet(this);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
     }
-    
+
     public void onResize(){
       Rectangle r = getContentBounds();
       if( r == null) return;
@@ -232,6 +230,10 @@ class ArmorPanel  extends PicMap
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
+        // Look out for a race condition.
+        if ( null == en ) {
+            return;
+        }
       DisplayMapSet ams = (DisplayMapSet) mech;
       removeAll();
         if(en instanceof Mech){
@@ -260,6 +262,10 @@ class ArmorPanel  extends PicMap
           minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;          
                     
+        }
+        if ( null == ams ) {
+            System.err.println( "The armor panel is null." );
+            return;
         }
         ams.setEntity(en); 
         this.addElement(ams.getContentGroup());

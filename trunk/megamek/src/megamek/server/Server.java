@@ -2362,7 +2362,7 @@ public class Server
                     roundReport.append("avoids successfully!\n");
                 } else {
                     roundReport.append("fails to avoid explosion.\n");
-                    roundReport.append(explodeAmmo(entity));
+                    roundReport.append(explodeAmmoFromHeat(entity));
                 }
             }
 
@@ -2765,19 +2765,13 @@ public class Server
                 }
                 break;
             case CriticalSlot.TYPE_EQUIPMENT :
-                desc += "\n            <<<CRITICAL HIT>>> on " + en.getEquipment(cs.getIndex()).getDesc() + ".";
-                if (en.getEquipment(cs.getIndex()).getType() instanceof AmmoType) {
-                    desc += explodeAmmo(en, loc, slot);
+                Mounted mounted = en.getEquipment(cs.getIndex());
+                EquipmentType eqType = mounted.getType();
+                desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
+                if (eqType.isExplosive()) {
+                    desc += explodeEquipment(en, loc, slot);
                 }
-				else if (en.getEquipment(cs.getIndex()).getName() == "Gauss Rifle") {
-					desc += "\n          Gauss Rifle is hit -- ** ENERGY DISCHARGE **  ";
-					desc += damageEntity(en, new HitData(loc), 20, true) + "\n";
-					 // if the mech survives, the pilot takes damage
-					if (!en.isDoomed() && !en.isDestroyed()) {
-						desc += damageCrew(en, 2) + "\n";
-					}
-				}
-                en.getEquipment(cs.getIndex()).setHit(true);
+                mounted.setHit(true);
                 break;
             }
             hits--;
@@ -2786,7 +2780,7 @@ public class Server
 
         return desc;
     }
-
+    
     /**
      * Marks all equipment in a location on an entity as destroyed.
      */
@@ -2826,47 +2820,48 @@ public class Server
     }
 
     /**
-     * Explodes the ammo in the specified location and slot.
+     * Makes a piece of equipment on a mech explode!  POW!  This expects either
+     * ammo, or an explosive weapon.
      */
-    private String explodeAmmo(Entity en, int loc, int slot) {
-        String desc = "";
-        // check amount of damage
+    private String explodeEquipment(Entity en, int loc, int slot) {
         Mounted mounted = en.getEquipment(en.getCritical(loc, slot).getIndex());
-        if (!(mounted.getType() instanceof AmmoType)) {
-            System.err.println("server: explodeAmmo called on non-ammo"
-                               + " crititical slot (" + loc + " , " + slot + ")");
-            return "";
-        }
-        AmmoType atype = (AmmoType)mounted.getType();
-        if (atype.isExplosive() == false) {
-			return "";
-		}
+        StringBuffer desc = new StringBuffer();
+        // is this hit-able?
         if (mounted.isHit() || mounted.isDestroyed()) {
-            System.err.println("server: explodeAmmo called on already exploded ammo"
-                               + " crititical slot (" + loc + " , " + slot + ")");
+            System.err.println("server: explodeEquipment called on destroyed"
+                               + " equipment (" + mounted.getName() + ")");
             return "";
         }
-        int damage = atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft();
+        
+        int damage = mounted.getExplosionDamage();
+        
         if (damage <= 0) {
             return "";
         }
-        // if there is damage, it's probably a lot
-        desc += "\n*** AMMO EXPLOSION!  " + damage + " DAMAGE! ***";
-        mounted.setHit(true);
-        desc += damageEntity(en, new HitData(loc), damage, true) + "\n\n";
-        // if the mech survives, the pilot takes damage
+        
+        desc.append("\n*** ");
+        desc.append(mounted.getName());
+        desc.append(" EXPLODES!  ");
+        desc.append(damage);
+        desc.append(" DAMAGE! ***");
+        
+        desc.append(damageEntity(en, new HitData(loc), damage, true));
+        desc.append("\n");
         if (!en.isDoomed() && !en.isDestroyed()) {
-            desc += damageCrew(en, 2) + "\n";
+            desc.append(damageCrew(en, 2));
+            desc.append("\n");
         }
-
-        return desc;
+        
+        // make sure all the criticals of the system are marked hit
+        en.hitAllCriticals(loc, slot);
+        
+        return desc.toString();
     }
-
 
     /**
      * Makes one slot of ammo, determined by certain rules, explode on a mech.
      */
-    private String explodeAmmo(Entity entity) {
+    private String explodeAmmoFromHeat(Entity entity) {
         int damage = 0;
         int rack = 0;
         int boomloc = -1;
@@ -2882,9 +2877,9 @@ public class Server
                     continue;
                 }
                 AmmoType atype = (AmmoType)mounted.getType();
-                if (atype.isExplosive() == false) {
-					continue;
-				}
+                if (!atype.isExplosive()) {
+                    continue;
+                }
                 if (!mounted.isHit() && (rack < atype.getDamagePerShot() * atype.getRackSize()
                 || damage < atype.getDamagePerShot() * atype.getRackSize() * mounted.getShotsLeft())) {
                     rack = atype.getDamagePerShot() * atype.getRackSize();
@@ -2895,7 +2890,7 @@ public class Server
             }
         }
         if (boomloc != -1 && boomslot != -1) {
-            return explodeAmmo(entity, boomloc, boomslot);
+            return explodeEquipment(entity, boomloc, boomslot);
         } else {
             return "  Luckily, there is no ammo to explode.\n";
         }

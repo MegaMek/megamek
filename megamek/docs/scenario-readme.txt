@@ -36,9 +36,13 @@ MMSVersion=1
 5. Map(s) placement 
 # Maps can be specified by name. The order is left-to-right, top-to-bottom 
 # Any unspecified boards will be set to RANDOM Maps=deserthills,mountainlake 
+# If the map is in a subdirectory, the syntax is subdirectory/mapname:
+# buildings/militarybase1, for example.
+#
 # Alternate Layout
-# This laysout the specific maps for your scenario. Left to Right. If you use the "rotate:" 
-# keyword, the board will appear rotated 180 degrees (North becomes South, East becomes West).
+# This laysout the specific maps for your scenario. Left to Right. If you use
+# the "rotate:"  keyword, the board will appear rotated 180 degrees (North
+# becomes South, East becomes West).
 Maps=rotate:deserthills,rotate:mountainlake
 
 

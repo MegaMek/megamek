@@ -115,7 +115,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.18-dev (CVS)
+v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.
 + Bug 732044: Use more intelligent hit locations on skids.
 + Bug 725946: Handle falls during skids.

@@ -2310,7 +2310,7 @@ public abstract class Entity
                prevHex.contains(Terrain.ROAD) ||
                prevHex.contains(Terrain.BRIDGE) )
             */
-            && prevStep.isOnPavement()
+            && prevStep.isPavementStep()
             && overallMoveType == Entity.MOVE_RUN
             && prevFacing != curFacing
             && !lastPos.equals(curPos)

@@ -291,35 +291,46 @@ extends Dialog implements ActionListener {
         }
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-            if(!entity.isEnemyOf(e) && !entity.equals(e)) {
-                int nodes = e.calculateFreeC3Nodes();
-                if (entity.C3MasterIs(e) && !entity.equals(e)) nodes++;
-                if(entity.hasC3i() && (entity.onSameC3NetworkAs(e) || entity.equals(e))) nodes++;
-                if(entity.hasC3i() != e.hasC3i()) nodes = 0;
-                if(nodes > 0) {
-                    if(e.hasC3i()) {
-                        if (entity.onSameC3NetworkAs(e)) {
-                            choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetID() + ": " + (nodes - 1)  + " free]");
-                            choC3.select(listIndex);                    
-                        }
-                        else
-                            choC3.add("Join " + e.getDisplayName() + " (netid " + e.getC3NetID() + ": " + nodes + " free)");
-                        entityCorrespondance[listIndex++] = e.getId();
-                    }
-                    else if (e.C3MasterIs(e) != entity.hasC3M()) {
-                      // if we're a slave-unit, we can only connect to sub-masters, not main masters
-                      // likewise, if we're a master unit, we can only connect to main master units, not sub-masters
-                    }
-                    else if (entity.C3MasterIs(e)) {
-                        choC3.add("Connect to " + e.getDisplayName() + " [" + (nodes - 1) + " free]");
-                        choC3.select(listIndex);
-                        entityCorrespondance[listIndex++] = e.getId();
-                    }
-                    else {
-                        choC3.add("Connect to " + e.getDisplayName() + " (" + nodes + " free)");
-                        entityCorrespondance[listIndex++] = e.getId();
-                    }
+            // ignore enemies or self
+            if(entity.isEnemyOf(e) || entity.equals(e)) {
+                continue;
+            }
+            // c3i only links with c3i
+            if (entity.hasC3i() != e.hasC3i()) {
+                continue;
+            }
+            int nodes = e.calculateFreeC3Nodes();
+            if (entity.C3MasterIs(e) && !entity.equals(e)) {
+                nodes++;
+            }
+            if (entity.hasC3i() && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
+                nodes++;
+            }
+            if (nodes == 0) {
+                continue;
+            }
+            if(e.hasC3i()) {
+                if (entity.onSameC3NetworkAs(e)) {
+                    choC3.add("Join " + e.getDisplayName() + " [netid " + e.getC3NetID() + ": " + (nodes - 1)  + " free]");
+                    choC3.select(listIndex);
                 }
+                else {
+                    choC3.add("Join " + e.getDisplayName() + " (netid " + e.getC3NetID() + ": " + nodes + " free)");
+                }
+                entityCorrespondance[listIndex++] = e.getId();
+            }
+            else if (e.C3MasterIs(e) != entity.hasC3M()) {
+                // if we're a slave-unit, we can only connect to sub-masters, not main masters
+                // likewise, if we're a master unit, we can only connect to main master units, not sub-masters
+            }
+            else if (entity.C3MasterIs(e)) {
+                choC3.add("Connect to " + e.getDisplayName() + " [" + (nodes - 1) + " free]");
+                choC3.select(listIndex);
+                entityCorrespondance[listIndex++] = e.getId();
+            }
+            else {
+                choC3.add("Connect to " + e.getDisplayName() + " (" + nodes + " free)");
+                entityCorrespondance[listIndex++] = e.getId();
             }
         }
     }

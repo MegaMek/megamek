@@ -274,6 +274,9 @@ implements Runnable {
         game.getPlayer(connId).setStartingPos(player.getStartingPos());
         game.getPlayer(connId).setTeam(player.getTeam());
         game.getPlayer(connId).setCamoFileName(player.getCamoFileName());
+        game.getPlayer(connId).setNbrMFConventional(player.getNbrMFConventional());
+        game.getPlayer(connId).setNbrMFCommand(player.getNbrMFCommand());
+        game.getPlayer(connId).setNbrMFVibra(player.getNbrMFVibra());
     }
     
     /**
@@ -367,6 +370,10 @@ implements Runnable {
         else {
             send(connId, createEntitiesPacket());
         }
+
+		Player player = game.getPlayer(connId);
+		send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS, player.getMinefields()));
+
         switch (game.getPhase()) {
             case Game.PHASE_LOUNGE :
                 send(connId, createMapSettingsPacket());
@@ -503,6 +510,7 @@ implements Runnable {
         // remove all entities
         game.reset();
         send(createEntitiesPacket());
+		send(new Packet(Packet.COMMAND_SENDING_MINEFIELDS, new Vector()));
         
         //TODO: remove ghosts
         
@@ -1006,6 +1014,26 @@ implements Runnable {
                 send(createReportPacket());
                 autoSave();
                 break;
+            case Game.PHASE_DEPLOY_MINEFIELDS :
+                checkForObservers();
+                resetActivePlayersDone();
+                setIneligible(phase);
+
+		        Enumeration e = game.getPlayers();
+		        Vector turns = new Vector();
+		        while (e.hasMoreElements()) {
+		        	Player p = (Player) e.nextElement();
+		        	if (p.hasMinefields()) {
+		        		GameTurn gt = new GameTurn(p.getId());
+		        		turns.add(gt);
+		        	}
+		        }
+		        game.setTurnVector(turns);
+		        game.resetTurnIndex();
+
+		        // send turns to all players
+		        send(createTurnVectorPacket());
+                break;
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
@@ -1055,6 +1083,7 @@ implements Runnable {
      */
     private boolean isPhasePlayable(int phase) {
         switch (phase) {
+            case Game.PHASE_DEPLOY_MINEFIELDS :
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
@@ -1086,6 +1115,7 @@ implements Runnable {
                 // transmit the board to everybody
                 send(createBoardPacket());
                 break;
+            case Game.PHASE_DEPLOY_MINEFIELDS :
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
@@ -1104,6 +1134,22 @@ implements Runnable {
                 changePhase(Game.PHASE_EXCHANGE);
                 break;
             case Game.PHASE_EXCHANGE :
+            case Game.PHASE_STARTING_SCENARIO :
+            	Enumeration e = game.getPlayers();
+            	boolean mines = false;
+            	while (e.hasMoreElements()) {
+            		Player p = (Player) e.nextElement();
+            		if (p.hasMinefields()) {
+            			mines = true;
+            		}
+            	}
+            	if (mines) {
+                	changePhase(Game.PHASE_DEPLOY_MINEFIELDS);
+                } else {
+	               	changePhase(Game.PHASE_INITIATIVE);
+                }
+                break;
+            case Game.PHASE_DEPLOY_MINEFIELDS :
                 changePhase(Game.PHASE_INITIATIVE);
                 break;
             case Game.PHASE_DEPLOYMENT :
@@ -1123,6 +1169,7 @@ implements Runnable {
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
                 addMovementHeat();
+                checkFor20Damage();
                 resolveCrewDamage();
                 resolvePilotingRolls(); // Skids cause damage in movement phase
                 resolveCrewDamage(); // again, I guess
@@ -1213,7 +1260,7 @@ implements Runnable {
         GameTurn nextTurn = game.changeToNextTurn();
         send(createTurnIndexPacket());
         
-        if (game.getFirstEntity() == null) {
+        if (game.getFirstEntity() == null && game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
             sendTurnErrorSkipMessage();
         }
 
@@ -2144,6 +2191,12 @@ implements Runnable {
         // Compile the move
         Compute.compile(game, entity.getId(), md);
 
+        if (md.contains(MovementData.STEP_CLEAR_MINEFIELD)) {
+            ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId());
+            entity.setClearingMinefield(true);
+            game.addAction(cma);
+        }
+
         // check for MASC failure
         if (entity instanceof Mech) {
             if (((Mech)entity).checkForMASCFailure(phaseReport,md)) {
@@ -2360,7 +2413,7 @@ implements Runnable {
                         else if ( curElevation > nextElevation + 1 ) {
                             doEntityFallsInto( entity, curPos, nextPos,
                                                entity.getBasePilotingRoll() );
-                            
+                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                             // Stay in the current hex and stop skidding.
                             break;
                         }
@@ -2521,8 +2574,9 @@ implements Runnable {
                                 phaseReport.append( this.damageEntity( entity, hit, toAttacker ) )
                                     .append( "\n" );
 
+                                entity.setPosition( nextPos );
+	                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                                 curPos = nextPos;
-                                entity.setPosition( curPos );
                             } // End buildings-suffer-too
 
                             // Any infantry in the building take damage
@@ -2547,8 +2601,9 @@ implements Runnable {
                         }
 
                         // Update the position and keep skidding.
+                        entity.setPosition( nextPos );
+                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                         curPos = nextPos;
-                        entity.setPosition( curPos );
                         phaseReport.append( "   Skids into hex " ).append( 
                                             curPos.getBoardNum() ).append( ".\n" );
 
@@ -2586,6 +2641,7 @@ implements Runnable {
                         }
                         phaseReport.append( "    " ); // indent displacement
                         doEntityDisplacement(target, curPos, nextPos, null);
+                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                         target = Compute.stackingViolation( game, 
                                                             entity.getId(), 
                                                             curPos );
@@ -2670,6 +2726,47 @@ implements Runnable {
                     doFlamingDeath(entity);
                 }
             }   
+
+            // check for minefields.
+            if ((!lastPos.equals(curPos) && 
+            	step.getMovementType() != Entity.MOVE_JUMP) ||
+            	(overallMoveType == Entity.MOVE_JUMP &&
+            	!i.hasMoreElements())) {
+            	if (game.containsMinefield(curPos)) {
+	            	Enumeration minefields = game.getMinefields(curPos).elements();
+	            	while (minefields.hasMoreElements()) {
+	            		Minefield mf = (Minefield) minefields.nextElement();
+	            		
+	            		switch (mf.getType()) {
+	            			case (Minefield.TYPE_CONVENTIONAL) :
+	            			case (Minefield.TYPE_THUNDER) :
+	            			case (Minefield.TYPE_COMMAND_DETONATED) :
+	            			enterMinefield(entity, mf, curPos, curPos, true);
+	            			break;
+	            		}
+	            	}
+	         	}
+	         	checkVibrabombs(entity, curPos);
+            }
+
+            // infantry discovers minefields if they end their move
+            // in a minefield.
+            
+            if (!lastPos.equals(curPos) && 
+            	!i.hasMoreElements() &&
+            	isInfantry) {
+            	if (game.containsMinefield(curPos)) {
+            		Player owner = entity.getOwner();
+	            	Enumeration minefields = game.getMinefields(curPos).elements();
+	            	while (minefields.hasMoreElements()) {
+	            		Minefield mf = (Minefield) minefields.nextElement();
+	            		if (!owner.containsMinefield(mf)) {
+		            		phaseReport.append(entity.getShortName() + " discovers a minefield.\n");
+							revealMinefield(owner, mf);
+						}
+	            	}
+            	}	
+            }
 
             // check if we've moved into water
             rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
@@ -3002,6 +3099,152 @@ implements Runnable {
         }
     }
     
+	// Adds a Thunder minefield to the hex.
+	private void deliverThunderMinefield(Coords coords, int playerId, int damage) {
+		Minefield minefield = null;
+		Enumeration minefields = game.getMinefields(coords).elements();
+		// Check if there already are Thunder minefields in the hex.
+		while (minefields.hasMoreElements()) {
+			Minefield mf = (Minefield) minefields.nextElement();
+			if (mf.getType() == Minefield.TYPE_THUNDER) {
+				minefield = mf;
+				break;
+			}
+		}
+		
+		// Create a new Thunder minefield
+		if (minefield == null) {
+			minefield = Minefield.createThunderMF(coords, playerId, damage);
+		// Add to the old one
+		} else if (minefield.getDamage() < Minefield.MAX_DAMAGE) {
+			removeMinefield(minefield);
+			int oldDamage = minefield.getDamage();
+			damage += oldDamage;
+			damage = (damage > Minefield.MAX_DAMAGE) ? Minefield.MAX_DAMAGE : damage;
+			minefield.setDamage(damage);
+		}
+		game.addMinefield(minefield);
+		revealMinefield(minefield);
+	}
+
+	// When an entity enters a conventional or Thunder minefield.
+	private void enterMinefield(Entity entity, Minefield mf, Coords src, Coords dest, boolean resolvePSRNow) {
+		switch (mf.getType()) {
+			case (Minefield.TYPE_CONVENTIONAL) :
+			case (Minefield.TYPE_THUNDER) :
+			if (mf.getTrigger() != Minefield.TRIGGER_NONE && 
+				Compute.d6(2) < mf.getTrigger()) {
+				return;
+			}
+			
+			phaseReport.append("\n" + entity.getShortName() + " hits a mine in hex " + mf.getCoords().getBoardNum() + ".");
+	        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+	        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+
+	        if (resolvePSRNow) {
+            	resolvePilotingRolls(entity, true, src, dest);
+            }
+
+            if (!mf.isOneUse()) {
+            	revealMinefield(mf);
+            } else {
+            	removeMinefield(mf);
+            }
+	        break;
+	     }
+	}
+	
+	// Checks to see if an entity sets off any vibrabombs.
+	private void checkVibrabombs(Entity entity, Coords coords) {
+		// Only mechs can set off vibrabombs.
+		if (!(entity instanceof Mech)) {
+			return;
+		}
+
+		int mass = (int) entity.getWeight();
+		
+		Enumeration e = game.getVibrabombs().elements();
+
+		while (e.hasMoreElements()) {		
+			Minefield mf = (Minefield) e.nextElement();
+			
+			// Mech weighing 10 tons or less can't set off the bomb
+			if (mass <= mf.getSetting() - 10) {
+				break;
+			} 
+			
+			int effectiveDistance = (mass - mf.getSetting()) / 10;
+			int actualDistance = coords.distance(mf.getCoords());
+			
+			if (actualDistance <= effectiveDistance) {
+				phaseReport.append("\n" + entity.getShortName() + " sets off a vibrabomb in hex " + mf.getCoords().getBoardNum() + ".\n");
+				explodeVibrabomb(mf);
+			}
+			
+		}
+	}
+
+	// Removes the 	minefield from the game.
+	private void removeMinefield(Minefield mf) {
+		if (game.containsVibrabomb(mf)) {
+			game.removeVibrabomb(mf);
+		}
+		game.removeMinefield(mf);
+		
+		Enumeration players = game.getPlayers();
+		while (players.hasMoreElements()) {
+			Player player = (Player) players.nextElement();
+          	removeMinefield(player, mf);
+		}
+	}
+	
+	// Removes the minfield from a player.
+	private void removeMinefield(Player player, Minefield mf) {
+		if (player.containsMinefield(mf)) {
+			player.removeMinefield(mf);
+			send(player.getId(), new Packet(Packet.COMMAND_REMOVE_MINEFIELD, mf));
+		}
+	}
+	
+	// Reveals a minefield for all players.
+	private void revealMinefield(Minefield mf) {
+		Enumeration players = game.getPlayers();
+		while (players.hasMoreElements()) {
+			Player player = (Player) players.nextElement();
+          	revealMinefield(player, mf);
+		}
+	}
+
+	// Reveals a minefield for a player.
+	private void revealMinefield(Player player, Minefield mf) {
+		if (!player.containsMinefield(mf)) {
+			player.addMinefield(mf);
+			send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
+		}
+	}
+
+	// Explodes a vibrabomb.
+	private void explodeVibrabomb(Minefield mf) {
+		Enumeration targets = game.getEntities(mf.getCoords());
+		
+		while (targets.hasMoreElements()) {
+			Entity entity = (Entity) targets.nextElement();
+
+			phaseReport.append(entity.getShortName() + " is hit by a vibrabomb attack.");
+	        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+	        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+	        
+           	resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
+           	send(createEntityPacket(entity.getId()));
+		}
+
+        if (!mf.isOneUse()) {
+        	revealMinefield(mf);
+        } else {
+        	removeMinefield(mf);
+        }
+	}
+    
     private void drownSwarmer(Entity entity, Coords pos) {
         // Any swarming infantry will be destroyed.
         final int swarmerId = entity.getSwarmAttackerId();
@@ -3309,6 +3552,7 @@ implements Runnable {
                 ).append( " is displaced into hex "
                 ).append( dest.getBoardNum() ).append( ".\n");
                 entity.setPosition(dest);
+                doEntityDisplacementMinefieldCheck(entity, src, dest);
                 if (roll != null) {
                     game.addPSR(roll);
                 }
@@ -3327,6 +3571,7 @@ implements Runnable {
                     pilotRoll.append(roll);
                 }
                 doEntityFall(entity, dest, fallElevation, pilotRoll);
+                doEntityDisplacementMinefieldCheck(entity, src, dest);
                 return;
             }
         }
@@ -3340,6 +3585,7 @@ implements Runnable {
             ).append( dest.getBoardNum() ).append( ", violating stacking with "
             ).append( violation.getDisplayName() ).append( ".\n");
             entity.setPosition(dest);
+            doEntityDisplacementMinefieldCheck(entity, src, dest);
             if (roll != null) {
                 game.addPSR(roll);
             }
@@ -3382,6 +3628,7 @@ implements Runnable {
                 PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                 pilotRoll.append(roll);
                 doEntityFall(entity, dest, fallElevation, 3, pilotRoll);
+                doEntityDisplacementMinefieldCheck(entity, src, dest);
                 
                 // defender pushed away, or destroyed
                 Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
@@ -3414,6 +3661,17 @@ implements Runnable {
         }
     }
     
+    private void doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest) {
+    	if (game.containsMinefield(dest)) {
+    		Enumeration minefields = game.getMinefields(dest).elements();
+    		while (minefields.hasMoreElements()) {
+    			Minefield mf = (Minefield) minefields.nextElement();
+	    		enterMinefield(entity, mf, src, dest, false);
+	    	}
+    	}
+    	checkVibrabombs(entity, dest);
+    }
+
     /**
      * Receive a deployment packet.  If valid, execute it and end the current
      * turn.
@@ -3477,6 +3735,57 @@ implements Runnable {
         entityUpdate(entity.getId());
     }
     
+    private void receiveDeployMinefields(Packet packet, int connId) {
+    	Vector minefields = (Vector) packet.getObject(0);
+
+        // is this the right phase?
+        if (game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) {
+            System.err.println("error: server got deploy minefields packet in wrong phase");
+            return;
+        }
+        
+        // looks like mostly everything's okay
+        processDeployMinefields(minefields);
+        endCurrentTurn(null);
+    }
+
+    private void processDeployMinefields(Vector minefields) {
+    	int playerId = Player.PLAYER_NONE;
+    	for (int i = 0; i < minefields.size(); i++) {
+    		Minefield mf = (Minefield) minefields.elementAt(i);
+    		playerId = mf.getPlayerId();
+    		
+    		game.addMinefield(mf);
+    		if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
+    			game.addVibrabomb(mf);
+    		}
+    	}
+    	
+    	if (playerId != Player.PLAYER_NONE) {
+	    	Player player = game.getPlayer(playerId);
+	    	int teamId = player.getTeam();
+	    	
+	    	if (teamId != Player.TEAM_NONE) {
+		    	Enumeration teams = game.getTeams();
+		    	while (teams.hasMoreElements()) {
+		    		Team team = (Team) teams.nextElement();
+		    		if (team.getId() == teamId) {
+		    			Enumeration players = team.getPlayers();
+		    			while (players.hasMoreElements()) {
+		    				Player teamPlayer = (Player) players.nextElement();
+		    				if (teamPlayer.getId() != player.getId()) {
+		    					send(teamPlayer.getId(), new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
+		    				}
+		    				teamPlayer.addMinefields(minefields);
+		    			}
+		    			break;
+		    		}
+		    	}
+		    } else {
+		    	player.addMinefields(minefields);
+		    }
+    	}
+    }
     /**
      * Gets a bunch of entity attacks from the packet.  If valid, processess
      * them and ends the current turn.
@@ -3585,6 +3894,7 @@ implements Runnable {
     private void resolveAllButWeaponAttacks() {
         roundReport.append("\nWeapon Attack Phase\n-------------------\n");
         
+        Vector clearAttempts = new Vector();
         // loop thru actions and handle everything we expect except attacks
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
@@ -3603,6 +3913,74 @@ implements Runnable {
 			else if (ea instanceof UnjamAction) {
 				resolveUnjam(entity);
 			} 
+			else if (ea instanceof ClearMinefieldAction) {
+				clearAttempts.add(entity);
+			}
+        }
+        
+        resolveClearMinefieldAttempts(clearAttempts);
+    }
+    
+    private void resolveClearMinefieldAttempts(Vector clearAttempts) {
+    	boolean[] doneWith = new boolean[clearAttempts.size()];
+    	
+    	for (int i = 0; i < clearAttempts.size(); i++) {
+    		Vector temp = new Vector();
+    		Entity e = (Entity) clearAttempts.elementAt(i);
+    		Coords pos = e.getPosition();
+    		temp.add(e);
+    		
+    		for (int j = i + 1; j < clearAttempts.size(); j++) {
+    			Entity ent = (Entity) clearAttempts.elementAt(j);
+    			if (ent.getPosition().equals(pos)) {
+    				temp.add(ent);
+    				clearAttempts.remove(ent);
+    			}
+    		}
+    		
+    		boolean accident = false;
+    		boolean cleared = false;
+    		for (int j = 0; j < temp.size(); j++) {
+    			Entity ent = (Entity) temp.elementAt(j);
+    			int roll = Compute.d6(2);
+    			phaseReport.append(ent.getShortName() + " attempts to clear mines in hex " + pos.getBoardNum() + ", rolls " + roll);
+    			if (roll >= Minefield.CLEAR_NUMBER_INFANTRY) {
+    				phaseReport.append(" and is successful!\n");
+    				cleared = true;
+    			} else if (roll <= Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT) {
+    				phaseReport.append(" and accidently sets it off!\n");
+    				accident = true;
+    			} else {
+    				phaseReport.append(" and fails!\n");
+    			}
+    		}
+    		if (accident) {
+    			Enumeration minefields = game.getMinefields(pos).elements();
+    			while (minefields.hasMoreElements()) {
+    				Minefield mf = (Minefield) minefields.nextElement();
+    				switch (mf.getType()) {
+    					case (Minefield.TYPE_CONVENTIONAL) :
+    					case (Minefield.TYPE_THUNDER) :
+    					for (int j = 0; j < temp.size(); j++) {
+    						Entity entity = (Entity) temp.elementAt(j);
+							phaseReport.append(entity.getShortName() + " is damaged in minefield accident.");
+					        HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+					        phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
+    					}
+    					break;
+    					case (Minefield.TYPE_VIBRABOMB) :
+    					explodeVibrabomb(mf);
+    					break;
+    				}
+    			}
+    		}
+    		if (cleared) {
+    			Enumeration minefields = game.getMinefields(pos).elements();
+    			while (minefields.hasMoreElements()) {
+    				Minefield mf = (Minefield) minefields.nextElement();
+    				removeMinefield(mf);
+    			}
+    		}
         }
     }
     
@@ -4077,10 +4455,27 @@ implements Runnable {
         }
         
         // do we hit?
-        boolean bMissed = false;
-        if (wr.roll < toHit.getValue()) {
+        boolean bMissed = wr.roll < toHit.getValue();
+        // special case minefield delivery, no damage and scatters if misses.
+        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
+        	Coords coords = target.getPosition();
+        	if (!bMissed) {
+        		phaseReport.append("hits the intended hex " + coords.getBoardNum() + "\n");
+        	} else {
+        		coords = Compute.scatter(coords);
+        		if (game.board.contains(coords)) {
+	        		phaseReport.append("misses and scatters to hex " + coords.getBoardNum() + "\n");
+        		} else {
+	        		phaseReport.append("misses and scatters off the board\n");
+	        		return;
+        		}
+        	}
+        	deliverThunderMinefield(coords, ae.getOwner().getId(), atype.getRackSize());
+        	return;
+        }
+
+        if (bMissed) {
             // miss
-            bMissed = true;
             phaseReport.append("misses.\n"); 
             if (wr.amsShotDown > 0) {
                 phaseReport.append( "\tAMS activates, firing " )
@@ -4143,6 +4538,26 @@ implements Runnable {
                 phaseReport.append("hits.  Pod attached.\n");
             }
             return;
+        }
+
+		// attempt to clear minefield by LRM/MRM fire.        
+        if (!bMissed && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
+        	int clearAttempt = Compute.d6(2);
+        	
+        	if (clearAttempt >= Minefield.CLEAR_NUMBER_WEAPON) {
+        		phaseReport.append("\n\thits and clears it.\n");
+        		Coords coords = target.getPosition();
+        		
+        		Enumeration minefields = game.getMinefields(coords).elements();
+        		while (minefields.hasMoreElements()) {
+        			Minefield mf = (Minefield) minefields.nextElement();
+        			
+        			removeMinefield(mf);
+        		}
+        	} else {
+        		phaseReport.append("\n\thits, but fails to clear it.\n");
+        	}
+        	return;
         }
 
         // yeech.  handle damage. . different weapons do this in very different ways
@@ -6342,6 +6757,9 @@ implements Runnable {
      * Resolves and reports all piloting skill rolls for a single mech.
      */
     void resolvePilotingRolls(Entity entity) {
+    	resolvePilotingRolls(entity, false, null, null);
+    }
+    void resolvePilotingRolls(Entity entity, boolean moving, Coords src, Coords dest) {
         // non-mechs don't need to
         if (!(entity instanceof Mech) || entity.isProne() || entity.isDoomed() 
         || entity.isDestroyed()) {
@@ -6374,7 +6792,11 @@ implements Runnable {
         // is our base roll impossible?
         if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
             phaseReport.append("\n").append(entity.getDisplayName()).append(" must make ").append(rolls.size()).append(" piloting skill roll(s) and automatically fails (").append(base.getDesc()).append(").\n");
-            doEntityFall(entity, base);
+            if (moving) {
+                doEntityFallsInto( entity, src, dest, base );
+            } else {
+	            doEntityFall(entity, base);
+	     	}
             return;
         }
         // loop thru rolls we do have to make...
@@ -6396,7 +6818,11 @@ implements Runnable {
             phaseReport.append(", rolls ").append(diceRoll).append(" : ");
             if (diceRoll < target.getValue()) {
                 phaseReport.append(" falls.\n");
-                doEntityFall(entity, base);
+	            if (moving) {
+	                doEntityFallsInto( entity, src, dest, base );
+	            } else {
+	                doEntityFall(entity, base);
+	            }
                 return;
             } else {
                 phaseReport.append(" succeeds.\n");
@@ -8550,6 +8976,9 @@ implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_DEPLOY :
                 receiveDeployment(packet, connId);
+                break;
+            case Packet.COMMAND_DEPLOY_MINEFIELDS :
+                receiveDeployMinefields(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
                 receiveAttack(packet, connId);

@@ -14,22 +14,18 @@
 
 package megamek.common;
 
-public class HexTarget implements Targetable
+public class MinefieldTarget implements Targetable
 {
     private Coords m_coords;
-    private boolean m_bIgnite;
     private int m_elev;
-    private int m_type;
     
-    public HexTarget(Coords c, Board board, int nType) {
+    public MinefieldTarget(Coords c, Board board) {
         m_coords = c;
         m_elev = board.getHex(m_coords).getElevation();
-        m_type = nType;
-        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
     
     public int getTargetType() { 
-        return m_type;
+        return Targetable.TYPE_MINEFIELD_CLEAR;
     }
     
     public int getTargetId() {
@@ -53,29 +49,13 @@ public class HexTarget implements Targetable
     }
     
     public boolean isImmobile() {
-        return m_type != Targetable.TYPE_MINEFIELD_DELIVER;
-    }
-
-    public String getDisplayName() {
-    	String name = "";
-    	switch (m_type) {
-		case (Targetable.TYPE_MINEFIELD_DELIVER) :
-			name = " (Deliver minefield)";
-			break;
-		case (Targetable.TYPE_HEX_CLEAR) :
-			name = " (Clear)";
-			break;
-		case (Targetable.TYPE_HEX_IGNITE) :
-			name = " (Ignite)";
-			break;
-    	}
-        return "Hex: " + m_coords.getBoardNum() + name;
+        return true;
     }
     
-    public boolean isIgniting() {
-        return m_bIgnite;
+    public String getDisplayName() {
+        return "Minefield: " + m_coords.getBoardNum() + " (Clear)";
     }
-
+    
     /**
      * The transformation encodes the y value in the top 5 decimal digits and
      * the x value in the bottom 5.  Could more efficiently encode this by

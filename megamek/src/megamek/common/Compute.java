@@ -1365,6 +1365,25 @@ public class Compute
 
         ToHitData toHit = null;
         
+        // make sure weapon can deliver minefield
+        if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER &&
+        	!AmmoType.canDeliverMinefield(atype)) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't deliver minefields");
+        }
+        
+        if (atype != null && 
+        	atype.getAmmoType() == AmmoType.T_LRM &&
+        	atype.getMunitionType() == AmmoType.M_THUNDER &&
+        	target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can only deliver minefields");        	
+        }
+        
+        // make sure weapon can clear minefield
+		if (target instanceof MinefieldTarget && 
+			!AmmoType.canClearMinefield(atype)) {
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can't clear minefields");
+		}
+		
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
@@ -1659,8 +1678,10 @@ public class Compute
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
-        // target terrain
-        toHit.append(getTargetTerrainModifier(game, target));
+        // target terrain, not applicable when delivering minefields
+		if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+			toHit.append(getTargetTerrainModifier(game, target));
+		}
         
         // target in water?
         Hex attHex = game.board.getHex(ae.getPosition());
@@ -5826,6 +5847,16 @@ public class Compute
 
         // Entity is not *inside* of the building.
         return false;
+    }
+    
+    public static Coords scatter(Coords coords) {
+    	int scatterDirection = d6(1) - 1;
+    	int scatterDistance = d6(1);
+    	
+    	for (int i = 0; i < scatterDistance; i++) {
+    		coords = coords.translated(scatterDirection);
+    	}
+    	return coords;
     }
 
 } // End public class Compute

@@ -14,7 +14,14 @@
 
 package megamek.common;
 
-import java.util.*;
+//import java.util.*;
+import com.sun.java.util.collections.HashMap;
+import com.sun.java.util.collections.Map;
+import com.sun.java.util.collections.Collections;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.Hashtable;
+
 import java.io.*;
 
 import megamek.common.actions.*;
@@ -39,6 +46,8 @@ public class Game implements Serializable
     public static final int PHASE_PHYSICAL          = 9;
     public static final int PHASE_END               = 10;
     public static final int PHASE_VICTORY           = 11;
+    public static final int PHASE_DEPLOY_MINEFIELDS = 13;
+    public static final int PHASE_STARTING_SCENARIO = 14;
     /**
      * The number of Infantry platoons that have to move for every Mek
      * or Vehicle, if the "inf_move_multi" option is selected.
@@ -105,6 +114,8 @@ public class Game implements Serializable
     private boolean mechInFirstHex = true;
     private boolean mechInSecondHex = true;
 
+	private Map minefields = Collections.synchronizedMap(new HashMap());
+    private Vector vibrabombs = new Vector();
     /**
      * Constructor
      */
@@ -132,6 +143,77 @@ public class Game implements Serializable
       mechInSecondHex = mech;
     }
 
+	public boolean containsMinefield(Coords coords) {
+		return minefields.containsKey(coords);
+	}
+    
+	public Vector getMinefields(Coords coords) {
+    	Vector mfs = (Vector) minefields.get(coords);
+    	if (mfs == null) {
+    		return new Vector();
+    	}
+		return mfs;
+	}
+    
+	public int getNbrMinefields(Coords coords) {
+    	Vector mfs = (Vector) minefields.get(coords);
+    	if (mfs == null) {
+    		return 0;
+    	}
+		
+		return mfs.size();
+	}
+    
+    public void addMinefield(Minefield mf) {
+    	Vector mfs = (Vector) minefields.get(mf.getCoords());
+    	if (mfs == null) {
+    		mfs = new Vector();
+	    	mfs.add(mf);
+	    	minefields.put(mf.getCoords(), mfs);
+	    	return;
+    	}
+    	mfs.add(mf);
+    }
+    
+    public void removeMinefield(Minefield mf) {
+    	Vector mfs = (Vector) minefields.get(mf.getCoords());
+    	if (mfs == null) {
+    		return;
+    	}
+    	
+    	Enumeration e = mfs.elements();
+    	while (e.hasMoreElements()) {
+    		Minefield mftemp = (Minefield) e.nextElement();
+    		if (mftemp.equals(mf)) {
+    			mfs.remove(mftemp);
+    			break;
+    		}
+    	}
+    	if (mfs.isEmpty()) {
+    		minefields.remove(mf.getCoords());
+    	}
+	}
+	
+	public void clearMinefields() {
+		minefields.clear();
+	}
+    
+    public Vector getVibrabombs() {
+    	return vibrabombs;
+    }
+    
+    public void addVibrabomb(Minefield mf) {
+    	vibrabombs.add(mf);
+    }
+    
+    public void removeVibrabomb(Minefield mf) {
+    	vibrabombs.remove(mf);
+	}
+    
+    public boolean containsVibrabomb(Minefield mf) {
+    	return vibrabombs.contains(mf);
+    }
+    
     public GameOptions getOptions() {
         return options;
     }
@@ -276,6 +358,7 @@ public class Game implements Serializable
      */
     public boolean phaseHasTurns(int phase) {
         switch (phase) {
+            case PHASE_DEPLOY_MINEFIELDS :
             case PHASE_DEPLOYMENT :
             case PHASE_MOVEMENT :
             case PHASE_FIRING :
@@ -576,11 +659,14 @@ public class Game implements Serializable
                 return getEntity(nID);
             case Targetable.TYPE_HEX_CLEAR :
             case Targetable.TYPE_HEX_IGNITE :
+            case Targetable.TYPE_MINEFIELD_DELIVER :
                 return new HexTarget(HexTarget.idToCoords(nID), board, nType);
             case Targetable.TYPE_BUILDING :
             case Targetable.TYPE_BLDG_IGNITE :
                 return new BuildingTarget
                     ( BuildingTarget.idToCoords(nID), board, nType );
+            case Targetable.TYPE_MINEFIELD_CLEAR :
+                return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
             default :
                 return null;
         }
@@ -673,10 +759,22 @@ public class Game implements Serializable
         resetActions();
         resetCharges();
         resetPSRs();
+        removeMinefields();
         
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
         victoryTeam = Player.TEAM_NONE;
+    }
+    
+    private void removeMinefields() {
+        minefields.clear();
+        vibrabombs.clear();
+
+		Enumeration players = getPlayers();
+		while (players.hasMoreElements()) {
+			Player player = (Player) players.nextElement();
+          	player.removeMinefields();
+		}
     }
     
     /**

@@ -403,9 +403,19 @@ public class Client extends Panel
         case Game.PHASE_LOUNGE :
             switchPanel(new ChatLounge(this));
             break;
+        case Game.PHASE_STARTING_SCENARIO :
+            switchPanel(new Label("Starting scenario..."));
+            sendDone(true);
+            break;
         case Game.PHASE_EXCHANGE :
             switchPanel(new Label("Transmitting game data..."));
             sendDone(true);
+            break;
+        case Game.PHASE_DEPLOY_MINEFIELDS :
+            switchPanel(new DeployMinefieldDisplay(this));
+            if (Settings.minimapEnabled && !minimapW.isVisible()) {
+                setMapVisible(true);
+            }
             break;
         case Game.PHASE_DEPLOYMENT :
             switchPanel(new DeploymentDisplay(this));
@@ -552,10 +562,10 @@ public class Client extends Panel
                 if (h != null && h.contains(Terrain.WOODS) &&
                     curPanel instanceof FiringDisplay ) {
                     popup.add(new TargetMenuItem(new HexTarget
-                        (coords, game.board, false) ) );
+                        (coords, game.board, Targetable.TYPE_HEX_CLEAR) ) );
                     if (game.getOptions().booleanOption("fire")) {
                         popup.add(new TargetMenuItem(new HexTarget
-                            (coords, game.board, true) ) );
+                            (coords, game.board, Targetable.TYPE_HEX_IGNITE) ) );
                     }
                 }
                 else if ( h != null && h.contains( Terrain.BUILDING ) ) {
@@ -566,6 +576,14 @@ public class Client extends Panel
                             ( coords, game.board, true ) ) );
                     }
                 }
+                if (h != null && game.containsMinefield(coords) &&
+                    curPanel instanceof FiringDisplay ) {
+                    popup.add(new TargetMenuItem(new MinefieldTarget
+                        (coords, game.board) ) );
+                }
+                if (h != null && curPanel instanceof FiringDisplay) {
+					popup.add(new TargetMenuItem(new HexTarget(coords, game.board, Targetable.TYPE_MINEFIELD_DELIVER) ) );
+				}
             }
         }
     }
@@ -817,6 +835,13 @@ public class Client extends Panel
     }
       
     /**
+     * Sends an "deploy minefields" packet
+     */
+    public void sendDeployMinefields(Vector minefields) {
+        send(new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
+    }
+      
+    /**
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
@@ -937,6 +962,42 @@ public class Client extends Panel
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
         //XXX
+    }
+
+    protected void receiveDeployMinefields(Packet packet) {
+    	Vector minefields = (Vector) packet.getObject(0);
+
+    	for (int i = 0; i < minefields.size(); i++) {
+    		Minefield mf = (Minefield) minefields.elementAt(i);
+    		
+    		game.addMinefield(mf);
+    	}
+    	bv.update(bv.getGraphics());
+    }
+
+    protected void receiveSendingMinefields(Packet packet) {
+    	Vector minefields = (Vector) packet.getObject(0);
+    	game.clearMinefields();
+
+    	for (int i = 0; i < minefields.size(); i++) {
+    		Minefield mf = (Minefield) minefields.elementAt(i);
+    		
+    		game.addMinefield(mf);
+	   	}
+    }
+
+    protected void receiveRevealMinefield(Packet packet) {
+		Minefield mf = (Minefield) packet.getObject(0);
+		
+		game.addMinefield(mf);
+    	bv.update(bv.getGraphics());
+    }
+
+    protected void receiveRemoveMinefield(Packet packet) {
+		Minefield mf = (Minefield) packet.getObject(0);
+		
+		game.removeMinefield(mf);
+    	bv.update(bv.getGraphics());
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
@@ -1111,6 +1172,18 @@ public class Client extends Panel
             case Packet.COMMAND_ENTITY_REMOVE :
                 receiveEntityRemove(c);
                 break;
+            case Packet.COMMAND_SENDING_MINEFIELDS :
+            	receiveSendingMinefields(c);
+            	break;
+            case Packet.COMMAND_DEPLOY_MINEFIELDS :
+            	receiveDeployMinefields(c);
+            	break;
+            case Packet.COMMAND_REVEAL_MINEFIELD :
+            	receiveRevealMinefield(c);
+            	break;
+            case Packet.COMMAND_REMOVE_MINEFIELD :
+            	receiveRemoveMinefield(c);
+            	break;
             case Packet.COMMAND_CHANGE_HEX :
                 game.board.setHex((Coords)c.getObject(0), (Hex)c.getObject(1));
                 break;

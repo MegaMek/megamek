@@ -1,3 +1,6 @@
+Credits:
+bh-21
+
 #
 # Wreck Tileset
 #
@@ -27,18 +30,19 @@ exact "default_tank" "default_tank_wreck.gif"
 
 # put custom pictures here:
 
-# by BH-21
-chassis "flatbed truck" "truck_wreck.gif"
-chassis "jeep" "truck_wreck.gif"
-chassis "skimmer" "truck_wreck.gif"
-chassis "swift wind scout car" "truck_wreck.gif"
-exact "j-27 ordnance transport" "truck_wreck.gif"
-exact "j-27 ordnance transport (+ trailer)" "truck_wreck.gif"
-chassis "skulker wheeled scout tank" "truck_wreck.gif"
-chassis "packrat lrpv" "truck_wreck.gif"
-chassis "m.a.s.h." "truck_wreck.gif"
-chassis "mobile hq" "truck_wreck.gif"
-chassis "coolant truck" "truck_wreck.gif"
-chassis "hi-scout drone carrier" "truck_wreck.gif"
-exact "hi-scout drone path track" "truck_wreck.gif"
-exact "hi-scout drone napfind" "truck_wreck.gif"
+chassis "Command Van" "truck_wreck.gif"
+chassis "Coolant Truck" "truck_wreck.gif"
+chassis "Flatbed Truck" "truck_wreck.gif"
+chassis "Ground Car" "truck_wreck.gif"
+chassis "Heavy Transport B1" "truck_wreck.gif"
+exact "Hi-Scout Drone (NapFind)" "truck_wreck.gif"
+exact "Hi-Scout Drone (Path Track)" "truck_wreck.gif"
+chassis "Hi-Scout Drone Carrier" "truck_wreck.gif"
+chassis "J-27 Ordance Transport" "truck_wreck.gif"
+chassis "Jeep" "truck_wreck.gif"
+chassis "M.A.S.H. Truck" "truck_wreck.gif"
+chassis "Mobile Headquarters" "truck_wreck.gif"
+chassis "Packrat LRPV" "truck_wreck.gif"
+chassis "Skimmer" "truck_wreck.gif"
+chassis "Skulker Wheeled Scout Tank" "truck_wreck.gif"
+chassis "Swift Wind Scout Car" "truck_wreck.gif"

@@ -49,10 +49,8 @@ Lot of people have contributed to the MegaMek project.
   Scenario Readme:
      Lee "T-Bolt" Smith
 
-  Mech Conversion:
+  Mech, Vehicle, and Infantry Conversion and QA:
      Hopalong
-
-  Vehicle Conversion:
      Martis Truesight
      Taerkar
 

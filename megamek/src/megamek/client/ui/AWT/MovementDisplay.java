@@ -352,14 +352,14 @@ public class MovementDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
+        selectEntity(client.getFirstEntityNum());
         butDone.setLabel("Done");
         butDone.setEnabled(true);
         setNextEnabled(true);
         butMore.setEnabled(true);
         if (!client.bv.isMovingUnits()) {
-	        client.setDisplayVisible(true);
-	    }
-        selectEntity(client.getFirstEntityNum());
+            client.setDisplayVisible(true);
+        }
     }
 
     /**

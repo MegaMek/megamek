@@ -253,13 +253,13 @@ public class PhysicalDisplay
      */
     private void beginMyTurn() {
         target(null);
+        selectEntity(client.getFirstEntityNum());
         setNextEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
         client.setDisplayVisible(true);
         client.game.board.select(null);
         client.game.board.highlight(null);
-        selectEntity(client.getFirstEntityNum());
     }
     
     /**

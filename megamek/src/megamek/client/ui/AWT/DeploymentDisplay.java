@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -19,17 +19,22 @@ import java.awt.event.*;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay 
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener,
-    KeyListener, GameListener, BoardViewListener
-{    
-	// Action command names
-	public static final String DEPLOY_TURN        = "deployTurn";
-	public static final String DEPLOY_NEXT        = "deployNext";
-	public static final String DEPLOY_LOAD        = "deployLoad";
-	public static final String DEPLOY_UNLOAD      = "deployUnload";
+    implements BoardListener,  ActionListener, DoneButtoned,
+               KeyListener, GameListener, BoardViewListener, Distractable
+{
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
+    // Action command names
+    public static final String DEPLOY_TURN        = "deployTurn";
+    public static final String DEPLOY_NEXT        = "deployNext";
+    public static final String DEPLOY_LOAD        = "deployLoad";
+    public static final String DEPLOY_UNLOAD      = "deployUnload";
 
     // parent game
     public Client client;
@@ -39,9 +44,9 @@ public class DeploymentDisplay
     
     private Button            butNext;
     private Button            butTurn;
-    private Button            butSpace;
-    private Button            butSpace2;
-    private Button            butSpace3;
+//     private Button            butSpace;
+//     private Button            butSpace2;
+//     private Button            butSpace3;
     private Button            butLoad;
     private Button            butUnload;
     private Button            butDone;
@@ -70,14 +75,14 @@ public class DeploymentDisplay
         butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
                         
-        butSpace = new Button(".");
-        butSpace.setEnabled(false);
+//         butSpace = new Button(".");
+//         butSpace.setEnabled(false);
 
-        butSpace2 = new Button(".");
-        butSpace2.setEnabled(false);
+//         butSpace2 = new Button(".");
+//         butSpace2.setEnabled(false);
 
-        butSpace3 = new Button(".");
-        butSpace3.setEnabled(false);
+//         butSpace3 = new Button(".");
+//         butSpace3.setEnabled(false);
 
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
@@ -100,15 +105,15 @@ public class DeploymentDisplay
 
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(0, 8));
         panButtons.add(butNext);
         panButtons.add(butTurn);
         panButtons.add(butLoad);
         panButtons.add(butUnload);
-        panButtons.add(butSpace);
-        panButtons.add(butSpace2);
-        panButtons.add(butSpace3);
-        panButtons.add(butDone);
+//         panButtons.add(butSpace);
+//         panButtons.add(butSpace2);
+//         panButtons.add(butSpace3);
+//         panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -118,21 +123,22 @@ public class DeploymentDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(client.bv, gridbag, c);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(client.bv, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
-        c.weightx = 1.0;    c.weighty = 0;
-        c.gridwidth = 1;
-        addBag(client.cb.getComponent(), gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
 
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
+
+        client.bv.addKeyListener( this );
         addKeyListener(this);
 
     }
@@ -156,7 +162,7 @@ public class DeploymentDisplay
 
         // okay.
         if (ce() != null) {
-        	ce().setSelected(false);
+            ce().setSelected(false);
         }
         this.cen = en;
         ce().setSelected(true);
@@ -168,11 +174,14 @@ public class DeploymentDisplay
         
         client.game.board.select(null);
         client.game.board.cursor(null);
-        client.mechD.displayEntity(ce());
-        client.mechD.showPanel("movement");
-
-        // Update the menu bar.
-        client.getMenuBar().setEntity( ce() );
+        // RACE : if player clicks fast enough, ce() is null.
+        if ( null != ce() ) {
+            client.mechD.displayEntity(ce());
+            client.mechD.showPanel("movement");
+        
+            // Update the menu bar.
+            client.getMenuBar().setEntity( ce() );
+        }
     }
 
     /**
@@ -196,11 +205,13 @@ public class DeploymentDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
+        Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
         if ( Game.PHASE_DEPLOYMENT == client.game.getPhase()
-            && Entity.NONE!=cen
-            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+             && null != next
+             && null != ce()
+             && next.getOwnerId() != ce().getOwnerId() ) {
             client.setDisplayVisible(false);
-        };                
+        }
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
@@ -245,8 +256,6 @@ public class DeploymentDisplay
         client.bv.markDeploymentHexesFor(null);
         client.removeGameListener(this);
         client.game.board.removeBoardListener(this);
-        client.bv.removeKeyListener(this);
-        client.cb.getComponent().removeKeyListener(this);
         
         this.removeAll();
     }
@@ -255,7 +264,12 @@ public class DeploymentDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-        
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (b.getType() != BoardEvent.BOARD_HEX_DRAGGED) {
             return;
         }
@@ -312,6 +326,11 @@ public class DeploymentDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
         
         endMyTurn();
 
@@ -325,8 +344,15 @@ public class DeploymentDisplay
     }
     
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.getPhase() != Game.PHASE_DEPLOYMENT) {
-            die();
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        if (client.game.getPhase() == Game.PHASE_DEPLOYMENT) {
+            setStatusBarText("Waiting to begin Deployment phase...");
+            beginMyTurn();
         }
     }
     
@@ -334,6 +360,12 @@ public class DeploymentDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if ( statusBarActionPerformed(ev, client) )
           return;
           
@@ -477,7 +509,6 @@ public class DeploymentDisplay
     }
 
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
 	//
@@ -488,52 +519,99 @@ public class DeploymentDisplay
     
     // Selected a unit in the unit overview.
     public void selectUnit(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
     	Entity e = client.game.getEntity(b.getEntityId());
+        if ( null == e ) {
+            return;
+        }
     	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
+            if ( client.game.getTurn().isValidEntity(e,client.game) ) {
             	if (ce() != null) {
-		            ce().setPosition(null);
-		            client.bv.redrawEntity(ce());
-		            // Unload any loaded units.
-		            Enumeration iter =  ce().getLoadedUnits().elements();
-		            while ( iter.hasMoreElements() ) {
-		                Entity other = (Entity) iter.nextElement();
-		                // Please note, the Server never got this unit's load orders.
-		                ce().unload( other );
-		                other.setTransportId( Entity.NONE );
-		                other.newRound(client.game.getRoundCount());
-		            }
-				}
+                    ce().setPosition(null);
+                    client.bv.redrawEntity(ce());
+                    // Unload any loaded units.
+                    Enumeration iter =  ce().getLoadedUnits().elements();
+                    while ( iter.hasMoreElements() ) {
+                        Entity other = (Entity) iter.nextElement();
+                        // Please note, the Server never got this unit's load orders.
+                        ce().unload( other );
+                        other.setTransportId( Entity.NONE );
+                        other.newRound(client.game.getRoundCount());
+                    }
+                }
 	            
-	            selectEntity(e.getId());
-    		}
+                selectEntity(e.getId());
+                if ( null != e.getPosition() ) {
+                    client.bv.centerOnHex(e.getPosition());
+                }
+            }
     	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
+            client.setDisplayVisible(true);
+            client.mechD.displayEntity(e);
+            if (e.isDeployed()) {
             	client.bv.centerOnHex(e.getPosition());
-    		}
+            }
     	}
     }
 
-	private void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
+    private void setNextEnabled(boolean enabled) {
+        butNext.setEnabled(enabled);
         client.getMenuBar().setDeployNextEnabled(enabled);
-	}
-	private void setTurnEnabled(boolean enabled) {
-		butTurn.setEnabled(enabled);
+    }
+    private void setTurnEnabled(boolean enabled) {
+        butTurn.setEnabled(enabled);
         client.getMenuBar().setDeployTurnEnabled(enabled);
-	}
-	private void setLoadEnabled(boolean enabled) {
-		butLoad.setEnabled(enabled);
+    }
+    private void setLoadEnabled(boolean enabled) {
+        butLoad.setEnabled(enabled);
         client.getMenuBar().setDeployLoadEnabled(enabled);
-	}
-	private void setUnloadEnabled(boolean enabled) {
-		butUnload.setEnabled(enabled);
+    }
+    private void setUnloadEnabled(boolean enabled) {
+        butUnload.setEnabled(enabled);
         client.getMenuBar().setDeployUnloadEnabled(enabled);
-	}
+    }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        die();
+    }
+
 }

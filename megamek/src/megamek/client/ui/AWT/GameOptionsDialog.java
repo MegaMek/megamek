@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -109,7 +109,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
 
-        savedAlert = new AlertDialog(frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.");
+        savedAlert = new AlertDialog(frame, "Options saved", "Default games options saved. Next time you host a\ngame these options will be automatically loaded and set.");
 
     }
 
@@ -215,23 +215,45 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         panOptions.add(groupLabel);
     }
     
-    private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this, option);
+    private void addOption( GameOption option, GridBagLayout gridbag,
+                            GridBagConstraints c ) {
+        DialogOptionComponent optionComp =
+            new DialogOptionComponent(this, option);
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
-        maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
+        maxOptionWidth = Math.max( maxOptionWidth,
+                                   optionComp.getPreferredSize().width );
 
-        if (option.getShortName().equals("inf_and_protos_deploy_last")) {
-            if (!(options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
+        if (option.getShortName().equals("inf_deploy_last")) {
+            if ( !(options.getOption("inf_move_last")).booleanValue()
+                 || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("inf_and_protos_move_multi")) {
-            if ((options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
+        } else if (option.getShortName().equals("inf_move_multi")) {
+            if ( (options.getOption("inf_move_last")).booleanValue()
+                 || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("inf_and_protos_move_last")) {
-            if ((options.getOption("inf_and_protos_move_multi")).booleanValue() || !editable) {
+        } else if (option.getShortName().equals("inf_move_last")) {
+            if ( (options.getOption("inf_move_multi")).booleanValue()
+                 || !editable ) {
+                optionComp.setEditable(false);
+            }
+        }
+        else if (option.getShortName().equals("protos_deploy_last")) {
+            if ( !(options.getOption("protos_move_last")).booleanValue()
+                 || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getShortName().equals("protos_move_multi")) {
+            if ( (options.getOption("protos_move_last")).booleanValue()
+                 || !editable) {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getShortName().equals("protos_move_last")) {
+            if ( (options.getOption("protos_move_multi")).booleanValue()
+                 || !editable) {
                 optionComp.setEditable(false);
             }
         } else {
@@ -249,22 +271,42 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     //  Arguments are the GameOption object and the true/false
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state) {
-        if (option.getShortName().equals("inf_and_protos_move_last")) {
+        if (option.getShortName().equals("inf_move_last")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_and_protos_deploy_last")) {
+                if (comp_i.option.getShortName().equals("inf_deploy_last")) {
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
-                if (comp_i.option.getShortName().equals("inf_and_protos_move_multi")) {
+                if (comp_i.option.getShortName().equals("inf_move_multi")) {
                     comp_i.setEditable(!state);
                 }
             }
         }
-        if (option.getShortName().equals("inf_and_protos_move_multi")) {
+        if (option.getShortName().equals("inf_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_and_protos_move_last")) {
+                if (comp_i.option.getShortName().equals("inf_move_last")) {
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getShortName().equals("protos_move_last")) {
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getShortName().equals("protos_deploy_last")) {
+                    comp_i.setEditable(state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getShortName().equals("protos_move_multi")) {
+                    comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getShortName().equals("protos_move_multi")) {
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getShortName().equals("protos_move_last")) {
                     comp_i.setEditable(!state);
                 }
             }

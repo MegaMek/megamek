@@ -51,6 +51,10 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Label labC3 = new Label("C3 Network: ", Label.RIGHT);;
     private Choice choC3 = new Choice();
     private int[] entityCorrespondance;
+    private Label labCallsign = new Label("Callsign: ", Label.CENTER);;
+    private Label labUnitNum = new Label("Swap Units With: ", Label.CENTER);;
+    private Choice choUnitNum = new Choice();
+    private Vector entityUnitNum = new Vector();
     private Label labDeployment = new Label("Deployment Round: ", Label.RIGHT);
     private Choice choDeployment = new Choice();
     
@@ -163,6 +167,52 @@ extends Dialog implements ActionListener, DialogOptionListener {
           gridbag.setConstraints(choC3, c);
           add(choC3);
           refreshC3();
+        }
+
+        if ( entity instanceof Protomech )
+        {
+            // All Protomechs have a callsign.
+            StringBuffer callsign = new StringBuffer( "Callsign: " );
+            callsign.append( (char) (this.entity.getUnitNumber() +
+                                     Settings.unitStartChar) )
+                .append( '-' )
+                .append( this.entity.getId() );
+            labCallsign.setText( callsign.toString() );
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.CENTER;
+            gridbag.setConstraints(labCallsign, c);
+            add(labCallsign);
+
+            // Get the Protomechs of this entity's player
+            // that *aren't* in the entity's unit.
+            Enumeration otherUnitEntities = client.game.getSelectedEntities
+                ( new EntitySelector() {
+                        private final int ownerId =
+                            CustomMechDialog.this.entity.getOwnerId();
+                        private final char unitNumber =
+                            CustomMechDialog.this.entity.getUnitNumber();
+                        public boolean accept( Entity entity ) {
+                            if ( entity instanceof Protomech &&
+                                 ownerId == entity.getOwnerId() &&
+                                 unitNumber != entity.getUnitNumber() )
+                                return true;
+                            return false;
+                        }
+                    } );
+
+            // If we got any other entites, show the unit number controls.
+            if ( otherUnitEntities.hasMoreElements() ) {
+                c.gridwidth = 1;
+                c.anchor = GridBagConstraints.EAST;
+                gridbag.setConstraints(labUnitNum, c);
+                add(labUnitNum);
+
+                c.gridwidth = GridBagConstraints.REMAINDER;
+                c.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(choUnitNum, c);
+                add(choUnitNum);
+                refreshUnitNum(otherUnitEntities);
+            }
         }
 
         // Can't set up munitions on infantry.
@@ -620,6 +670,39 @@ extends Dialog implements ActionListener, DialogOptionListener {
         }
     }
 
+    /**
+     * Populate the list of entities in other units from the given enumeration.
+     *
+     * @param   others the <code>Enumeration</code> containing entities in
+     *          other units.
+     */    
+    private void refreshUnitNum( Enumeration others ) {
+        // Clear the list of old values
+        choUnitNum.removeAll();
+        entityUnitNum.clear();
+
+        // Make an entry for "no change".
+        choUnitNum.add( "-- Do Not Swap Units --" );
+        entityUnitNum.addElement( this.entity );
+
+        // Walk through the other entities.
+        while ( others.hasMoreElements() ) {
+            // Track the position of the next other entity.
+            final Entity other = (Entity) others.nextElement();
+            entityUnitNum.addElement( other );
+
+            // Show the other entity's name and callsign.
+            StringBuffer callsign = new StringBuffer( other.getDisplayName() );
+            callsign.append( " (" )
+                .append( (char) (other.getUnitNumber() +
+                                 Settings.unitStartChar) )
+                .append( '-' )
+                .append( other.getId() )
+                .append( ')' );
+            choUnitNum.add( callsign.toString() );
+        }
+        choUnitNum.select(0);
+    }
 
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         if (actionEvent.getSource() != butCancel) {
@@ -673,9 +756,22 @@ extends Dialog implements ActionListener, DialogOptionListener {
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
-            
+
+            // If the player wants to swap unit numbers, update both
+            // entities and send an update packet for the other entity.
+            if ( !entityUnitNum.isEmpty() &&
+                 choUnitNum.getSelectedIndex() > 0 ) {
+                Entity other =  (Entity) this.entityUnitNum.elementAt
+                    ( choUnitNum.getSelectedIndex() );
+                char temp = this.entity.getUnitNumber();
+                this.entity.setUnitNumber( other.getUnitNumber() );
+                other.setUnitNumber( temp );
+                client.sendUpdateEntity( other );
+            }
+
+            // Set the entity's deployment round.
             entity.setDeployRound(choDeployment.getSelectedIndex());
-            
+
             // update munitions selections
             for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {
                 ((MunitionChoicePanel)e.nextElement()).applyChoice();

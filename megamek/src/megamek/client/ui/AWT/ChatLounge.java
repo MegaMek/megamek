@@ -22,11 +22,17 @@ import java.io.*;
 import megamek.client.util.widget.*;
 
 import megamek.common.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 import megamek.common.util.StringUtil;
 
 public class ChatLounge extends AbstractPhaseDisplay
-    implements ActionListener, ItemListener, BoardListener, GameListener
+    implements ActionListener, ItemListener, BoardListener,
+               GameListener, DoneButtoned, Distractable
 {
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
     public static final String START_LOCATION_NAMES[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     
     // parent Client
@@ -66,7 +72,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Panel panBoardSettings;
 
     private Button butLoadList;
-    private Label  lblPlaceholder;
+//      private Label  lblPlaceholder;
     private Button butSaveList;
     private Button butDeleteAll;
 
@@ -113,7 +119,18 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         butOptions = new Button("Game Options...");
         butOptions.addActionListener(this);
-        
+
+        butDone = new Button("I'm Done");
+        Font font = new Font( "sanserif", Font.BOLD, 12 );
+        if ( null == font ) {
+            System.err.println
+                ( "Couldn't find the new font for the 'Done' button." );
+        } else {
+            butDone.setFont( font );
+        }
+        butDone.setActionCommand("ready");
+        butDone.addActionListener(this);
+
         setupPlayerInfo();
         setupMinefield();
         
@@ -133,10 +150,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         
         labStatus = new Label("", Label.CENTER);
                 
-        butDone = new Button("I'm Done");
-        butDone.setActionCommand("ready");
-        butDone.addActionListener(this);
-                
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -148,17 +161,19 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panMain, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        addBag(labStatus, gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0.0;
+//         addBag(labStatus, gridbag, c);
 
-        c.gridwidth = 1;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        addBag(client.cb.getComponent(), gridbag, c);
+//          c.gridwidth = 1;
+//          c.weightx = 1.0;    c.weighty = 0.0;
+//          addBag(client.cb.getComponent(), gridbag, c);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        addBag(butDone, gridbag, c);
-        
+//          c.gridwidth = 1;
+//          c.anchor = GridBagConstraints.EAST;
+//          c.weightx = 0.0;    c.weighty = 0.0;
+//          c.ipady = 10;
+//          addBag(butDone, gridbag, c);
+
         validate();
     }
     
@@ -415,12 +430,13 @@ public class ChatLounge extends AbstractPhaseDisplay
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
             
+        gridbag.setConstraints(panUnits, c);
+        panMain.add(panUnits);
+
         c.weightx = 1.0;    c.weighty = 1.0;
         gridbag.setConstraints(panTop, c);
         panMain.add(panTop);
             
-        gridbag.setConstraints(panUnits, c);
-        panMain.add(panUnits);
     }
     
     /**
@@ -436,7 +452,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         panTop.setLayout(gridbag);
             
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
+        c.insets = new Insets(6, 6, 1, 6);
         c.weightx = 1.0;    c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panBoardSettings, c);
@@ -464,7 +480,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoadList.setActionCommand("load_list");
         butLoadList.addActionListener(this);
 
-        lblPlaceholder = new Label();
+//          lblPlaceholder = new Label();
 
         butSaveList = new Button("Save Unit List...");
         butSaveList.setActionCommand("save_list");
@@ -472,6 +488,13 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.setEnabled(false);
 
         butLoad = new Button("Add A Unit...");
+        Font font = new Font( "sanserif", Font.BOLD, 18 );
+        if ( null == font ) {
+            System.err.println
+                ( "Couldn't find the new font for the 'Add a Unit' button." );
+        } else {
+            butLoad.setFont( font );
+        }
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
 
@@ -511,9 +534,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = 1;
+        c.gridheight = 2;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
             
+        c.gridheight = 1;
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
             
@@ -530,9 +555,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         gridbag.setConstraints( butLoadList, c );
         panEntities.add( butLoadList );
 
-        c.gridwidth = 1;
-        gridbag.setConstraints( lblPlaceholder, c );
-        panEntities.add( lblPlaceholder );
+//          c.gridwidth = 1;
+//          gridbag.setConstraints( lblPlaceholder, c );
+//          panEntities.add( lblPlaceholder );
 
         c.gridwidth = 1;
         gridbag.setConstraints( butSaveList, c );
@@ -623,6 +648,8 @@ public class ChatLounge extends AbstractPhaseDisplay
      * Refreshes the game settings with new info from the client
      */
     private void refreshGameSettings() {
+        refreshTeams();
+        refreshDoneButton();
     }
   
     /**
@@ -827,32 +854,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         camoDialog.setCategory( curCat );
         camoDialog.setItemName( curItem );
     }
-
-    // begin killme block
-    public static Vector getCamoList() {
-      com.sun.java.util.collections.Vector tempList = new com.sun.java.util.collections.Vector();
-      com.sun.java.util.collections.Comparator sortComp = StringUtil.stringComparator();
-      
-      File camoLib = new File("data/camo");
-      String[] fileList = camoLib.list();
-      for (int i = 0; i < fileList.length; i++) {
-        if (fileList[i].endsWith(".jpg")) {
-          tempList.addElement(fileList[i].substring(0, fileList[i].indexOf(".jpg")));
-        }
-      }
-
-      com.sun.java.util.collections.Collections.sort(tempList, sortComp);
-
-      Vector camoList = new Vector();
-      
-      for (int i = 0; i < tempList.size(); i++) {
-      	camoList.addElement(tempList.elementAt(i));
-      }
-
-      camoList.insertElementAt(Player.NO_CAMO, 0);
-      return camoList;
-    }
-    //  end  killme block
     
     /**
      * Refreshes the starting positions
@@ -878,7 +879,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (int i = 0; i < Player.MAX_TEAMS; i++) {
             choTeam.add(Player.teamNames[i]);
         }
-        choTeam.select(client.getLocalPlayer().getTeam());
+        if ( null != client.getLocalPlayer() ) {
+            choTeam.select(client.getLocalPlayer().getTeam());
+        } else {
+            choTeam.select(0);
+        }
     }
   
 
@@ -1048,6 +1053,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     // GameListener
     //
     public void gamePlayerStatusChange(GameEvent ev) {
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
         refreshDoneButton();
         refreshBVs();
         refreshPlayerInfo();
@@ -1056,17 +1065,36 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshMinefield();
     }
     public void gamePhaseChange(GameEvent ev) {
-        if (client.game.getPhase() !=  Game.PHASE_LOUNGE) {
-            // unregister stuff.
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+        if (client.game.getPhase() ==  Game.PHASE_LOUNGE) {
+            refreshDoneButton();
+            refreshGameSettings();
+            refreshPlayerInfo();
+            refreshTeams();
+            refreshCamos();
+            refreshMinefield();
+            refreshEntities();
+            refreshBVs();
+            refreshStarts();
+            refreshBoardSettings();
         }
     }
     public void gameNewEntities(GameEvent ev) {
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
         refreshEntities();
         refreshBVs();
     }
     public void gameNewSettings(GameEvent ev) {
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
         refreshGameSettings();
         refreshBoardSettings();
         refreshEntities();
@@ -1079,6 +1107,12 @@ public class ChatLounge extends AbstractPhaseDisplay
      * it is already selected.
      */
     public void itemStateChanged(ItemEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getSource() == choTeam) {
             changeTeam(choTeam.getSelectedIndex());
         } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
@@ -1107,6 +1141,12 @@ public class ChatLounge extends AbstractPhaseDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getSource() == butDone) {
           boolean anyDelayed = false;
           
@@ -1188,5 +1228,54 @@ public class ChatLounge extends AbstractPhaseDisplay
             camoDialog.show();
         }
     }
- 
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+    }
+
+    /**
+     * Get the secondary display section of this phase.
+     *
+     * @return  the <code>Component</code> which is displayed in the
+     *          secondary section during this phase.
+     */
+    public Component getSecondaryDisplay() {
+        return labStatus;
+    }
+
 }

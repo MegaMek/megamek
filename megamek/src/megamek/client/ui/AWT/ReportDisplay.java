@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -20,20 +20,24 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class ReportDisplay 
-    extends AbstractPhaseDisplay
-    implements ActionListener, KeyListener
+    extends StatusBarPhaseDisplay
+    implements ActionListener, KeyListener, DoneButtoned, Distractable
 {
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
     // parent game
     public Client client;
     
-    // chatterbox keeps track of chatting and other messages
-    private ChatterBox        cb;
+//     // chatterbox keeps track of chatting and other messages
+//     private ChatterBox        cb;
     
     // displays
     private TextArea        rta;
-    private Label            statusL;
     
     private Window            mechw;
     private MechDisplay        mechd;
@@ -54,13 +58,15 @@ public class ReportDisplay
      */
     public ReportDisplay(Client client, boolean showRerollInitiativeButton) {
         this.client = client;
-        
-        cb = client.cb;
+
+        this.client.addGameListener( this );
+
+//         cb = client.cb;
         
         rta = new TextArea(client.eotr, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         rta.setEditable(false);
         
-        statusL = new Label("", Label.CENTER);
+        setupStatusBar( "" );
         
         readyB = new Button("Done");
         readyB.setActionCommand("ready");
@@ -81,34 +87,48 @@ public class ReportDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(rta, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(statusL, gridbag, c);
+//         c.gridwidth = 1;
+//         c.weightx = 1.0;    c.weighty = 0.0;
+//         addBag(cb.getComponent(), gridbag, c);
 
         c.gridwidth = 1;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        addBag(cb.getComponent(), gridbag, c);
-        
-        if (showRerollInitiativeButton) {
-            c.gridwidth = 1;
-            c.weightx = 0.0;    c.weighty = 0.0;
-            addBag(rerollInitiativeB, gridbag, c);
-        }
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
-        addBag(readyB, gridbag, c);
+        Panel panButtons = new Panel();
+        panButtons.setLayout( new GridLayout(0, 8) );
+        for ( int padding = 0; padding < 6; padding++ ) {
+            panButtons.add( new Label( "" ) );
+        }
+        addBag( panButtons, gridbag, c );
+        this.showRerollButton( showRerollInitiativeButton );
 
-    addKeyListener(this);
+//         c.weightx = 1.0;    c.weighty = 0.0;
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(panStatus, gridbag, c);
+
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         c.weightx = 0.0;    c.weighty = 0.0;
+//         addBag(readyB, gridbag, c);
+
+        addKeyListener(this);
         
     }
-    
+
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
     }
-    
+
+    /**
+     * Show or hide the "reroll inititiative" button in this report display.
+     *
+     * @param   show a <code>boolean</code> that indicates that the button
+     *          should be shown in this report display.
+     */
+    public void showRerollButton( boolean show ) {
+        rerollInitiativeB.setVisible( show );
+    }
+
     /**
      * Sets you as ready and disables the ready button.
      */
@@ -167,6 +187,64 @@ public class ReportDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
-    
+
+    public void gamePhaseChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        refresh();
+        resetReadyButton();
+    }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return readyB;
+    }
+
+    /**
+     * Get the secondary display section of this phase.
+     *
+     * @return  the <code>Component</code> which is displayed in the
+     *          secondary section during this phase.
+     */
+    public Component getSecondaryDisplay() {
+        return panStatus;
+    }
 
 }

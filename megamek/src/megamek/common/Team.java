@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -29,8 +29,6 @@ public final class Team extends TurnOrdered implements Serializable
     private Vector players = new Vector();
     private int id;
 
-    private TurnVectors team_order;
-
     public Team(int newID) {
         id = newID;
     }
@@ -55,40 +53,75 @@ public final class Team extends TurnOrdered implements Serializable
         players.addElement(p);
     }
 
-    public void updateTurnCount()
-    {
-        turns_mech = 0;
-        turns_tank = 0;
-        turns_infantry_and_protomechs = 0;
-
-        for (Enumeration i = players.elements(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-
-            player.updateTurnCount();
-
-            turns_mech += player.getMechCount();
-            turns_tank += player.getTankCount();
-            turns_infantry_and_protomechs += player.getInfantryAndProtomechCount();
-        }
+    /**
+     * Clear the initiative of this object.
+     */
+    public void clearInitiative() {
+        this.getInitiative().clear();
+        TurnOrdered.rollInitiative( players );
     }
 
-    public void determineTeamOrder(boolean infAndProtosLast)
+    public TurnVectors determineTeamOrder()
     {
-        TurnOrdered.rollInitiative(players);
-        team_order = TurnOrdered.generateTurnOrder(players, infAndProtosLast);
-    }
-
-    public void resetTurnOrder()
-    {
-        team_order = null;
-    }
-
-    public TurnVectors getTurnOrder()
-    {
-        return team_order;
+        return TurnOrdered.generateTurnOrder( players );
     }
 
     public int getId() {
         return id;
     }
+
+    public int getLastTurns() {
+        // Sum the last turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += ( (Player) loop.nextElement() ).getLastTurns();
+        }
+        return sum;
+    }
+
+    public int getOtherTurns() {
+        // Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += ( (Player) loop.nextElement() ).getOtherTurns();
+        }
+        return sum;
+    }
+
+    public int getMultiTurns() {
+        // Sum the multi turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += ( (Player) loop.nextElement() ).getMultiTurns();
+        }
+        return sum;
+    }
+
+    /**
+     * Two teams are equal if their ids and players are equal.
+     * <p/>
+     * Override <code>java.lang.Object#equals(Object)
+     */
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Team other = (Team)object;
+        if ( other.getId() != this.getId() ||
+             other.getSize() != this.getSize() ) {
+            return false;
+        }
+        Enumeration thisPlayers = this.getPlayers();
+        Enumeration otherPlayers = other.getPlayers();
+        while ( thisPlayers.hasMoreElements() ) {
+            if ( !thisPlayers.nextElement().equals(otherPlayers.nextElement()) ) {
+                return false;
+            }
+        }
+        // The teams pass all tests, so they must match.
+        return true;
+    }
+
 }

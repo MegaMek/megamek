@@ -20,12 +20,17 @@ import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ChargeAttackAction;
+import megamek.common.util.Distractable;
+import megamek.common.util.DistractableAdapter;
 
 public class MovementDisplay
     extends StatusBarPhaseDisplay
-    implements BoardListener,  ActionListener,
-    KeyListener, GameListener, BoardViewListener
+    implements BoardListener,  ActionListener, DoneButtoned,
+               KeyListener, GameListener, BoardViewListener, Distractable
 {
+    // Distraction implementation.
+    private DistractableAdapter distracted = new DistractableAdapter();
+
     private static final int    NUM_BUTTON_LAYOUTS = 3;
 
     public static final String    MOVE_WALK = "moveWalk";
@@ -215,22 +220,23 @@ public class MovementDisplay
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;    c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(client.bv, gridbag, c);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(client.bv, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(panStatus, gridbag, c);
-
-        c.weightx = 1.0;    c.weighty = 0;
-        c.gridwidth = 1;
-        addBag(client.cb.getComponent(), gridbag, c);
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
 
-        addKeyListener(this);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(panStatus, gridbag, c);
+
+        client.bv.addKeyListener( this );
+        addKeyListener( this );
 
     }
 
@@ -242,7 +248,7 @@ public class MovementDisplay
     
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 4));
+        panButtons.setLayout(new GridLayout(0, 8));
 
         switch (buttonLayout) {
         case 0 :
@@ -253,7 +259,7 @@ public class MovementDisplay
             panButtons.add(butTurn);
             panButtons.add(butUp);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butNext);
@@ -263,7 +269,7 @@ public class MovementDisplay
             panButtons.add(butFlee);
             panButtons.add(butEject);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         case 2:
             panButtons.add(butNext);
@@ -273,7 +279,7 @@ public class MovementDisplay
             panButtons.add(butClear);
             panButtons.add(butSpace);
             panButtons.add(butMore);
-            panButtons.add(butDone);
+//             panButtons.add(butDone);
             break;
         }
 
@@ -367,6 +373,7 @@ public class MovementDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
+        setStatusBarText("It's your turn to move.");
         selectEntity(client.getFirstEntityNum());
         butDone.setLabel("Done");
         butDone.setEnabled(true);
@@ -383,11 +390,13 @@ public class MovementDisplay
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
+        Entity next = client.game.getNextEntity( client.game.getTurnIndex() );
         if ( Game.PHASE_MOVEMENT == client.game.getPhase()
-            && Entity.NONE!=cen
-            && client.game.getNextEntity(client.game.getTurnIndex()).getOwnerId() != ce().getOwnerId()) {
+             && null != next
+             && null != ce()
+             && next.getOwnerId() != ce().getOwnerId() ) {
             client.setDisplayVisible(false);
-        };
+        }
         cen = Entity.NONE;
         client.game.board.select(null);
         client.game.board.highlight(null);
@@ -713,6 +722,12 @@ public class MovementDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         // ignore buttons other than 1
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
@@ -1041,6 +1056,12 @@ public class MovementDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.game.getPhase() != Game.PHASE_MOVEMENT) {
             // ignore
             return;
@@ -1049,21 +1070,29 @@ public class MovementDisplay
         endMyTurn();
 
         if (client.isMyTurn()) {
-            beginMyTurn();
-            setStatusBarText("It's your turn to move.");
+            // Can the player unload entities stranded on immobile transports?
+            if ( client.canUnloadStranded() ) {
+                unloadStranded();
+            } else {
+                beginMyTurn();
+            }
+
         } else {
             setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to move.");
         }
     }
     public void gamePhaseChange(GameEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_MOVEMENT) {
             endMyTurn();
         }
-        if (client.game.getPhase() !=  Game.PHASE_MOVEMENT) {
-            client.removeGameListener(this);
-            client.game.board.removeBoardListener(this);
-            client.bv.removeKeyListener(this);
-            client.cb.getComponent().removeKeyListener(this);
+        if (client.game.getPhase() ==  Game.PHASE_MOVEMENT) {
+            setStatusBarText("Waiting to begin Movement phase...");
         }
     }
 
@@ -1071,6 +1100,12 @@ public class MovementDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if ( statusBarActionPerformed(ev, client) )
           return;
           
@@ -1229,11 +1264,86 @@ public class MovementDisplay
         updateLoadButtons();
     }
 
+    /**
+     * Give the player the opportunity to unload all entities that are
+     * stranded on immobile transports.
+     * <p/>
+     * According to <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">
+     * Randall Bills</a>, the "minimum move" rule allow stranded units to
+     * dismount at the start of the turn.
+     */
+    private void unloadStranded() {
+        Vector stranded = new Vector();
+        String[] names = null;
+        Entity entity = null;
+        Entity transport = null;
+
+        // Let the player know what's going on.
+        setStatusBarText
+            ("All players unload entities stranded on immobile transports.");
+
+        // Collect the stranded entities into the vector.
+        // TODO : get a better interface to "game" and "turn"
+        Enumeration entities = client.getSelectedEntities
+            ( new EntitySelector() {
+                    private final Game game =
+                        MovementDisplay.this.client.game;
+                    private final GameTurn turn =
+                        MovementDisplay.this.client.game.getTurn();
+                    private final int ownerId =
+                        MovementDisplay.this.client.getLocalPlayer().getId();
+                    public boolean accept( Entity entity ) {
+                        if ( turn.isValid( ownerId, entity, game ) )
+                            return true;
+                        return false;
+                    }
+                } );
+        while ( entities.hasMoreElements() ) {
+            stranded.addElement( entities.nextElement() );
+        }
+
+        // Construct an array of stranded entity names
+        names = new String[ stranded.size() ];
+        for ( int index = 0; index < names.length; index++ ) {
+            StringBuffer buffer = new StringBuffer();
+            entity = (Entity) stranded.elementAt(index);
+            transport = client.getEntity( entity.getTransportId() );
+            buffer.append( entity.getDisplayName() );
+            if ( null != transport ) {
+                buffer.append( " at " )
+                    .append( transport.getPosition().getBoardNum() );
+            }
+            names[index] = buffer.toString();
+        }
+
+        // Show the choices to the player
+        // TODO : implement this function!!!
+        int[] indexes = client.doChoiceDialog( "Unload Stranded Units", 
+                                               "The following units are currently stranded\non immobile transports.  Select as any and\nall units that you want to unload.",
+                                               names );
+
+        // Convert the indexes into selected entity IDs and tell the server.
+        int[] ids = null;
+        if ( null != indexes ) {
+            ids = new int[indexes.length];
+            for ( int index = 0; index < indexes.length; index++ ) {
+                entity = (Entity) stranded.elementAt(index);
+                ids[index] = entity.getId();
+            }
+        }
+        client.sendUnloadStranded( ids );
+    }
 
     //
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAllMoves();
         }
@@ -1274,6 +1384,12 @@ public class MovementDisplay
     }
     
     public void keyReleased(KeyEvent ev) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;
             if (client.isMyTurn() && client.game.board.lastCursor != null && !client.game.board.lastCursor.equals(client.game.board.selected)) {
@@ -1285,92 +1401,142 @@ public class MovementDisplay
         }
     }
     public void keyTyped(KeyEvent ev) {
-        ;
     }
 
     // board view listener 
-	public void finishedMovingUnits(BoardViewEvent b) {
-		if (client.isMyTurn() && ce() != null) {
-	        client.setDisplayVisible(true);
-			client.bv.centerOnHex(ce().getPosition());
-		}
-	}
+    public void finishedMovingUnits(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
+        if (client.isMyTurn() && ce() != null) {
+            client.setDisplayVisible(true);
+            client.bv.centerOnHex(ce().getPosition());
+        }
+    }
     public void selectUnit(BoardViewEvent b) {
+
+        // Are we ignoring events?
+        if ( this.isIgnoringEvents() ) {
+            return;
+        }
+
     	Entity e = client.game.getEntity(b.getEntityId());
+        if ( null == e ) {
+            return;
+        }
     	if (client.isMyTurn()) {
-    		if (!e.isSelectableThisTurn(client.game)) {
-            	client.setDisplayVisible(true);
-            	client.mechD.displayEntity(e);
-            	client.bv.centerOnHex(e.getPosition());
-            } else {
-	            selectEntity(e.getId());
-    		}
+            if ( client.game.getTurn().isValidEntity(e,client.game) ) {
+                selectEntity(e.getId());
+            }
     	} else {
-        	client.setDisplayVisible(true);
-        	client.mechD.displayEntity(e);
-    		if (e.isDeployed()) {
+            client.setDisplayVisible(true);
+            client.mechD.displayEntity(e);
+            if (e.isDeployed()) {
             	client.bv.centerOnHex(e.getPosition());
-    		}
+            }
     	}
     }
-	private void setWalkEnabled(boolean enabled) {
-		butWalk.setEnabled(enabled);
+    private void setWalkEnabled(boolean enabled) {
+        butWalk.setEnabled(enabled);
         client.getMenuBar().setMoveWalkEnabled(enabled);
-	}
-	private void setTurnEnabled(boolean enabled) {
-		butTurn.setEnabled(enabled);
+    }
+    private void setTurnEnabled(boolean enabled) {
+        butTurn.setEnabled(enabled);
         client.getMenuBar().setMoveTurnEnabled(enabled);
-	}
-	private void setNextEnabled(boolean enabled) {
-		butNext.setEnabled(enabled);
+    }
+    private void setNextEnabled(boolean enabled) {
+        butNext.setEnabled(enabled);
         client.getMenuBar().setMoveNextEnabled(enabled);
-	}
-	private void setLoadEnabled(boolean enabled) {
-		butLoad.setEnabled(enabled);
+    }
+    private void setLoadEnabled(boolean enabled) {
+        butLoad.setEnabled(enabled);
         client.getMenuBar().setMoveLoadEnabled(enabled);
-	}
-	private void setUnloadEnabled(boolean enabled) {
-		butUnload.setEnabled(enabled);
+    }
+    private void setUnloadEnabled(boolean enabled) {
+        butUnload.setEnabled(enabled);
         client.getMenuBar().setMoveUnloadEnabled(enabled);
-	}
-	private void setJumpEnabled(boolean enabled) {
-		butJump.setEnabled(enabled);
+    }
+    private void setJumpEnabled(boolean enabled) {
+        butJump.setEnabled(enabled);
         client.getMenuBar().setMoveJumpEnabled(enabled);
-	}
-	private void setBackUpEnabled(boolean enabled) {
-		butBackup.setEnabled(enabled);
+    }
+    private void setBackUpEnabled(boolean enabled) {
+        butBackup.setEnabled(enabled);
         client.getMenuBar().setMoveBackUpEnabled(enabled);
-	}
-	private void setChargeEnabled(boolean enabled) {
-		butCharge.setEnabled(enabled);
+    }
+    private void setChargeEnabled(boolean enabled) {
+        butCharge.setEnabled(enabled);
         client.getMenuBar().setMoveChargeEnabled(enabled);
-	}
-	private void setDFAEnabled(boolean enabled) {
-		butDfa.setEnabled(enabled);
+    }
+    private void setDFAEnabled(boolean enabled) {
+        butDfa.setEnabled(enabled);
         client.getMenuBar().setMoveDFAEnabled(enabled);
-	}
-	private void setGoProneEnabled(boolean enabled) {
-		butDown.setEnabled(enabled);
+    }
+    private void setGoProneEnabled(boolean enabled) {
+        butDown.setEnabled(enabled);
         client.getMenuBar().setMoveGoProneEnabled(enabled);
-	}
-	private void setFleeEnabled(boolean enabled) {
-		butFlee.setEnabled(enabled);
+    }
+    private void setFleeEnabled(boolean enabled) {
+        butFlee.setEnabled(enabled);
         client.getMenuBar().setMoveFleeEnabled(enabled);
-	}
-	private void setEjectEnabled(boolean enabled) {
-		butEject.setEnabled(enabled);
+    }
+    private void setEjectEnabled(boolean enabled) {
+        butEject.setEnabled(enabled);
         client.getMenuBar().setMoveEjectEnabled(enabled);
-	}
-	private void setUnjamEnabled(boolean enabled) {
-		butRAC.setEnabled(enabled);
+    }
+    private void setUnjamEnabled(boolean enabled) {
+        butRAC.setEnabled(enabled);
         client.getMenuBar().setMoveUnjamEnabled(enabled);
-	}
-	private void setClearEnabled(boolean enabled) {
-		butClear.setEnabled(enabled);
+    }
+    private void setClearEnabled(boolean enabled) {
+        butClear.setEnabled(enabled);
         client.getMenuBar().setMoveClearEnabled(enabled);
-	}
-	private void setGetUpEnabled(boolean enabled) {
-		butUp.setEnabled(enabled);
+    }
+    private void setGetUpEnabled(boolean enabled) {
+        butUp.setEnabled(enabled);
         client.getMenuBar().setMoveGetUpEnabled(enabled);
-	}
+    }
+
+    /**
+     * Determine if the listener is currently distracted.
+     *
+     * @return  <code>true</code> if the listener is ignoring events.
+     */
+    public boolean isIgnoringEvents() {
+        return this.distracted.isIgnoringEvents();
+    }
+
+    /**
+     * Specify if the listener should be distracted.
+     *
+     * @param   distract <code>true</code> if the listener should ignore events
+     *          <code>false</code> if the listener should pay attention again.
+     *          Events that occured while the listener was distracted NOT
+     *          going to be processed.
+     */
+    public void setIgnoringEvents( boolean distracted ) {
+        this.distracted.setIgnoringEvents( distracted );
+    }
+
+    /**
+     * Retrieve the "Done" button of this object.
+     *
+     * @return  the <code>java.awt.Button</code> that activates this
+     *          object's "Done" action.
+     */
+    public Button getDoneButton() {
+        return butDone;
+    }
+    
+    /**
+     * Stop just ignoring events and actually stop listening to them.
+     */
+    public void removeAllListeners() {
+        client.removeGameListener(this);
+        client.game.board.removeBoardListener(this);
+    }
+
 }

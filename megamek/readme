@@ -130,9 +130,10 @@ makers of MegaMek.  You can find this program on many Battletech web sites.
 
 Files with the ".mtf" extension are created by HMPRead, a seperate program,
 available on the MegaMek website, that converts data files from the popular
-Heavy Metal Pro mech designer.  MegaMek cannot read ".hmp" files directly.
-Heavy Metal Pro is not associated with MegaMek, so please do not email its 
-authors about MegaMek.
+Heavy Metal Pro mech designer.  MegaMek can read most ".hmp or ".hmv" files
+directly, but there are still some known problems.  Please note that neither
+Heavy Metal Pro nor Heavy Metal Vee is associated with MegaMek, so please do
+not email its authors about MegaMek.
 
 Mech files with the extension ".blk" are created by MekMaker, a Java mech design
 program specifically created to work with MegaMek.  It's homepage is at:

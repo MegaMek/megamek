@@ -700,6 +700,9 @@ public class HmpFile
     isCriticals.put(new Long(0x62), "ISLRM15");
     isCriticals.put(new Long(0x63), "ISLRM20");
 
+    isCriticals.put(new Long(0x64), "CLLightActiveProbe");
+    isCriticals.put(new Long(0x65), "CLLightTAG");
+
     isCriticals.put(new Long(0x66), "ISImprovedNarc");
     isCriticals.put(new Long(0x67), "ISSRM2");
     isCriticals.put(new Long(0x68), "ISSRM4");
@@ -782,7 +785,8 @@ public class HmpFile
     isCriticals.put(new Long(0xC9), "CLArrowIVSystem");
     isCriticals.put(new Long(0xCA), "CLAntiPersonnelPod");
     isCriticals.put(new Long(0xCB), "CLActiveProbe");
-
+    isCriticals.put(new Long(0xCC), "CLECMSuite");
+    isCriticals.put(new Long(0xCD), "CLNarcBeacon");
     isCriticals.put(new Long(0xCE), "CLTAG");
 
     isCriticals.put(new Long(0xD0), "CLLRM5 (OS)");
@@ -895,6 +899,8 @@ public class HmpFile
     isCriticals.put(new Long(0x0257), "CLStreakSRM4 Ammo");
     isCriticals.put(new Long(0x0258), "CLStreakSRM6 Ammo");
     isCriticals.put(new Long(0x0259), "CLArrowIV Ammo");
+
+    isCriticals.put(new Long(0x025D), "CLNarc Pods");
 
     isCriticals.put(new Long(0x026A), "CLFlamer (Vehicle) Ammo");
     isCriticals.put(new Long(0x026C), "CLSniper Ammo");
@@ -1053,6 +1059,14 @@ public class HmpFile
     clanCriticals.put(new Long(0xBB), "ISStreakSRM4");
     clanCriticals.put(new Long(0xBC), "ISStreakSRM6");
 
+    clanCriticals.put(new Long(0xC3), "ISBeagleActiveProbe");
+    clanCriticals.put(new Long(0xC5), "ISC3MasterComputer");
+    clanCriticals.put(new Long(0xC6), "ISC3SlaveUnit");
+    clanCriticals.put(new Long(0xC7), "ISImprovedC3CPU");
+    clanCriticals.put(new Long(0xC8), "ISGuardianECM");
+    clanCriticals.put(new Long(0xC9), "ISNarcBeacon");
+    clanCriticals.put(new Long(0xCA), "ISTAG");
+
     clanCriticals.put(new Long(0xCB), "ISLRM5 (OS)");
     clanCriticals.put(new Long(0xCC), "ISLRM10 (OS)");
     clanCriticals.put(new Long(0xCD), "ISLRM15 (OS)");
@@ -1161,6 +1175,8 @@ public class HmpFile
     clanCriticals.put(new Long(0x024A), "ISStreakSRM2 Ammo");
     clanCriticals.put(new Long(0x024B), "ISStreakSRM4 Ammo");
     clanCriticals.put(new Long(0x024C), "ISStreakSRM6 Ammo");
+
+    clanCriticals.put(new Long(0x0259), "ISNarc Pods");
 
     clanCriticals.put(new Long(0x0265), "ISFlamer (Vehicle) Ammo");
 

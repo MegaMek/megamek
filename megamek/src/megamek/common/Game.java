@@ -50,7 +50,7 @@ public class Game implements Serializable
     public static final int UNIT_NEVER_JOINED   = 0x0000;
     public static final int UNIT_IN_RETREAT     = 0x0100;
     public static final int UNIT_SALVAGEABLE    = 0x0200;
-    public static final int UNIT_DEVESTATED     = 0x0400;
+    public static final int UNIT_DEVASTATED     = 0x0400;
     
     public int phase = PHASE_UNKNOWN;
     private GameTurn turn;
@@ -70,7 +70,7 @@ public class Game implements Serializable
     private Vector sanctuary = new Vector();
 
     /**
-     * Track units that have been utterly devestated.
+     * Track units that have been utterly devastated.
      */
     private Vector smithereens = new Vector();
 
@@ -275,7 +275,7 @@ public class Game implements Serializable
     /**
      * Returns an enumeration of entities that were utterly destroyed
      */
-    public Enumeration getDevestatedEntities() {
+    public Enumeration getDevastatedEntities() {
         return smithereens.elements();
     }
     
@@ -358,7 +358,7 @@ public class Game implements Serializable
                 // Move it into the graveyard where it may be resurrected.
                 graveyard.addElement( toRemove );
                 break;
-            case UNIT_DEVESTATED  :
+            case UNIT_DEVASTATED  :
                 // Mark the unit as way gone.
                 smithereens.addElement( toRemove );
                 break;

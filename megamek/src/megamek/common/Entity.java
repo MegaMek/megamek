@@ -430,7 +430,8 @@ public abstract class Entity
      * entities can not be selected.
      */
     public boolean isSelectableThisTurn(Game game) {
-        return !done && (conveyance == Entity.NONE) && !isClearingMinefield();
+        return !done && (conveyance == Entity.NONE) &&
+            !this.unloadedThisTurn && !isClearingMinefield();
         //&& isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) 
     }
 
@@ -2615,19 +2616,19 @@ public abstract class Entity
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-  // Walk through this entity's transport components;
-  // try to remove the unit from each in turn.
-  // Stop after the first match.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // try to remove the unit from each in turn.
+        // Stop after the first match.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-      if ( next.unload( unit ) ) {
-    return true;
-      }
-  }
+            if ( next.unload( unit ) ) {
+                return true;
+            }
+        }
 
-  // If we got here, none of our transports currently carry the unit.
-  return false;
+        // If we got here, none of our transports currently carry the unit.
+        return false;
     }
 
     /**
@@ -2636,22 +2637,22 @@ public abstract class Entity
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-  StringBuffer result = new StringBuffer();
+        StringBuffer result = new StringBuffer();
 
-  // Walk through this entity's transport components;
-  // add all of their string to ours.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // add all of their string to ours.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-      result.append( next.getUnusedString() );
+            result.append( next.getUnusedString() );
             // Add a newline character between strings.
             if ( iter.hasMoreElements() ) {
                 result.append( '\n' );
             }
-  }
+        }
 
-  // Return the String.
-  return result.toString();
+        // Return the String.
+        return result.toString();
     }
 
     /**
@@ -2666,20 +2667,20 @@ public abstract class Entity
      *          <code>false</code> if the weapon can fire.
      */
     public boolean isWeaponBlockedAt( int loc, boolean isRear ) {
-  // Walk through this entity's transport components;
-  // check each for blockage in turn.
-  // Stop after the first match.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // check each for blockage in turn.
+        // Stop after the first match.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
-      if ( next.isWeaponBlockedAt( loc, isRear ) ) {
-    return true;
-      }
-  }
+            if ( next.isWeaponBlockedAt( loc, isRear ) ) {
+                return true;
+            }
+        }
 
-  // If we got here, none of our transports
+        // If we got here, none of our transports
         // carry a blocking unit at that location.
-  return false;
+        return false;
     }
 
     /**
@@ -2697,21 +2698,21 @@ public abstract class Entity
      *          if no unit is transported on the outside at that location.
      */
     public Entity getExteriorUnitAt( int loc, boolean isRear ) {
-  // Walk through this entity's transport components;
-  // check each for an exterior unit in turn.
-  // Stop after the first match.
-  Enumeration iter = this.transports.elements();
-  while ( iter.hasMoreElements() ) {
+        // Walk through this entity's transport components;
+        // check each for an exterior unit in turn.
+        // Stop after the first match.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
             Transporter next = (Transporter)iter.nextElement();
             Entity exterior = next.getExteriorUnitAt( loc, isRear );
-      if ( null != exterior ) {
-    return exterior;
-      }
-  }
+            if ( null != exterior ) {
+                return exterior;
+            }
+        }
 
-  // If we got here, none of our transports
+        // If we got here, none of our transports
         // carry an exterior unit at that location.
-  return null;
+        return null;
     }
 
     /**
@@ -2912,85 +2913,86 @@ public abstract class Entity
         }
     }
 
-	/**
-	 * @return whether this entity is clearing a minefield.
-	 */
-	public boolean isClearingMinefield() {
-		return clearingMinefield;
-	}
+    /**
+     * @return whether this entity is clearing a minefield.
+     */
+    public boolean isClearingMinefield() {
+        return clearingMinefield;
+    }
 
-	/**
-	 * @param clearingMinefield
-	 */
-	public void setClearingMinefield(boolean clearingMinefield) {
-		this.clearingMinefield = clearingMinefield;
-	}
+    /**
+     * @param clearingMinefield
+     */
+    public void setClearingMinefield(boolean clearingMinefield) {
+        this.clearingMinefield = clearingMinefield;
+    }
 
-  /**
-   * @return whether this entity is spotting this round.
-   */
-  public boolean isSpotting() {
-    return spotting;
-  }
+    /**
+     * @return whether this entity is spotting this round.
+     */
+    public boolean isSpotting() {
+        return spotting;
+    }
 
-  /**
-   * @param spotting
-   */
-  public void setSpotting(boolean spotting) {
-    this.spotting = spotting;
-  }
+    /**
+     * @param spotting
+     */
+    public void setSpotting(boolean spotting) {
+        this.spotting = spotting;
+    }
   
-  /**
-   * Um, basically everything can spot for LRM indirect fire.
-   * @return true, I would think.
-   */
-  public boolean canSpot() {
-    return true;
-  }
+    /**
+     * Um, basically everything can spot for LRM indirect fire.
+     * @return true, I would think.
+     */
+    public boolean canSpot() {
+        return true;
+    }
 
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";
     }
 
-/**
- * The round the unit will be deployed. We will deploy at the end of a round. So if depoyRound is set to 5, we will deploy when round 5 is over.
- * Any value of zero or less is automatically set to 1
- *
- * @param    deployRound         an int
- *
- */
-  public void setDeployRound(int deployRound) {
-    this.deployRound = deployRound;
-  }
+    /**
+     * The round the unit will be deployed. We will deploy at the end of a
+     * round. So if depoyRound is set to 5, we will deploy when round 5 is
+     * over.  Any value of zero or less is automatically set to 1
+     *
+     * @param    deployRound         an int
+     *
+     */
+    public void setDeployRound(int deployRound) {
+        this.deployRound = deployRound;
+    }
   
-/**
- * The round the unit will be deployed
- * 
- * @return   an int
- * 
- */
-  public int getDeployRound() {
-    return deployRound;
-  }
+    /**
+     * The round the unit will be deployed
+     * 
+     * @return   an int
+     * 
+     */
+    public int getDeployRound() {
+        return deployRound;
+    }
 
-/**
- * Toggles if an entity has been deployed
- */
-  public void setDeployed(boolean deployed) {
-    this.deployed = deployed;
-  }
+    /**
+     * Toggles if an entity has been deployed
+     */
+    public void setDeployed(boolean deployed) {
+        this.deployed = deployed;
+    }
 
-/**
- * Checks to see if an entity has been deployed
- */ 
-  public boolean isDeployed() {
-    return deployed;
-  }
+    /**
+     * Checks to see if an entity has been deployed
+     */ 
+    public boolean isDeployed() {
+        return deployed;
+    }
   
- /**
-  * Returns true if the entity should be deployed
-  */
-  public boolean shouldDeploy(int round) {
-    return ( !deployed && (getDeployRound() <= round) );
-  }
+    /**
+     * Returns true if the entity should be deployed
+     */
+    public boolean shouldDeploy(int round) {
+        return ( !deployed && (getDeployRound() <= round) );
+    }
 }

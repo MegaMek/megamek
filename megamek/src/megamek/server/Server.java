@@ -1947,6 +1947,11 @@ implements Runnable {
         // Place the unloaded unit onto the screen.
         unit.setPosition( pos );
 
+        // Units unloaded onto the screen are deployed.
+        if ( pos != null ) {
+            unit.setDeployed( true );
+        }
+
         // Point the unloaded unit in the given direction.
         unit.setFacing( facing );
         unit.setSecondaryFacing( facing );

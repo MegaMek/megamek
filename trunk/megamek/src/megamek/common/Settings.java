@@ -240,7 +240,7 @@ scan:
                     }
                     else if (key.equals("nagfornoaction")) {
                         st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
+                        nagForNoAction = Boolean.valueOf(st.sval).booleanValue();
                     }
                     else if(key.equals("playername")) {
                         st.nextToken();

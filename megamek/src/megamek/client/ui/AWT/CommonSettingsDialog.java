@@ -28,6 +28,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    nagForMASC;
     private Checkbox    nagForPSR;
     private Checkbox    animateMove;
+    private Checkbox    showWrecks;
 
     private static final String CANCEL = "CANCEL";
     private static final String UPDATE = "UPDATE";
@@ -60,6 +61,9 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         animateMove
             = new Checkbox( "Animate movement." );
         this.add( animateMove );
+        showWrecks
+            = new Checkbox( "Show wrecks." );
+        this.add( showWrecks );
 
         // Add the dialog controls.
         Panel buttons = new Panel();
@@ -101,6 +105,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         nagForMASC.setState( Settings.nagForMASC );
         nagForPSR.setState( Settings.nagForPSR );
         animateMove.setState( Settings.showMoveStep );
+        showWrecks.setState( Settings.showWrecks );
         super.show();
     }
 
@@ -119,7 +124,8 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.autoEndFiring =  autoEndFiring.getState();
         Settings.nagForMASC =     nagForMASC.getState();
         Settings.nagForPSR =      nagForPSR.getState();
-        Settings.showMoveStep=    animateMove.getState();
+        Settings.showMoveStep =   animateMove.getState();
+        Settings.showWrecks =     showWrecks.getState();
         Settings.save();
         this.setVisible( false );
     }

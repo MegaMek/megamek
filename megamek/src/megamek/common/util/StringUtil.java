@@ -20,37 +20,37 @@ import com.sun.java.util.collections.Comparator;
 public class StringUtil {
 
     public static Vector splitString(String s, String divider) {
-    	if (s == null || s.equals("")) {
-    		return new Vector();
-    	}
-    	
-    	Vector v = new Vector();
-    	int oldIndex = 0;
-		int newIndex = s.indexOf(divider);
-    	
-    	while (newIndex != -1) {
-    		String sub = s.substring(oldIndex, newIndex);
-    		v.addElement(sub);
-    		oldIndex = newIndex + 1;
-    		newIndex = s.indexOf(divider, oldIndex);
-    	}
-    	
-    	if (oldIndex != s.length()) {
-    		String sub = s.substring(oldIndex);
-    		v.addElement(sub);    		
-    	}
+        if (s == null || s.equals("")) {
+            return new Vector();
+        }
 
-    	return v;
+        Vector v = new Vector();
+        int oldIndex = 0;
+        int newIndex = s.indexOf(divider);
+
+        while (newIndex != -1) {
+            String sub = s.substring(oldIndex, newIndex);
+            v.addElement(sub);
+            oldIndex = newIndex + 1;
+            newIndex = s.indexOf(divider, oldIndex);
+        }
+
+        if (oldIndex != s.length()) {
+            String sub = s.substring(oldIndex);
+            v.addElement(sub);
+        }
+
+        return v;
     }
 
     public static Comparator stringComparator() {
         return new Comparator() {
-                public int compare(java.lang.Object o1, java.lang.Object o2) {
-                    String s1 = ((String) o1).toLowerCase();
-                    String s2 = ((String) o2).toLowerCase();
-                    return s1.compareTo(s2);
-                }
-            };
+            public int compare(java.lang.Object o1, java.lang.Object o2) {
+                String s1 = ((String) o1).toLowerCase();
+                String s2 = ((String) o2).toLowerCase();
+                return s1.compareTo(s2);
+            }
+        };
     }
 
     /**
@@ -58,12 +58,20 @@ public class StringUtil {
      * <code>String</code>.  Treat all <code>null</code> values
      * as <code>false</code>.  The default is <code>false</code>.
      *
+     * This also ensures the <code>String</code> will always be 
+     * parsed against the us "true"
+     *
      * @param   input - the <code>String</code> to be evaluated.
      *          This value may be <code>null</code>.
      * @return  The <code>boolean</code> equivalent of the input.
      */
-    public static boolean parseBoolean( String input ) {
-        return Boolean.valueOf(input).booleanValue();
+    public static boolean parseBoolean(String input) {
+        if (null == input) {
+            return false;
+        } else if (input.equalsIgnoreCase("true")) {
+            return true;
+        }
+        return false;
     }
 
 }

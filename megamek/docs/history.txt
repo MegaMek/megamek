@@ -11,8 +11,8 @@ v0.29.59 (CVS)
 + Unconcious and shutdown units should not be able to pick up ejected pilots
 + Bug 1090577: Do not pick up pilots that died in the end phase
 + Bug 1092677: Explosion damage avoided by CASE still counts for PSRs.
-+ Bug 790693: the new BMRr errata says that a "Running with Gyro or Hip crit
-   PSR" should be made after the move
++ Bug 790693: the new BMRr errata says that the "Running with Gyro or Hip crit
+   PSR" should be made after the move, not before
 + Bug 1093082: according to the new BMRr errata, jumping in high gravity should
    cause a PSR, with damage to the legs if the PSR is failed
 

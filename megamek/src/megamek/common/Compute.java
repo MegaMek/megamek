@@ -261,7 +261,11 @@ public class Compute
         }
 
         // can't be displaced into prohibited terrain
-        if (entity.isHexProhibited(destHex)) {
+        // unless we're displacing a tracked or wheeled vee into water
+        if (entity.isHexProhibited(destHex) && 
+            !(entity instanceof Tank && destHex.contains(Terrain.WATER) && 
+              (entity.movementType == Entity.MovementType.TRACKED 
+               || entity.movementType == Entity.MovementType.WHEELED))) {
             return false;
         }
 

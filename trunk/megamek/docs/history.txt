@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29.6 (CVS)
++ Merge of underwater patch undid the Inferno SRM2 fix.
+
 v 0.29.5 (07-27-03, 9pm)
 + Bug 759032: fixed NPE in MovementDisplay
 + Bug 774767: attacks at 0 range prohibited again for non-infantry

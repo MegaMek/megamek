@@ -3080,7 +3080,8 @@ implements Runnable, ConnectionHandler {
                 HitData hit;
                 if (entity instanceof Mech) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                    if (step.getMpUsed() > entity.getRunMP(false) && game.getOptions().floatOption("gravity") != 1) {
+                    if (step.getMpUsed() > entity.getRunMP(false)) {
+                            // We moved too fast, let's make PSR to see if we get damage
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
@@ -3090,6 +3091,7 @@ implements Runnable, ConnectionHandler {
                                         j--;
                                         damage++;
                                     }
+                                    // Wee, direct internal damage
                                     if (entity instanceof BipedMech) {
                                         hit = new HitData (Mech.LOC_LLEG);
                                         phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
@@ -3110,6 +3112,7 @@ implements Runnable, ConnectionHandler {
                         }
                     } else if (step.getMovementType() == Entity.MOVE_JUMP) {
                         if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
+//                          // We jumped too fast, let's make PSR to see if we get damage
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
@@ -3119,6 +3122,7 @@ implements Runnable, ConnectionHandler {
                                         j--;
                                         damage++;
                                     }
+                                    // Wee, direct internal damage
                                     if (entity instanceof BipedMech) {
                                         hit = new HitData (Mech.LOC_LLEG);
                                         phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
@@ -3140,7 +3144,8 @@ implements Runnable, ConnectionHandler {
                       }
                 } else if (entity instanceof Tank) {
                     if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
-                        if (step.getMpUsed() > entity.getRunMP(false)) {
+                        // For Tanks, we need to check if the tank had more MPs because it was moving along a road
+                        if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
@@ -3152,6 +3157,43 @@ implements Runnable, ConnectionHandler {
                                     }
                                     hit = new HitData (Tank.LOC_FRONT);
                                     phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                }
+                            }    
+                        } else if (step.getMovementType() == Entity.MOVE_WALK) {
+                            // If the tank was just cruising, he got a flat +1 road bonus
+                            if (step.getMpUsed() > entity.getWalkMP(false) + 1) {
+                                rollTarget = entity.checkMovedTooFast(step);
+                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                    if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                        int j=step.getMpUsed();
+                                        int damage = 0;
+                                        while (j > entity.getRunMP() + 1) {
+                                            j--;
+                                            damage++;
+                                        }
+                                        hit = new HitData (Tank.LOC_FRONT);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    }
+                                }
+                            }
+                        } else if (step.getMovementType() == Entity.MOVE_RUN) {
+                            // If the tank was flanking, we need a calculation to see wether we get a +1 or +2 road bonus
+                            // NOTE: this continues the assumption from MoveStep.java that the +1 bonus is applied to 
+                            // cruising speed, thus possibly gaining 2 flanking MPs
+                            int k = entity.getWalkMP(false) % 2 == 1 ? 1 : 2;
+                            if (step.getMpUsed() > entity.getRunMP(false) + k) {
+                                rollTarget = entity.checkMovedTooFast(step);
+                                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                                    if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                                        int j=step.getMpUsed();
+                                        int damage = 0;
+                                        while (j > entity.getRunMP() + k) {
+                                            j--;
+                                            damage++;
+                                        }
+                                        hit = new HitData (Tank.LOC_FRONT);
+                                        phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                    }
                                 }
                             }
                         }

@@ -3509,5 +3509,14 @@ public abstract class Entity
     public boolean isVisibleToEnemy() {
         return this.visibleToEnemy;
     }
+    
+    protected int applyGravityEffectsOnMP (int MP) {
+        if (game != null) {
+            float modMP = MP / game.getOptions().floatOption("gravity");
+            modMP = ((Math.round (modMP) - modMP) < (0.5+0.000001)) ? (Math.round(modMP - 0.000001 * 2.0)) : Math.round(modMP);
+            return Math.max ((int)modMP, 0);
+        }
+        return MP;
+     }
 
 }

@@ -73,9 +73,6 @@ public class MechTileset {
      */
     private MechEntry entryFor(Entity entity) {
         // first, check for exact matches
-        
-        System.out.println("checking for '" + entity.getShortName() + "'...");
-        
         if (exact.containsKey(entity.getShortName())) {
             return (MechEntry)exact.get(entity.getShortName());
         }

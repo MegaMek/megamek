@@ -3303,9 +3303,17 @@ public class Compute
      * @param   nMod - the <code>int</code> modifier to the roll for number
      *          of missiles that hit.
      */
-    public static int missilesHit(int missiles, int nMod) {
+    public static int missilesHit(int missiles, int nMod, boolean maxtech) {
         int nRoll = d6(2) + nMod;
-        nRoll = Math.min(Math.max(nRoll, 2), 12);
+        int minimum = maxtech ? 1 : 2;
+        nRoll = Math.min(Math.max(nRoll, minimum), 12);
+
+        if (maxtech && nRoll == 1) {
+            return 1;
+        }
+        if (nRoll<2) {
+            nRoll = 2;
+        }
 
         final int[][] hits = new int[][] {
         {2,1,1,1,1,1,1,2,2,2,2,2},
@@ -3327,6 +3335,11 @@ public class Compute
         }
         throw new RuntimeException("Could not find number of missles in hit table");
     }
+
+    public static int missilesHit (int missiles, int nMod) {
+        return missilesHit (missiles, nMod, false);
+    }
+
 
     /**
      * Returns the consciousness roll number

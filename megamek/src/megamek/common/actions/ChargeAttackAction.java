@@ -112,6 +112,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         } else if (te instanceof Infantry) {
             // Can't charge infantry.
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is infantry");
+        } else if (te instanceof Protomech) {
+            // Can't charge protomechs.
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is protomech");
         }
 
         // target must be within 1 elevation level

@@ -156,10 +156,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
      	Properties p = System.getProperties();
      	String javaVersion = p.getProperty( "java.version" );
-     	if ( javaVersion.charAt(2) == '1' ){
-     		isJ2RE = false;
+     	if ( javaVersion.length() < 3 || javaVersion.charAt(2) == '1' ){
+            isJ2RE = false;
      	} else {
-     		isJ2RE = true;
+            isJ2RE = true;
      	}
         
         // Create the Game sub-menu.

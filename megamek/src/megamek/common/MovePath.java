@@ -512,10 +512,6 @@ public class MovePath implements Cloneable, Serializable {
             step = MovePath.STEP_FORWARDS;
         }
 
-        if (this.getFinalCoords().equals(dest)) {
-            return;
-        }
-
         MovePathComparator mpc = new MovePathComparator(dest, step == MovePath.STEP_BACKWARDS);
 
         MovePath bestPath = (MovePath) this.clone();
@@ -526,12 +522,18 @@ public class MovePath implements Cloneable, Serializable {
         ArrayList candidates = new ArrayList();
         candidates.add(bestPath);
 
-        boolean keepLooping = true;
+        boolean keepLooping = this.getFinalCoords().distance(dest) > 2;
         int loopcount = 0;
 
         while (candidates.size() > 0 && keepLooping) {
             MovePath candidatePath = (MovePath) candidates.remove(0);
             Coords startingPos = candidatePath.getFinalCoords();
+            
+			if (candidatePath.getFinalCoords().distance(dest) == 1) {
+			    bestPath = candidatePath;
+				keepLooping = false;
+				break;
+			}
 
             Iterator adjacent = candidatePath.getNextMoves(step == STEP_BACKWARDS, step == STEP_FORWARDS).iterator();
             while (adjacent.hasNext()) {
@@ -542,19 +544,6 @@ public class MovePath implements Cloneable, Serializable {
                     if (found != null && mpc.compare(found, expandedPath) <= 0) {
                         continue;
                     }
-                    //does our moving gets us to the destination?
-                    if (expandedPath.getFinalCoords().equals(dest)) {
-                        if (type != MovePath.STEP_FORWARDS && type != MovePath.STEP_BACKWARDS) {
-                            MovePath pathOriginalType = (MovePath) candidatePath.clone();
-                            pathOriginalType.addStep(type);
-                            bestPath = pathOriginalType;
-                        } else {
-                            bestPath = expandedPath;
-                        }
-                        keepLooping = false;
-                        break;
-                    }
-
                     int index = Collections.binarySearch(candidates, expandedPath, mpc);
                     if (index < 0) {
                         index = -index - 1;
@@ -659,20 +648,20 @@ public class MovePath implements Cloneable, Serializable {
             return result;
         }
         if (canShift()) {
-            if (forward && (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT)) {
+            if (forward && (!backward || (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT))) {
                 result.add(((MovePath) this.clone()).addStep(STEP_LATERAL_RIGHT));
             }
-            if (forward && (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT)) {
+            if (forward && (!backward || (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT))) {
                 result.add(((MovePath) this.clone()).addStep(MovePath.STEP_LATERAL_LEFT));
             }
-            if (backward && (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT_BACKWARDS)) {
+            if (backward && (!forward || (last == null || last.getType() != MovePath.STEP_LATERAL_LEFT_BACKWARDS))) {
                 result.add(((MovePath) this.clone()).addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS));
             }
-            if (backward && (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT_BACKWARDS)) {
+            if (backward && (!forward || (last == null || last.getType() != MovePath.STEP_LATERAL_RIGHT_BACKWARDS))) {
                 result.add(((MovePath) this.clone()).addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS));
             }
         }
-        if (forward && (last == null || last.getType() != MovePath.STEP_BACKWARDS)) {
+        if (forward && (!backward || (last == null || last.getType() != MovePath.STEP_BACKWARDS))) {
             result.add(((MovePath) this.clone()).addStep(MovePath.STEP_FORWARDS));
         }
         if (last == null || last.getType() != MovePath.STEP_TURN_LEFT) {
@@ -681,7 +670,7 @@ public class MovePath implements Cloneable, Serializable {
         if (last == null || last.getType() != MovePath.STEP_TURN_RIGHT) {
             result.add(((MovePath) this.clone()).addStep(MovePath.STEP_TURN_LEFT));
         }
-        if (backward && (last == null || last.getType() != MovePath.STEP_FORWARDS)) {
+        if (backward && (!forward || (last == null || last.getType() != MovePath.STEP_FORWARDS))) {
             result.add(((MovePath) this.clone()).addStep(MovePath.STEP_BACKWARDS));
         }
         return result;

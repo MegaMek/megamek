@@ -693,7 +693,7 @@ public class WeaponType extends EquipmentType {
       weapon.tonnage = .5f;
       weapon.criticals = 1;
       weapon.bv= 18;
-      weapon.ammoType = AmmoType.T_LRM;
+      weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
       weapon.flags |= F_ONESHOT;
       weapon.toHitModifier=1;
 
@@ -719,7 +719,7 @@ public class WeaponType extends EquipmentType {
       weapon.bv= 23;
       weapon.flags |= F_ONESHOT;
       weapon.toHitModifier=1;
-      weapon.ammoType= AmmoType.T_LRM;
+      weapon.ammoType= AmmoType.T_ROCKET_LAUNCHER;
 
       return weapon;
     }
@@ -741,7 +741,7 @@ public class WeaponType extends EquipmentType {
      weapon.tonnage = 1.5f;
      weapon.criticals = 3;
      weapon.bv= 24;
-     weapon.ammoType = AmmoType.T_LRM;
+     weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
      weapon.flags |= F_ONESHOT;
      weapon.toHitModifier=1;
 

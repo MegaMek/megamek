@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -259,11 +259,15 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
 
 		// If clan_ignore_eq_limits is unchecked,
-                // do NOT allow Clans to use IS-only ammo
+                // do NOT allow Clans to use IS-only ammo.
+                // N.B. play bit-shifting games to allow "incendiary"
+                //      to be combined to othter munition types.
                 int muniType = atCheck.getMunitionType();
+                muniType &= ~AmmoType.M_INCENDIARY;
                 if ( !client.game.getOptions().booleanOption("clan_ignore_eq_limits")
                      && entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2
-                     && ( muniType == AmmoType.M_THUNDER_AUGMENTED ||
+                     && ( muniType == AmmoType.M_SEMIGUIDED ||
+                          muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||
                           muniType == AmmoType.M_THUNDER_VIBRABOMB ||
                           muniType == AmmoType.M_THUNDER_ACTIVE)) {
@@ -275,13 +279,11 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     continue;
                 }
 
-                // Battle Armor ammo can't be selected at all, proto ammo
-                // can't be selected by non protos, and vice versa.
+                // Battle Armor ammo can't be selected at all.
+                // All other ammo types need to match on rack size and tech.
                 if ( bTechMatch &&
                      atCheck.getRackSize() == at.getRackSize() &&
                      !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
-                     ( atCheck.hasFlag(AmmoType.F_PROTOMECH) ==
-                       entity instanceof Protomech ) &&
                      atCheck.getTonnage(entity) == at.getTonnage(entity) ) {
                     vTypes.addElement(atCheck);
                 }
@@ -292,7 +294,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
             }
             
             gbc.gridy = row++;
-            MunitionChoicePanel mcp = new MunitionChoicePanel(m, vTypes);
+            // Protomechs need special choice panels.
+            MunitionChoicePanel mcp = null;
+            if ( entity instanceof Protomech ) {
+                mcp = new ProtomechMunitionChoicePanel(m, vTypes);
+            } else {
+                mcp = new MunitionChoicePanel(m, vTypes);
+            }
             gbl.setConstraints(mcp, gbc);
             panMunitions.add(mcp);
             m_vMunitions.addElement(mcp);
@@ -328,9 +336,54 @@ extends Dialog implements ActionListener, DialogOptionListener {
             AmmoType at = (AmmoType)m_vTypes.elementAt(n);
             m_mounted.changeAmmoType(at);
         }
-        
+
+        /**
+         * Get the number of shots in the mount.
+         *
+         * @return      the <code>int</code> number of shots in the mount.
+         */
+        /* package */ int getShotsLeft() {
+            return m_mounted.getShotsLeft();
+        }
+
+        /**
+         * Set the number of shots in the mount.
+         *
+         * @param shots the <code>int</code> number of shots for the mount.
+         */
+        /* package */ void setShotsLeft( int shots ) {
+            m_mounted.setShotsLeft( shots );
+        }
     }
-        
+
+    /**
+     * When a Protomech selects ammo, you need to adjust the shots on the
+     * unit for the weight of the selected munition.
+     */
+    class ProtomechMunitionChoicePanel extends MunitionChoicePanel {
+        private final float m_origShotsLeft;
+        private final AmmoType m_origAmmo;
+
+        public ProtomechMunitionChoicePanel(Mounted m, Vector vTypes) {
+            super( m, vTypes );
+            m_origAmmo = (AmmoType) m.getType();
+            m_origShotsLeft = m.getShotsLeft();
+        }
+
+        /**
+         * All ammo must be applied in ratios to the starting load.
+         */
+        public void applyChoice() {
+            super.applyChoice();
+
+            // Calculate the number of shots for the new ammo.
+            // N.B. Some special ammos are twice as heavy as normal
+            // so they have half the number of shots (rounded down).
+            setShotsLeft( Math.round( getShotsLeft() * m_origShotsLeft /
+                                      m_origAmmo.getShots() ) );
+        }
+    }
+
     public void setOptions() {
       GameOption option;
       
@@ -403,7 +456,12 @@ extends Dialog implements ActionListener, DialogOptionListener {
     public void showDescFor(GameOption option) {
         texDesc.setText(option.getDesc());
     }
-    
+
+    // TODO : implement me!!!
+    public void optionClicked( DialogOptionComponent comp,
+                               GameOption option, boolean state ) {
+    }
+
     public boolean isOkay() {
         return okay;
     }

@@ -124,7 +124,7 @@ These differences are not considered "bugs."
 - When punching, you automatically punch with both arms, if possible.  This
     means you can not punch two different targets in the same round.
 - When kicking, you automatically use the leg with the better chance to hit.
-- Some more that I've forgotten
+- Some more that I've forgotten...
 
 
 RUNNING MEGAMEK

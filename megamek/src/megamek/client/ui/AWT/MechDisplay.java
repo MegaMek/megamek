@@ -119,21 +119,21 @@ public class MechDisplay extends BufferedPanel
     
     
     /**
-     * Changes to the specified panel.
-     */
+	 * Changes to the specified panel.
+	 */
     public void showPanel(String s) {
-        ((CardLayout)displayP.getLayout()).show(displayP, s);
+        ((CardLayout) displayP.getLayout()).show(displayP, s);
         if (s == "movement") {
-         tabStrip.setTab(0);
-      } else if (s == "armor") {
-        tabStrip.setTab(1);
-      } else if (s == "weapons"){
-        tabStrip.setTab(3);
-      } else if (s == "systems") {
-        tabStrip.setTab(2);
-      } else if (s == "extras") {
-        tabStrip.setTab(4);
-      }
+            tabStrip.setTab(0);
+        } else if (s == "armor") {
+            tabStrip.setTab(1);
+        } else if (s == "weapons") {
+            tabStrip.setTab(3);
+        } else if (s == "systems") {
+            tabStrip.setTab(2);
+        } else if (s == "extras") {
+            tabStrip.setTab(4);
+        }
     }
     
 }
@@ -231,48 +231,48 @@ class ArmorPanel  extends PicMap
      */
     public void displayMech(Entity en) {
         // Look out for a race condition.
-        if ( null == en ) {
+        if (null == en) {
             return;
         }
-      DisplayMapSet ams = (DisplayMapSet) mech;
-      removeAll();
-        if(en instanceof Mech){
-          ams = (DisplayMapSet) mech;
-          minLeftMargin = minMechLeftMargin;
-          minTopMargin = minMechTopMargin;
+        DisplayMapSet ams = (DisplayMapSet) mech;
+        removeAll();
+        if (en instanceof Mech) {
+            ams = (DisplayMapSet) mech;
+            minLeftMargin = minMechLeftMargin;
+            minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
-        } else if (en instanceof Tank){
-          ams = (DisplayMapSet) tank;
-          minLeftMargin = minTankLeftMargin;
-          minTopMargin = minTankTopMargin;
-          minBottomMargin = minTankTopMargin;
+        } else if (en instanceof Tank) {
+            ams = (DisplayMapSet) tank;
+            minLeftMargin = minTankLeftMargin;
+            minTopMargin = minTankTopMargin;
+            minBottomMargin = minTankTopMargin;
             minRightMargin = minTankLeftMargin;
-        } else if ( en instanceof BattleArmor){
-          ams = (DisplayMapSet) battleArmor;
+        } else if (en instanceof BattleArmor) {
+            ams = (DisplayMapSet) battleArmor;
             minLeftMargin = minInfLeftMargin;
-          minTopMargin = minInfTopMargin;
-          minBottomMargin = minInfTopMargin;
+            minTopMargin = minInfTopMargin;
+            minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-                  
-        } else if (en instanceof Infantry){
-          ams = (DisplayMapSet)infantry;
+
+        } else if (en instanceof Infantry) {
+            ams = (DisplayMapSet) infantry;
             minLeftMargin = minInfLeftMargin;
-          minTopMargin = minInfTopMargin;
-          minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;          
-                    
+            minTopMargin = minInfTopMargin;
+            minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;
+
         }
-        if ( null == ams ) {
-            System.err.println( "The armor panel is null." );
+        if (null == ams) {
+            System.err.println("The armor panel is null.");
             return;
         }
-        ams.setEntity(en); 
+        ams.setEntity(en);
         this.addElement(ams.getContentGroup());
         Vector v = ams.getBackgroundDrawers();
         Enumeration enum = v.elements();
-        while(enum.hasMoreElements()){
-          addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        while (enum.hasMoreElements()) {
+            addBgDrawer((BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();

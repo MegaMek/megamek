@@ -335,8 +335,8 @@ public class Compute
         int[] offsets = {0, 1, 5, 2, 4, 3};
         for (int i = 0; i < offsets.length; i++) {
             Coords dest = src.translated((direction + offsets[i]) % 6);
-            if (isValidDisplacement(game, entityId, src, dest)) {
-                 // assume that if the displacement's valid, hex is !null
+            if (isValidDisplacement(game, entityId, src, dest) 
+                && game.board.contains(dest)) {
                 Hex hex = game.board.getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {

@@ -92,9 +92,10 @@ public class LOSDialog
 		gridbag.setConstraints(butOK, c);
 		add(butOK);
 
-        butOK.requestFocus();
-
 		pack();
+
+        butOK.requestFocusInWindow();
+
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     }

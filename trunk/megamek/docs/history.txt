@@ -88,6 +88,9 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ fix to check number of engine hits when a side torso is destroyed
+
 v 0.26.6 (07-12-02, 6:14pm)
 + clan gauss rifles explode too
 + light gauss rifles use distinct ammo, explode for less damage

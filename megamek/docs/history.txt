@@ -6,6 +6,7 @@ v0.29.63 (CVS)
 + Provide a non-HACKish way of getting destroyed/fled arty units.
 + Bug 1109829: DFA's ignore all terrain modifiers, including PC for water.
 + Data 1108467: Added Lawyers, Guns, and Money.
++ Bug 1110014: Units *can* jump over enemies, and **can't** run through them.
 
 v0.29.62 (2005-01-23 2:30pm)
 + Additional Batchall.de-Mechs

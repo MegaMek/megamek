@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.16 (CVS)
+v 0.29.16 (10-29-03, 8am)
 - Bug 744962: For some reason, the entity still thinks the pilot is not dead.
 + Still more attempts to solve bug 825739.
 + Bug 826463: Stop the loop until we can fix InputMethod's state.

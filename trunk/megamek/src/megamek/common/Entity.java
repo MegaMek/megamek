@@ -1581,23 +1581,27 @@ public abstract class Entity
         int nodes = 0;
         if (hasC3i())  {
             nodes = 5;
-            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                final Entity e = (Entity)i.nextElement();
-                if (!equals(e) && OnSameC3NetworkAs(e)) {
-                    nodes--;
-                    if(nodes <= 0) return 0;
+            if (game != null) {
+                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = (Entity)i.nextElement();
+                    if (!equals(e) && OnSameC3NetworkAs(e)) {
+                        nodes--;
+                        if(nodes <= 0) return 0;
+                    }
                 }
             }
             return nodes;
         }
         if (hasC3M())  {
             nodes = 3;
-            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                final Entity e = (Entity)i.nextElement();
-                if (e.hasC3() && e != this ) {
-                    final Entity m = e.getC3Master();
-                    if (equals(m)) nodes--;
-                    if(nodes <= 0) return 0;
+            if (game != null) {
+                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = (Entity)i.nextElement();
+                    if (e.hasC3() && e != this ) {
+                        final Entity m = e.getC3Master();
+                        if (equals(m)) nodes--;
+                        if(nodes <= 0) return 0;
+                    }
                 }
             }
             return nodes;

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 3rd September 2004.  MegaMek Version 0.22.48. Best viewed in 1024x768.
+The Great MegaMek Feature list. 17th October 2004.  MegaMek Version 0.22.53. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -83,7 +83,7 @@ Combat (Line Of Sight)
 - Elevation			Yes		None
 - Intervening Terrain		Yes		None
 - Partial Cover			Yes		None
-- Water Hexes			Yes 	None
+- Water Hexes			Yes             None
 
 Weapon Attacks
 
@@ -113,7 +113,7 @@ Weapons Attacks (Critical Damage)
 Weapon Attacks (Destroying a Unit)
 
 - Battlemech			Yes		None
-- Protomechs			Yes 	Fire declaration *is* as a point (report a bug if it's not).
+- Protomechs			Yes             Fire declaration *is* as a point (report a bug if it's not).
 - Vehicles			Yes		None
 - Infantry			Yes		None
 
@@ -155,7 +155,7 @@ Buildings (Movement Effects)
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
-- Attacking Units inside Bldgs	Yes 	None
+- Attacking Units inside Bldgs	Yes             None
 - Combat Within Buildings	Partial		Needs to be debugged.
 - Collapse			Partial		Units may not climb buildings.
 
@@ -229,7 +229,7 @@ Special Case Rules (Anti Mech Infantry)
 
 Special Case Rules (Artillery)
 
-- Setup				Partial		Offboard setup.
+- Setup				Yes		None
 - Targeting			Yes		None
 - Damage			Yes		None
 - Smoke Rounds			No		None
@@ -318,7 +318,7 @@ Equipment
 - Anti-Missile System		Yes		AMS target is selected for the player.
 - Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
-- Artillery Weapons		Partial		Need smoke and other non-standard ammo.
+- Artillery Weapons		Partial		Need smoke and Homing Arrow IV ammo.
 - Autocannon Munitions		Partial		Incendiary Ammo not implemented.
 - C3 Computers			Yes    		All bug reports on C3 need to be re-confirmed
 - Cargo Space			No		None
@@ -337,7 +337,7 @@ Equipment
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None
-- TAG				Yes		Requires Arrows IV implementation to work.
+- TAG				Yes		Requires Homing Arrow IV implementation to work.
 - Targeting Computers		Yes		None
 - Triple Strength Myomer	Yes		Cannot shut off heat sinks in the end phase to overheat battlemech.
 

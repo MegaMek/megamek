@@ -38,6 +38,7 @@ mechs:
 - parse XML files (from BTTC, even)
 -- handle template XML files
 -- handle "slottless" equipment
+-- enforce ammo loading restrictions
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
@@ -86,6 +87,7 @@ VERSION HISTORY:
 ----------------
 v 0.28.9 (CVS)
 + Added XML parsing to MegaMek.
++ Changed MUL files to an XML format.
 
 v 0.28.8 (03-07-03, 7:20pm)
 + Added ability to go prone

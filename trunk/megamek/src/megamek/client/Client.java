@@ -47,6 +47,7 @@ public class Client extends Panel
         
     // here's some game phase stuff
     public GameSettings gameSettings;
+    private MapSettings mapSettings;
     public String                eotr;
         
     // keep me
@@ -57,6 +58,9 @@ public class Client extends Panel
     public MechDisplay          mechD;
         
     private Panel                curPanel;
+    
+    // some dialogs...
+    private BoardSelectionDialog    boardSelectionDialog;
 
         
     // message pump listening to the server
@@ -178,12 +182,26 @@ public class Client extends Panel
     return game.board;
   }
     
-  /**
-   * Returns an emumeration of the entities in game.entities
-   */
-  public Enumeration getEntities() {
-    return game.getEntities();
-  }
+    /**
+     * Returns an emumeration of the entities in game.entities
+     */
+    public Enumeration getEntities() {
+        return game.getEntities();
+    }
+    
+    public MapSettings getMapSettings() {
+        return mapSettings;
+    }
+    
+    /**
+     * Returns the board selection dialog, creating it on the first call
+     */
+    public BoardSelectionDialog getBoardSelectionDialog() {
+        if (boardSelectionDialog == null) {
+            boardSelectionDialog = new BoardSelectionDialog(this);
+        }
+        return boardSelectionDialog;
+    }
     
     /**
      * Changes the game phase, and the displays that go
@@ -378,10 +396,21 @@ public class Client extends Panel
      * Send the game settings to the server
      */
     public void sendGameSettings() {
-    
-        System.out.println("client: sending game settings");
-    
         send(new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, gameSettings));
+    }
+    
+    /**
+     * Send the game settings to the server
+     */
+    public void sendMapSettings(MapSettings mapSettings) {
+        send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings));
+    }
+    
+    /**
+     * Send the game settings to the server
+     */
+    public void sendMapQuery(MapSettings query) {
+        send(new Packet(Packet.COMMAND_QUERY_MAP_SETTINGS, query));
     }
     
     /**
@@ -611,7 +640,19 @@ public class Client extends Panel
             case Packet.COMMAND_SENDING_GAME_SETTINGS :
                 gameSettings = (GameSettings)c.getObject(0);
                 processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
-        break;
+                break;
+            case Packet.COMMAND_SENDING_MAP_SETTINGS :
+                mapSettings = (MapSettings)c.getObject(0);
+                if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+                    boardSelectionDialog.update((MapSettings)c.getObject(0), true);
+                }
+                processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                break;
+            case Packet.COMMAND_QUERY_MAP_SETTINGS :
+                if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+                    boardSelectionDialog.update((MapSettings)c.getObject(0), false);
+                }
+                break;
             }
         }
     }

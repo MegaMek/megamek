@@ -154,7 +154,7 @@ public class Connection {
             out.reset(); // write each packet fresh
             out.writeObject(packet);
             out.flush();
-            System.out.println("server(" + id + "): command #" + packet.getCommand() + " sent with " + packet.getData().length + " data");
+//            System.out.println("server(" + id + "): command #" + packet.getCommand() + " sent with " + packet.getData().length + " data");
         } catch(IOException ex) {
             System.err.println("server(" + id + "): error sending command.  dropping player");
             System.err.println(ex);

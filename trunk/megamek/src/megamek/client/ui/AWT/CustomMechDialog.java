@@ -23,6 +23,7 @@ package megamek.client;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.*;
 
@@ -51,6 +52,9 @@ extends Dialog implements ActionListener {
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
+
+    private Vector m_vMunitions = new Vector();
+    private Panel panMunitions = new Panel();
     
     private Entity entity;
     private boolean okay = false;
@@ -118,6 +122,12 @@ extends Dialog implements ActionListener {
           add(choC3);
           refreshC3();
         }
+        
+        setupMunitions();
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(panMunitions, c);
+        add(panMunitions);
+        
 
         setupButtons();
         
@@ -169,6 +179,84 @@ extends Dialog implements ActionListener {
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
+    
+    private void setupMunitions() {
+        
+        GridBagLayout gbl = new GridBagLayout();
+        panMunitions.setLayout(gbl);
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        int row = 0;
+        for (Enumeration e = entity.getAmmo(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            AmmoType at = (AmmoType)m.getType();
+            Vector vTypes = new Vector();
+            Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
+            if (vAllTypes == null || vAllTypes.size() < 2) {
+                continue;
+            }
+            
+            for (int x = 0, n = vAllTypes.size(); x < n; x++) {
+                AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
+                
+                boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
+                if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 && 
+                        atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
+                    bTechMatch = true;
+                }
+                
+                if (bTechMatch && atCheck.getRackSize() == at.getRackSize() &&
+                        atCheck.getTonnage(entity) == at.getTonnage(entity)) {
+                    vTypes.addElement(atCheck);
+                }
+            }
+            
+            if (vTypes.size() < 2) {
+                continue;
+            }
+            
+            gbc.gridy = row++;
+            MunitionChoicePanel mcp = new MunitionChoicePanel(m, vTypes);
+            gbl.setConstraints(mcp, gbc);
+            panMunitions.add(mcp);
+            m_vMunitions.add(mcp);
+        }
+    }
+    
+    class MunitionChoicePanel extends Panel {
+        private Vector m_vTypes;
+        private Choice m_choice;
+        private Mounted m_mounted;
+        
+        public MunitionChoicePanel(Mounted m, Vector vTypes) {
+            m_vTypes = vTypes;
+            m_mounted = m;
+            AmmoType curType = (AmmoType)m.getType();
+            m_choice = new Choice();
+            Enumeration e = m_vTypes.elements();
+            for (int x = 0; e.hasMoreElements(); x++) {
+                AmmoType at = (AmmoType)e.nextElement();
+                m_choice.add(at.getName());
+                if (at.getMunitionType() == curType.getMunitionType()) {
+                    m_choice.select(x);
+                }
+            }
+            setLayout(new BorderLayout());
+            String sDesc = "(" + entity.getLocationAbbr(m.getLocation()) + ")";
+            add(new Label(sDesc), BorderLayout.WEST);
+            add(m_choice, BorderLayout.CENTER);
+        }
+        
+        public void applyChoice() {
+            int n = m_choice.getSelectedIndex();
+            AmmoType at = (AmmoType)m_vTypes.elementAt(n);
+            m_mounted.changeAmmoType(at);
+        }
+        
+    }
+        
+        
+        
     
     public boolean isOkay() {
         return okay;
@@ -256,12 +344,16 @@ extends Dialog implements ActionListener {
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
-                //new AlertDialog(client.frame, "Setting C3", "Set C3 Master to " + entity.getC3Master().getDisplayName()).show();
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetID(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
-// = HentaiZonga
+            
+            // update munitions selections
+            for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {
+                ((MunitionChoicePanel)e.nextElement()).applyChoice();
+            }
+            
             okay = true;
         }
         

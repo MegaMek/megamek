@@ -849,14 +849,14 @@ class WeaponPanel
         // Only override the display for the various ATM ammos
         if(AmmoType.T_ATM == atype.getAmmoType())
         {
-            if(atype.hasFlag(AmmoType.F_ATM_ER))
+            if(atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)
             {
                 wMinR.setText("4");
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
             }
-            else if(atype.hasFlag(AmmoType.F_ATM_HE))
+            else if(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
             {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");

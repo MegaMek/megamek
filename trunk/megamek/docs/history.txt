@@ -29,6 +29,9 @@ v 0.29.15 (10-19-03, 9:30pm)
 + Bug 744962: Dead (or doomed) pilots are never concious and auto fail PSRs.
 + Bug 744623: Report when the pilot bakes to death, and destroy the Mek.
 + Bug 826410: The PHASE_LOUNGE change clears all entities, so send it first.
+- Bug 744962: For some reason, the entity still thinks the pilot is not dead.
++ Still more attempts to solve bug 825739.
++ Bug 826463: Stop the loop until we can fix InputMethod's state.
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

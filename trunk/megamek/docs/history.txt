@@ -18,6 +18,7 @@ v0.29.52 (CVS)
 + Bug 1042096: Battlearmor should not check for hull breaching
 + Bug 1042131: Falling damage not modified for gravity
 + Bug 1042169: Incorrect jumping PSR at low gravity
++ Bug 1042185: BA MP not reduced for extreme temperatures
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

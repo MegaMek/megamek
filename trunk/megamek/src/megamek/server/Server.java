@@ -5962,7 +5962,9 @@ implements Runnable, ConnectionHandler {
                         bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         bCheckedECM = true;
                     }
-                    if (!bECMAffected && !bMekStealthActive) {
+                    // only apply Narc bonus if we're not suffering ECM effect
+                    // and we are using standard ammo.
+                    if (!bECMAffected && !bMekStealthActive && atype.getMunitionType() == AmmoType.M_STANDARD) {
                         nSalvoBonus += 2;
                     }
                 }

@@ -782,7 +782,10 @@ public class Infantry
         report.append('\n');
         report.append("Kills: " + getKillNumber());
         report.append('\n');
-        
+        if (isCaptured()) {
+            report.append("  *** CAPTURED BY THE ENEMY ***");
+            report.append('\n');
+        }        
         return report.toString();
     }
 

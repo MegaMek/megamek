@@ -144,7 +144,7 @@ public class TdbFile implements MechLoader {
         //  it is basically a debuging tool.
         if (larmArmor != rarmArmor || ltArmor != rtArmor
             || llegArmor != rlegArmor || ltrArmor != rtrArmor) {
-            System.out.println("TdbFile: Warning: This mech appears to have asymetrical armor.  If that is the case, then ignore this message.  If this mech's armor is supposed to be symetrical, then we have failed to read the armor from the '.dbm' file correctly");
+            System.out.println("  -Warning: This mech appears to have asymetrical armor.  If that is the case, then ignore this message.  If this mech's armor is supposed to be symetrical, then we have failed to read the armor from the '.dbm' file correctly");
         }
 
     }

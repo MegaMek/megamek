@@ -534,32 +534,44 @@ public class Compute
      */
     public static Entity stackingViolation(Game game, int enteringId, Coords coords) {
         Entity entering = game.getEntity(enteringId);
-        
-        // is the entering entity a mech?
-        if (entering instanceof Mech) {
-            // then any other mech in the hex is a violation
-            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-                final Entity inHex = (Entity)i.nextElement();
-                if (inHex instanceof Mech && !inHex.equals(entering)) {
-                    return inHex;
-                }
-            }
-        }
-        
-        // otherwise, if there are two present entities controlled by this
-        // player, returns a random one of the two.
-        // somewhat arbitrary, but how else should we resolve it?
+	boolean isInfantry = entering instanceof Infantry;
+	boolean isMech = entering instanceof Mech;
         Entity firstEntity = null;
+
+	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-            if (inHex.getOwner().equals(entering.getOwner()) && !inHex.equals(entering)) {
-                if (firstEntity == null) {
-                    firstEntity = inHex;
-                } else {
-                    return d6() > 3 ? firstEntity : inHex;
-                }
-            }
-        }
+	    final boolean isEnemy = 
+		inHex.getOwner().isEnemyOf(entering.getOwner());
+
+	    // Don't compare the entering entity to itself.
+	    if ( !(inHex.equals(entering)) ) {
+
+		// Only Infantry can enter the hex of an enemy entity.
+		if ( !isInfantry && isEnemy ) {
+		    return inHex;
+		}
+
+		// If the entering entity is a mech,
+		// then any other mech in the hex is a violation.
+		else if ( isMech && (inHex instanceof Mech) ) {
+                    return inHex;
+		}
+
+		// Otherwise, if there are two present entities controlled
+		// by this player, returns a random one of the two.
+		// Somewhat arbitrary, but how else should we resolve it?
+		if ( !isEnemy ) {
+		    if (firstEntity == null) {
+			firstEntity = inHex;
+		    } else {
+			return d6() > 3 ? firstEntity : inHex;
+		    }
+		}
+
+	    } // End different-entity
+
+	} // Check the next entity
         
         // okay, all clear
         return null;

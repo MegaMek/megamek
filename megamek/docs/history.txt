@@ -31,6 +31,7 @@ v0.29.33 (CVS)
 + Added minor multi-lingual support for the main help file. 
 + Bug 940015: put support for Settings.explicitScrollOnly back in
 + Bug 946395: CTL+U shortcut works again on Unit Overview menu
++ Fixed typo in ammo slot for Phoenix Hawk IIC 4
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

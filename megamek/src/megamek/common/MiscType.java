@@ -278,6 +278,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = misc.name;
         misc.mtfName = misc.name;
+        misc.tdbName = "Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.flags |= F_HEAT_SINK;
@@ -293,6 +294,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = misc.name;
         misc.mtfName = misc.name;
+        misc.tdbName = "Jump Jet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.flags |= F_JUMP_JET;
@@ -308,6 +310,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "N/A";
         misc.mtfName = misc.mepName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_TREE_CLUB | F_CLUB;
@@ -323,6 +326,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "N/A";
         misc.mtfName = misc.mepName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_CLUB;
@@ -338,6 +342,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "N/A";
         misc.mtfName = misc.mepName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.flags |= F_CLUB;
@@ -353,6 +358,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = misc.name;
         misc.mtfName = misc.name;
+        misc.tdbName = "Hatchet";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.flags |= F_HATCHET;
@@ -371,6 +377,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "REMOVE MEEE!!";
         misc.mepName = "REMOVE ME!";
         misc.mtfName = "Double Heat Sink";
+        misc.tdbName = "REMOVE ME!";
         misc.tonnage = 1.0f;
         misc.criticals = CRITICALS_VARIABLE;
         misc.flags |= F_DOUBLE_HEAT_SINK;
@@ -386,6 +393,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISDoubleHeatSink";
         misc.mepName = "IS Double Heat Sink";
         misc.mtfName = "ISDouble Heat Sink";
+        misc.tdbName = "IS Double Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = 3;
         misc.flags |= F_DOUBLE_HEAT_SINK;
@@ -401,6 +409,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLDoubleHeatSink";
         misc.mepName = "Clan Double Heat Sink";
         misc.mtfName = "CLDouble Heat Sink";
+        misc.tdbName = "Clan Double Heat Sink";
         misc.tonnage = 1.0f;
         misc.criticals = 2;
         misc.flags |= F_DOUBLE_HEAT_SINK;
@@ -416,6 +425,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISCASE";
         misc.mepName ="IS CASE";
         misc.mtfName = "ISCASE";
+        misc.tdbName = "IS CASE";
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = false;
@@ -432,6 +442,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLCASE";
         misc.mepName = "Clan CASE";
         misc.mtfName = "CLCASE";
+        misc.tdbName = "Clan CASE";
         misc.tonnage = 0.0f;
         misc.criticals = 0;
         misc.hittable = false;
@@ -448,6 +459,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISMASC";
         misc.mepName = "IS MASC";
         misc.mtfName = misc.internalName;
+        misc.tdbName = "IS MASC";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -468,6 +480,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLMASC";
         misc.mepName = "Clan MASC";
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Clan MASC";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -488,6 +501,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "IS TSM";
         misc.mtfName = "Triple Strength Myomer";
+        misc.tdbName = "Triple Strength Myomer";
         misc.tonnage = 0;
         misc.criticals = 6;
         misc.hittable = false;
@@ -505,6 +519,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISC3SlaveUnit";
         misc.mepName = "IS C3 Slave";
         misc.mtfName = "ISC3SlaveUnit";
+        misc.tdbName = "IS C3 Slave";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.hittable = true;
@@ -522,6 +537,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "IS C3 Computer";
         misc.mtfName = "ISC3MasterComputer";
+        misc.tdbName = "IS C3 Computer";
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.hittable = true;
@@ -539,6 +555,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = misc.name;
         misc.mtfName = "ISImprovedC3CPU";
+        misc.tdbName = "IS C3i Computer";
         misc.tonnage = 2.5f;
         misc.criticals = 2;
         misc.hittable = true;
@@ -553,6 +570,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "ISArtemisIV";
+        misc.tdbName = "IS Artemis IV FCS";
         misc.mepName = "IS Artemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
@@ -565,6 +583,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Artemis IV FCS";
         misc.mtfName = "CLArtemisIV";
+        misc.tdbName = "Clan Artemis IV FCS";
         misc.mepName = "Clan Artemis IV FCS";
         misc.internalName = misc.mtfName;
         misc.tonnage = 1.0f;
@@ -580,6 +599,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "IS Guardian ECM";
         misc.mtfName = "ISGuardianECM";
+        misc.tdbName = "IS Guardian ECM Suite";
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.hittable = true;
@@ -597,6 +617,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = misc.name;
         misc.mepName = "Clan ECM Suite";
         misc.mtfName = "CLECMSuite";
+        misc.tdbName = "Clan ECM Suite";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.hittable = true;
@@ -624,6 +645,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "ISTargeting Computer";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "IS Targeting Computer";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = BV_VARIABLE;
@@ -641,6 +663,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "CLTargeting Computer";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Clan Targeting Computer";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = BV_VARIABLE;
@@ -659,6 +682,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.BOARDING_CLAW;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -675,6 +699,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.ASSAULT_CLAW;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -691,6 +716,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.FIRE_PROTECTION;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -707,6 +733,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -723,6 +750,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.ADVANCED_STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -739,6 +767,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.EXPERT_STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -755,6 +784,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "Mine";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = true;
@@ -771,6 +801,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "Minesweeper";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -787,6 +818,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.MAGNETIC_CLAMP;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -803,6 +835,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.SINGLE_HEX_ECM;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -819,6 +852,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = BattleArmor.MIMETIC_CAMO;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -835,6 +869,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = "Parafoil";
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "N/A";
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -852,6 +887,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = Mech.STEALTH;
         misc.mepName = misc.internalName;
         misc.mtfName = "Stealth Armor";
+        misc.tdbName = "Stealth Armor";
         misc.tonnage = 0;       //???
         misc.criticals = 12;
         misc.hittable = false;
@@ -872,6 +908,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = MiscType.FERRO_FIBROUS;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "Ferro-Fibrous Armor";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -889,6 +926,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = MiscType.ENDO_STEEL;
         misc.mepName = misc.internalName;
         misc.mtfName = misc.internalName;
+        misc.tdbName = "EndoSteel";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
@@ -906,6 +944,7 @@ public class MiscType extends EquipmentType {
         misc.internalName = MiscType.ENDO_STEEL;
         misc.mepName = misc.internalName;
         misc.mtfName = "Endo-Steel";
+        misc.tdbName = "EndoSteel";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;

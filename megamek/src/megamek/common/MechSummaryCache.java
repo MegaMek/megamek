@@ -163,6 +163,14 @@ public class MechSummaryCache
                 continue;
             }
             if (f.getName().indexOf('.') == -1) { continue; }
+            if (f.getName().endsWith(".dbm")) {
+                // Skip this file because it is read by TdbFile class.
+                //  See TdbFile.java for details.
+                // Warning: this means that ".dbm" files without
+                //  matching ".xml" files will silently fail to
+                //  load (doh!)
+                continue;
+            }
             if (f.getName().toLowerCase().endsWith(".zip")) {
                 bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                 continue;
@@ -220,6 +228,10 @@ public class MechSummaryCache
             
             try {
                 System.out.println("Loading from " + fZipFile.getPath() + " >> " + zEntry.getName());
+                if (zEntry.getName().toLowerCase().endsWith(".xml") || zEntry.getName().toLowerCase().endsWith(".dbm")) {
+                    System.out.println(" >>> Mech files from The Drawing Board cannot be loaded from zip files.");
+                    continue;
+                }
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();

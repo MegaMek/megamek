@@ -41,6 +41,7 @@ public class EquipmentType {
     protected String    internalName = null;
     protected String    mepName = null;
     protected String    mtfName = null;
+    protected String    tdbName = null;
 
     protected float     tonnage = 0;
     protected int       criticals = 0;
@@ -67,6 +68,7 @@ public class EquipmentType {
     protected static Hashtable internalNameHash;
     protected static Hashtable mepNameHash;
     protected static Hashtable mtfNameHash;
+    protected static Hashtable tdbNameHash;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -91,6 +93,10 @@ public class EquipmentType {
     
     public String getMtfName() {
         return mtfName;
+    }
+    
+    public String getTdbName() {
+        return tdbName;
     }
     
     public float getTonnage(Entity entity) {
@@ -233,6 +239,37 @@ public class EquipmentType {
             EquipmentType type = (EquipmentType)i.nextElement();
             
             mtfNameHash.put(type.getMtfName(), type);
+        }
+    }
+
+    public static EquipmentType getByTdbName(String key, boolean isClan) {
+        if (tdbNameHash == null) {
+            initializeTdbNameHash();
+        }
+
+        EquipmentType equip = (EquipmentType)tdbNameHash.get(key);
+        if (equip == null) {
+            if (isClan)
+                key = "Clan " + key;
+            else
+                key = "IS " + key;
+            return (EquipmentType)tdbNameHash.get(key);
+        } else {
+            return equip;
+        }
+    }
+    
+    public static void initializeTdbNameHash() {
+        if (allTypes == null) {
+            initializeTypes();
+        }
+        
+        tdbNameHash = new Hashtable(allTypes.size());
+        
+        for (Enumeration i = allTypes.elements(); i.hasMoreElements();) {
+            EquipmentType type = (EquipmentType)i.nextElement();
+            
+            tdbNameHash.put(type.getTdbName(), type);
         }
     }
 }

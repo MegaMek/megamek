@@ -240,7 +240,7 @@ public abstract class Mech
 
             // Stealth can not be turned on if it's ECM is destroyed.
             if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
-                      m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
+                      m.getLinked().isDestroyed() ) {
                 m.setMode("Off");
             }
 
@@ -293,6 +293,18 @@ public abstract class Mech
         
         return destroyed;
                 }
+
+    /**
+     * Returns true if the entity has a hip crit.
+     */
+    public boolean hasHipCrit() {
+        for ( int loc = 0; loc < NUM_MECH_LOCATIONS; loc++ ) {
+            if ( legHasHipCrit( loc ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Return true is the location is a leg and has a hip crit
@@ -384,7 +396,7 @@ public abstract class Mech
     public boolean hasArmedMASC() {
         for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
             Mounted m = (Mounted)e.nextElement();
-            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
+            if (!m.isDestroyed() && m.getType() instanceof MiscType &&
                 m.getType().hasFlag(MiscType.F_MASC)
                 && m.curMode().equals("Armed")) {
                 return true;
@@ -431,7 +443,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()) {
                 jump++;
             }
         }
@@ -465,7 +477,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed()
             && locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
@@ -588,7 +600,7 @@ public abstract class Mech
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+            if (mounted.isDestroyed()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -632,7 +644,7 @@ public abstract class Mech
         int sinksUnderwater = 0;
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
+            if (mounted.isDestroyed() || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -1683,12 +1695,12 @@ public abstract class Mech
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( char range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -1699,13 +1711,13 @@ public abstract class Mech
         // Determine the modifier based upon the range.
         else {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case Entity.RANGE_SHORT:
                 result = new TargetRoll( 0, "stealth" );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case Entity.RANGE_MEDIUM:
                 result = new TargetRoll( 1, "stealth" );
                 break;
-            case Compute.RANGE_LONG:
+            case Entity.RANGE_LONG:
                 result = new TargetRoll( 2, "stealth" );
                 break;
             default:

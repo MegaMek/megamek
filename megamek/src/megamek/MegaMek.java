@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.29.5-dev";
+    public static String    VERSION = "0.29-stable-2";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;
@@ -184,7 +184,6 @@ public class MegaMek
         server = new Server(hd.serverPass, hd.port);
         // initialize game
         client = new Client(frame, hd.name);
-
         // verify connection
         if(!client.connect("localhost", hd.port)) {
             server = null;
@@ -194,8 +193,6 @@ public class MegaMek
         }
         // wait for full connection
         client.retrieveServerInfo();
-
-        server.getGame().getOptions().loadOptions(client, hd.serverPass);
     }
 
     public void loadGame() {
@@ -298,8 +295,6 @@ public class MegaMek
             // wait for full connection
             client.retrieveServerInfo();
 
-            server.getGame().getOptions().loadOptions(client, hd.serverPass);
-            
             // popup options dialog
             client.getGameOptionsDialog().update(client.game.getOptions());
             client.getGameOptionsDialog().show();
@@ -358,7 +353,7 @@ public class MegaMek
         client = BotFactory.getBot(BotFactory.TEST, frame, cd.name);
         //client = new BotClient(frame, cd.name);
 
-  // verify connection
+	// verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;
@@ -779,7 +774,6 @@ class ScenarioDialog extends Dialog implements ActionListener
     private Label[] m_labels;
     private Choice[] m_typeChoices;
     private Choice[] m_colorChoices;
-    private Choice[] m_camoChoices;
     private Frame m_frame;
 
     public boolean bSet = false;
@@ -794,11 +788,8 @@ class ScenarioDialog extends Dialog implements ActionListener
         m_labels = new Label[pa.length];
         m_typeChoices = new Choice[pa.length];
         m_colorChoices = new Choice[pa.length];
-        m_camoChoices = new Choice[pa.length];
         playerTypes = new int[pa.length];
 
-        Vector camoList = ChatLounge.getCamoList();
-        
         for (int x = 0; x < pa.length; x++) {
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
             m_typeChoices[x] = new Choice();
@@ -810,12 +801,6 @@ class ScenarioDialog extends Dialog implements ActionListener
                 m_colorChoices[x].add(Player.colorNames[i]);
             }
             m_colorChoices[x].select(x);
-            
-            m_camoChoices[x] = new Choice();
-            for ( int i = 0; i < camoList.size(); i++ ) {
-              m_camoChoices[x].add((String)camoList.elementAt(i));
-            }
-            m_camoChoices[x].select(0);
         }
 
         setLayout(new BorderLayout());
@@ -824,12 +809,10 @@ class ScenarioDialog extends Dialog implements ActionListener
         choicePanel.add(new Label("Player"));
         choicePanel.add(new Label("Type"));
         choicePanel.add(new Label("Color"));
-        choicePanel.add(new Label("Camo"));
         for (int x = 0; x < pa.length; x++) {
             choicePanel.add(m_labels[x]);
             choicePanel.add(m_typeChoices[x]);
             choicePanel.add(m_colorChoices[x]);
-            choicePanel.add(m_camoChoices[x]);
         }
         add(choicePanel, BorderLayout.CENTER);
 
@@ -866,7 +849,6 @@ class ScenarioDialog extends Dialog implements ActionListener
                     localName = m_players[x].getName();
                 }
                 m_players[x].setColorIndex(m_colorChoices[x].getSelectedIndex());
-                m_players[x].setCamoFileName(m_camoChoices[x].getSelectedItem());
             }
             bSet = true;
             setVisible(false);

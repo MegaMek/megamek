@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -15,18 +15,21 @@
 
 package megamek.server;
 
-import java.util.*;
-import megamek.common.*;
-
 import java.io.File;
 import java.io.FileInputStream;
-import megamek.client.ChatLounge;
-import megamek.common.options.GameOption;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.Enumeration;
+
+import megamek.common.*;
 
 public class ScenarioLoader 
 {
     private File m_scenFile;
     // copied from ChatLounge.java
+    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     private Vector m_vDamagePlans = new Vector();        
     
     public ScenarioLoader(File f)
@@ -161,13 +164,6 @@ public class ScenarioLoader
                     int nBlocks = Integer.parseInt(s);
                     m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
                 }
-                
-                //Check for advantages
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
-                  if ( null != s ) {
-                    parseAdvantages(e, s);
-                  }
-                  
                 vEntities.addElement(e);
             }
         }        
@@ -199,23 +195,6 @@ public class ScenarioLoader
             e.printStackTrace();
             throw new Exception("Unparseable entity line: " + s + "\n   Unable to load mech: " + e.getMessage());
         }
-    }
-    
-    private void parseAdvantages(Entity entity, String adv) {
-      StringTokenizer st = new StringTokenizer(adv);
-      
-      while ( st.hasMoreTokens() ) {
-        String curAdv = st.nextToken();
-        
-        GameOption option = entity.getCrew().getOptions().getOption(curAdv);
-       
-        if ( null == option ) {
-          System.out.println("Ignoring invalid pilot advantage: " + curAdv);
-        } else {
-          System.out.println("Adding pilot advantage '" + curAdv + "' to " + entity.getDisplayName());
-          option.setValue(true);
-        }
-      }
     }
     
     private int findIndex(String[] sa, String s)
@@ -254,7 +233,7 @@ public class ScenarioLoader
                 s = "Any";
             }
             
-            int nDir = findIndex(ChatLounge.START_LOCATION_NAMES, s);
+            int nDir = findIndex(startNames, s);
             
             // if it's not set by now, make it any
             if (nDir == -1) {

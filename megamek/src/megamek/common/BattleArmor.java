@@ -598,12 +598,12 @@ public class BattleArmor
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( char range ) {
         TargetRoll result = null;
 
         // Stealth must be active.
@@ -632,15 +632,15 @@ public class BattleArmor
         // Stealthy units alreay have their to-hit mods defined.
         else if ( isStealthy ) {
             switch ( range ) {
-            case Compute.RANGE_SHORT:
+            case Entity.RANGE_SHORT:
                 result = new TargetRoll( this.shortStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_MEDIUM:
+            case Entity.RANGE_MEDIUM:
                 result = new TargetRoll( this.mediumStealthMod,
                                          this.stealthName );
                 break;
-            case Compute.RANGE_LONG:
+            case Entity.RANGE_LONG:
                 result = new TargetRoll( this.longStealthMod,
                                          this.stealthName );
                 break;

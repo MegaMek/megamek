@@ -59,8 +59,8 @@ public class Client extends Panel
     public BoardComponent       bc;
     public Dialog               mechW;
     public MechDisplay          mechD;
-    public Dialog   minimapW;
-    public MiniMap    minimap;
+    public Dialog		minimapW;
+    public MiniMap		minimap;
     public PopupMenu            popup;
         
     protected Component         curPanel;
@@ -107,7 +107,7 @@ public class Client extends Panel
         frame.setForeground(SystemColor.menuText);
         
         frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false);
+	    public void windowClosing(WindowEvent e) { setVisible(false);
                 // feed last window position to settings
                 Settings.windowPosX = frame.getLocation().x;
                 Settings.windowPosY = frame.getLocation().y;
@@ -119,7 +119,7 @@ public class Client extends Panel
                 
                 die();
             }
-  });
+	});
         
         standalone = false;
         
@@ -328,14 +328,14 @@ public class Client extends Panel
     }
     
     public MechSelectorDialog getMechSelectorDialog() {
-      return mechSelectorDialog;
+    	return mechSelectorDialog;
     }
     
     public StartingPositionDialog getStartingPositionDialog() {
         if (startingPositionDialog == null) {
             startingPositionDialog = new StartingPositionDialog(this);
         }
-      return startingPositionDialog;
+    	return startingPositionDialog;
     }
     
 //    public ButtonMenuDialog getButtonMenuDialog() {
@@ -628,7 +628,7 @@ public class Client extends Panel
      * @returns true if yes
      */
     public boolean doYesNoDialog(String title, String question) {
-  ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
+	ConfirmDialog confirm = new ConfirmDialog(frame,title,question);
         confirm.show();
         return confirm.getAnswer();
     };
@@ -859,7 +859,7 @@ public class Client extends Panel
         Entity entity = (Entity)c.getObject(1);
         Coords oc = entity.getPosition();
         if (game.getEntity(eindex) != null) {
-          oc = game.getEntity(eindex).getPosition();
+        	oc = game.getEntity(eindex).getPosition();
         }
         // re-link player
         entity.restore();
@@ -919,7 +919,6 @@ public class Client extends Panel
     protected void receiveAttack(Packet c) {
         Vector vector = (Vector)c.getObject(0);
         boolean charge = c.getBooleanValue(1);
-        boolean addAction = true;
         for (Enumeration i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = (EntityAction)i.nextElement();
             int entityId = ea.getEntityId();
@@ -937,11 +936,6 @@ public class Client extends Panel
                 //XXX Hack alert!
                 bv.boardChangedEntity(new BoardEvent(game.board, entity.getPosition(), entity, 0, 0)); //XXX
                 //XXX
-            } else if (ea instanceof DodgeAction && game.hasEntity(entityId)) {
-                Entity entity = game.getEntity(entityId);
-                entity.dodging = true;
-                
-                addAction = false;
             } else if (ea instanceof AttackAction) {
                 if ( ea instanceof ClubAttackAction ) {
                     ClubAttackAction clubAct = (ClubAttackAction) ea;
@@ -950,14 +944,11 @@ public class Client extends Panel
                 }
                 bv.addAttack((AttackAction)ea);
             }
-            
-            if ( addAction ) {
-              // track in the appropriate list
-              if (charge) {
-                  game.addCharge((AttackAction)ea);
-              } else {
-                  game.addAction(ea);
-              }
+            // track in the appropriate list
+            if (charge) {
+                game.addCharge((AttackAction)ea);
+            } else {
+                game.addAction(ea);
             }
         }
     }

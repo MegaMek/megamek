@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -43,9 +43,8 @@ public class WeaponType extends EquipmentType {
     public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
     public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
 
-    protected RangeType range;
-    protected int   heat;
-    protected int   damage;
+    private int     heat;
+    private int     damage;
     private int     rackSize; // or AC size, or whatever
     private int     ammoType;
 
@@ -53,11 +52,8 @@ public class WeaponType extends EquipmentType {
     private int     shortRange;
     private int     mediumRange;
     private int     longRange;
-    private int     waterShortRange;
-    private int     waterMediumRange;
-    private int     waterLongRange;
 
-    protected WeaponType() {
+    private WeaponType() {
         ;
     }
 
@@ -88,10 +84,6 @@ public class WeaponType extends EquipmentType {
     public int getAmmoType() {
         return ammoType;
     }
-    
-    public int[] getRanges() {
-    	return new int[] {minimumRange, shortRange, mediumRange, longRange};
-    }
 
     public int getMinimumRange() {
         return minimumRange;
@@ -108,23 +100,6 @@ public class WeaponType extends EquipmentType {
     public int getLongRange() {
         return longRange;
     }
-
-    public int[] getWRanges() {
-    	return new int[] {minimumRange, waterShortRange, waterMediumRange, waterLongRange};
-    }
-
-    public int getWShortRange() {
-        return waterShortRange;
-    }
-
-    public int getWMediumRange() {
-        return waterMediumRange;
-    }
-
-    public int getWLongRange() {
-        return waterLongRange;
-    }
-
 
     /**
      * Add all the types of weapons we can create to the list
@@ -332,9 +307,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 6;
-        weapon.waterLongRange = 9;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -358,9 +330,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 4;
-        weapon.waterLongRange = 6;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -384,9 +353,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -410,9 +376,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 7;
-        weapon.waterLongRange = 10;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -559,7 +522,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -583,7 +545,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -607,7 +568,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -631,7 +591,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -724,9 +683,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -750,9 +706,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 19;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 9;
-        weapon.waterLongRange = 12;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -776,9 +729,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -802,9 +752,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 5;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -829,10 +776,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 7;
         weapon.longRange = 10;
-
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 7;
         weapon.tonnage = 7.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -857,9 +800,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 3;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -884,9 +824,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1353,7 +1290,6 @@ public class WeaponType extends EquipmentType {
         weapon.name = "MRM 30";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-30"; // NA in MEP
-
         weapon.mtfName = "ISMRM30";
         weapon.tdbName = "IS MRM 30";
         weapon.heat = 10;
@@ -1462,9 +1398,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -1488,9 +1421,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 15;
         weapon.longRange = 25;
-        weapon.waterShortRange = 5;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 4.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1514,9 +1444,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 7;
-        weapon.waterLongRange = 10;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1540,9 +1467,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1566,9 +1490,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 4;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1645,9 +1566,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 6;
-        weapon.waterLongRange = 9;
         weapon.tonnage = 4.0f;
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1672,9 +1590,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 4;
-        weapon.waterLongRange = 6;
         weapon.tonnage = 1.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1699,9 +1614,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1798,7 +1710,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1822,7 +1733,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1846,7 +1756,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1870,7 +1779,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1961,9 +1869,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 14;
         weapon.longRange = 20;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 14;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1988,9 +1893,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 8;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2015,9 +1917,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2042,9 +1941,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2550,7 +2446,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-		weapon.setModes(new String[] {"", "Indirect"}); // ?
 
         return weapon;
     }
@@ -2995,9 +2890,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;

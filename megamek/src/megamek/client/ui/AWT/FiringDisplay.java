@@ -16,13 +16,14 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
 
 public class FiringDisplay 
-    extends StatusBarPhaseDisplay
+    extends AbstractPhaseDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener, ItemListener
 {
@@ -30,6 +31,12 @@ public class FiringDisplay
     
     // parent game
     public Client client;
+    
+    // displays
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
     
     // buttons
     private Container        panButtons;
@@ -42,7 +49,6 @@ public class FiringDisplay
     private Button            butFindClub;
     private Button            butNextTarg;
     private Button            butFlipArms;
-    private Button			  butSpot;
     
     private Button            butReport;
     private Button            butSpace;
@@ -83,7 +89,7 @@ public class FiringDisplay
         // fire
         attacks = new Vector();
 
-        setupStatusBar("Waiting to begin Firing phase...");
+        setupStatusBar();
         
         butFire = new Button("Fire");
         butFire.addActionListener(this);
@@ -110,13 +116,9 @@ public class FiringDisplay
         butNextTarg.addActionListener(this);
         butNextTarg.setEnabled(false);
         
-		butFlipArms = new Button("Flip Arms");
-		butFlipArms.addActionListener(this);
-		butFlipArms.setEnabled(false);
-        
-		butSpot = new Button("Spot");
-		butSpot.addActionListener(this);
-		butSpot.setEnabled(false);
+        butFlipArms = new Button("Flip Arms");
+        butFlipArms.addActionListener(this);
+        butFlipArms.setEnabled(false);
         
         butReport = new Button("Report..");
         butReport.addActionListener(this);
@@ -183,6 +185,40 @@ public class FiringDisplay
         add(comp);
         comp.addKeyListener(this);
     }
+    
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Firing phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
 
     private void setupButtonPanel() {
         panButtons.removeAll();
@@ -204,7 +240,11 @@ public class FiringDisplay
             panButtons.add(butFindClub);
             panButtons.add(butFlipArms);
             panButtons.add(butNext);
-            panButtons.add(butSpot);
+            panButtons.add(butAim);
+            /* 2003-03-30 Suvarov454: I'd rather see the "Fire"
+            **            button on this panel than a spaceholder.
+            panButtons.add(butSpace);
+            */
             panButtons.add(butFireMode);
             panButtons.add(butMore);
             panButtons.add(butDone);
@@ -230,15 +270,15 @@ public class FiringDisplay
             // ASSUMPTION: there will always be *at least one* entity on map.
             if ( null == ce().getPosition() ) {
 
-    // Walk through the list of entities for this player.
-    for ( int nextId = client.getNextEntityNum(en);
-          nextId != en;
-          nextId = client.getNextEntityNum(nextId) ) {
+		// Walk through the list of entities for this player.
+		for ( int nextId = client.getNextEntityNum(en);
+		      nextId != en;
+		      nextId = client.getNextEntityNum(nextId) ) {
 
-        if (null != client.game.getEntity(nextId).getPosition()) {
-      this.cen = nextId;
-      break;
-        }
+		    if (null != client.game.getEntity(nextId).getPosition()) {
+			this.cen = nextId;
+			break;
+		    }
 
                 } // Check the player's next entity.
 
@@ -264,8 +304,6 @@ public class FiringDisplay
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
-            butSpot.setEnabled(ce().canSpot()
-            	&& client.game.getOptions().booleanOption("indirect_fire"));
             butFlipArms.setEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
@@ -311,8 +349,7 @@ public class FiringDisplay
         butFire.setEnabled(false);
         butSkip.setEnabled(false);
         butTwist.setEnabled(false);
-		butAim.setEnabled(false);
-		butSpot.setEnabled(false);
+        butAim.setEnabled(false);
         butFindClub.setEnabled(false);
         butMore.setEnabled(false);
         butNext.setEnabled(false);
@@ -527,32 +564,7 @@ public class FiringDisplay
         
         ready();
     }
-
-    /**
-     * The entity spends the rest of its turn spotting
-     */
-    private void doSpot() {
-        if (ce() == null) {
-            return;
-        }
-		
-        // comfirm this action
-        String title = "Spot For Indirect Fire?";
-        String body = "Do you want to spot for indirect fire?\n\n" +
-            "Spotting is an exclusive action.  If you choose\n" +
-            "to spot, any declared attacks will be cancelled,\n" +
-            "and you may declare no further attacks.\n\n" +
-            "Pressing 'Yes' will confirm, and end your turn.";
-        if (!client.doYesNoDialog(title, body)) {
-            return;
-        }
-        
-        attacks.removeAllElements();
-        attacks.addElement(new SpotAction(cen));
-        
-        ready();
-    }
-
+  
     /**
      * Removes all current fire
      */
@@ -690,22 +702,18 @@ public class FiringDisplay
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
             return;
         }
-        // control pressed means a line of sight check.
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-            return;
-        }
         // check for shifty goodness
         if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
         
-        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
+        if (b.getType() == b.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
             client.game.board.cursor(b.getCoords());
-        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
+        } else if (b.getType() == b.BOARD_HEX_CLICKED) {
             twisting = false;
             client.game.board.select(b.getCoords());
         }
@@ -731,9 +739,9 @@ public class FiringDisplay
             
             if(client.isMyTurn()) {
                 beginMyTurn();
-                setStatusBarText("It's your turn to fire.");
+                labStatus.setText("It's your turn to fire.");
             } else {
-                setStatusBarText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
+                labStatus.setText("It's " + ev.getPlayer().getName() + "'s turn to fire.");
             }
         }
     }
@@ -757,9 +765,13 @@ public class FiringDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             return;
         }
@@ -781,10 +793,8 @@ public class FiringDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-		} else if (ev.getSource() == butFindClub) {
-			findClub();
-		} else if (ev.getSource() == butSpot) {
-			doSpot();
+        } else if (ev.getSource() == butFindClub) {
+            findClub();
         } else if (ev.getSource() == butNextTarg) {
           jumpToNextTarget();
         } else if (ev.getSource() == butFlipArms) {
@@ -815,13 +825,13 @@ public class FiringDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if (ev.getKeyCode() == ev.VK_ESCAPE) {
             clearAttacks();
             client.game.board.select(null);
             client.game.board.cursor(null);
             refreshAll();
         }
-        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
+        if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 //
             }
@@ -833,7 +843,7 @@ public class FiringDisplay
                 torsoTwist(client.game.board.lastCursor);
             }
         }
-        if (ev.getKeyCode() == KeyEvent.VK_M) {
+        if (ev.getKeyCode() == ev.VK_M) {
             changeMode(); 
         }
     }

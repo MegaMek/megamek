@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
+import java.util.*;
 
 /**
  * Represents a player in the game.
@@ -59,18 +60,6 @@ public final class Player extends TurnOrdered
     private int num_mechs    = 0;
     private int num_tanks    = 0;
     private int num_infantry = 0;
-
-    public static final String NO_CAMO = "No Camo";
-    
-    private String camoFileName = null;
-    
-    public void setCamoFileName(String name) {
-      this.camoFileName = name;
-    }
-    
-    public String getCamoFileName() {
-      return camoFileName;
-    }
 
     public void resetMechCount() {
         num_mechs = 0;

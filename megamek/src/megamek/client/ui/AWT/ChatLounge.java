@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -25,7 +25,7 @@ import megamek.common.*;
 public class ChatLounge extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardListener, GameListener
 {
-    public static final String START_LOCATION_NAMES[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
+    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     
     // parent Client
     private Client client;
@@ -39,8 +39,6 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Choice choColor;
     private Choice choTeam;
     
-    private Label labCamo;
-    private Choice choCamo;
     
     private Button butOptions;
 
@@ -159,7 +157,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         
         labColor = new Label("Color:", Label.RIGHT);
         labTeam = new Label("Team:", Label.RIGHT);
-        labCamo = new Label("Camo:", Label.RIGHT);
                 
         choColor = new Choice();
         choColor.addItemListener(this);
@@ -168,10 +165,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         choTeam = new Choice();
         choTeam.addItemListener(this);
         setupTeams();
-        
-        choCamo = new Choice();
-        choCamo.addItemListener(this);
-        setupCamos();
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -210,16 +203,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
         
-        c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        gridbag.setConstraints(labCamo, c);
-        panPlayerInfo.add(labCamo);
-            
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;    c.weighty = 0.0;
-        gridbag.setConstraints(choCamo, c);
-        panPlayerInfo.add(choCamo);
-
         refreshPlayerInfo();
     }
   
@@ -535,12 +518,6 @@ public class ChatLounge extends AbstractPhaseDisplay
                 strTreeView = "";
             }            
 
-            if ( !client.game.getOptions().booleanOption("pilot_advantages") ) {
-              entity.getCrew().clearAdvantages();
-            }
-            
-            int crewAdvCount = entity.getCrew().countAdvantages();
-            
             // Handle the "Blind Drop" option.
             if ( !entity.getOwner().equals(client.getLocalPlayer()) &&
                  client.game.getOptions().booleanOption("blind_drop") )
@@ -557,14 +534,14 @@ public class ChatLounge extends AbstractPhaseDisplay
             
                 lisEntities.add(entity.getOwner().getName() 
                 + " (" + entity.getCrew().getGunnery()
-                + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
+                + "/" + entity.getCrew().getPiloting() + " pilot)"
                 + " Class: " + weight);
             }
             else
             {
                 lisEntities.add(strTreeSet + entity.getDisplayName()
                 + " (" + entity.getCrew().getGunnery()
-                + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
+                + "/" + entity.getCrew().getPiloting() + " pilot)"
                 + " BV=" + entity.calculateBattleValue() + strTreeView);
             }
             
@@ -583,19 +560,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             if(player != null) {
-              StringBuffer pi = new StringBuffer();
-              pi.append(player.getName()).append(" : ");
-              pi.append(Player.teamNames[player.getTeam()]);
-
-              String plyrCamo = player.getCamoFileName();
-                
-              if ( (null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo) ) {
-                pi.append(", ").append(Player.colorNames[player.getColorIndex()]);
-              } else {
-                pi.append(", ").append(player.getCamoFileName());
-              }
-
-              lisPlayerInfo.add(pi.toString());
+                StringBuffer pi = new StringBuffer();
+                pi.append(player.getName()).append(" : ");
+                pi.append(Player.colorNames[player.getColorIndex()]).append(", ");
+                pi.append(Player.teamNames[player.getTeam()]);
+                lisPlayerInfo.add(pi.toString());
             }
         }
     }
@@ -631,48 +600,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
     
-    private void setupCamos() {
-        choCamo.removeAll();
-        
-        Vector camoList = getCamoList();
-
-        for (int i = 0; i < camoList.size(); i++) {
-          choCamo.add((String)camoList.elementAt(i));
-        }
-        
-        String selCamo = client.getLocalPlayer().getCamoFileName();
-        
-        if ( (null == selCamo) || (selCamo.equals(Player.NO_CAMO)) )
-          choCamo.select(Player.NO_CAMO);
-        else
-          choCamo.select(client.getLocalPlayer().getCamoFileName());
-    }
-    
-    private void refreshCamos() {
-      String selCamo = client.getLocalPlayer().getCamoFileName();
-      
-      if ( (null == selCamo) || (selCamo.equals(Player.NO_CAMO)) )
-        choCamo.select(Player.NO_CAMO);
-      else
-        choCamo.select(client.getLocalPlayer().getCamoFileName());
-    }
-
-    public static Vector getCamoList() {
-      Vector camoList = new Vector();
-      
-      camoList.addElement(Player.NO_CAMO);
-
-      File camoLib = new File("data/camo");
-      String[] fileList = camoLib.list();
-      for (int i = 0; i < fileList.length; i++) {
-        if (fileList[i].endsWith(".jpg")) {
-          camoList.addElement(fileList[i].substring(0, fileList[i].indexOf(".jpg")));
-        }
-      }
-
-      return camoList;
-    }
-    
     /**
      * Refreshes the starting positions
      */
@@ -683,7 +610,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if(player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : ");
-                ssb.append(START_LOCATION_NAMES[player.getStartingPos()]);
+                ssb.append(startNames[player.getStartingPos()]);
                 lisStarts.add(ssb.toString());
             }
         }
@@ -758,15 +685,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
     
-    public void changeCamo(String camo) {
-    	String curCamo = client.getLocalPlayer().getCamoFileName();
-        if ((camo == null && curCamo != null)
-            || (camo != null && !camo.equals(curCamo))) {
-			client.getLocalPlayer().setCamoFileName(camo);
-			client.sendPlayerInfo();
-    	}
-    }
-
     /**
      * Pop up the customize mech dialog
      */
@@ -778,7 +696,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
         // display dialog
         CustomMechDialog cmd = new CustomMechDialog(client, entity, editable);
-        cmd.refreshOptions();
         cmd.show();
         if (editable && cmd.isOkay()) {
             // send changes
@@ -796,9 +713,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         MechView mechView = new MechView(entity);
         TextArea ta = new TextArea();
-  ta.setEditable(false);
-  ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
-  ta.setText(mechView.getMechReadout());
+	ta.setEditable(false);
+	ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
+	ta.setText(mechView.getMechReadout());
         final Dialog dialog = new Dialog(client.frame, "Mech Quick View", false);
         Button btn = new Button("Ok");
         dialog.add("South", btn);
@@ -836,7 +753,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshPlayerInfo();
         refreshStarts();
         refreshColors();
-        refreshCamos();
     }
     public void gamePhaseChange(GameEvent ev) {
         if (client.game.phase !=  Game.PHASE_LOUNGE) {
@@ -855,23 +771,14 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshEntities();
     }
     
-    /*
-     * NOTE: On linux, this gets called even when programatically updating the
-     * list box selected item.  Do not let this go into an infinite loop.  Do not
-     * update the selected item (even indirectly, by sending player info) if 
-     * it is already selected.
-     */
+    //
+    // ItemListener
+    //
     public void itemStateChanged(ItemEvent ev) {
         if (ev.getSource() == choColor) {
             changeColor(choColor.getSelectedIndex());
         } else if (ev.getSource() == choTeam) {
             changeTeam(choTeam.getSelectedIndex());
-        } else if (ev.getSource() == choCamo) {
-          if (choCamo.getSelectedIndex() != 0) {
-            changeCamo(choCamo.getSelectedItem());
-          } else {
-            changeCamo(null);
-          }
         } else if (ev.getSource() == chkBV || ev.getSource() == chkTons) {
             refreshBVs();
         } else if (ev.getSource() == lisEntities) {

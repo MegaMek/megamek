@@ -163,7 +163,7 @@ public class CEntity  {
     this.runMP = entity.getRunMP();
     this.jumpMP = entity.getJumpMP();
     this.overall_armor_percent = entity.getArmorRemainingPercent();
-    this.base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll().getValue())/100;
+    this.base_psr_odds = Compute.oddsAbove(Compute.getBasePilotingRoll(game,entity.getId()).getValue())/100;
     //begin weapons characterization
     double heat_mod = .9; //these estimates are consistently too high
     if (entity.heat > 7) heat_mod = .8; //reduce effectiveness

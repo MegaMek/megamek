@@ -41,7 +41,6 @@ public class Settings
     public static boolean   autoEndFiring           = true;
 
     public static boolean   nagForMASC              = true;
-    public static boolean   nagForPSR               = true;
     
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
@@ -153,10 +152,6 @@ scan:
                         st.nextToken();
                         nagForMASC = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if (key.equals("nagforpsr")) {
-                        st.nextToken();
-                        nagForPSR = Boolean.valueOf(st.sval).booleanValue();
-                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -264,7 +259,6 @@ scan:
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
-            cw.write("nagforpsr " + nagForPSR + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

@@ -250,19 +250,6 @@ public class MovementData
         }
         return bProne;
     }
-
-    public int getLastStepMovementType() {
-        int lastStepMoveType = Entity.MOVE_NONE;
-        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
-            final Step step = (Step)i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
-                break;
-            } else {
-                lastStepMoveType = step.getMovementType();
-            }
-        }
-        return lastStepMoveType;
-    }
     
     /**
      * Removes impossible steps, if compiled.  If not compiled, does nothing.

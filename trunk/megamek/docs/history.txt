@@ -17,6 +17,7 @@ v 0.29.21 (CVS)
 + Patch 868676: Fix the NPE mentioned in one of the ammo patches.
 + Patch 867630: updated README files
 + Full ProtoMech implementation.  Probably bugridden, but feature complete.
++ Bug 831347, Patch 874446: Head explosions shouldn't devestate Meks.
 
 v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.

@@ -7631,8 +7631,11 @@ implements Runnable, ConnectionHandler {
                         if ( !engineExploded ) {
                           // Entity destroyed.  Ammo explosions are
                           // neither survivable nor salvagable.
-                          desc += destroyEntity(te, "damage", !ammoExplosion,
-                                                !ammoExplosion);
+                          // Only ammo explosions in the CT are devastating.
+                          desc += destroyEntity( te, "damage", !ammoExplosion,
+                                                 !( ammoExplosion &&
+                                                    hit.getLocation() ==
+                                                    Mech.LOC_CT ) );
                         }
                         
                         // nowhere for further damage to go

@@ -578,7 +578,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 24;
         ammo.bv = 6;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -604,8 +605,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 5 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-5";
+        ammo.name = "Thunder-Augmented LRM 5 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-5";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -708,7 +709,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 11;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -734,8 +736,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 10 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-10";
+        ammo.name = "Thunder-Augmented LRM 10 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-10";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -838,7 +840,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 8;
         ammo.bv = 17;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -864,8 +867,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 15 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-15";
+        ammo.name = "Thunder-Augmented LRM 15 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-15";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -968,7 +971,8 @@ public class AmmoType extends EquipmentType {
         ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 23;
-        
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
         return ammo;
     }
     
@@ -994,8 +998,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 20 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-20";
+        ammo.name = "Thunder-Augmented LRM 20 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-20";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2397,8 +2401,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 5 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-5";
+        ammo.name = "Thunder-Augmented LRM 5 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-5";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2529,8 +2533,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 10 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-10";
+        ammo.name = "Thunder-Augmented LRM 10 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-10";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2661,8 +2665,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 15 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-15";
+        ammo.name = "Thunder-Augmented LRM 15 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-15";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2793,8 +2797,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 20 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-20";
+        ammo.name = "Thunder-Augmented LRM 20 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-20";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -3984,6 +3988,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 2;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4000,6 +4005,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 3;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4016,6 +4022,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 4;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4032,6 +4039,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 5;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4048,6 +4056,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 6;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4064,6 +4073,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 7;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4080,6 +4090,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 3;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4097,6 +4108,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 5;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4114,6 +4126,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 8;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4131,6 +4144,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 10;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4148,6 +4162,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 13;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;
@@ -4165,6 +4180,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 15;
+        ammo.flags |=F_PROTOMECH;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
 
         return ammo;

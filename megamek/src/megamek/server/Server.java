@@ -2595,6 +2595,7 @@ implements Runnable {
                 ae.heatBuildup -= wtype.getHeat();
                 ammo.setShotsLeft(ammo.getShotsLeft() + 1);
                 phaseReport.append("    Streak fails to achieve lock on target.\n");
+                return;
             }
             // if the target is in the woods and the weapon misses, and the weapon is a large weapon, set the woods on fire.
             Hex targetHex = game.getBoard().getHex(te.getPosition());

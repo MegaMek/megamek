@@ -4576,38 +4576,37 @@ implements Runnable, ConnectionHandler {
 
         // any AMS attacks by the target?
         Vector vCounters = waa.getCounterEquipment();
-        if (vCounters == null) {
+        if (null == vCounters) {
             wr.amsShotDown = new int[0];
-            return wr;
-        }
+        } else {
+            // resolve AMS counter-fire
+            wr.amsShotDown = new int[vCounters.size()];
+            for (int x = 0; x < vCounters.size(); x++) {
+                wr.amsShotDown[x] = 0;
 
-        // resolve AMS counter-fire
-        wr.amsShotDown = new int[vCounters.size()];
-        for (int x = 0; x < vCounters.size(); x++) {
-            wr.amsShotDown[x] = 0;
+                Mounted counter = (Mounted)vCounters.elementAt(x);
+                Mounted mAmmo = counter.getLinked();
+                if (!(counter.getType() instanceof WeaponType)
+                || ((WeaponType)counter.getType()).getAmmoType() != AmmoType.T_AMS
+                || !counter.isReady() || counter.isMissing()) {
+                    continue;
+                }
+                // roll hits
+                int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
 
-            Mounted counter = (Mounted)vCounters.elementAt(x);
-            Mounted mAmmo = counter.getLinked();
-            if (!(counter.getType() instanceof WeaponType)
-            || ((WeaponType)counter.getType()).getAmmoType() != AmmoType.T_AMS
-            || !counter.isReady() || counter.isMissing()) {
-                continue;
-            }
-            // roll hits
-            int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
+                // build up some heat (assume target is ams owner)
+                te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
 
-            // build up some heat (assume target is ams owner)
-            te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+                // decrement the ammo
+                mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
 
-            // decrement the ammo
-            mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
+                // set the ams as having fired
+                counter.setUsedThisRound(true);
 
-            // set the ams as having fired
-            counter.setUsedThisRound(true);
-
-            wr.amsShotDown[x]    = amsHits;
-            wr.amsShotDownTotal += amsHits;
-        }
+                wr.amsShotDown[x]    = amsHits;
+                wr.amsShotDownTotal += amsHits;
+            };
+        };
 
         return wr;
     }

@@ -1792,7 +1792,9 @@ public class Compute
         }
 
         // check facing
-        if (!isInArc(ae.getPosition(), ae.getFacing(), 
+	// 2002-10-21 Suvarov454 : Don't check arc for stomping infantry.
+        if (( 0 != range || !(te instanceof Infantry) ) &&
+	    !isInArc(ae.getPosition(), ae.getFacing(), 
                      te.getPosition(), Compute.ARC_FORWARD)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }

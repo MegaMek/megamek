@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.69 (CVS)
+v0.29.69 (2005-03-14 7:45am)
 + Data 1157247: New pictures for Burrock, Great Wyrm, Highlander IIC, Scylla.
 + Bug 1156215: jammed RACs can fire
 + Patch 1158743, Bug 1154050: Infantry takes PSR after taking 20 dmg

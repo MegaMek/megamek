@@ -3765,10 +3765,7 @@ implements Runnable {
                 phaseReport.append("\n" + entity.getDisplayName() + " must make " + rolls + " piloting skill roll(s) (" + reasons + ").\n");
                 phaseReport.append("The target is " + roll.getValueAsString() + " [" + roll.getDesc() + "].\n");
                 for (int j = 0; j < rolls; j++) {
-                    /* restore me
                     final int diceRoll = Compute.d6(2);
-                    */
-        final int diceRoll = 0; //killme
                     phaseReport.append("    " + entity.getDisplayName() + " needs " + roll.getValueAsString() + ", rolls " + diceRoll + " : ");
                     phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") + ".\n");
                     if (diceRoll < roll.getValue()) {

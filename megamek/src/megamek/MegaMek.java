@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -30,7 +31,7 @@ import megamek.server.*;
 import megamek.test.*;
 
 public class MegaMek implements ActionListener {
-    public static String VERSION = "0.29.65-dev";
+    public static String VERSION = "0.29.65";
     public static long TIMESTAMP = new File("timestamp").lastModified();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();

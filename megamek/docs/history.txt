@@ -6,7 +6,7 @@ v0.29.51 (CVS)
     Pike Support Vehicle (RAC) datafile should be in vehicles.zip,
     not in unofficial.zip
 + Bug 1035223: Vector#clear does not work with MS JRE
-+ Bug  1035780: fixed Summoer and Hellbringer image transparency
++ Bug 1035780: fixed Summoer and Hellbringer image transparency
 
 v0.29.50 (2004-09-26 1:15pm)
 + Bug 1031414: location exposure should be checked after each fall

@@ -175,7 +175,7 @@ public class MechSelectorDialog
             }
             MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
             try {
-                Entity e = new MechFileParser(ms.getSourceFile()).getEntity();
+                Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 e.setOwner(m_client.getLocalPlayer());
                 m_client.sendAddEntity(e);
             } catch (EntityLoadingException ex) {

@@ -220,18 +220,22 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         viewMekDisplay = new MenuItem( "Mek Display" );
         viewMekDisplay.addActionListener( this );
         viewMekDisplay.setActionCommand(AbstractPhaseDisplay.VIEW_MEK_DISPLAY);
+        viewMekDisplay.setShortcut(new MenuShortcut(KeyEvent.VK_D));
         menu.add( viewMekDisplay );
         viewMiniMap = new MenuItem( "Mini Map" );
         viewMiniMap.addActionListener( this );
         viewMiniMap.setActionCommand(AbstractPhaseDisplay.VIEW_MINI_MAP);
+        viewMiniMap.setShortcut(new MenuShortcut(KeyEvent.VK_M));
         menu.add( viewMiniMap );
         viewUnitOverview = new MenuItem( "Unit Overview" );
         viewUnitOverview.addActionListener( this );
         viewUnitOverview.setActionCommand(AbstractPhaseDisplay.VIEW_UNIT_OVERVIEW);
+        viewUnitOverview.setShortcut(new MenuShortcut(KeyEvent.VK_U));
         menu.add( viewUnitOverview );
         viewLOSSetting = new MenuItem( "LOS Setting" );
         viewLOSSetting.addActionListener( this );
         viewLOSSetting.setActionCommand(AbstractPhaseDisplay.VIEW_LOS_SETTING);
+        viewLOSSetting.setShortcut(new MenuShortcut(KeyEvent.VK_L));
         menu.add( viewLOSSetting );
         menu.addSeparator();
         viewTurnReport = new MenuItem( "Turn Report" );
@@ -337,6 +341,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         fireFire = new MenuItem( "Fire" );
         fireFire.addActionListener( this );
         fireFire.setActionCommand(FiringDisplay.FIRE_FIRE);
+        fireFire.setShortcut(new MenuShortcut(KeyEvent.VK_F));
         menu.add( fireFire );
         fireSkip = new MenuItem( "Skip" );
         fireSkip.addActionListener( this );
@@ -363,19 +368,22 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         fireMode = new MenuItem( "Mode" );
         fireMode.addActionListener( this );
         fireMode.setActionCommand(FiringDisplay.FIRE_MODE);
+        fireMode.setShortcut(new MenuShortcut(KeyEvent.VK_O));
         menu.add( fireMode );
 
-        // Create the Exclusive sub-menu.
-        submenu = new Menu( "Exclusive" );
-        menu.add( submenu );
+        menu.addSeparator();
+
         fireFindClub = new MenuItem( "Find Club" );
         fireFindClub.addActionListener( this );
         fireFindClub.setActionCommand(FiringDisplay.FIRE_FIND_CLUB);
-        submenu.add( fireFindClub );
+        menu.add( fireFindClub );
+        
         fireSpot = new MenuItem( "Spot" );
         fireSpot.addActionListener( this );
         fireSpot.setActionCommand(FiringDisplay.FIRE_SPOT);
-        submenu.add( fireSpot );
+        menu.add( fireSpot );
+
+        menu.addSeparator();
 
         fireCancel = new MenuItem( "Cancel" );
         fireCancel.addActionListener( this );

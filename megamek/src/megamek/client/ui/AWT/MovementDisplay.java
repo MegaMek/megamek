@@ -43,14 +43,13 @@ public class MovementDisplay
     private Button            butCharge;
     private Button            butDfa;
 
-    // Hentai - for unjamming RAC (sets to Walk only)
     private Button            butRAC;
     private Button            butFlee;
     private Button            butEject;
 
     private Button            butLoad;
     private Button            butUnload;
-    private Button            butReport;
+    private Button            butSpace;
 
     private Button            butClear;
 
@@ -137,7 +136,7 @@ public class MovementDisplay
         butEject.addActionListener(this);
         butEject.setEnabled(false);
 
-        butRAC = new Button("Unjam");
+        butRAC = new Button("Unjam RAC");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
 
@@ -145,7 +144,7 @@ public class MovementDisplay
         butMore.addActionListener(this);
         butMore.setEnabled(false);
 
-        butNext = new Button(" Next Unit ");
+        butNext = new Button("Next Unit");
         butNext.addActionListener(this);
         butNext.setEnabled(false);
 
@@ -161,9 +160,8 @@ public class MovementDisplay
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
         
-        butReport = new Button("Report..");
-        butReport.addActionListener(this);
-        butReport.setEnabled(true);
+        butSpace = new Button(".");
+        butSpace.setEnabled(false);
 
         // layout button grid
         panButtons = new Panel();
@@ -206,32 +204,32 @@ public class MovementDisplay
 
         switch (buttonLayout) {
         case 0 :
+            panButtons.add(butNext);
             panButtons.add(butWalk);
             panButtons.add(butJump);
             panButtons.add(butBackup);
-            panButtons.add(butNext);
             panButtons.add(butTurn);
-            panButtons.add(butReport);
+            panButtons.add(butUp);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 1 :
-            panButtons.add(butUp);
+            panButtons.add(butNext);
             panButtons.add(butCharge);
             panButtons.add(butDfa);
-            panButtons.add(butNext);
             panButtons.add(butDown);
-            panButtons.add(butClear);
+            panButtons.add(butFlee);
+            panButtons.add(butEject);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
         case 2:
-            panButtons.add(butFlee);
-            panButtons.add(butLoad);
-            panButtons.add(butRAC);
             panButtons.add(butNext);
-            panButtons.add(butEject);
+            panButtons.add(butLoad);
             panButtons.add(butUnload);
+            panButtons.add(butRAC);
+            panButtons.add(butClear);
+            panButtons.add(butSpace);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -1025,9 +1023,6 @@ public class MovementDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-        } else if (ev.getSource() == butReport) {
-            new MiniReportDisplay(client.frame, client.eotr).show();
-            return;
         } else if (ev.getSource() == butRAC) {
             if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
                 //clearAllMoves();

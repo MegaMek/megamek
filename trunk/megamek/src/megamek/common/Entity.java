@@ -3807,30 +3807,38 @@ public abstract class Entity
             throw new IllegalStateException
                 ( "game not set; possible serialization error" );
         }
+        // N.B. 17 / 2 = 8, but the middle of 1..17 is 9, so we
+        //      add a bit (because 17 % 2 == 1 and 16 % 2 == 0).
         switch (offBoardDirection) {
         case Entity.NONE:
             break;
         case Entity.NORTH:
-            setPosition( new Coords( game.board.width / 2,
+            setPosition( new Coords( game.board.width / 2
+                                     + game.board.width % 2,
                                      -getOffBoardDistance() ) );
             setFacing(3);
             setDeployed( true );
             break;
         case Entity.SOUTH:
-            setPosition( new Coords( game.board.width / 2,
-                                     game.board.height + getOffBoardDistance() ) );
+            setPosition( new Coords( game.board.width / 2
+                                     + game.board.width % 2,
+                                     game.board.height
+                                     + getOffBoardDistance() ) );
             setFacing(0);
             setDeployed( true );
             break;
         case Entity.EAST:
-            setPosition( new Coords( game.board.width + getOffBoardDistance(),
-                                     game.board.height / 2 ) );
+            setPosition( new Coords( game.board.width
+                                     + getOffBoardDistance(),
+                                     game.board.height / 2
+                                     + game.board.height % 2 ) );
             setFacing(5);
             setDeployed( true );
             break;
         case Entity.WEST:
             setPosition( new Coords( -getOffBoardDistance(),
-                                     game.board.height / 2 ) );
+                                     game.board.height / 2
+                                     + game.board.height % 2 ) );
             setFacing(1);
             setDeployed( true );
             break;

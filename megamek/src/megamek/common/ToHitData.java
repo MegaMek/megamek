@@ -31,7 +31,7 @@ public class ToHitData
     public final static int IMPOSSIBLE      = Integer.MAX_VALUE;
     
     private int             value;
-     private StringBuffer    desc;
+    private StringBuffer    desc;
     private int             hitTable;
     private int             sideTable;
     

@@ -661,11 +661,11 @@ public class Mech
                          int tr, int arm, int leg) {
         armor[LOC_HEAD] = head;
         armor[LOC_CT] = ct;
-//        armor[LOC_CTR] = ctr;
+        rearArmor[LOC_CT] = ctr;
         armor[LOC_RT] = t;
         armor[LOC_LT] = t;
-//        armor[LOC_RTR] = tr;
-//        armor[LOC_LTR] = tr;
+        rearArmor[LOC_RT] = tr;
+        rearArmor[LOC_LT] = tr;
         armor[LOC_RARM] = arm;
         armor[LOC_LARM] = arm;
         armor[LOC_RLEG] = leg;
@@ -762,11 +762,11 @@ public class Mech
     int maxumumHeatRear = 0;
     for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
       MountedWeapon weapon = (MountedWeapon)i.nextElement();
-//      if (isRearLocation(weapon.getLocation())) {
-//        maxumumHeatRear += weapon.getType().getHeat();
-//      } else {
+      if (weapon.isRearMounted()) {
+        maxumumHeatRear += weapon.getType().getHeat();
+      } else {
         maxumumHeatFront += weapon.getType().getHeat();
-//      }
+      }
     }
     int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
     if (getJumpMP() > 0) {
@@ -796,11 +796,11 @@ public class Mech
     int weaponsBVRear = 0;
     for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
       MountedWeapon weapon = (MountedWeapon)i.nextElement();
-//      if (isRearLocation(weapon.getLocation())) {
-//        weaponsBVRear += weapon.getType().getBV();
-//      } else {
+      if (weapon.isRearMounted()) {
+        weaponsBVRear += weapon.getType().getBV();
+      } else {
         weaponsBVFront += weapon.getType().getBV();
-//      }
+      }
     }
     if (weaponsBVFront > weaponsBVRear) {
       weaponBV += weaponsBVFront;

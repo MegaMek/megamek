@@ -94,10 +94,12 @@ v 0.25
 
 VERSION HISTORY:
 ----------------
-v next
+v next 
 + 532083: transfer damage no longer counts double towards damage this phase
 + prone mechs can make facing changes at the normal cost
 + 531143: prone mechs can't make torso twists
++ impossible shots now show reason instead of 2147483647
++ 532908: fire button no longer enabled when it shouldn't be, AFAIK
 
 v 0.24.2 (03-20-02, 10pm)
 + .mep files load weapons with no space between "(R)" and the weapon name now

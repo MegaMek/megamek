@@ -300,6 +300,9 @@ public class FiringDisplay
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             client.bv.redrawEntity(ce());
+            // update target data in weapon display
+            butFire.setEnabled(false);
+            updateTarget();
         }
     }
     
@@ -480,12 +483,6 @@ public class FiringDisplay
             butFire.setEnabled(false);
             // update target data in weapon display
             updateTarget();
-            // also, allow firing only if weapon is ready
-            if (ce() != null) {
-                butFire.setEnabled(ce().getWeapon(client.mechD.wPan.weaponList.getSelectedIndex()).isReady());
-            } else {
-                butFire.setEnabled(false);
-            }
         }
     }
 }

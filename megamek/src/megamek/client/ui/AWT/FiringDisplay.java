@@ -311,6 +311,9 @@ public class FiringDisplay
      */
     private void beginMyTurn() {
         target = null;
+
+        selectEntity(client.getFirstEntityNum());
+
         setNextEnabled(true);
         butDone.setEnabled(true);
         butMore.setEnabled(true);
@@ -319,10 +322,8 @@ public class FiringDisplay
         client.game.board.highlight(null);
 
         if (!client.bv.isMovingUnits()) {
-	        client.setDisplayVisible(true);
-	    }
-
-        selectEntity(client.getFirstEntityNum());
+            client.setDisplayVisible(true);
+        }
     }
     
     /**

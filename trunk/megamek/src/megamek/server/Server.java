@@ -2343,6 +2343,10 @@ public class Server
                 // is the internal structure gone?
                 if (te.getInternal(hit) <= 0) {
                     destroyLocation(te, hit.getLocation());
+                    if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
+                        pilotRolls.addElement(new PilotingRollData(te.getId(),
+                        PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
+                    }
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
@@ -2397,15 +2401,20 @@ public class Server
                 hits = 2;
                 desc += " 2 locations.";
         } else if (roll == 12) {
-            if (loc == Mech.LOC_HEAD ||
-                    loc == Mech.LOC_RARM || loc == Mech.LOC_LARM ||
-                    loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
+            if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
                 desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
                 destroyLocation(en, loc);
-                if (loc == Mech.LOC_HEAD) {
-                    en.crew.setDead(true);
-                    desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
-                }
+                pilotRolls.addElement(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
+                return desc;
+            } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
+                desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                destroyLocation(en, loc);
+                return desc;
+            } else if (loc == Mech.LOC_HEAD) {
+                desc += "<<<HEAD BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                destroyLocation(en, loc);
+                en.crew.setDead(true);
+                desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                 return desc;
             }
             hits = 3;
@@ -2515,13 +2524,6 @@ public class Server
         if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
-        
-        // also, if that was your leg, you fall
-        if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
-            pilotRolls.addElement(new PilotingRollData(te.getId(),
-            PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
-        }
-
     }
 
     /**

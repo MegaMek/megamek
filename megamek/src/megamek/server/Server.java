@@ -7984,24 +7984,29 @@ implements Runnable, ConnectionHandler {
                                 switch (tweapRoll) {
                                 case 1:
                                 case 2:
-                                case 3:
                                     if ( ((Protomech)en).bHasTorsoAGun ) {
                                         Mounted weapon = en.getEquipment
                                             ( ((Protomech)en).TorsoAGunNum );
                                         weapon.setHit(true);
+                                        desc.append("\n Torso A weapon destroyed"); 
                                     }
                                     break;
+                                case 3:
                                 case 4:
-                                case 5:
-                                case 6:
                                     if ( ((Protomech)en).bHasTorsoBGun ) {
                                         Mounted weapon = en.getEquipment
                                             ( ((Protomech)en).TorsoBGunNum);
                                         weapon.setHit(true);
-                                                    }
+                                        desc.append("\n Torso B weapon destroyed"); 
+                                    }
                                     break;
                                 }
                             }
+                            if ( ((Protomech)en).shaded(loc, numHit) ) {
+                                desc.append( "\n" )
+                                    .append( damageCrew(en, 1) );
+                            }
+
 
                         } // End switch( cs.getType() )
 

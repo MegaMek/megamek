@@ -1523,7 +1523,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing2Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/2 Ammo";
+        ammo.name = "Armor-Piercing AC/2 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/2";
         ammo.mepName = "IS Armor Piercing Ammo AC/2";
         ammo.mtfName = "ISAC2 Armor Piercing Ammo";
@@ -1580,7 +1580,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/5 Ammo";
+        ammo.name = "Armor-Piercing AC/5 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/5";
         ammo.mepName = "IS Armor Piercing Ammo AC/5";
         ammo.mtfName = "ISAC5 Armor Piercing Ammo";
@@ -1637,7 +1637,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/10 Ammo";
+        ammo.name = "Armor-Piercing AC/10 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/10";
         ammo.mepName = "IS Armor Piercing Ammo AC/10";
         ammo.mtfName = "ISAC10 Armor Piercing Ammo";
@@ -1694,7 +1694,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/20 Ammo";
+        ammo.name = "Armor-Piercing AC/20 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/20";
         ammo.mepName = "IS Armor Piercing Ammo AC/20";
         ammo.mtfName = "ISAC20 Armor Piercing Ammo";

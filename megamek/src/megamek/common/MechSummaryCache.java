@@ -3,6 +3,7 @@ package megamek.common;
 import java.io.*;
 import java.util.zip.*;
 import com.sun.java.util.collections.*;
+import java.awt.*;
 
 /*
  * Setting this up as static so a client and server running in the same
@@ -15,8 +16,13 @@ public class MechSummaryCache
     
     public static synchronized MechSummaryCache getInstance()
     {
+        return getInstance(null);
+    }
+
+    public static synchronized MechSummaryCache getInstance(Dialog wD)
+    {
         if (m_instance == null) {
-            m_instance = new MechSummaryCache();
+            m_instance = new MechSummaryCache(wD);
         }
         return m_instance;
     }
@@ -26,9 +32,17 @@ public class MechSummaryCache
     private static final char SEPARATOR = '|';
     private static final File ROOT = new File(Settings.mechDirectory);
     private static final File CACHE = new File(ROOT, "mechcache.txt");
+
+    private Dialog waitDialog;
+    private int loadedFromCacheCount = 0;
+    private int loadedFromFilesCount = 0;
+    private int loadedFromZipsCount = 0;
     
-    private MechSummaryCache()
+    private MechSummaryCache(Dialog wD)
     {
+        if (wD != null) {
+            this.waitDialog = wD;
+        }
         m_nameMap = new Hashtable();
         loadMechData();
     }
@@ -95,6 +109,9 @@ public class MechSummaryCache
                     if (ms.getSourceFile().exists()) {
                         vMechs.addElement(ms);
                         sKnownFiles.add(ms.getSourceFile().toString());
+                        if (waitDialog != null) {
+                            ((Label)waitDialog.getComponent(3)).setText(String.valueOf(++loadedFromCacheCount));
+                        }
                     }
                 }
             }
@@ -219,6 +236,9 @@ public class MechSummaryCache
                 vMechs.addElement(ms);
                 sKnownFiles.add(f.toString());
                 bNeedsUpdate = true;
+                if (waitDialog != null) {
+                    ((Label)waitDialog.getComponent(5)).setText(String.valueOf(++loadedFromFilesCount));
+                }
             } catch (EntityLoadingException ex) {
                 System.err.println("couldn't load file " + f.getName() + " : " + ex.getMessage());
                 continue;
@@ -271,6 +291,9 @@ public class MechSummaryCache
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
                 bNeedsUpdate = true;
+                if (waitDialog != null) {
+                    ((Label)waitDialog.getComponent(7)).setText(String.valueOf(++loadedFromZipsCount));
+                }
             } catch (Exception ex) {
                 System.err.println("couldn't load file " + zEntry.getName() + " : " + ex.getMessage());
                 continue;

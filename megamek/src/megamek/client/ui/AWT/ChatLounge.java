@@ -734,7 +734,8 @@ public class ChatLounge extends AbstractPhaseDisplay
     /**
      * Pop up the dialog to load a mech
      */
-    public void loadMech() {
+    public void loadMech() throws Exception {
+        client.mechSelectorDialogThread.join();
         client.getMechSelectorDialog().show();
     }
   
@@ -804,7 +805,11 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.sendDone(done);
             refreshDoneButton(done);
         } else if (ev.getSource() == butLoad) {
-            loadMech();
+            try {
+                loadMech();
+            } catch (Exception e) {
+                System.out.println("Thread.join() exception in ChatLounge.loadMech()");
+            }
         } else if (ev.getSource() == butCustom ||  ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {

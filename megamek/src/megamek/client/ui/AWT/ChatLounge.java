@@ -16,27 +16,26 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 import java.util.Enumeration;
-import java.io.*;
-import megamek.client.util.widget.*;
+import java.util.Vector;
 
+import megamek.client.util.widget.BufferedPanel;
+import megamek.client.util.widget.ImageButton;
 import megamek.common.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-import megamek.common.util.StringUtil;
 
-public class ChatLounge extends AbstractPhaseDisplay
-    implements ActionListener, ItemListener, BoardListener,
-               GameListener, DoneButtoned, Distractable
-{
+public class ChatLounge
+    extends AbstractPhaseDisplay
+    implements ActionListener, ItemListener, BoardListener, GameListener, DoneButtoned, Distractable {
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    public static final String START_LOCATION_NAMES[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
-    
+    public static final String START_LOCATION_NAMES[] = { "Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W" };
+
     // parent Client
     private Client client;
+    private ClientGUI clientgui;
 
     // The camo selection dialog.
     private CamoChoiceDialog camoDialog;
@@ -46,12 +45,12 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Label labPlayerInfo;
     private List lisPlayerInfo;
 
-    private Label labTeam;            
+    private Label labTeam;
     private Choice choTeam;
-    
+
     private Label labCamo;
     private ImageButton butCamo;
-    
+
     private Panel panMinefield;
     private Label labMinefield;
     private List lisMinefield;
@@ -72,7 +71,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Panel panBoardSettings;
 
     private Button butLoadList;
-//      private Label  lblPlaceholder;
+    //      private Label  lblPlaceholder;
     private Button butSaveList;
     private Button butDeleteAll;
 
@@ -83,36 +82,37 @@ public class ChatLounge extends AbstractPhaseDisplay
     private List lisEntities;
     private int[] entityCorrespondance;
     private Panel panEntities;
-    
+
     private Label labStarts;
     private List lisStarts;
     private Panel panStarts;
     private Button butChangeStart;
-      
+
     private Label labBVs;
     private List lisBVs;
     private CheckboxGroup bvCbg;
     private Checkbox chkBV;
     private Checkbox chkTons;
     private Panel panBVs;
-      
+
     private Panel panMain;
-    
+
     private Panel panUnits;
     private Panel panTop;
-        
+
     private Label labStatus;
     private Button butDone;
-    
+
     /**
      * Creates a new chat lounge for the client.
      */
-    public ChatLounge(Client client) {
+    public ChatLounge(ClientGUI clientgui) {
         super();
-        this.client = client;
+        this.client = clientgui.getClient();
+        this.clientgui = clientgui;
 
         // Create a new camo selection dialog.
-        camoDialog = new CamoChoiceDialog( client.getFrame() );
+        camoDialog = new CamoChoiceDialog(clientgui.getFrame());
 
         client.addGameListener(this);
         client.game.board.addBoardListener(this);
@@ -121,67 +121,67 @@ public class ChatLounge extends AbstractPhaseDisplay
         butOptions.addActionListener(this);
 
         butDone = new Button("I'm Done");
-        Font font = new Font( "sanserif", Font.BOLD, 12 );
-        if ( null == font ) {
-            System.err.println
-                ( "Couldn't find the new font for the 'Done' button." );
+        Font font = new Font("sanserif", Font.BOLD, 12);
+        if (null == font) {
+            System.err.println("Couldn't find the new font for the 'Done' button.");
         } else {
-            butDone.setFont( font );
+            butDone.setFont(font);
         }
         butDone.setActionCommand("ready");
         butDone.addActionListener(this);
 
         setupPlayerInfo();
         setupMinefield();
-        
+
         setupBoardSettings();
         refreshGameSettings();
-            
+
         setupEntities();
         refreshEntities();
-            
+
         setupBVs();
         refreshBVs();
-        
+
         setupStarts();
         refreshStarts();
-        
+
         setupMainPanel();
-        
+
         labStatus = new Label("", Label.CENTER);
-                
+
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-                
+
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panMain, gridbag, c);
 
-//         c.weightx = 1.0;    c.weighty = 0.0;
-//         addBag(labStatus, gridbag, c);
+        //         c.weightx = 1.0;    c.weighty = 0.0;
+        //         addBag(labStatus, gridbag, c);
 
-//          c.gridwidth = 1;
-//          c.weightx = 1.0;    c.weighty = 0.0;
-//          addBag(client.cb.getComponent(), gridbag, c);
+        //          c.gridwidth = 1;
+        //          c.weightx = 1.0;    c.weighty = 0.0;
+        //          addBag(client.cb.getComponent(), gridbag, c);
 
-//          c.gridwidth = 1;
-//          c.anchor = GridBagConstraints.EAST;
-//          c.weightx = 0.0;    c.weighty = 0.0;
-//          c.ipady = 10;
-//          addBag(butDone, gridbag, c);
+        //          c.gridwidth = 1;
+        //          c.anchor = GridBagConstraints.EAST;
+        //          c.weightx = 0.0;    c.weighty = 0.0;
+        //          c.ipady = 10;
+        //          addBag(butDone, gridbag, c);
 
         validate();
     }
-    
+
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
-    
+
     /**
      * Sets up the player info (team, camo) panel
      */
@@ -189,172 +189,181 @@ public class ChatLounge extends AbstractPhaseDisplay
         Player player = client.getLocalPlayer();
 
         panPlayerInfo = new Panel();
-        
+
         labPlayerInfo = new Label("Player Setup");
-        
+
         lisPlayerInfo = new List(5);
-        
+
         labTeam = new Label("Team:", Label.RIGHT);
         labCamo = new Label("Camo:", Label.RIGHT);
-                
+
         choTeam = new Choice();
         choTeam.addItemListener(this);
         setupTeams();
 
         butCamo = new ImageButton();
-        butCamo.setLabel( "No Camo" );
-        butCamo.setPreferredSize( 84, 72 );
-        butCamo.setActionCommand( "camo" );
-        butCamo.addActionListener( this );
-        camoDialog.addItemListener( new CamoChoiceListener
-                                    (camoDialog,
-                                     butCamo,
-                                     butOptions.getBackground(),
-                                     player.getId(),
-                                     client) );
+        butCamo.setLabel("No Camo");
+        butCamo.setPreferredSize(84, 72);
+        butCamo.setActionCommand("camo");
+        butCamo.addActionListener(this);
+        camoDialog.addItemListener(
+            new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), player.getId(), client));
         refreshCamos();
 
         // If we have a camo pattern, use it.  Otherwise set a background.
         Image[] images = (Image[]) camoDialog.getSelectedObjects();
-        if ( null != images ) {
-            butCamo.setImage( images[0] );
+        if (null != images) {
+            butCamo.setImage(images[0]);
         } else {
-            butCamo.setBackground
-                ( new Color(Player.colorRGBs[player.getColorIndex()]) );
+            butCamo.setBackground(new Color(Player.colorRGBs[player.getColorIndex()]));
         }
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panPlayerInfo.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labPlayerInfo, c);
         panPlayerInfo.add(labPlayerInfo);
-        
+
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         gridbag.setConstraints(lisPlayerInfo, c);
         panPlayerInfo.add(lisPlayerInfo);
 
         c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(labTeam, c);
         panPlayerInfo.add(labTeam);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
 
         c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(labCamo, c);
         panPlayerInfo.add(labCamo);
-            
+
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(butCamo, c);
         panPlayerInfo.add(butCamo);
 
         refreshPlayerInfo();
     }
-  
-  
+
     /**
      * Sets up the minefield panel
      */
     private void setupMinefield() {
-		panMinefield = new Panel();
-		
-		labMinefield = new Label("Minefields");
-		
-		lisMinefield = new List(4);
-		
-		labConventional = new Label("Conventional:", Label.RIGHT);
-		labCommandDetonated = new Label("Command-detonated:", Label.RIGHT);
-		labVibrabomb = new Label("Vibrabomb:", Label.RIGHT);
+        panMinefield = new Panel();
 
-		fldConventional = new TextField(1);
-		fldCommandDetonated = new TextField(1);
-		fldVibrabomb = new TextField(1);
-		
-		butMinefield = new Button("Update");
-		butMinefield.addActionListener(this);
+        labMinefield = new Label("Minefields");
 
-		enableMinefields(client.game.getOptions().booleanOption("minefields"));
+        lisMinefield = new List(4);
 
-		// layout
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		panMinefield.setLayout(gridbag);
-		    
-		c.fill = GridBagConstraints.VERTICAL;
-		c.insets = new Insets(1, 1, 1, 1);
-		c.weightx = 1.0;    c.weighty = 0.0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		gridbag.setConstraints(labMinefield, c);
-		panMinefield.add(labMinefield);
-		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;    c.weighty = 1.0;
-		gridbag.setConstraints(lisMinefield, c);
-		panMinefield.add(lisMinefield);
-		
-		c.gridwidth = 1;
-		c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(labConventional, c);
-		panMinefield.add(labConventional);
-		    
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0;    c.weighty = 0.0;
-		gridbag.setConstraints(fldConventional, c);
-		panMinefield.add(fldConventional);
-		    
-		c.gridwidth = 1;
-		c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(labCommandDetonated, c);
-		panMinefield.add(labCommandDetonated);
-		    
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0;    c.weighty = 0.0;
-		gridbag.setConstraints(fldCommandDetonated, c);
-		panMinefield.add(fldCommandDetonated);
-		
-		c.gridwidth = 1;
-		c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(labVibrabomb, c);
-		panMinefield.add(labVibrabomb);
-		    
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 1.0;    c.weighty = 0.0;
-		gridbag.setConstraints(fldVibrabomb, c);
-		panMinefield.add(fldVibrabomb);
-		
-		c.gridwidth = GridBagConstraints.REMAINDER;
+        labConventional = new Label("Conventional:", Label.RIGHT);
+        labCommandDetonated = new Label("Command-detonated:", Label.RIGHT);
+        labVibrabomb = new Label("Vibrabomb:", Label.RIGHT);
+
+        fldConventional = new TextField(1);
+        fldCommandDetonated = new TextField(1);
+        fldVibrabomb = new TextField(1);
+
+        butMinefield = new Button("Update");
+        butMinefield.addActionListener(this);
+
+        enableMinefields(client.game.getOptions().booleanOption("minefields"));
+
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panMinefield.setLayout(gridbag);
+
+        c.fill = GridBagConstraints.VERTICAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMinefield, c);
+        panMinefield.add(labMinefield);
+
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        gridbag.setConstraints(lisMinefield, c);
+        panMinefield.add(lisMinefield);
+
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labConventional, c);
+        panMinefield.add(labConventional);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(fldConventional, c);
+        panMinefield.add(fldConventional);
+
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labCommandDetonated, c);
+        panMinefield.add(labCommandDetonated);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(fldCommandDetonated, c);
+        panMinefield.add(fldCommandDetonated);
+
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labVibrabomb, c);
+        panMinefield.add(labVibrabomb);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(fldVibrabomb, c);
+        panMinefield.add(fldVibrabomb);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
-        c.weightx = 0.0;    c.weighty = 0.0;
-		gridbag.setConstraints(butMinefield, c);
-		panMinefield.add(butMinefield);
-		
-		refreshMinefield();
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butMinefield, c);
+        panMinefield.add(butMinefield);
+
+        refreshMinefield();
     }
 
-	public void enableMinefields(boolean enable) {
-		fldConventional.setEnabled(enable);
-		labConventional.setEnabled(enable);
+    public void enableMinefields(boolean enable) {
+        fldConventional.setEnabled(enable);
+        labConventional.setEnabled(enable);
 
-		fldCommandDetonated.setEnabled(false);
-		labCommandDetonated.setEnabled(false);
-		
-		fldVibrabomb.setEnabled(enable);
-		labVibrabomb.setEnabled(enable);
-		
-		butMinefield.setEnabled(enable);
-	}
+        fldCommandDetonated.setEnabled(false);
+        labCommandDetonated.setEnabled(false);
+
+        fldVibrabomb.setEnabled(enable);
+        labVibrabomb.setEnabled(enable);
+
+        butMinefield.setEnabled(enable);
+    }
 
     /**
      * Sets up the board settings panel
@@ -362,112 +371,128 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void setupBoardSettings() {
         labBoardSize = new Label("Board Size: # x # hexes", Label.CENTER);
         labMapSize = new Label("Map Size: # x # boards", Label.CENTER);
-        
+
         lisBoardsSelected = new List(5);
         lisBoardsSelected.addActionListener(this);
-            
+
         butChangeBoard = new Button("Edit / View Map...");
         butChangeBoard.setActionCommand("change_board");
         butChangeBoard.addActionListener(this);
-            
+
         panBoardSettings = new Panel();
-            
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panBoardSettings.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labBoardSize, c);
         panBoardSettings.add(labBoardSize);
-            
+
         gridbag.setConstraints(labMapSize, c);
         panBoardSettings.add(labMapSize);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         gridbag.setConstraints(lisBoardsSelected, c);
         panBoardSettings.add(lisBoardsSelected);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
+
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(butChangeBoard, c);
         panBoardSettings.add(butChangeBoard);
-     
+
         refreshBoardSettings();
     }
-    
+
     private void refreshBoardSettings() {
-        labBoardSize.setText("Board Size: " + client.getMapSettings().getBoardWidth() + " x " + client.getMapSettings().getBoardHeight() + " hexes");
-        labMapSize.setText("Map Size: " + client.getMapSettings().getMapWidth() + " x " + client.getMapSettings().getMapHeight() + " boards");
+        labBoardSize.setText(
+            "Board Size: "
+                + client.getMapSettings().getBoardWidth()
+                + " x "
+                + client.getMapSettings().getBoardHeight()
+                + " hexes");
+        labMapSize.setText(
+            "Map Size: "
+                + client.getMapSettings().getMapWidth()
+                + " x "
+                + client.getMapSettings().getMapHeight()
+                + " boards");
         lisBoardsSelected.removeAll();
         int index = 0;
         for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String)i.nextElement());
+            lisBoardsSelected.add((index++) + ": " + (String) i.nextElement());
         }
     }
-    
+
     private void setupMainPanel() {
-        
+
         panUnits = new Panel(new BorderLayout());
         panUnits.add(panEntities, BorderLayout.CENTER);
         panUnits.add(panBVs, BorderLayout.EAST);
-        
+
         setupTop();
-            
+
         panMain = new Panel();
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panMain.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
-            
+
         gridbag.setConstraints(panUnits, c);
         panMain.add(panUnits);
 
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         gridbag.setConstraints(panTop, c);
         panMain.add(panTop);
-            
+
     }
-    
+
     /**
      * Sets up the top panel with the player info, map info and starting
      * positions
      */
     private void setupTop() {
         panTop = new Panel(new BorderLayout());
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panTop.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(6, 6, 1, 6);
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(panBoardSettings, c);
         panTop.add(panBoardSettings);
-            
+
         gridbag.setConstraints(panStarts, c);
         panTop.add(panStarts);
-            
+
         gridbag.setConstraints(panPlayerInfo, c);
         panTop.add(panPlayerInfo);
 
         gridbag.setConstraints(panMinefield, c);
         panTop.add(panMinefield);
     }
-  
+
     /**
      * Sets up the entities panel
      */
@@ -480,7 +505,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butLoadList.setActionCommand("load_list");
         butLoadList.addActionListener(this);
 
-//          lblPlaceholder = new Label();
+        //          lblPlaceholder = new Label();
 
         butSaveList = new Button("Save Unit List...");
         butSaveList.setActionCommand("save_list");
@@ -488,12 +513,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         butSaveList.setEnabled(false);
 
         butLoad = new Button("Add A Unit...");
-        Font font = new Font( "sanserif", Font.BOLD, 18 );
-        if ( null == font ) {
-            System.err.println
-                ( "Couldn't find the new font for the 'Add a Unit' button." );
+        Font font = new Font("sanserif", Font.BOLD, 18);
+        if (null == font) {
+            System.err.println("Couldn't find the new font for the 'Add a Unit' button.");
         } else {
-            butLoad.setFont( font );
+            butLoad.setFont(font);
         }
         butLoad.setActionCommand("load_mech");
         butLoad.addActionListener(this);
@@ -502,72 +526,75 @@ public class ChatLounge extends AbstractPhaseDisplay
         butCustom.setActionCommand("custom_mech");
         butCustom.addActionListener(this);
         butCustom.setEnabled(false);
-            
+
         butMechReadout = new Button("View Unit...");
         butMechReadout.setActionCommand("Mech_readout");
         butMechReadout.addActionListener(this);
         butMechReadout.setEnabled(false);
-            
+
         butDelete = new Button("Delete Unit");
         butDelete.setActionCommand("delete_mech");
         butDelete.addActionListener(this);
         butDelete.setEnabled(false);
-            
+
         butDeleteAll = new Button("Delete All");
         butDeleteAll.setActionCommand("delete_all");
         butDeleteAll.addActionListener(this);
         butDeleteAll.setEnabled(false);
 
         panEntities = new Panel();
-            
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panEntities.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(lisEntities, c);
         panEntities.add(lisEntities);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
+
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 2;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
-            
+
         c.gridheight = 1;
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
-            
+
         gridbag.setConstraints(butMechReadout, c);
         panEntities.add(butMechReadout);
-            
-        c.weightx = 1.0;    c.weighty = 0.0;
+
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
 
         c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
-        gridbag.setConstraints( butLoadList, c );
-        panEntities.add( butLoadList );
+        gridbag.setConstraints(butLoadList, c);
+        panEntities.add(butLoadList);
 
-//          c.gridwidth = 1;
-//          gridbag.setConstraints( lblPlaceholder, c );
-//          panEntities.add( lblPlaceholder );
-
-        c.gridwidth = 1;
-        gridbag.setConstraints( butSaveList, c );
-        panEntities.add( butSaveList );
+        //          c.gridwidth = 1;
+        //          gridbag.setConstraints( lblPlaceholder, c );
+        //          panEntities.add( lblPlaceholder );
 
         c.gridwidth = 1;
-        gridbag.setConstraints( butDeleteAll, c );
-        panEntities.add( butDeleteAll );
+        gridbag.setConstraints(butSaveList, c);
+        panEntities.add(butSaveList);
+
+        c.gridwidth = 1;
+        gridbag.setConstraints(butDeleteAll, c);
+        panEntities.add(butDeleteAll);
     }
-    
+
     /**
      * Sets up the battle values panel
      */
@@ -575,36 +602,39 @@ public class ChatLounge extends AbstractPhaseDisplay
         labBVs = new Label("Total Battle Values", Label.CENTER);
 
         lisBVs = new List(5);
-            
+
         panBVs = new Panel();
-            
+
         bvCbg = new CheckboxGroup();
         chkBV = new Checkbox("BV", bvCbg, true);
         chkBV.addItemListener(this);
         chkTons = new Checkbox("Tons", bvCbg, false);
         chkTons.addItemListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panBVs.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labBVs, c);
         panBVs.add(labBVs);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         gridbag.setConstraints(lisBVs, c);
         panBVs.add(lisBVs);
-        
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(lisBVs, c);
         panBVs.add(chkBV);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(lisBVs, c);
         panBVs.add(chkTons);
@@ -615,31 +645,34 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void setupStarts() {
         labStarts = new Label("Starting Positions", Label.CENTER);
-        
+
         lisStarts = new List(5);
         lisStarts.addActionListener(this);
 
         butChangeStart = new Button("Change Start...");
         butChangeStart.addActionListener(this);
-        
+
         panStarts = new Panel();
-            
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panStarts.setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labStarts, c);
         panStarts.add(labStarts);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         gridbag.setConstraints(lisStarts, c);
         panStarts.add(lisStarts);
-        
-        c.weightx = 1.0;    c.weighty = 0.0;
+
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(butChangeStart, c);
         panStarts.add(butChangeStart);
     }
@@ -651,7 +684,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshTeams();
         refreshDoneButton();
     }
-  
+
     /**
      * Refreshes the entities from the client
      */
@@ -663,11 +696,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity)i.nextElement();
+            Entity entity = (Entity) i.nextElement();
 
             // Remember if the local player has units.
-            if ( !localUnits &&
-                 entity.getOwner().equals(client.getLocalPlayer()) ) {
+            if (!localUnits && entity.getOwner().equals(client.getLocalPlayer())) {
                 localUnits = true;
             }
 
@@ -676,37 +708,34 @@ public class ChatLounge extends AbstractPhaseDisplay
             strTreeView = "";
 
             // Set the tree strings based on C3 settings for the unit.
-            if(entity.hasC3i()) {
-                if(entity.calculateFreeC3Nodes() == 5) strTreeSet = "**";
+            if (entity.hasC3i()) {
+                if (entity.calculateFreeC3Nodes() == 5)
+                    strTreeSet = "**";
                 strTreeView = " (" + entity.getC3NetId() + ")";
-            }
-            else if(entity.hasC3()) {
-                if(entity.getC3Master() == null) {
-                    if(entity.hasC3S())
+            } else if (entity.hasC3()) {
+                if (entity.getC3Master() == null) {
+                    if (entity.hasC3S())
                         strTreeSet = "***";
                     else
                         strTreeSet = "*";
-                }
-                else if(!entity.C3MasterIs(entity)) {
+                } else if (!entity.C3MasterIs(entity)) {
                     strTreeSet = ">";
-                    if(entity.getC3Master().getC3Master() != null &&
-                       !entity.getC3Master().C3MasterIs(entity.getC3Master()))
+                    if (entity.getC3Master().getC3Master() != null
+                        && !entity.getC3Master().C3MasterIs(entity.getC3Master()))
                         strTreeSet = ">>";
-                    strTreeView = " -> " +
-                        entity.getC3Master().getDisplayName();
+                    strTreeView = " -> " + entity.getC3Master().getDisplayName();
                 }
             }
 
-            if ( !client.game.getOptions().booleanOption("pilot_advantages") ) {
-              entity.getCrew().clearAdvantages();
+            if (!client.game.getOptions().booleanOption("pilot_advantages")) {
+                entity.getCrew().clearAdvantages();
             }
-            
+
             int crewAdvCount = entity.getCrew().countAdvantages();
-            
+
             // Handle the "Blind Drop" option.
-            if ( !entity.getOwner().equals(client.getLocalPlayer()) &&
-                 client.game.getOptions().booleanOption("blind_drop") )
-            {
+            if (!entity.getOwner().equals(client.getLocalPlayer())
+                && client.game.getOptions().booleanOption("blind_drop")) {
                 String unitClass = "";
                 if (entity instanceof Infantry) {
                     unitClass = "Infantry";
@@ -714,68 +743,88 @@ public class ChatLounge extends AbstractPhaseDisplay
                     unitClass = "Protomech";
                 } else {
                     int weight = entity.getWeightClass();
-                    switch (weight)
-                    {
-                        case Entity.WEIGHT_LIGHT  : unitClass= "Light";break;
-                        case Entity.WEIGHT_MEDIUM : unitClass= "Medium";break;
-                        case Entity.WEIGHT_HEAVY  : unitClass= "Heavy";break;
-                        case Entity.WEIGHT_ASSAULT: unitClass= "Assault";break;
+                    switch (weight) {
+                        case Entity.WEIGHT_LIGHT :
+                            unitClass = "Light";
+                            break;
+                        case Entity.WEIGHT_MEDIUM :
+                            unitClass = "Medium";
+                            break;
+                        case Entity.WEIGHT_HEAVY :
+                            unitClass = "Heavy";
+                            break;
+                        case Entity.WEIGHT_ASSAULT :
+                            unitClass = "Assault";
+                            break;
                     }
                     if (entity instanceof Tank) {
                         unitClass += " Vehicle";
                     }
                 }
-                lisEntities.add(entity.getOwner().getName() 
-                + " (" + entity.getCrew().getGunnery()
-                + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
-                + " Class: " + unitClass
-                + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+                lisEntities.add(
+                    entity.getOwner().getName()
+                        + " ("
+                        + entity.getCrew().getGunnery()
+                        + "/"
+                        + entity.getCrew().getPiloting()
+                        + " pilot"
+                        + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "")
+                        + ")"
+                        + " Class: "
+                        + unitClass
+                        + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
+            } else {
+                lisEntities.add(
+                    strTreeSet
+                        + entity.getDisplayName()
+                        + " ("
+                        + entity.getCrew().getGunnery()
+                        + "/"
+                        + entity.getCrew().getPiloting()
+                        + " pilot"
+                        + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "")
+                        + ")"
+                        + " BV="
+                        + entity.calculateBattleValue()
+                        + strTreeView
+                        + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
             }
-            else
-            {
-                lisEntities.add(strTreeSet + entity.getDisplayName()
-                + " (" + entity.getCrew().getGunnery()
-                + "/" + entity.getCrew().getPiloting() + " pilot" + (crewAdvCount > 0 ? " <" + crewAdvCount + " advs>" : "") + ")"
-                + " BV=" + entity.calculateBattleValue() + strTreeView
-                + ((entity.getDeployRound() > 0) ? " - Deploy after round " + entity.getDeployRound() : ""));
-            }
-            
-            
+
             entityCorrespondance[listIndex++] = entity.getId();
         }
 
         // Enable the "Save Unit List..." and "Delete All"
         // buttons if the local player has units.
-        butSaveList.setEnabled( localUnits );
-        butDeleteAll.setEnabled( localUnits );
+        butSaveList.setEnabled(localUnits);
+        butDeleteAll.setEnabled(localUnits);
 
         // Disable the "must select" buttons.
         butCustom.setEnabled(false);
         butMechReadout.setEnabled(false);
         butDelete.setEnabled(false);
     }
-    
+
     /**
      * Refreshes the player info
      */
     private void refreshPlayerInfo() {
         lisPlayerInfo.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if(player != null) {
-              StringBuffer pi = new StringBuffer();
-              pi.append(player.getName()).append(" : ");
-              pi.append(Player.teamNames[player.getTeam()]);
+            final Player player = (Player) i.nextElement();
+            if (player != null) {
+                StringBuffer pi = new StringBuffer();
+                pi.append(player.getName()).append(" : ");
+                pi.append(Player.teamNames[player.getTeam()]);
 
-              String plyrCamo = player.getCamoFileName();
-                
-              if ( (null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo) ) {
-                pi.append(", ").append(Player.colorNames[player.getColorIndex()]);
-              } else {
-                pi.append(", ").append(player.getCamoFileName());
-              }
+                String plyrCamo = player.getCamoFileName();
 
-              lisPlayerInfo.add(pi.toString());
+                if ((null == plyrCamo) || Player.NO_CAMO.equals(plyrCamo)) {
+                    pi.append(", ").append(Player.colorNames[player.getColorIndex()]);
+                } else {
+                    pi.append(", ").append(player.getCamoFileName());
+                }
+
+                lisPlayerInfo.add(pi.toString());
             }
         }
     }
@@ -786,20 +835,20 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshMinefield() {
         lisMinefield.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if(player != null) {
-              StringBuffer pi = new StringBuffer();
-              pi.append(player.getName()).append(" : ");
-              pi.append(player.getNbrMFConventional()).append("/");
-              pi.append(player.getNbrMFCommand()).append("/");
-              pi.append(player.getNbrMFVibra());
+            final Player player = (Player) i.nextElement();
+            if (player != null) {
+                StringBuffer pi = new StringBuffer();
+                pi.append(player.getName()).append(" : ");
+                pi.append(player.getNbrMFConventional()).append("/");
+                pi.append(player.getNbrMFCommand()).append("/");
+                pi.append(player.getNbrMFVibra());
 
-              lisMinefield.add(pi.toString());
+                lisMinefield.add(pi.toString());
             }
         }
         int nbr = client.getLocalPlayer().getNbrMFConventional();
         fldConventional.setText(Integer.toString(nbr));
-        
+
         nbr = client.getLocalPlayer().getNbrMFCommand();
         fldCommandDetonated.setText(Integer.toString(nbr));
 
@@ -812,16 +861,16 @@ public class ChatLounge extends AbstractPhaseDisplay
      */
     private void refreshBVs() {
         final boolean useBv = chkBV.getState();
-        
+
         lisBVs.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if(player == null) {
+            final Player player = (Player) i.nextElement();
+            if (player == null) {
                 continue;
             }
             float playerValue = 0;
             for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
-                Entity entity = (Entity)j.nextElement();
+                Entity entity = (Entity) j.nextElement();
                 if (entity.getOwner().equals(player)) {
                     if (useBv) {
                         playerValue += entity.calculateBattleValue();
@@ -831,38 +880,37 @@ public class ChatLounge extends AbstractPhaseDisplay
                 }
             }
             if (useBv) {
-                lisBVs.add(player.getName() + " BV=" + (int)playerValue);
+                lisBVs.add(player.getName() + " BV=" + (int) playerValue);
             } else {
                 lisBVs.add(player.getName() + " Tons=" + playerValue);
             }
         }
     }
-    
+
     private void refreshCamos() {
         // Get the local player's selected camo.
         String curCat = client.getLocalPlayer().getCamoCategory();
         String curItem = client.getLocalPlayer().getCamoFileName();
 
         // If the player has no camo selected, show his color.
-        if ( null == curItem ) {
+        if (null == curItem) {
             curCat = Player.NO_CAMO;
-            curItem = Player.colorNames
-                [client.getLocalPlayer().getColorIndex()];
+            curItem = Player.colorNames[client.getLocalPlayer().getColorIndex()];
         }
 
         // Now update the camo selection dialog.
-        camoDialog.setCategory( curCat );
-        camoDialog.setItemName( curItem );
+        camoDialog.setCategory(curCat);
+        camoDialog.setItemName(curItem);
     }
-    
+
     /**
      * Refreshes the starting positions
      */
     private void refreshStarts() {
         lisStarts.removeAll();
         for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player)i.nextElement();
-            if(player != null) {
+            Player player = (Player) i.nextElement();
+            if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : ");
                 ssb.append(START_LOCATION_NAMES[player.getStartingPos()]);
@@ -879,13 +927,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         for (int i = 0; i < Player.MAX_TEAMS; i++) {
             choTeam.add(Player.teamNames[i]);
         }
-        if ( null != client.getLocalPlayer() ) {
+        if (null != client.getLocalPlayer()) {
             choTeam.select(client.getLocalPlayer().getTeam());
         } else {
             choTeam.select(0);
         }
     }
-  
 
     /**
      * Highlight the team the player is playing on.
@@ -893,7 +940,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void refreshTeams() {
         choTeam.select(client.getLocalPlayer().getTeam());
     }
-  
+
     /**
      * Refreshes the done button.  The label will say the opposite of the
      * player's "done" status, indicating that clicking it will reverse the
@@ -916,45 +963,41 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-	private void updateMinefield() {
-    	String conv = fldConventional.getText();
-    	String cmd = fldCommandDetonated.getText();
-    	String vibra = fldVibrabomb.getText();
-    	
-    	int nbrConv = 0;
-    	int nbrCmd = 0;
-    	int nbrVibra = 0;
-    	
-   		try {
-        	if (conv != null && conv.length() != 0) {
-        			nbrConv = Integer.parseInt(conv);
-        	}
-        	if (cmd != null && cmd.length() != 0) {
-        			nbrCmd = Integer.parseInt(cmd);
-        	}
-        	if (vibra != null && vibra.length() != 0) {
-        			nbrVibra = Integer.parseInt(vibra);
-        	}
-		} catch (NumberFormatException e) {
-			AlertDialog ad = new AlertDialog(client.frame,
-											"Minefield",
-											"Only positive integers allowed");
-			ad.show();
-			return;
-		}
-		
-		if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
-			AlertDialog ad = new AlertDialog(client.frame,
-											"Minefield",
-											"Only positive integers allowed");
-			ad.show();
-			return;
-		}
-		client.getLocalPlayer().setNbrMFConventional(nbrConv);
-		client.getLocalPlayer().setNbrMFCommand(nbrCmd);
-		client.getLocalPlayer().setNbrMFVibra(nbrVibra);
-		client.sendPlayerInfo();
-	}
+    private void updateMinefield() {
+        String conv = fldConventional.getText();
+        String cmd = fldCommandDetonated.getText();
+        String vibra = fldVibrabomb.getText();
+
+        int nbrConv = 0;
+        int nbrCmd = 0;
+        int nbrVibra = 0;
+
+        try {
+            if (conv != null && conv.length() != 0) {
+                nbrConv = Integer.parseInt(conv);
+            }
+            if (cmd != null && cmd.length() != 0) {
+                nbrCmd = Integer.parseInt(cmd);
+            }
+            if (vibra != null && vibra.length() != 0) {
+                nbrVibra = Integer.parseInt(vibra);
+            }
+        } catch (NumberFormatException e) {
+            AlertDialog ad = new AlertDialog(clientgui.frame, "Minefield", "Only positive integers allowed");
+            ad.show();
+            return;
+        }
+
+        if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
+            AlertDialog ad = new AlertDialog(clientgui.frame, "Minefield", "Only positive integers allowed");
+            ad.show();
+            return;
+        }
+        client.getLocalPlayer().setNbrMFConventional(nbrConv);
+        client.getLocalPlayer().setNbrMFCommand(nbrCmd);
+        client.getLocalPlayer().setNbrMFVibra(nbrVibra);
+        client.sendPlayerInfo();
+    }
 
     /**
      * Pop up the customize mech dialog
@@ -970,17 +1013,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         Vector c3members = new Vector();
-        Enumeration playerUnits = client.game.getPlayerEntities
-            ( client.getLocalPlayer() ).elements();
-        while ( playerUnits.hasMoreElements() ) {
+        Enumeration playerUnits = client.game.getPlayerEntities(client.getLocalPlayer()).elements();
+        while (playerUnits.hasMoreElements()) {
             Entity unit = (Entity) playerUnits.nextElement();
-            if ( !entity.equals(unit) && entity.onSameC3NetworkAs(unit) ) {
-                c3members.addElement( unit );
+            if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
+                c3members.addElement(unit);
             }
         }
 
         // display dialog
-        CustomMechDialog cmd = new CustomMechDialog(client, entity, editable);
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, entity, editable);
         cmd.refreshOptions();
         cmd.show();
         if (editable && cmd.isOkay()) {
@@ -988,17 +1030,17 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.sendUpdateEntity(entity);
 
             // Do we need to update the members of our C3 network?
-            if ( (c3master != null && !c3master.equals(entity.getC3Master()))||
-                 (c3master == null && entity.getC3Master() != null) ) {
+            if ((c3master != null && !c3master.equals(entity.getC3Master()))
+                || (c3master == null && entity.getC3Master() != null)) {
                 playerUnits = c3members.elements();
-                while ( playerUnits.hasMoreElements() ) {
+                while (playerUnits.hasMoreElements()) {
                     Entity unit = (Entity) playerUnits.nextElement();
-                    client.sendUpdateEntity( unit );
+                    client.sendUpdateEntity(unit);
                 }
             }
         }
     }
-    
+
     /**
      * Pop up the view mech dialog
      */
@@ -1009,52 +1051,54 @@ public class ChatLounge extends AbstractPhaseDisplay
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         MechView mechView = new MechView(entity);
         TextArea ta = new TextArea();
-  ta.setEditable(false);
-  ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
-  ta.setText(mechView.getMechReadout());
-        final Dialog dialog = new Dialog(client.frame, "Unit Quick View", false);
+        ta.setEditable(false);
+        ta.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        ta.setText(mechView.getMechReadout());
+        final Dialog dialog = new Dialog(clientgui.frame, "Unit Quick View", false);
         Button btn = new Button("Ok");
         dialog.add("South", btn);
         btn.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                }
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+            }
         });
         dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                        dialog.setVisible(false);
-                }
+            public void windowClosing(WindowEvent e) {
+                dialog.setVisible(false);
+            }
         });
         dialog.add("Center", ta);
-        
+
         // Preview image of the Mech...
-		BufferedPanel panPreview = new BufferedPanel();
-		panPreview.setPreferredSize(84, 72);
-		client.loadPreviewImage(panPreview, entity);
+        BufferedPanel panPreview = new BufferedPanel();
+        panPreview.setPreferredSize(84, 72);
+        clientgui.loadPreviewImage(panPreview, entity);
         dialog.add("North", panPreview);
 
-        dialog.setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - dialog.getSize().width/2,
-                    client.frame.getLocation().y + client.frame.getSize().height/5 - dialog.getSize().height/2);
+        dialog.setLocation(
+            clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - dialog.getSize().width / 2,
+            clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 5 - dialog.getSize().height / 2);
         dialog.setSize(300, 450);
 
-		dialog.validate();
+        dialog.validate();
         dialog.show();
     }
-    
+
     /**
      * Pop up the dialog to load a mech
      */
-    public void loadMech() throws Exception {
-        client.mechSelectorDialogThread.join();
-        client.getMechSelectorDialog().show();
+    public void loadMech() {
+        if (client.areMechsLoaded()) {
+            clientgui.getMechSelectorDialog().show();
+        }
     }
-  
+
     //
     // GameListener
     //
     public void gamePlayerStatusChange(GameEvent ev) {
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
         refreshDoneButton();
@@ -1066,10 +1110,10 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     public void gamePhaseChange(GameEvent ev) {
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
-        if (client.game.getPhase() ==  Game.PHASE_LOUNGE) {
+        if (client.game.getPhase() == Game.PHASE_LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerInfo();
@@ -1084,7 +1128,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     public void gameNewEntities(GameEvent ev) {
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
         refreshEntities();
@@ -1092,14 +1136,14 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     public void gameNewSettings(GameEvent ev) {
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
         refreshGameSettings();
         refreshBoardSettings();
         refreshEntities();
     }
-    
+
     /*
      * NOTE: On linux, this gets called even when programatically updating the
      * list box selected item.  Do not let this go into an infinite loop.  Do not
@@ -1109,7 +1153,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
@@ -1122,21 +1166,17 @@ public class ChatLounge extends AbstractPhaseDisplay
             butCustom.setEnabled(selected);
 
             // Handle "Blind drop" option.
-            if ( selected &&
-                 client.game.getOptions().booleanOption("blind_drop") ) {
-                Entity entity = client.game.getEntity
-                    ( entityCorrespondance[lisEntities.getSelectedIndex()] );
-                butMechReadout.setEnabled
-                    ( entity.getOwner().equals(client.getLocalPlayer()) );
-                butCustom.setEnabled
-                    ( entity.getOwner().equals(client.getLocalPlayer()) );
+            if (selected && client.game.getOptions().booleanOption("blind_drop")) {
+                Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+                butMechReadout.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
+                butCustom.setEnabled(entity.getOwner().equals(client.getLocalPlayer()));
             } else {
                 butMechReadout.setEnabled(selected);
             }
 
             butDelete.setEnabled(selected);
         }
-        
+
     }
 
     //
@@ -1145,39 +1185,39 @@ public class ChatLounge extends AbstractPhaseDisplay
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
         if (ev.getSource() == butDone) {
-          boolean anyDelayed = false;
-          
-          Enumeration enum = client.getEntities();
-          
-          while ( enum.hasMoreElements() ) {
-            Entity en = (Entity)enum.nextElement();
-            
-            if ( en.getDeployRound() > 0 ) {
-              anyDelayed = true;
-              break;
+            boolean anyDelayed = false;
+
+            Enumeration enum = client.getEntities();
+
+            while (enum.hasMoreElements()) {
+                Entity en = (Entity) enum.nextElement();
+
+                if (en.getDeployRound() > 0) {
+                    anyDelayed = true;
+                    break;
+                }
             }
-          }
-          
-          if ( anyDelayed && (client.getLocalPlayer().getStartingPos() == 0) ) {
-            new AlertDialog(client.frame, "Need deployment", "Players with delayed deployment can not use the 'any' starting position. Please select a direction to start from.").show();
-            return;
-          }
-           
+
+            if (anyDelayed && (client.getLocalPlayer().getStartingPos() == 0)) {
+                new AlertDialog(
+                    clientgui.frame,
+                    "Need deployment",
+                    "Players with delayed deployment can not use the 'any' starting position. Please select a direction to start from.")
+                    .show();
+                return;
+            }
+
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);
             refreshDoneButton(done);
         } else if (ev.getSource() == butLoad) {
-            try {
-                loadMech();
-            } catch (Exception e) {
-                System.out.println("Thread.join() exception in ChatLounge.loadMech()");
-            }
-        } else if (ev.getSource() == butCustom ||  ev.getSource() == lisEntities) {
+            loadMech();
+        } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {
             // delete mech
@@ -1186,47 +1226,42 @@ public class ChatLounge extends AbstractPhaseDisplay
             }
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
-            Vector currentUnits = client.game.getPlayerEntities
-                ( client.getLocalPlayer() );
+            Vector currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
 
             // Walk through the vector, deleting the entities.
             Enumeration entities = currentUnits.elements();
-            while ( entities.hasMoreElements() ) {
+            while (entities.hasMoreElements()) {
                 final Entity entity = (Entity) entities.nextElement();
-                client.sendDeleteEntity( entity.getId() );
+                client.sendDeleteEntity(entity.getId());
             }
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
             // board settings
-            client.getBoardSelectionDialog().update(client.getMapSettings(), true);
-            client.getBoardSelectionDialog().show();
+            clientgui.getBoardSelectionDialog().update(client.getMapSettings(), true);
+            clientgui.getBoardSelectionDialog().show();
         } else if (ev.getSource() == butOptions) {
             // Make sure the game options dialog is editable.
-            if ( !client.getGameOptionsDialog().isEditable() ) {
-                client.getGameOptionsDialog().setEditable( true );
+            if (!clientgui.getGameOptionsDialog().isEditable()) {
+                clientgui.getGameOptionsDialog().setEditable(true);
             }
             // Display the game options dialog.
-            client.getGameOptionsDialog().update(client.game.getOptions());
-            client.getGameOptionsDialog().show();
+            clientgui.getGameOptionsDialog().update(client.game.getOptions());
+            clientgui.getGameOptionsDialog().show();
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
-            client.getStartingPositionDialog().update();
-            client.getStartingPositionDialog().show();
+            clientgui.getStartingPositionDialog().update();
+            clientgui.getStartingPositionDialog().show();
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
-        }
-        else if ( ev.getSource() == butLoadList ) {
+        } else if (ev.getSource() == butLoadList) {
             // Allow the player to replace their current
             // list of entities with a list from a file.
-            client.loadListFile();
-        }
-        else if ( ev.getSource() == butSaveList ) {
+            clientgui.loadListFile();
+        } else if (ev.getSource() == butSaveList) {
             // Allow the player to save their current
             // list of entities to a file.
-            client.saveListFile
-                ( client.game.getPlayerEntities(client.getLocalPlayer()) );
+            clientgui.saveListFile(client.game.getPlayerEntities(client.getLocalPlayer()));
         } else if (ev.getSource() == butMinefield) {
-        	updateMinefield();
-        }
-        else if (ev.getSource() == butCamo) {
+            updateMinefield();
+        } else if (ev.getSource() == butCamo) {
             camoDialog.show();
         }
     }
@@ -1248,8 +1283,8 @@ public class ChatLounge extends AbstractPhaseDisplay
      *          Events that occured while the listener was distracted NOT
      *          going to be processed.
      */
-    public void setIgnoringEvents( boolean distracted ) {
-        this.distracted.setIgnoringEvents( distracted );
+    public void setIgnoringEvents(boolean distracted) {
+        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**
@@ -1261,7 +1296,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     public Button getDoneButton() {
         return butDone;
     }
-    
+
     /**
      * Stop just ignoring events and actually stop listening to them.
      */

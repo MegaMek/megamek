@@ -137,7 +137,8 @@ public class Board
         selected = null;
         
         initializeAll();
-        
+		// good time to ensure hex cache
+		IdealHex.ensureCacheSize(width + 1, height + 1);
         processBoardEvent(new BoardEvent(this, new Coords(), null, BoardEvent.BOARD_NEW_BOARD, 0));
     }
     
@@ -588,6 +589,11 @@ public class Board
             case BoardEvent.BOARD_SECOND_LOS_HEX :
                 l.boardSecondLOSHex(be, firstLOS);
                 break;
+            case BoardEvent.BOARD_CHANGED_ENTITY :
+                l.boardChangedEntity(be);
+                break;
+            case BoardEvent.BOARD_NEW_ATTACK :
+                l.boardNewAttack(be);
             }
         }
     }

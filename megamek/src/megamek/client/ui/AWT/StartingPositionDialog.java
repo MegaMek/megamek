@@ -48,9 +48,9 @@ extends java.awt.Dialog implements ActionListener
     private List lisStartList = new List(5);
 
     /** Creates a new instance of StartingPositionDialog */
-    public StartingPositionDialog(Client client) {
+    public StartingPositionDialog(ClientGUI client) {
         super(client.frame, "Select a Starting Position...", true);
-        this.client = client;
+        this.client = client.getClient();
         
         lisStartList.setEnabled(false);
         

@@ -15,24 +15,20 @@
 package megamek.client;
 
 import java.awt.*;
-import java.awt.event.*;
 
 import megamek.common.*;
 
-public abstract class AbstractPhaseDisplay
-  extends Panel
-  implements BoardListener, GameListener
-{
+public abstract class AbstractPhaseDisplay extends Panel implements BoardListener, GameListener {
 
     //
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-    ;
+        ;
     }
     public void boardHexSelected(BoardEvent b) {
-    ;
-  }
+        ;
+    }
     public void boardHexCursor(BoardEvent b) {
         ;
     }
@@ -64,15 +60,37 @@ public abstract class AbstractPhaseDisplay
         ;
     }
     public void gameTurnChange(GameEvent ev) {
-    ;
+        ;
     }
     public void gamePhaseChange(GameEvent ev) {
-    ;
+        ;
     }
     public void gameNewEntities(GameEvent ev) {
-    ;
+        ;
     }
     public void gameNewSettings(GameEvent ev) {
-    ;
+        ;
     }
+    public void gameDisconnected(GameEvent e) {
+        ;
+    }
+    public void gameBoardChanged(GameEvent e) {
+        ;
+    }
+    public void gameEnd(GameEvent e) {
+        ;
+    }
+
+    public void boardChangedEntity(BoardEvent b) {
+        ;
+    }
+
+    public void boardNewAttack(BoardEvent a) {
+        ;
+    }
+
+    public void gameReport(GameEvent e) {
+        ;
+    }
+
 }

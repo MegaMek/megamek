@@ -108,7 +108,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveUnjam = null;
     private MenuItem moveClear = null;
     private MenuItem moveGetUp = null;
-    private MenuItem moveCancel         = null;
 
     private MenuItem fireFire           = null;
     private MenuItem fireSkip           = null;
@@ -243,25 +242,25 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
 
         viewMekDisplay = new MenuItem( "Mek Display" );
         viewMekDisplay.addActionListener( this );
-        viewMekDisplay.setActionCommand(Client.VIEW_MEK_DISPLAY);
+        viewMekDisplay.setActionCommand(ClientGUI.VIEW_MEK_DISPLAY);
         viewMekDisplay.setShortcut(new MenuShortcut(KeyEvent.VK_D));
         menu.add( viewMekDisplay );
         viewMiniMap = new MenuItem( "Mini Map" );
         viewMiniMap.addActionListener( this );
-        viewMiniMap.setActionCommand(Client.VIEW_MINI_MAP);
+        viewMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP);
         viewMiniMap.setShortcut(new MenuShortcut(KeyEvent.VK_M));
         menu.add( viewMiniMap );
         viewUnitOverview = new MenuItem( "Unit Overview" );
         viewUnitOverview.addActionListener( this );
-        viewUnitOverview.setActionCommand(Client.VIEW_UNIT_OVERVIEW);
+        viewUnitOverview.setActionCommand(ClientGUI.VIEW_UNIT_OVERVIEW);
         menu.add( viewUnitOverview );
         viewZoomIn = new MenuItem( "Zoom In" );
         viewZoomIn.addActionListener( this );
-        viewZoomIn.setActionCommand(Client.VIEW_ZOOM_IN);
+        viewZoomIn.setActionCommand(ClientGUI.VIEW_ZOOM_IN);
         menu.add( viewZoomIn );
         viewZoomOut = new MenuItem( "Zoom Out" );
         viewZoomOut.addActionListener( this );
-        viewZoomOut.setActionCommand(Client.VIEW_ZOOM_OUT);
+        viewZoomOut.setActionCommand(ClientGUI.VIEW_ZOOM_OUT);
         menu.add( viewZoomOut );
         menu.addSeparator();
         viewTurnReport = new MenuItem( "Turn Report" );
@@ -283,7 +282,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         menu.add( viewClientSettings );
         viewLOSSetting = new MenuItem( "LOS Setting" );
         viewLOSSetting.addActionListener( this );
-        viewLOSSetting.setActionCommand(Client.VIEW_LOS_SETTING);
+        viewLOSSetting.setActionCommand(ClientGUI.VIEW_LOS_SETTING);
         viewLOSSetting.setShortcut(new MenuShortcut(KeyEvent.VK_L));
         menu.add( viewLOSSetting );
         menu.addSeparator();

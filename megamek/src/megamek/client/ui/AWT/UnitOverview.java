@@ -40,7 +40,7 @@ public class UnitOverview implements Displayable {
 	private int					actUnitsPerPage = 0;
     private int					scrollOffset = 0;
 
-    private Client				client;
+    private ClientGUI				client;
 
     private FontMetrics			fm;
     
@@ -49,7 +49,7 @@ public class UnitOverview implements Displayable {
     private Image				pageUp;
     private Image				pageDown;
 
-	public UnitOverview(Client client) {
+	public UnitOverview(ClientGUI client) {
 		this.client = client;
 		fm = client.bv.getFontMetrics(FONT);
 
@@ -74,7 +74,7 @@ public class UnitOverview implements Displayable {
 		}
 		
 		graph.setFont(FONT);
-		java.util.Vector v = client.game.getPlayerEntities(client.getLocalPlayer());
+		java.util.Vector v = client.getClient().game.getPlayerEntities(client.getClient().getLocalPlayer());
 		unitIds = new int[v.size()];
 
 		scroll = v.size() > unitsPerPage;
@@ -288,7 +288,7 @@ public class UnitOverview implements Displayable {
     }
     
     private Color getFrameColor(Entity entity) {
-    	if (!client.isMyTurn() || !entity.isSelectableThisTurn(client.game)) {
+    	if (!client.getClient().isMyTurn() || !entity.isSelectableThisTurn(client.getClient().game)) {
     		return Color.gray;
     	}
     	return Color.black;
@@ -328,7 +328,7 @@ public class UnitOverview implements Displayable {
             graph.setColor(Color.yellow);
             graph.drawString("PRONE", x + 10, y + 33);
         } else if (!entity.isDeployed()) {
-        	int roundsLeft = entity.getDeployRound() - client.game.getRoundCount();
+        	int roundsLeft = entity.getDeployRound() - client.getClient().game.getRoundCount();
         	if (roundsLeft > 0) {
         		printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
         	}

@@ -36,7 +36,7 @@ import megamek.common.options.*;
  */
 public class GameOptionsDialog extends Dialog implements ActionListener, DialogOptionListener {
     
-    private Client client;
+    private ClientGUI client;
     private GameOptions options;
 
     private boolean editable = true;
@@ -118,10 +118,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
      *
      * @param   client - the <code>Client</code> parent of this dialog.
      */
-    public GameOptionsDialog(Client client) {
+    public GameOptionsDialog(ClientGUI client) {
         super(client.frame, "View/Edit Game Options...", true);
         this.client = client;
-        this.init( client.frame, client.game.getOptions() );
+        this.init( client.frame, client.getClient().game.getOptions() );
     }
 
     /**
@@ -133,7 +133,6 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
      */
     public GameOptionsDialog( Frame frame, GameOptions options ) {
         super(frame, "View/Edit Game Options...", true);
-        this.client = null;
         this.init( frame, options );
         butOkay.setEnabled( false );
     }
@@ -155,7 +154,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         }
         
         if (client != null && changed.size() > 0) {
-            client.sendGameOptions(texPass.getText(), changed);
+            client.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
     

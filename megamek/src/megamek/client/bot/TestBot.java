@@ -55,8 +55,8 @@ public class TestBot extends BotClient {
     GALance old_moves = null;
     int my_mechs_moved = 0;
 
-    public TestBot(String name) {
-        super(name);
+    public TestBot(String name, String host, int port) {
+        super(name, host, port);
         ignore = config.getIgnoreLevel();
     }
 

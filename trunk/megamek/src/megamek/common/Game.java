@@ -700,6 +700,24 @@ public class Game implements Serializable
     }
 
     /**
+     * Returns an enumeration of wrecked entities.
+     */
+    public Enumeration getWreckedEntities() {
+        Vector wrecks = new Vector();
+        
+        for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if ( entity.getRemovalCondition() == Entity.REMOVE_SALVAGEABLE ||
+                 entity.getRemovalCondition() == Entity.REMOVE_EJECTED ||
+                 entity.getRemovalCondition() == Entity.REMOVE_DEVASTATED ) {
+                wrecks.addElement(entity);
+            }
+        }
+        
+        return wrecks.elements();
+    }
+
+    /**
      * Returns an enumeration of entities that have retreated
      */
     public Enumeration getRetreatedEntities() {

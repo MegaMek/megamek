@@ -6,6 +6,7 @@ v 0.29.16 (CVS)
 + Bug 826463: Stop the loop until we can fix InputMethod's state.
 + Removed java 1.1 incompatible method.
 + Removed change mode from the M key.
++ Shows wreck after ammo explosion.
 
 v 0.29.15 (10-19-03, 9:30pm)
 + Fa Shih units have superior mine-clearing capabilities.

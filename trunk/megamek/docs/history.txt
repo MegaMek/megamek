@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v 0.29.29 (CVS)
+
 v 0.29.28 (2004-03-14 3:30pm)
 + Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.
 + Bug 911954: BA flamers shouldn't cause heat.

@@ -203,7 +203,9 @@ public class MoveStep implements Serializable {
     {
         copy(game, prev);
 
+        // Is this the first step?
         if (prev == null) {
+            setFirstStep( true );
             prev = new MoveStep(parent, MovePath.STEP_FORWARDS);
             prev.setFromEntity(entity, game);
         }
@@ -770,18 +772,14 @@ public class MoveStep implements Serializable {
         Coords lastPos = entity.getPosition();
         boolean isUnjammingRAC = entity.isUnjammingRAC();
 
-        // Is this the first step?
-        if (null == prev) {
-            setFirstStep(true);
-        } else {
-            // infantry get a first step if all they've done is spin on the
-            // spot:
+        // Infantry get a first step if all they've done is spin on the spot.
+        if (parent.isInfantry() && (getMpUsed() - getMp()) == 0) {
+            setFirstStep( true );
+
             //   getMpUsed() is the MPs used in the whole MovePath
             //   getMp() is the MPs used in the last (illegal) step (this step)
             //   if the difference between the whole path and this step is 0
             //   then this must be their first step
-            setFirstStep(parent.isInfantry() && (getMpUsed() - getMp()) == 0);
-
             prevStepOnPavement = prev.isPavementStep();
             isTurning = prev.isTurning();
             isUnloaded = prev.isUnloaded();
@@ -1182,7 +1180,7 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        // Can't run into water unless hovering, or using a bridge.
+        // Can't run into water unless hovering, first step, or using a bridge.
         if (movementType == Entity.MOVE_RUN
             && nMove != Entity.MovementType.HOVER
             && destHex.levelOf(Terrain.WATER) > 0

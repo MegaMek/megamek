@@ -4600,9 +4600,7 @@ implements Runnable, ConnectionHandler {
 
         // any AMS attacks by the target?
         Vector vCounters = waa.getCounterEquipment();
-        if (null == vCounters) {
-            wr.amsShotDown = new int[0];
-        } else {
+        if (null != vCounters) {
             // resolve AMS counter-fire
             wr.amsShotDown = new int[vCounters.size()];
             for (int x = 0; x < vCounters.size(); x++) {

@@ -1891,12 +1891,13 @@ implements Runnable {
         final Entity te = game.getEntity(waa.getTargetId());
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
- 	// 2002-09-16 Infantry weapons have unlimited ammo.
- 	final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-	final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+        
+        // 2002-09-16 Infantry weapons have unlimited ammo.
+        final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
  	    !isWeaponInfantry;
         Mounted ammo = null;
-	Infantry platoon = null;
+        Infantry platoon = null;
         if (usesAmmo) {
             if (waa.getAmmoId() > -1) {
                 ammo = ae.getEquipment(waa.getAmmoId());
@@ -1984,12 +1985,44 @@ implements Runnable {
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
         
+        // if firing an HGR unbraced, schedule a PSR
+        if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
+            // the mod is weight-based
+            int nMod;
+            if (te.getWeight() <= Mech.WEIGHT_LIGHT) {
+                nMod = 2;
+            } else if (te.getWeight() <= Mech.WEIGHT_MEDIUM) {
+                nMod = 1;
+            } else if (te.getWeight() <= Mech.WEIGHT_HEAVY) {
+                nMod = 0;
+            } else {
+                nMod = -1;
+            }
+            
+            pilotRolls.addElement(new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced"));
+        }
         
         // roll
         int roll = Compute.d6(2);
         phaseReport.append("rolls " + roll + " : ");
         
-        if (roll == 2 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
+        // check for AC jams
+        int jamCheck = 0;
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
+            jamCheck = 2;
+        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (weapon.curMode().equals("2-shot")) {
+                jamCheck = 2;
+            }
+            else if (weapon.curMode().equals("4-shot")) {
+                jamCheck = 3;
+            }
+            else if (weapon.curMode().equals("6-shot")) {
+                jamCheck = 4;
+            }
+        }
+        
+        if (jamCheck > 0 && roll <= jamCheck) {
             phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
             weapon.setHit(true);
             return;
@@ -2008,165 +2041,126 @@ implements Runnable {
             return;
         }
         
-        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || isWeaponInfantry
-            || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) 
-            || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
-             if (isWeaponInfantry || ammo != null) {
-                // missiles; determine number of missiles hitting
-                int hits;
-                String hitType = " missile(s)";
-                if ( isWeaponInfantry ) {
-                    // Infantry damage depends on # men left in platoon.
-                    platoon = (Infantry) ae;
-                    hits = platoon.getDamage( platoon.getShootingStrength() );
-                    hitType = " shot(s)";
-
-                    // Flamer-equipped infantry can do heat damage.
-                    if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
-                     game.getOptions().booleanOption("flamer_heat") ) {
-                        phaseReport.append("hits; target gains " + hits +
-                           " more heat during heat phase.");
-                        te.heatBuildup += hits;
-                        // That's all for this weapon.
-                        return;
-                    }
-
-                } else if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-                    hits = wtype.getRackSize();
-                } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
-                    // I'm going to assume these are MRMs
-                    hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
-                } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
-                    hits = Compute.missilesHit(2);
-                } else {
-                    hits = Compute.missilesHit(wtype.getRackSize());
-                }                    
-                
-		// LBX ACs use shots, not missles.
-		if ( wtype.getAmmoType() == AmmoType.T_AC_LBX ) {
-		    hitType = " shot(s)";
-		}
-
-                phaseReport.append(hits + hitType + " hit" + toHit.getTableDesc() + ".");
-                
-                // adjust for AMS
-                Vector vCounters = waa.getCounterEquipment();
-                if (vCounters != null) {
-                    for (int x = 0; x < vCounters.size(); x++) {
-                        Mounted counter = (Mounted)vCounters.elementAt(x);
-                        if (counter.getType() instanceof WeaponType && 
-                                ((WeaponType)counter.getType()).getAmmoType() == AmmoType.T_AMS) {
-
-                            if (!counter.isReady() || counter.isMissing()) {
-                                continue;
-                            }
-                            int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
-                            
-                            if (amsHits > hits) amsHits = hits;
-                            hits -= amsHits;
-                            phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
-                            
-                            // build up some heat
-                            ae.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+        // yeech.  handle damage. . different weapons do this in very different ways
+        int hits = 1, amsHits = 0, nCluster = 1;
+        boolean bSalvo = false;
+        String sSalvoType = " shot(s) ";
         
-                            // decrement the ammo
-                            Mounted mAmmo = counter.getLinked();
-                            mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
-                            
-                            // set the ams as having fired
-                            weapon.setUsedThisRound(true);
-                        }
-                    }
-                }
-                
-                if ( isWeaponInfantry || wtype.getAmmoType() == AmmoType.T_LRM ||
-                         wtype.getAmmoType() == AmmoType.T_MRM ) {
-                    // Infantry weapons, LRMs, MRMs do salvos of 5
-                    while (hits > 0) {
-                    int salvo = Math.min(5, hits);
-                    HitData hit = te.rollHitLocation(toHit.getHitTable(),
-                                     toHit.getSideTable());
-                    phaseReport.append(damageEntity(te, hit, salvo));
-                    hits -= salvo;
-                    }
-                } else if (atype.hasFlag(AmmoType.F_CLUSTER)) {
-                    // for LBX cluster ammo
-                    for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
-                                toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, 1));
-                    }
-                } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
-                    // Fire Mode - uAC ammo
-                    for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
-                                toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
+        if (isWeaponInfantry) {
+            // Infantry damage depends on # men left in platoon.
+            bSalvo = true;
+            platoon = (Infantry)ae;
+            nCluster = 5;
+            hits = platoon.getDamage(platoon.getShootingStrength());
+        } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            sSalvoType = " missile(s) ";
+            bSalvo = true;
+            
+            if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
+                nCluster = 5;
+            }
                         
-                    }
-                } else if (wtype.getAmmoType() == AmmoType.T_SRM || 
-                        wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
-                    // for SRMs, do each missile seperately
-                    for (int j = 0; j < hits; j++) {
-                        HitData hit = te.rollHitLocation(toHit.getHitTable(),
-                                toHit.getSideTable());
-                        phaseReport.append(damageEntity(te, hit, 2));
+            if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                hits = wtype.getRackSize();
+            } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
+                // I'm going to assume these are MRMs
+                hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
+            } else {
+                hits = Compute.missilesHit(wtype.getRackSize());
+            }
+            
+            // adjust for AMS
+            Vector vCounters = waa.getCounterEquipment();
+            if (vCounters != null) {
+                for (int x = 0; x < vCounters.size(); x++) {
+                    Mounted counter = (Mounted)vCounters.elementAt(x);
+                    if (counter.getType() instanceof WeaponType && 
+                            ((WeaponType)counter.getType()).getAmmoType() == AmmoType.T_AMS) {
+
+                        if (!counter.isReady() || counter.isMissing()) {
+                            continue;
+                        }
+                        amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
+                        
+                        if (amsHits > hits) amsHits = hits;
+                        
+                        // build up some heat
+                        ae.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+    
+                        // decrement the ammo
+                        Mounted mAmmo = counter.getLinked();
+                        mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
+                        
+                        // set the ams as having fired
+                        weapon.setUsedThisRound(true);
                     }
                 }
             }
-        } else if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
-            phaseReport.append("hits; target gains 2 more heat during heat phase.");
-            te.heatBuildup += 2;
-	} else if ( (wtype.getAmmoType() == AmmoType.T_MG ||
-		     wtype.getAmmoType() == AmmoType.T_MG_LIGHT ||
-		     wtype.getAmmoType() == AmmoType.T_MG_HEAVY) &&
-		    !isWeaponInfantry && 
-		    (te instanceof Infantry) ) {
-	    // Mech and Vehicle MGs do *DICE* of damage to PBI.
-	    int mgDamage = Compute.d6( wtype.getDamage() );
-	    HitData hit = te.rollHitLocation( toHit.getHitTable(),
-					      toHit.getSideTable() );
-	    phaseReport.append( "riddles the target with " + mgDamage +
-				" shot(s)" );
-	    phaseReport.append( damageEntity(te, hit, mgDamage) );
-        } else {
-            // normal weapon; deal damage
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
             
-            // HGR do range-based damage.  Hardcoded until another weapon acts like this.
-            int nDamage = wtype.getDamage();
-            if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
-                int nRange = ae.getPosition().distance(te.getPosition());
-                if (nRange <= wtype.getShortRange()) {
-                    nDamage = 25;
-                } else if (nRange <= wtype.getMediumRange()) {
-                    nDamage = 20;
-                } else {
-                    nDamage = 10;
-                }
-                
-                // if MP were used this round, unit is 'unbraced' and must make PSR
-                if (ae.mpUsed > 0) {
-                    // the mod is weight-based
-                    int nMod;
-                    if (te.getWeight() <= Mech.WEIGHT_LIGHT) {
-                        nMod = 2;
-                    } else if (te.getWeight() <= Mech.WEIGHT_MEDIUM) {
-                        nMod = 1;
-                    } else if (te.getWeight() <= Mech.WEIGHT_HEAVY) {
-                        nMod = 0;
-                    } else {
-                        nMod = -1;
-                    }
-                    
-                    pilotRolls.addElement(new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced"));
-                }
+        } else if (atype != null && atype.hasFlag(AmmoType.F_CLUSTER)) {
+            bSalvo = true;
+            hits = Compute.missilesHit(wtype.getRackSize());
+        } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
+            bSalvo = true;
+            hits = Compute.missilesHit(2);
+        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && !weapon.curMode().equals("Single")) {
+            bSalvo = true;
+            if (weapon.curMode().equals("2-shot")) {
+                hits = Compute.missilesHit(2);
+            } else if (weapon.curMode().equals("4-shot")) {
+                hits = Compute.missilesHit(4);
+            } else if (weapon.curMode().equals("6-shot")) {
+                hits = Compute.missilesHit(6);
             }
-            
-            phaseReport.append(damageEntity(te, hit, nDamage));
+        } else if (atype != null && atype.hasFlag(AmmoType.F_MG) && !isWeaponInfantry && (te instanceof Infantry)) {
+            // Mech and Vehicle MGs do *DICE* of damage to PBI.
+            bSalvo = true;
+            hits = Compute.d6(wtype.getDamage());
         }
         
+        if (bSalvo) {
+            phaseReport.append(hits + sSalvoType + " hit" + toHit.getTableDesc() + ".");
+            
+            if (amsHits > 0) {
+                phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
+            }
+            phaseReport.append("\n\t");            
+        }
+        
+        int nDamPerHit = wtype.getDamage();
+        if (nDamPerHit == wtype.DAMAGE_MISSILE) {
+            nDamPerHit = atype.getDamagePerShot();
+        } else if (isWeaponInfantry) {
+            nDamPerHit = 1;
+        } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
+            // HGR does range-dependent damage
+            int nRange = ae.getPosition().distance(te.getPosition());
+            if (nRange <= wtype.getShortRange()) {
+                nDamPerHit = 25;
+            } else if (nRange <= wtype.getMediumRange()) {
+                nDamPerHit = 20;
+            } else {
+                nDamPerHit = 10;
+            }
+        }
+            
+        // for each cluster of hits, do a chunk of damage
+        while (hits > 0) {
+            int nDamage = nDamPerHit * Math.min(nCluster, hits);
+            
+            if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+               phaseReport.append("\n\tTarget gains ").append(nDamage).append(" more heat during heat phase.\n");
+               te.heatBuildup += hits;
+               continue;
+            }
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            if (!bSalvo) {
+                phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+            }
+            phaseReport.append(damageEntity(te, hit, nDamage));
+            
+            hits -= nCluster;
+        }
         phaseReport.append("\n");
     }
     

@@ -81,6 +81,8 @@ v CVS (10-20-02, 10pm)
 + Ammo dumping implemented
 + HeavyGaussRifles added
 + LRM-equipped infantry added (as IS Lvl 2, 3050)
++ RACs implemented, but no unjamming
++ chunk of resolveWeaponAttack cleaned up. . hopefully easier to read
 
 v 0.27.3 (10-18-02, 4pm)
 + Abstracted equipment mode system

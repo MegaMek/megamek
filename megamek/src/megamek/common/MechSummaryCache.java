@@ -22,14 +22,14 @@ public class MechSummaryCache
     }
     
     private MechSummary[] m_data;
-    private Map m_refMap;
+    private Map m_nameMap;
     private static final char SEPARATOR = '|';
     private static final File ROOT = new File(Settings.mechDirectory);
     private static final File CACHE = new File(ROOT, "mechcache.txt");
     
     private MechSummaryCache()
     {
-        m_refMap = new Hashtable();
+        m_nameMap = new Hashtable();
         loadMechData();
     }
     
@@ -37,7 +37,7 @@ public class MechSummaryCache
     
     public MechSummary getMech(String sRef)
     {
-        return (MechSummary)m_refMap.get(sRef);
+        return (MechSummary)m_nameMap.get(sRef);
     }
     
     private void loadMechData()
@@ -58,9 +58,12 @@ public class MechSummaryCache
                     MechSummary ms = new MechSummary();
                     // manually do a string tokenizer.  Much faster
                     int nIndex1 = s.indexOf(SEPARATOR);
-                    ms.setRef(s.substring(0, nIndex1));
+                    ms.setName(s.substring(0, nIndex1));
                     int nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setName(s.substring(nIndex1 + 1, nIndex2));
+                    ms.setChassis(s.substring(nIndex1 + 1, nIndex2));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setModel(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
@@ -105,7 +108,7 @@ public class MechSummaryCache
         
         // store map references
         for (int x = 0; x < m_data.length; x++) {
-            m_refMap.put(m_data[x].getRef(), m_data[x]);
+            m_nameMap.put(m_data[x].getName(), m_data[x]);
         }
         
         // save updated cache back to disk
@@ -126,8 +129,9 @@ public class MechSummaryCache
         System.out.println("Saving mechcache");
         FileWriter wr = new FileWriter(CACHE);
         for (int x = 0; x < m_data.length; x++) {
-            wr.write(m_data[x].getRef() + SEPARATOR + 
-                    m_data[x].getName() + SEPARATOR + 
+            wr.write(m_data[x].getName() + SEPARATOR + 
+                    m_data[x].getChassis() + SEPARATOR + 
+                    m_data[x].getModel() + SEPARATOR + 
                     m_data[x].getSourceFile().getPath() + SEPARATOR + 
                     m_data[x].getEntryName() + SEPARATOR + 
                     m_data[x].getYear() + SEPARATOR +
@@ -168,7 +172,8 @@ public class MechSummaryCache
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();
                 ms.setName(m.getShortName());
-                ms.setRef(m.getModel());
+                ms.setChassis(m.getChassis());
+                ms.setModel(m.getModel());
                 ms.setSourceFile(f);
                 ms.setEntryName(null);
                 ms.setYear(m.getYear());
@@ -214,7 +219,8 @@ public class MechSummaryCache
                 Entity m = mfp.getEntity();
                 MechSummary ms = new MechSummary();
                 ms.setName(m.getShortName());
-                ms.setRef(m.getModel());
+                ms.setChassis(m.getChassis());
+                ms.setModel(m.getModel());
                 ms.setSourceFile(fZipFile);
                 ms.setEntryName(zEntry.getName());
                 ms.setYear(m.getYear());

@@ -18,8 +18,8 @@
  
  public class MechSummaryComparator implements Comparator
  {
- 	public static final int T_NAME = 0;
- 	public static final int T_REF = 1;
+ 	public static final int T_CHASSIS = 0;
+ 	public static final int T_MODEL = 1;
  	public static final int T_WEIGHT = 2;
  	public static final int T_BV = 3;
  	public static final int T_YEAR = 4;
@@ -37,10 +37,10 @@
  		MechSummary ms2 = (MechSummary)o2;
  		
  		switch (m_nType) {
- 			case T_NAME :
- 				return ms1.getName().compareTo(ms2.getName());
- 			case T_REF :
-	 			return ms1.getRef().compareTo(ms2.getRef());
+ 			case T_CHASSIS :
+ 				return ms1.getChassis().compareTo(ms2.getChassis());
+ 			case T_MODEL :
+	 			return ms1.getModel().compareTo(ms2.getModel());
 	 		case T_WEIGHT :
  				return numCompare(ms1.getTons(), ms2.getTons());
  			case T_BV :

@@ -75,6 +75,8 @@ v CVS
 + 646609 intentional fires set at correct level
 + added movement display colors to config file
 + bot deploys itself
++ 648967: fixed typos in mechset.txt
++ updated vehicles to use new naming system
 
 v 0.27.9 (12-01-02, 12:19pm)
 + 642892: charging units don't move into the target's hex until resolution

@@ -222,7 +222,10 @@ public class EquipmentType {
     	addType(new CLFlamer());
     	addType(new ISFlamer());
     	//Autocannons
+    	addType(new ISAC2());
+    	addType(new ISAC5());
     	addType(new ISAC10());
+    	addType(new ISAC20());
     }
     
 }

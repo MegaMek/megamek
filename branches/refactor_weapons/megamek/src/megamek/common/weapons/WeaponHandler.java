@@ -143,7 +143,7 @@ public class WeaponHandler implements AttackHandler {
 
 		// yeech.  handle damage. . different weapons do this in very different ways
 	        int hits = calcHits(), nCluster = calcnCluster(), nSalvoBonus = 0;
-	        int nDamPerHit = wtype.getDamage();
+	        int nDamPerHit = calcDamagePerHit();
 	        boolean bSalvo = false;
 	        String sSalvoType = " shot(s) ";
 	        boolean bAllShotsHit = allShotsHit();
@@ -215,6 +215,9 @@ public class WeaponHandler implements AttackHandler {
 
 	        phaseReport.append("\n");
 		return false;
+	}
+	protected int calcDamagePerHit() {
+		return wtype.getDamage();
 	}
 	protected void handleEntityDamage(Entity entityTarget, StringBuffer phaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
 		int nDamage;

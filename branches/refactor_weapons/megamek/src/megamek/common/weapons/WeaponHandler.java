@@ -207,7 +207,7 @@ public class WeaponHandler implements AttackHandler {
 	            }
 	            if (entityTarget != null) {
 	            		                
-	            	handeDamageEntity(entityTarget, phaseReport, bldg, hits, nCluster, nDamPerHit, bldgAbsorbs);
+	            	handleEntityDamage(entityTarget, phaseReport, bldg, hits, nCluster, nDamPerHit, bldgAbsorbs);
 	                
 	                hits -= nCluster;
 	            }
@@ -216,7 +216,7 @@ public class WeaponHandler implements AttackHandler {
 	        phaseReport.append("\n");
 		return false;
 	}
-	protected void handeDamageEntity(Entity entityTarget, StringBuffer phaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
+	protected void handleEntityDamage(Entity entityTarget, StringBuffer phaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
 		int nDamage;
 		HitData hit = entityTarget.rollHitLocation
 		     ( toHit.getHitTable(),
@@ -308,23 +308,7 @@ public class WeaponHandler implements AttackHandler {
 		// Damage any infantry in the hex.
 		server.damageInfantryIn( bldg, nDamage );
 	}
-	protected boolean handleDamageBuilding(StringBuffer phaseReport, Building bldg, int hits, int nDamPerHit, boolean bSalvo) {
-		int nDamage;
-		// The building takes the full brunt of the attack.
-		nDamage = nDamPerHit * hits;
-		if ( !bSalvo ) {
-		    phaseReport.append( "hits." );
-		}
-		phaseReport.append( "\n        " )
-		    .append( server.damageBuilding( bldg, nDamage ) )
-		    .append( "\n" );
-
-		// Damage any infantry in the hex.
-		server.damageInfantryIn( bldg, nDamage );
-
-		// And we're done!
-		return false;
-	}
+	
 	protected boolean allShotsHit() {
 		return false;
 	}

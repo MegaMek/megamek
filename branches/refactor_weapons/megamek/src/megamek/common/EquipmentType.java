@@ -218,6 +218,9 @@ public class EquipmentType {
     	addType(new ISPPC());
     	addType(new ISERPPC());
     	addType(new CLERPPC());
+    	//Flamers
+    	addType(new CLFlamer());
+    	addType(new ISFlamer());
     }
     
 }

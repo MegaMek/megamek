@@ -97,6 +97,9 @@ public class BoardView1
 
     // should we mark deployment hexes for a player?
     private Player               m_plDeployer = null;
+    
+    // should be able to turn it off(board editor)
+    private boolean              useLOSTool = true;
 
     /**
      * Construct a new board view for the specified game
@@ -956,62 +959,66 @@ public class BoardView1
         moveCursor(secondLOSSprite, null);
     }
     public void boardFirstLOSHex(BoardEvent b) {
-        moveCursor(secondLOSSprite, null);
-        moveCursor(firstLOSSprite, b.getCoords());
+		if (useLOSTool) {
+	        moveCursor(secondLOSSprite, null);
+    	    moveCursor(firstLOSSprite, b.getCoords());
+    	}
     }
     public void boardSecondLOSHex(BoardEvent b, Coords c1) {
-        Coords c2 = b.getCoords();
-        moveCursor(secondLOSSprite, c2);
-        
-        LosEffects le = Compute.calculateLos(game, c1, c2, 
-        						game.getMechInFirst(), 
-        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
-        int blocking = le.getHeavyWoods() * 2 +
-            le.getLightWoods() +
-            le.getSmoke() * 2;
-        message.append( "Attacker(")
-         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
-         	.append(") hex is " )
-            .append( c1.getBoardNum() )
-            .append( ".\n" );
-        message.append( "Target(")
-         	.append(game.getMechInSecond() ? "Mech" : "non Mech")
-         	.append(") hex is " )
-            .append( c2.getBoardNum() )
-            .append( ".\n" );
-        if (le.isBlocked() || blocking > 2) {
-            message.append( "Line of sight is blocked.\n" );
-            message.append( "Range is " )
-                .append( c1.distance(c2) )
-                .append( " hex(es).\n");
-        } else {
-            message.append( "Line of sight is not blocked.\n" );
-            message.append( "Range is " )
-                .append( c1.distance(c2) )
-                .append( " hex(es).\n");
-            if (le.getHeavyWoods() > 0) {
-                message.append( le.getHeavyWoods() )
-                    .append( " heavy wood hex(es) in line of sight.\n" );
-            }
-            if (le.getLightWoods() > 0) {
-                message.append( le.getLightWoods() )
-                    .append( " light wood hex(es) in line of sight.\n" );
-            }
-            if (le.getSmoke() > 0) {
-                message.append( le.getSmoke() )
-                    .append( " smoke hex(es) in line of sight.\n" );
-            }
-            if (le.isTargetCover()) {
-                message.append("Target has partial cover.\n");
-            }
-            if (le.isAttackerCover()) {
-                message.append("Attacker has partial cover.\n");
-            }
-        }
-        AlertDialog alert = new AlertDialog(frame,
-                                            "Range / Line of Sight",
-                                            message.toString(), false);
-        alert.show();
+		if (useLOSTool) {
+	        Coords c2 = b.getCoords();
+	        moveCursor(secondLOSSprite, c2);
+	        
+	        LosEffects le = Compute.calculateLos(game, c1, c2, 
+	        						game.getMechInFirst(), 
+	        						game.getMechInSecond());        StringBuffer message = new StringBuffer();
+	        int blocking = le.getHeavyWoods() * 2 +
+	            le.getLightWoods() +
+	            le.getSmoke() * 2;
+	        message.append( "Attacker(")
+	         	.append(game.getMechInFirst() ? "Mech" : "non Mech")
+	         	.append(") hex is " )
+	            .append( c1.getBoardNum() )
+	            .append( ".\n" );
+	        message.append( "Target(")
+	         	.append(game.getMechInSecond() ? "Mech" : "non Mech")
+	         	.append(") hex is " )
+	            .append( c2.getBoardNum() )
+	            .append( ".\n" );
+	        if (le.isBlocked() || blocking > 2) {
+	            message.append( "Line of sight is blocked.\n" );
+	            message.append( "Range is " )
+	                .append( c1.distance(c2) )
+	                .append( " hex(es).\n");
+	        } else {
+	            message.append( "Line of sight is not blocked.\n" );
+	            message.append( "Range is " )
+	                .append( c1.distance(c2) )
+	                .append( " hex(es).\n");
+	            if (le.getHeavyWoods() > 0) {
+	                message.append( le.getHeavyWoods() )
+	                    .append( " heavy wood hex(es) in line of sight.\n" );
+	            }
+	            if (le.getLightWoods() > 0) {
+	                message.append( le.getLightWoods() )
+	                    .append( " light wood hex(es) in line of sight.\n" );
+	            }
+	            if (le.getSmoke() > 0) {
+	                message.append( le.getSmoke() )
+	                    .append( " smoke hex(es) in line of sight.\n" );
+	            }
+	            if (le.isTargetCover()) {
+	                message.append("Target has partial cover.\n");
+	            }
+	            if (le.isAttackerCover()) {
+	                message.append("Attacker has partial cover.\n");
+	            }
+	        }
+	        AlertDialog alert = new AlertDialog(frame,
+	                                            "Range / Line of Sight",
+	                                            message.toString(), false);
+	        alert.show();
+	     }
     }
     public void boardChangedHex(BoardEvent b) {
         tileManager.waitForHex(game.getBoard().getHex(b.getCoords()));
@@ -2174,5 +2181,9 @@ public class BoardView1
      */
     public boolean isTileImagesLoaded() {
         return this.tileManager.isLoaded();
+    }
+    
+    public void setUseLOSTool(boolean use) {
+    	useLOSTool = use;
     }
 }

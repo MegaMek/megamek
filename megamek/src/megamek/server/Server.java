@@ -1335,6 +1335,15 @@ implements Runnable {
             return;
         }
         
+        // check for MASC failure
+        if (entity instanceof Mech) {
+            if (((Mech)entity).checkForMASCFailure(phaseReport)) {
+                // no movement after that
+                return;
+            }
+        }
+                
+        
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -1856,12 +1865,6 @@ implements Runnable {
             } else if (o instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction)o;
                 game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
-            } else if (o instanceof FiringModeChangeAction) {
-                // Fire Mode - Handles pulling the FireModeChangeActions out of the attack Vector
-                FiringModeChangeAction fmc = (FiringModeChangeAction)o;
-                final Entity fe = game.getEntity(fmc.getEntityId());
-                final Mounted fmcweapon = fe.getEquipment(fmc.getEquipmentId());
-                fmcweapon.switchMode();
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
@@ -3681,6 +3684,15 @@ implements Runnable {
         }
     }
     
+    private void receiveEntityModeChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int equipId = c.getIntValue(1);
+        int mode = c.getIntValue(2);
+        Entity e = game.getEntity(entityId);
+        Mounted m = e.getEquipment(equipId);
+        m.setMode(mode);
+    }
+    
     /**
      * Deletes an entity owned by a certain player from the list
      */
@@ -4043,6 +4055,9 @@ implements Runnable {
                 receiveEntityUpdate(packet, connId);
                 resetPlayerReady();
                 transmitAllPlayerReadys();
+                break;
+            case Packet.COMMAND_ENTITY_MODECHANGE :
+                receiveEntityModeChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_REMOVE :
                 receiveEntityDelete(packet, connId);

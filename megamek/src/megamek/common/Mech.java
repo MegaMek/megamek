@@ -67,6 +67,9 @@ public abstract class Mech
     private int[] rearArmor;
     private int[] orig_rearArmor;
     
+    // MASCLevel is the # of turns MASC has been used - the # of turns it hasn't, kind of
+    private int nMASCLevel = 0;
+    
     /**
      * Construct a new, blank, mech.
      */
@@ -110,6 +113,52 @@ public abstract class Mech
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
     
+    private static int[] MASC_FAILURE = { 0, 2, 4, 6, 10, 12, 12, 12 };
+    
+    public boolean checkForMASCFailure(StringBuffer phaseReport)
+    {        
+        if (hasActiveMASC()) {
+            boolean bFailure = false;
+            
+            // iterate before checking
+            nMASCLevel++;
+            
+            int nRoll = Compute.d6(2);
+            
+            phaseReport.append("\n" + getDisplayName() +
+                   " checking for MASC failure.\n");       
+            phaseReport.append("Needs " + (MASC_FAILURE[nMASCLevel] + 1) +
+                    ", rolls " + nRoll + " : ");
+            
+            
+            if (nRoll <= MASC_FAILURE[nMASCLevel]) {
+                // uh oh
+                bFailure = true;
+                phaseReport.append("MASC fails!.\n");
+                
+                // do the damage.  Rules say 'as if you took 2 hip crits'. We'll
+                // just do the hip crits
+                getCritical(LOC_RLEG, 0).setDestroyed(true);
+                getCritical(LOC_LLEG, 0).setDestroyed(true);
+                for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+                    Mounted m = (Mounted)e.nextElement();
+                    if (m.getType().hasFlag(MiscType.F_MASC)) {
+                        m.setDestroyed(true);
+                    }
+                }                
+            }
+            else {
+                phaseReport.append("succeeds.\n");
+            }
+            
+            // also iterate after checking, to make up for the decrement that all 
+            // mechs have at the end of the turn
+            nMASCLevel++;
+            return bFailure;
+        }
+        return false;
+    }
+    
 
     /**
      * Returns the number of locations in the entity
@@ -123,7 +172,8 @@ public abstract class Mech
      */
     public void newRound() {
         super.newRound();
-        
+
+        nMASCLevel = Math.max(0, nMASCLevel - 1);        
         setSecondaryFacing(getFacing());
         
     }
@@ -213,6 +263,29 @@ public abstract class Mech
             setCritical(LOC_RT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
             setCritical(LOC_LT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
         }
+    }
+    
+    /**
+     * Utility function to loop through the equipment
+     */
+    public boolean hasActiveMASC() {
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (!m.isDestroyed() && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("On")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Potentially adjust runMP for MASC
+     */
+    public int getRunMP() {
+        if (hasActiveMASC()) {
+            return getWalkMP() * 2;
+        }
+        return super.getRunMP();
     }
     
     /**

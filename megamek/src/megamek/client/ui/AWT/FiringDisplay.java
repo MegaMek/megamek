@@ -299,11 +299,10 @@ public class FiringDisplay
     private void changeMode() {
         int wn = client.mechD.wPan.getSelectedWeaponNum();
         Mounted m = ce().getEquipment(wn);
-        m.switchMode();
+        int nMode = m.switchMode();
         
-        attacks.addElement(new FiringModeChangeAction(cen, wn));
-        client.mechD.wPan.displayMech(ce());
-        client.mechD.wPan.selectWeapon(wn);
+        // send change to the server
+        client.sendModeChange(ce().getId(), wn, nMode);
         
         // notify the player
         if (m.getType().hasInstantModeSwitch()) {
@@ -313,6 +312,9 @@ public class FiringDisplay
             client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
                     " at end of turn.");
         }
+
+        client.mechD.wPan.displayMech(ce());
+        client.mechD.wPan.selectWeapon(wn);
     }
 
    /**

@@ -87,17 +87,38 @@ public class Mounted implements Serializable{
         return type.getModes()[pendingMode];
     }
     
-    public void switchMode() {
+    public int switchMode() {
         if (type.hasModes()) {
-            if (type.hasInstantModeSwitch()) {
-                mode = (mode + 1) % type.getModes().length;
-            }
-            else if (pendingMode == -1) {
-                pendingMode = (mode + 1) % type.getModes().length;
+            int nMode = 0;
+            if (pendingMode > -1) {
+                nMode = (pendingMode + 1) % type.getModes().length;
             }
             else {
-                // already had a mode pending, so we need to iterate that
-                pendingMode = (pendingMode + 1) % type.getModes().length;
+                nMode = (mode + 1) % type.getModes().length;
+            }
+            setMode(nMode);
+            return nMode;
+        }
+        return -1;
+    }
+    
+    public int setMode(String s) {
+        for (int x = 0; x < type.getModes().length; x++) {
+            if (type.getModes()[x].equals(s)) {
+                setMode(x);
+                return x;
+            }
+        }
+        return -1;
+    }
+    
+    public void setMode(int n) {
+        if (type.hasModes()) {
+            if (type.hasInstantModeSwitch()) {
+                mode = n;
+            }
+            else if (pendingMode == -1) {
+                pendingMode = n;
             }
         }
     }

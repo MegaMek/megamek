@@ -286,16 +286,20 @@ public class Mech
             return "Unknown!";
         }
     }
+    
+    public boolean canChangeSecondaryFacing() {
+        return !isProne();
+    }
   
     /**
      * Can this mech torso twist in the given direction?
      */
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
-        if (isProne()) {
-            return rotate == 0;
-        } else {
+        if (canChangeSecondaryFacing()) {
             return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
+        } else {
+            return rotate == 0;
         }
     }
 
@@ -307,7 +311,7 @@ public class Mech
             return dir;
         }
         // can't twist while prone
-        if (isProne()) {
+        if (!canChangeSecondaryFacing()) {
             return getFacing();
         }
         // otherwise, twist once in the appropriate direction

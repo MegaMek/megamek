@@ -39,6 +39,7 @@ public class Compute
     public static final int        GEAR_JUMP        = 2;
     public static final int        GEAR_CHARGE      = 3;
     public static final int        GEAR_DFA         = 4;
+    public static final int        GEAR_TURN        = 5;
     
     public static final DiceRandom random = new DiceRandom();
     

@@ -101,6 +101,7 @@ v next
 + window close buttons close dialogs
 + changed button layout (again)... let's get the new buttons working!
 + inserted Derek Evans's fix for LOS floating-point precision errors
++ turn & torso twist buttons working
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

@@ -66,6 +66,7 @@ public class FiringDisplay
   
     // is the shift key held?
     private boolean            shiftheld;
+    private boolean            twisting;
 
     
     /**
@@ -218,6 +219,8 @@ public class FiringDisplay
             client.mechD.wPan.selectWeapon(selectedWeapon);
 
             client.bv.centerOnHex(ce().getPosition());
+            
+            butTwist.setEnabled(ce().canChangeSecondaryFacing());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
             System.err.println("FiringDisplay: sending ready signal...");
@@ -404,20 +407,25 @@ public class FiringDisplay
     // BoardListener
     //
     public void boardHexMoused(BoardEvent b) {
-        if (client.isMyTurn()
-            && (b.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
-            if (b.getType() == b.BOARD_HEX_DRAGGED) {
-                if (!b.getCoords().equals(client.game.board.lastCursor)) {
-                    if (shiftheld) {
-                        torsoTwist(b.getCoords());
-                    }
-                    client.game.board.cursor(b.getCoords());
-                }
-            } else if (b.getType() == b.BOARD_HEX_CLICKED) {
-                client.game.board.select(b.getCoords());
-            }
+        // ignore buttons other than 1
+        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+            return;
         }
-    }
+        // check for shifty goodness
+        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        }
+        
+        if (b.getType() == b.BOARD_HEX_DRAGGED && !b.getCoords().equals(client.game.board.lastCursor)) {
+            if (shiftheld || twisting) {
+                torsoTwist(b.getCoords());
+            }
+            client.game.board.cursor(b.getCoords());
+        } else if (b.getType() == b.BOARD_HEX_CLICKED) {
+            twisting = false;
+            client.game.board.select(b.getCoords());
+        }
+     }
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null
             && !b.getCoords().equals(ce().getPosition())) {
@@ -476,6 +484,8 @@ public class FiringDisplay
             ready();
         } else if (ev.getSource() == butFire) {
             fire();
+        } else if (ev.getSource() == butTwist) {
+            twisting = true;
         } else if (ev.getSource() == butNext) {
             selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
         } else if (ev.getSource() == butMore) {

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.70 (CVS)
+
 v0.29.69 (2005-03-14 7:45am)
 + Data 1157247: New pictures for Burrock, Great Wyrm, Highlander IIC, Scylla.
 + Bug 1156215: jammed RACs can fire

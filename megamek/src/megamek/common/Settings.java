@@ -82,7 +82,14 @@ public class Settings
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
 
     public static boolean   soundMute               = false;
-    public static String    soundBingFilename       = "data" + File.separator + "sounds" + File.separator + "call.wav";
+
+    // I *intentionally* use a hardcoded "/" instead of File.separator.
+    // (a) I'm defining an "abstract pathname" that generates a URI, so it
+    //          works on systems which have "\" as File.separator.
+    // (b) Having "\" in the pathname **does not work**; for reasons that
+    //          are *not* obvious to me, the "\" disappears from the
+    //          MegaMek.cfg setting after repeated saves.
+    public static String    soundBingFilename       = "data/sounds/call.wav";
 
     /**
      * The player wants to track memory use. Setting this to <code>true</code>

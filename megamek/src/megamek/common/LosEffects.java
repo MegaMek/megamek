@@ -28,21 +28,22 @@ package megamek.common;
 public class LosEffects {
     
     public static class AttackInfo {
-    	public boolean attUnderWater;
-		public boolean attInWater;
-		public boolean attOnLand;
-		public boolean targetUnderWater;
-		public boolean targetInWater;
-		public boolean targetOnLand;
-		public boolean underWaterCombat;
-		public boolean targetEntity = true;
-		public boolean targetInfantry;
-		public Coords attackPos;
-		public Coords targetPos;
-		public int attackAbsHeight;
-		public int targetAbsHeight;
-		public int attackHeight;
-		public int targetHeight;
+        public boolean attUnderWater;
+        public boolean attInWater;
+        public boolean attOnLand;
+        public boolean targetUnderWater;
+        public boolean targetInWater;
+        public boolean targetOnLand;
+        public boolean underWaterCombat;
+        public boolean targetEntity = true;
+        public boolean targetInfantry;
+        public boolean attOffBoard;
+        public Coords attackPos;
+        public Coords targetPos;
+        public int attackAbsHeight;
+        public int targetAbsHeight;
+        public int attackHeight;
+        public int targetHeight;
     }
 
     boolean blocked = false;
@@ -138,7 +139,7 @@ public class LosEffects {
 	 * LOS check from ae to te.
 	 */
 	public boolean canSee() {
-		return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
+	    return !blocked && (lightWoods + lightSmoke) + ((heavyWoods + heavySmoke) * 2) < 3;
 	}
 
     /**
@@ -164,8 +165,8 @@ public class LosEffects {
         ai.targetPos = target.getPosition();
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         ai.targetInfantry = target instanceof Infantry;
-    	ai.attackHeight = ae.getHeight();
-    	ai.targetHeight = target.getHeight();
+        ai.attackHeight = ae.getHeight();
+        ai.targetHeight = target.getHeight();
     
         Hex attHex = game.board.getHex(ae.getPosition());
         Hex targetHex = game.board.getHex(target.getPosition());
@@ -182,14 +183,24 @@ public class LosEffects {
     	
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;
+        boolean attOffBoard = ae.isOffBoard();
+        boolean attUnderWater;
+        boolean attInWater;
+        boolean attOnLand;
+        if (attOffBoard) {
+            attUnderWater = true;
+            attInWater = false;
+            attOnLand = true;
+        } else {
+            attUnderWater = attHex.contains(Terrain.WATER) && 
+                        attHex.depth() > 0 && 
+                        attEl < attHex.surface();
+            attInWater = attHex.contains(Terrain.WATER) &&
+                        attHex.depth() > 0 && 
+                        attEl == attHex.surface();
+            attOnLand = !(attUnderWater || attInWater);
+        }
         
-        boolean attUnderWater = attHex.contains(Terrain.WATER) && 
-        						attHex.depth() > 0 && 
-        						attEl < attHex.surface();
-        boolean attInWater = attHex.contains(Terrain.WATER) &&
-        						attHex.depth() > 0 && 
-        						attEl == attHex.surface();
-        boolean attOnLand = !(attUnderWater || attInWater);
         
         boolean targetUnderWater = targetHex.contains(Terrain.WATER) && 
         						targetHex.depth() > 0 && 
@@ -208,18 +219,24 @@ public class LosEffects {
         ai.targetInWater = targetInWater;
         ai.targetOnLand = targetOnLand;
         ai.underWaterCombat = underWaterCombat;
+        ai.attOffBoard = attOffBoard;
         
 		return calculateLos(game, ai);
     }
 
     public static LosEffects calculateLos(Game game, AttackInfo ai) {
         
-		if (ai.attOnLand && ai.targetUnderWater ||
-			ai.attUnderWater && ai.targetOnLand) {
-			LosEffects los = new LosEffects();
-			los.blocked = true;
-			return los;        	
-		}
+        if (ai.attOffBoard) {
+            LosEffects los = new LosEffects();
+            los.blocked = true;
+            return los;
+        }
+        if (ai.attOnLand && ai.targetUnderWater ||
+			     ai.attUnderWater && ai.targetOnLand) {
+			     LosEffects los = new LosEffects();
+			     los.blocked = true;
+			     return los;        	
+		    }
 		
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {

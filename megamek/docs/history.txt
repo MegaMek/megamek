@@ -7,6 +7,12 @@ v0.29.53 (CVS)
 + Bug 1039781: TCs and immobile targets
 + Bug 1044357: MS JRE doesn't support Vector#add
 + Add date/time stamp to "END OF GAME" message.
++ Bug 1047085: allow delayed deployment with 'any' as starting direction
++ Bug 1046545: Client hangs with PPC inhibitor disengaging and missile mod.
++ RFE 580405: Artillery. Off-board artillery support added, when cofiguring a
+    unit that has an artillery weapon, you can select to deploy it off-board,
+    select the map-edge behind which it should be positioned, and select the
+    distance from the board.
 
 v0.29.52 (2004-01-10 8:15pm)
 + Bug 1039773: the club needs to be restored after transmission.

@@ -532,8 +532,10 @@ public abstract class Mech
         if (getPosition() == null) {
             return getJumpMP();
         }
-        
-        int waterLevel = game.board.getHex(getPosition()).levelOf(Terrain.WATER);
+        int waterLevel = 0;
+        if (!isOffBoard()) {
+            waterLevel = game.board.getHex(getPosition()).levelOf(Terrain.WATER);
+        }        
         if (waterLevel <= 0) {
             return getJumpMP();
         } else if (waterLevel > 1) {
@@ -699,7 +701,8 @@ public abstract class Mech
      * Gets the number of heat sinks that are underwater.
      */
     private int sinksUnderwater() {
-        if (getPosition() == null) {
+        if (getPosition() == null ||
+            isOffBoard()) {
             return 0;
         }
         

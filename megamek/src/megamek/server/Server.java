@@ -1207,11 +1207,17 @@ implements Runnable, ConnectionHandler {
                 send(createTurnVectorPacket());
                 break;
             case Game.PHASE_SET_ARTYAUTOHITHEXES :
+                // place off board entities actually off-board
+                Enumeration i = game.getEntities();
+                while (i.hasMoreElements()) {
+                    Entity en = (Entity) i.nextElement();
+                    en.checkPlaceOffBoard();
+                }
                 checkForObservers();
                 resetActivePlayersDone();
                 setIneligible(phase);
 
-                Enumeration i = game.getPlayers();
+                i = game.getPlayers();
                 Vector turn = new Vector();
                 while (i.hasMoreElements()) {
                     Player p = (Player) i.nextElement();
@@ -2040,10 +2046,15 @@ implements Runnable, ConnectionHandler {
     /**
      * Pretty much anybody's eligible for movement. If the game option
      * is toggled on, inactive and immobile entities are not eligible.
+     * OffBoard units are always ineligible
      * @param entity
      * @return
      */
     private boolean isEligibleForMovement(Entity entity) {
+        // check if entity is offboard
+        if (entity.isOffBoard()) {
+            return false;
+        }
         // check game options
         if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
             return true;
@@ -2066,6 +2077,11 @@ implements Runnable, ConnectionHandler {
         if (entity.isUnjammingRAC()
             || entity.isCharging()
             || entity.isMakingDfa()) {
+            return false;
+        }
+        
+        // if you're offboard, no shooting
+        if (entity.isOffBoard()) {
             return false;
         }
 
@@ -5384,6 +5400,7 @@ implements Runnable, ConnectionHandler {
       }
       // Resolve roll for disengaged field inhibitors on PPCs, if needed
       if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
+          && weapon.getName().equals("Particle Cannon")
           && weapon.curMode().equals("Field Inhibitor OFF") ) {
           int rollTarget = 0;
           int dieRoll = Compute.d6(2);
@@ -7862,9 +7879,11 @@ implements Runnable, ConnectionHandler {
             
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
-            if (entityHex.levelOf(Terrain.FIRE) == 2) {
-                entity.heatBuildup += 5;
-                roundReport.append("Added 5 heat from a fire...\n");
+            if (entityHex != null) {
+                if (entityHex.levelOf(Terrain.FIRE) == 2) {
+                    entity.heatBuildup += 5;
+                    roundReport.append("Added 5 heat from a fire...\n");
+                }
             }
 
             // add the heat we've built up so far.
@@ -8128,7 +8147,8 @@ implements Runnable, ConnectionHandler {
             if ( null == entity.getPosition() ||
                  entity instanceof Mech ||
                  entity.isDoomed() ||
-                 entity.isDestroyed()) {
+                 entity.isDestroyed() ||
+                 entity.isOffBoard()) {
                 continue;
             }
             final Hex curHex = game.board.getHex(entity.getPosition());
@@ -8145,7 +8165,8 @@ implements Runnable, ConnectionHandler {
     private void checkForSuffocation() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if ( null == entity.getPosition() ) {
+            if ( null == entity.getPosition() ||
+                 entity.isOffBoard()) {
                 continue;
             }
             final Hex curHex = game.board.getHex(entity.getPosition());

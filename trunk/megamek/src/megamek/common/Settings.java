@@ -67,7 +67,7 @@ public class Settings
 
     // scrolling settings
     public static boolean   rightDragScroll         = true;
-    public static boolean   tabScroll               = false;
+    public static boolean   ctlScroll               = false;
     public static boolean   clickEdgeScroll         = false;
     public static boolean   autoEdgeScroll          = false;
     public static int       scrollSensitivity       = 3;
@@ -438,9 +438,9 @@ scan:
                         st.nextToken();
                         rightDragScroll = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if(key.equals("tabscroll")) {
+                    else if(key.equals("ctlScroll")) {
                         st.nextToken();
-                        tabScroll = Boolean.valueOf(st.sval).booleanValue();
+                        ctlScroll = Boolean.valueOf(st.sval).booleanValue();
                     }
                     else if(key.equals("clickedgescroll")) {
                         st.nextToken();
@@ -585,7 +585,7 @@ scan:
             cw.write("maxpathfindertime " + maxPathfinderTime + "\r\n" );
 
             cw.write("rightdragscroll " + rightDragScroll + "\r\n");
-            cw.write("tabscroll " + tabScroll + "\r\n");
+            cw.write("ctlScroll " + ctlScroll + "\r\n");
             cw.write("clickedgescroll " + clickEdgeScroll + "\r\n");
             cw.write("autoedgescroll " + autoEdgeScroll + "\r\n");
             cw.write("scrollsensitivity " + scrollSensitivity + "\r\n");

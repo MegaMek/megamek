@@ -213,10 +213,7 @@ public class FiringDisplay
             client.game.board.select(null);
             client.game.board.cursor(null);
 
-            client.mechD.displayMech(ce());
-            client.mechD.showPanel("weapons");
-            selectedWeapon = ce().getFirstWeapon();
-            client.mechD.wPan.selectWeapon(selectedWeapon);
+            refreshAll();
 
             client.bv.centerOnHex(ce().getPosition());
             
@@ -265,8 +262,12 @@ public class FiringDisplay
      */
     private void disableButtons() {
         butFire.setEnabled(false);
-        butDone.setEnabled(false);
+        butSkip.setEnabled(false);
+        butAim.setEnabled(false);
+        butFindClub.setEnabled(false);
+        butMore.setEnabled(false);
         butNext.setEnabled(false);
+        butDone.setEnabled(false);
     }
     
     /**
@@ -336,7 +337,16 @@ public class FiringDisplay
             }
             attacks.removeAllElements();
         }
+        ce().setSecondaryFacing(ce().getFacing());
+    }
+    
+    /**
+     * Refeshes all displays.
+     */
+    private void refreshAll() {
+        client.bv.redrawEntity(ce());
         client.mechD.wPan.displayMech(ce());
+        client.mechD.showPanel("weapons");
         selectedWeapon = ce().getFirstWeapon();
         client.mechD.wPan.selectWeapon(selectedWeapon);
         updateTarget();
@@ -386,9 +396,7 @@ public class FiringDisplay
             clearAttacks();
             attacks.addElement(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
-            client.bv.redrawEntity(ce());
-            // update target data in weapon display
-            updateTarget();
+            refreshAll();
         }
     }
     
@@ -431,7 +439,7 @@ public class FiringDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
         
-        if (b.getType() == b.BOARD_HEX_DRAGGED && !b.getCoords().equals(client.game.board.lastCursor)) {
+        if (b.getType() == b.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 torsoTwist(b.getCoords());
             }
@@ -442,12 +450,10 @@ public class FiringDisplay
         }
     }
     public void boardHexSelected(BoardEvent b) {
-        if (client.isMyTurn() && b.getCoords() != null && ce() != null
-        && !b.getCoords().equals(ce().getPosition())) {
+        if (client.isMyTurn() && b.getCoords() != null && ce() != null && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 torsoTwist(b.getCoords());
-            } else if (client.game.getEntity(b.getCoords()) != null
-            && client.game.getEntity(b.getCoords()).isTargetable()) {
+            } else if (client.game.getEntity(b.getCoords()) != null && client.game.getEntity(b.getCoords()).isTargetable()) {
                 target(client.game.getEntity(b.getCoords()).getId());
             }
         }
@@ -502,6 +508,8 @@ public class FiringDisplay
         } else if (ev.getSource() == butTwist) {
             twisting = true;
         } else if (ev.getSource() == butNext) {
+            clearAttacks();
+            refreshAll();
             selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
@@ -519,6 +527,9 @@ public class FiringDisplay
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == ev.VK_ESCAPE) {
             clearAttacks();
+            client.game.board.select(null);
+            client.game.board.cursor(null);
+            refreshAll();
         }
         if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {

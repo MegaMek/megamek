@@ -38,8 +38,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
          aimingAt != Mech.LOC_NONE) {
          toHit.addModifier(3, "aiming with targeting computer");
        } else {
-         if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-              (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+         if ( ae.hasTargComp()) {
              toHit.addModifier(-1, "targeting computer");
          }
        }

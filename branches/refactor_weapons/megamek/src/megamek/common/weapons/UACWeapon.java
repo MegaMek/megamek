@@ -30,7 +30,7 @@ public class UACWeapon extends AmmoWeapon {
 	 */
 	public UACWeapon() {
 		super();
-        this.flags |= F_DIRECT_FIRE;
+        this.flags |= WeaponType.F_DIRECT_FIRE;
         this.ammoType = AmmoType.T_AC_ULTRA;
         String[] modes = { "Single", "Ultra" };
         this.setModes(modes);
@@ -42,8 +42,7 @@ public class UACWeapon extends AmmoWeapon {
         aimingAt != Mech.LOC_NONE) {
         toHit.addModifier(3, "aiming with targeting computer");
       } else {
-        if ( ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-             (!usesAmmo || atype.getMunitionType() != AmmoType.M_CLUSTER) ) {
+        if ( ae.hasTargComp()) {
             toHit.addModifier(-1, "targeting computer");
         }
       }

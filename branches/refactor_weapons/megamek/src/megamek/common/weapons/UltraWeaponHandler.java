@@ -33,7 +33,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 	 */
 	public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,Server s) {
 		super(t, w, g, s);
-		server.sendServerChat("Hi, I'm an ultraweaponhandler.  Go!");
 	}
 	
 	/* (non-Javadoc)
@@ -43,7 +42,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 		setDone();       
 		checkAmmo();
 		int total =ae.getTotalAmmoOfType(ammo.getType());
-		server.sendServerChat("UWH#useAmmo. Total=" + total);
 		if(total>1) {
 			howManyShots=2;
 		}
@@ -52,16 +50,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 		}
 		if(total==0) {
 			//can't happen?
-			server.sendServerChat("Why am I getting total=0?");
 			
 		}
-		server.sendServerChat("OK, hms=" + howManyShots);
 		if(ammo.getShotsLeft()==0) {
-			
-			server.sendServerChat("//Ugh, we need a new ammo!");
 			ae.loadWeapon(weapon);
 			ammo = weapon.getLinked();
-			server.sendServerChat("New ammo has shots=" + ammo.getShotsLeft());
 			//there will be some ammo somewhere, otherwise shot will not have been fired.
 		}
 		if(ammo.getShotsLeft()==1)  {

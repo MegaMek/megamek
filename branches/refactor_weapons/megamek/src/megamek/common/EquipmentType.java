@@ -235,6 +235,16 @@ public class EquipmentType {
     	addType(new CLUAC5());
     	addType(new CLUAC10());
     	addType(new CLUAC20());
+    	//LBXs
+    	addType(new ISLB2XAC());
+    	addType(new ISLB5XAC());
+    	addType(new ISLB10XAC());
+    	addType(new ISLB20XAC());
+    	addType(new CLLB2XAC());
+    	addType(new CLLB5XAC());
+    	addType(new CLLB10XAC());
+    	addType(new CLLB20XAC());
+    	
     }
     
 }

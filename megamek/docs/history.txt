@@ -5,6 +5,7 @@ v0.29.47 (CVS)
 + Added scrollbars to Board Editor.  In-game scrollbars coming soon.
 + Bug 988798: Mechs with dodge ability auto-dodge when appropriate.
 + Bug 999146: Server NPE on client disconnect fixed.
++ Bug 996032: Exception in Customize Mech Dialog fixed.  Thanks weaselflink!
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

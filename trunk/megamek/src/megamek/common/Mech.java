@@ -169,6 +169,50 @@ public abstract class Mech
         }
     }
 
+    /**
+     * Get the number of turns MASC has been used continuously.
+     * <p/>
+     * This method should <strong>only</strong> be used during serialization.
+     *
+     * @return  the <code>int</code> number of turns MASC has been used.
+     */
+    public int getMASCTurns() {
+        return nMASCLevel;
+    }
+
+    /**
+     * Set the number of turns MASC has been used continuously.
+     * <p/>
+     * This method should <strong>only</strong> be used during deserialization.
+     *
+     * @param   turns The <code>int</code> number of turns MASC has been used.
+     */
+    public void setMASCTurns( int turns ) {
+        nMASCLevel = turns;
+    }
+
+    /**
+     * Determine if MASC has been used this turn.
+     * <p/>
+     * This method should <strong>only</strong> be used during serialization.
+     *
+     * @return  <code>true</code> if MASC has been used.
+     */
+    public boolean isMASCUsed() {
+        return usedMASC;
+    }
+
+    /**
+     * Set whether MASC has been used.
+     * <p/>
+     * This method should <strong>only</strong> be used during deserialization.
+     *
+     * @param   used The <code>boolean</code> whether MASC has been used.
+     */
+    public void setMASCUsed( boolean used ) {
+        usedMASC = used;
+    }
+
     public int getMASCTarget() {
         return MASC_FAILURE[nMASCLevel] + 1;
     }
@@ -258,7 +302,7 @@ public abstract class Mech
 
             // Stealth can not be turned on if it's ECM is destroyed.
             if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
-                      m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
+                 m.getLinked().isDestroyed() && m.getLinked().isBreached() ) {
                 m.setMode("Off");
             }
 
@@ -268,12 +312,13 @@ public abstract class Mech
         // If MASC was used last turn, increment the counter,
         // otherwise decrement.  Then, clear the counter 
         if (usedMASC) {
-                nMASCLevel++;
-        } else
-            nMASCLevel = Math.max(0, nMASCLevel - 1);        
+            nMASCLevel++;
+        } else {
+            nMASCLevel = Math.max(0, nMASCLevel - 1);
+        }
 
-  // Clear the MASC flag 
-  usedMASC = false;
+        // Clear the MASC flag 
+        usedMASC = false;
 
         setSecondaryFacing(getFacing());
         

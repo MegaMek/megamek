@@ -310,7 +310,8 @@ public class DeploymentDisplay
             dlg.show();
             return;
         }
-        else if (client.game.getFirstEntity(moveto) != null) {
+        // check if deployed unit violates stacking
+        else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             return;
         }
         else {    

@@ -27,6 +27,7 @@ public class PhysicalDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener, ComponentListener
 {
+    private static final int    NUM_BUTTON_LAYOUTS = 1;
     // parent game
     private Client          client;
         
@@ -35,13 +36,19 @@ public class PhysicalDisplay
         
     // buttons
     private Container         panButtons;
+    
     private Button            butPunch;
     private Button            butKick;
     private Button            butPush;
     private Button            butClub;
-    private Button            butReady;
+    
+    private Button            butSpace;
+   
     private Button            butNext;
-    private Button            butMenu;
+    private Button            butDone;
+    private Button            butMore;
+    
+    private int               buttonLayout;
         
     // let's keep track of what we're shooting and at what, too
     private int                cen;        // current entity number
@@ -65,58 +72,40 @@ public class PhysicalDisplay
         labStatus = new Label("Waiting to begin Physical Attack phase...", Label.CENTER);
             
         butPunch = new Button("Punch");
-        butPunch.setActionCommand("punch");
         butPunch.addActionListener(this);
-        butPunch.addKeyListener(this);
         butPunch.setEnabled(false);
         
         butKick = new Button("Kick");
-        butKick.setActionCommand("kick");
         butKick.addActionListener(this);
-        butKick.addKeyListener(this);
         butKick.setEnabled(false);
         
         butPush = new Button("Push");
-        butPush.setActionCommand("push");
         butPush.addActionListener(this);
-        butPush.addKeyListener(this);
         butPush.setEnabled(false);
         
         butClub = new Button("Club");
-        butClub.setActionCommand("club");
         butClub.addActionListener(this);
-        butClub.addKeyListener(this);
         butClub.setEnabled(false);
         
-        butReady = new Button("Done");
-        butReady.setActionCommand("ready");
-        butReady.addActionListener(this);
-        butReady.addKeyListener(this);
-        butReady.setEnabled(false);
+        butSpace = new Button(".");
+        butSpace.setEnabled(false);
         
-        butNext = new Button("Next Unit");
-        butNext.setActionCommand("next");
+        butDone = new Button("Done");
+        butDone.addActionListener(this);
+        butDone.setEnabled(false);
+        
+        butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
-        butNext.addKeyListener(this);
         butNext.setEnabled(false);
         
-        butMenu = new Button("?");
-        butMenu.setActionCommand("menu");
-        butMenu.addActionListener(this);
-        butMenu.addKeyListener(this);
-        butMenu.setEnabled(false);
+        butMore = new Button("More...");
+        butMore.addActionListener(this);
+        butMore.setEnabled(false);
         
         // layout button grid
         panButtons = new Panel();
-        panButtons.setLayout(new GridLayout(2, 3));
-        panButtons.add(butPunch);
-        panButtons.add(butClub);
-        panButtons.add(butNext);
-        panButtons.add(butKick);
-        panButtons.add(butPush);
-//        panButtons.add(butMenu);
-        panButtons.add(butReady);
-    
+        buttonLayout = 0;
+        setupButtonPanel();
         
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -152,6 +141,26 @@ public class PhysicalDisplay
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
+    }
+    
+    private void setupButtonPanel() {
+        panButtons.removeAll();
+        panButtons.setLayout(new GridLayout(2, 4));
+        
+        switch (buttonLayout) {
+        case 0 :
+            panButtons.add(butPunch);
+            panButtons.add(butKick);
+            panButtons.add(butPush);
+            panButtons.add(butNext);
+            panButtons.add(butClub);
+            panButtons.add(butSpace);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
+        }
+        
+        validate();
     }
     
     /**
@@ -190,7 +199,7 @@ public class PhysicalDisplay
     private void beginMyTurn() {
         ten = Entity.NONE;
         butNext.setEnabled(true);
-        butReady.setEnabled(true);
+        butDone.setEnabled(true);
         client.mechW.setVisible(true);
         moveMechDisplay();
         client.game.board.select(null);
@@ -222,7 +231,7 @@ public class PhysicalDisplay
         butPunch.setEnabled(false);
         butPush.setEnabled(false);
         butClub.setEnabled(false);
-        butReady.setEnabled(false);
+        butDone.setEnabled(false);
         butNext.setEnabled(false);
     }
     
@@ -440,17 +449,21 @@ public class PhysicalDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("ready") && client.isMyTurn()) {
+        if (!client.isMyTurn()) {
+            // odd...
+            return;
+        }
+        if (ev.getSource() == butDone) {
             ready();
-        } else if (ev.getActionCommand().equalsIgnoreCase("punch") && client.isMyTurn()) {
+        } else if (ev.getSource() == butPunch) {
             punch();
-        } else if (ev.getActionCommand().equalsIgnoreCase("kick") && client.isMyTurn()) {
+        } else if (ev.getSource() == butKick) {
             kick();
-        } else if (ev.getActionCommand().equalsIgnoreCase("push") && client.isMyTurn()) {
+        } else if (ev.getSource() == butPush) {
             push();
-        } else if (ev.getActionCommand().equalsIgnoreCase("club") && client.isMyTurn()) {
+        } else if (ev.getSource() == butClub) {
             club();
-        } else if (ev.getActionCommand().equalsIgnoreCase("next") && client.isMyTurn()) {
+        } else if (ev.getSource() == butNext) {
             selectEntity(client.game.getNextEntityNum(client.getLocalPlayer(), cen));
         }
     }

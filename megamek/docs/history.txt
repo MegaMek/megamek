@@ -96,6 +96,8 @@ v next
 + moved jump jets & heat sinks into "equipment" from "systems"
 + hatchets load properly
 + hatchet attacks work
++ window close buttons close dialogs
++ changed button layout (again)... let's get the new buttons working!
 
 v 0.24.5 (03-30-02, 3pm)
 + "esc" clears fire even when focus is not on the map

@@ -113,6 +113,9 @@ public class BoardSelectionDialog
         gridbag.setConstraints(panButtons, c);
         this.add(panButtons);        
         
+        addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
         
         pack();
         setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,

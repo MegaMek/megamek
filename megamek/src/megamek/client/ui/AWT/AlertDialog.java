@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -50,6 +50,10 @@ public class AlertDialog
         c.ipadx = 20;    c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
+        
+        addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
         
         pack();
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,

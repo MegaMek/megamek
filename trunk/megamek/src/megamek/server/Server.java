@@ -110,8 +110,30 @@ implements Runnable {
         registerCommand(new WhoCommand(this));
     }
     
+    /**
+     * Sets the game for this server.  Restores any transient fields, and sets
+     * all players as ghosts.
+     * This should only be called during server initialization before any
+     * players have connected.
+     */
     public void setGame(Game g) {
-        game = g;
+        this.game = g;
+        
+        // reattach the transient fields and ghost the players
+        for (Enumeration e = game.getEntities(); e.hasMoreElements(); ) {
+            Entity ent = (Entity)e.nextElement();
+            ent.setOwner(game.getPlayer(ent.getOwnerId()));
+            ent.setGame(game);
+            ent.restore();
+        }
+        
+        for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player p = (Player)e.nextElement();
+            p.setGame(game);
+            p.setGhost(true);
+        }
+        
+        changePhase(game.getPhase());
     }
     
     /**
@@ -467,19 +489,8 @@ implements Runnable {
             return false;
         }
         
-        // reattach the transient fields and ghost the players
-        for (Enumeration e = game.getEntities(); e.hasMoreElements(); ) {
-            Entity ent = (Entity)e.nextElement();
-            ent.setOwner(game.getPlayer(ent.getOwnerId()));
-            ent.setGame(game);
-            ent.restore();
-        }
-        
-        for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
-            Player p = (Player)e.nextElement();
-            p.setGame(game);
-            p.setGhost(true);
-        }
+        // a bit redundant, but there's some initialization code there
+        setGame(game);
         
         return true;
     }
@@ -489,23 +500,6 @@ implements Runnable {
      */
     public Player getPlayer(int id) {
         return game.getPlayer(id);
-    }
-    
-    /**
-     * Counts up how many non-ghost, non-observer players are connected.
-     */
-    private int countActivePlayers() {
-        int count = 0;
-        
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            
-            if (!player.isGhost() && !player.isObserver()) {
-                count++;
-            }
-        }
-        
-        return count;
     }
     
     /**
@@ -776,7 +770,7 @@ implements Runnable {
      */
     private void checkReady() {
         // are there any active players?
-        boolean allAboard = countActivePlayers() > 0;
+        boolean allAboard = true;
         // check if all active players are done
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
@@ -850,6 +844,7 @@ implements Runnable {
                 send(createMapSettingsPacket());
                 break;
             case Game.PHASE_INITIATIVE :
+                autoSave();
                 // remove the last traces of last round
                 attacks.removeAllElements();
                 roundReport = new StringBuffer();
@@ -859,7 +854,7 @@ implements Runnable {
                 // roll 'em
                 resetActivePlayersDone();
                 rollInitiative();
-                setIneligible(phase);
+                //setIneligible(phase);
                 determineTurnOrder();
                 writeInitiativeReport();
                 send(createReportPacket());
@@ -886,7 +881,6 @@ implements Runnable {
                 resolveCrewDamage();
                 resolveCrewWakeUp();
                 resolveFire();
-                autoSave();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                 }

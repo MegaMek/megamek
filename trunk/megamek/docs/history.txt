@@ -90,6 +90,8 @@ v 0.28.6-dev (CVS)
 + rough byte count kept per connection (use /who)
 + externalId field added to entities (for mm.net use)
 + 687825: fix crash going back to lobby from a scenario
++ first initiative phase not lost when using a scenario or loading a savegame
++ autosave takes place at beginning of initiative, not end phase
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

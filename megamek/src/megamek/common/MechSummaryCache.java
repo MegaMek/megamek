@@ -304,6 +304,9 @@ public class MechSummaryCache {
             if (f.getName().toLowerCase().endsWith(".log")) {
                 continue;
             }
+            if (f.getName().equals("UnitVerifierOptions.xml")) {
+                continue;
+            }
             if (f.getName().toLowerCase().endsWith(".zip")) {
                 bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                 continue;

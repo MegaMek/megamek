@@ -245,7 +245,7 @@ public class BattleArmor
     /**
      * Returns this entity's original jumping mp.
      */
-    protected int getOriginalJumpMP() {
+    public int getOriginalJumpMP() {
         return jumpMP;
     }
 

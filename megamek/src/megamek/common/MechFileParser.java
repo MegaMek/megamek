@@ -1,5 +1,5 @@
 /*
- * MechFileParser.java - Copyright (C) 2002 Josh Yockey
+ * MechFileParser.java - Copyright (C) 2002,2003,2004 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -100,6 +100,9 @@ public class MechFileParser {
                 }
                 else if (sType.equals("BattleArmor")) {
                     loader = new BLKBattleArmorFile(bb);
+                }
+                else if (sType.equals("ProtoMech")) {
+                    loader = new BLKProtoFile(bb);
                 }
                 else if (sType.equals("Mech")) {
                     loader = new BLKMechFile(bb);

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -218,8 +218,10 @@ public class EntityListFile {
 
             } // Check the next slot in this location
 
-            // Tanks don't have slots, so we have to handle the ammo specially.
-            if ( entity instanceof Tank ) {
+            // Tanks don't have slots, and Protomechs only have
+            // system slots, so we have to handle the ammo specially.
+            if ( entity instanceof Tank ||
+                 entity instanceof Protomech ) {
                 Enumeration ammo = entity.getAmmo();
                 while ( ammo.hasMoreElements() ) {
 
@@ -235,7 +237,7 @@ public class EntityListFile {
 
                 } // Check the next ammo.
 
-            } // End is-tank
+            } // End is-tank-or-proto
 
             // Did we record information for this location?
             if ( thisLoc.length() > 0 ) {

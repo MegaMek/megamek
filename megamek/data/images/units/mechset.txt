@@ -42,7 +42,7 @@ exact "default_quad" "default_quad.gif"
 exact "default_tank" "default_tank.gif"
 exact "default_infantry" "default_infantry.gif"
 # TODO : Replace this with the *real* image.
-exact "default_proto" "default_light.gif"
+exact "default_proto" "default_proto.gif"
 
 
 Infantry

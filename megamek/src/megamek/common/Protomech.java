@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -44,6 +44,21 @@ public class Protomech
     public int TorsoAGunNum;
     public int TorsoBGunNum;
     // locations
+
+    /**
+     * The battle value of this unit.  This value should
+     * be set when the unit's file is read.
+     */
+    private int         myBV = 0;
+
+    /*
+    ** Not every Protomech has a main gun.
+    ** N.B. Regardless of the value set here, the variable is initialized to
+    ** <code>false</code> until after the <code>Entity</code> is initialized,
+    ** which is too late to allow main gun armor, hence the convoluted reverse
+    ** logic.
+    */
+    private boolean     m_bHasNoMainGun = false;
 
     public static final int        LOC_HEAD            = 0;
     public static final int        LOC_TORSO           = 1;
@@ -153,15 +168,6 @@ public class Protomech
         return LOC_TORSO;
     }
 
-
-
-
-    /**
-     * Returns the number of locations in the entity
-     */
-    public int locations() {
-      return NUM_PMECH_LOCATIONS;
-    }
      /**
      * Add in any piloting skill mods
      */
@@ -493,16 +499,17 @@ public class Protomech
      * weight class
      */
     public void autoSetInternal() {
+        int mainGunIS = hasMainGun() ? 1: Entity.ARMOR_NA;
         switch ((int)weight) {
             //                     H, TSO,ARM,LEGS,MainGun
-            case 2  : setInternal(1,2,1,2,1); break;
-            case 3  : setInternal(1,3,1,2,1); break;
-            case 4  : setInternal(1,4,1,3,1); break;
-            case 5  : setInternal(1,5,1,3,1); break;
-            case 6  : setInternal(2,6,2,4,1); break;
-            case 7  : setInternal(2,7,2,4,1); break;
-            case 8  : setInternal(2,8,2,5,1); break;
-            case 9  : setInternal(2,9,2,5,1); break;
+            case 2  : setInternal(1,2,1,2,mainGunIS); break;
+            case 3  : setInternal(1,3,1,2,mainGunIS); break;
+            case 4  : setInternal(1,4,1,3,mainGunIS); break;
+            case 5  : setInternal(1,5,1,3,mainGunIS); break;
+            case 6  : setInternal(2,6,2,4,mainGunIS); break;
+            case 7  : setInternal(2,7,2,4,mainGunIS); break;
+            case 8  : setInternal(2,8,2,5,mainGunIS); break;
+            case 9  : setInternal(2,9,2,5,mainGunIS); break;
         }
     }
     /**
@@ -553,14 +560,14 @@ public class Protomech
      */
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted, int shots)
         throws LocationFullException
-    {	if(mounted.getType() instanceof AmmoType){
-
-    		if(-1!=shots){
-
-    			mounted.setShotsLeft(shots);//Damn protomech ammo; nasty hack, should be cleaner
-                        super.addEquipment(mounted,loc,rearMounted);
-
-    		}
+    {
+        if(mounted.getType() instanceof AmmoType) {
+            //Damn protomech ammo; nasty hack, should be cleaner
+            if( -1 != shots ){
+                mounted.setShotsLeft(shots);
+                super.addEquipment(mounted,loc,rearMounted);
+                return;
+            }
         }
 
     	if(mounted.getType() instanceof WeaponType) {
@@ -656,7 +663,15 @@ public class Protomech
      *
      */
     public int calculateBattleValue() {
-double dbv = 0; // defensive battle value
+
+        // Was our battle value set at construction?
+        if ( myBV > 0 ) {
+            // Adjust BV for crew skills.
+            double pilotFactor = crew.getBVSkillMultiplier();
+            return (int)(pilotFactor * (double)myBV);
+        }
+
+        double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         // total armor points
@@ -768,7 +783,7 @@ double dbv = 0; // defensive battle value
     }
 
     public void generateIconName(java.awt.FontMetrics fm) {
-        iconName = getModel();
+        iconName = getChassis() + " " + getModel();
 
         while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
             iconName = iconName.substring(0, iconName.length() - 1);
@@ -809,6 +824,47 @@ double dbv = 0; // defensive battle value
         else {
             return super.getLocationAbbr(loc);
         }
+    }
+
+    /**
+     * Sets the battle value of this unit.  Please note that the BV
+     * of all Battle Armor units is dictated by the BMRr, page 155.
+     *
+     * @param   bv - the <code>int</code> battle value of this unit.
+     */
+    public void setBattleValue( int bv ) { myBV = bv; }
+
+    /*
+    ** Not every Protomech has a main gun.
+    */
+    public boolean hasMainGun() 
+    { 
+        return !m_bHasNoMainGun; 
+    }
+
+    /*
+    ** Not every Protomech has a main gun.
+    */
+    public void setHasMainGun(boolean b)
+    {
+        m_bHasNoMainGun = !b;
+    }
+
+    /**
+     * Returns the number of locations in the entity
+     */
+    public int locations() {
+        if ( m_bHasNoMainGun ) {
+            return NUM_PMECH_LOCATIONS - 1;
+        }
+        return NUM_PMECH_LOCATIONS;
+    }
+        
+    /**
+     * Protomechs have no piloting skill (set to 5 for BV purposes)
+     */
+    public void setCrew(Pilot p) {
+        super.setCrew(new Pilot(p.getName(), p.getGunnery(), 5));
     }
 
 }

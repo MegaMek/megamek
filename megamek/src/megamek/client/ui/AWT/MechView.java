@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -35,6 +35,7 @@ public class MechView {
     private boolean isMech;
     private boolean isInf;
     private boolean isVehicle;
+    private boolean isProto;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
 
@@ -46,6 +47,7 @@ public class MechView {
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
         isVehicle = entity instanceof Tank;
+        isProto = entity instanceof Protomech;
         hasEndoSteel = false;
         hasFerroFibrous = false;
 
@@ -150,12 +152,15 @@ public class MechView {
 
             // Skip empty sections.
             if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
-                 (!isMech && !isInf && (( loc == Tank.LOC_TURRET &&
-                                          ((Tank)mech).hasNoTurret() ) ||
-                                        (loc == Tank.LOC_BODY))) ) {
+                 ( isVehicle && (( loc == Tank.LOC_TURRET &&
+                                   ((Tank)mech).hasNoTurret() ) ||
+                                 (loc == Tank.LOC_BODY))) ) {
                 continue;
             }
 
+            if ( mech.getLocationAbbr(loc).length() < 2 ) {
+                sIntArm.append( " " );
+            }
             sIntArm.append( mech.getLocationAbbr(loc) )
                 .append( ": " );
             sIntArm.append( renderArmor(mech.getInternal(loc)) )

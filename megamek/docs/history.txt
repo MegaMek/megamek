@@ -25,6 +25,7 @@ v0.29.43 (CVS)
 + Don't show heat on general tab for vehicles or protos.
 + Show vehicle type on general tab.
 + Omit team from general tab if it is "No Team".
++ Included updates to boards from Endreffy Janos.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

@@ -105,6 +105,7 @@ v 0.28.6-dev (CVS)
 + 681414 renamed various systems to match David McCulloch's names.
 + Added Kage battle armor squads.
 + Added submitted unit image files.
++ option for teams to share vision (in double-blind) added
 
 v 0.28.5 (02-15-03, 1:38pm) 
 + GameTurn now controls which entities are selectable

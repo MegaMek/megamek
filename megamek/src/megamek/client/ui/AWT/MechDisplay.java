@@ -712,25 +712,28 @@ class WeaponPanel extends BufferedPanel
         }
             
         // update range
+        int shortR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange(); 
+        int mediumR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange(); 
+        int longR = entity.getLocationStatus(mounted.getLocation()) == entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange(); 
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
             wMinR.setText("---");
         }
-        if(wtype.getShortRange() > 1) {
-            wShortR.setText("1 - " + wtype.getShortRange());
+        if(shortR > 1) {
+            wShortR.setText("1 - " + shortR);
         } else {
-            wShortR.setText("" + wtype.getShortRange());
+            wShortR.setText("" + shortR);
         }
-        if(wtype.getMediumRange() - wtype.getShortRange() > 1) {
-            wMedR.setText((wtype.getShortRange() + 1) + " - " + wtype.getMediumRange());
+        if(mediumR - shortR > 1) {
+            wMedR.setText((shortR + 1) + " - " + mediumR);
         } else {
-            wMedR.setText("" + wtype.getMediumRange());
+            wMedR.setText("" + mediumR);
         }
-        if(wtype.getLongRange() - wtype.getMediumRange() > 1) {
-            wLongR.setText((wtype.getMediumRange() + 1) + " - " + wtype.getLongRange());
+        if(longR - mediumR > 1) {
+            wLongR.setText((mediumR + 1) + " - " + longR);
         } else {
-            wLongR.setText("" + wtype.getLongRange());
+            wLongR.setText("" + longR);
         }
 
         // Update the range display to account for the weapon's loaded ammo.
@@ -1020,12 +1023,12 @@ class SystemPanel
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    sb.append(cs.isDestroyed() ? "*" : "").append(Mech.systemNames[cs.getIndex()]);
+                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(Mech.systemNames[cs.getIndex()]);
                     vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
                     Mounted m = en.getEquipment(cs.getIndex());
-                    sb.append(cs.isDestroyed() ? "*" : "").append(m.getDesc());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc());
                     if (m.getType().hasModes()) {
                         sb.append(" (").append(m.curMode()).append(")");
                     }

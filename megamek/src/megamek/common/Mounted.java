@@ -35,6 +35,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hit = false;
     private boolean missing = false;
     private boolean jammed = false;
+    private boolean useless = false;
     
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
@@ -168,6 +169,8 @@ public class Mounted implements Serializable, RoundUpdated {
         StringBuffer desc = new StringBuffer(type.getDesc());
         if (destroyed) {
             desc.insert(0, "*");
+        } else if (useless) {
+            desc.insert(0, "x ");
         } else if (usedThisRound) {
             desc.insert(0, "+");
         } else if (jammed) {
@@ -185,7 +188,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
     
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !jammed;
+        return !usedThisRound && !destroyed && !jammed && !useless;
     }
     
     public boolean isUsedThisRound() {
@@ -196,6 +199,14 @@ public class Mounted implements Serializable, RoundUpdated {
         this.usedThisRound = usedThisRound;
     }
     
+    public boolean isBreached() {
+        return useless;
+    }
+
+    public void setBreached(boolean breached) {
+        this.useless = breached;
+    }
+
     public boolean isDestroyed() {
         return destroyed;
     }

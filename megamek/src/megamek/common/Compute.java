@@ -1365,7 +1365,7 @@ public class Compute
         }
         
         // weapon operational?
-        if (weapon.isDestroyed()) {
+        if (weapon.isDestroyed() || weapon.isBreached()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
         }
         
@@ -1405,8 +1405,8 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can not clear woods.");
         }
 
-        // Some weapons can't cause fires, but Infernos always can.
-        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno &&
+        // Some weapons can't cause fires.
+        if ( wtype.hasFlag(WeaponType.F_NO_FIRES) &&
              Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon can not cause fires.");
         }
@@ -1653,25 +1653,15 @@ public class Compute
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
-        // attacker in water?
-        Hex attHex = game.board.getHex(ae.getPosition());
-        if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker underwater.");
-        }
-        
         // target terrain
         toHit.append(getTargetTerrainModifier(game, target));
         
         // target in water?
+        Hex attHex = game.board.getHex(ae.getPosition());
         Hex targHex = game.board.getHex(target.getPosition());
-        if (targHex.contains(Terrain.WATER)) {
-            if (targHex.surface() == targEl && te.height() > 0) {
-                // force partial cover
-                los.targetCover = true;
-                losMods = losModifiers(los);
-            } else if (targHex.surface() > targEl) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater.");
-            }
+        if (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) { //target in partial water
+            los.targetCover = true;
+            losMods = losModifiers(los);
         }
 
         // add in LOS mods that we've been keeping
@@ -1751,9 +1741,14 @@ public class Compute
 
         }
 
-        // Change hit table for partial cover.
-        else if (los.targetCover) {
-            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        // Change hit table for partial cover, accomodate for partial underwater(legs)
+        if (los.targetCover) {
+            if ( ae.getLocationStatus(weapon.getLocation()) == Entity.LOC_WET && (targHex.contains(Terrain.WATER) && targHex.surface() == targEl && te.height() > 0) ) {
+            //weapon underwater, target in partial water
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
+            }
         }
         
         // factor in target side
@@ -1833,6 +1828,27 @@ public class Compute
 			else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
 				weaponRanges = new int[] {0, 3, 6, 9};
 			}
+		}
+
+		//is water involved?
+		Hex attHex = game.board.getHex(ae.getPosition());
+		Hex targHex = game.board.getHex(target.getPosition());
+		int targEl;
+		if (target == null) {
+			targEl = game.board.getHex(target.getPosition()).floor();
+		} else {
+
+			targEl = target.absHeight();
+		}
+
+		if (ae.getLocationStatus(weapon.getLocation()) == ae.LOC_WET) {
+			weaponRanges = wtype.getWRanges(); //HACK on ranges: for those without underwater range, long == medium; iteration in rangeBracket() allows this
+			if (weaponRanges[RANGE_SHORT] == 0) {return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon cannot fire underwater."); }
+			if (!(targHex.contains(Terrain.WATER)) || targHex.surface() <= target.getElevation()) { //target on land or over water
+				return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon underwater, but not target.");
+			}
+		} else if (targHex.contains(Terrain.WATER) && targHex.surface() > targEl) { //target completely underwater, weapon not
+			return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater, but not weapon.");
 		}
 
 		// determine base distance & range bracket
@@ -2426,7 +2442,7 @@ public class Compute
             targEl = game.board.getHex(target.getPosition()).floor();
         }
         Hex hex = game.board.getHex(coords);
-        int hexEl = hex.surface();
+        int hexEl = hex.surface() - hex.depth(); //depth accomodates water and basements
 
         // Handle building elevation.
         // Attacks thru a building are not blocked by that building.
@@ -2893,6 +2909,9 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
+        if (entity.getLocationStatus(armLoc) == entity.LOC_WET) {
+            multiplier /= 2.0f;
+        }
         return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
     }
     
@@ -3157,7 +3176,9 @@ public class Compute
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             multiplier *= 2.0f;
         }
-
+        if (entity.getLocationStatus(legLoc) == entity.LOC_WET) {
+            multiplier /= 2.0f;
+        }
         return (int)Math.floor(damage * multiplier) + modifyPhysicalDamagaForMeleeSpecialist(entity);
     }
     
@@ -3424,6 +3445,9 @@ public class Compute
         }
         if (entity.heat >= 9 && ((Mech)entity).hasTSM()) {
             nDamage *= 2;
+        }
+        if (entity.getLocationStatus(club.getLocation()) == entity.LOC_WET) {
+            nDamage /= 2.0f;
         }
 
         return nDamage + modifyPhysicalDamagaForMeleeSpecialist(entity);
@@ -3947,14 +3971,14 @@ public class Compute
   * Damage that a mech does with a successful charge, given it will move a certain way
   */
   public static int getChargeDamageFor(Entity entity, int hexesMoved) {
-    return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1));
+         return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1)==entity.LOC_WET ? 0.5 : 1) );
   };
 
     /**
      * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int) Math.ceil( target.getWeight() / 10.0 );
+        return (int) Math.ceil( target.getWeight() / 10.0 * (entity.getLocationStatus(1)==entity.LOC_WET ? 0.5 : 1) );
     }
 
     /**

@@ -16,91 +16,112 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+
+import megamek.common.*;
+import megamek.client.util.*;
 
 /**
- * A (somewhat primitive) dialog that asks a question and lets the user confirm or cancel.
- * The question string is tokenised on "\n".
- * Based on AlertDialog and CustomMechDialog
- * @author  Dima.Nemchenko@lunarlollipop.co.uk
- * @version 1
+ * A simple yes/no confirmation dialog.
  */
 public class ConfirmDialog
-	extends Dialog implements ActionListener
-{
-	private boolean confirm = false;
+    extends Dialog implements ActionListener {
+    
+    private GridBagLayout gridbag = new GridBagLayout();
+    private GridBagConstraints c = new GridBagConstraints();
 
-	private Panel panButtons = new Panel();
-	private Button butOK = new Button("OK");
-	private Button butCancel = new Button("Cancel");
+    private boolean useCheckbox;
+    private Checkbox botherCheckbox;
 
-	public ConfirmDialog(Frame parent, String title, String question) {
-		super(parent, title, true);
-		super.setResizable(false);
+    private Panel panButtons = new Panel();
+    private Button butYes = new Button("Yes");
+    private Button butNo = new Button("No");
 
-		GridBagLayout gridbag = new GridBagLayout();
-		setLayout(gridbag);
+    private boolean confirmation = false;
 
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.gridx = 0;
+    public ConfirmDialog(Frame p, String title, String question) {
+        this(p, title, question, false);
+    }
 
-		TextArea message = new TextArea(question, 5, 50, TextArea.SCROLLBARS_VERTICAL_ONLY);
-		message.setEditable(false);
+    public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox) {
+        super(p, title, true);
+        super.setResizable(false);
+        useCheckbox = includeCheckbox;
 
-		c.gridy = 0;
-		c.insets = new Insets(0, 5, 0, 5);
-		add(message,c);
+        setLayout(gridbag);
+        addQuestion(question);
+        addInputs();
+        finishSetup(p);
+    }
 
-		setupButtons();
-		c.gridy = 1;
-		c.insets = new Insets(5, 5, 5, 5);
-		add(panButtons,c);
+    private void addQuestion(String question) {
+        AdvancedLabel questionLabel = new AdvancedLabel(question);
+        c.gridheight = 2;
+        c.insets = new Insets(5, 5, 5, 5);
+        gridbag.setConstraints(questionLabel, c);
+        add(questionLabel);
+    }
+
+    private void addInputs() {
+        int y = 2;
+
+        c.gridheight = 1;
+
+        if (useCheckbox) {
+            botherCheckbox = new Checkbox("Do not bother me again");
         
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) { setVisible(false); }
-		});
-        
-		pack();
-		setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-			parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
-	};
+            c.gridy = y++;
+            gridbag.setConstraints(botherCheckbox, c);
+            add(botherCheckbox);
+        }
 
-	private void setupButtons() {
-		butOK.addActionListener(this);
-		butCancel.addActionListener(this);
+        butYes.addActionListener(this);
+        butNo.addActionListener(this);
 
-		// layout
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		panButtons.setLayout(gridbag);
+        GridBagLayout buttonGridbag = new GridBagLayout();
+        GridBagConstraints bc = new GridBagConstraints();
+        panButtons.setLayout(buttonGridbag);
+        bc.insets = new Insets(5, 5, 5, 5);
+        bc.ipadx = 20;    bc.ipady = 5;
+        buttonGridbag.setConstraints(butYes, bc);
+        panButtons.add(butYes);
+        buttonGridbag.setConstraints(butNo, bc);
+        panButtons.add(butNo);
 
-		c.fill = GridBagConstraints.BOTH;
-		c.insets = new Insets(10, 5, 5, 5);
-		c.weightx = 1.0;    c.weighty = 1.0;
-		c.fill = GridBagConstraints.VERTICAL;
-		c.ipadx = 20;    c.ipady = 5;
+        c.gridy = y;
 
-		c.gridwidth = 1;
-		gridbag.setConstraints(butOK, c);
-		panButtons.add(butOK);
+        gridbag.setConstraints(panButtons, c);
+        add(panButtons);
+    }
 
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		gridbag.setConstraints(butCancel, c);
-		panButtons.add(butCancel);
-	};
+    private void finishSetup(Frame p) {
+        addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    setVisible(false);
+                }
+            });
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == butOK) {
-			confirm = true;
-		} else {
-			confirm = false;
-		};
-		this.setVisible(false);
-	};
+        pack();
+        setLocation(p.getLocation().x + p.getSize().width/2 - getSize().width/2,
+                    p.getLocation().y + p.getSize().height/2 - getSize().height/2);
+    }
+    
+    public boolean getAnswer() {
+        return confirmation;
+    }
 
-	public boolean getAnswer() {
-		return confirm;
-	};
+    public boolean getShowAgain() {
+        if (botherCheckbox == null) {
+            return true;
+        }
+        return !botherCheckbox.getState();
+    }
+
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource() == butYes) {
+            confirmation = true;
+        } else if (actionEvent.getSource() == butNo) {
+            confirmation = false;
+        }
+        this.setVisible(false);
+    }
 }

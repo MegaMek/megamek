@@ -238,6 +238,9 @@ public class BattleArmor
         // Instantiate the superclass.
         super();
 
+        // All Battle Armor squads are Clan until specified otherwise.
+        this.setTechLevel( TechConstants.T_CLAN_LEVEL_2 );
+
         // Construction complete.
         this.isInitialized = true;
     };

@@ -44,9 +44,8 @@ public class TankEncoder {
         throws IOException
     {
         Enumeration iter; // used when marching through a list of sub-elements
-        Coords coords;
-        int turns;
-        String substr;
+        Tank tank = (Tank) entity;
+        int value;
 
         // First, validate our input.
         if ( null == entity ) {
@@ -57,7 +56,31 @@ public class TankEncoder {
         }
 
         // Our EntityEncoder already gave us our root element.
-        // TODO : write Tank-specific elements.
+        out.write( "<hasNoTurret value=\"" );
+        out.write( tank.hasNoTurret() ? "true" : "false" );
+        out.write( "\" /><stunnedTurns value=\"" );
+        value = tank.getStunnedTurns();
+        out.write( String.valueOf(value) );
+        out.write( "\" /><jammedTurns value=\"" );
+        value = tank.getJammedTurns();
+        out.write( String.valueOf(value) );
+        out.write( "\" /><moveHit value=\"" );
+        out.write( tank.isMovementHit() ? "true" : "false" );
+        out.write( "\" /><moveHitPending value=\"" );
+        out.write( tank.isMovementHitPending() ? "true" : "false" );
+
+        // Is the turret locked?
+        if ( tank.isTurretLocked() ) {
+            // Yup.  Record the current facing of the tank and the turret.
+            out.write( "\" /><facing value=\"" );
+            value = tank.getFacing();
+            out.write( String.valueOf(value) );
+            out.write( "\" /><turretFacing value=\"" );
+            value = tank.getSecondaryFacing();
+            out.write( String.valueOf(value) );
+            out.write( "\" /><turretLocked value=\"true" );
+        }
+        out.write( "\" />" );
     }
 
     /**
@@ -73,8 +96,196 @@ public class TankEncoder {
      *          contain a valid <code>Entity</code>.
      */
     public static Entity decode( ParsedXML node, Game game ) {
-        Tank entity = new Tank();
+        Tank entity = null;
+        String attrStr;
+        int attrVal;
+        int loc;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The Tank node is null." );
+        }
+
+        // Make sure that the node is for an Tank unit.
+        attrStr = node.getAttribute( "name" );
+        if ( !node.getName().equals( "class" ) ||
+             null == attrStr || !attrStr.equals( "Tank" ) ) {
+            throw new IllegalStateException( "Not passed an Tank node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Create the entity.
+        entity = new Tank();
+
+        // Walk the board node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the stunnedTurns node?
+            else if ( childName.equals( "stunnedTurns" ) ) {
+
+                // Get the Tank's stunned turns.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the stunnedTurns for a Tank unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                entity.setStunnedTurns( attrVal );
+            }
+
+            // Did we find the jammed turns node?
+            else if ( childName.equals( "jammedTurns" ) ) {
+
+                // Get the Tank's jammed turns.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the jammedTurns for a Tank unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                entity.setJammedTurns( attrVal );
+            }
+
+            // Did we find the hasNoTurret node?
+            else if ( childName.equals( "hasNoTurret" ) ) {
+
+                // See if the Tank has a no turret.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode hasNoTurret for a Tank unit." );
+                }
+
+                // If the value is "true", the Tank has a no turret.
+                if ( attrStr.equals( "true" ) ) {
+                    entity.setHasNoTurret( true );
+                } else {
+                    entity.setHasNoTurret( false );
+                }
+            }
+
+            // Did we find the moveHit node?
+            else if ( childName.equals( "moveHit" ) ) {
+
+                // See if the Tank move a hit pending.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode moveHit for a Tank unit." );
+                }
+
+                // If the value is "true", the Tank move a hit pending.
+                if ( attrStr.equals( "true" ) ) {
+                    entity.immobilize();
+                    entity.applyDamage();
+                }
+            }
+
+            // Did we find the moveHitPending node?
+            else if ( childName.equals( "moveHitPending" ) ) {
+
+                // See if the Tank move a hit pending.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode moveHitPending for a Tank unit." );
+                }
+
+                // If the value is "true", the Tank move a hit pending.
+                if ( attrStr.equals( "true" ) ) {
+                    entity.immobilize();
+                }
+            }
+
+            // Did we find the facing node?
+            else if ( childName.equals( "facing" ) ) {
+
+                // Get the Tank's facing.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the facing for a Tank unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                entity.setFacing( attrVal );
+            }
+
+            // Did we find the turret's secondaryFacing node?
+            else if ( childName.equals( "turretFacing" ) ) {
+
+                // Get the Tank's turret's facing.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the turret's secondaryFacing for a Tank unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                entity.setSecondaryFacing( attrVal );
+            }
+
+            // Did we find the turretLocked node?
+            else if ( childName.equals( "turretLocked" ) ) {
+
+                // See if the Tank move a hit pending.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode turretLocked for a Tank unit." );
+                }
+
+                // If the value is "true", the Tank move a hit pending.
+                if ( attrStr.equals( "true" ) ) {
+                    entity.lockTurret();
+                }
+            }
+
+        } // Handle the next element.
+
+        // Return the entity.
         return entity;
+
     }
 
 }

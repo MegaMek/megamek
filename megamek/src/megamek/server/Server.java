@@ -7978,9 +7978,16 @@ implements Runnable, ConnectionHandler {
                     }
                     else {
                         desc.append( "\n            <<<CRITICAL HIT>>> " )
-                            .append( mWeap.getName() )
-                            .append( " jams for 1 turn." );
-                        tank.setJammedWeapon(mWeap);
+                            .append( mWeap.getName() );
+                        int jamTurns = tank.getJammedTurns() + 1;
+                        if ( jamTurns > 1 ) {
+                            desc.append( " jams for 1 more turn (" )
+                                .append( jamTurns )
+                                 .append( " turns total)." );
+                        } else {
+                            desc.append( " jams for 1 turn." );
+                        }
+                        tank.setJammedTurns( jamTurns );
                     }
                     break;
                 case 3 :

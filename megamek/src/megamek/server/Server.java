@@ -1632,7 +1632,7 @@ public class Server
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
-            phaseReport.append(", the shot is an automatic miss, ");
+            phaseReport.append(", the shot is an automatic miss (" + toHit.getDesc() + "), ");
         } else {
             phaseReport.append("; needs " + toHit.getValue() + ", ");
         }

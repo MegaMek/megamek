@@ -17,6 +17,7 @@ package megamek.client.bot;
 import java.util.Enumeration;
 
 import megamek.client.GameEvent;
+import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -124,7 +125,7 @@ public class TestBot extends BotClient {
                     cen.moved = true;
                 } else if (!cen.moved) {
                     if (result.length < 6) {
-                        min = result.length > 0 ? (MoveOption) result[0]:null;
+                        min = result.length > 0 ? (MoveOption) result[0] : null;
                         short_circuit = true;
                     }
                     possible.add(result);
@@ -139,7 +140,9 @@ public class TestBot extends BotClient {
                     lance.evolve();
                     min = lance.getResult();
                     this.old_moves = lance;
-                } else if (((MoveOption[]) possible.elementAt(0)) != null && ((MoveOption[]) possible.elementAt(0)).length > 0) {
+                } else if (
+                    ((MoveOption[]) possible.elementAt(0)) != null
+                        && ((MoveOption[]) possible.elementAt(0)).length > 0) {
                     min = ((MoveOption[]) possible.elementAt(0))[0];
                 }
             }
@@ -190,8 +193,8 @@ public class TestBot extends BotClient {
     }
 
     /***************************************************************************
-	 * first pass, filter moves based upon present case
-	 **************************************************************************/
+     * first pass, filter moves based upon present case
+     **************************************************************************/
     public void firstPass(CEntity self) {
         ArrayList enemies = getEnemyEntities();
         Object[] move_array;
@@ -251,9 +254,9 @@ public class TestBot extends BotClient {
                     option.tv.add(max + " Threat " + e + "\n");
                 }
                 /*
-				 * As a first approximation, take the maximum to a single
-				 * target
-				 */
+                 * As a first approximation, take the maximum to a single
+                 * target
+                 */
                 if (!option.isPhysical) {
                     if (modifiers[MoveOption.ATTACK_MOD] != ToHitData.IMPOSSIBLE) {
                         self.engaged = true;
@@ -277,11 +280,7 @@ public class TestBot extends BotClient {
                                 if (option.isJumping()) {
                                     self.current.setState();
                                     toHit =
-                                        Compute.toHitDfa(
-                                            game,
-                                            option.getEntity().getId(),
-                                            target.getEntity(),
-                                            option);
+                                        Compute.toHitDfa(game, option.getEntity().getId(), target.getEntity(), option);
                                     damage = 2 * Compute.getDfaDamageFor(option.getEntity());
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
@@ -296,11 +295,19 @@ public class TestBot extends BotClient {
                                     self_threat *= 100 / option.getCEntity().getEntity().getWeight();
                                 } else {
                                     self.current.setState();
-                                    toHit = new ChargeAttackAction(option.getEntity(), target.getEntity()).toHit(game, option);
-                                    damage = ChargeAttackAction.getChargeDamageFor(option.getEntity(), option.getHexesMoved());
+                                    toHit =
+                                        new ChargeAttackAction(option.getEntity(), target.getEntity()).toHit(
+                                            game,
+                                            option);
+                                    damage =
+                                        ChargeAttackAction.getChargeDamageFor(
+                                            option.getEntity(),
+                                            option.getHexesMoved());
                                     self_threat =
                                         option.getCEntity().getThreatUtility(
-                                            ChargeAttackAction.getChargeDamageTakenBy(option.getEntity(), target.getEntity()),
+                                            ChargeAttackAction.getChargeDamageTakenBy(
+                                                option.getEntity(),
+                                                target.getEntity()),
                                             CEntity.SIDE_FRONT)
                                             * (Compute.oddsAbove(toHit.getValue()) / 100);
                                     option.setState();
@@ -354,9 +361,9 @@ public class TestBot extends BotClient {
         int friends = entities.size() - enemy_array.size();
 
         /***********************************************************************
-		 * Second pass, combination moves/firing based only on the present
-		 * case, since only one mech moves at a time
-		 **********************************************************************/
+         * Second pass, combination moves/firing based only on the present
+         * case, since only one mech moves at a time
+         **********************************************************************/
         move_array = self.pass.values().toArray();
         self.pass.clear();
         for (int j = 0; j < move_array.length && friends > 2; j++) {
@@ -387,9 +394,9 @@ public class TestBot extends BotClient {
         //top damage
         filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 50);
         /***********************************************************************
-		 * third pass, (not so bad) oppurtunistic planner gives preference to
-		 * good ranges/defensive positions based upon the mech characterization
-		 **********************************************************************/
+         * third pass, (not so bad) oppurtunistic planner gives preference to
+         * good ranges/defensive positions based upon the mech characterization
+         **********************************************************************/
         move_array = self.pass.values().toArray();
         self.pass.clear();
 
@@ -511,8 +518,8 @@ public class TestBot extends BotClient {
 
         //pass should contains 30 ~ 60
         /***********************************************************************
-		 * fourth pass, speculation on top moves use averaging to filter
-		 **********************************************************************/
+         * fourth pass, speculation on top moves use averaging to filter
+         **********************************************************************/
         for (int e = 0; e < enemy_array.size(); e++) { // for each enemy
             Entity en = (Entity) enemy_array.elementAt(e);
             CEntity enemy = centities.get(en);
@@ -636,7 +643,7 @@ public class TestBot extends BotClient {
                     option.threat = 0;
                     for (Iterator i = option.damageInfos.keySet().iterator(); i.hasNext();) {
                         //my damage is the average of expected and min
-                        CEntity cen = (CEntity)i.next();
+                        CEntity cen = (CEntity) i.next();
                         //rescale
                         MoveOption.DamageInfo di = option.getDamageInfo(cen, true);
                         di.min_damage /= cen.strategy.target;
@@ -671,9 +678,9 @@ public class TestBot extends BotClient {
 
         //pass should now be 20 ~ 40
         /***********************************************************************
-		 * fourth pass, final damage and threat approximation --prevents moves
-		 * that from the previous pass would cause the mech to die
-		 **********************************************************************/
+         * fourth pass, final damage and threat approximation --prevents moves
+         * that from the previous pass would cause the mech to die
+         **********************************************************************/
         if (self.engaged) {
             for (int j = 0; j < move_array.length; j++) {
                 MoveOption option = (MoveOption) move_array[j];
@@ -689,7 +696,9 @@ public class TestBot extends BotClient {
                     Entity en = (Entity) enemy_array.elementAt(e);
                     CEntity enemy = centities.get(en);
                     if (!enemy.canMove()) {
-                        option.setThreat(enemy, (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
+                        option.setThreat(
+                            enemy,
+                            (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
                         option.tv.add(option.getThreat(enemy) + " Revised Threat " + e + " \n");
                         if (!option.isPhysical) {
                             if (temp != null) {
@@ -698,7 +707,7 @@ public class TestBot extends BotClient {
                                 //probably zero, but just in case
                                 option.setDamage(enemy, option.getMinDamage(enemy));
                             }
-							option.tv.add(option.getDamage(enemy) + " Revised Damage " + e + " \n");
+                            option.tv.add(option.getDamage(enemy) + " Revised Damage " + e + " \n");
                             //this needs to be reworked
                             if (option.getFinalCoords().distance(enemy.current.getFinalCoords()) == 1) {
                                 PhysicalOption p =
@@ -722,13 +731,15 @@ public class TestBot extends BotClient {
                         }
                     } else {
                         //get a more accurate estimate
-                        option.setDamage(enemy, option.getDamage(enemy) / Math.sqrt((double) enemy.bv / (double) self.bv));
+                        option.setDamage(
+                            enemy,
+                            option.getDamage(enemy) / Math.sqrt((double) enemy.bv / (double) self.bv));
                         option.damage = option.getDamage(enemy);
                     }
                 }
                 option.threat = 0;
                 for (Iterator i = option.damageInfos.values().iterator(); i.hasNext();) {
-                    option.threat += ((MoveOption.DamageInfo)i.next()).threat;
+                    option.threat += ((MoveOption.DamageInfo) i.next()).threat;
                 }
                 option.tv.add(option.threat + " Revised Threat Utility\n");
                 option.tv.add(option.damage + " Revised Damage Utility\n");
@@ -738,8 +749,8 @@ public class TestBot extends BotClient {
         self.current.setState();
 
         /***********************************************************************
-		 * Return top twenty moves to the lance algorithm
-		 **********************************************************************/
+         * Return top twenty moves to the lance algorithm
+         **********************************************************************/
         MoveOption[] result = new MoveOption[Math.min(move_array.length, 20)];
         int offset = 0;
         for (int i = 0; i < Math.min(move_array.length, 20); i++) {
@@ -859,7 +870,7 @@ public class TestBot extends BotClient {
                 front.add(c);
                 attacks[0] = Math.max(attacks[0], c.size());
             }
-            if ( !es.getFinalProne() && en.canChangeSecondaryFacing() ) {
+            if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
                 en.setSecondaryFacing((o_facing + 5) % 6);
                 c = this.calculateWeaponAttacks(en, mw, true);
                 if (c.size() > 0) {
@@ -872,8 +883,7 @@ public class TestBot extends BotClient {
                     right.add(c);
                     attacks[2] = Math.max(attacks[2], c.size());
                 }
-            }
-            else {
+            } else {
                 attacks[1] = 0;
                 attacks[2] = 0;
             }
@@ -881,7 +891,7 @@ public class TestBot extends BotClient {
         }
         Vector arcs = new Vector();
         arcs.add(front);
-        if ( !es.getFinalProne() && en.canChangeSecondaryFacing() ) {
+        if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             arcs.add(left);
             arcs.add(right);
         }
@@ -982,8 +992,8 @@ public class TestBot extends BotClient {
     }
 
     /**
-	 * consider how to put more pre-turn logic here
-	 */
+     * consider how to put more pre-turn logic here
+     */
     protected void initMovement() {
         this.my_mechs_moved = 0;
         this.old_moves = null;
@@ -1134,5 +1144,41 @@ public class TestBot extends BotClient {
 
     protected MovePath continueMovementFor(Entity entity) {
         return new MovePath(game, entity);
+    }
+
+    protected java.util.Vector calculateMinefieldDeployment() {
+        java.util.Vector deployedMinefields = new java.util.Vector();
+  
+        deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFConventional(), 0);
+		deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFCommand(), 1);
+		deployedMinefields = deployMinefields(deployedMinefields, getLocalPlayer().getNbrMFVibra(), 2);
+
+		return deployedMinefields;
+    }
+
+    protected java.util.Vector deployMinefields(java.util.Vector deployedMinefields, int number, int type) {
+        for (int i = 0; i < number; i++) {
+            Coords coords = new Coords(Compute.randomInt(game.board.width), Compute.randomInt(game.board.height));
+
+            if (game.containsMinefield(coords)) {
+                Minefield mf = (Minefield) game.getMinefields(coords).elementAt(0);
+                if (mf.getPlayerId() == getLocalPlayer().getId()) {
+                    i--;
+                    continue;
+                }
+            } else {
+                Minefield mf = null;
+
+                if (type == 0) {
+                    mf = Minefield.createConventionalMF(coords, getLocalPlayer().getId());
+                } else if (type == 1) {
+                    mf = Minefield.createCommandDetonatedMF(coords, getLocalPlayer().getId());
+                } else if (type == 2) {
+                    mf = Minefield.createVibrabombMF(coords, getLocalPlayer().getId(), 20);
+                }
+                deployedMinefields.addElement(mf);
+            }
+        }
+        return deployedMinefields;
     }
 }

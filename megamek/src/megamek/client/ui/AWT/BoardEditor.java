@@ -134,7 +134,20 @@ public class BoardEditor extends Container
     private void setupFrame() {
         frame.setTitle("MegaMek Board Editor : Unnamed");
         frame.setLayout(new BorderLayout());
-        frame.add(bv, BorderLayout.CENTER);
+
+        // Create a scroll bars to surround the board view.
+        Panel scrollPane = new Panel();
+        scrollPane.setLayout (new BorderLayout());
+        final Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
+        Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
+        scrollPane.add (bv, BorderLayout.CENTER);
+        scrollPane.add (vertical, BorderLayout.EAST);
+        scrollPane.add (horizontal, BorderLayout.SOUTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        // Assign the scrollbars to the board viewer.
+        bv.setScrollbars (vertical, horizontal);
+
         frame.add(this, BorderLayout.EAST);
 
         menuBar.addActionListener( this );
@@ -150,6 +163,10 @@ public class BoardEditor extends Container
         } else {
             frame.setSize(800, 600);
         }
+
+        // Give the scrollbars large initial values.
+        horizontal.setVisibleAmount (frame.getSize().width);
+        vertical.setVisibleAmount (frame.getSize().height);
 
         // when frame is closing, just hide it
         frame.addWindowListener(new WindowAdapter() {

@@ -98,6 +98,9 @@ public class AmmoType extends EquipmentType {
     public static final int     M_INFERNO_IV        = 1 << 25;
     public static final int     M_VIBRABOMB_IV      = 1 << 26;
     public static final int     M_SMOKE             = 1 << 27;
+    // Narc capable missiles
+    public static final int     M_NARC_CAPABLE      = 1 << 28;
+    
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision",
@@ -494,6 +497,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO ) );
         munitions.addElement( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION ) );
+        munitions.addElement( new MunitionMutator( "Narc capable",
+                                                   1, M_NARC_CAPABLE ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -521,6 +526,8 @@ public class AmmoType extends EquipmentType {
                                                    2, M_THUNDER_ACTIVE ) );
         munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB ) );
+        munitions.addElement( new MunitionMutator( "Narc capable",
+                                                   1, M_NARC_CAPABLE ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.

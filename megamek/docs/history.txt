@@ -13,6 +13,8 @@ v0.29.66 (CVS)
 + Don't make leg actuator hit PSRs when breaching a Torso
 + Bug 1115590: MMS: Initial vee crits not working correctly
 + Implemented iNarc Nemesis Pods.
++ Added Narc capable ammunition, to take advantage of Narc, you now have to set
+    your missile launchers to load Narc capable munition.
 
 v0.29.65 (2005-02-14 7:45am)
 + Bug 749240: The APM forum says +1 MP road bonus is *after* calculating flank.

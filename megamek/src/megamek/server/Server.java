@@ -5569,7 +5569,7 @@ implements Runnable, ConnectionHandler {
           }
       } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM) {
-          if (atype.getMunitionType() == AmmoType.M_STANDARD) {
+          if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
               isNemesisConfusable = true;
           }
       }
@@ -6309,7 +6309,7 @@ implements Runnable, ConnectionHandler {
                     }
                     // only apply Narc bonus if we're not suffering ECM effect
                     // and we are using standard ammo.
-                    if (!bECMAffected && !bMekStealthActive && atype.getMunitionType() == AmmoType.M_STANDARD) {
+                    if (!bECMAffected && !bMekStealthActive && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         nSalvoBonus += 2;
                     }
                 }

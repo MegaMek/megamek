@@ -1172,7 +1172,7 @@ public class MovementDisplay
         } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {       	
-	    clearAllMoves();
+            clearAllMoves();
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
@@ -1208,8 +1208,8 @@ public class MovementDisplay
             }
             gear = MovementDisplay.GEAR_BACKUP;
         } else if (ev.getActionCommand().equals(MOVE_CLEAR)) {       	
-	    clearAllMoves();
-	    if (!client.game.containsMinefield(ce().getPosition())) {
+            clearAllMoves();
+            if (!client.game.containsMinefield(ce().getPosition())) {
                 clientgui.doAlertDialog( "Can't clear minefield",
                                       "No minefield in hex!" );
                 return;
@@ -1239,7 +1239,7 @@ public class MovementDisplay
                                        buff.toString() ) ) {
                 cmd.addStep(MovePath.STEP_CLEAR_MINEFIELD);
                 moveTo(cmd);
-                        }
+            }
         } else if (ev.getActionCommand().equals(MOVE_CHARGE)) {
             if (gear != MovementDisplay.GEAR_LAND) {
                 clearAllMoves();

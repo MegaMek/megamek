@@ -64,6 +64,13 @@ public class Game
     }
     
     /**
+     * Return the players vector
+     */
+    public Vector getPlayersVector() {
+        return players;
+    }
+    
+    /**
      * Return the current number of active players in the game.
      */
     public int getNoOfPlayers() {

@@ -43,9 +43,8 @@ public final class Player
     private int             colorIndex = 0;
 
     // these are game-specific, and maybe should be seperate from the player object
-    private Vector          initVector = new Vector();
-    private int             order = 0;
     private int             startingPos = 0;
+    private InitiativeRoll  initiative = new InitiativeRoll();
         
     public Player(int id, String name) {
         this.name = name;
@@ -104,41 +103,10 @@ public final class Player
         this.colorIndex = index;
     }
     
-    public void clearInitiative() {
-        initVector.removeAllElements();
+    public InitiativeRoll getInitiative() {
+        return initiative;
     }
   
-    public int getInitiative(int index) {
-        return ((Integer)initVector.elementAt(index)).intValue();
-    }
-  
-    public int getInitiativeSize() {
-        return initVector.size();
-    }
-  
-    public Enumeration getInitiatives() {
-        return initVector.elements();
-    }
-  
-    public void setInitiative(int init, int index) {
-        if (initVector.size() < index + 1) {
-            initVector.setSize(index + 1);
-        }
-        initVector.setElementAt(new Integer(init), index);
-    }
-    
-    public void setInitiativeVector(Vector initVector) {
-        this.initVector = initVector;
-    }
-    
-    public int getOrder() {
-        return order;
-    }
-  
-    public void setOrder(int order) {
-        this.order = order;
-    }
-    
     public int getStartingPos() {
         return startingPos;
     }

@@ -224,49 +224,49 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         maxOptionWidth = Math.max( maxOptionWidth,
                                    optionComp.getPreferredSize().width );
 
-        if (option.getShortName().equals("inf_deploy_last")) {
-            if ( !(options.getOption("inf_move_last")).booleanValue()
+        if (option.getShortName().equals("inf_deploy_even")) {
+            if ( !(options.getOption("inf_move_even")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("inf_move_multi")) {
-            if ( (options.getOption("inf_move_last")).booleanValue()
+            if ( (options.getOption("inf_move_even")).booleanValue()
                  || (options.getOption("inf_move_later")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("inf_move_last")) {
+        } else if (option.getShortName().equals("inf_move_even")) {
             if ( (options.getOption("inf_move_multi")).booleanValue()
                  || (options.getOption("inf_move_later")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("inf_move_later")) {
-            if ( (options.getOption("inf_move_last")).booleanValue()
+            if ( (options.getOption("inf_move_even")).booleanValue()
                  || (options.getOption("inf_move_multi")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
             }
         }
-        else if (option.getShortName().equals("protos_deploy_last")) {
-            if ( !(options.getOption("protos_move_last")).booleanValue()
+        else if (option.getShortName().equals("protos_deploy_even")) {
+            if ( !(options.getOption("protos_move_even")).booleanValue()
                  || !editable) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("protos_move_multi")) {
-            if ( (options.getOption("protos_move_last")).booleanValue()
+            if ( (options.getOption("protos_move_even")).booleanValue()
                  || (options.getOption("protos_move_later")).booleanValue()
                  || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getShortName().equals("protos_move_last")) {
+        } else if (option.getShortName().equals("protos_move_even")) {
             if ( (options.getOption("protos_move_multi")).booleanValue()
                  || (options.getOption("protos_move_later")).booleanValue()
                  || !editable) {
                 optionComp.setEditable(false);
             }
         } else if (option.getShortName().equals("protos_move_later")) {
-            if ( (options.getOption("protos_move_last")).booleanValue()
+            if ( (options.getOption("protos_move_even")).booleanValue()
                  || (options.getOption("protos_move_multi")).booleanValue()
                  || !editable ) {
                 optionComp.setEditable(false);
@@ -286,10 +286,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     //  Arguments are the GameOption object and the true/false
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state) {
-        if (option.getShortName().equals("inf_move_last")) {
+        if (option.getShortName().equals("inf_move_even")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_deploy_last")) {
+                if (comp_i.option.getShortName().equals("inf_deploy_even")) {
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
@@ -304,7 +304,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (option.getShortName().equals("inf_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_move_last")) {
+                if (comp_i.option.getShortName().equals("inf_move_even")) {
                     comp_i.setEditable(!state);
                 }
                 if (comp_i.option.getShortName().equals("inf_move_later")) {
@@ -315,7 +315,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (option.getShortName().equals("inf_move_later")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_move_last")) {
+                if (comp_i.option.getShortName().equals("inf_move_even")) {
                     comp_i.setEditable(!state);
                 }
                 if (comp_i.option.getShortName().equals("inf_move_multi")) {
@@ -323,10 +323,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 }
             }
         }
-        if (option.getShortName().equals("protos_move_last")) {
+        if (option.getShortName().equals("protos_move_even")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("protos_deploy_last")) {
+                if (comp_i.option.getShortName().equals("protos_deploy_even")) {
                     comp_i.setEditable(state);
                     comp_i.setState(false);
                 }
@@ -341,7 +341,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (option.getShortName().equals("protos_move_multi")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("protos_move_last")) {
+                if (comp_i.option.getShortName().equals("protos_move_even")) {
                     comp_i.setEditable(!state);
                 }
                 if (comp_i.option.getShortName().equals("protos_move_later")) {
@@ -352,7 +352,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         if (option.getShortName().equals("protos_move_later")) {
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("protos_move_last")) {
+                if (comp_i.option.getShortName().equals("protos_move_even")) {
                     comp_i.setEditable(!state);
                 }
                 if (comp_i.option.getShortName().equals("protos_move_multi")) {

@@ -1810,33 +1810,33 @@ implements Runnable, ConnectionHandler {
     private void determineTurnOrder(int phase) {
 
         // Determine whether infantry and/or Protomechs move
-        // and/or deploy last according to game options.
-        boolean infMoveLast =
-            ( game.getOptions().booleanOption("inf_move_last") &&
+        // and/or deploy even according to game options.
+        boolean infMoveEven =
+            ( game.getOptions().booleanOption("inf_move_even") &&
               (game.getPhase() == Game.PHASE_INITIATIVE ||
                game.getPhase() == Game.PHASE_MOVEMENT) ) ||
-            ( game.getOptions().booleanOption("inf_deploy_last") &&
+            ( game.getOptions().booleanOption("inf_deploy_even") &&
               game.getPhase() == Game.PHASE_DEPLOYMENT );
         boolean infMoveMulti =
             game.getOptions().booleanOption("inf_move_multi");
-        boolean protosMoveLast =
-            ( game.getOptions().booleanOption("protos_move_last") &&
+        boolean protosMoveEven =
+            ( game.getOptions().booleanOption("protos_move_even") &&
               (game.getPhase() == Game.PHASE_INITIATIVE ||
                game.getPhase() == Game.PHASE_MOVEMENT) ) ||
-            ( game.getOptions().booleanOption("protos_deploy_last") &&
+            ( game.getOptions().booleanOption("protos_deploy_even") &&
               game.getPhase() == Game.PHASE_DEPLOYMENT );
         boolean protosMoveMulti =
             game.getOptions().booleanOption("protos_move_multi");
         boolean protosFireMulti = !protosMoveMulti &&
             game.getPhase() == Game.PHASE_FIRING;
-        int lastMask = 0;
-        if ( infMoveLast ) lastMask += GameTurn.CLASS_INFANTRY;
-        if ( protosMoveLast ) lastMask += GameTurn.CLASS_PROTOMECH;
+        int evenMask = 0;
+        if ( infMoveEven ) evenMask += GameTurn.CLASS_INFANTRY;
+        if ( protosMoveEven ) evenMask += GameTurn.CLASS_PROTOMECH;
 
         // Reset all of the Players' turn category counts
         for (Enumeration loop = game.getPlayers(); loop.hasMoreElements();) {
             final Player player = (Player) loop.nextElement();
-            player.resetLastTurns();
+            player.resetEvenTurns();
             player.resetMultiTurns();
             player.resetOtherTurns();
 
@@ -1857,7 +1857,7 @@ implements Runnable, ConnectionHandler {
                 int numProtoUnits =
                     (int) Math.ceil( ((double) numPlayerProtos) / 5.0 );
                 for ( int unit = 0; unit < numProtoUnits; unit++ ) {
-                    if ( protosMoveLast ) player.incrementLastTurns();
+                    if ( protosMoveEven ) player.incrementEvenTurns();
                     else player.incrementOtherTurns();
                 }
 
@@ -1874,13 +1874,13 @@ implements Runnable, ConnectionHandler {
                 final Player player = entity.getOwner();
                 final Team team = game.getTeamForPlayer( player );
                 if ( entity instanceof Infantry ) {
-                    if ( infMoveLast ) player.incrementLastTurns();
+                    if ( infMoveEven ) player.incrementEvenTurns();
                     else if ( infMoveMulti ) player.incrementMultiTurns();
                     else player.incrementOtherTurns();
                 }
                 else if ( entity instanceof Protomech ) {
                     if ( !protosFireMulti ) {
-                        if ( protosMoveLast ) player.incrementLastTurns();
+                        if ( protosMoveEven ) player.incrementEvenTurns();
                         else if ( protosMoveMulti ) player.incrementMultiTurns();
                         else player.incrementOtherTurns();
                     }
@@ -1892,10 +1892,24 @@ implements Runnable, ConnectionHandler {
 
         // Generate the turn order for the Players *within*
         // each Team.  Map the teams to their turn orders.
+        // Count the number of teams moving this turn.
         Hashtable allTeamTurns = new Hashtable( game.getTeamsVector().size() );
+        Hashtable evenTrackers = new Hashtable( game.getTeamsVector().size() );
+        int numTeamsMoving = 0;
         for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
             final Team team = (Team) loop.nextElement();
             allTeamTurns.put( team, team.determineTeamOrder() );
+
+            // Track both the number of times we've checked the team for
+            // "leftover" turns, and the number of "leftover" turns placed.
+            int[] evenTracker = new int[2];
+            evenTracker[0] = 0;
+            evenTracker[1] = 0;
+            evenTrackers.put (team, evenTracker);
+
+            // Count this team if it has any "normal" moves.
+            if (team.getNormalTurns() > 0)
+                numTeamsMoving++;
         }
 
         // Now, generate the global order of all teams' turns.
@@ -1920,40 +1934,103 @@ implements Runnable, ConnectionHandler {
             // Add a game turn to unload stranded units, if this
             //  is the movement phase.
             turns = new Vector( team_order.getNormalTurns() +
-                                team_order.getLastTurns() + 1);
+                                team_order.getEvenTurns() + 1);
             turns.addElement( new GameTurn.UnloadStrandedTurn(strandedUnits) );
         } else {
             // No stranded units.
             turns = new Vector( team_order.getNormalTurns() +
-                                team_order.getLastTurns() );
+                                team_order.getEvenTurns() );
         }
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
         // Keep track of how many turns we've added to the vector.
+        Team prevTeam = null;
+        int min = team_order.getMin();
         for ( int numTurn = 0; team_order.hasMoreElements(); numTurn++ ) {
             Team team = (Team) team_order.nextElement();
             TurnVectors withinTeamTurns = (TurnVectors) allTeamTurns.get(team);
-            Player player = (Player) withinTeamTurns.nextElement();
-            // If we've added all "normal" turns, allocate turns
-            // for the infantry and/or protomechs moving last.
-            GameTurn turn = null;
-            if ( numTurn >= team_order.getNormalTurns() ) {
-                turn = new GameTurn.EntityClassTurn(player.getId(), lastMask);
+
+            int[] evenTracker = (int[]) evenTrackers.get (team);
+            float teamEvenTurns = (float) team.getEvenTurns();
+
+            // Calculate the number of "even" turns to add for this team.
+            int numEven = 0;
+            if (1 == numTeamsMoving) {
+                // The only team moving should move all "even" units.
+                numEven += teamEvenTurns;
+            }
+            else if (prevTeam == null) {
+                // Increment the number of times we've checked for "leftovers".
+                evenTracker[0]++;
+
+                // The first team to move just adds the "baseline" turns.
+                numEven += teamEvenTurns / min;
+            }
+            else if (!team.equals(prevTeam)) {
+                // Increment the number of times we've checked for "leftovers".
+                evenTracker[0]++;
+
+                // This wierd equation attempts to spread the "leftover"
+                // turns accross the turn's moves in a "fair" manner.
+                // It's based on the number of times we've checked for
+                // "leftovers" the number of "leftovers" we started with,
+                // the number of times we've added a turn for a "leftover",
+                // and the total number of times we're going to check.
+                numEven += Math.round (evenTracker[0] * (teamEvenTurns % min)
+                                       / min) - evenTracker[1];
+
+                // Update the number of turns actually added for "leftovers".
+                evenTracker[1] += numEven;
+
+                // Add the "baseline" number of turns.
+                numEven += teamEvenTurns / min;
             }
 
-            // If either Infantry or Protomechs move last, only allow
-            // the other classes to move during the "normal" turn.
-            else if ( infMoveLast || protosMoveLast ) {
-                turn = new GameTurn.EntityClassTurn(player.getId(), ~lastMask);
-            }
+            // Record this team for the next move.
+            prevTeam = team;
 
-            // Otherwise, let *anybody* move.
-            else {
-                turn = new GameTurn( player.getId() );
+            // This may be a "placeholder" for a team without "normal" turns.
+            if (withinTeamTurns.hasMoreElements()) {
+
+                // Not a placeholder... get the player who moves next.
+                Player player = (Player) withinTeamTurns.nextElement();
+
+                // If we've added all "normal" turns, allocate turns
+                // for the infantry and/or protomechs moving even.
+                GameTurn turn = null;
+                if ( numTurn >= team_order.getNormalTurns() ) {
+                    turn = new GameTurn.EntityClassTurn
+                        (player.getId(), evenMask);
+                }
+
+                // If either Infantry or Protomechs move even, only allow
+                // the other classes to move during the "normal" turn.
+                else if ( infMoveEven || protosMoveEven ) {
+                    turn = new GameTurn.EntityClassTurn
+                        (player.getId(), ~evenMask);
+                }
+
+                // Otherwise, let *anybody* move.
+                else {
+                    turn = new GameTurn( player.getId() );
+                }
+                turns.addElement(turn);
+
+            } // End team-has-"normal"-turns
+
+            // Add the calculated number of "even" turns.
+            // Allow the player at least one "normal" turn before the
+            // "even" turns to help with loading infantry in deployment.
+            while (numEven > 0 && withinTeamTurns.hasMoreEvenElements()) {
+                Player evenPlayer = (Player) withinTeamTurns.nextEvenElement();
+                turns.addElement
+                    (new GameTurn.EntityClassTurn (evenPlayer.getId(),
+                                                   evenMask));
+                numEven--;
             }
-            turns.addElement(turn);
         }
+        System.out.println ("All Done!"); //killme
 
         // set fields in game
         game.setTurnVector(turns);
@@ -2010,8 +2087,11 @@ implements Runnable, ConnectionHandler {
             }
         }
 
-        roundReport.append("\nThe turn order is:\n  ");
+        // The turn order is different in movement phase
+        // if a player has any "even" moving units.
+        roundReport.append("\nThe turn order for movement is:\n  ");
         boolean firstTurn = true;
+        boolean hasEven = false;
         for (Enumeration i = game.getTurns(); i.hasMoreElements();) {
             GameTurn turn = (GameTurn)i.nextElement();
             Player player = getPlayer( turn.getPlayerNum() );
@@ -2019,8 +2099,18 @@ implements Runnable, ConnectionHandler {
                 roundReport.append( (firstTurn ? "" : ", ") )
                     .append( player.getName() );
                 firstTurn = false;
+                if (player.getEvenTurns() > 0)
+                    hasEven = true;
             }
         }
+        if (hasEven) {
+            roundReport.append( "\n    The turn order for " );
+            if (game.getOptions().booleanOption("inf_deploy_even")
+                || game.getOptions().booleanOption("protos_deploy_even"))
+                roundReport.append( "deployment phase and " );
+            roundReport.append( "firing phase will be different." );
+        }
+
         roundReport.append("\n\n");
         if (!abbreviatedReport) {
             roundReport.append("  Wind direction is ")

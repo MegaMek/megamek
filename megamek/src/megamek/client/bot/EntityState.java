@@ -140,6 +140,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       Coords lastPos = null;
       if ( this.curPos == null ) {
           return;
+      } else {
+          lastPos = this.curPos;
       }
       int stepMp = 0;
       //calculate mps used

@@ -26,6 +26,9 @@ import megamek.common.actions.*;
 public abstract class Entity 
     implements Serializable 
 {
+// + HentaiZonga
+    public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
+// - HentaiZonga
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?
       public static final int BIPED   = 1;
@@ -91,6 +94,9 @@ public abstract class Entity
     protected boolean           prone = false;
     protected boolean           findingClub = false;
     protected boolean           armsFlipped = false;
+// + HentaiZonga
+    protected boolean           unjammingRAC = false;
+// - HentaiZonga
     
     protected DisplacementAttackAction displacementAttack = null;
     
@@ -105,6 +111,11 @@ public abstract class Entity
     private int[]               orig_armor;
     private int[]               orig_internal;
     public int                  damageThisPhase;
+
+// + HentaiZonga
+    protected String            C3NetIDString = null;
+    protected int               C3Master = NONE;
+// - HentaiZonga
 
     protected Vector            equipmentList = new Vector();
     protected Vector            weaponList = new Vector();
@@ -128,6 +139,7 @@ public abstract class Entity
         for (int i = 0; i < locations(); i++) {
             this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
+        setC3NetID(this);
     }
     
     /**
@@ -375,6 +387,16 @@ public abstract class Entity
         return null;
     }
 
+// + HentaiZonga
+    public boolean isUnjammingRAC() {
+        return unjammingRAC;
+    }
+
+    public void setUnjammingRAC(boolean u) {
+        unjammingRAC = u;
+    }
+// - HentaiZonga
+
     public boolean isFindingClub() {
         return findingClub;
     }
@@ -562,6 +584,36 @@ public abstract class Entity
      */
     public abstract int clipSecondaryFacing(int dir);
     
+// + HentaiZonga
+    /**
+     * Returns true if the entity has an RAC
+     */
+      public boolean hasRAC() {
+          for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                  return true;
+              }
+          }
+          return false;
+      }
+
+    /**
+     * Returns true if the entity has an RAC which is jammed
+     */
+      public boolean canUnjamRAC() {
+          for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
+              Mounted mounted = (Mounted)i.nextElement();
+              WeaponType wtype = (WeaponType)mounted.getType();
+              if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && mounted.isJammed()) {
+                  return true;
+              }
+          }  
+          return false;
+      }
+// - HentaiZonga
+
     /**
      * Returns true if the entity can flip its arms
      */
@@ -1492,6 +1544,174 @@ public abstract class Entity
         return false;
     }
     
+// + HentaiZonga
+    /**
+     * Returns whether this 'mech is part of a C3 network.
+     */
+
+    public boolean hasC3S() {
+        if (isShutDown()) return false;
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_C3S) && !m.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasC3M() {
+        if (isShutDown()) return false;
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_C3M) && !m.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasC3() {
+      return hasC3S() | hasC3M();
+    }
+
+    public boolean hasC3i() {
+        if (isShutDown()) return false;
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_C3I) && !m.isDestroyed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getC3NetID() {
+        if(C3NetIDString == null) C3NetIDString = "C3." + getId() + "." + random.nextInt(1000);
+        return C3NetIDString;
+    }
+
+    public void setC3NetID(Entity e) {
+        if (isEnemyOf(e)) return;
+        C3NetIDString = e.C3NetIDString;
+    }
+
+    public int calculateFreeC3Nodes() {
+        int nodes = 0;
+        if (hasC3i())  {
+            nodes = 5;
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity e = (Entity)i.nextElement();
+                if (!equals(e) && OnSameC3NetworkAs(e)) {
+                    nodes--;
+                    if(nodes <= 0) return 0;
+                }
+            }
+            return nodes;
+        }
+        if (hasC3M())  {
+            nodes = 3;
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity e = (Entity)i.nextElement();
+                if (e.hasC3() && e != this ) {
+                    final Entity m = e.getC3Master();
+                    if (equals(m)) nodes--;
+                    if(nodes <= 0) return 0;
+                }
+            }
+            return nodes;
+        }
+        return 0;
+    }
+
+
+    public boolean LosIsThroughEnemyECM(Entity e, Entity m) {
+       return false;
+    }
+
+    public Entity getC3Top() {
+      Entity m = this;
+      while(m.getC3Master() != null && !m.getC3Master().equals(m) && m.getC3Master().hasC3() && !LosIsThroughEnemyECM(m, m.getC3Master())) {
+        m = m.getC3Master();
+      }
+      return m;
+    }
+
+    public Entity getC3Master() {
+      if(C3Master == NONE) return null;
+      if(hasC3S()) { // since we can't seem to get the check working in setC3Master(), I'll just do it here, every time. This sucks.
+          if(C3Master > NONE && game.getEntity(C3Master).C3MasterIs(game.getEntity(C3Master)))
+             C3Master = NONE;
+      }
+      else if(hasC3M()) {
+          if(C3Master > NONE && !game.getEntity(C3Master).C3MasterIs(game.getEntity(C3Master)))
+             C3Master = NONE;
+      }
+      return game.getEntity(C3Master);
+    }
+
+    public boolean C3MasterIs(Entity e)
+    {
+        if(e == null && C3Master == NONE) return true;
+        return (e.id == C3Master);
+    }
+
+    public void setC3Master(Entity e)
+    {
+        if(e == null) {
+            setC3Master(NONE);
+        }
+        else {
+            if (isEnemyOf(e)) return;
+            setC3Master(e.id);
+        }
+    }
+
+    public void setC3Master(int entityId)
+    {
+        if((id == entityId) != (id == C3Master))
+        {   // this just changed from a company-level to lance-level (or vice versa); have to disconnect all slaved units to maintain integrity.
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity e = (Entity)i.nextElement();                
+                if(e.C3MasterIs(this) && !equals(e)) {
+                   e.setC3Master(NONE); // this doesn't work - I have no idea why.
+                }
+            }
+        }
+        if(hasC3()) C3Master = entityId;
+        if(hasC3() && entityId == NONE) {
+            C3NetIDString = "C3." + id + "." +  random.nextInt(1000);
+        }
+        else if(hasC3i() && entityId == NONE) 
+        {
+            C3NetIDString = "C3i." + id + "." +  random.nextInt(1000);
+        }
+        else if((hasC3() || hasC3i())) 
+            C3NetIDString = game.getEntity(entityId).getC3NetID();
+
+        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            final Entity e = (Entity)i.nextElement();
+            if(e.C3MasterIs(this) && !equals(e)) e.C3NetIDString = C3NetIDString;
+        }
+
+
+    }
+
+    public boolean OnSameC3NetworkAs(Entity e) {
+      // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
+      if(isEnemyOf(e)) return false;
+      if (isShutDown() || e.isShutDown()) return false;
+
+      if(hasC3i() && e.hasC3i()) return getC3NetID().equals(e.getC3NetID());
+
+      // simple sanity check - do they both have C3, and are they both on the same network?
+      if (!hasC3() || !e.hasC3()) return false;
+      if (getC3Top() == null || e.getC3Top() == null) return false;
+      // got the easy part out of the way, now we need to verify that the network isn't down
+      return (getC3Top().equals(e.getC3Top()));
+    }
+// - HentaiZonga
+
     /**
      * Returns whether there is CASE protecting the location.
      */
@@ -1546,7 +1766,9 @@ public abstract class Entity
         setArmsFlipped(false);
         setDisplacementAttack(null);
         setFindingClub(false);
-
+// + HentaiZonga
+        setUnjammingRAC(false);
+// - HentaiZonga
         crew.setKoThisRound(false);
 
         for (Enumeration i = getEquipment(); i.hasMoreElements();) {

@@ -1135,15 +1135,43 @@ public class Compute
         // determine range
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
+
+// + HentaiZonga
+        int c3range = range;
+        Entity c3spotter = ae;
+        if (ae.hasC3() || ae.hasC3i()) {
+            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                final Entity fe = (Entity)i.nextElement();
+                if ( ae.OnSameC3NetworkAs(fe)) {
+                  final int buddyrange = fe.getPosition().distance(te.getPosition());
+                  if(buddyrange < c3range) {
+                      c3range = buddyrange; 
+                      c3spotter = fe;
+                  }
+                }
+            }
+        }
+
+        // if out of range, short circuit logic
         if (range > wtype.getLongRange()) {
             return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
         }
         if (range > wtype.getMediumRange()) {
             // long range, add +4
             toHit.addModifier(4, "long range");
+            // reduce range modifier back to short if a C3 spotter is at short range
+            if (c3range <= wtype.getShortRange()) 
+              toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() + " at short range");
+            // reduce range modifier back to medium if a C3 spotter is at medium range
+            else if (c3range <= wtype.getMediumRange())
+              toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() + " at medium range");
         } else if (range > wtype.getShortRange()) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
+            // reduce range modifier back to short if a C3 spotter is at short range
+            if (c3range <= wtype.getShortRange())
+              toHit.addModifier(-2, "c3: " + c3spotter.getDisplayName() + " at short range");
+// - HentaiZonga
 	} else if ( 0 == range ) {
 	    // Only Infantry shoot at zero range.
 	    if ( !isAttackerInfantry ) {
@@ -2697,7 +2725,15 @@ public class Compute
         }
         
         ToHitData toHit = new ToHitData();
-        
+// + HentaiZonga
+        if (target instanceof HexEntity) {
+            if (hex.contains(Terrain.SMOKE)) {
+                toHit.addModifier(2, "target in smoke");
+            }
+            return toHit; // terrain doesn't get target modifiers for itself
+        }
+// - HentaiZonga
+
         if (hex.levelOf(Terrain.WATER) > 0
         && target.getMovementType() != Entity.MovementType.HOVER) {
             toHit.addModifier(-1, "target in water");
@@ -2705,7 +2741,8 @@ public class Compute
 
         if (hex.contains(Terrain.SMOKE)) {
             toHit.addModifier(2, "target in smoke");
-        } else if (hex.levelOf(Terrain.WOODS) == 1) {
+        }
+        else if (hex.levelOf(Terrain.WOODS) == 1) {
             toHit.addModifier(1, "target in light woods");
         } else if (hex.levelOf(Terrain.WOODS) > 1) {
             toHit.addModifier(2, "target in heavy woods");

@@ -263,6 +263,7 @@ public class WeaponHandler implements AttackHandler {
 	}
 	//Among other things, basically a refactored Server#preTreatWeaponAttack
 	public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
+		System.out.println("Making a WH");
 		toHit=t;
 		waa=w;
 		game=g;

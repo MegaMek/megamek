@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.63 (CVS)
++ Bug 1107959: ejected pilot moves same turn
 
 v0.29.62 (2005-01-23 2:30pm)
 + Additional Batchall.de-Mechs

@@ -177,7 +177,7 @@ public class MovePath implements Cloneable, Serializable {
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
         if ( step.isLegal() && null != prev
-             && !start.equals( prev.getPosition() ) ) {
+             && !land.equals( prev.getPosition() ) ) {
 
             // Loop through the steps from back to front.
             // Stop looping when the step says to, or we run out of steps.

@@ -81,7 +81,7 @@ public class BoardView1
     private Scrollbar vScrollbar = null;
     private Scrollbar hScrollbar = null;
     private boolean isScrolling = false;
-    private Thread scroller = new Thread(this);
+    private Thread scroller = new Thread(this, "BoardView Scroller Thread");
     private Point scroll = new Point();
     private boolean initCtlScroll;
     private boolean ctlKeyHeld = false;

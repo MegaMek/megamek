@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -572,11 +572,30 @@ public class ScenarioLoader
     private Properties loadProperties()
         throws Exception
     {
-        Properties p = new Properties();
+        Properties props = new Properties();
         FileInputStream fis = new FileInputStream(m_scenFile);
-        p.load(fis);
+        props.load(fis);
         fis.close();
-        return p;
+      
+        // Strip trailing spaces
+        int loop;
+        String key;
+        StringBuffer value;
+        Properties fixed = new Properties();
+        Enumeration keyIt = props.keys();
+        while (keyIt.hasMoreElements()) {
+            key = (String) keyIt.nextElement();
+            value = new StringBuffer( props.getProperty(key) );
+            for (loop = value.length() - 1; loop >= 0; loop--) {
+                if(!Character.isWhitespace( value.charAt( loop ) ))
+                    break;
+            }
+        
+            value.setLength( loop + 1 );
+            fixed.setProperty( key, value.toString() );
+        }
+      
+        return fixed;
     }
     
     public static void main(String[] saArgs)

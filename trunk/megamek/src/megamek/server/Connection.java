@@ -75,7 +75,7 @@ public class Connection {
             }
         };
         
-        receiver = new Thread(receiverRunnable);
+        receiver = new Thread(receiverRunnable, "Packet Receiver (" + getId() + ")");
         receiver.start();
         
         // start sender thread
@@ -87,7 +87,7 @@ public class Connection {
             }
         };
         
-        sender = new Thread(senderRunable);
+        sender = new Thread(senderRunable, "Packet Sender (" + getId() + ")");
         sender.start();
     }
 

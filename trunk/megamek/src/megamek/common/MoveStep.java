@@ -555,7 +555,22 @@ public class MoveStep implements Serializable {
      *          then <code>false</code> is returned.
      */
     public boolean isLegalEndPos() {
-        return (!isStackingViolation && !terrainInvalid);
+        // Can't be a stacking violation.
+        boolean legal = true;
+        if (isStackingViolation) {
+            legal = false;
+        }
+
+        // Can't be into invalid terrain.
+        else if (terrainInvalid) {
+            legal = false;
+        }
+
+        // Can't jump zero hexes.
+        else if (parent.isJumping() && distance == 0) {
+            legal = false;
+        }
+        return legal;
     }
 
     /**
@@ -1247,10 +1262,8 @@ public class MoveStep implements Serializable {
             this.isUsingMASC == other.isUsingMASC &&
             this.targetNumberMASC == other.targetNumberMASC &&
             this.isPavementStep == other.isPavementStep &&
-            !this.isStackingViolation &&
-            !other.isStackingViolation &&
-            !this.terrainInvalid &&
-            !other.terrainInvalid ) {
+            this.isLegalEndPos() &&
+            other.isLegalEndPos() ) {
             reuse = true;
         }
         return reuse;

@@ -12,6 +12,10 @@ v 0.29.21 (CVS)
 + Bug 869878 (, 872136?): EquipmentTypes *must* have mepName and blkName.
 + Bug 869816: check for no proto ammo in non-proto units was buggy.
               Proto SRMs and SSRMs need the proto flag too!
++ Patch 869079: Added HmvFile.java... Now MegaMek can read HMVee files!!!
++ Bug 869807, Patch 870075: hyphenated thunder-augmented and armor-piercing
++ Patch 868676: Fix the NPE mentioned in one of the ammo patches.
++ Patch 867630: updated README files
 
 v 0.29.20 (2004-01-02 10:40pm)
 + Bug 797649, Patch 862927: Stop accepting arbitrary block delimiters.

@@ -602,8 +602,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 5 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-5";
+        ammo.name = "Thunder-Augmented LRM 5 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-5";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -733,8 +733,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 10 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-10";
+        ammo.name = "Thunder-Augmented LRM 10 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-10";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -864,8 +864,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 15 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-15";
+        ammo.name = "Thunder-Augmented LRM 15 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-15";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -995,8 +995,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISThunderAugmentedLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 20 Ammo";
-        ammo.internalName = "IS Ammo Thunder Augmented LRM-20";
+        ammo.name = "Thunder-Augmented LRM 20 Ammo";
+        ammo.internalName = "IS Ammo Thunder-Augmented LRM-20";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -1520,7 +1520,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing2Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/2 Ammo";
+        ammo.name = "Armor-Piercing AC/2 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/2";
         ammo.mepName = "IS Armor Piercing Ammo AC/2";
         ammo.mtfName = "ISAC2 Armor Piercing Ammo";
@@ -1577,7 +1577,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/5 Ammo";
+        ammo.name = "Armor-Piercing AC/5 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/5";
         ammo.mepName = "IS Armor Piercing Ammo AC/5";
         ammo.mtfName = "ISAC5 Armor Piercing Ammo";
@@ -1634,7 +1634,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/10 Ammo";
+        ammo.name = "Armor-Piercing AC/10 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/10";
         ammo.mepName = "IS Armor Piercing Ammo AC/10";
         ammo.mtfName = "ISAC10 Armor Piercing Ammo";
@@ -1691,7 +1691,7 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createISArmorPiercing20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Armor Piercing AC/20 Ammo";
+        ammo.name = "Armor-Piercing AC/20 Ammo";
         ammo.internalName = "IS Armor Piercing Ammo AC/20";
         ammo.mepName = "IS Armor Piercing Ammo AC/20";
         ammo.mtfName = "ISAC20 Armor Piercing Ammo";
@@ -2398,8 +2398,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM5Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 5 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-5";
+        ammo.name = "Thunder-Augmented LRM 5 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-5";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2530,8 +2530,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM10Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 10 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-10";
+        ammo.name = "Thunder-Augmented LRM 10 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-10";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2662,8 +2662,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 15 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-15";
+        ammo.name = "Thunder-Augmented LRM 15 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-15";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";
@@ -2794,8 +2794,8 @@ public class AmmoType extends EquipmentType {
     public static AmmoType createCLThunderAugmentedLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
-        ammo.name = "Thunder Augmented LRM 20 Ammo";
-        ammo.internalName = "Clan Ammo Thunder Augmented LRM-20";
+        ammo.name = "Thunder-Augmented LRM 20 Ammo";
+        ammo.internalName = "Clan Ammo Thunder-Augmented LRM-20";
         ammo.mepName = "N/A";
         ammo.mtfName = "N/A";
         ammo.tdbName = "N/A";

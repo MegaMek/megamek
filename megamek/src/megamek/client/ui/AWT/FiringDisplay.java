@@ -514,7 +514,8 @@ public class FiringDisplay
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
                 target.getTargetId(), weaponNum);
 
-        if (((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+        if ( null != mounted.getLinked() && 
+             ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
             Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if ( ((AmmoType)(ammoMount.getType())).getMunitionType() ==

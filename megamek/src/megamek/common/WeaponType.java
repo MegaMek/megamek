@@ -1538,7 +1538,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = "CLLightMG";
         weapon.heat = 0;
         weapon.damage = 1;
-        weapon.rackSize = 2;
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_MG_LIGHT;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 2;
@@ -1560,7 +1560,7 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = "CLHeavyMG";
         weapon.heat = 0;
         weapon.damage = 3;
-        weapon.rackSize = 2;
+        weapon.rackSize = 3;
         weapon.ammoType = AmmoType.T_MG_HEAVY;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;

@@ -200,7 +200,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLMGAmmo());
         EquipmentType.addType(createCLMGAmmoHalf());
         EquipmentType.addType(createCLHeavyMGAmmo());
+        EquipmentType.addType(createCLHeavyMGAmmoHalf());
         EquipmentType.addType(createCLLightMGAmmo());
+        EquipmentType.addType(createCLLightMGAmmoHalf());
         EquipmentType.addType(createCLLRM5Ammo());
         EquipmentType.addType(createCLLRM10Ammo());
         EquipmentType.addType(createCLLRM15Ammo());
@@ -1223,6 +1225,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLHeavyMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Half Heavy Machine Gun Ammo";
+        ammo.internalName = "Clan Heavy Machine Gun Ammo - Half";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "CLHeavyMG Ammo (50)";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags |= F_MG;
+        ammo.shots = 50;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 1;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createCLMGAmmo() {
         AmmoType ammo = new AmmoType();
         
@@ -1272,6 +1293,24 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MG_LIGHT;
         ammo.flags |= F_MG;
         ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
+    public static AmmoType createCLLightMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Half Light Machine Gun Ammo";
+        ammo.internalName = "Clan Light Machine Gun Ammo - Half";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "CLLightMG Ammo (100)";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags |= F_MG;
+        ammo.shots = 100;
         ammo.bv = 1;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
         

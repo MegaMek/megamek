@@ -125,6 +125,7 @@ v 0.29 release candidate 2 (CVS)
 + Skidding mechs only use MASC movement when player intended it.
 + Mech preview shows proper movement again for MASC equiped mechs.
 + Bug 756054: partial fix: bot shouldn't throw exception when it gets swarmed.
++ Bug 754730: Mek can't dump ammo and jump; also, can't shoot w/ dumping ammo.
 
 v 0.29 release candidate 1 (06-16-03, 11pm)
 + Bug 748959: fixed bug with moved units not updating

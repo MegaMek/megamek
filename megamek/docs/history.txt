@@ -9,6 +9,7 @@ v0.29.42 (CVS)
 + Bug 992675,974358,877943: characterize Protomech armor to the AI bot
 + Bug 994206: not all targets are Entities
 + Data 986741: images for SHD-5M, PXH-3D, PXH-3K, PHX-3M 
++ New image for the Goblin LRM -- made sure it has 2xLRM10s
 
 v0.29.41 (2004-07-18 5:30pm)
 + Bug 985884: Attempt #2 at fixing this bug.

@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.*;
 
+import megamek.common.actions.*;
+
 /**
  * Entity is a master class for basically anything on the board except
  * terrain.
@@ -76,10 +78,10 @@ public abstract class Entity
     public boolean              ready = false;    
 
     protected boolean           prone = false;
-    protected boolean           charging = false;
-    protected boolean           makingDfa = false;
     protected boolean           findingClub = false;
     protected boolean           armsFlipped = false;
+    
+    protected DisplacementAttackAction displacementAttack = null;
     
     public int                  heat = 0;
     public int                  heatBuildup = 0;
@@ -271,21 +273,25 @@ public abstract class Entity
     }
     
     public boolean isCharging() {
-        return charging;
+        return displacementAttack instanceof ChargeAttackAction;
     }
 
-    public void setCharging(boolean charging) {
-        this.charging = charging;
+    public boolean isPushing() {
+        return displacementAttack instanceof PushAttackAction;
     }
-        
+
     public boolean isMakingDfa() {
-        return makingDfa;
+        return displacementAttack instanceof DfaAttackAction;
+    }
+    
+    public boolean hasDisplacementAttack() {
+        return displacementAttack != null;
     }
 
-    public void setMakingDfa(boolean makingDfa) {
-        this.makingDfa = makingDfa;
+    public void setDisplacementAttack(DisplacementAttackAction displacementAttack) {
+        this.displacementAttack = displacementAttack;
     }
-        
+
     public boolean isFindingClub() {
         return findingClub;
     }
@@ -311,6 +317,9 @@ public abstract class Entity
     /**
      * Returns the current position of this entity on
      * the board.
+     *
+     * This is not named getLocation(), since I want the word location to
+     * refer to hit locations on a mech or vehicle.
      */
     public Coords getPosition() {
         return position;
@@ -326,10 +335,12 @@ public abstract class Entity
     }
 
     /**
-     * Returns the elevation of the hex that this entity is standing on
+     * Returns the elevation of the hex that this entity is standing on.
+     *
+     * By default, the entity is on the floor
      */
-    public int getElevation(Board b) {
-        return b.getHex(getPosition()).getElevation();
+    public int elevation(Board b) {
+        return b.getHex(getPosition()).floor();
     }
     
     /**

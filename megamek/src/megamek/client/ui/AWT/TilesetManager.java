@@ -7,7 +7,9 @@
 package megamek.client;
 
 import com.sun.java.util.collections.*;
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Component;
+import java.awt.MediaTracker;
 import java.awt.image.*;
 import java.io.*;
 
@@ -36,6 +38,9 @@ public class TilesetManager {
     private ArrayList mechImageList = new ArrayList();
     private HashMap mechImages = new HashMap();
     
+    // hex images
+    private HexTileset hexTileset = new HexTileset();
+    
 
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) {
@@ -45,6 +50,7 @@ public class TilesetManager {
         
         
         mechTileset.loadFromFile("mechset.txt");
+        hexTileset.loadFromFile("defaulthexset.txt");
 
     }
     
@@ -54,6 +60,23 @@ public class TilesetManager {
     public Image imageFor(Entity entity) {
         EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
         return entityImage.getFacing(entity.getSecondaryFacing());
+    }
+    
+    /**
+     * Return the base image for the hex
+     */
+    public Image baseFor(Hex hex) {
+        if (hex.getBase() == null) {
+            hexTileset.assignMatch(hex, comp);
+        }
+        return hex.getBase();
+    }
+    
+    /**
+     * Return a list of superimposed images for the hex
+     */
+    public List supersFor(Hex hex) {
+        return hex.getSupers();
     }
     
     
@@ -81,9 +104,15 @@ public class TilesetManager {
     public void loadAllImages(Game game) {
         loaded = false;
         
-        // load all terrain
-        for (int i = 0; i < game.board.terrains.length; i++) {
-            tracker.addImage(game.board.terrains[i].getImage(comp), 2);
+        // load all images in the hex tileset
+        hexTileset.loadAllImages(comp, tracker);
+        
+        // pre-match all hexes with images
+        for (int y = 0; y < game.board.height; y++) {
+            for (int x = 0; x < game.board.width; x++) {
+                Hex hex = game.board.getHex(x, y);
+                hexTileset.assignMatch(hex, comp);
+            }
         }
         
         // load all mech images

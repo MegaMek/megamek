@@ -501,8 +501,7 @@ public class Server
             entity.delta_distance = 0;
             entity.moved = Entity.MOVE_NONE;
             
-            entity.setCharging(false);
-            entity.setMakingDfa(false);
+            entity.setDisplacementAttack(null);
             entity.setFindingClub(false);
 
             entity.crew.setKoThisRound(false);
@@ -1264,9 +1263,10 @@ public class Server
                 Entity target = game.getEntity(step.getPosition());
 
                 distance = step.getDistance();
-                entity.setCharging(true);
-                
-                pendingCharges.addElement(new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition()));
+
+                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
+                entity.setDisplacementAttack(caa);
+                pendingCharges.addElement(caa);
                 break;
             }
 
@@ -1275,9 +1275,10 @@ public class Server
                 Entity target = game.getEntity(step.getPosition());
 
                 distance = step.getDistance();
-                entity.setMakingDfa(true);
-                
-                pendingCharges.addElement(new DfaAttackAction(entity.getId(), target.getId(), target.getPosition()));
+ 
+                DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
+                entity.setDisplacementAttack(daa);
+                pendingCharges.addElement(daa);
                 break;
             }
 
@@ -1292,18 +1293,17 @@ public class Server
             // check if we've moved into rubble
             if (!lastPos.equals(curPos)
                     && step.getMovementType() != Entity.MOVE_JUMP
-                    && (curHex.getTerrainType() == Terrain.RUBBLE)) {
+                    && curHex.levelOf(Terrain.RUBBLE) > 0) {
                 doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Rubble"));
             }
 
             // check if we've moved into water
             if (!lastPos.equals(curPos)
                     && step.getMovementType() != Entity.MOVE_JUMP
-                    && curHex.getTerrainType() == Terrain.WATER
-                    && curHex.getElevation() < 0) {
-                if (curHex.getElevation() == -1) {
+                    && curHex.levelOf(Terrain.WATER) > 0) {
+                if (curHex.levelOf(Terrain.WATER) == 1) {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), -1, "entering Depth 1 Water"));
-                } else if (curHex.getElevation() == -2) {
+                } else if (curHex.levelOf(Terrain.WATER) == 2) {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 0, "entering Depth 2 Water"));
                 } else {
                     doSkillCheckWhileMoving(entity, lastPos, curPos, new PilotingRollData(entity.getId(), 1, "entering Depth 3+ Water"));
@@ -1400,14 +1400,14 @@ public class Server
         roll.append(reason);
 
         // will the entity fall in the source or destination hex?
-        if (src.equals(dest) || srcHex.getElevation() < destHex.getElevation()) {
+        if (src.equals(dest) || srcHex.floor() < destHex.floor()) {
             fallsInPlace = true;
         } else {
             fallsInPlace = false;
         }
 
         // how far down did it fall?
-        fallElevation = Math.abs(destHex.getElevation() - srcHex.getElevation());
+        fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         
         // okay, print the info
         phaseReport.append("\n" + entity.getDisplayName()
@@ -1435,7 +1435,7 @@ public class Server
     private void doEntityFallsInto(Entity entity, Coords src, Coords dest, PilotingRollData roll) {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-        final int fallElevation = Math.abs(destHex.getElevation() - srcHex.getElevation());
+        final int fallElevation = Math.abs(destHex.floor() - srcHex.floor());
         int direction = src.direction(dest);
         // check entity in target hex
         Entity target = game.getEntity(dest);
@@ -1483,7 +1483,7 @@ public class Server
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
         final int direction = src.direction(dest);
-        int fallElevation = srcHex.getElevation() - destHex.getElevation();
+        int fallElevation = srcHex.floor() - destHex.floor();
         Entity target = game.getEntity(dest);
 
         // can't fall upwards
@@ -2043,7 +2043,7 @@ public class Server
         final int direction = ae.getFacing();
 
         // entity isn't charging any more
-        ae.setCharging(false);
+        ae.setDisplacementAttack(null);
 
         if (lastEntityId != caa.getEntityId()) {
             phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
@@ -2149,7 +2149,7 @@ public class Server
         }
 
         // entity isn't charging any more
-        ae.setMakingDfa(false);
+        ae.setDisplacementAttack(null);
 
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -2364,9 +2364,8 @@ public class Server
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             final Hex curHex = game.board.getHex(entity.getPosition());
-            if (curHex.getTerrainType() == Terrain.WATER
-                    && (curHex.getElevation() <= -2
-                        || (curHex.getElevation() == -1 && entity.isProne()))
+            if ((curHex.levelOf(Terrain.WATER) > 1
+                        || (curHex.levelOf(Terrain.WATER) == 1 && entity.isProne()))
                     && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
                 roundReport.append("\n" + entity.getDisplayName() + " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
                 damageCrew(entity, 1);
@@ -2878,7 +2877,7 @@ public class Server
         int damage = (int)Math.round(entity.getWeight() / 10) * (height + 1);
         
         // TODO: only fall to surface of water
-        if (game.board.getHex(fallPos).getTerrainType() == Terrain.WATER) {
+        if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
             damage = (int)Math.ceil(damage / 2.0);
         }
 

@@ -27,22 +27,13 @@ import megamek.common.*;
  * @author  Ben
  * @version 
  */
-public class DfaAttackAction extends AbstractAttackAction {
+public class DfaAttackAction extends DisplacementAttackAction {
 
     private Coords targetPos;
 
     /** Creates new DfaAttackAction */
     public DfaAttackAction(int entityId, int targetId, Coords targetPos) {
-        super(entityId, targetId);
-        this.targetPos = targetPos;
-    }
-    
-    public Coords getTargetPos() {
-        return targetPos;
-    }
-    
-    public void setTargetPos(Coords targetPos) {
-        this.targetPos = targetPos;
+        super(entityId, targetId, targetPos);
     }
 
 }

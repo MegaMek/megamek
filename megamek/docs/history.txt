@@ -82,12 +82,10 @@ FUTURE VERSION PLANS:
 - more interface improvements, particularly in the lobby
 
 v 0.26
-- revise map code to support more terrain & terrain effects
-- also on map code, use a tileset, no more image names in map files
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.25.6 (05-23-02, 8:30pm)
 + 554568: fixed false secondary target modifier on first shot
 + improved recently introduced oddities with friendly fire impacting movement and bots--LDE
 + minor fixess to unlikely crit transfers--LDE
@@ -99,6 +97,7 @@ v next
 + non-standalone client no longer calls System.exit
 + killed some flicker associated with torso twists
 + 557858: front arc targets are primary, if possible
++ new map format
 
 v 0.25.5 (05-10-02, 10:20am)
 + minor changes to the client & server for Helge

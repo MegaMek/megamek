@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -14,18 +14,15 @@
 
 package megamek.common.actions;
 
+import megamek.common.*;
+
 /**
- * The attacker punches the target.
+ * The attacker pushes the target.
  */
 public class PushAttackAction
-    extends AbstractAttackAction
+    extends DisplacementAttackAction
 {
-    public PushAttackAction(int entityId, int targetId) {
-        super(entityId, targetId);
+    public PushAttackAction(int entityId, int targetId, Coords targetPos) {
+        super(entityId, targetId, targetPos);
     }
 }
-
-
-
-
-// blah!

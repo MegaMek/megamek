@@ -76,57 +76,57 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Can't thrash against non-infantry
-        if (te == null && !(te instanceof Infantry)) {
+        if (te == null || !(te instanceof Infantry)) {
             return new ToHitData( ToHitData.IMPOSSIBLE,
                                   "Can only thrash at infantry" );
         }
 
-		// Can't thrash against swarming infantry.
-		else if (te != null && Entity.NONE != te.getSwarmTargetId()) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Can't thrash at swarming infantry");
-		}
+        // Can't thrash against swarming infantry.
+        else if (te != null && Entity.NONE != te.getSwarmTargetId()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Can't thrash at swarming infantry");
+        }
 
-		// Check range.
-		if (target.getPosition() == null || ae.getPosition().distance(target.getPosition()) > 0) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in same hex");
-		}
+        // Check range.
+        if (target.getPosition() == null || ae.getPosition().distance(target.getPosition()) > 0) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in same hex");
+        }
 
-		// Check terrain.
-		Hex hex = game.board.getHex(ae.getPosition());
-		if (hex.contains(Terrain.WOODS)
-			|| hex.contains(Terrain.ROUGH)
-			|| hex.contains(Terrain.RUBBLE)
-			|| hex.contains(Terrain.BUILDING)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Not a clear or pavement hex.");
-		}
+        // Check terrain.
+        Hex hex = game.board.getHex(ae.getPosition());
+        if (hex.contains(Terrain.WOODS)
+            || hex.contains(Terrain.ROUGH)
+            || hex.contains(Terrain.RUBBLE)
+            || hex.contains(Terrain.BUILDING)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Not a clear or pavement hex.");
+        }
 
-		// Can't target woods or a building with a thrash attack.
-		if (target.getTargetType() == Targetable.TYPE_BUILDING
-			|| target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
-			|| target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-			|| target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Invalid attack");
-		}
+        // Can't target woods or a building with a thrash attack.
+        if (target.getTargetType() == Targetable.TYPE_BUILDING
+            || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+            || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
+            || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Invalid attack");
+        }
 
-		// The Mech can't have fired a weapon this round.
-		for (int loop = 0; loop < ae.locations(); loop++) {
-			if (ae.weaponFiredFrom(loop)) {
-				return new ToHitData(
-					ToHitData.IMPOSSIBLE,
-					"Weapons fired from " + ae.getLocationName(loop) + " this turn");
-			}
-		}
+        // The Mech can't have fired a weapon this round.
+        for (int loop = 0; loop < ae.locations(); loop++) {
+            if (ae.weaponFiredFrom(loop)) {
+                return new ToHitData(
+                                     ToHitData.IMPOSSIBLE,
+                                     "Weapons fired from " + ae.getLocationName(loop) + " this turn");
+            }
+        }
 
-		// Mech must have at least one working arm or leg.
-		if (ae.isLocationBad(Mech.LOC_RARM)
-			&& ae.isLocationBad(Mech.LOC_LARM)
-			&& ae.isLocationBad(Mech.LOC_RLEG)
-			&& ae.isLocationBad(Mech.LOC_LLEG)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Mech has no arms or legs to thrash");
-		}
+        // Mech must have at least one working arm or leg.
+        if (ae.isLocationBad(Mech.LOC_RARM)
+            && ae.isLocationBad(Mech.LOC_LARM)
+            && ae.isLocationBad(Mech.LOC_RLEG)
+            && ae.isLocationBad(Mech.LOC_LLEG)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Mech has no arms or legs to thrash");
+        }
 
-		// If the attack isn't impossible, it's automatically successful.
-		return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "thrash attacks always hit");
+        // If the attack isn't impossible, it's automatically successful.
+        return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "thrash attacks always hit");
     }
 
     /**

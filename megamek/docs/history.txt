@@ -6,6 +6,12 @@ v0.29.47 (CVS)
 + Bug 988798: Mechs with dodge ability auto-dodge when appropriate.
 + Bug 999146: Server NPE on client disconnect fixed.
 + Bug 996032: Exception in Customize Mech Dialog fixed.  Thanks weaselflink!
++ Patch 1016082, 1015958: Four new unofficial pilot advantages,
+    Gunnery/Laser: Pilot gets a -1 to-hit bonus on all energy-based weapons (Laser, PPC, and Flamer)
+    Gunnery/Missile: Pilot gets a -1 to-hit bonus on all missile weapons (LRM, SRM, MRM, RL and ATM)
+    Gunnery/Ballistic: Pilot gets a -1 to-hit bonus on all ballistic weapons (MGs, any ACs, Gaussrifles)
+    Iron Man: A pilot with this skill receives only 1 pilot hit from ammunition explosions.
+    Thanks schoelling!
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

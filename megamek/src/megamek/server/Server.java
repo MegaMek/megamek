@@ -2511,6 +2511,7 @@ implements Runnable {
                 ammo = weapon.getLinked();
             }
         }
+        boolean streakMiss;
         
         WeaponResult wr = new WeaponResult();
         wr.waa = waa;
@@ -2544,16 +2545,18 @@ implements Runnable {
         wr.roll = Compute.d6(2);
         
         // if the shot is possible and not a streak miss, add heat and use ammo
-        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE
-        && (wtype.getAmmoType() != AmmoType.T_SRM_STREAK || wr.roll >= wr.toHit.getValue())) {
+        streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK && wr.roll < wr.toHit.getValue());
+        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss) {
             wr = addHeatUseAmmoFor(waa, wr);
         }
         
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
         
-        // resolve any AMS attacks on this attack
-        wr = resolveAmsFor(waa, wr);
+        // if not streak miss, resolve any AMS attacks on this attack
+        if (!streakMiss) {
+            wr = resolveAmsFor(waa, wr);
+        }
         
         return wr;
     }
@@ -2571,8 +2574,6 @@ implements Runnable {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             !wtype.hasFlag(WeaponType.F_INFANTRY);
         Mounted ammo = weapon.getLinked();
-        
-        boolean revertsToSingleShot = false;
         
         // how many shots are we firing?
         int nShots = howManyShots(weapon, ammo);
@@ -2633,7 +2634,7 @@ implements Runnable {
             te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
 
             // decrement the ammo
-            mAmmo.setShotsLeft(mAmmo.getShotsLeft() - amsHits);
+            mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
 
             // set the ams as having fired
             counter.setUsedThisRound(true);

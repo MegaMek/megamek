@@ -69,7 +69,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         m_dialog.setResizable(false);
     }
 
-    public void update(Graphics g) {
+    public synchronized void update(Graphics g) {
         paint(g);
     }
 
@@ -115,7 +115,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     }
 
     // draw everything
-    private void drawMap() {
+    private synchronized void drawMap() {
         if (m_mapImage == null) {
             return;
         }

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -85,7 +85,6 @@ public class BackGroundDrawer{
     
     
     private Image mainImage;
-    private Color backColor;
     private int   behavior = NO_TILING | VALIGN_CENTER | HALIGN_CENTER;
     private int   fixedX = 0;
     private int   fixedY = 0;
@@ -195,8 +194,8 @@ public class BackGroundDrawer{
      */
     
     public void drawInto(Graphics g,int width, int height){
-        Color oldColor = g.getColor();
-        if(mainImage == null) return;
+
+        if (mainImage == null) return;
         
         //Checking behavior of painter
         if((behavior & NO_TILING) != 0){
@@ -218,7 +217,7 @@ public class BackGroundDrawer{
             drawTilingHorizontal(g,width,height);
             return;
         }
-        
+
     }
     
     private void drawNoTiling(Graphics g, int width, int height){

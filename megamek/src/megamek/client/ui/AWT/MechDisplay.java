@@ -166,7 +166,6 @@ class MovementPanel extends PicMap{
     
     public void onResize(){
     	int w = getSize().width;
-    	int h = getSize().height;
     	Rectangle r = getContentBounds();
     	int dx = (int) Math.round((w - r.width)/2);
     	if (dx < minLeftMargin) dx = minLeftMargin;
@@ -1178,7 +1177,6 @@ class SystemPanel
 class ExtraPanel 
     extends BufferedPanel
 {
-    private static Object SYSTEM = new Object();
     private TransparentLabel  narcLabel, unusedL, carrysL;
     //public Label    unusedL, carrysL;
     public TextArea unusedR, carrysR;

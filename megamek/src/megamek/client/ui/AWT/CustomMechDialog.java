@@ -37,8 +37,6 @@ import megamek.common.*;
 public class CustomMechDialog 
 extends Dialog implements ActionListener {
     
-    private Label labInstructions = new Label("Edit your pilot's stats here.");
-    
     private Label labName = new Label("Name: ", Label.RIGHT);
     private TextField fldName = new TextField(20);
     private Label labGunnery = new Label("Gunnery: ", Label.RIGHT);;
@@ -73,10 +71,6 @@ extends Dialog implements ActionListener {
             
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(5, 5, 5, 5);
-//        c.weightx = 1.0;    c.weighty = 0.0;
-//        c.gridwidth = GridBagConstraints.REMAINDER;
-//        gridbag.setConstraints(labInstructions, c);
-//        add(labInstructions);
             
         c.weightx = 1.0;    c.weighty = 1.0;
         c.gridwidth = 1;

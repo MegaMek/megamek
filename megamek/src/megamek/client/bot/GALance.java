@@ -1,4 +1,17 @@
 /*
+ * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+/*
  * GALance.java
  *
  * Created on May 30, 2002, 11:41 AM
@@ -230,14 +243,13 @@ public class GALance extends GA {
     if (c1.genes.length < 1) {
         return;
     }
-    int r1 = Compute.randomInt(c1.genes.length - 1);
-    boolean done = false;
+    int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1) : 0;
     if (r1%2 == 1) {
       c1.genes[r1] = Compute.randomInt(((EntityState[])this.moves.elementAt(r1)).length);
       return;
     }
-    for (int i = 0; (i < c1.genes.length) && !done; i++) {
-      int iGene = (i + r1)%(c1.genes.length - 1);
+    for (int i = 1; i < c1.genes.length; i++) {
+      int iGene = (i + r1 - 1)%(c1.genes.length - 1);
       if (((EntityState[])this.moves.elementAt(iGene)).length > 1) {
         c1.genes[iGene] = Compute.randomInt(((EntityState[])this.moves.elementAt(iGene)).length);
         return;

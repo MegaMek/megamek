@@ -460,7 +460,7 @@ public class MovementDisplay
             butWalk.setEnabled(true);
             butBackup.setEnabled(true);
         } else if (ev.getActionCommand().equalsIgnoreCase("backup") && client.isMyTurn()) {
-            if (gear != Compute.GEAR_JUMP) {
+            if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;

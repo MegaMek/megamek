@@ -261,11 +261,18 @@ public class MegaMek
         FileDialog fd =
             new FileDialog(frame, "Select saved game...", FileDialog.LOAD);
         fd.setDirectory(".");
+        // limit file-list to savedgames only
+        fd.setFilenameFilter( new FilenameFilter() {
+                public boolean accept( File dir, String name ) {
+                    return ( null != name && name.endsWith( ".sav" ) );
+                }
+            } );
         //Using the FilenameFilter class would be the appropriate way to
         // filter for certain extensions, but it's broken under windoze.  See
         // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
         // for details.  The hack below is better than nothing.
         fd.setFile("*.sav");
+        
         fd.show();
         if (fd.getFile() == null) {
             return;

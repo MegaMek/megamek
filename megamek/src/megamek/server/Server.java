@@ -167,6 +167,7 @@ public class Server
         Player player = (Player)packet.getObject(0);
         game.getPlayer(connId).setColorIndex(player.getColorIndex());
         game.getPlayer(connId).setStartingPos(player.getStartingPos());
+        game.getPlayer(connId).setTeam(player.getTeam());
     }
         
     /**

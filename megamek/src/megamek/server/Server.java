@@ -7583,6 +7583,9 @@ implements Runnable {
             game.getOptions().getOption("inf_move_multi").setValue(false);
             changed += 2;
         }
+        
+        // Set proper RNG
+        Compute.setRNG(game.getOptions().intOption("rng_type"));
 
         return changed > 0;
     }

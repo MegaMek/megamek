@@ -67,7 +67,10 @@ public class Settings
     public static String    mapTileset              = "defaulthexset.txt";
     
     public static String    mechDirectory           = "data" + File.separator + "mechfiles";
-    
+
+    public static boolean   soundMute               = false;
+    public static String    soundBingFilename       = "data/sounds/call.wav";
+
     private static String[] m_sColorNames = { "black", "blue", "cyan", "darkgray", "gray", 
             "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
             
@@ -224,6 +227,14 @@ scan:
                         st.nextToken();
                         showWrecks = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if(key.equals("soundmute")) {
+                        st.nextToken();
+                        soundMute = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("soundbingfilename")) {
+                        st.nextToken();
+                        soundBingFilename = st.sval;
+                    }
                 }
             }
             
@@ -294,6 +305,8 @@ scan:
             cw.write("showmovestep " + showMoveStep + "\r\n");
             cw.write("movestepdelay " + moveStepDelay + "\r\n");
             cw.write("showwrecks " + showWrecks + "\r\n");
+            cw.write("soundmute " + soundMute + "\r\n");
+            cw.write("soundbingfilename \"" + soundBingFilename + "\"\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

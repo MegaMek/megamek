@@ -16,6 +16,8 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -92,6 +94,11 @@ public class Client extends Panel
     private FileDialog dlgLoadList = null;
     private FileDialog dlgSaveList = null;
 
+    /**
+     * Cache the "bing" soundclip.
+     */
+    AudioClip bingClip = null;
+
 	/**
      * Construct a client which will try to connect.  If the connection
      * fails, it will alert the player, free resources and hide the frame.
@@ -105,15 +112,31 @@ public class Client extends Panel
     	this(name);
     	
     	// try to connect
-		if(!connect(host, port)) {
-			String error = "Error: could not connect to server at " +				host + ":" + port + ".";
-			new AlertDialog(frame, "Host a Game", error).show();
-			frame.setVisible(false);
-			die();
-		}
+        if(!connect(host, port)) {
+            StringBuffer error = new StringBuffer();
+            error.append( "Error: could not connect to server at " )
+                .append( host )
+                .append( ":" )
+                .append( port )
+                .append( "." );
+            new AlertDialog(frame, "Host a Game", error.toString()).show();
+            frame.setVisible(false);
+            die();
+        }
 		
-		// wait for full connection
-		retrieveServerInfo();
+        // wait for full connection
+        retrieveServerInfo();
+
+        // Try to load the "bing" sound clip.
+        if (Settings.soundBingFilename == null) return;
+        try {
+            File file = new File( Settings.soundBingFilename );
+            bingClip = Applet.newAudioClip(file.toURL());
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
     
     /**
@@ -127,6 +150,16 @@ public class Client extends Panel
         this.name = playername;
 
         Settings.load();
+
+        // Try to load the "bing" sound clip.
+        if (Settings.soundBingFilename == null) return;
+        try {
+            File file = new File( Settings.soundBingFilename );
+            bingClip = Applet.newAudioClip(file.toURL());
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         initializeFrame();
         initializeDialogs();
@@ -1356,6 +1389,7 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_CHAT :
                 processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_CHAT, null, (String)c.getObject(0)));
+                bing();
                 break;
             case Packet.COMMAND_ENTITY_ADD :
                 receiveEntityAdd(c);
@@ -1728,4 +1762,14 @@ public class Client extends Panel
 		int tint = player.getColorRGB();
 		bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
     }
+
+    /**
+     * Make a "bing" sound.
+     */
+    public void bing() {
+        if ( !Settings.soundMute && null != bingClip ) {
+            bingClip.play();
+        }
+    }
+
 }

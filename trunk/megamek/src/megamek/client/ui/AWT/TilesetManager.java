@@ -55,6 +55,7 @@ public class TilesetManager {
     // hex images
     private HexTileset hexTileset = new HexTileset();
     
+	private Image minefieldSign;    
 
     /** Creates new TilesetManager */
     public TilesetManager(Component comp) {
@@ -107,7 +108,9 @@ public class TilesetManager {
         return hex.getSupers();
     }
     
-    
+    public Image getMinefieldSign() {
+        return minefieldSign;
+    }    
     
     /**
      * @returns true if we're in the process of loading some images
@@ -145,6 +148,9 @@ public class TilesetManager {
             loadImage((Entity)i.nextElement());
         }
         
+        // load minefield sign
+		minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
+
         started = true;
     }
     

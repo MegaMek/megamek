@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -26,6 +26,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
     protected Panel panStatus;
     private Button butDisplay;
     private Button butMap;
+    private Button butLOS;
 
     /**
      * Sets up the status bar with toggle buttons for the mek display and map.
@@ -40,6 +41,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       
       butMap = new Button("M");
       butMap.addActionListener(this);
+      
+      butLOS = new Button("L");
+      butLOS.addActionListener(this);
       
       // layout
       GridBagLayout gridbag = new GridBagLayout();
@@ -56,14 +60,20 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       gridbag.setConstraints(butDisplay, c);
       panStatus.add(butDisplay);
       
+	  panStatus.add(butMap);
+
       c.gridwidth = GridBagConstraints.REMAINDER;
-      panStatus.add(butMap);
+      panStatus.add(butLOS);
     }
     
     protected void setStatusBarText(String text) {
       labStatus.setText(text);
     }
     
+    protected void setDisplayButtonEnabled(boolean enabled) {
+      butDisplay.setEnabled(enabled);
+    }
+
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
       boolean handled = false;
 
@@ -72,6 +82,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
         handled = true;
       } else if (ev.getSource() == butMap) {
         client.toggleMap();
+        handled = true;
+      } else if (ev.getSource() == butLOS) {
+        client.showLOSSettingDialog();
         handled = true;
       }
       

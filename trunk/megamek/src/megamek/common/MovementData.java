@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -42,6 +42,7 @@ public class MovementData
     public static final int        STEP_LOAD                     = 16;
     public static final int        STEP_UNLOAD                   = 17;
     public static final int        STEP_EJECT                    = 18;
+    public static final int        STEP_CLEAR_MINEFIELD          = 19;
 
     private Vector steps = new Vector();
     

@@ -129,6 +129,7 @@ public abstract class Entity
     public boolean              dodging;
     
     public boolean        spotting;
+    private boolean				clearingMinefield = false;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -429,7 +430,7 @@ public abstract class Entity
      * entities can not be selected.
      */
     public boolean isSelectableThisTurn(Game game) {
-        return !done && isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) && (conveyance == Entity.NONE) ;
+        return !done && isActive(game.getPhase() == Game.PHASE_DEPLOYMENT ? game.getRoundCount() : -1) && (conveyance == Entity.NONE) && !isClearingMinefield();
     }
 
     /**
@@ -1977,6 +1978,7 @@ public abstract class Entity
         setDisplacementAttack(null);
         setFindingClub(false);
         setSpotting(false);
+        setClearingMinefield(false);
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;
@@ -2906,6 +2908,20 @@ public abstract class Entity
             this.removalCondition = removalCondition;
         }
     }
+
+	/**
+	 * @return whether this entity is clearing a minefield.
+	 */
+	public boolean isClearingMinefield() {
+		return clearingMinefield;
+	}
+
+	/**
+	 * @param clearingMinefield
+	 */
+	public void setClearingMinefield(boolean clearingMinefield) {
+		this.clearingMinefield = clearingMinefield;
+	}
 
   /**
    * @return whether this entity is spotting this round.

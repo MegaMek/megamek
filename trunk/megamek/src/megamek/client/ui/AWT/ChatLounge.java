@@ -42,6 +42,17 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Label labCamo;
     private Choice choCamo;
     
+    private Panel panMinefield;
+    private Label labMinefield;
+    private List lisMinefield;
+    private Label labConventional;
+    private Label labCommandDetonated;
+    private Label labVibrabomb;
+    private TextField fldConventional;
+    private TextField fldCommandDetonated;
+    private TextField fldVibrabomb;
+    private Button butMinefield;
+
     private Button butOptions;
 
     private Label labBoardSize;
@@ -96,6 +107,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         butOptions.addActionListener(this);
         
         setupPlayerInfo();
+        setupMinefield();
         
         setupBoardSettings();
         refreshGameSettings();
@@ -225,6 +237,86 @@ public class ChatLounge extends AbstractPhaseDisplay
   
   
     /**
+     * Sets up the minefield panel
+     */
+    private void setupMinefield() {
+		panMinefield = new Panel();
+		
+		labMinefield = new Label("Minefields");
+		
+		lisMinefield = new List(4);
+		
+		labConventional = new Label("Conventional:", Label.RIGHT);
+		labCommandDetonated = new Label("Command-detonated:", Label.RIGHT);
+		labVibrabomb = new Label("Vibrabomb:", Label.RIGHT);
+
+		fldConventional = new TextField(1);
+		fldCommandDetonated = new TextField(1);
+		fldVibrabomb = new TextField(1);
+		
+		fldCommandDetonated.setEnabled(false);
+		labCommandDetonated.setEnabled(false);
+		
+		butMinefield = new Button("Update");
+		butMinefield.addActionListener(this);
+
+		// layout
+		GridBagLayout gridbag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		panMinefield.setLayout(gridbag);
+		    
+		c.fill = GridBagConstraints.VERTICAL;
+		c.insets = new Insets(1, 1, 1, 1);
+		c.weightx = 1.0;    c.weighty = 0.0;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		gridbag.setConstraints(labMinefield, c);
+		panMinefield.add(labMinefield);
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1.0;    c.weighty = 1.0;
+		gridbag.setConstraints(lisMinefield, c);
+		panMinefield.add(lisMinefield);
+		
+		c.gridwidth = 1;
+		c.weightx = 0.0;    c.weighty = 0.0;
+		gridbag.setConstraints(labConventional, c);
+		panMinefield.add(labConventional);
+		    
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0;    c.weighty = 0.0;
+		gridbag.setConstraints(fldConventional, c);
+		panMinefield.add(fldConventional);
+		    
+		c.gridwidth = 1;
+		c.weightx = 0.0;    c.weighty = 0.0;
+		gridbag.setConstraints(labCommandDetonated, c);
+		panMinefield.add(labCommandDetonated);
+		    
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0;    c.weighty = 0.0;
+		gridbag.setConstraints(fldCommandDetonated, c);
+		panMinefield.add(fldCommandDetonated);
+		
+		c.gridwidth = 1;
+		c.weightx = 0.0;    c.weighty = 0.0;
+		gridbag.setConstraints(labVibrabomb, c);
+		panMinefield.add(labVibrabomb);
+		    
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0;    c.weighty = 0.0;
+		gridbag.setConstraints(fldVibrabomb, c);
+		panMinefield.add(fldVibrabomb);
+		
+		c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 0.0;    c.weighty = 0.0;
+		gridbag.setConstraints(butMinefield, c);
+		panMinefield.add(butMinefield);
+		
+		refreshMinefield();
+    }
+
+    /**
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
@@ -330,6 +422,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         gridbag.setConstraints(panPlayerInfo, c);
         panTop.add(panPlayerInfo);
+
+        gridbag.setConstraints(panMinefield, c);
+        panTop.add(panMinefield);
     }
   
     /**
@@ -603,6 +698,33 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
 
     /**
+     * Refreshes the minefield
+     */
+    private void refreshMinefield() {
+        lisMinefield.removeAll();
+        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if(player != null) {
+              StringBuffer pi = new StringBuffer();
+              pi.append(player.getName()).append(" : ");
+              pi.append(player.getNbrMFConventional()).append("/");
+              pi.append(player.getNbrMFCommand()).append("/");
+              pi.append(player.getNbrMFVibra());
+
+              lisMinefield.add(pi.toString());
+            }
+        }
+        int nbr = client.getLocalPlayer().getNbrMFConventional();
+        fldConventional.setText(Integer.toString(nbr));
+        
+        nbr = client.getLocalPlayer().getNbrMFCommand();
+        fldCommandDetonated.setText(Integer.toString(nbr));
+
+        nbr = client.getLocalPlayer().getNbrMFVibra();
+        fldVibrabomb.setText(Integer.toString(nbr));
+    }
+
+    /**
      * Refreshes the battle values/tons from the client
      */
     private void refreshBVs() {
@@ -769,6 +891,46 @@ public class ChatLounge extends AbstractPhaseDisplay
       }
     }
 
+	private void updateMinefield() {
+    	String conv = fldConventional.getText();
+    	String cmd = fldCommandDetonated.getText();
+    	String vibra = fldVibrabomb.getText();
+    	
+    	int nbrConv = 0;
+    	int nbrCmd = 0;
+    	int nbrVibra = 0;
+    	
+   		try {
+        	if (conv != null && conv.length() != 0) {
+        			nbrConv = Integer.parseInt(conv);
+        	}
+        	if (cmd != null && cmd.length() != 0) {
+        			nbrCmd = Integer.parseInt(cmd);
+        	}
+        	if (vibra != null && vibra.length() != 0) {
+        			nbrVibra = Integer.parseInt(vibra);
+        	}
+		} catch (NumberFormatException e) {
+			AlertDialog ad = new AlertDialog(client.frame,
+											"Minefield",
+											"Only positive integers allowed");
+			ad.show();
+			return;
+		}
+		
+		if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
+			AlertDialog ad = new AlertDialog(client.frame,
+											"Minefield",
+											"Only positive integers allowed");
+			ad.show();
+			return;
+		}
+		client.getLocalPlayer().setNbrMFConventional(nbrConv);
+		client.getLocalPlayer().setNbrMFCommand(nbrCmd);
+		client.getLocalPlayer().setNbrMFVibra(nbrVibra);
+		client.sendPlayerInfo();
+	}
+
     /**
      * Pop up the customize mech dialog
      */
@@ -839,6 +1001,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshStarts();
         refreshColors();
         refreshCamos();
+        refreshMinefield();
     }
     public void gamePhaseChange(GameEvent ev) {
         if (client.game.getPhase() !=  Game.PHASE_LOUNGE) {
@@ -959,6 +1122,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             // list of entities to a file.
             client.saveListFile
                 ( client.game.getPlayerEntities(client.getLocalPlayer()) );
+        } else if (ev.getSource() == butMinefield) {
+        	updateMinefield();
         }
     }
 

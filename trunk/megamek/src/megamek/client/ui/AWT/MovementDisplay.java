@@ -16,6 +16,7 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -52,7 +53,7 @@ public class MovementDisplay
     private Button            butUnload;
     private Button            butReport;
 
-    private Button            butSpace;
+    private Button            butClear;
 
     private Button            butNext;
     private Button            butDone;
@@ -92,8 +93,9 @@ public class MovementDisplay
 
         setupStatusBar("Waiting to begin Movement phase...");
 
-        butSpace = new Button("");
-        butSpace.setEnabled(false);
+		butClear = new Button("Clear mines");
+		butClear.addActionListener(this);
+        butClear.setEnabled(false);
 
         butWalk = new Button("Walk");
         butWalk.addActionListener(this);
@@ -223,7 +225,7 @@ public class MovementDisplay
             panButtons.add(butDfa);
             panButtons.add(butNext);
             panButtons.add(butDown);
-            panButtons.add(butSpace);
+            panButtons.add(butClear);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -289,9 +291,15 @@ public class MovementDisplay
         if ( isInfantry ) {
             butCharge.setEnabled(false);
             butDfa.setEnabled(false);
+            if(client.game.containsMinefield(ce().getPosition())) {
+            	butClear.setEnabled(true);
+        	} else {
+            	butClear.setEnabled(false);
+        	}
         } else {
             butCharge.setEnabled(ce().getWalkMP() > 0);
             butDfa.setEnabled(ce().getJumpMP() > 0);
+            butClear.setEnabled(false);
         }
         
         butTurn.setEnabled(ce().getWalkMP() > 0 || ce().getJumpMP() > 0);
@@ -1038,6 +1046,19 @@ public class MovementDisplay
                 clearAllMoves();
             }
             gear = Compute.GEAR_BACKUP;
+        } else if (ev.getSource() == butClear) {       	
+			clearAllMoves();
+			if (!client.game.containsMinefield(ce().getPosition())) {
+				client.doAlertDialog("Can't clear minefield", "No minefield in hex!");
+				gear = Compute.GEAR_LAND;
+				return;
+			}
+			if (client.doYesNoDialog("Clear the minefield?", "The unit successfully clears the\nminefield on " +
+				Minefield.CLEAR_NUMBER_INFANTRY + "+. The minefield\nwill explode on " + Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT +
+				" or less.")) {
+				md.addStep(MovementData.STEP_CLEAR_MINEFIELD);
+				moveTo(md);
+			}
         } else if (ev.getSource() == butCharge) {
             if (gear != Compute.GEAR_LAND) {
                 clearAllMoves();

@@ -634,6 +634,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         drawMap();
     }
     public void boardSecondLOSHex(BoardEvent b, Coords c) {
+    	firstLOS = c;
         secondLOS = b.getCoords();
         drawMap();
     }

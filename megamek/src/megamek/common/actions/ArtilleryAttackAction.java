@@ -26,23 +26,32 @@ implements Serializable
 {
     private WeaponResult wr;
     public int turnsTilHit;
-    private Vector spotters;
-    public ArtilleryAttackAction(WeaponResult wr,Game game,Vector spotters) {
-        this.wr=wr;
-        this.spotters=spotters;//possible spotters, won't know until it lands.
-        int distance=Compute.effectiveDistance(game, wr.waa.getEntity(game),wr.waa.getTarget(game));//get distance
-        turnsTilHit=(distance<=17)? 0 : ((distance/34)+1);  //Two board increments are flight time, UNLESS it's on the same sheet.
+    /** IDs of possible spotters, won't know until it lands. */
+    private Vector spotterIds;
+    private final int playerId;
+    public ArtilleryAttackAction(WeaponResult wr, Game game,
+                                 int playerId, Vector spotterIds) {
+        this.wr = wr;
+        this.playerId = playerId;
+        this.spotterIds = spotterIds;
+        int distance = Compute.effectiveDistance
+            (game, wr.waa.getEntity(game), wr.waa.getTarget(game));
+        // Two boards is one turn of flight time, except on the same sheet.
+        turnsTilHit = (distance<=17) ? 0 : ((distance/34)+1);
     }
-      public void setWR(WeaponResult wr) {
+    public void setWR(WeaponResult wr) {
         this.wr=wr;
     }
     public WeaponResult getWR() {
         return wr;
     }
-    public Vector getSpotters() {
-        return spotters;
+    public Vector getSpotterIds() {
+        return spotterIds;
     }
-    public void setSpotters(Vector spotters) {
-        this.spotters=spotters;
+    public int getPlayerId() {
+        return playerId;
+    }
+    public void setSpotterIds(Vector spotterIds) {
+        this.spotterIds=spotterIds;
     }
 }

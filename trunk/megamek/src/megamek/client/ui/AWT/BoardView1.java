@@ -441,14 +441,11 @@ public class BoardView1
         return new Coords(x, y);
     }
     
-    
-    
-    
-    
     /**
      * Shows the tooltip thinger
      */
     private void showTooltip() {
+        final Point tipLoc = new Point(getLocationOnScreen());
         // retrieve tip text
         String[] tipText = getTipText(mousePos);
         if (tipText == null) {
@@ -460,11 +457,24 @@ public class BoardView1
         tipWindow.add(new TooltipCanvas(tipText));
         tipWindow.pack();
         
-        // set tip location
-        final Point tipLoc = new Point(getLocationOnScreen());
         tipLoc.translate(mousePos.x, mousePos.y + 20);
+
+        // adjust horizontal location for the tipWindow if it goes off the frame
+        if (frame.getLocation().x + frame.getSize().width < tipLoc.x + tipWindow.getSize().width + 10) {
+            if (frame.getSize().width > tipWindow.getSize().width) {
+                // bound it by the right edge of the frame
+                tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10 - frame.getSize().width - frame.getLocation().x;
+            }
+            else {
+                // too big to fit, left justify to the frame (roughly).
+                // how do I extract the first term of HEX_SIZE to use here?--LDE
+                tipLoc.x = getLocationOnScreen().x + 84;
+            }
+        }
+
+        // set tip location
         tipWindow.setLocation(tipLoc);
-        
+
         tipWindow.show();
     }
     
@@ -472,39 +482,77 @@ public class BoardView1
      * The text to be displayed when the mouse is at a certain point
      */
     private String[] getTipText(Point point) {
-        // check if it's on an attack
-        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite sprite = (AttackSprite)i.next();
-            if (sprite.isInside(point)) {
-                return sprite.getTooltip();
-            }
-        }
-        
-        // check if it's on an entity
-        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite sprite = (EntitySprite)i.next();
-            if (sprite.isInside(point)) {
-                return sprite.getTooltip();
-            }
-        }
-        
-        // then return a tip for the hex it's on
+
+        int stringsSize = 0;
+
+        // first, we have to determine how much text we are going to have
+        // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
-        if (!game.board.contains(mcoords)) {
+        if (game.board.contains(mcoords)) {
+            stringsSize += 1;
+        }
+
+        // check if it's on any entities
+        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
+            final EntitySprite eSprite = (EntitySprite)i.next();
+            if (eSprite.isInside(point)) {
+                stringsSize += 3;
+            }
+        }
+
+        // check if it's on any attacks
+        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite aSprite = (AttackSprite)i.next();
+            if (aSprite.isInside(point)) {
+                stringsSize += 1 + aSprite.weaponDescs.size();
+            }
+        }
+        
+        // if the size is zip, you must a'quit
+        if (stringsSize == 0) {
             return null;
         }
-        Hex mhex = game.board.getHex(mcoords);
-        String[] strings = new String[1];
-        strings[0] = "Hex " + mcoords.getBoardNum() 
-                    + "; level " + mhex.getElevation();
-//                    + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
+
+        // now we can allocate an array of strings
+        String[] strings = new String[stringsSize];
+        int stringsIndex = 0;
+
+        // are we on a hex?
+        if (game.board.contains(mcoords)) {
+            Hex mhex = game.board.getHex(mcoords);
+            strings[stringsIndex] = "Hex " + mcoords.getBoardNum() 
+                        + "; level " + mhex.getElevation();
+//                        + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
+            stringsIndex += 1;
+        }
+
+        // check if it's on any entities
+        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
+            final EntitySprite eSprite = (EntitySprite)i.next();
+            if (eSprite.isInside(point)) {
+                final String[] entityStrings = eSprite.getTooltip();
+                java.lang.System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
+                stringsIndex += entityStrings.length;
+            }
+        }
+        
+        // check if it's on any attacks
+        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite aSprite = (AttackSprite)i.next();
+            if (aSprite.isInside(point)) {
+                final String[] attackStrings = aSprite.getTooltip();
+                java.lang.System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
+                stringsIndex += 1 + aSprite.weaponDescs.size();
+            }
+        }
+
         return strings;
     }
     
     /**
      * Hides the tooltip thinger
      */
-    private void hideTooltip() {
+    public void hideTooltip() {
         tipWindow.setVisible(false);
     }
     

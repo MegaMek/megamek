@@ -59,6 +59,7 @@ public class MoveStep implements Serializable {
     private boolean onlyPavement; // additive
     private boolean isPavementStep;
     private boolean isRunProhibited = false;
+    private boolean isStackingViolation = false;
     private MovePath parent = null;
 
     /**
@@ -310,6 +311,7 @@ public class MoveStep implements Serializable {
         final Entity violation = Compute.stackingViolation(game, entity.getId(), getPosition());
         if (violation != null && getType() != MovePath.STEP_CHARGE && getType() != MovePath.STEP_DFA) {
             // can't move here
+            setStackingViolation(true);
             setMovementType(Entity.MOVE_ILLEGAL);
             return true;
         }
@@ -670,6 +672,14 @@ public class MoveStep implements Serializable {
 
     boolean isRunProhibited() {
         return isRunProhibited;
+    }
+
+    void setStackingViolation(boolean isStackingViolation) {
+        this.isStackingViolation = isStackingViolation;
+    }
+
+    boolean isStackingViolation() {
+        return isStackingViolation;
     }
 
     void compileIllegal(final Game game, final Entity entity, final MoveStep prev) {

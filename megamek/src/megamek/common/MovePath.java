@@ -128,6 +128,13 @@ public class MovePath implements Serializable {
         }
         MoveStep prev = getStep(steps.size() - 2);
         
+        // TODO: more elegant method possible here?
+        if (prev != null && prev.isStackingViolation()) {
+            // if previous step is stacking violation, fully recompile
+            compile(game, entity);
+            return this;
+        }
+        
         try {
             step.compile(game, entity, prev);
         } catch (RuntimeException re) {

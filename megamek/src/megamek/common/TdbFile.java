@@ -45,6 +45,7 @@ public class TdbFile implements MechLoader {
     private static final String  WALK   = "walk";
     private static final String  JUMP    = "jump";
     private static final String  HEAT_SINKS    = "heatsinks";
+    private static final String  ARMOR    = "armor";
     private static final String  MOUNTED_ITEM    = "mounteditem";
     private static final String  ITEM_DEFS    = "itemdefs";
     private static final String  LOCATION= "location";
@@ -55,6 +56,7 @@ public class TdbFile implements MechLoader {
     private static final String  LEVEL    = "level";
     private static final String  POD_SPACE    = "podspace";
     private static final String  COUNT    = "count";
+    private static final String  POINTS    = "points";
     private static final String  REAR_MOUNTED    = "rearmounted";
     private static final String  IS_SPREAD    = "isspread";
     private static final String  ITEM_INDEX    = "itemindex";
@@ -85,6 +87,7 @@ public class TdbFile implements MechLoader {
     private String walkMP;
     private String jumpMP;
     
+    private int totalArmor;
     private int larmArmor;
     private int rarmArmor;
     private int ltArmor;
@@ -188,6 +191,8 @@ public class TdbFile implements MechLoader {
                 dblSinks = false;
             }
             heatSinks = node.getAttribute(COUNT);
+        } else if (node.getName().equals(ARMOR)) {
+            totalArmor = Integer.parseInt(node.getAttribute(POINTS));
         } else if (node.getName().equals(MOUNTED_ITEM)) {
             if (node.getAttribute(REAR_MOUNTED).equals(TRUE)) {
                 isRearMounted[Integer.parseInt(node.getAttribute(ITEM_INDEX))] = true;
@@ -239,22 +244,17 @@ public class TdbFile implements MechLoader {
         /**
            In a Drawing Board .dbm file, the bytes that hold the armor
            distribution for each location seem to always be followed by
-           the following string of bytes (in hex): 0,4D,0,8,0,53.  That
-           is how we find them in the binary file.
-
-           Note: The above method for finding the armor is invalid for
-           clan omni mechs.  In the case of a clan omni mech, only the
-           following couple of bytes follow the armor (in hex): 0,4D.
-           This seems like a much more error prone method, but we'll
-           use it until the bug reports start rolling in :)
+           the following two bytes (in hex): 0,4D
+           This seems like a rather error prone method, so we'll also
+           have to verify the total amount of armor we read from the
+           .dbm file against the armor total listed in the .xml file.
            One place where (0,4D) can be found is the name/model area
-           when a mechs name/model/etc starts with "M".  So we won't
-           start looking for armor until address 100h or so in the
-           file.
+           when a mechs name/model/etc starts with "M".  Another
+           possiblility is c3 slave eqipment.
 
-           Note2: Both above methods fail for quad mechs (isn't this
-           fun?).  The following two bytes seem to follow armor in
-           the case of a quad mech (in hex): 0, 41.
+           Note: The above method fails for quad mechs (I knew it
+           wouldn't work!).  The following two bytes seem to follow
+           armor in the case of a quad mech (in hex): 0, 41.
         */
         try {
             File BASE = new File(Settings.mechDirectory);
@@ -262,8 +262,7 @@ public class TdbFile implements MechLoader {
             FileInputStream fStream = new FileInputStream(armorFile);
             DataInputStream dStream = new DataInputStream(fStream);
 
-            Vector armorValues = new Vector(28);
-            int a = 0;
+            Vector armorValues = new Vector(24);
 
             int keyByte;
             if (chassisConfig.equals("Quad")) {
@@ -272,28 +271,30 @@ public class TdbFile implements MechLoader {
                 keyByte = 77; //hex 4d
             }
 
-            for (int i = 0; i < 27; i++) {
+            for (int i = 0; i < 23; i++) {
                 armorValues.addElement(new Integer(dStream.readUnsignedByte()));
-                a++;
             }
 
-             while (true) {
-                 armorValues.addElement(new Integer(dStream.readUnsignedByte()));
-                 a++;
-                 armorValues.removeElementAt(0);
-                 
-                 //if (((Integer)armorValues.elementAt(26)).intValue() == 83 &&
-                 //    ((Integer)armorValues.elementAt(25)).intValue() == 0 &&
-                 //    ((Integer)armorValues.elementAt(24)).intValue() == 8 &&
-                 //    ((Integer)armorValues.elementAt(23)).intValue() == 0 &&
-                 //    ((Integer)armorValues.elementAt(22)).intValue() == 77 &&
-                 //    ((Integer)armorValues.elementAt(21)).intValue() == 0) {
-                 if (((Integer)armorValues.elementAt(22)).intValue() == keyByte &&
-                     ((Integer)armorValues.elementAt(21)).intValue() == 0 && a > 256) {
-                     break;
-                 }
-             }
-
+            while (true) {
+                armorValues.addElement(new Integer(dStream.readUnsignedByte()));
+                armorValues.removeElementAt(0);
+                
+                if (((Integer)armorValues.elementAt(22)).intValue() == keyByte &&
+                    ((Integer)armorValues.elementAt(21)).intValue() == 0) {
+                    // Ok, looks like we've found the armor section.
+                    //  We could be wrong though, so let's see if
+                    //  the total number of armor points checks out.
+                    int tA = 0;
+                    for (int j = 0; j < 21; j = j + 2) {
+                        tA += ((Integer)armorValues.elementAt(j)).intValue();
+                    }
+                    if (tA == totalArmor) {
+                        // We found the armor!
+                        break;
+                    }
+                }
+            }
+            
             return armorValues;
 
         } catch (EOFException ex) {

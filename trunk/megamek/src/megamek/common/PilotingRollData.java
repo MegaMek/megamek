@@ -16,12 +16,14 @@ package megamek.common;
 
 public class PilotingRollData extends TargetRoll
 {
+    private boolean forSkid;
     private int entityId;
     private boolean m_bCumulative = true;
     
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
         this.entityId = entityId;
+	this.forSkid = false;
     }
     
     /**
@@ -32,7 +34,19 @@ public class PilotingRollData extends TargetRoll
         super(value, desc);
         addModifier(pilotValue, desc);
         this.entityId = entityId;
+	this.forSkid = false;
     }
+
+    /**
+     * Record where a PSR is to avoid a skid.
+     */
+    public PilotingRollData(int entityId, int value, String desc, boolean isForSkid) {
+        super(value, desc);
+        this.entityId = entityId;
+	this.forSkid = isForSkid;
+    }
+
+    public boolean isForSkid() { return this.forSkid; }
     
     public int getEntityId() {
         return entityId;

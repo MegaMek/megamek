@@ -266,6 +266,7 @@ public class Compute
         boolean isJumping = false;
         boolean isRunProhibited = false;
 	boolean isInfantry = (entity instanceof Infantry);
+	MovementData.Step prevStep = null;
 
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
@@ -411,6 +412,7 @@ public class Compute
         boolean pastDanger = false;
         boolean firstStep = true;
 	boolean isInfantry = (entity instanceof Infantry);
+	MovementData.Step prevStep = null;
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -463,7 +465,8 @@ public class Compute
             // check for danger
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded(game, entityId, lastPos, 
-                                              curPos, moveType);
+                                              curPos, moveType,
+					      prevStep, overallMoveType);
             
             // getting up is also danger
             if (step.getType() == MovementData.STEP_GET_UP) {
@@ -484,6 +487,9 @@ public class Compute
 	    if ( isInfantry && step.getMpUsed() == 0 ) {
 		firstStep = true;
 	    }
+
+	    // Record the step just taken.
+	    prevStep = step;
         }
     }
     
@@ -541,7 +547,8 @@ public class Compute
 	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-
+	    if ( null == inHex ) 
+		System.out.println( "getEntities( Coords ) returns an enumeration with null values" ); //killme
 	    // Don't compare the entering entity to itself.
 	    if ( !(inHex.equals(entering)) ) {
 
@@ -802,10 +809,13 @@ public class Compute
      */
     public static boolean isPilotingSkillNeeded(Game game, int entityId, 
                                                 Coords src, Coords dest,
-                                                int movementType) {
+                                                int movementType,
+						MovementData.Step prevStep,
+						int overallMoveType) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
+	final boolean isInfantry = ( entity instanceof Infantry );
         
         // arguments valid?
         if (entity == null) {
@@ -822,7 +832,8 @@ public class Compute
         
         // check for rubble
         if (movementType != Entity.MOVE_JUMP
-            && destHex.levelOf(Terrain.RUBBLE) > 0) {
+            && destHex.levelOf(Terrain.RUBBLE) > 0
+	    && !isInfantry) {
             return true;
         }
         
@@ -832,7 +843,18 @@ public class Compute
             && destHex.levelOf(Terrain.WATER) > 0) {
             return true;
         }
-        
+
+        // Check for skids.
+	// ASSUMPTION - only count pavement in the src hex.
+	if ( movementType != Entity.MOVE_JUMP
+	     && srcHex.contains(Terrain.PAVEMENT)
+	     && overallMoveType == Entity.MOVE_RUN
+	     && prevStep != null
+	     && (prevStep.getType() == MovementData.STEP_TURN_LEFT ||
+		 prevStep.getType() == MovementData.STEP_TURN_RIGHT)
+	     && !isInfantry ) {
+	    return true;
+	}
         
         return false;
     }
@@ -1346,7 +1368,7 @@ public class Compute
 	    // are resolved against the front.
 	    toHit.setSideTable( ToHitData.SIDE_FRONT );
 	} else {
-            toHit.setSideTable(targetSideTable(ae, te));
+            toHit.setSideTable( targetSideTable(ae, te) );
 	}
         
         // okay!

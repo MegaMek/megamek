@@ -224,8 +224,12 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       if (moveType == Entity.MOVE_ILLEGAL || overallMoveType == Entity.MOVE_ILLEGAL) {
         isMovementLegal = false;
       }
+      // We need the previous step.
+      MovementData.Step prevStep = null;
+      if ( this.length() > 0 )
+	  prevStep = (MovementData.Step) super.getStep(super.length());
       // check for danger
-      isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType) || step_type == MovementData.STEP_GET_UP);
+      isDanger = (Compute.isPilotingSkillNeeded(game, entityId, lastPos, curPos, moveType, prevStep, overallMoveType) || step_type == MovementData.STEP_GET_UP);
       
       //this should be a more exact calculation, but for now it just serves as a deterent
       //for example it should actaully be a proportion of the threat if you end up stuck in

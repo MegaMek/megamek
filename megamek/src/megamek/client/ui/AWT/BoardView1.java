@@ -1735,10 +1735,13 @@ public class BoardView1
 
         protected int entityId;
         protected int masterId;
+        
+        Color spriteColor;
 
         public C3Sprite(Entity e, Entity m) {
             this.entityId = e.getId();
             this.masterId = m.getId();
+            this.spriteColor = e.getOwner().getColor();
 
             if(e.getPosition() == null || m.getPosition() == null) {
                 C3Poly = new Polygon();
@@ -1788,7 +1791,7 @@ public class BoardView1
             Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
             drawPoly.translate(x, y);
 
-            g.setColor(game.getEntity(entityId).getOwner().getColor());
+            g.setColor(spriteColor);
             g.fillPolygon(drawPoly);
             g.setColor(Color.black);
             g.drawPolygon(drawPoly);

@@ -81,6 +81,8 @@ v (next)
 + 622305: fixed crash with AMS
 + 622514: changed "missles", etc. to "missile(s)"
 + messed around with LOS; hopefully more readable code, bugs fixed
++ split crits supported
++ TSM added
 
 v 0.27.2 (10-11-02, 5pm)
 + added right-click popup menu to board display

@@ -100,7 +100,19 @@ public class BipedMech extends Mech {
         wmp = Math.max(0, wmp);
         
         // and we still need to factor in heat!
-        return Math.max(wmp - (int)(heat / 5), 0);
+        wmp = Math.max(wmp - (int)(heat / 5), 0);
+        
+        // TSM negates some heat
+        if (heat >= 9 && hasTSM()) {
+            if (heat == 9) {
+                wmp += 2;
+            }
+            else {
+                wmp += 1;
+            }
+        }
+        
+        return wmp;
     }
     
     /**

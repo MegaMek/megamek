@@ -47,6 +47,8 @@ public class EquipmentType {
     
     protected boolean   explosive = false;
     protected boolean   hittable = true; // if false, reroll critical hits
+    // can the crits for this be spread over locations?
+    protected boolean   spreadable = false;
     protected int       toHitModifier = 0;
 
     protected int       flags = 0;
@@ -104,6 +106,11 @@ public class EquipmentType {
     
     public boolean isHittable() {
         return hittable;
+    }
+    
+    // like margarine!
+    public boolean isSpreadable() { 
+        return spreadable;
     }
     
     public int getToHitModifier() {

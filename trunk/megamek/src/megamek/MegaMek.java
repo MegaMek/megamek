@@ -87,6 +87,27 @@ public class MegaMek
         // Show the window.
         frame.setVisible(true);
 
+        // tell the user about the readme...
+        if (true==Settings.nagForReadme) {
+            String title = "Welcome to MegaMek "+VERSION;
+            String body = 
+                "MegaMek is a complex application -- if you ever need any help you\n"+
+                "should start by reading the documentation, accessible through\n"+
+                "the Help menu.\n"+
+                " \nWould you like to view the documentation now?\n";
+            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
+            confirm.show();
+
+            if ( !confirm.getShowAgain() ) {
+                Settings.nagForReadme = false;
+                Settings.save();
+            };
+
+            if ( confirm.getAnswer() ) {
+                showHelp();
+            };
+        };        
+
     }
 
     /**

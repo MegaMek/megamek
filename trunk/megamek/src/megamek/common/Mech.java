@@ -1023,6 +1023,69 @@ public abstract class Mech
                                    HitData.EFFECT_CRITICAL);
             }
         }
+        if(table == ToHitData.HIT_ABOVE) {
+            roll = Compute.d6(1);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
+            // Hits from above.
+            switch( roll ) {
+            case 1:
+                return new HitData( Mech.LOC_LARM );
+            case 2:
+                return new HitData( Mech.LOC_LT,
+                                    (side == ToHitData.SIDE_REAR) );
+            case 3:
+                return new HitData( Mech.LOC_CT,
+                                    (side == ToHitData.SIDE_REAR) );
+            case 4:
+                return new HitData( Mech.LOC_RT,
+                                    (side == ToHitData.SIDE_REAR) );
+            case 5:
+                return new HitData( Mech.LOC_RARM );
+            case 6:
+                return new HitData( Mech.LOC_HEAD );
+            }
+        }
+        if(table == ToHitData.HIT_BELOW) {
+            roll = Compute.d6(1);
+            try {
+                if ( Settings.mekHitLocLog != null ) {
+                    Settings.mekHitLocLog.print( table );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.print( side );
+                    Settings.mekHitLocLog.print( "\t" );
+                    Settings.mekHitLocLog.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
+            // Hits from below.
+            switch( roll ) {
+            case 1:
+                return new HitData( Mech.LOC_LLEG );
+            case 2:
+                return new HitData( Mech.LOC_LLEG );
+            case 3:
+                return new HitData( Mech.LOC_LT,
+                                    (side == ToHitData.SIDE_REAR) );
+            case 4:
+                return new HitData( Mech.LOC_RT,
+                                    (side == ToHitData.SIDE_REAR) );
+            case 5:
+                return new HitData( Mech.LOC_RLEG );
+            case 6:
+                return new HitData( Mech.LOC_RLEG );
+            }
+        }
         return null;
     }
     

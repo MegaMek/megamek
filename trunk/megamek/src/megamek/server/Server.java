@@ -136,7 +136,12 @@ implements Runnable {
             p.setGame(game);
             p.setGhost(true);
         }
-        
+
+        // Re-initialize the game's board.
+        // TODO: have megamek.common.Board's de-serialization
+        //       reconstruct the transient bldgByCoords instead.
+        game.board.newData( game.board );
+
         //HACK
         roundReport = game.getRoundReport();
         phaseReport = game.getPhaseReport();
@@ -8653,6 +8658,7 @@ implements Runnable {
         // Do nothing if no building or no damage was passed.
         if ( bldg != null && damage > 0 ) {
             int curCF = bldg.getCurrentCF();
+            final int startingCF = curCF;
             curCF -= Math.min( curCF, damage );
             bldg.setCurrentCF( curCF );
             buffer.append( bldg.getName() )
@@ -8661,7 +8667,7 @@ implements Runnable {
                 .append( " points of damage." );
 
             // If the CF is zero, the building should fall.
-            if ( curCF == 0 ) {
+            if ( curCF == 0 && startingCF != 0 ) {
                 buffer.append( " <<<BUILDING DESTROYED>>>" );
             }
 

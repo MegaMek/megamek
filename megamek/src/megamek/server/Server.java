@@ -2263,7 +2263,8 @@ implements Runnable {
             }
             // if the target is in the woods and the weapon misses, and the weapon is a large weapon, set the woods on fire.
             Hex targetHex = game.getBoard().getHex(te.getPosition());
-            if (targetHex.contains(Terrain.WOODS) && !(targetHex.contains(Terrain.FIRE))) {
+            if (targetHex.contains(Terrain.WOODS) && !(targetHex.contains(Terrain.FIRE))
+            && toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
                 // disqualified weapons are Gauss, small lasers of all sorts, and SRM2s.  This is a hack, but it works.
                 if (wtype.getName().indexOf("Small")==-1  //"small" does not appear
                 && wtype.getName().indexOf("Gauss")==-1	//"Gauss" does not appear

@@ -123,6 +123,7 @@ v 0.28.16 CVS
 + Feature 652625: Applied xylaan's Team Initiative patch (728677).
 + Bug 709873: Applied xylaan's RAC heat BV patch (729332).
 + Bug 728998: Changed internal name for IS AP Pods.
++ It should no longer be necessary to delete mechcache.txt (Bug 691364)
 
 v 0.28.15 (04-27-03, 7:30pm)
 + Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.

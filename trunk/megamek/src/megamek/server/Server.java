@@ -9312,7 +9312,9 @@ implements Runnable, ConnectionHandler {
             return desc.toString();
         }
         desc.append( "<<<" )
-            .append( en.getLocationAbbr(loc) )
+            .append( en.getShortName() )
+			.append( " ")
+			.append( en.getLocationAbbr(loc) )
             .append( " BREACHED>>>" );
         //equipment and crits will be marked in applyDamage?
         // equipment marked missing

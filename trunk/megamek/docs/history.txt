@@ -5,6 +5,7 @@ v0.29.33 (CVS)
 + Bug 937431: fix race condition.
 + Artillery bugfixes and neatening of code; spotters implemented. Battle-ready?
 + Bug 937752: correct the pathfinder moves for Jump and DFA.
++ Artillery actions can't count on entities lasting until the shot lands.
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

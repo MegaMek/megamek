@@ -433,16 +433,72 @@ public class PhysicalDisplay
     }
     public void boardHexSelected(BoardEvent b) {
         if (client.isMyTurn() && b.getCoords() != null && ce() != null) {
-            if (client.game.getEntity(b.getCoords()) != null 
-                && client.game.getEntity(b.getCoords()).isTargetable()
-                && !b.getCoords().equals(ce().getPosition())) {
-                target(client.game.getEntity(b.getCoords()).getId());
+            final Entity target = this.chooseTarget( b.getCoords() );
+            if ( target != null ) {
+                target( target.getId() );
             } else {
                 target(Entity.NONE);
             }
         }
     }
-    
+
+    /**
+     * Have the player select a target from the entities at the given coords.
+     *
+     * @param   pos - the <code>Coords</code> containing targets.
+     */
+    private Entity chooseTarget( Coords pos ) {
+
+        // Assume that we have *no* choice.
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration choices = client.game.getEntities( pos );
+
+        // Convert the choices into a List of targets.
+        java.util.List targets = new Vector();
+        while ( choices.hasMoreElements() ) {
+            choice = (Entity) choices.nextElement();
+            if ( !ce().equals( choice ) ) {
+                targets.add( choice );
+            }
+        }
+
+        // Do we have a single choice?
+        if ( targets.size() == 1 ) {
+
+            // Return  that choice.
+            choice = (Entity) targets.get( 0 );
+
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( targets.size() > 1 ) {
+            String[] names = new String[ targets.size() ];
+            StringBuffer question = new StringBuffer();
+            question.append( "Hex " );
+            question.append( pos.getBoardNum() );
+            question.append( " contains the following units." );
+            question.append( "\n\nWhich unit do you want to target?" );
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = ( (Entity)targets.get(loop) ).getShortName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( client.frame,
+                                        "Target Unit",
+                                        question.toString(),
+                                        names );
+            choiceDialog.show();
+            if ( choiceDialog.getAnswer() == true ) {
+                choice = (Entity) targets.get( choiceDialog.getChoice() );
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+
+    } // End private Entity chooseTarget( Coords )
+
     //
     // GameListener
     //

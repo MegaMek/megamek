@@ -39,6 +39,8 @@ public class MovementData
     public static final int        STEP_LATERAL_LEFT_BACKWARDS   = 13;
     public static final int        STEP_LATERAL_RIGHT_BACKWARDS  = 14;
     public static final int        STEP_UNJAM_RAC                = 15;
+    public static final int        STEP_LOAD                     = 16;
+    public static final int        STEP_UNLOAD                   = 17;
 
     private Vector steps = new Vector();
     
@@ -85,7 +87,7 @@ public class MovementData
     public void setCompiled(boolean compiled) {
         this.compiled = compiled;
     }
-    
+
     /**
      * Add a new step to the movement data.
      * 
@@ -94,7 +96,18 @@ public class MovementData
     public void addStep(int type) {
         steps.addElement(new Step(type));
     }
-    
+
+    /**
+     * Add a new step to the movement data with the given target.
+     * 
+     * @param type the type of movement.
+     * @param target the <code>Entity</code> that is the target of this step.
+     *          For example, the enemy being charged.
+     */
+    public void addStep(int type, Entity target) {
+        steps.addElement(new Step(type, target));
+    }
+
     public Enumeration getSteps() {
         return steps.elements();
     }
@@ -430,7 +443,8 @@ public class MovementData
         implements Serializable
     {
         private int type;
-        
+	private int targetId;
+
         // these are all set using Compute.compile:
         private transient Coords position;
         private transient int facing;
@@ -439,13 +453,38 @@ public class MovementData
         private transient int movementType;
         private transient boolean danger;
         private transient boolean pastDanger;
-        
+
+        /**
+         * Create a step of the given type.
+         *
+         * @param       type - should match one of the MovementData constants,
+         *              but this is not currently checked.
+         */
         public Step(int type) {
             this.type = type;
         }
-        
+
+        /**
+         * Create a step with the given target.
+         *
+         * @param       type - should match one of the MovementData constants,
+         *              but this is not currently checked.
+         * @param       target - the <code>Entity</code> that is the target
+         *              of this step. For example, the enemy being charged.
+         */
+        public Step( int type, Entity target ) {
+            this.type = type;
+            this.targetId = target.getId();
+        }
+
+        /**
+         * Create an exact duplicate of another step.
+         *
+         * @param       other - the <code>Step</code> to be duplicated.
+         */
         public Step(Step other) {
             this.type = other.type;
+            this.targetId = other.targetId;
             this.position = new Coords(other.position);
             this.facing = other.facing;
             this.mpUsed = other.mpUsed;
@@ -468,9 +507,11 @@ public class MovementData
             case MovementData.STEP_TURN_RIGHT:return "R";	
             case MovementData.STEP_LATERAL_LEFT:return "ShL";	
             case MovementData.STEP_LATERAL_RIGHT:return "ShR";	
-            case MovementData.STEP_LATERAL_LEFT_BACKWARDS:return "ShLB";	
-            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS:return "ShRB";	
+            case MovementData.STEP_LATERAL_LEFT_BACKWARDS:return "ShLB";
+            case MovementData.STEP_LATERAL_RIGHT_BACKWARDS:return "ShRB";
             case MovementData.STEP_UNJAM_RAC:return "Unjam";	
+	    case MovementData.STEP_LOAD:return "Load";	
+	    case MovementData.STEP_UNLOAD:return "Unload";	
             }
             return"";
         }
@@ -478,7 +519,28 @@ public class MovementData
         public int getType() {
             return type;
         }
-        
+
+        /**
+         * Set the target of the current step.
+         *
+         * @param       target - the <code>Entity</code> that is the target
+         *              of this step. For example, the enemy being charged.
+         */
+        public void setTarget( Entity target ) {
+            this.targetId = target.getId();
+        }
+
+        /**
+         * Get the target of the current step.
+         *
+         * @param       game - The <code>Game</code> object.
+         * @return      The <code>Entity</code> that is the target of
+         *              this step. For example, the enemy being charged.
+         */
+        public Entity getTarget( Game game ) {
+            return game.getEntity( this.targetId );
+        }
+
         public Coords getPosition() {
             return position;
         }

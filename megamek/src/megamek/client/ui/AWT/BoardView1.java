@@ -1554,6 +1554,34 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 break;
+            case MovementData.STEP_LOAD:
+                // Announce load.
+                String load = "Load";
+                if (step.isPastDanger()) {
+                    load = "(" + load + ")";
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                int loadX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(load, loadX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(load, loadX - 1, stepPos.y + 38);
+                break;
+            case MovementData.STEP_UNLOAD:
+                // Announce unload.
+                String unload = "Unload";
+                if (step.isPastDanger()) {
+                    unload = "(" + unload + ")";
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                int unloadX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
+                int unloadY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(unload, unloadX, unloadY + 1);
+                graph.setColor(col);
+                graph.drawString(unload, unloadX - 1, unloadY);
+                break;
+
             default :
                 break;
             }

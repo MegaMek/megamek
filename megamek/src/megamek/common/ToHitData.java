@@ -27,9 +27,12 @@ public class ToHitData extends TargetRoll
     public static final int SIDE_REAR       = 1;
     public static final int SIDE_LEFT       = 2;
     public static final int SIDE_RIGHT      = 3;
+    public static final int SIDE_RANDOM     = 4;
   
     private int             hitTable = HIT_NORMAL;
     private int             sideTable = SIDE_FRONT;
+
+    private com.sun.java.util.collections.Random random = null;
     
     /**
      * Construct default.
@@ -61,9 +64,35 @@ public class ToHitData extends TargetRoll
     public void setHitTable(int hitTable) {
         this.hitTable = hitTable;
     }
-    
+
+    /**
+     * Set the random number generator for this to-hit roll.
+     *
+     * @param   rand - the <code>Random</code> number generator.
+     */
+    public void setRandom( com.sun.java.util.collections.Random rand ) {
+        this.random = rand;
+    }
+
+    /**
+     * Get the side being targeted.  If the targeted side is determined
+     * randomly, the calculation occurs each time the side is requested.
+     *
+     * @return  an <code>int</code> that represents the side being targeted;
+     *          the value will be one of SIDE_FRONT, SIDE_REAR, SIDE_LEFT, or
+     *          SIDE_RIGHT, and *never* SIDE_RANDOM.
+     */
     public int getSideTable() {
-        return sideTable;
+        int side = this.sideTable;
+        if ( side == SIDE_RANDOM ) {
+            if ( random == null ) {
+                System.err.println
+                    ( "ToHitData#getSideTable has to get its own random." );
+                random = new com.sun.java.util.collections.Random();
+            }
+            side = random.nextInt(4);
+        }
+        return side;
     }
     
     public void setSideTable(int sideTable) {
@@ -74,10 +103,13 @@ public class ToHitData extends TargetRoll
      * Describes the table and side we'return hitting on
      */
     public String getTableDesc() {
-        if (getSideTable() != SIDE_FRONT
-                || getHitTable() != HIT_NORMAL) {
+        if ( this.sideTable != SIDE_FRONT
+                || this.hitTable != HIT_NORMAL ) {
             String tdesc = new String();
-            switch(getSideTable()) {
+            switch ( this.sideTable ) {
+            case SIDE_RANDOM :
+                tdesc += "Random Side ";
+                break;
             case SIDE_RIGHT :
                 tdesc += "Right Side ";
                 break;
@@ -88,7 +120,7 @@ public class ToHitData extends TargetRoll
                 tdesc += "Rear ";
                 break;
             }
-            switch(getHitTable()) {
+            switch ( this.hitTable ) {
             case HIT_PUNCH :
                 tdesc += "Punch ";
                 break;

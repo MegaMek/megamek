@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.common.*;
 
@@ -159,6 +160,8 @@ class MovementPanel
     public Label    mechTypeL;
     public Label    statusL, statusR, playerL, playerR, teamL, teamR, weightL, weightR, pilotL, pilotR;
     public Label    mpL, mpR, curMoveL, curMoveR, heatL, heatR;
+    public Label    unusedL, carrysL;
+    public TextArea unusedR, carrysR;
         
     public MovementPanel() {
         super();
@@ -166,7 +169,7 @@ class MovementPanel
         GridBagLayout gridbag;
         GridBagConstraints c;
             
-        mechTypeL = new Label("LCT-1L Loc0st", Label.CENTER);
+        mechTypeL = new Label("Loc0st LCT-1L", Label.CENTER);
 
         // status stuff
         statusL = new Label("Status:", Label.RIGHT);
@@ -185,7 +188,15 @@ class MovementPanel
         mpL = new Label("Movement:", Label.RIGHT);
         curMoveL = new Label("Currently:", Label.RIGHT);
         heatL = new Label("Heat:", Label.RIGHT);
-            
+
+        // transport stuff
+        unusedL = new Label( "Unused Space:", Label.RIGHT );
+        unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        unusedR.setEditable(false);
+        carrysL = new Label( "Carrying:", Label.RIGHT );
+        carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        carrysR.setEditable(false);
+
         mpR = new Label("8/12/0", Label.LEFT);
         curMoveR = new Label("No Movement", Label.LEFT);
         heatR = new Label("2 (10 capacity)", Label.LEFT);
@@ -197,7 +208,7 @@ class MovementPanel
         
         c.insets = new Insets(1, 1, 1, 1);
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;    c.weighty = 0.0;
         
         c.gridwidth = 1;
         c.weightx = 0.5;
@@ -294,7 +305,32 @@ class MovementPanel
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(heatR, c);
         statusP.add(heatR);
-            
+
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(unusedL, c);
+        statusP.add(unusedL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(unusedR, c);
+        statusP.add(unusedR);
+
+        c.gridwidth = 1;
+        c.weightx = 0.5;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(carrysL, c);
+        statusP.add(carrysL);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(carrysR, c);
+        statusP.add(carrysR);
+
         // layout main panel
         gridbag = new GridBagLayout();
         c = new GridBagConstraints();
@@ -347,7 +383,20 @@ class MovementPanel
         }
         
         this.heatR.setText(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
-        
+
+        // transport values
+        String unused = en.getUnusedString();
+        if ( unused.equals("") ) unused = "None";
+        this.unusedR.setText( unused );
+        Iterator iter = en.getLoadedUnits().iterator();
+        carrysR.setText( null );
+        while ( iter.hasNext() ) {
+            carrysR.append( ((Entity)iter.next()).getShortName() );
+            if ( iter.hasNext() ) {
+                carrysR.append( "\n" );
+            }
+        }
+
         validate();
     }
 }
@@ -706,6 +755,8 @@ class WeaponPanel
             wDamR.setText("Missile");
         } else if(wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
             wDamR.setText("Variable");
+        } else if(wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
+            wDamR.setText("Special");
         } else {
             wDamR.setText(new Integer(wtype.getDamage()).toString());
         }

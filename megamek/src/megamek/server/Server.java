@@ -2144,7 +2144,7 @@ public class Server
         int loc = hit.loc, nextLoc = Entity.LOC_NONE;
         while (damage > 0 && !te.isDestroyed() && !te.isDoomed()) {
             // let's resolve some damage!
-            desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(loc) + ".";
+            desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(loc) + (hit.effect == HitData.EFFECT_CRITICAL ? " (critical.)" : ".");
             te.damageThisPhase += damage;
 
             // is there armor in the location hit?

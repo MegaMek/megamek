@@ -69,7 +69,10 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     this.entity = base.entity;
     this.isProne = base.isProne;
     this.mpUsed = base.mpUsed;
-    this.curPos = new Coords(base.curPos);
+    this.curPos = null;
+    if ( base.curPos != null ) {
+        this.curPos = new Coords(base.curPos);
+    }
     this.curFacing = base.curFacing;
     this.isJumping = base.isJumping;
     this.isRunProhibited = base.isRunProhibited;
@@ -110,7 +113,10 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   public EntityState(CEntity en) {
     this.centity = en;
     this.entity = this.centity.entity;
-    this.curPos = new Coords(entity.getPosition());
+    this.curPos = null;
+    if ( entity.getPosition() != null ) {
+        this.curPos = new Coords(entity.getPosition());
+    }
     this.curFacing = entity.getFacing();
     this.isProne = entity.isProne();
     this.mpUsed = entity.mpUsed;
@@ -131,7 +137,10 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       super.addStep(step_type);
       Steps.add(new Integer(step_type));
       int entityId = entity.getId();
-      Coords lastPos = new Coords(curPos);
+      Coords lastPos = null;
+      if ( this.curPos == null ) {
+          return;
+      }
       int stepMp = 0;
       //calculate mps used
       switch(step_type) {
@@ -155,8 +164,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
             this.overallMoveType = Entity.MOVE_ILLEGAL;
             return;
           }
-          stepMp = Compute.getMovementCostFor(game, this.entity.getId(), lastPos, curPos,
-          overallMoveType);
+          stepMp = Compute.getMovementCostFor(game, this.entity.getId(),
+                                              lastPos, curPos,overallMoveType);
           // check for water
           if (game.board.getHex(curPos).contains(Terrain.WATER)) {
             isRunProhibited = true;

@@ -2077,7 +2077,9 @@ public class Compute
             right.add(los);
             
             // which is better?
-            if (losModifiers(left).getValue() > losModifiers(right).getValue()) {
+            int lVal = losModifiers(left).getValue();
+            int rVal = losModifiers(right).getValue();
+            if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
                 los = left;
             } else {
                 los = right;

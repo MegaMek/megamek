@@ -3175,11 +3175,6 @@ implements Runnable {
         // hmmm... somebody there... problems.
         if (fallElevation >= 2) {
             // accidental death from above
-            // TODO : code me!!!
-            System.err.println( "MegaMek should perform an accidental DFA for "
-                                + entity.getShortName() +
-                                " to land on " + violation.getShortName()
-                                + " but it doesn't.  We're working on it." );
         } else {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);
@@ -3437,6 +3432,8 @@ implements Runnable {
                 game.addCharge(paa);
             } else if (ea instanceof DodgeAction) {
               entity.dodging = true;
+            } else if (ea instanceof SpotAction) {
+				entity.setSpotting(true);
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);
@@ -3511,9 +3508,9 @@ implements Runnable {
             else if (ea instanceof FindClubAction) {
                 resolveFindClub(entity);
             } 
-            else if (ea instanceof UnjamAction) {
-                resolveUnjam(entity);
-            } 
+			else if (ea instanceof UnjamAction) {
+				resolveUnjam(entity);
+			} 
         }
     }
     
@@ -5664,7 +5661,7 @@ implements Runnable {
         phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, toHit.SIDE_FRONT);
+            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             phaseReport.append(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -5824,7 +5821,7 @@ implements Runnable {
         phaseReport.append("\n  Attacker takes " ).append( damageTaken ).append( " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, toHit.SIDE_FRONT);
+            HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
             phaseReport.append(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }

@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.awt.*;
 import java.io.*;
-import java.util.*;
 
 /**
  * Represents a player in the game.

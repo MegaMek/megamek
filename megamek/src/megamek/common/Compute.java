@@ -1349,6 +1349,8 @@ public class Compute
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
+        boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+            && weapon.curMode().equals("Indirect");
         
         ToHitData toHit = null;
         
@@ -1458,9 +1460,34 @@ public class Compute
         //      the target hex or the elevation of the hex the attacker is
         //      in, whichever is higher."
         
-        // check LOS
-        LosEffects los = calculateLos(game, attackerId, target);
-        ToHitData losMods = losModifiers(los);
+        // if we're doing indirect fire, find a spotter
+        Entity spotter = null;
+        if (isIndirect) {
+            spotter = findSpotter(game, ae, target);
+            if (spotter == null) {
+                return new ToHitData( ToHitData.IMPOSSIBLE, "No available spotter");
+            }
+        }
+        
+        // check LOS (indirect LOS is from the spotter)
+        LosEffects los;
+        ToHitData losMods;
+        if (!isIndirect) {
+            los = calculateLos(game, attackerId, target);
+            losMods = losModifiers(los);
+        } else {
+            los = calculateLos(game, spotter.getId(), target);
+            // do not count partial cover in indirect fire
+            // (except water, which is done separately later)
+            los.setAttackerCover(false);
+            los.setTargetCover(false);
+            losMods = losModifiers(los);
+        }
+
+        // if LOS is blocked, block the shot
+        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
+            return losMods;
+        }
 
         // Must target infantry in buildings from the inside.
         if ( targetInBuilding &&
@@ -1469,11 +1496,6 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attack on infantry crosses building exterior wall.");
         }
         
-        // if LOS is blocked, block the shot
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE) {
-            return losMods;
-        }
-
         // attacker partial cover means no leg weapons
         if (los.attackerCover && ae.locationIsLeg(weapon.getLocation())) {
             return new ToHitData(ToHitData.IMPOSSIBLE,
@@ -1596,6 +1618,11 @@ public class Compute
         if ( !isAttackerInfantry && te != null && te instanceof BattleArmor ) {
             toHit.addModifier( 1, "battle armor target" );
         }
+        
+        // Indirect fire has a +1 mod
+        if (isIndirect) {
+			toHit.addModifier( 1, "indirect fire" );
+        }
 
         // attacker movement
         toHit.append(getAttackerMovementModifier(game, attackerId));
@@ -1613,6 +1640,11 @@ public class Compute
                     toHit.append(new ToHitData(-nAdjust, "Precision Ammo"));
                 }
             }
+        }
+        
+        // spotter movement, if applicable
+        if (isIndirect) {
+        	toHit.append(getAttackerMovementModifier(game, spotter.getId()));
         }
         
         // attacker terrain
@@ -1731,6 +1763,35 @@ public class Compute
         
         // okay!
         return toHit;
+    }
+    
+    /**
+     * Finds the best spotter for the attacker.  The best spotter is the one
+     * with the lowest attack modifiers, of course.  LOS modifiers and
+     * movement are considered.
+     */
+    public static Entity findSpotter(Game game, Entity attacker, Targetable target) {
+    	Entity spotter = null;
+    	ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
+    	
+		for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+			Entity other = (Entity)i.nextElement();
+			if (!other.isSpotting() || attacker.isEnemyOf(other)) {
+				continue; // useless to us...
+			}
+			// what are this guy's mods to the attack?
+			LosEffects los = calculateLos(game, other.getId(), target);
+			ToHitData mods = losModifiers(los);
+			los.setTargetCover(false);
+			mods.append(getAttackerMovementModifier(game, other.getId()));
+			// is this guy a better spotter?
+			if (true || mods.getValue() < bestMods.getValue()) {
+				spotter = other;
+				bestMods = mods;
+			}
+		}
+		
+		return spotter;
     }
 	
 	private static ToHitData getImmobileMod(Targetable target) {

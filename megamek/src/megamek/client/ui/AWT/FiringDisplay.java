@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
@@ -43,6 +42,7 @@ public class FiringDisplay
     private Button            butFindClub;
     private Button            butNextTarg;
     private Button            butFlipArms;
+    private Button			  butSpot;
     
     private Button            butReport;
     private Button            butSpace;
@@ -110,9 +110,13 @@ public class FiringDisplay
         butNextTarg.addActionListener(this);
         butNextTarg.setEnabled(false);
         
-        butFlipArms = new Button("Flip Arms");
-        butFlipArms.addActionListener(this);
-        butFlipArms.setEnabled(false);
+		butFlipArms = new Button("Flip Arms");
+		butFlipArms.addActionListener(this);
+		butFlipArms.setEnabled(false);
+        
+		butSpot = new Button("Spot");
+		butSpot.addActionListener(this);
+		butSpot.setEnabled(false);
         
         butReport = new Button("Report..");
         butReport.addActionListener(this);
@@ -200,11 +204,7 @@ public class FiringDisplay
             panButtons.add(butFindClub);
             panButtons.add(butFlipArms);
             panButtons.add(butNext);
-            panButtons.add(butAim);
-            /* 2003-03-30 Suvarov454: I'd rather see the "Fire"
-            **            button on this panel than a spaceholder.
-            panButtons.add(butSpace);
-            */
+            panButtons.add(butSpot);
             panButtons.add(butFireMode);
             panButtons.add(butMore);
             panButtons.add(butDone);
@@ -264,6 +264,7 @@ public class FiringDisplay
             
             butTwist.setEnabled(ce().canChangeSecondaryFacing());
             butFindClub.setEnabled(Compute.canMechFindClub(client.game, en));
+            butSpot.setEnabled(ce().canSpot());
             butFlipArms.setEnabled(ce().canFlipArms());
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en);
@@ -309,7 +310,8 @@ public class FiringDisplay
         butFire.setEnabled(false);
         butSkip.setEnabled(false);
         butTwist.setEnabled(false);
-        butAim.setEnabled(false);
+		butAim.setEnabled(false);
+		butSpot.setEnabled(false);
         butFindClub.setEnabled(false);
         butMore.setEnabled(false);
         butNext.setEnabled(false);
@@ -500,19 +502,55 @@ public class FiringDisplay
         updateTarget();
     }
     
-    /**
-     * The entity spends the rest of its turn finding a club
-     */
-    private void findClub() {
-        if (ce() == null) {
-            return;
-        }
+	/**
+	 * The entity spends the rest of its turn finding a club
+	 */
+	private void findClub() {
+		if (ce() == null) {
+			return;
+		}
         
-        attacks.removeAllElements();
-        attacks.addElement(new FindClubAction(cen));
+		// comfirm this action
+		String title = "Find A Club?";
+		String body = "Do you want to find a club?\n\n" +
+			"Finding a club is an exclusive action.  If you choose\n" +
+			"to find a club, any declared attacks will be cancelled,\n" +
+			"and you may declare no further attacks.\n\n" +
+			"Pressing 'Yes' will confirm, and end your turn.";
+		if (!client.doYesNoDialog(title, body)) {
+			return;
+		}
+		
+		attacks.removeAllElements();
+		attacks.addElement(new FindClubAction(cen));
         
-        ready();
-    }
+		ready();
+	}
+  
+	/**
+	 * The entity spends the rest of its turn spotting
+	 */
+	private void doSpot() {
+		if (ce() == null) {
+			return;
+		}
+		
+		// comfirm this action
+		String title = "Spot For Indirect Fire?";
+		String body = "Do you want to spot for indirect fire?\n\n" +
+			"Spotting is an exclusive action.  If you choose\n" +
+			"to spot, any declared attacks will be cancelled,\n" +
+			"and you may declare no further attacks.\n\n" +
+			"Pressing 'Yes' will confirm, and end your turn.";
+		if (!client.doYesNoDialog(title, body)) {
+			return;
+		}
+        
+		attacks.removeAllElements();
+		attacks.addElement(new SpotAction(cen));
+        
+		ready();
+	}
   
     /**
      * Removes all current fire
@@ -656,13 +694,13 @@ public class FiringDisplay
             shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         }
         
-        if (b.getType() == b.BOARD_HEX_DRAGGED) {
+        if (b.getType() == BoardEvent.BOARD_HEX_DRAGGED) {
             if (shiftheld || twisting) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
             client.game.board.cursor(b.getCoords());
-        } else if (b.getType() == b.BOARD_HEX_CLICKED) {
+        } else if (b.getType() == BoardEvent.BOARD_HEX_CLICKED) {
             twisting = false;
             client.game.board.select(b.getCoords());
         }
@@ -738,8 +776,10 @@ public class FiringDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-        } else if (ev.getSource() == butFindClub) {
-            findClub();
+		} else if (ev.getSource() == butFindClub) {
+			findClub();
+		} else if (ev.getSource() == butSpot) {
+			doSpot();
         } else if (ev.getSource() == butNextTarg) {
           jumpToNextTarget();
         } else if (ev.getSource() == butFlipArms) {
@@ -770,13 +810,13 @@ public class FiringDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if (ev.getKeyCode() == ev.VK_ESCAPE) {
+        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
             clearAttacks();
             client.game.board.select(null);
             client.game.board.cursor(null);
             refreshAll();
         }
-        if (ev.getKeyCode() == ev.VK_ENTER && ev.isControlDown()) {
+        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             if (client.isMyTurn()) {
                 //
             }
@@ -788,7 +828,7 @@ public class FiringDisplay
                 torsoTwist(client.game.board.lastCursor);
             }
         }
-        if (ev.getKeyCode() == ev.VK_M) {
+        if (ev.getKeyCode() == KeyEvent.VK_M) {
             changeMode(); 
         }
     }

@@ -26,8 +26,8 @@ Components (Mapsheets)
 
 Playing The Game (Sequence)
 
-- Initiative Phase		Yes		Immobile Units do not yet count for initiative.
-- Movement Phase		Yes		Player cannot designate a movement for an immobile unit as stated on Page 14.
+- Initiative Phase		Yes		Immobile Units count for initiative (unless turned off).
+- Movement Phase		Yes		Player can designate a movement for an immobile unit as stated on Page 14.
 - Weapon Attack Phase		Yes		None
 - Physical Attack Phase		Yes		None
 - Heat Phase			Yes		None

@@ -67,7 +67,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
     
     private Entity entity;
     private boolean okay = false;
-    private ClientGUI client;
+    private ClientGUI clientgui;
+    private Client client;
 
     private PilotOptions options;
     
@@ -81,10 +82,11 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private boolean editable;
     
     /** Creates new CustomMechDialog */
-    public CustomMechDialog(ClientGUI client, Entity entity, boolean editable) {
-        super(client.frame, "Customize pilot/mech stats...", true);
+    public CustomMechDialog(ClientGUI clientgui, Client client, Entity entity, boolean editable) {
+        super(clientgui.frame, "Customize pilot/mech stats...", true);
         
         this.entity = entity;
+        this.clientgui = clientgui;
         this.client = client;
         this.options = entity.getCrew().getOptions();
         this.editable = editable;
@@ -141,7 +143,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
         add(choDeployment);
         refreshDeployment();
 
-        if ( client.getClient().game.getOptions().booleanOption("pilot_advantages") ) {
+        if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") ) {
           scrOptions.add(panOptions);
         
           c.weightx = 1.0;    c.weighty = 1.0;
@@ -185,7 +187,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Enumeration otherUnitEntities = client.getClient().game.getSelectedEntities
+            Enumeration otherUnitEntities = client.game.getSelectedEntities
                 ( new EntitySelector() {
                         private final int ownerId =
                             CustomMechDialog.this.entity.getOwnerId();
@@ -252,8 +254,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
         pack();
         setResizable(false);
-        setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
-                    client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
+        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width/2 - getSize().width/2,
+                    clientgui.frame.getLocation().y + clientgui.frame.getSize().height/2 - getSize().height/2);
     }
     
     private void setupButtons() {
@@ -305,7 +307,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 }
                 
                 // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
-                if (!client.getClient().game.getOptions().booleanOption("is_eq_limits")
+                if (!clientgui.getClient().game.getOptions().booleanOption("is_eq_limits")
                     && entity.getTechLevel() == TechConstants.T_IS_LEVEL_1
                     && atCheck.getTechType() == TechConstants.T_IS_LEVEL_2) {
                     bTechMatch = true;
@@ -317,7 +319,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 //      to be combined to othter munition types.
                 int muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY;
-                if ( !client.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits")
+                if ( !clientgui.getClient().game.getOptions().booleanOption("clan_ignore_eq_limits")
                      && entity.isClan()
                      && ( muniType == AmmoType.M_SEMIGUIDED ||
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
@@ -327,7 +329,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     bTechMatch = false;
 		}
 
-                if ( !client.getClient().game.getOptions().booleanOption("minefields") &&
+                if ( !clientgui.getClient().game.getOptions().booleanOption("minefields") &&
                 	AmmoType.canDeliverMinefield(atCheck) ) {
                     continue;
                 }
@@ -575,7 +577,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private void refreshC3() {
         choC3.removeAll();
         int listIndex = 0;
-        entityCorrespondance = new int[client.getClient().game.getNoOfEntities() + 2];
+        entityCorrespondance = new int[client.game.getNoOfEntities() + 2];
 
         if(entity.hasC3i()) {
             choC3.add("Create new network (6 free)");
@@ -609,7 +611,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             entityCorrespondance[listIndex++] = -1;
 
         }
-        for (Enumeration i = client.getClient().getEntities(); i.hasMoreElements();) {
+        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
             // ignore enemies or self
             if(entity.isEnemyOf(e) || entity.equals(e)) {
@@ -714,25 +716,25 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(client.frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
+                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter valid numbers for the skill values.").show();
                 return;
             }
             
             // keep these reasonable, please
             if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
-                new AlertDialog(client.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
+                new AlertDialog(clientgui.frame, "Number Format Error", "Please enter values between 0 and 7 for the skill values.").show();
                 return;
             }
             
             // change entity
             entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
-                Entity chosen = client.getClient().getEntity
+                Entity chosen = client.getEntity
                     ( entityCorrespondance[choC3.getSelectedIndex()] );
                 int entC3nodeCount = 
-                    client.getClient().game.getC3SubNetworkMembers( entity ).size();
+                    client.game.getC3SubNetworkMembers( entity ).size();
                 int choC3nodeCount = 
-                    client.getClient().game.getC3NetworkMembers( chosen ).size();
+                    client.game.getC3NetworkMembers( chosen ).size();
                 if ( entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES ) {
                     entity.setC3Master( chosen );
                 }
@@ -748,13 +750,13 @@ extends Dialog implements ActionListener, DialogOptionListener {
                         .append( ",\nwhich is more than the maximum of " )
                         .append( Entity.MAX_C3_NODES )
                         .append( "." );
-                    client.doAlertDialog( "C3 Network Too Big",
+                    clientgui.doAlertDialog( "C3 Network Too Big",
                                           message.toString() );
                     refreshC3();
                 }
             }
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
-                entity.setC3NetId(client.getClient().getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
+                entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
 
             // If the player wants to swap unit numbers, update both
@@ -766,7 +768,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
                 char temp = this.entity.getUnitNumber();
                 this.entity.setUnitNumber( other.getUnitNumber() );
                 other.setUnitNumber( temp );
-                client.getClient().sendUpdateEntity( other );
+                client.sendUpdateEntity( other );
             }
 
             // Set the entity's deployment round.

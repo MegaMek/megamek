@@ -109,8 +109,8 @@ public class ClientGUI
     /** Map phase component names to phase component objects. */
     private Hashtable phaseComponents = new Hashtable();
 
-	//TODO: there's a better place for this
-	private Map bots = new TreeMap(StringUtil.stringComparator());
+    //TODO: there's a better place for this
+    private Map bots = new TreeMap(StringUtil.stringComparator());
     /**
      * Construct a client which will display itself in a new frame.  It will
      * not try to connect to a server yet.  When the frame closes, this client
@@ -481,6 +481,24 @@ public class ClientGUI
      * Shuts down threads and sockets
      */
     public void die() {
+        //Tell all the displays to remove themselves as listeners.
+        boolean reportHandled = false;
+        Enumeration names = phaseComponents.keys();
+        while (names.hasMoreElements()) {
+            Component component = (Component) phaseComponents.get(names.nextElement());
+            if (component instanceof ReportDisplay) {
+                if (reportHandled) {
+                    continue;
+                } else {
+                    reportHandled = true;
+                }
+            }
+            if (component instanceof Distractable) {
+                ((Distractable) component).removeAllListeners();
+            }
+
+        } // Handle the next component
+
         frame.removeAll();
         frame.setVisible(false);
         try {
@@ -1308,7 +1326,7 @@ public class ClientGUI
     }
 
     public void gamePlayerChat(GameEvent e) {
-        ;
+        bing();
     }
 
     public void gamePlayerStatusChange(GameEvent e) {
@@ -1329,12 +1347,12 @@ public class ClientGUI
 
     public void gameEnd(GameEvent e) {
         this.bv.clearMovementData();
-        
-		for (Iterator i = getBots().values().iterator(); i.hasNext();) {
-			((Client)i.next()).die();
-		}
-		getBots().clear();
-		
+
+        for (Iterator i = getBots().values().iterator(); i.hasNext();) {
+            ((Client) i.next()).die();
+        }
+        getBots().clear();
+
         // Make a list of the player's living units.
         Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
 

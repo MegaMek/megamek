@@ -135,10 +135,17 @@ public class MechSelectorDialog
     }
 
     private void updatePlayerChoice() {
+        String lastChoice = m_chPlayer.getSelectedItem();
         m_chPlayer.removeAll();
+        m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
 		for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
 			m_chPlayer.addItem(((Client)i.next()).getName());
+		}
+		if (m_chPlayer.getItemCount() == 1) {
+		    m_chPlayer.setEnabled(false);
+		} else {
+		    m_chPlayer.select(lastChoice);
 		}
     }
 
@@ -152,7 +159,7 @@ public class MechSelectorDialog
 
         final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
-            UnitFailureDialog unitFailureDialog = new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing dialog
+            new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing dialog
         }
     }
     

@@ -1044,10 +1044,11 @@ public class ChatLounge
             ad.show();
             return;
         }
-        client.getLocalPlayer().setNbrMFConventional(nbrConv);
-        client.getLocalPlayer().setNbrMFCommand(nbrCmd);
-        client.getLocalPlayer().setNbrMFVibra(nbrVibra);
-        client.sendPlayerInfo();
+        Client c = getPlayerListSelected(lisMinefield);
+        c.getLocalPlayer().setNbrMFConventional(nbrConv);
+        c.getLocalPlayer().setNbrMFCommand(nbrCmd);
+        c.getLocalPlayer().setNbrMFVibra(nbrVibra);
+        c.sendPlayerInfo();
     }
 
     /**
@@ -1058,13 +1059,19 @@ public class ChatLounge
             return;
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
-        boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
-
+        boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
+		Client c = null;
+        if (editable) {
+			c = (Client)clientgui.getBots().get(entity.getOwner().getName());
+        } else {
+            editable |= entity.getOwnerId() == client.getLocalPlayer().getId();
+            c = client;
+        }
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         Vector c3members = new Vector();
-        Enumeration playerUnits = client.game.getPlayerEntities(client.getLocalPlayer()).elements();
+        Enumeration playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
         while (playerUnits.hasMoreElements()) {
             Entity unit = (Entity) playerUnits.nextElement();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
@@ -1073,12 +1080,12 @@ public class ChatLounge
         }
 
         // display dialog
-        CustomMechDialog cmd = new CustomMechDialog(clientgui, entity, editable);
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity, editable);
         cmd.refreshOptions();
         cmd.show();
         if (editable && cmd.isOkay()) {
             // send changes
-            client.sendUpdateEntity(entity);
+            c.sendUpdateEntity(entity);
 
             // Do we need to update the members of our C3 network?
             if ((c3master != null && !c3master.equals(entity.getC3Master()))
@@ -1086,7 +1093,7 @@ public class ChatLounge
                 playerUnits = c3members.elements();
                 while (playerUnits.hasMoreElements()) {
                     Entity unit = (Entity) playerUnits.nextElement();
-                    client.sendUpdateEntity(unit);
+                    c.sendUpdateEntity(unit);
                 }
             }
         }

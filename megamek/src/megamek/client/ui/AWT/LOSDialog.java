@@ -33,7 +33,7 @@ public class LOSDialog
     private Checkbox[] checkboxes2 = null;
 
     public LOSDialog(Frame parent, boolean mechInFirst, boolean mechInSecond) {
-        super(parent, "LOS tool settings", false);
+        super(parent, "LOS tool settings", true);
         super.setResizable(false);
 
         // closing the window is the same as hitting butOK

@@ -248,6 +248,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
                 boolean bTechMatch = (entity.getTechLevel() == atCheck.getTechType());
+                // allow level 2 units to use level 1 ammo
                 if (!bTechMatch && entity.getTechLevel() == TechConstants.T_IS_LEVEL_2 && 
                         atCheck.getTechType() == TechConstants.T_IS_LEVEL_1) {
                     bTechMatch = true;
@@ -278,6 +279,20 @@ extends Dialog implements ActionListener, DialogOptionListener {
 
                 if ( !client.game.getOptions().booleanOption("minefields") &&
                 	AmmoType.canDeliverMinefield(atCheck) ) {
+                    continue;
+                }
+
+                // Only Protos can use Proto-specific ammo
+                if ( atCheck.hasFlag(AmmoType.F_PROTOMECH) &&
+                     !(entity instanceof Protomech) ) {
+                    continue;
+                }
+
+                // When dealing with machine guns, Protos can only
+                //  use proto-specific machine gun ammo
+                if ( entity instanceof Protomech &&
+                     atCheck.hasFlag(AmmoType.F_MG) &&
+                     !atCheck.hasFlag(AmmoType.F_PROTOMECH) ) {
                     continue;
                 }
 

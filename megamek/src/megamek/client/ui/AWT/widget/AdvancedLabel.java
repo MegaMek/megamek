@@ -37,27 +37,30 @@ public class AdvancedLabel extends Component {
     final private int rightMargin = 2;
 
     public AdvancedLabel(String text) {
+        colorArray = null;
+        setText(text);
+    }
+
+    public AdvancedLabel(String text, Color[] lineColors) {
+        colorArray = lineColors;
         setText(text);
     }
 
     public void paint(Graphics g) {
         getSizes();
         for (int i = 0; i < stringVector.size(); i++) {
-            g.setColor(colorArray[i]);
+            if (colorArray != null)
+                g.setColor(colorArray[i]);
             g.drawString((String) stringVector.elementAt(i), leftMargin, lineHeight * (i + 1));
         }
     }
 
     public void setText(String text) {
-        stringVector.clear();
+        stringVector.removeAllElements();
         StringTokenizer st = new StringTokenizer(text, "\n");
         while (st.hasMoreTokens()) {
             stringVector.addElement(st.nextToken());
         }
-		colorArray = new Color[stringVector.size()];
-		for (int i = 0; i < stringVector.size(); i++) {
-			colorArray[i] = getForeground();
-		}
     }
 
     /*

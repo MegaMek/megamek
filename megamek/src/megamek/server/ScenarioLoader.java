@@ -86,6 +86,9 @@ public class ScenarioLoader
             }
         }
         
+        // set wind direction
+        g.determineWindDirection();
+        
         // game's ready
         g.getOptions().initialize();
         g.phase = Game.PHASE_INITIATIVE;
@@ -144,7 +147,7 @@ public class ScenarioLoader
     private int findIndex(String[] sa, String s)
     {
         for (int x = 0; x < sa.length; x++) {
-            if (sa[x].equals(s)) {
+            if (sa[x].equalsIgnoreCase(s)) {
                 return x;
             }
         }

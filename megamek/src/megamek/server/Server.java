@@ -5139,7 +5139,7 @@ implements Runnable {
         }
 
         if (te.getMovementType() == Entity.MovementType.BIPED || te.getMovementType() == Entity.MovementType.QUAD) {
-            game.addPSR(new PilotingRollData(te.getId(), 0, "was kicked"));
+          game.addPSR(new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was kicked"));
         }
         
         phaseReport.append("\n");
@@ -5463,7 +5463,8 @@ implements Runnable {
             phaseReport.append("succeeds: target is pushed into hex "
             ).append( dest.getBoardNum()
             ).append( "\n");
-            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
+            
+            doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed"));
             
             // if push actually moved the target, attacker follows thru
             if (!te.getPosition().equals(src)) {
@@ -5480,7 +5481,7 @@ implements Runnable {
                 ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
-                game.addPSR(new PilotingRollData(te.getId(), 0, "was pushed"));
+                game.addPSR(new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed"));
             }
         }
         
@@ -5853,7 +5854,56 @@ implements Runnable {
         // HACK: to avoid automatic falls, displace from dest to dest
         doEntityDisplacement(ae, dest, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
     }
-    
+
+    private int getKickPushPSRMod(Entity attacker, Entity target, int def) {    
+      int mod = def;
+      
+      if ( game.getOptions().booleanOption("maxtech_physical_psr") ) {
+        int attackerMod = 0;
+        int targetMod = 0;
+        
+        switch ( attacker.getWeightClass() ) {
+          case Entity.WEIGHT_LIGHT:
+            attackerMod = 1;
+            break;
+            
+          case Entity.WEIGHT_MEDIUM:
+            attackerMod = 2;
+            break;
+            
+          case Entity.WEIGHT_HEAVY:
+            attackerMod = 3;
+            break;
+            
+          case Entity.WEIGHT_ASSAULT:
+            attackerMod = 4;
+            break;
+        }
+        
+        switch ( target.getWeightClass() ) {
+          case Entity.WEIGHT_LIGHT:
+            targetMod = 1;
+            break;
+            
+          case Entity.WEIGHT_MEDIUM:
+            targetMod = 2;
+            break;
+            
+          case Entity.WEIGHT_HEAVY:
+            targetMod = 3;
+            break;
+            
+          case Entity.WEIGHT_ASSAULT:
+            targetMod = 4;
+            break;
+        }
+        
+        mod = attackerMod - targetMod;
+      }
+      
+      return mod;
+    }
+              
     /**
      * Each mech sinks the amount of heat appropriate to its current heat
      * capacity.

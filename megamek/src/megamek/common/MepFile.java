@@ -59,13 +59,9 @@ public class MepFile implements MechLoader {
     
     String[] critData;
 
-    public MepFile(String filename) throws EntityLoadingException {
-        this(new File(filename));
-    }
-    
-    public MepFile(File file) throws EntityLoadingException {
+    public MepFile(InputStream is) throws EntityLoadingException {
         try {
-            BufferedReader r = new BufferedReader(new FileReader(file));
+            BufferedReader r = new BufferedReader(new InputStreamReader(is));
             
             version = r.readLine();
             name = r.readLine();

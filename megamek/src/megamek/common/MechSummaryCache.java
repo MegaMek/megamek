@@ -1,6 +1,7 @@
 package megamek.common;
 
 import java.io.*;
+import java.util.zip.*;
 import com.sun.java.util.collections.*;
 
 /*
@@ -48,7 +49,7 @@ public class MechSummaryCache
         
         // check the cache
         try {
-            if (CACHE.exists()) {
+            if (CACHE.exists() && CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP) {
                 System.out.println("Reading from mechcache file");
                 lLastCheck = CACHE.lastModified();
                 DataInputStream dis = new DataInputStream(new FileInputStream(CACHE));
@@ -63,6 +64,9 @@ public class MechSummaryCache
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
@@ -121,6 +125,7 @@ public class MechSummaryCache
             wr.write(m_data[x].getRef() + SEPARATOR + 
                     m_data[x].getName() + SEPARATOR + 
                     m_data[x].getSourceFile().getPath() + SEPARATOR + 
+                    m_data[x].getEntryName() + SEPARATOR + 
                     m_data[x].getYear() + SEPARATOR +
                     m_data[x].getType() + SEPARATOR + 
                     m_data[x].getTons() + SEPARATOR + 
@@ -140,35 +145,85 @@ public class MechSummaryCache
         for (int x = 0; x < sa.length; x++) {
             File f = new File(fDir, sa[x]);
             if (f.equals(CACHE)) { continue; }
-            else if (f.isDirectory()) {
+            if (f.isDirectory()) {
                  // recursion is fun
-                if (loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f)) {
-                    bNeedsUpdate = true;
-                }
+                bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);
+                continue;
             }
-            else {
-                if (f.lastModified() > lLastCheck || !sKnownFiles.contains(f.toString())) {
-                   try {
-                       System.out.println("Loading from " + f);
-                       MechFileParser mfp = new MechFileParser(f);
-                       Entity m = mfp.getEntity();
-                       MechSummary ms = new MechSummary();
-                       ms.setName(m.getName());
-                       ms.setRef(m.getModel());
-                       ms.setSourceFile(f);
-                       ms.setYear(m.getYear());
-                       ms.setType(m.getTechLevel());
-                       ms.setTons((int)m.getWeight());
-                       ms.setBV(m.calculateBattleValue());
-                       vMechs.addElement(ms);
-                       sKnownFiles.add(f.toString());
-                       bNeedsUpdate = true;
-                   } catch (EntityLoadingException ex) {
-                       System.err.println("couldn't load file " + f.getName() + " : " + ex.getMessage());
-                       continue;
-                   }
-                }
-            } 
+            if (f.getName().indexOf('.') == -1) { continue; }
+            if (f.getName().toLowerCase().endsWith(".zip")) {
+                bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
+                continue;
+            }
+            if (f.lastModified() < lLastCheck  && sKnownFiles.contains(f.toString())) {
+                continue;
+            }
+            try {
+                System.out.println("Loading from " + f);
+                MechFileParser mfp = new MechFileParser(f);
+                Entity m = mfp.getEntity();
+                MechSummary ms = new MechSummary();
+                ms.setName(m.getName());
+                ms.setRef(m.getModel());
+                ms.setSourceFile(f);
+                ms.setEntryName(null);
+                ms.setYear(m.getYear());
+                ms.setType(m.getTechLevel());
+                ms.setTons((int)m.getWeight());
+                ms.setBV(m.calculateBattleValue());
+                vMechs.addElement(ms);
+                sKnownFiles.add(f.toString());
+                bNeedsUpdate = true;
+            } catch (EntityLoadingException ex) {
+                System.err.println("couldn't load file " + f.getName() + " : " + ex.getMessage());
+                continue;
+            }
+        }
+        
+        return bNeedsUpdate;
+    }
+    
+    private boolean loadMechsFromZipFile(Vector vMechs, Set sKnownFiles, long lLastCheck, File fZipFile) {
+        boolean bNeedsUpdate = false;
+        ZipFile zFile;
+        try {
+            zFile = new ZipFile(fZipFile);
+        } catch (Exception ex) {
+            System.err.println("couldn't load file " + fZipFile.getName() + " : " + ex.getMessage());
+            return false;
+        }
+        System.out.println("Looking in zip file " + fZipFile.getPath());
+        
+        for (java.util.Enumeration i = zFile.entries(); i.hasMoreElements();){
+            ZipEntry zEntry = (ZipEntry)i.nextElement();
+            
+            if (zEntry.isDirectory()) { 
+                continue; 
+            }
+            if (Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck && sKnownFiles.contains(fZipFile.toString())) {
+                continue;
+            }
+            
+            try {
+                System.out.println("Loading from " + fZipFile.getPath() + " >> " + zEntry.getName());
+                MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
+                Entity m = mfp.getEntity();
+                MechSummary ms = new MechSummary();
+                ms.setName(m.getName());
+                ms.setRef(m.getModel());
+                ms.setSourceFile(fZipFile);
+                ms.setEntryName(zEntry.getName());
+                ms.setYear(m.getYear());
+                ms.setType(m.getTechLevel());
+                ms.setTons((int)m.getWeight());
+                ms.setBV(m.calculateBattleValue());
+                vMechs.addElement(ms);
+                sKnownFiles.add(zEntry.getName());
+                bNeedsUpdate = true;
+            } catch (Exception ex) {
+                System.err.println("couldn't load file " + zEntry.getName() + " : " + ex.getMessage());
+                continue;
+            }
         }
         
         return bNeedsUpdate;

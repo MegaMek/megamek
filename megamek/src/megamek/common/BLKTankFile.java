@@ -35,15 +35,9 @@ public class BLKTankFile implements MechLoader {
     private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover" };
     
     /** Creates new BLkFile */
-    public BLKTankFile(String fileName) {
+    public BLKTankFile(InputStream is) {
         
-        dataFile = new BuildingBlock(fileName);
-        
-    }
-    
-    public BLKTankFile(File file) {
-        
-        dataFile = new BuildingBlock(file.getPath());
+        dataFile = new BuildingBlock(is);
         
     }
     

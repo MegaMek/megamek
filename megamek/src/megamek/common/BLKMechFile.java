@@ -53,17 +53,11 @@ public class BLKMechFile implements MechLoader {
     BuildingBlock dataFile;
     
     /** Creates new BLkFile */
-    public BLKMechFile(String fileName) {
+    public BLKMechFile(InputStream is) {
         
-        dataFile = new BuildingBlock(fileName);
+        dataFile = new BuildingBlock(is);
         
     }
-    
-    public BLKMechFile(File file) {
-        
-        dataFile = new BuildingBlock(file.getPath());
-        
-    }  
     
     public BLKMechFile(BuildingBlock bb)
     {

@@ -68,9 +68,9 @@ public class MtfFile implements MechLoader {
     
     
     /** Creates new MtfFile */
-    public MtfFile(File file) throws EntityLoadingException {
+    public MtfFile(InputStream is) throws EntityLoadingException {
         try {
-            BufferedReader r = new BufferedReader(new FileReader(file));
+            BufferedReader r = new BufferedReader(new InputStreamReader(is));
             
             version = r.readLine();
 

@@ -46,7 +46,7 @@ public class Settings
     
     public static String    mapTileset              = "defaulthexset.txt";
     
-    public static String    mechDirectory           = "data/mechfiles/";
+    public static String    mechDirectory           = "data" + File.separator + "mechfiles";
     
     
     /**

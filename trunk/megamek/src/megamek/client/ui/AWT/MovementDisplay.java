@@ -53,6 +53,7 @@ public class MovementDisplay
 
     private Button            butLoad;
     private Button            butUnload;
+    private Button            butReport;
 
     private Button            butSpace;
 
@@ -155,6 +156,10 @@ public class MovementDisplay
         butUnload = new Button("Unload");
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
+        
+        butReport = new Button("Report..");
+        butReport.addActionListener(this);
+        butReport.setEnabled(true);
 
         // layout button grid
         panButtons = new Panel();
@@ -209,7 +214,7 @@ public class MovementDisplay
             panButtons.add(butBackup);
             panButtons.add(butNext);
             panButtons.add(butTurn);
-            panButtons.add(butRAC);
+            panButtons.add(butReport);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -238,7 +243,7 @@ public class MovementDisplay
         case 2:
             panButtons.add(butWalk);
             panButtons.add(butLoad);
-            panButtons.add(butBackup);
+            panButtons.add(butRAC);
             panButtons.add(butNext);
             panButtons.add(butTurn);
             panButtons.add(butUnload);
@@ -773,6 +778,9 @@ public class MovementDisplay
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
+        } else if (ev.getSource() == butReport) {
+            new MiniReportDisplay(client.frame, client.eotr).show();
+            return;
         } else if (ev.getSource() == butRAC) {
             if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
                 //clearAllMoves();
@@ -899,6 +907,22 @@ public class MovementDisplay
                 cmd = md.getAppended(currentMove(md.getFinalCoords(ce().getPosition(), ce().getFacing()), md.getFinalFacing(ce().getFacing()), client.game.board.lastCursor));
                 client.bv.drawMovementData(ce(), cmd);
             }
+        }
+        
+        // arrow can also rotate when shift is down
+        if (shiftheld && client.isMyTurn() && (ev.getKeyCode() == ev.VK_LEFT || ev.getKeyCode() == ev.VK_RIGHT)) {
+            int curDir = md.getFinalFacing(ce().getFacing());
+            int dir = curDir;
+            if (ev.getKeyCode() == ev.VK_LEFT) {
+                dir = (dir + 5) % 6;
+            } else {
+                dir = (dir + 7) % 6;
+            }
+            Coords curPos = md.getFinalCoords(ce().getPosition(), ce().getFacing());
+            Coords target = curPos.translated(dir);
+            cmd = md.getAppended(currentMove(curPos, curDir, target));
+            client.bv.drawMovementData(ce(), cmd);
+            md = new MovementData(cmd);
         }
     }
     public void keyReleased(KeyEvent ev) {

@@ -1025,7 +1025,7 @@ implements Runnable {
 		        	Player p = (Player) e.nextElement();
 		        	if (p.hasMinefields()) {
 		        		GameTurn gt = new GameTurn(p.getId());
-		        		turns.add(gt);
+		        		turns.addElement(gt);
 		        	}
 		        }
 		        game.setTurnVector(turns);
@@ -3938,7 +3938,7 @@ implements Runnable {
 				resolveUnjam(entity);
 			} 
 			else if (ea instanceof ClearMinefieldAction) {
-				clearAttempts.add(entity);
+				clearAttempts.addElement(entity);
 			}
         }
         
@@ -3952,13 +3952,13 @@ implements Runnable {
     		Vector temp = new Vector();
     		Entity e = (Entity) clearAttempts.elementAt(i);
     		Coords pos = e.getPosition();
-    		temp.add(e);
+    		temp.addElement(e);
     		
     		for (int j = i + 1; j < clearAttempts.size(); j++) {
     			Entity ent = (Entity) clearAttempts.elementAt(j);
     			if (ent.getPosition().equals(pos)) {
-    				temp.add(ent);
-    				clearAttempts.remove(ent);
+    				temp.addElement(ent);
+    				clearAttempts.removeElement(ent);
     			}
     		}
     		

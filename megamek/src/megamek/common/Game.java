@@ -168,11 +168,11 @@ public class Game implements Serializable
     	Vector mfs = (Vector) minefields.get(mf.getCoords());
     	if (mfs == null) {
     		mfs = new Vector();
-	    	mfs.add(mf);
+	    	mfs.addElement(mf);
 	    	minefields.put(mf.getCoords(), mfs);
 	    	return;
     	}
-    	mfs.add(mf);
+    	mfs.addElement(mf);
     }
     
     public void removeMinefield(Minefield mf) {
@@ -185,7 +185,7 @@ public class Game implements Serializable
     	while (e.hasMoreElements()) {
     		Minefield mftemp = (Minefield) e.nextElement();
     		if (mftemp.equals(mf)) {
-    			mfs.remove(mftemp);
+    			mfs.removeElement(mftemp);
     			break;
     		}
     	}
@@ -203,11 +203,11 @@ public class Game implements Serializable
     }
     
     public void addVibrabomb(Minefield mf) {
-    	vibrabombs.add(mf);
+    	vibrabombs.addElement(mf);
     }
     
     public void removeVibrabomb(Minefield mf) {
-    	vibrabombs.remove(mf);
+    	vibrabombs.removeElement(mf);
 	}
     
     public boolean containsVibrabomb(Minefield mf) {
@@ -768,7 +768,7 @@ public class Game implements Serializable
     
     private void removeMinefields() {
         minefields.clear();
-        vibrabombs.clear();
+        vibrabombs.removeAllElements();
 
 		Enumeration players = getPlayers();
 		while (players.hasMoreElements()) {

@@ -14,7 +14,6 @@ could almost be combined:
 - make fields private, classes encapsulated
 
 ? javax.swing gui
-? unify systems & equipment (anything that takes up a critical slot)
 
 - the turn report could keep a list of "message" objects 
   instead of a large report string.  This would allow some customizing of the
@@ -62,7 +61,6 @@ weapon attacks:
 
 physical attacks:
 - dfa should violate stacking
-? show the to-hit numbers, somehow
 - opposing pushes should counter each other
 
 displacement issues:
@@ -75,7 +73,6 @@ pilots:
 
 falling:
 - only fall to surface of water
-- during automatic fall, the pilot rolls against mech damage, not auto-fail
 
 
 FUTURE VERSION PLANS:
@@ -87,7 +84,6 @@ FUTURE VERSION PLANS:
 v 0.26
 - revise map code to support more terrain & terrain effects
 - also on map code, use a tileset, no more image names in map files
-- physical attacks have a dialog showing to-hit factors and confirming attack
 
 VERSION HISTORY:
 ----------------

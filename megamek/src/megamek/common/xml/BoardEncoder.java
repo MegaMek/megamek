@@ -144,6 +144,8 @@ public class BoardEncoder {
         int width = 0;
         Hex[] hexes = null;
         boolean roadsAutoExit = false;
+        Enumeration subnodes = null;
+        ParsedXML subnode = null;
 
         // Did we get a null node?
         if ( null == node ) {
@@ -161,9 +163,16 @@ public class BoardEncoder {
         Enumeration children = node.elements();
         while ( children.hasMoreElements() ) {
             ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
 
             // Did we find the boardData node?
-            if ( child.getName().equals( "boardData" ) ) {
+            else if ( childName.equals( "boardData" ) ) {
 
                 // There should be only one boardData node.
                 if ( null != retVal ) {
@@ -226,11 +235,11 @@ public class BoardEncoder {
 
                 // Walk through the subnodes, parsing out hex nodes.
                 int numHexes = 0;
-                Enumeration subnodes = child.elements();
+                subnodes = child.elements();
                 while ( subnodes.hasMoreElements() ) {
 
                     // Is this a "hex" node?
-                    ParsedXML subnode = (ParsedXML) subnodes.nextElement();
+                    subnode = (ParsedXML) subnodes.nextElement();
                     if ( subnode.getName().equals( "hex" ) ) {
 
                         // Are there too many hex nodes?
@@ -257,10 +266,70 @@ public class BoardEncoder {
 
             } // End found-"boardData"-node
 
+            // Did we find the infernos node?
+            else if ( childName.equals("infernos") ) {
+                subnodes = child.elements();
+                while ( subnodes.hasMoreElements() ) {
+                    subnode = (ParsedXML) subnodes.nextElement();
+                    if ( subnode.getName().equals("inferno") ) {
+                        Coords coords = null;
+                        InfernoTracker tracker = new InfernoTracker();
+
+                        // Try to find the inferno detail nodes.
+                        Enumeration details = subnode.elements();
+                        while ( details.hasMoreElements() ) {
+                            ParsedXML detail = (ParsedXML) 
+                                details.nextElement();
+
+                            // Have we found the coords?
+                            if ( detail.getName().equals("coords") ) {
+                                coords = CoordsEncoder.decode
+                                    ( detail, game );
+                            }
+
+                            // Have we found the Arrow IV inferno entry?
+                            if ( detail.getName().equals("coords") ) {
+                                coords = CoordsEncoder.decode
+                                    ( detail, game );
+                            }
+
+                            // Have we found the standard inferno entry?
+                            if ( detail.getName().equals("coords") ) {
+                                coords = CoordsEncoder.decode
+                                    ( detail, game );
+                            }
+
+                        } // Handle the next detail node.
+
+                        // We *did* find the coords, right?
+
+                        // Add this inferno tracker to the map.
+
+                    } // End found-"inferno"-subnode
+
+                } // Check the next subnode
+
+            } // End found-"infernos"-child
+
+            // Did we find the buildings node?
+            else if ( childName.equals("buildings") ) {
+                subnodes = child.elements();
+                while ( subnodes.hasMoreElements() ) {
+                    subnode = (ParsedXML) subnodes.nextElement();
+                    if ( subnode.getName().equals("building") ) {
+                        buildings.addElement
+                            ( BuildingEncoder.decode( subnode, game ) );
+                    }
+                } // Handle the next building
+            }
+
         } // Look at the next child.
 
         // Did we find all needed child nodes?
-        // TODO : perform data validation.
+        if ( null == hexes ) {
+            throw new IllegalStateException
+                ( "Couldn't locate the boardData for a board node." );
+        }
 
         // Construct the board.
         retVal = new Board( width, height, hexes, buildings, infernos );

@@ -344,7 +344,11 @@ public class MovementDisplay
         updateLoadButtons();
 
         setFleeEnabled(Compute.canEntityFlee(client.game, cen));
-        setEjectEnabled(isMech && ce().isActive());
+        if (client.game.getOptions().booleanOption("vehicles_can_eject")) {
+          setEjectEnabled ( (!isInfantry) && ce().isActive());
+        } else {
+          setEjectEnabled(isMech && ce().isActive());
+        }
         
     }
 

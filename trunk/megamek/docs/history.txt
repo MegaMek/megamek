@@ -5,6 +5,7 @@ v0.29.46 (CVS)
 + Re-added option to use right-click near the edge of the map scrolling
     also in the firing phase.
 + Bug 897421: Bot no longer gets stuck when you use Tactical Genius against it.
++ Bug 906536: Empty slots in middle of location no longer confuses mech parser.
 
 v0.29.45 (2004-08-16 8:00am)
 + Bug 1001685: all the scroll options are now individually configurable

@@ -407,12 +407,19 @@ public class HmpFile
     removeArmActuators(mech, laCriticals, Mech.LOC_LARM);
     removeArmActuators(mech, raCriticals, Mech.LOC_RARM);
 
+    compactCriticals(rlCriticals);
     setupCriticals(mech, rlCriticals, Mech.LOC_RLEG);
+    compactCriticals(llCriticals);
     setupCriticals(mech, llCriticals, Mech.LOC_LLEG);
+    compactCriticals(raCriticals);
     setupCriticals(mech, raCriticals, Mech.LOC_RARM);
+    compactCriticals(laCriticals);
     setupCriticals(mech, laCriticals, Mech.LOC_LARM);
+    compactCriticals(rtCriticals);
     setupCriticals(mech, rtCriticals, Mech.LOC_RT);
+    compactCriticals(ltCriticals);
     setupCriticals(mech, ltCriticals, Mech.LOC_LT);
+    compactCriticals(ctCriticals);
     setupCriticals(mech, ctCriticals, Mech.LOC_CT);
     setupCriticals(mech, headCriticals, Mech.LOC_HEAD);
   }
@@ -491,8 +498,16 @@ public class HmpFile
               }
             } else {
                 if (!criticalName.equals("-Empty-")) {
-                    // Can't load this piece of equipment!
+                    //Can't load this piece of equipment!
+                    // Add it to the list so we can show the user.
                     mech.addFailedEquipment(criticalName);
+                    // Make the failed equipment an empty slot
+                    criticals[i] = 0;
+                    // Compact criticals again
+                    compactCriticals(criticals);
+                    // Re-parse the same slot, since the compacting
+                    //  could have moved new equipment to this slot
+                    i--;
                 }
             }
           } catch (LocationFullException ex) {
@@ -890,24 +905,47 @@ public class HmpFile
             }
         }
 
-        // Report unexpected parsing failures.
+        // Unexpected parsing failures should be passed on so that
+        //  they can be dealt with properly.
         if ( critName == null &&
              value != 0  &&     // 0x00 Empty
              value != 7  &&     // 0x07 Lower Leg Actuator (on a quad)
              value != 8  &&     // 0x08 Foot Actuator (on a quad)
              value != 15 ) {    // 0x0F Fusion Engine
-            System.out.print( "unknown critical: 0x" );
-            System.out.print( Integer.toHexString(critical.intValue())
-                              .toUpperCase() );
-            System.out.print( " (" );
-            System.out.print( techType );
-            System.out.println( ")" );
+            critName = "UnknownCritical(0x" + Integer.toHexString(critical.intValue()) + ")";
         }
 
         if ( critName == null && value == 0)
             return "-Empty-";
 
         return critName;
+    }
+
+    /**
+     * This function moves all "empty" slots to the end of a location's
+     * critical list.
+     *
+     * MegaMek adds equipment to the first empty slot available in a
+     * location.  This means that any "holes" (empty slots not at the
+     * end of a location), will cause the file crits and MegaMek's crits
+     * to become out of sync.
+     */
+    private void compactCriticals(long[] criticals) {
+        int firstEmpty = -1;
+        for (int slot = 0; slot < criticals.length; slot++) {
+            if (criticals[slot] == 0) {
+                firstEmpty = slot;
+            }
+            if (firstEmpty != -1 && criticals[slot] != 0) {
+                //move this to the first empty slot
+                criticals[firstEmpty] = criticals[slot];
+                //mark the old slot empty
+                criticals[slot] = 0;
+                //restart just after the moved slot's new location
+                slot = firstEmpty;
+                firstEmpty = -1;
+            }
+        }
     }
 
   public static void main(String[] args)
@@ -1201,4 +1239,5 @@ class WeaponLocation
   {
     return (WeaponLocation) types.get(new Integer(i));
   }
+
 }

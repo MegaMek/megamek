@@ -301,5 +301,21 @@ public class MovementData
         public void setPastDanger(boolean pastDanger) {
             this.pastDanger = pastDanger;
         }
+        
+        /**
+         * Steps are equal if everything about them is equal
+         */
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            } else if (object == null || getClass() != object.getClass()) {
+                return false;
+            }
+            Step other = (Step)object;
+            return other.type == this.type && other.position.equals(this.position)
+            && other.facing == this.facing && other.mpUsed == this.mpUsed
+            && other.distance == this.distance && other.movementType == this.movementType
+            && other.danger == this.danger && other.pastDanger == this.pastDanger;
+        }
     }
 }

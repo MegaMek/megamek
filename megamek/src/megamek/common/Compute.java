@@ -168,7 +168,7 @@ public class Compute
     }
     
     /**
-     * Charge pathfinder.  Finds a path up to the square before the target,
+     * Charge pathfinder.  Finds a path up to the hex before the target,
      * then charges
      */
     public static MovementData chargeLazyPathfinder(Coords src, int facing,
@@ -194,6 +194,37 @@ public class Compute
         md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
         // charge!
         md.addStep(MovementData.STEP_CHARGE);
+        
+        return md;
+    }
+    
+    /**
+     * Death from above pathfinder.  Finds a path up to the hex before the target,
+     * then charges
+     */
+    public static MovementData dfaLazyPathfinder(Coords src, int facing,
+                                                        Coords dest) {
+        MovementData md = new MovementData();
+        
+        int curFacing = facing;
+        Coords curPos = new Coords(src);
+        
+        Coords subDest = dest.translated(dest.direction1(src));
+        
+        while(!curPos.equals(subDest)) {
+            // adjust facing
+            md.append(rotatePathfinder(curFacing, curPos.direction1(subDest)));
+            // step forwards
+            md.addStep(MovementData.STEP_FORWARDS);
+
+            curFacing = curPos.direction1(subDest);
+            curPos = curPos.translated(curFacing);
+        }
+        
+        // adjust facing
+        md.append(rotatePathfinder(curFacing, curPos.direction1(dest)));
+        // charge!
+        md.addStep(MovementData.STEP_DFA);
         
         return md;
     }
@@ -606,6 +637,40 @@ public class Compute
      * @return valid displacement coords, or null if none
      */
     public static Coords getValidDisplacement(Game game, int entityId, 
+                                              Coords src, int direction) {
+        final Entity entity = game.getEntity(entityId);
+        // check the surrounding hexes
+        if (isValidDisplacement(game, entityId, src, direction)) {
+            // direction already valid?  (probably)
+            return src.translated(direction);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 1) % 6)) {
+            // 1 right?
+            return src.translated((direction + 1) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 5) % 6)) {
+            // 1 left?
+            return src.translated((direction + 5) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 2) % 6)) {
+            // 2 right?
+            return src.translated((direction + 2) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 4) % 6)) {
+            // 2 left?
+            return src.translated((direction + 4) % 6);
+        } else if (isValidDisplacement(game, entityId, src, (direction + 3) % 6)) {
+            // opposite?
+            return src.translated((direction + 3) % 6);
+        } else {
+            // well, tried to accomodate you... too bad.
+            return null;
+        }
+    }
+    
+    /**
+     * Gets a preferred displacement.  Right now this picks the surrounding hex
+     * with the highest elevation that is a valid displacement.
+     * 
+     * @return valid displacement coords, or null if none
+     */
+    public static Coords getPreferredDisplacement(Game game, int entityId, 
                                               Coords src, int direction) {
         final Entity entity = game.getEntity(entityId);
         // check the surrounding hexes
@@ -1434,14 +1499,6 @@ public class Compute
         return toHitCharge(game, attackerId, targetId, chargeSrc);
     }
     
-    /**
-     * Damage that a mech does with a successful charge.  Assumes that 
-     * delta_distance is correct.
-     */
-    public static int getChargeDamageFor(Entity entity) {
-        return (int)Math.ceil((entity.getWeight() / 10) * (entity.delta_distance - 1));
-    }
-    
     public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
         final Entity entity = game.getEntity(caa.getEntityId());
         return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition());
@@ -1519,8 +1576,144 @@ public class Compute
      * Damage that a mech does with a successful charge.  Assumes that 
      * delta_distance is correct.
      */
+    public static int getChargeDamageFor(Entity entity) {
+        return (int)Math.ceil((entity.getWeight() / 10.0) * (entity.delta_distance - 1));
+    }
+    
+    /**
+     * Damage that a mech does with a successful charge.  Assumes that 
+     * delta_distance is correct.
+     */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int)Math.ceil(target.getWeight() / 10);
+        return (int)Math.ceil(target.getWeight() / 10.0);
+    }
+    
+    /**
+     * Checks if a death from above attack can hit the target, including movement
+     */
+    public static ToHitData toHitDfa(Game game, int attackerId, int targetId, MovementData md) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        Coords chargeSrc = ae.getPosition();
+        MovementData.Step chargeStep = null;
+        
+        // let's just check this
+        if (!md.contains(MovementData.STEP_DFA)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. action not found in movment path");
+        }
+        
+        // have to jump
+        if (!md.contains(MovementData.STEP_START_JUMP)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. must involve jumping");
+        }
+        
+        // determine last valid step
+        compile(game, attackerId, md);
+        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MovementData.Step step = (MovementData.Step)i.nextElement();
+            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+                break;
+            } else {
+                if (step.getType() == MovementData.STEP_DFA) {
+                    chargeStep = step;
+                } else {
+                    chargeSrc = step.getPosition();
+                }
+            }
+        }
+        
+        // need to reach target
+        if (chargeStep == null || !te.getPosition().equals(chargeStep.getPosition())) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
+        }
+        
+        // target must have moved already
+        if (te.ready) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
+        }
+        
+        return toHitDfa(game, attackerId, targetId, chargeSrc);
+    }
+    
+    public static ToHitData toHitDfa(Game game, DfaAttackAction daa) {
+        final Entity entity = game.getEntity(daa.getEntityId());
+        return toHitDfa(game, daa.getEntityId(), daa.getTargetId(), entity.getPosition());
+    }
+    
+    /**
+     * To-hit number for a death from above attack, assuming that movement has 
+     * been handled
+     */
+    public static ToHitData toHitDfa(Game game, int attackerId, int targetId, Coords src) {
+        final Entity ae = game.getEntity(attackerId);
+        final Entity te = game.getEntity(targetId);
+        ToHitData toHit = null;
+        
+        // arguments legal?
+        if (ae == null || te == null || ae == te) {
+            throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+        
+        // check range
+        if (src.distance(te.getPosition()) > 1 ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+        }
+        
+        // can't dfa while prone, even if you somehow did manage to jump
+        if (ae.isProne()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+        }
+        
+        // can't charge charging mechs
+        if (te.isCharging()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already charging");
+        }
+        
+        // okay, modifiers...
+        toHit = new ToHitData(5, "5 (base)");
+        
+        // attacker movement
+        toHit.append(getAttackerMovementModifier(game, attackerId));
+        
+        // target movement
+        toHit.append(getTargetMovementModifier(game, targetId));
+        
+        // target immobile
+        if (te.isImmobile()) {
+            toHit.addModifier(-4, "target immobile");
+        }
+        
+        // determine hit direction
+        toHit.setSideTable(targetSideTable(src, te.getPosition(),
+                                            te.getFacing()));
+        
+        // should hit the punch table
+        toHit.setHitTable(ToHitData.HIT_PUNCH);
+        
+        // unless the target is prone, in which case rear normal is used
+        if (te.isProne()) {
+            toHit.setSideTable(ToHitData.SIDE_REAR);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        }
+
+        // done!
+        return toHit;
+    }
+        
+    /**
+     * Damage that a mech does with a successful charge.  Assumes that 
+     * delta_distance is correct.
+     */
+    public static int getDfaDamageFor(Entity entity) {
+        return (int)Math.ceil((entity.getWeight() / 10.0) * 3.0);
+    }
+    
+    /**
+     * Damage that a mech does with a successful charge.  Assumes that 
+     * delta_distance is correct.
+     */
+    public static int getDfaDamageTakenBy(Entity entity) {
+        return (int)Math.ceil(entity.getWeight() / 5.0);
     }
     
     

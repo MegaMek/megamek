@@ -114,4 +114,36 @@ public class ToHitData
             this.desc.append(other.getDesc());
         }
     }
+    
+    /**
+     * Describes the table and side we'return hitting on
+     */
+    public String getTableDesc() {
+        if (getSideTable() != SIDE_FRONT
+                || getHitTable() != HIT_NORMAL) {
+            String tdesc = new String();
+            switch(getSideTable()) {
+            case SIDE_RIGHT :
+                tdesc += "Right Side ";
+                break;
+            case SIDE_LEFT :
+                tdesc += "Left Side ";
+                break;
+            case SIDE_REAR :
+                tdesc += "Rear ";
+                break;
+            }
+            switch(getHitTable()) {
+            case HIT_PUNCH :
+                tdesc += "Punch ";
+                break;
+            case HIT_KICK :
+                tdesc += "Kick ";
+                break;
+            }
+            return " (using " + tdesc + "table)";
+        } else {
+            return "";
+        }
+    }
 }

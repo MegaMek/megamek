@@ -61,15 +61,15 @@ public class MegaMek
             
         frame.removeAll();
         
-        hostB = new Button("Host a New Game");
+        hostB = new Button("Host a New Game...");
         hostB.setActionCommand("game_host");
         hostB.addActionListener(this);
         
-        connectB = new Button("Connect to a Game");
+        connectB = new Button("Connect to a Game...");
         connectB.setActionCommand("game_connect");
         connectB.addActionListener(this);
         
-        dedicatedB = new Button("Dedicated Server");
+        dedicatedB = new Button("Dedicated Server...");
         dedicatedB.setActionCommand("server_dedicated");
         dedicatedB.addActionListener(this);
         

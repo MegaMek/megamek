@@ -45,7 +45,8 @@ public class BoardView1
     private Frame frame;
     
     private Point mousePos = new Point();
-    private Rectangle view = null;
+    private Rectangle view = new Rectangle();
+    private Point offset = new Point();
     private Dimension boardSize;
     
     // scrolly stuff:
@@ -156,11 +157,14 @@ public class BoardView1
      * Draw the screen!
      */
     public void update(Graphics g) {
-        //final long start = System.currentTimeMillis();
-        
         final Dimension size = getSize();
-        view = new Rectangle(scroll, size);
-        
+//        final long start = System.currentTimeMillis();
+
+        // update view, offset
+        view.setLocation(scroll);
+        view.setSize(getOptimalView(size));
+        offset.setLocation(getOptimalOffset(size));
+
         if (!imagesLoading) {
             g.drawString("loading images...", 20, 50);
             loadAllImages();
@@ -171,10 +175,13 @@ public class BoardView1
         }
 
         // make sure back buffer is valid
-        if (backGraph == null || !size.equals(backSize)) {
-            backSize = size;
-            backImage = createImage(size.width, size.height);
+        if (backGraph == null || !view.getSize().equals(backSize)) {
+            // make new back buffer
+            backSize = view.getSize();
+            backImage = createImage(backSize.width, backSize.height);
             backGraph = backImage.getGraphics();
+            // clear current graphics
+            g.clearRect(0, 0, size.width, size.height);
         }
         
         // make sure board rectangle contains our current view rectangle
@@ -182,10 +189,13 @@ public class BoardView1
             updateBoardImage();
         }
         
-        // begin drawing onto the back buffer:
+        // draw onto the back buffer:
         
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
+        
+        // draw highlight border
+        drawSprite(highlightSprite);
         
         // draw onscreen entities
         drawSprites(entitySprites);
@@ -200,14 +210,36 @@ public class BoardView1
         
         // draw cursors
         drawSprite(cursorSprite);
-        drawSprite(highlightSprite);
         drawSprite(selectedSprite);
         
         // draw the back buffer onto the screen
-        g.drawImage(backImage, 0, 0, this);
+        g.drawImage(backImage, offset.x, offset.y, this);
         
-        //final long finish = System.currentTimeMillis();
-        //System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
+//        final long finish = System.currentTimeMillis();
+//        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
+    }
+    
+    /**
+     * Think up the size of the view rectangle based on the size of the component
+     * and the size of board
+     */
+    private Dimension getOptimalView(Dimension size) {
+        return new Dimension(Math.min(size.width, boardSize.width), Math.min(size.height, boardSize.height));
+    }
+    
+    /**
+     * Where shouuld the offset be for this screen size?
+     */
+    private Point getOptimalOffset(Dimension size) {
+            int ox = 0;
+            int oy = 0;
+            if (size.width > boardSize.width) {
+                ox = (size.width - boardSize.width) / 2;
+            }
+            if (size.height > boardSize.height) {
+                oy = (size.height - boardSize.height) / 2;
+            }
+            return new Point(ox, oy);
     }
     
     /**
@@ -215,7 +247,7 @@ public class BoardView1
      */
     private void repaintBounds(Rectangle bounds) {
         if (view != null) {
-            repaint(bounds.x - view.x, bounds.y - view.y, bounds.width, bounds.height);
+            repaint(bounds.x - view.x + offset.x, bounds.y - view.y + offset.y, bounds.width, bounds.height);
         }
     }
     
@@ -336,10 +368,16 @@ public class BoardView1
         
         // clear, if we need to
         if (rect.x < 21) {
-            boardGraph.clearRect(0, rect.y - boardRect.y, 21 - rect.x, rect.height);
+            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y, 21 - rect.x, rect.height);
         }
         if (rect.y < 36) {
-            boardGraph.clearRect(rect.x - boardRect.x, 0, rect.width, 36 - rect.y);
+            boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y, rect.width, 36 - rect.y);
+        }
+        if (rect.x > boardSize.width - view.width - 21) {
+            boardGraph.clearRect(boardRect.width - 21, rect.y - boardRect.y, 21, rect.height);
+        }
+        if (rect.y > boardSize.height - view.height - 36) {
+            boardGraph.clearRect(rect.x - boardRect.x, boardRect.height - 36, rect.width, 36);
         }
         
         // draw some hexes
@@ -413,8 +451,8 @@ public class BoardView1
      * Returns the coords at the specified point
      */
     private Coords getCoordsAt(Point p) {
-        final int x = (p.x + scroll.x) / 63;
-        final int y = ((p.y + scroll.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
+        final int x = (p.x + scroll.x - offset.x) / 63;
+        final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? 36 : 0)) / 72;
         return new Coords(x, y);
     }
     
@@ -556,7 +594,12 @@ public class BoardView1
     
     
     public void centerOnHex(Coords c) {
-        ;
+        scroll.setLocation(getHexLocation(c));
+        scroll.translate(42 - (view.width / 2), 36 - (view.height / 2));
+
+        isScrolling = false;
+        checkScrollBounds();
+        repaint();
     }
     
     /**
@@ -734,14 +777,14 @@ public class BoardView1
     public void checkScrollBounds() {
         if (scroll.x < 0) {
             scroll.x = 0;
-        } else if (scroll.x > (boardSize.width - backSize.width)) {
-            scroll.x = (boardSize.width - backSize.width);
+        } else if (scroll.x > (boardSize.width - view.width)) {
+            scroll.x = (boardSize.width - view.width);
         }
 
         if (scroll.y < 0) {
             scroll.y = 0;
-        } else if (scroll.y > (boardSize.height - backSize.height)) {
-            scroll.y = (boardSize.height - backSize.height);
+        } else if (scroll.y > (boardSize.height - view.height)) {
+            scroll.y = (boardSize.height - view.height);
         }
     }
     
@@ -1180,7 +1223,7 @@ public class BoardView1
          * Return true if the point is on a non-transparent pixel
          */
         public boolean isInside(Point point) {
-            return entityRect.contains(point.x + view.x, point.y + view.y);
+            return entityRect.contains(point.x + view.x - offset.x, point.y + view.y - offset.y);
         }
         
         public String[] getTooltip() {
@@ -1378,8 +1421,8 @@ public class BoardView1
          */
         public boolean isInside(Point point) {
             return super.isInside(point) 
-                   && attackPoly.contains(point.x + view.x - bounds.x, 
-                                          point.y + view.y - bounds.y);
+                   && attackPoly.contains(point.x + view.x - bounds.x - offset.x, 
+                                          point.y + view.y - bounds.y - offset.y);
         }
         
         public AttackAction getAttack() {

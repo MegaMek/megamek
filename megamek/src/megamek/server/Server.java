@@ -212,7 +212,7 @@ public class Server
     }
 
     /**
-     * Removes all entities owned by a player.  Please only call this when it
+     * Removes all entities owned by a player.  Should only be called when it
      * won't cause trouble (the lounge, for instance, or between phases.)
      */
     private void removeAllEntitesOwnedBy(Player player) {
@@ -723,11 +723,38 @@ public class Server
         // roll the dice for each player
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            player.setInitiative(Compute.d6(2));
+            player.clearInitiative();
+            player.setInitiative(Compute.d6(2), 0);
         }
+        
+        // roll off initiative ties, up to 5 times
+        // TODO: infinite rerolls
+        for (int i = 0; i < 5; i++) {
+            for (int j = 2; j <= 12; j++) {
+                for (Enumeration k = game.getPlayers(); k.hasMoreElements();) {
+                    final Player player = (Player)k.nextElement();
+                    if (player.getInitiativeSize() > i && player.getInitiative(i) == j && isInitTie(j, i)) {
+                        player.setInitiative(Compute.d6(2), i + 1);
+                    }
+                }
+            }
+        }
+        
         transmitAllPlayerUpdates();
     }
-
+    
+    private boolean isInitTie(int init, int index) {
+        int playersAt = 0;
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            if (player.getInitiativeSize() > index && player.getInitiative(index) == init) {
+                playersAt++;
+            }
+        }
+        return playersAt > 1;
+    }
+    
+    
     /**
      * Determine turn order by number of entities that are selectable this phase
      */
@@ -735,14 +762,17 @@ public class Server
         // determine turn order
         int[] order = new int[game.getNoOfPlayers()];
         int oi = 0;
-        for (int j = 0; j < 13; j++) {
-            for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-                final Player player = (Player)i.nextElement();
-                if (player.getInitiative() == j) {
-                    order[oi++] = player.getId();
+        for (int i = 0; i < 5; i++) {
+            for (int j = 2; j <= 12; j++) {
+                for (Enumeration k = game.getPlayers(); k.hasMoreElements();) {
+                    final Player player = (Player)k.nextElement();
+                    if (player.getInitiativeSize() > i && player.getInitiative(i) == j && !isInitTie(j, i)) {
+                        order[oi++] = player.getId();
+                    }
                 }
             }
         }
+        
         // count how many entities each player controls, and how many turns we have to assign
         int MAX_PLAYERS = 255; //XXX HACK HACK HACK!
         int[] noe = new int[MAX_PLAYERS];
@@ -799,8 +829,18 @@ public class Server
                            + "\n------------------------------\n");
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            roundReport.append(player.getName() + " rolls a " +
-                               player.getInitiative() + ".\n");
+            roundReport.append(player.getName() + " rolls a ");
+            boolean first = true;
+            for (Enumeration j = player.getInitiatives(); j.hasMoreElements();) {
+                Integer init = (Integer)j.nextElement();
+                if (first) {
+                    first = false;
+                } else {
+                    roundReport.append(" / ");
+                }
+                roundReport.append(init.toString());
+            }
+            roundReport.append(".\n");
         }
         roundReport.append("\nThe turn order is:\n  ");
         for (int i = 0; i < turns.length; i++) {
@@ -964,13 +1004,22 @@ public class Server
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
                 Entity target = game.getEntity(step.getPosition());
-                
-                System.out.println("server: got charge step at hex " + curPos.getBoardNum());
-                
+
                 distance = step.getDistance();
                 entity.setCharging(true);
                 
                 pendingCharges.addElement(new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition()));
+                break;
+            }
+
+            // check for dfa
+            if (step.getType() == MovementData.STEP_DFA) {
+                Entity target = game.getEntity(step.getPosition());
+
+                distance = step.getDistance();
+                entity.setCharging(true);
+                
+                pendingCharges.addElement(new DfaAttackAction(entity.getId(), target.getId(), target.getPosition()));
                 break;
             }
 
@@ -1385,41 +1434,16 @@ public class Server
             phaseReport.append("misses.\n");
             return;
         }
-        // we hit, now what arc are we hitting?
-        if (toHit.getSideTable() != ToHitData.SIDE_FRONT
-                || toHit.getHitTable() != ToHitData.HIT_NORMAL) {
-            String tdesc = new String();
-            switch(toHit.getSideTable()) {
-            case ToHitData.SIDE_RIGHT :
-                tdesc += "Right Side ";
-                break;
-            case ToHitData.SIDE_LEFT :
-                tdesc += "Left Side ";
-                break;
-            case ToHitData.SIDE_REAR :
-                tdesc += "Rear ";
-                break;
-            }
-            switch(toHit.getHitTable()) {
-            case ToHitData.HIT_PUNCH :
-                tdesc += "Punch ";
-                break;
-            case ToHitData.HIT_KICK :
-                tdesc += "Kick ";
-                break;
-            }
-            phaseReport.append("(using " + tdesc + "table) ");
-        }
         // are we attacks normal weapons or missiles?
         if (w.getType().getDamage() != Weapon.DAMAGE_MISSILE) {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append("hits " + te.getLocationAbbr(hit.loc));
+            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
             phaseReport.append(damageEntity(te, hit, w.getType().getDamage()));
         } else {
             // missiles; determine number of missiles hitting
             int hits = Compute.missilesHit(w.getType().getRackSize());
-            phaseReport.append(hits + " missiles hit.");
+            phaseReport.append(hits + " missiles hit" + toHit.getTableDesc() + ".");
             // for SRMs, do each missile seperately
             if (w.getType().getAmmoType() == Ammo.TYPE_SRM) {
                 for (int j = 0; j < hits; j++) {
@@ -1482,6 +1506,10 @@ public class Server
                 ChargeAttackAction caa = (ChargeAttackAction)o;
                 resolveChargeAttack(caa, cen);
                 cen = caa.getEntityId();
+            }  else if (o instanceof DfaAttackAction) {
+                DfaAttackAction daa = (DfaAttackAction)o;
+                resolveDfaAttack(daa, cen);
+                cen = daa.getEntityId();
             } else {
                 // hmm, error.
             }
@@ -1521,36 +1549,10 @@ public class Server
             phaseReport.append("misses.\n");
             return;
         }
-        // we hit, now what arc are we hitting?
-        if (toHit.getSideTable() != ToHitData.SIDE_FRONT
-                || toHit.getHitTable() != ToHitData.HIT_NORMAL) {
-            String tdesc = new String();
-            switch(toHit.getSideTable()) {
-            case ToHitData.SIDE_RIGHT :
-                tdesc += "Right Side ";
-                break;
-            case ToHitData.SIDE_LEFT :
-                tdesc += "Left Side ";
-                break;
-            case ToHitData.SIDE_REAR :
-                tdesc += "Rear ";
-                break;
-            }
-            switch(toHit.getHitTable()) {
-            case ToHitData.HIT_PUNCH :
-                tdesc += "Punch ";
-                break;
-            case ToHitData.HIT_KICK :
-                tdesc += "Kick ";
-                break;
-            }
-            phaseReport.append("(using " + tdesc + "table) ");
-        }
-
         int damage = Compute.getPunchDamageFor(ae, paa.getArm());
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits " + te.getLocationAbbr(hit.loc));
+        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
         phaseReport.append(damageEntity(te, hit, damage));
 
         phaseReport.append("\n");
@@ -1592,36 +1594,11 @@ public class Server
             pilotRolls.addElement(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
         }
-       // we hit, now what arc are we hitting?
-        if (toHit.getSideTable() != ToHitData.SIDE_FRONT
-                || toHit.getHitTable() != ToHitData.HIT_NORMAL) {
-            String tdesc = new String();
-            switch(toHit.getSideTable()) {
-            case ToHitData.SIDE_RIGHT :
-                tdesc += "Right Side ";
-                break;
-            case ToHitData.SIDE_LEFT :
-                tdesc += "Left Side ";
-                break;
-            case ToHitData.SIDE_REAR :
-                tdesc += "Rear ";
-                break;
-            }
-            switch(toHit.getHitTable()) {
-            case ToHitData.HIT_PUNCH :
-                tdesc += "Punch ";
-                break;
-            case ToHitData.HIT_KICK :
-                tdesc += "Kick ";
-                break;
-            }
-            phaseReport.append("(using " + tdesc + "table) ");
-        }
         
         int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits " + te.getLocationAbbr(hit.loc));
+        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
         phaseReport.append(damageEntity(te, hit, damage));
 
         pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
@@ -1734,25 +1711,8 @@ public class Server
         int damage = Compute.getChargeDamageFor(ae);
         int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
 
-        // we hit, now what arc are we hitting?
-        if (toHit.getSideTable() != ToHitData.SIDE_FRONT) {
-            String tdesc = new String();
-            switch(toHit.getSideTable()) {
-            case ToHitData.SIDE_RIGHT :
-                tdesc += "Right Side ";
-                break;
-            case ToHitData.SIDE_LEFT :
-                tdesc += "Left Side ";
-                break;
-            case ToHitData.SIDE_REAR :
-                tdesc += "Rear ";
-                break;
-            }
-            phaseReport.append("(using " + tdesc + "table) ");
-        }
-
         phaseReport.append("hits.");
-        phaseReport.append("\n  Defender takes " + damage + " damage.");
+        phaseReport.append("\n  Defender takes " + damage + " damage" + toHit.getTableDesc() + ".");
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -1762,7 +1722,7 @@ public class Server
         phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, toHit.SIDE_FRONT);
             phaseReport.append(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -1781,6 +1741,98 @@ public class Server
         }
 
         phaseReport.append("\n");
+    }
+
+    /**
+     * Handle a charge attack
+     */
+    private void resolveDfaAttack(DfaAttackAction daa, int lastEntityId) {
+        final Entity ae = game.getEntity(daa.getEntityId());
+        final Entity te = game.getEntity(daa.getTargetId());
+        final int direction = ae.getFacing();
+
+        if (lastEntityId != daa.getEntityId()) {
+            phaseReport.append("\nPhysical attacks for " + ae.getDisplayName() + "\n");
+        }
+
+        phaseReport.append("    Attempting death from above on " + te.getDisplayName());
+
+        // should we even bother?
+        if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
+            phaseReport.append(" but the target is already destroyed!\n");
+            return;
+        }
+
+        // target still in the same position?
+        if (!te.getPosition().equals(daa.getTargetPos())) {
+            phaseReport.append(" but the target has moved.\n");
+            return;
+        }
+
+        // compute to-hit
+        ToHitData toHit = Compute.toHitDfa(game, daa);
+        phaseReport.append("; needs " + toHit.getValue() + ", ");
+
+        // roll
+        int roll = Compute.d6(2);
+        phaseReport.append("rolls " + roll + " : ");
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            Coords src = ae.getPosition();
+            Coords dest = te.getPosition();
+            Coords targetDest = Compute.getPreferredDisplacement(game, te.getId(), dest, direction);
+            phaseReport.append("misses.\n");
+            if (targetDest != null) {
+                // move target to preferred hex
+                doEntityDisplacement(te, src, targetDest, null);
+                // attacker falls into destination hex
+                phaseReport.append(ae.getDisplayName() + " falls into hex " + dest.getBoardNum() + ".\n");
+                doEntityFall(ae, dest, 2, 3, PilotingRollData.AUTOMATIC_FALL);
+            } else {
+                // attacker destroyed
+                phaseReport.append("*** " + ae.getDisplayName()
+                                   + " DESTROYED due to impossible displacement! ***");
+                ae.setDoomed(true);
+            }
+            return;
+        }
+
+        // we hit...
+        int damage = Compute.getDfaDamageFor(ae);
+        int damageTaken = Compute.getDfaDamageTakenBy(ae);
+
+        phaseReport.append("hits.");
+
+        phaseReport.append("\n  Defender takes " + damage + " damage" + toHit.getTableDesc() + ".");
+        while (damage > 0) {
+            int cluster = Math.min(5, damage);
+            HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            phaseReport.append(damageEntity(te, hit, cluster));
+            damage -= cluster;
+        }
+        phaseReport.append("\n  Attacker takes " + damageTaken + " damage.");
+        while (damageTaken > 0) {
+            int cluster = Math.min(5, damageTaken);
+            HitData hit = te.rollHitLocation(ToHitData.HIT_KICK, toHit.SIDE_FRONT);
+            phaseReport.append(damageEntity(ae, hit, cluster));
+            damageTaken -= cluster;
+        }
+        phaseReport.append("\n");
+        
+        // defender pushed away or destroyed
+        Coords src = ae.getPosition();
+        Coords dest = te.getPosition();
+        Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
+        if (targetDest != null) {
+            doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
+        } else {
+            // ack!  automatic death!
+            phaseReport.append("*** " + te.getDisplayName()
+                               + " DESTROYED due to impossible displacement! ***");
+            te.setDoomed(true);
+        }
+        doEntityDisplacement(ae, src, dest, new PilotingRollData(ae.getId(), 4, "executed death from above"));
     }
 
     /**
@@ -2220,6 +2272,7 @@ public class Server
                             pilotRolls.addElement(new PilotingRollData(en.getId(), 3, "gyro hit"));
                         }
                         break;
+                    case Mech.ACTUATOR_UPPER_LEG :
                     case Mech.ACTUATOR_LOWER_LEG :
                     case Mech.ACTUATOR_FOOT :
                         // leg/foot actuator piloting roll

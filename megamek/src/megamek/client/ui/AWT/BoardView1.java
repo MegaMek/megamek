@@ -3666,7 +3666,8 @@ public class BoardView1
 
         public void addWeapon(ClubAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement("Hits with club. Needs " + roll);
+            final String club = attack.getClub().getName();
+            weaponDescs.addElement("Hits with " + club +". Needs " + roll);
         }
 
         public void addWeapon(ChargeAttackAction attack) {

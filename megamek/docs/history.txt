@@ -75,6 +75,7 @@ physical attacks:
 - death from above!
 - show the to-hit numbers
 - opposing pushes should counter each other
+- underwater should be 1/2 damage
 
 pilots:
 - successive conciousness checks should be made from low rolls to high
@@ -106,6 +107,11 @@ v 0.24
 VERSION HISTORY:
 ----------------
 v next
++ charging
++ mechs can't fire in depth 2+ water
++ each starting position can handle many more mechs now
+
+v 0.23.3 (03-12-02, 1:30am)
 + slightly better dialogs
 + now counting upper leg crits for piloting roll purposes (thx jerrymeander)
 + now applying immobile modifier to unconcious pilots (jerrymeander again)

@@ -634,98 +634,38 @@ public class Compute
     }
     
     /**
-     * Can we do a valid DFA with this movement?
+     * Gets a hex to displace a missed charge to.  Picks left or right, first 
+     * preferring higher hexes, then randomly, or returns the base hex if 
+     * they're impassible.
      */
-    public static boolean isValidDFA(Game game, int entityId, MovementData md) {
-        final Entity entity = game.getEntity(entityId);
-        Coords targetCoords;
-        Entity target;
-        MovementData.Step lastValid = null;
-        Hex srcHex;
-        Hex destHex;
+    public static Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction) {
+        Coords first = src.translated((direction + 1) % 6);
+        Coords second = src.translated((direction + 5) % 6);
+        Hex firstHex = game.board.getHex(first);
+        Hex secondHex = game.board.getHex(second);
         
-        // need to have jumped (duh)
-        if (!md.contains(MovementData.STEP_START_JUMP)) { 
-            return false;
+        
+        if (firstHex.getElevation() > secondHex.getElevation()) {
+            // leave it
+        } else if (firstHex.getElevation() > secondHex.getElevation()) {
+            // switch
+            Coords temp = first;
+            first = second;
+            second = temp;
+        } else if (random.nextFloat() > 0.5) {
+            // switch randomly
+            Coords temp = first;
+            first = second;
+            second = temp;
         }
         
-        // determine last valid step
-        compile(game, entityId, md);
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
-                break;
-            } else {
-                lastValid = step;
-            }
+        if (isValidDisplacement(game, entityId, src, src.direction(first))) {
+            return first;
+        } else if (isValidDisplacement(game, entityId, src, src.direction(second))) {
+            return second;
+        } else {
+            return src;
         }
-        
-        // check target
-        targetCoords = lastValid.getPosition().translated(lastValid.getFacing());
-        target = game.getEntity(targetCoords);
-
-        // do you have enough mp?   
-    
-        return true;
-    }
-    
-    /**
-     * Can we do a valid charge with this movement?
-     */
-    public static boolean isValidCharge(Game game, int entityId, MovementData md) {
-        final Entity entity = game.getEntity(entityId);
-        Coords targetCoords;
-        Entity target;
-        MovementData.Step lastValid = null;
-        Hex srcHex;
-        Hex destHex;
-        
-        // no jumping or backwards
-        if (md.contains(MovementData.STEP_START_JUMP)
-            || md.contains(MovementData.STEP_BACKWARDS)) {
-            return false;
-        }
-        
-        // determine last valid step
-        compile(game, entityId, md);
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MovementData.Step step = (MovementData.Step)i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
-                break;
-            } else {
-                lastValid = step;
-            }
-        }
-        
-        if (lastValid == null) {
-            
-            System.out.println("compute.isvalidcharge: could not find last valid step");
-            
-            return false;
-        }
-        
-        // determine target
-        targetCoords = lastValid.getPosition().translated(lastValid.getFacing());
-        target = game.getEntity(targetCoords);
-        
-        if (target == null) {
-            
-            System.out.println("compute.isvalidcharge: could not find target");
-            
-            return false;
-        }
-        
-        // target must have moved already
-        if (target.ready) {
-            
-            System.out.println("compute.isvalidcharge: target has not moved yet");
-            
-            return false;
-        }
-
-        // do you have enough mp?   
-    
-        return true;
     }
     
     /**
@@ -919,6 +859,13 @@ public class Compute
         
         // attacker terrain
         toHit.append(getAttackerTerrainModifier(game, attackerId));
+        
+        Hex attackerHex = game.board.getHex(ae.getPosition());
+        if (attackerHex.getTerrainType() == Terrain.WATER) {
+            if (attackerHex.getElevation() < -1) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
+            }
+        }
         
         // target terrain
         toHit.append(getTargetTerrainModifier(game, targetId));
@@ -1312,12 +1259,36 @@ public class Compute
         return toHit;
     }
     
+    /**
+     * Damage that the specified mech does with a kick
+     */
+    public static int getKickDamageFor(Entity entity, int leg) {
+        final int legLoc = (leg == KickAttackAction.RIGHT)
+                           ? Mech.LOC_RLEG : Mech.LOC_LLEG;
+        int damage = (int)Math.floor(entity.getWeight() / 5.0);
+        float multiplier = 1.0f;
+        
+        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
+                                    Mech.ACTUATOR_UPPER_LEG, legLoc) == 0) {
+            multiplier /= 2.0f;
+        }
+        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
+                                    Mech.ACTUATOR_LOWER_LEG, legLoc) == 0) {
+            multiplier /= 2.0f;
+        }
+        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.ACTUATOR_HIP, legLoc) == 0) {
+            damage = 0;
+        }
+        return (int)Math.floor(damage * multiplier);
+    }
+    
     public static ToHitData toHitPush(Game game, PushAttackAction paa) {
         return toHitPush(game, paa.getEntityId(), paa.getTargetId());
     }
     
     /**
-     * To-hit number for the specified arm to punch
+     * To-hit number for the mech to push another mech
      */
     public static ToHitData toHitPush(Game game, int attackerId, int targetId) {
         final Entity ae = game.getEntity(attackerId);
@@ -1466,13 +1437,21 @@ public class Compute
         return toHitCharge(game, attackerId, targetId, chargeSrc);
     }
     
+    /**
+     * Damage that a mech does with a successful charge.  Assumes that 
+     * delta_distance is correct.
+     */
+    public static int getChargeDamageFor(Entity entity) {
+        return (int)Math.ceil((entity.getWeight() / 10) * (entity.delta_distance - 1));
+    }
+    
     public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
         final Entity entity = game.getEntity(caa.getEntityId());
         return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition());
     }
     
     /**
-     * To-hit number for a charge
+     * To-hit number for a charge, assuming that movement has been handled
      */
     public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src) {
         final Entity ae = game.getEntity(attackerId);
@@ -1526,36 +1505,22 @@ public class Compute
             toHit.addModifier(-4, "target immobile");
         }
         
-        // side and elevation shouldn't matter
+        // determine hit direction
+        toHit.setSideTable(targetSideTable(src, te.getPosition(),
+                                            te.getFacing()));
 
         // done!
         return toHit;
     }
         
-    
     /**
-     * Damage that the specified mech does with a kick
+     * Damage that a mech does with a successful charge.  Assumes that 
+     * delta_distance is correct.
      */
-    public static int getKickDamageFor(Entity entity, int leg) {
-        final int legLoc = (leg == KickAttackAction.RIGHT)
-                           ? Mech.LOC_RLEG : Mech.LOC_LLEG;
-        int damage = (int)Math.floor(entity.getWeight() / 5.0);
-        float multiplier = 1.0f;
-        
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_UPPER_LEG, legLoc) == 0) {
-            multiplier /= 2.0f;
-        }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                    Mech.ACTUATOR_LOWER_LEG, legLoc) == 0) {
-            multiplier /= 2.0f;
-        }
-        if (entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.ACTUATOR_HIP, legLoc) == 0) {
-            damage = 0;
-        }
-        return (int)Math.floor(damage * multiplier);
+    public static int getChargeDamageTakenBy(Entity entity, Entity target) {
+        return (int)Math.ceil(target.getWeight() / 10);
     }
+    
     
     /**
      * Modifier to attacks due to attacker movement

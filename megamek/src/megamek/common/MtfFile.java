@@ -158,15 +158,24 @@ public class MtfFile {
         else
           mech = new BipedMech();
 
-        if (techYear == null || !techYear.substring(4).equalsIgnoreCase("3025")) {
+        if (techYear == null) {
             return null;
         }
         
         mech.setName(name);
         mech.setModel(model);
+		mech.setTech(techBase.substring(9));
         
         mech.weight = (float)Integer.parseInt(tonnage.substring(5));
         mech.heatSinks = Integer.parseInt(heatSinks.substring(11, 14).trim()) - 10;
+		//check for double heatsinks
+		if (heatSinks.substring(14).equalsIgnoreCase("Double")) {
+			mech.heatSinks = (mech.heatSinks + 10) * 2;
+			if (mech.heatSinks == 0) {
+				mech.heatSinks += 10;
+			}
+			mech.heatSinks -= 10;
+		}
         
         mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
         mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
@@ -216,6 +225,9 @@ public class MtfFile {
             String critName = critData[loc][i];
             boolean rearMounted = false;
             
+			if (critName.equalsIgnoreCase("Fusion Engine")) {
+				mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
+			}
             if (critName.endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();

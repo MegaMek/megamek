@@ -203,8 +203,8 @@ public class MegaMek
         }
         // initialize game
         client = new BotClient(frame, cd.name);
-
-		// verify connection
+         
+	// verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;

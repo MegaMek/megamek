@@ -479,6 +479,31 @@ public class ChatLounge extends AbstractPhaseDisplay
         client.getLocalPlayer().setTeam(team);
         client.sendPlayerInfo();
     }
+    
+    /**
+     * Pop up the customize mech dialog
+     */
+    public void customizeMech() {
+        if (lisEntities.getSelectedIndex() == -1) {
+            return;
+        }
+        Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+        boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
+        // display dialog
+        CustomMechDialog cmd = new CustomMechDialog(client.frame, entity, editable);
+        cmd.show();
+        if (editable && cmd.isOkay()) {
+            // send changes
+            client.sendUpdateEntity(entity);
+        }
+    }
+    
+    /**
+     * Pop up the dialog to load a mech
+     */
+    public void loadMech() {
+        client.getMechSelectorDialog().show();
+    }
   
     //
     // GameListener
@@ -527,20 +552,9 @@ public class ChatLounge extends AbstractPhaseDisplay
             client.sendReady(!client.getLocalPlayer().isReady());
             refreshReadyButton();
         } else if (ev.getSource() == butLoad) {
-            client.getMechSelectorDialog().show();
+            loadMech();
         } else if (ev.getSource() == butCustom) {
-            if (lisEntities.getSelectedIndex() != -1) {
-                Entity entity = client.game.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
-                boolean editable = entity.getOwnerId() == client.getLocalPlayer().getId();
-                // display dialog
-                CustomMechDialog cmd = new CustomMechDialog(client.frame, entity, editable);
-                cmd.show();
-                if (editable && cmd.isOkay()) {
-                    // send changes
-                    
-                    client.sendUpdateEntity(entity);
-                }
-            }
+            customizeMech();
         } else if (ev.getSource() == butDelete) {
             // delete mech
             if (lisEntities.getSelectedIndex() != -1) {

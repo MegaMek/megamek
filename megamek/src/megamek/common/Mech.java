@@ -220,6 +220,9 @@ public abstract class Mech
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && mounted.isDestroyed()) {
                 capacity--;
             }
+			else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) && mounted.isDestroyed()) {
+				capacity = capacity - 2;
+			}
         }
         
         return capacity;
@@ -244,6 +247,8 @@ public abstract class Mech
                     Mounted mounted = (Mounted)i.nextElement();
                     if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
                         sinksUnderwater++;
+                    } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK) && !mounted.isDestroyed() && locationIsLeg(mounted.getLocation()) ) {
+                        sinksUnderwater = sinksUnderwater + 2;
                     }
                 }
             }
@@ -253,7 +258,7 @@ public abstract class Mech
         
         return capacity + Math.min(sinksUnderwater, 6);
     }
-    
+
     /**
      * Returns the name of the type of movement used.
      * This is mech-specific.

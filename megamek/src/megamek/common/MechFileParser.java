@@ -25,11 +25,11 @@ import megamek.common.util.BuildingBlock;
 
 public class MechFileParser {
     private Entity m_entity = null;
-    
+
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
-    
+
     public MechFileParser(File f, String entryName) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
@@ -39,7 +39,7 @@ public class MechFileParser {
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException(ex.getMessage());
                 } else {
-                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());                    
+                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
                 }
             }
         } else {
@@ -57,7 +57,7 @@ public class MechFileParser {
             }
         }
     }
-    
+
     public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
@@ -69,9 +69,9 @@ public class MechFileParser {
             }
         }
     }
-    
+
     public Entity getEntity() { return m_entity; }
-    
+
     public void parse(InputStream is, String fileName) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         MechLoader loader;
@@ -81,13 +81,11 @@ public class MechFileParser {
         } else if (lowerName.endsWith(".mtf")) {
             loader = new MtfFile(is);
         } else if (lowerName.endsWith(".hmp")) {
-            loader = new HmpFile(is);           
+            loader = new HmpFile(is);
         } else if (lowerName.endsWith(".hmv")) {
-            loader = new HmvFile(is);           
+            loader = new HmvFile(is);
         } else if (lowerName.endsWith(".xml")) {
             loader = new TdbFile(is);
-        } else if (lowerName.endsWith(".ptf")) {
-            loader = new PtfFile(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
@@ -119,12 +117,12 @@ public class MechFileParser {
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
-        
+
         m_entity = loader.getEntity();
-        
+
         postLoadInit(m_entity);
     }
-    
+
     /**
      * File-format agnostic location to do post-load initialization on a unit.
      * Automatically add BattleArmorHandles to all OmniMechs.
@@ -137,22 +135,22 @@ public class MechFileParser {
 
             // Link Artemis IV fire-control systems to their missle racks.
             if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
-                
+
                 // link up to a weapon in the same location
                 for (Enumeration e2 = ent.getWeapons(); e2.hasMoreElements(); ) {
                     Mounted mWeapon = (Mounted)e2.nextElement();
                     WeaponType wtype = (WeaponType)mWeapon.getType();
-                    
+
                     // only srm and lrm are valid for artemis
                     if (wtype.getAmmoType() != AmmoType.T_LRM && wtype.getAmmoType() != AmmoType.T_SRM) {
                         continue;
                     }
-                    
+
                     // already linked?
                     if (mWeapon.getLinkedBy() != null) {
                         continue;
                     }
-                    
+
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
                         m.setLinked(mWeapon);
@@ -165,7 +163,7 @@ public class MechFileParser {
                         break;
                     }
                 }
-                
+
                 if (m.getLinked() == null) {
                     // huh.  this shouldn't happen
                     throw new EntityLoadingException("Unable to match Artemis to launcher");
@@ -193,6 +191,6 @@ public class MechFileParser {
         }
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException
-            
-        
+
+
 }

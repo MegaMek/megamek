@@ -57,6 +57,7 @@ public class WeaponType extends EquipmentType {
     private int     waterShortRange;
     private int     waterMediumRange;
     private int     waterLongRange;
+    private boolean oneShot=false; //For OS/RL weapons.
 
     protected WeaponType() {
         ;
@@ -89,7 +90,7 @@ public class WeaponType extends EquipmentType {
     public int getAmmoType() {
         return ammoType;
     }
-    
+
     public int[] getRanges() {
     	return new int[] {minimumRange, shortRange, mediumRange, longRange};
     }
@@ -124,6 +125,10 @@ public class WeaponType extends EquipmentType {
 
     public int getWLongRange() {
         return waterLongRange;
+    }
+
+    public boolean isOneShot() {
+      return oneShot;
     }
 
 
@@ -190,6 +195,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMRM40());
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
+        EquipmentType.addType(createISRL10());
+        EquipmentType.addType(createISRL15());
+        EquipmentType.addType(createISRL20());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -669,6 +677,79 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
+    public static WeaponType createISRL10()  {
+      WeaponType weapon = new WeaponType();
+
+      weapon.name = "RL 10";
+      weapon.internalName = "RL10";
+      weapon.mtfName = "ISRocketLauncher10";
+      weapon.tdbName = "ISRocketLauncher10";
+      weapon.mepName = "ISRocketLauncher10";
+      weapon.heat = 3;
+      weapon.damage= DAMAGE_MISSILE;
+      weapon.rackSize= 10;
+      weapon.minimumRange = WEAPON_NA;
+      weapon.shortRange= 5;
+      weapon.mediumRange= 11;
+      weapon.longRange = 18;
+      weapon.tonnage = .5f;
+      weapon.criticals = 1;
+      weapon.bv= 18;
+      weapon.ammoType = AmmoType.T_NA;
+      weapon.oneShot=true;
+      weapon.toHitModifier=1;
+
+      return weapon;
+    }
+    public static WeaponType createISRL15()  {
+      WeaponType weapon = new WeaponType();
+
+      weapon.name = "RL 15";
+      weapon.internalName = "RL15";
+      weapon.mtfName = "ISRocketLauncher15";
+      weapon.mepName = "ISRocketLauncher15";
+      weapon.tdbName = "ISRocketLauncher15";
+      weapon.heat = 4;
+      weapon.damage= DAMAGE_MISSILE;
+      weapon.rackSize= 15;
+      weapon.minimumRange = WEAPON_NA;
+      weapon.shortRange= 4;
+      weapon.mediumRange= 9;
+      weapon.longRange = 15;
+      weapon.tonnage = 1.0f;
+      weapon.criticals = 2;
+      weapon.bv= 23;
+      weapon.ammoType = AmmoType.T_NA;
+      weapon.oneShot=true;
+      weapon.toHitModifier=1;
+
+      return weapon;
+    }
+    public static WeaponType createISRL20()  {
+     WeaponType weapon = new WeaponType();
+
+     weapon.name = "RL 20";
+     weapon.internalName = "RL20";
+     weapon.mtfName = "ISRocketLauncher20";
+     weapon.mepName = "ISRocketLauncher20";
+     weapon.tdbName = "ISRocketLauncher20";
+     weapon.heat = 5;
+     weapon.damage= DAMAGE_MISSILE;
+     weapon.rackSize= 20;
+     weapon.minimumRange = WEAPON_NA;
+     weapon.shortRange= 3;
+     weapon.mediumRange= 7;
+     weapon.longRange = 12;
+     weapon.tonnage = 1.5f;
+     weapon.criticals = 3;
+     weapon.bv= 24;
+     weapon.ammoType = AmmoType.T_NA;
+     weapon.oneShot=true;
+     weapon.toHitModifier=1;
+
+     return weapon;
+   }
 
     public static WeaponType createSRM2() {
         WeaponType weapon = new WeaponType();

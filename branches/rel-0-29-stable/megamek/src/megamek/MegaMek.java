@@ -490,8 +490,23 @@ public class MegaMek
                 return;
             }
             else if (args[i].equals("-dedicated")) {
+                // Next argument may be the savegame file's name.
+                String savegameFileName=null;
+                i++;
+                if ( i >= args.length || args[i].startsWith("-") ) {
+                    // no filename -- bump the argument processing back up
+                    i--;
+                } else {
+                    savegameFileName = args[i];
+                }
                 Settings.load();
-                new Server(Settings.lastServerPass, Settings.lastServerPort);
+                // kick off a RNG check
+                megamek.common.Compute.d6();
+                // start server
+                Server server = new Server(Settings.lastServerPass, Settings.lastServerPort);
+                if (null!=savegameFileName) {
+                    server.loadGame(new File(savegameFileName));
+                };
                 return;
             }
             else if (args[i].equals("-log")) {

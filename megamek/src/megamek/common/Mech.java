@@ -1409,7 +1409,8 @@ public abstract class Mech
         }
         
         // add it
-        super.addEquipment(mounted, loc, rearMounted);
+        if (getEquipmentNum(mounted)==-1)
+            super.addEquipment(mounted, loc, rearMounted);
 
         // add criticals
         int num = getEquipmentNum(mounted);        

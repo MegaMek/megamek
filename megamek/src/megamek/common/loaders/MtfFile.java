@@ -374,11 +374,11 @@ public class MtfFile implements MechLoader {
                             m = new Mounted(mech, etype);
                             m.setSplit(true);
                             m.setFoundCrits(1);
-                            mech.addEquipment(m, loc, rearMounted);
                             vSplitWeapons.addElement(m);
                         }
-                        mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                mech.getEquipmentNum(m), etype.isHittable()));
+                        mech.addEquipment(m, loc, rearMounted);
+                        //mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
+                        //        mech.getEquipmentNum(m), etype.isHittable()));
                     }
                     else {
                         mech.addEquipment(etype, loc, rearMounted);

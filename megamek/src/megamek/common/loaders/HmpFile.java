@@ -485,13 +485,9 @@ public class HmpFile
                   m = new Mounted(mech, equipment);
                   m.setSplit(true);
                   m.setFoundCrits(1);
-                  mech.addEquipment(m, location, rearMounted);
                   vSplitWeapons.addElement(m);
                 }
-                mech.addCritical(location,
-                                 new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                                  mech.getEquipmentNum(m),
-                                                  equipment.isHittable()));
+                mech.addEquipment(m, location, rearMounted);
               }
               else {
                 mech.addEquipment(equipment, location, rearMounted);

@@ -1127,6 +1127,16 @@ public abstract class Mech
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
+        return calculateBattleValue(false);
+    }
+  
+    /**
+     * Calculates the battle value of this mech.
+     *  If the parameter is true, then the battle value for
+     *  c3 will be added whether the mech is currently part of
+     *  a network or not.
+     */
+    public int calculateBattleValue(boolean assumeLinkedC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -1411,7 +1421,8 @@ public abstract class Mech
         double xbv = 0.0;
         if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5)) {
+            (hasC3i() && calculateFreeC3Nodes() < 5) ||
+            assumeLinkedC3) {
                 xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
         }
         

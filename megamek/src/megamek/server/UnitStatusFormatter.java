@@ -194,7 +194,7 @@ public abstract class UnitStatusFormatter
     public static void main(String[] ARGS)
         throws Exception
     {
-        Entity e = new MechFileParser(MechSummaryCache.getInstance().getMech(ARGS[0]).getSourceFile()).getMech();
+        Entity e = new MechFileParser(MechSummaryCache.getInstance().getMech(ARGS[0]).getSourceFile()).getEntity();
         System.out.println(format(e));
     }
 }

@@ -581,6 +581,13 @@ public class Compute
         // account for elevation?
         if (srcHex.floor() != destHex.floor()) {
             int delta_e = Math.abs(srcHex.floor() - destHex.floor());
+            
+            // ground vehicles are charged double
+            int nMove = entity.getMovementType();
+            if (nMove == Entity.MovementType.TRACKED || nMove == Entity.MovementType.WHEELED ||
+                    nMove == Entity.MovementType.HOVER) {
+                delta_e *= 2;
+            }
             mp += delta_e;
         }
         
@@ -617,9 +624,9 @@ public class Compute
         if (!game.board.contains(dest)) {
             return false;
         }
-        // check elevation difference > 2
+        // check elevation difference > max
         if (entityMoveType != Entity.MOVE_JUMP 
-            && Math.abs(srcHex.floor() - destHex.floor()) > 2) {
+            && Math.abs(srcHex.floor() - destHex.floor()) > entity.getMaxElevationChange()) {
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
@@ -647,6 +654,25 @@ public class Compute
                   entity.getJumpMPWithTerrain())) {
             return false;
         }
+        
+        // certain movement types have terrain restrictions
+        if (entity.getMovementType() == Entity.MovementType.WHEELED) {
+            if (destHex.contains(Terrain.WOODS) || destHex.contains(Terrain.ROUGH) ||
+                    destHex.levelOf(Terrain.WATER) > 0 || destHex.contains(Terrain.RUBBLE)) {
+                return false;
+            }
+        }
+        else if (entity.getMovementType() == Entity.MovementType.TRACKED) {
+            if (destHex.levelOf(Terrain.WOODS) > 1 || destHex.levelOf(Terrain.WATER) > 0) {
+                return false;
+            }
+        }
+        else if (entity.getMovementType() == Entity.MovementType.HOVER) {
+            if (destHex.contains(Terrain.WOODS)) {
+                return false;
+            }
+        }
+              
         
         return true;
     }

@@ -173,26 +173,26 @@ public class ScenarioLoader
             if (ms == null) {
                 throw new Exception("Scenario requires missing entity: " + sRef);
             }
-            Mech m = new MechFileParser(ms.getSourceFile()).getMech();
-            m.crew = new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
+            Entity e = new MechFileParser(ms.getSourceFile()).getEntity();
+            e.crew = new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
                     Integer.parseInt(st.nextToken()));
             int nFacing = -1;
             if (st.hasMoreTokens()) {
                 // facing specified
                 nFacing = findIndex(FACING, st.nextToken());
             }
-            m.setFacing(nFacing);
-            m.setSecondaryFacing(nFacing);
+            e.setFacing(nFacing);
+            e.setSecondaryFacing(nFacing);
             if (st.hasMoreTokens()) {
                 // coords specified
-                m.setPosition(new Coords(Integer.parseInt(st.nextToken()), 
+                e.setPosition(new Coords(Integer.parseInt(st.nextToken()), 
                         Integer.parseInt(st.nextToken())));
             }
             else {
                 // explicitly set to null so a later process can detect it
-                m.setPosition(null);
+                e.setPosition(null);
             }
-            return m;
+            return e;
         } catch (NumberFormatException e) {
             e.printStackTrace();
             throw new Exception("Unparseable entity line: " + s);

@@ -64,6 +64,11 @@ public class BLKMechFile implements MechLoader {
         dataFile = new BuildingBlock(file.getPath());
         
     }  
+    
+    public BLKMechFile(BuildingBlock bb)
+    {
+        dataFile = bb;
+    }
       
     //if it's a block file it should have this...
     public boolean isMine() {
@@ -74,7 +79,7 @@ public class BLKMechFile implements MechLoader {
         
     }
 
-    public Mech getMech() throws EntityLoadingException {
+    public Entity getEntity() throws EntityLoadingException {
     
       int chassisType = 0;
       if (!dataFile.exists("chassis_type")) {

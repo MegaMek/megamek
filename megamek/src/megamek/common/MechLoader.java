@@ -35,6 +35,6 @@ public interface MechLoader {
      * Return a valid mech, matching the file to the best of MegaMek's current
      * capabilities, or throw an exception with a helpful message.
      */
-    public Mech getMech() throws EntityLoadingException;
+    public Entity getEntity() throws EntityLoadingException;
 }
 

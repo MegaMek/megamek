@@ -146,7 +146,7 @@ public class MechSummaryCache
                    try {
                        System.out.println("Loading from " + f);
                        MechFileParser mfp = new MechFileParser(f);
-                       Mech m = mfp.getMech();
+                       Entity m = mfp.getEntity();
                        MechSummary ms = new MechSummary();
                        ms.setName(m.getName());
                        ms.setRef(m.getModel());

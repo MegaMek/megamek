@@ -1550,7 +1550,7 @@ class ConnectionThread extends Thread {
       f = reqs[Compute.random.nextInt(reqs.length)];
       Mech mech = new MepFile(f.getAbsolutePath()).getMech();*/
       //Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/more/EXT-4A Exterminator.MEP").getMech();
-      Mech mech = new BLKMechFile("d:/Projects/current_megamek/data/blk/Warhammer WHM-6K.blk").getMech();
+      Mech mech = (Mech)(new BLKMechFile("d:/Projects/current_megamek/data/blk/Warhammer WHM-6K.blk").getEntity());
       //Mech mech = new MepFile("d:/Projects/current_megamek/data/mep/ASN-21 Assassin.MEP").getMech();
       
       mech.setOwner(mm.client.getLocalPlayer());

@@ -13,8 +13,8 @@ Name=A Developing Situation
 Description=LG&M second mission
 
 
-BoardWidth=1
-BoardHeight=2
+BoardWidth=2
+BoardHeight=1
 
 Maps=buildings/militarybase2,buildings/militarybase1
 
@@ -22,8 +22,8 @@ Maps=buildings/militarybase2,buildings/militarybase1
 Factions=RedfieldsRenegades,LoneStar
 
 
-Location_RedfieldsRenegades=S
-Location_LoneStar=N
+Location_RedfieldsRenegades=E
+Location_LoneStar=W
 
 
 
@@ -48,7 +48,7 @@ Unit_LoneStar_3=Stalker STK-5S,Ranger-Sergeant Caspar Mayfield,2,3
 Unit_LoneStar_4=Wolverine WVR-7K,MechWarrior Patrick Morganthayler,3,3
 #Strike Lance, Jarvis' Jokers
 Unit_LoneStar_5=Hatchetman HCT-5S,Ranger-Lieutenant Vernon Jarvis,3,3
-Unit_LoneStar_61=Phoenix Hawk PXH-3D,MechWarrior Shaunda Berquist,3,3
+Unit_LoneStar_6=Phoenix Hawk PXH-3D,MechWarrior Shaunda Berquist,3,3
 Unit_LoneStar_7=Griffin GRF-3M,MechWarrior Bryan Fochs,3,3
 Unit_LoneStar_8=Wasp WSP-1D,MechWarrior Jasmine Howell,3,4
 

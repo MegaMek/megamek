@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29-stable-7
++ Bug 781250: Fixed MASC bug.
+
 v 0.29-stable-6 (2003-11-09 11:20 AM EST)
 + Bug 834457: MicroSoft JRE can't use PNG files.  Sad, really.
 + Bug 837237, Patch 838203: you can define "rear of leg/arm" hit locations!

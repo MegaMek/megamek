@@ -130,7 +130,7 @@ public class BipedMech extends Mech {
      */
     public int getRunMPwithoutMASC() {
         if ( countDestroyedLegs() == 0 ) {
-            return super.getRunMP();
+            return super.getRunMPwithoutMASC();
         } else {
             return getWalkMP();
         }

@@ -12,7 +12,7 @@
   <property name="jarmanifest" value="manifest.txt"/> 
   <property name="cvsdir" value="cvsrel"/>
   <property name="libraries" value="collections.jar;TinyXML.jar"/>
-  <property name="cvstag" value="rel-0-29-stable-2" />
+  <property name="cvstag" value="rel-0-29-stable-3" />
 
   <target description="Initialize system before build" name="init">
      <!-- Create the time stamp -->

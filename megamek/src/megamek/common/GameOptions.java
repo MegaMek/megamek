@@ -67,7 +67,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(level3, new GameOption("maxtech_physical_psr", "MaxTech physical PSR weight difference", "If checked, after being kicked or pushed the PSR is modified by the weight classes of the two mechs. The PSR is modified by 1 point per weight class difference. The difference is added to the PSR if the attacker is heavier or subtracted if the attacker is lighter.", false));
         addOption(level3, new GameOption("maxtech_round_damage", "MaxTech damage per round", "If checked, units will have +1 to their piloting skill roll for every 20 damage taken, not just the first damage. Also, BTH is altered by weight class. Lights get +1 to BTH where as assaults get -2. Mediums and heavies are in between.", false));
         addOption(level3, new GameOption("maxtech_prone_fire", "MaxTech firing while prone", "If checked, mechs that are prone can fire if they are missing one arm. Standard rules disallow firing when prone and missing an arm. All weapons are +1 BTH and weapons mounted in propping arm can not be fired.", false));
-		addOption(level3, new GameOption("maxtech_target_modifiers", "MaxTech target movement modifiers", "If checked, the target movement modifiers table is enhanced by 3 additional steps (14-18 hexes => +5, 19-24 hexes => +6 25+ hexes => +7.", false));
+        addOption(level3, new GameOption("maxtech_target_modifiers", "MaxTech target movement modifiers", "If checked, the target movement modifiers table is enhanced by 3 additional steps (14-18 hexes => +5, 19-24 hexes => +6 25+ hexes => +7.", false));
         addOption(level3, new GameOption("maxtech_leg_damage", "MaxTech Leg Damage Rule", "If checked, hip criticals are cummulative with other damage to legs, but reduce movement by 2 instead of halving. Destroying both hips does not reduce MPs to zero.", false));
         addOption(level3, new GameOption("maxtech_fire", "MaxTech Fire/Smoke Rules", "If checked, fires create smoke that drifts and dissipates, instead of remaining static.  In addition, smoke is split into light and heavy varieties.", false));
         
@@ -85,6 +85,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("blind_drop", "Blind Drop", "If checked, the configuration of a Mech won't be shown in the Chatroom to your opponents.", false)); 
         addOption(ruleBreakers, new GameOption("clan_ignore_eq_limits", "Ignore Clan Ammo Limitations", "If checked, Clan units can use ammo normally limited to IS units only; for example, Thunder-Augmented, Thunder-Inferno, and Thunder-Active LRM rounds.", false));
         addOption(ruleBreakers, new GameOption("no_clan_physical", "No physical attacks for the clans", "If checked, clan Meks may not make physical attacks.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("no_hover_charge", "No charge attacks for Hover vehicles", "If checked, Hover vehicles may not make rams/charges.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

@@ -825,10 +825,20 @@ public class Infantry
 
     public void generateIconName(java.awt.FontMetrics fm) {
         iconName = getModel();
-		
+
         while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
             iconName = iconName.substring(0, iconName.length() - 1);
         }
     }
+
+    public boolean canCharge() {
+        // Infantry can't Charge
+        return false;
+    };
+
+    public boolean canDFA() {
+        // Infantry can't DFA
+        return false;
+    };
 
 } // End class Infantry

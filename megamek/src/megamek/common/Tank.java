@@ -670,12 +670,12 @@ public class Tank
 
     public void generateIconName(java.awt.FontMetrics fm) {
         iconName = getShortName();
-		
+
         if (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
             Vector v = StringUtil.splitString(iconName, " ");
             iconName = (String) v.elementAt(0);
         }
-		
+
         while (fm.stringWidth(iconName) > Entity.ICON_NAME_MAX_LENGTH) {
             iconName = iconName.substring(0, iconName.length() - 1);
         }
@@ -693,4 +693,13 @@ public class Tank
         }
     }
 
+    public boolean canCharge() {
+        // Tanks can charge, except Hovers when the option is set
+        return super.canCharge() && !(game.getOptions().booleanOption("no_hover_charge") && MovementType.HOVER==getMovementType());
+    };
+
+    public boolean canDFA() {
+        // Tanks can't DFA
+        return false;
+    };
 }

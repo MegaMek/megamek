@@ -31,25 +31,27 @@ public class Client extends Panel
     // a frame, to show stuff in
     public Frame                frame;
     
+    private boolean             standalone;
+    
 //    // another frame for the report
 //    public Frame                reportFrame;
         
     // we need these to communicate with the server
     private String              name;
-    Socket              socket;
+    Socket                      socket;
     private ObjectInputStream   in = null;
     private ObjectOutputStream  out = null;
 
     // some info about us and the server
     private boolean             connected = false;
-    public int                    local_pn;
+    public int                  local_pn;
         
     // the actual game (imagine that)
     public Game                 game;
         
     // here's some game phase stuff
-    private MapSettings mapSettings;
-    public String                eotr;
+    private MapSettings         mapSettings;
+    public String               eotr;
         
     // keep me
     public ChatterBox           cb;
@@ -58,7 +60,7 @@ public class Client extends Panel
     public Dialog               mechW;
     public MechDisplay          mechD;
         
-    protected Panel                curPanel;
+    protected Panel             curPanel;
     
     // some dialogs...
     private BoardSelectionDialog    boardSelectionDialog;
@@ -66,13 +68,17 @@ public class Client extends Panel
 
         
     // message pump listening to the server
-    private Thread                pump;
+    private Thread              pump;
         
     // I send out game events!
-    private Vector                gameListeners;
+    private Vector              gameListeners;
     
     /**
-     * Construct w/o frame
+     * Construct a non-standalone client.  This client will try to dispose of
+     * itself as much as possible when it's done playing, but will not call
+     * System.exit().
+     *
+     * This is mostly for use in MCWizards's game finder.
      */
     public Client(String playername) {
         this(new Frame("MegaMek Client"), playername);
@@ -104,11 +110,14 @@ public class Client extends Panel
             }
 	});
         
+        standalone = false;
+        
         frame.setVisible(true);
     }
     
     /**
-     * Constructor
+     * Construct a standalone client by giving it a frame to take over.  This
+     * client will call System.exit(0) when it's done.
      */
     public Client(Frame frame, String playername) {
         this.frame = frame;
@@ -139,6 +148,8 @@ public class Client extends Panel
         frame.setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.validate();
+        
+        standalone = true;
         
 //        // report frame
 //        reportFrame = new Frame("MegaMek Reports");
@@ -177,6 +188,13 @@ public class Client extends Panel
             in.close();
             out.close();
         } catch (IOException ex) { ; }
+        
+        if (standalone) {
+            System.exit(0);
+        } else {
+            frame.setVisible(false);
+            frame.dispose();
+        }
     }
     
     /**
@@ -187,9 +205,6 @@ public class Client extends Panel
         alert.show();
         
         die();
-        
-        //TODO: close window programmatically instead.
-        System.exit(0);
     }
     
     /**

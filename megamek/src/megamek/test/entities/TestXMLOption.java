@@ -4,10 +4,6 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.StringTokenizer;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import gd.xml.*;
 import gd.xml.tiny.*;
 
 public class TestXMLOption implements TestEntityOption

@@ -36,29 +36,24 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     public ChargeAttackAction(Entity attacker, Targetable target) {
         this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
     }
-    
+
     public ChargeAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
 
     /**
-	 * To-hit number for a charge, assuming that movement has been handled
-	 */
+     * To-hit number for a charge, assuming that movement has been handled
+     */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
-        return toHitCharge(
-            game,
-            getEntityId(),
-            game.getTarget(getTargetType(), getTargetId()),
-            entity.getPosition(),
-            entity.moved);
+        return toHitCharge(game, game.getTarget(getTargetType(), getTargetId()), entity.getPosition(), entity.moved);
     }
 
     /**
-	 * To-hit number for a charge, assuming that movement has been handled
-	 */
-    public static ToHitData toHitCharge(Game game, int attackerId, Targetable target, Coords src, int movement) {
-        final Entity ae = game.getEntity(attackerId);
+     * To-hit number for a charge, assuming that movement has been handled
+     */
+    public ToHitData toHitCharge(Game game, Targetable target, Coords src, int movement) {
+        final Entity ae = getEntity(game);
         int targetId = Entity.NONE;
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -133,11 +128,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         if (te != null && te.hasDisplacementAttack()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
-        
-		// target must have moved already
-		if (te != null && !te.isDone()) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
-		}
+
+        // target must have moved already
+        if (te != null && !te.isDone()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
+        }
 
         // can't attack the target of another displacement attack
         if (te != null
@@ -177,13 +172,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit = new ToHitData(base, "base");
 
         // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, attackerId, movement));
+        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId(), movement));
 
         // target movement
         toHit.append(Compute.getTargetMovementModifier(game, targetId));
 
         // attacker terrain
-        toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
+        toHit.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
 
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, te));
@@ -224,8 +219,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     }
 
     /**
-	 * Checks if a charge can hit the target, taking account of movement
-	 */
+     * Checks if a charge can hit the target, taking account of movement
+     */
     public ToHitData toHit(Game game, MovePath md) {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
@@ -269,31 +264,32 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
 
-        return toHitCharge(game, getEntityId(), target, chargeSrc, chargeStep.getMovementType());
+        return toHitCharge(game, target, chargeSrc, chargeStep.getMovementType());
     }
 
     /**
       * Damage that a mech does with a successful charge.  Assumes that 
       * delta_distance is correct.
       */
-      public static int getChargeDamageFor(Entity entity) {
+    public static int getChargeDamageFor(Entity entity) {
         return getChargeDamageFor(entity, entity.delta_distance);
-      }
+    }
 
     public static int getChargeDamageFor(Entity entity, int hexesMoved) {
-             return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
-      }
+        return (int) Math.ceil(
+            (entity.getWeight() / 10.0) * (hexesMoved - 1) * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
+    }
 
     /**
      * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Building bldg) {
         // ASSUMPTION: 10% of buildings CF at start of phase, round up.
-        return (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
+        return (int) Math.ceil(bldg.getPhaseCF() / 10.0);
     }
 
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
-        return (int) Math.ceil( target.getWeight() / 10.0 * (entity.getLocationStatus(1)==Entity.LOC_WET ? 0.5 : 1) );
+        return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == Entity.LOC_WET ? 0.5 : 1));
     }
 
 }

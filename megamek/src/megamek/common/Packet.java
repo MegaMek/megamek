@@ -206,7 +206,17 @@ implements Serializable {
         return ((Boolean)getObject(index)).booleanValue();
     }
     
-    
+    /**
+     * Returns this packet's approximate size, in bytes, if we happen to know 
+     * it.  Otherwise, returns 0.
+     */
+    public int size() {
+        if (zipped) {
+            return ((byte[])data[0]).length;
+        } else {
+            return 0;
+        }
+    }
     
     
 }

@@ -65,6 +65,9 @@ public abstract class Entity
     protected transient Game    game;
 
     protected int               id = Entity.NONE;
+    
+    // ID settable by external sources (such as mm.net)
+    protected int               externalId = Entity.NONE;
 
     protected float             weight;
     protected boolean           omni = false;
@@ -200,6 +203,14 @@ public abstract class Entity
   
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public int getExternalId() {
+        return externalId;
+    }
+    
+    public void setExternalId(int externalId) {
+        this.externalId = externalId;
     }
     
     public void setGame(Game game) {

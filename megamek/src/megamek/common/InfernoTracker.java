@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -24,7 +24,7 @@ import java.io.*;
  * constants: <code>STANDARD_ROUND</code> and <code>ARROW_IV_ROUND</code>.
  */
 public class InfernoTracker
-  implements Serializable, RoundUpdated
+	implements Serializable
 {
     // Private helper classes, methods, and attributes.
 
@@ -32,9 +32,9 @@ public class InfernoTracker
      * This class defines the effects of a single hit by an Inferno round.
      */
     /* package */ static class Inferno
-  implements Serializable {
+	implements Serializable {
         private int         heatPerRound;
-  private int         burnRoundsPerHit;      
+	private int         burnRoundsPerHit;      
 
         public Inferno() {
             heatPerRound = 6;
@@ -77,16 +77,6 @@ public class InfernoTracker
      * The hit from a Inferno IV round.
      */
     public static final Inferno INFERNO_IV_ROUND = new Inferno(10,3);
-
-    /**
-     * A single burn turn from a standard Inferno round.
-     */
-    public static final Inferno STANDARD_TURN   = new Inferno(6,1);
-
-    /**
-     * A single burn turn from an Inferno IV round.
-     */
-    public static final Inferno INFERNO_IV_TURN = new Inferno(10,1);
 
     /**
      * Create an empty tracker.
@@ -154,7 +144,7 @@ public class InfernoTracker
     /**
      * The infernos have burned for a round.
      */
-    public void newRound(int roundNumber) {
+    public void newRound() {
 
         // BMRr, pg. 77 makes me think that Inferno IVs
         // burn in parallel with standard rounds.
@@ -181,24 +171,6 @@ public class InfernoTracker
         
         // Add the number of standard burn turns to Inferno IV turns.
         result = turnsLeftToBurn + turnsIVLeftToBurn;
-
-        return result;
-    }
-
-    /**
-     * Determine just the number of turns left for Arrow IV Infernos to burn.
-     *
-     * @return  The <code>int</code> number of turns that this unit or
-     *          hex will suffer the effects of an Inferno IV round (ignore
-     *          any standard inferno rounds).  This number will be
-     *          positive when the <code>isStillBurning()</code> method
-     *          returns <code>true</code>.  It will not be negative.
-     */
-    public int getArrowIVTurnsLeftToBurn() {
-        int result = 0;
-        
-        // Add the number of standard burn turns to Inferno IV turns.
-        result = turnsIVLeftToBurn;
 
         return result;
     }

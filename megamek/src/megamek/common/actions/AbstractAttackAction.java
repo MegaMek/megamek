@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -14,8 +14,6 @@
 
 package megamek.common.actions;
 
-import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.Targetable;
 
 /**
@@ -56,14 +54,6 @@ public abstract class AbstractAttackAction
     
     public void setTargetId(int targetId) {
         this.targetId = targetId;
-    }
-    
-    public Targetable getTarget(Game g) {
-        return g.getTarget(getTargetType(), getTargetId());
-    }
-    
-    public Entity getEntity(Game g) {
-        return g.getEntity(getEntityId());
     }
     
 }

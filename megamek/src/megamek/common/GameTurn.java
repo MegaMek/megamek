@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -48,16 +48,16 @@ public class GameTurn implements Serializable {
     /**
      * Returns true if the specified entity is a valid one to use for this turn.
      */
-    public boolean isValidEntity(Entity entity, Game game) {
+    public boolean isValidEntity(Entity entity) {
         return entity != null && entity.getOwnerId() == playerId
-        && entity.isSelectableThisTurn(game);
+        && entity.isSelectable();
     }
     
     /**
      * Returns true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity, Game game) {
-        return playerId == this.playerId && isValidEntity(entity, game);
+    public boolean isValid(int playerId, Entity entity) {
+        return playerId == this.playerId && isValidEntity(entity);
     }
     
     public String toString() {
@@ -87,63 +87,40 @@ public class GameTurn implements Serializable {
          * Returns true if the entity is normally valid and it is the specific
          * entity that can move this turn.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
-            return super.isValidEntity(entity, game) && entity.getId() == entityId;
-        }
-    }
-
-    /**
-     * A type of game turn that allows only one specific entity to 
-     * trigger their Anti-Personell pods against attacking infantry.
-     */
-    public static class TriggerAPPodTurn extends SpecificEntityTurn {
-        
-        public TriggerAPPodTurn(int playerId, int entityId) {
-            super(playerId, entityId);
-        }
-
-        /**
-         * Returns true if the entity matches this game turn, even if the
-         * entity has declared an action.
-         */
-        public boolean isValidEntity(Entity entity, Game game) {
-            final boolean oldDone = entity.done;
-            entity.done = false;
-            final boolean result = super.isValidEntity( entity, game );
-            entity.done = oldDone;
-            return result;
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && entity.getId() == entityId;
         }
     }
     
     /**
-     * A type of game turn that allows only infantry and protomechs to move
+     * A type of game turn that allows only infantry to move
      */
-    public static class OnlyInfantryAndProtomechTurn extends GameTurn {
-        public OnlyInfantryAndProtomechTurn(int playerId) {
+    public static class OnlyInfantryTurn extends GameTurn {
+        public OnlyInfantryTurn(int playerId) {
             super(playerId);
         }
         
         /**
-         * Returns true if the entity is normally valid and it is infantry or protomech.
+         * Returns true if the entity is normally valid and it is infantry.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
-            return super.isValidEntity(entity, game) && (entity instanceof Infantry || entity instanceof Protomech);
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && entity instanceof Infantry;
         }
     }
     
     /**
      * A type of game turn that allows anything except infantry to move
      */
-    public static class NotInfantryOrProtomechTurn extends GameTurn {
-        public NotInfantryOrProtomechTurn(int playerId) {
+    public static class NotInfantryTurn extends GameTurn {
+        public NotInfantryTurn(int playerId) {
             super(playerId);
         }
         
         /**
-         * Returns true if the entity is normally valid and it is not infantry or protomech.
+         * Returns true if the entity is normally valid and it is not infantry.
          */
-        public boolean isValidEntity(Entity entity, Game game) {
-            return super.isValidEntity(entity, game) && !(entity instanceof Infantry || entity instanceof Protomech);
+        public boolean isValidEntity(Entity entity) {
+            return super.isValidEntity(entity) && !(entity instanceof Infantry);
         }
     }
 }

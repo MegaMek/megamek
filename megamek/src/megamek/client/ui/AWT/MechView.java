@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -35,10 +35,9 @@ public class MechView {
     private boolean isMech;
     private boolean isInf;
     private boolean isVehicle;
-    private boolean isProto;
     private boolean hasEndoSteel;
     private boolean hasFerroFibrous;
-
+    private boolean hasMASC;
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
 
@@ -47,7 +46,6 @@ public class MechView {
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
         isVehicle = entity instanceof Tank;
-        isProto = entity instanceof Protomech;
         hasEndoSteel = false;
         hasFerroFibrous = false;
 
@@ -71,13 +69,23 @@ public class MechView {
         sBasic.append("\n");
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( "Linked c3 BV: ");
-            sBasic.append( mech.calculateBattleValue(true) );
+            // TODO: refactor this code.
+            if ( isMech ) {
+                sBasic.append( ((Mech)mech).calculateBattleValue(true) );
+            } else {
+                sBasic.append( ((Tank)mech).calculateBattleValue(true) );
+            }
         }
         sBasic.append("\n");
         sBasic.append( "Movement: " )
             .append( mech.getWalkMP() )
             .append( "/" )
-            .append( mech.getRunMPasString() );
+            .append( mech.getRunMPwithoutMASC() );
+        if (hasMASC) {
+            sBasic.append( "(")
+                .append( mech.getWalkMP() * 2)
+                .append( ")");
+        }
         sBasic.append( "/" )
             .append( mech.getJumpMP() );
         if (isVehicle) {
@@ -147,15 +155,12 @@ public class MechView {
 
             // Skip empty sections.
             if ( Entity.ARMOR_NA == mech.getInternal(loc) ||
-                 ( isVehicle && (( loc == Tank.LOC_TURRET &&
-                                   ((Tank)mech).hasNoTurret() ) ||
-                                 (loc == Tank.LOC_BODY))) ) {
+                 (!isMech && !isInf && (( loc == Tank.LOC_TURRET &&
+                                          ((Tank)mech).hasNoTurret() ) ||
+                                        (loc == Tank.LOC_BODY))) ) {
                 continue;
             }
 
-            if ( mech.getLocationAbbr(loc).length() < 2 ) {
-                sIntArm.append( " " );
-            }
             sIntArm.append( mech.getLocationAbbr(loc) )
                 .append( ": " );
             sIntArm.append( renderArmor(mech.getInternal(loc)) )
@@ -217,6 +222,9 @@ public class MechView {
                     hasFerroFibrous = true;
                 }
                 continue;
+            }
+            if (mounted.getDesc().indexOf("MASC") != -1) {
+                hasMASC = true;
             }
             sMisc.append( mounted.getDesc() )
                 .append( "  [" )

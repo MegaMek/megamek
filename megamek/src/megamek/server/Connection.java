@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
-import megamek.common.net.ConnectionHandler;
+import megamek.common.actions.*;
 
 /**
  *
@@ -34,16 +34,9 @@ import megamek.common.net.ConnectionHandler;
  */
 public class Connection {
     
-    /**
-     * The object that handles this connection.
-     */
-    protected ConnectionHandler server;
+    private Server              server;
 
-    /**
-     * The socket for this connection.
-     */
-    protected Socket            socket;
-
+    private Socket              socket;
     private ObjectInputStream   in;
     private ObjectOutputStream  out;
 
@@ -57,7 +50,7 @@ public class Connection {
     private long                bytesSent;
 
 
-    public Connection(ConnectionHandler server, Socket socket, int id) {
+    public Connection(Server server, Socket socket, int id) {
         this.server = server;
         this.socket = socket;
         this.id = id;
@@ -119,16 +112,7 @@ public class Connection {
             socket.close();
             in.close();
             out.close();
-        } catch (IOException e) {
-            System.err.print( "Error closing connection #" );
-            System.err.print( getId() );
-            System.err.print( ": " );
-            System.err.println( e.getMessage() );
-            // We don't need a full stack trace... we're
-            // just closing the connection anyway.
-            //e.printStackTrace();
-        } catch (NullPointerException ex) {
-        	; // never initialized, poor thing
+        } catch (IOException ex) {
         }
     }
     
@@ -152,7 +136,7 @@ public class Connection {
         }
         Packet packet = (Packet)sendQueue.elementAt(0);
         sendQueue.removeElementAt(0);
-        bytesSent += sendPacket(packet);
+        sendPacket(packet);
     }
     
     /**
@@ -164,12 +148,8 @@ public class Connection {
 
     /**
      * Reads a complete net command from the given socket
-     * <p/>
-     * Subclasses are encouraged to override this method.
-     *
-     * @return  the <code>Packet</code> that was sent.
      */
-    protected Packet readPacket() {
+    private Packet readPacket() {
         try {
             if (in == null) {
                 in = new ObjectInputStream(socket.getInputStream());
@@ -179,25 +159,19 @@ public class Connection {
             return packet;
         } catch (IOException ex) {
             System.err.println("server(" + id + "): IO error reading command");
-            server.disconnected(this);
+            server.disconnected(id);
             return null;
         } catch (ClassNotFoundException ex) {
             System.err.println("server(" + id + "): class not found error reading command");
-            server.disconnected(this);
+            server.disconnected(id);
             return null;
         }
     }
 
     /**
      * Sends a packet!
-     * <p/>
-     * Subclasses are encouraged to override this method.
-     *
-     * @param   packet - the <code>Packet</code> to be sent.
-     * @return  the <code>int</code> number of bytes sent.
      */
-    protected int sendPacket(Packet packet) {
-        int bytes = 0;
+    private void sendPacket(Packet packet) {
         try {
             if (out == null) {
                 out = new ObjectOutputStream(socket.getOutputStream());
@@ -206,22 +180,21 @@ public class Connection {
             out.reset(); // write each packet fresh
             out.writeObject(packet);
             out.flush();
-            bytes = packet.size();
+            bytesSent += packet.size();
 //            System.out.println("server(" + id + "): command #" + packet.getCommand() + " sent with " + packet.getData().length + " data");
         } catch(IOException ex) {
             System.err.println("server(" + id + "): error sending command.  dropping player");
             System.err.println(ex);
             System.err.println(ex.getMessage());
-            server.disconnected(this);
+            server.disconnected(id);
         }
-        return bytes;
     }
     
     /**
      * Returns a very approximate count of how many bytes were sent to this
      * player.
      */
-    public synchronized long bytesSent() {
+    public long bytesSent() {
         return bytesSent;
     }
 }

@@ -18,11 +18,11 @@ package megamek.common;
 
 public class QuadMech extends Mech
 {
-  public static final String[] LOCATION_NAMES = {"Head",
+  private static final String[] LOCATION_NAMES = {"Head",
       "Center Torso", "Right Torso", "Left Torso", 
       "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg"};
   
-  public static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
+  private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
       "LT", "FRL", "FLL", "RRL", "RLL"};
   
   private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 6, 6, 6, 6};
@@ -78,15 +78,9 @@ public class QuadMech extends Mech
         } 
         
         if ( wmp > 0 ) {
-            if (hipHits>0) {
-                if (game.getOptions().booleanOption("maxtech_leg_damage")) {
-                   wmp = wmp - (2 * hipHits);
-                } else {
-                    for (int i = 0; i < hipHits; i++) {
-                        wmp = (int) Math.ceil( (double) wmp / 2.0);
-                    }
-                }
-            }
+          for ( int i = 0; i < hipHits; i++ ) {
+            wmp = (int)Math.ceil((double)wmp / 2.0);
+          }
 
           wmp -= actuatorHits;
         }
@@ -127,7 +121,7 @@ public class QuadMech extends Mech
      */
     public int getRunMPwithoutMASC() {
         if ( countDestroyedLegs() <= 1 ) {
-            return super.getRunMP();
+            return super.getRunMPwithoutMASC();
         } else {
             return getWalkMP();
         }

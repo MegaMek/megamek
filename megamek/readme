@@ -102,15 +102,13 @@ another copy of the game for each connecting player, and in the "Server Address"
 field of the connect dialog, type "localhost".  Each player will need to switch
 to his/her copy of the game to play their turn.
 
-To start a dedicated server, use the -dedicated command line switch.  A
+To start a dedicated server, use the -dedicated command line switch.  A 
 dedicated server just runs the server, in the console, without a "host" player
 in the game.  People, including yourself, can join it like a game with a host.
 The dedicated server reads the password and port options from the MegaMek.cfg
-file, or uses the default (no password and port 2346.)  If you want the
-dedicated server to load a saved game, supply the filename after the
--dedicated switch, like this: "-dedicated savedgame.sav".  To stop the server,
-you will need to tell the Java machine to halt execution, which is CTRL + C on
-most platforms.
+file, or uses the default (no password and port 2346.)  To stop the server, you
+will need to tell the Java machine to halt execution, which is CTRL + C on most
+platforms.
 
 
 PLAYING THE GAME
@@ -197,8 +195,8 @@ Holding the Shift key while clicking on the map allows you to change the
 unit's facing without moving.  Since you automatically change facing while 
 moving, this is best done at the end of any movement.
 
-To move backwards, click the "Back Up" button before clicking a hex in the arc
-behind the unit.  To jump, click the "Jump" button before the destination hex.
+To back up, click the "Back Up" button before clicking a hex in the arc behind 
+the unit.  To jump, click the "Jump" button before the destination hex.  
 Facing changes during jumps are free.
 
 Prone units can change facing without getting up at the normal cost.  To get up, 
@@ -327,7 +325,7 @@ After this phase, it's time for initiative again!  Hurrah!
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
 ----------------------------------------------
-Although MegaMek tries to be faithful to the original board game rules, in
+Although MegaMek tries to be faithful to the original board game rules.  In
 some cases, due to technical or design limitations, this is not possible.
 These differences are not considered "bugs."  If you spot any more 
 discrepancies, please contact the author (see "CONTACT" below.)

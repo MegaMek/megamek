@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,7 +16,6 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
-import megamek.common.Settings;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the user
@@ -129,20 +128,8 @@ public class SingleChoiceDialog
             });
         
         pack();
-        Dimension size = getSize();
-        boolean updateSize = false;
-        if ( size.width < Settings.minimumSizeWidth ) {
-            size.width = Settings.minimumSizeWidth;
-        }
-        if ( size.height < Settings.minimumSizeHeight ) {
-            size.height = Settings.minimumSizeHeight;
-        }
-        if ( updateSize ) {
-            setSize( size );
-            size = getSize();
-        }
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
+                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     };
 
     private void setupButtons() {

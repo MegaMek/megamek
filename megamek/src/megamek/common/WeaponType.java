@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -31,13 +31,11 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PPC           = 0x0008; //              "
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
-    public static final int     F_ONESHOT       = 0x8000; //weapon is oneShot.
 
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
     public static final int     F_INFERNO       = 0x0400; // Inferno weapon
     public static final int     F_INFANTRY      = 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
-    public static final int     F_PROTOMECH     = 0x0040; //Protomech weapons, which need weird ammo stuff.
 
     // Flags for implementing the vast number of BattleArmor special rules.
     public static final int     F_SOLO_ATTACK   = 0x0080; // must be only weapon attacking
@@ -45,9 +43,8 @@ public class WeaponType extends EquipmentType {
     public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
     public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
 
-    protected RangeType range;
-    protected int   heat;
-    protected int   damage;
+    private int     heat;
+    private int     damage;
     private int     rackSize; // or AC size, or whatever
     private int     ammoType;
 
@@ -55,11 +52,8 @@ public class WeaponType extends EquipmentType {
     private int     shortRange;
     private int     mediumRange;
     private int     longRange;
-    private int     waterShortRange;
-    private int     waterMediumRange;
-    private int     waterLongRange;
 
-    protected WeaponType() {
+    private WeaponType() {
         ;
     }
 
@@ -91,10 +85,6 @@ public class WeaponType extends EquipmentType {
         return ammoType;
     }
 
-    public int[] getRanges() {
-    	return new int[] {minimumRange, shortRange, mediumRange, longRange};
-    }
-
     public int getMinimumRange() {
         return minimumRange;
     }
@@ -110,24 +100,6 @@ public class WeaponType extends EquipmentType {
     public int getLongRange() {
         return longRange;
     }
-
-    public int[] getWRanges() {
-    	return new int[] {minimumRange, waterShortRange, waterMediumRange, waterLongRange};
-    }
-
-    public int getWShortRange() {
-        return waterShortRange;
-    }
-
-    public int getWMediumRange() {
-        return waterMediumRange;
-    }
-
-    public int getWLongRange() {
-        return waterLongRange;
-    }
-
-
 
     /**
      * Add all the types of weapons we can create to the list
@@ -192,9 +164,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMRM40());
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
-        EquipmentType.addType(createISRL10());
-        EquipmentType.addType(createISRL15());
-        EquipmentType.addType(createISRL20());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -239,39 +208,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLATM12());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
-        //Protomech weapons
-        EquipmentType.addType(createCLPROLRM1() );
-        EquipmentType.addType(createCLPROLRM2() );
-        EquipmentType.addType(createCLPROLRM3() );
-        EquipmentType.addType(createCLPROLRM4() );
-        //EquipmentType.addType(createCLPROLRM5() );
-        EquipmentType.addType(createCLPROLRM6() );
-        EquipmentType.addType(createCLPROLRM7() );
-        EquipmentType.addType(createCLPROLRM8() );
-        EquipmentType.addType(createCLPROLRM9() );
-        //EquipmentType.addType(createCLPROLRM10() );
-        EquipmentType.addType(createCLPROLRM11() );
-        EquipmentType.addType(createCLPROLRM12() );
-        EquipmentType.addType(createCLPROLRM13() );
-        EquipmentType.addType(createCLPROLRM14() );
-        //EquipmentType.addType(createCLPROLRM15() );
-        EquipmentType.addType(createCLPROLRM16() );
-        EquipmentType.addType(createCLPROLRM17() );
-        EquipmentType.addType(createCLPROLRM18() );
-        EquipmentType.addType(createCLPROLRM19() );
-        //EquipmentType.addType(createCLPROLRM20() );
-        EquipmentType.addType(createCLPROSRM1() );
-        EquipmentType.addType(createCLPROStreakSRM1() );
-        //EquipmentType.addType(createCLPROSRM2() );
-        //EquipmentType.addType(createCLPROStreakSRM2() );
-        EquipmentType.addType(createCLPROSRM3() );
-        EquipmentType.addType(createCLPROStreakSRM3() );
-        //EquipmentType.addType(createCLPROSRM4() );
-        //EquipmentType.addType(createCLPROStreakSRM4() );
-        EquipmentType.addType(createCLPROSRM5() );
-        EquipmentType.addType(createCLPROStreakSRM5() );
-        //EquipmentType.addType(createCLPROSRM6() );
-        //EquipmentType.addType(createCLPROStreakSRM6() );
 
         // Anti-Mek attacks are weapon-like in nature.
         EquipmentType.addType( createLegAttack() );
@@ -371,9 +307,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 6;
-        weapon.waterLongRange = 9;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -397,9 +330,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 4;
-        weapon.waterLongRange = 6;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -423,9 +353,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -449,9 +376,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 7;
-        weapon.waterLongRange = 10;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -598,7 +522,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -622,7 +545,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -646,7 +568,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -670,83 +591,9 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
-
-    public static WeaponType createISRL10()  {
-      WeaponType weapon = new WeaponType();
-
-      weapon.name = "RL 10";
-      weapon.internalName = "RL10";
-      weapon.mtfName = "ISRocketLauncher10";
-      weapon.tdbName = "IS RLauncher-10";
-      weapon.mepName = "ISRocketLauncher10";
-      weapon.heat = 3;
-      weapon.damage= DAMAGE_MISSILE;
-      weapon.rackSize= 10;
-      weapon.minimumRange = WEAPON_NA;
-      weapon.shortRange= 5;
-      weapon.mediumRange= 11;
-      weapon.longRange = 18;
-      weapon.tonnage = .5f;
-      weapon.criticals = 1;
-      weapon.bv= 18;
-      weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-      weapon.flags |= F_ONESHOT;
-      weapon.toHitModifier=1;
-
-      return weapon;
-    }
-    public static WeaponType createISRL15()  {
-      WeaponType weapon = new WeaponType();
-
-      weapon.name = "RL 15";
-      weapon.internalName = "RL15";
-      weapon.mtfName = "ISRocketLauncher15";
-      weapon.mepName = "ISRocketLauncher15";
-      weapon.tdbName = "IS RLauncher-15";
-      weapon.heat = 4;
-      weapon.damage= DAMAGE_MISSILE;
-      weapon.rackSize= 15;
-      weapon.minimumRange = WEAPON_NA;
-      weapon.shortRange= 4;
-      weapon.mediumRange= 9;
-      weapon.longRange = 15;
-      weapon.tonnage = 1.0f;
-      weapon.criticals = 2;
-      weapon.bv= 23;
-      weapon.flags |= F_ONESHOT;
-      weapon.toHitModifier=1;
-      weapon.ammoType= AmmoType.T_ROCKET_LAUNCHER;
-
-      return weapon;
-    }
-    public static WeaponType createISRL20()  {
-     WeaponType weapon = new WeaponType();
-
-     weapon.name = "RL 20";
-     weapon.internalName = "RL20";
-     weapon.mtfName = "ISRocketLauncher20";
-     weapon.mepName = "ISRocketLauncher20";
-     weapon.tdbName = "IS RLauncher-20";
-     weapon.heat = 5;
-     weapon.damage= DAMAGE_MISSILE;
-     weapon.rackSize= 20;
-     weapon.minimumRange = WEAPON_NA;
-     weapon.shortRange= 3;
-     weapon.mediumRange= 7;
-     weapon.longRange = 12;
-     weapon.tonnage = 1.5f;
-     weapon.criticals = 3;
-     weapon.bv= 24;
-     weapon.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-     weapon.flags |= F_ONESHOT;
-     weapon.toHitModifier=1;
-
-     return weapon;
-   }
 
     public static WeaponType createSRM2() {
         WeaponType weapon = new WeaponType();
@@ -836,9 +683,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -862,9 +706,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 19;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 9;
-        weapon.waterLongRange = 12;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -888,9 +729,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 8;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -914,9 +752,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 5;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -941,10 +776,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 7;
         weapon.longRange = 10;
-
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 7;
         weapon.tonnage = 7.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -969,9 +800,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 3;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -996,9 +824,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1465,7 +1290,6 @@ public class WeaponType extends EquipmentType {
         weapon.name = "MRM 30";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-30"; // NA in MEP
-
         weapon.mtfName = "ISMRM30";
         weapon.tdbName = "IS MRM 30";
         weapon.heat = 10;
@@ -1542,7 +1366,6 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = weapon.internalName;
         weapon.tdbName = "IS Narc Missile Beacon";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;
@@ -1575,9 +1398,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 23;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
@@ -1601,9 +1421,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 8;
         weapon.mediumRange = 15;
         weapon.longRange = 25;
-        weapon.waterShortRange = 5;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 16;
         weapon.tonnage = 4.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1627,9 +1444,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 7;
-        weapon.waterLongRange = 10;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1653,9 +1467,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1679,9 +1490,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 4;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -1758,9 +1566,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 6;
-        weapon.waterLongRange = 9;
         weapon.tonnage = 4.0f;
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1785,9 +1590,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
-        weapon.waterShortRange = 2;
-        weapon.waterMediumRange = 4;
-        weapon.waterLongRange = 6;
         weapon.tonnage = 1.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1812,9 +1614,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -1911,7 +1710,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1935,7 +1733,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1959,7 +1756,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -1983,7 +1779,6 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
-		weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }
@@ -2074,9 +1869,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 6;
         weapon.mediumRange = 14;
         weapon.longRange = 20;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 10;
-        weapon.waterLongRange = 14;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2101,9 +1893,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 4;
         weapon.mediumRange = 8;
         weapon.longRange = 12;
-        weapon.waterShortRange = 3;
-        weapon.waterMediumRange = 5;
-        weapon.waterLongRange = 8;
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2128,9 +1917,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 4;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
@@ -2155,9 +1941,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
-        weapon.waterShortRange = 1;
-        weapon.waterMediumRange = 2;
-        weapon.waterLongRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
@@ -2663,7 +2446,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-		weapon.setModes(new String[] {"", "Indirect"}); // ?
 
         return weapon;
     }
@@ -2748,7 +2530,6 @@ public class WeaponType extends EquipmentType {
         weapon.mtfName = weapon.internalName;
         weapon.tdbName = "Clan Narc Missile Beacon";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;
@@ -3109,9 +2890,6 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
         weapon.longRange = 21;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
@@ -3238,7 +3016,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createBAAutoGL() {
         WeaponType weapon = new WeaponType();
 
-        weapon.name = "Auto Grenade Launcher";
+        weapon.name = "Auto Gernade Launcher";
         weapon.internalName = "BAAutoGL";
         weapon.mepName = "BA-Auto GL";
         weapon.mtfName = weapon.internalName;
@@ -3395,749 +3173,6 @@ public class WeaponType extends EquipmentType {
         weapon.setModes(modes);
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_SOLO_ATTACK;
 
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM1() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 1";
-        weapon.internalName = "CLLRM1";
-        weapon.mtfName = "CLLRM1";
-        weapon.mepName = "CLLRM1";
-        weapon.tdbName = "CLLRM1";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=1;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 0.2f;
-        weapon.criticals=0;
-        weapon.bv = 17;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 2";
-        weapon.internalName = "CLLRM2";
-        weapon.mtfName = "CLLRM2";
-        weapon.mepName = "CLLRM2";
-        weapon.tdbName = "CLLRM2";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=2;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 0.4f;
-        weapon.criticals=0;
-        weapon.bv = 25;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM3() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 3";
-        weapon.internalName = "CLLRM3";
-        weapon.mtfName = "CLLRM3";
-        weapon.mepName = "CLLRM3";
-        weapon.tdbName = "CLLRM3";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=3;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 0.6f;
-        weapon.criticals=0;
-        weapon.bv = 35;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 4";
-        weapon.internalName = "CLLRM4";
-        weapon.mtfName = "CLLRM4";
-        weapon.mepName = "CLLRM4";
-        weapon.tdbName = "CLLRM4";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=4;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 0.8f;
-        weapon.criticals=0;
-        weapon.bv = 46;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM5() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 5";
-        weapon.internalName = "CLLRM5";
-        weapon.mtfName = "CLLRM5";
-        weapon.mepName = "CLLRM5";
-        weapon.tdbName = "CLLRM5";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=5;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 1f;
-        weapon.criticals=0;
-        weapon.bv = 55;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 6";
-        weapon.internalName = "CLLRM6";
-        weapon.mtfName = "CLLRM6";
-        weapon.mepName = "CLLRM6";
-        weapon.tdbName = "CLLRM6";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=6;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 1.2f;
-        weapon.criticals=0;
-        weapon.bv = 69;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM7() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 7";
-        weapon.internalName = "CLLRM7";
-        weapon.mtfName = "CLLRM7";
-        weapon.mepName = "CLLRM7";
-        weapon.tdbName = "CLLRM7";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=7;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 1.4f;
-        weapon.criticals=0;
-        weapon.bv = 92;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM8() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 8";
-        weapon.internalName = "CLLRM8";
-        weapon.mtfName = "CLLRM8";
-        weapon.mepName = "CLLRM8";
-        weapon.tdbName = "CLLRM8";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=8;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 1.6f;
-        weapon.criticals=0;
-        weapon.bv = 93;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM9() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 9";
-        weapon.internalName = "CLLRM9";
-        weapon.mtfName = "CLLRM9";
-        weapon.mepName = "CLLRM9";
-        weapon.tdbName = "CLLRM9";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=9;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 1.8f;
-        weapon.criticals=0;
-        weapon.bv = 95;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM10() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 10";
-        weapon.internalName = "CLLRM10";
-        weapon.mtfName = "CLLRM10";
-        weapon.mepName = "CLLRM10";
-        weapon.tdbName = "CLLRM10";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=10;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 2f;
-        weapon.criticals=0;
-        weapon.bv = 109;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM11() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 11";
-        weapon.internalName = "CLLRM11";
-        weapon.mtfName = "CLLRM11";
-        weapon.mepName = "CLLRM11";
-        weapon.tdbName = "CLLRM11";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=11;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 2.2f;
-        weapon.criticals=0;
-        weapon.bv = 139;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM12() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 12";
-        weapon.internalName = "CLLRM12";
-        weapon.mtfName = "CLLRM12";
-        weapon.mepName = "CLLRM12";
-        weapon.tdbName = "CLLRM12";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=12;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 2.4f;
-        weapon.criticals=0;
-        weapon.bv = 141;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM13() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 13";
-        weapon.internalName = "CLLRM13";
-        weapon.mtfName = "CLLRM13";
-        weapon.mepName = "CLLRM13";
-        weapon.tdbName = "CLLRM13";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=13;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 2.6f;
-        weapon.criticals=0;
-        weapon.bv = 161;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM14() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 14";
-        weapon.internalName = "CLLRM14";
-        weapon.mtfName = "CLLRM14";
-        weapon.mepName = "CLLRM14";
-        weapon.tdbName = "CLLRM14";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=14;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 2.8f;
-        weapon.criticals=0;
-        weapon.bv = 163;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM15() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 15";
-        weapon.internalName = "CLLRM15";
-        weapon.mtfName = "CLLRM15";
-        weapon.mepName = "CLLRM15";
-        weapon.tdbName = "CLLRM15";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=15;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 3f;
-        weapon.criticals=0;
-        weapon.bv = 164;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM16() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 16";
-        weapon.internalName = "CLLRM16";
-        weapon.mtfName = "CLLRM16";
-        weapon.mepName = "CLLRM16";
-        weapon.tdbName = "CLLRM16";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=16;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 3.2f;
-        weapon.criticals=0;
-        weapon.bv = 214;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM17() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 17";
-        weapon.internalName = "CLLRM17";
-        weapon.mtfName = "CLLRM17";
-        weapon.mepName = "CLLRM17";
-        weapon.tdbName = "CLLRM17";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=17;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 3.4f;
-        weapon.criticals=0;
-        weapon.bv = 215;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM18() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 18";
-        weapon.internalName = "CLLRM18";
-        weapon.mtfName = "CLLRM18";
-        weapon.mepName = "CLLRM18";
-        weapon.tdbName = "CLLRM18";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=18;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 3.6f;
-        weapon.criticals=0;
-        weapon.bv = 217;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM19() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 19";
-        weapon.internalName = "CLLRM19";
-        weapon.mtfName = "CLLRM19";
-        weapon.mepName = "CLLRM19";
-        weapon.tdbName = "CLLRM19";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=19;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 3.8f;
-        weapon.criticals=0;
-        weapon.bv = 218;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM20() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "LRM 20";
-        weapon.internalName = "CLLRM20";
-        weapon.mtfName = "CLLRM20";
-        weapon.mepName = "CLLRM20";
-        weapon.tdbName = "CLLRM20";
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=20;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.tonnage = 4f;
-        weapon.criticals=0;
-        weapon.bv = 220;
-        weapon.flags |= F_PROTOMECH;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-    public static WeaponType createCLPROSRM1() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 1";
-        weapon.internalName = "CLSRM1";
-        weapon.mtfName = "CLSRM1";
-        weapon.mepName = "CLSRM1";
-        weapon.tdbName = "CLSRM1";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 1;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 0.25f;
-        weapon.criticals = 0;
-        weapon.bv = 15;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 2";
-        weapon.internalName = "CLSRM2";
-        weapon.mtfName = "CLSRM2";
-        weapon.mepName = "CLSRM2";
-        weapon.tdbName = "CLSRM2";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 0.5f;
-        weapon.criticals = 0;
-        weapon.bv = 21;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM3() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 3";
-        weapon.internalName = "CLSRM3";
-        weapon.mtfName = "CLSRM3";
-        weapon.mepName = "CLSRM3";
-        weapon.tdbName = "CLSRM3";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 3;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 0.75f;
-        weapon.criticals = 0;
-        weapon.bv = 30;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 4";
-        weapon.internalName = "CLSRM4";
-        weapon.mtfName = "CLSRM4";
-        weapon.mepName = "CLSRM4";
-        weapon.tdbName = "CLSRM4";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 39;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM5() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 5";
-        weapon.internalName = "CLSRM5";
-        weapon.mtfName = "CLSRM5";
-        weapon.mepName = "CLSRM5";
-        weapon.tdbName = "CLSRM5";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 1.25f;
-        weapon.criticals = 0;
-        weapon.bv = 47;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "SRM 6";
-        weapon.internalName = "CLSRM6";
-        weapon.mtfName = "CLSRM6";
-        weapon.mepName = "CLSRM6";
-        weapon.tdbName = "CLSRM6";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.tonnage = 1.5f;
-        weapon.criticals = 0;
-        weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM1() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 1";
-        weapon.internalName = "CLStreakSRM1";
-        weapon.mtfName = "CLStreakSRM1";
-        weapon.mepName = "CLStreakSRM1";
-        weapon.tdbName = "CLStreakSRM1";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 1;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 0.5f;
-        weapon.criticals = 0;
-        weapon.bv = 20;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 2";
-        weapon.internalName = "CLStreakSRM2";
-        weapon.mtfName = "CLStreakSRM2";
-        weapon.mepName = "CLStreakSRM2";
-        weapon.tdbName = "CLStreakSRM2";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 40;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM3() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 3";
-        weapon.internalName = "CLStreakSRM3";
-        weapon.mtfName = "CLStreakSRM3";
-        weapon.mepName = "CLStreakSRM3";
-        weapon.tdbName = "CLStreakSRM3";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 3;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 1.5f;
-        weapon.criticals = 0;
-        weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 4";
-        weapon.internalName = "CLStreakSRM4";
-        weapon.mtfName = "CLStreakSRM4";
-        weapon.mepName = "CLStreakSRM4";
-        weapon.tdbName = "CLStreakSRM4";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 2f;
-        weapon.criticals = 0;
-        weapon.bv = 79;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM5() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 5";
-        weapon.internalName = "CLStreakSRM5";
-        weapon.mtfName = "CLStreakSRM5";
-        weapon.mepName = "CLStreakSRM5";
-        weapon.tdbName = "CLStreakSRM5";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 2.5f;
-        weapon.criticals = 0;
-        weapon.bv = 99;
-        weapon.flags |= F_PROTOMECH;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.name = "Streak SRM 6";
-        weapon.internalName = "CLStreakSRM6";
-        weapon.mtfName = "CLStreakSRM6";
-        weapon.mepName = "CLStreakSRM6";
-        weapon.tdbName = "CLStreakSRM6";
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.tonnage = 3f;
-        weapon.criticals = 0;
-        weapon.bv = 119;
-        weapon.flags |= F_PROTOMECH;
         return weapon;
     }
 

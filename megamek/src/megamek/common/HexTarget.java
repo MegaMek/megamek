@@ -19,17 +19,21 @@ public class HexTarget implements Targetable
     private Coords m_coords;
     private boolean m_bIgnite;
     private int m_elev;
-    private int m_type;
     
     public HexTarget(Coords c, Board board, int nType) {
         m_coords = c;
         m_elev = board.getHex(m_coords).getElevation();
-        m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
     
+    public HexTarget(Coords c, Board board, boolean bIgnite) {
+        m_coords = c;
+        m_elev = board.getHex(m_coords).getElevation();
+        m_bIgnite = bIgnite;
+    }
+    
     public int getTargetType() { 
-        return m_type;
+        return m_bIgnite ? Targetable.TYPE_HEX_IGNITE : Targetable.TYPE_HEX_CLEAR;
     }
     
     public int getTargetId() {
@@ -53,23 +57,12 @@ public class HexTarget implements Targetable
     }
     
     public boolean isImmobile() {
-        return m_type != Targetable.TYPE_MINEFIELD_DELIVER;
+        return true;
     }
-
+    
     public String getDisplayName() {
-    	String name = "";
-    	switch (m_type) {
-		case (Targetable.TYPE_MINEFIELD_DELIVER) :
-			name = " (Deliver minefield)";
-			break;
-		case (Targetable.TYPE_HEX_CLEAR) :
-			name = " (Clear)";
-			break;
-		case (Targetable.TYPE_HEX_IGNITE) :
-			name = " (Ignite)";
-			break;
-    	}
-        return "Hex: " + m_coords.getBoardNum() + name;
+        return "Hex: " + m_coords.getBoardNum() + 
+                (m_bIgnite ? " (Ignite)" : " (Clear)");
     }
     
     public boolean isIgniting() {

@@ -34,18 +34,13 @@ import megamek.common.options.*;
  * @author  Ben
  * @version 
  */
-public class GameOptionsDialog extends Dialog implements ActionListener, DialogOptionListener {
+public class GameOptionsDialog extends Dialog implements ActionListener {
     
     private Client client;
     private GameOptions options;
-
-    private boolean editable = true;
-
-    private Vector optionComps = new Vector();
-
-    private int maxOptionWidth = 0;
     
-    private AlertDialog savedAlert = null;
+    private Vector optionComps = new Vector();
+    
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
     
@@ -56,18 +51,14 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private TextField texPass = new TextField(15);
     
     private Panel panButtons = new Panel();
-    private Button butSave = new Button("Save");
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
-
-    /**
-     * Initialize this dialog.
-     *
-     * @param   frame - the <code>Frame</code> parent of this dialog.
-     * @param   options - the <code>GameOptions</code> to be displayed.
-     */
-    private void init( Frame frame, GameOptions options ) {
-        this.options = options;
+    
+    /** Creates new GameOptionsDialog */
+    public GameOptionsDialog(Client client) {
+        super(client.frame, "View/Edit Game Options...", true);
+        this.client = client;
+        this.options = client.game.getOptions();
         
         scrOptions.add(panOptions);
         
@@ -100,44 +91,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         add(panButtons);
         
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) { setVisible(false); }
-            });
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
         
         pack();
         setSize(getSize().width, Math.max(getSize().height, 400));
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
-
-        savedAlert = new AlertDialog(frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.");
-
+        setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
+                    client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
     }
-
-    /**
-     * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
-     *
-     * @param   client - the <code>Client</code> parent of this dialog.
-     */
-    public GameOptionsDialog(Client client) {
-        super(client.frame, "View/Edit Game Options...", true);
-        this.client = client;
-        this.init( client.frame, client.game.getOptions() );
-    }
-
-    /**
-     * Creates new <code>GameOptionsDialog</code> for a given 
-     * <code>Frame</code>, with given set of options.
-     *
-     * @param   frame - the <code>Frame</code> parent of this dialog.
-     * @param   options - the <code>GameOptions</code> to be displayed.
-     */
-    public GameOptionsDialog( Frame frame, GameOptions options ) {
-        super(frame, "View/Edit Game Options...", true);
-        this.client = null;
-        this.init( frame, options );
-        butOkay.setEnabled( false );
-    }
-
+    
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
@@ -147,33 +110,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         Vector changed = new Vector();
         
         for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+            OptionComponent comp = (OptionComponent)i.nextElement();
             
             if (comp.hasChanged()) {
                 changed.addElement(comp.changedOption());
             }
         }
         
-        if (client != null && changed.size() > 0) {
+        if (changed.size() > 0) {
             client.sendGameOptions(texPass.getText(), changed);
         }
-    }
-    
-    public void doSave() {
-      Vector options = new Vector();
-      
-      for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-        DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
-        
-        GameOption option = comp.getOption().deepCopy();
-        option.setValue(comp.getValue());
-        
-        options.addElement(option);
-      }
-      
-      GameOptions.saveOptions(options);
-      
-      savedAlert.show();
     }
     
     private void refreshOptions() {
@@ -200,11 +146,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 addOption(option, gridbag, c);
             }
         }
-
-        // Make the width accomadate the longest game option label
-        //  without needing to scroll horizontally.
-        setSize(Math.min(client.getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
-
+        
         validate();
     }
     
@@ -216,63 +158,21 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this, option);
+        OptionComponent optionComp = new OptionComponent(option);
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
-        maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
-
-        if (option.getShortName().equals("inf_and_protos_deploy_last")) {
-            if (!(options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
-                optionComp.setEditable(false);
-            }
-        } else if (option.getShortName().equals("inf_and_protos_move_multi")) {
-            if ((options.getOption("inf_and_protos_move_last")).booleanValue() || !editable) {
-                optionComp.setEditable(false);
-            }
-        } else if (option.getShortName().equals("inf_and_protos_move_last")) {
-            if ((options.getOption("inf_and_protos_move_multi")).booleanValue() || !editable) {
-                optionComp.setEditable(false);
-            }
-        } else {
-            optionComp.setEditable( editable );
-        }
+        
         optionComps.addElement(optionComp);
     }
     
-    // Gets called when one of the options gets moused over.
-    public void showDescFor(GameOption option) {
+    
+    private void showDescFor(GameOption option) {
         texDesc.setText(option.getDesc());
     }
     
-    // Gets called when one of the option checkboxes is clicked.
-    //  Arguments are the GameOption object and the true/false
-    //  state of the checkbox.
-    public void optionClicked(DialogOptionComponent comp, GameOption option, boolean state) {
-        if (option.getShortName().equals("inf_and_protos_move_last")) {
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_and_protos_deploy_last")) {
-                    comp_i.setEditable(state);
-                    comp_i.setState(false);
-                }
-                if (comp_i.option.getShortName().equals("inf_and_protos_move_multi")) {
-                    comp_i.setEditable(!state);
-                }
-            }
-        }
-        if (option.getShortName().equals("inf_and_protos_move_multi")) {
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
-                if (comp_i.option.getShortName().equals("inf_and_protos_move_last")) {
-                    comp_i.setEditable(!state);
-                }
-            }
-        }
-    }
-
+    
     private void setupButtons() {
-        butSave.addActionListener(this);
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         
@@ -290,12 +190,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         gridbag.setConstraints(butOkay, c);
         panButtons.add(butOkay);
             
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(butSave, c);
-        panButtons.add(butSave);
-            
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
     }
@@ -311,47 +207,78 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOkay) {
             send();
-        } else if (e.getSource() == butSave) {
-          doSave();
-          
-          return;
         }
-        
         this.setVisible(false);
     }
 
-    /**
-     * Update the dialog so that it is editable or view-only.
-     *
-     * @param   editable - <code>true</code> if the contents of the dialog
-     *          are editable, <code>false</code> if they are view-only.
-     */
-    public void setEditable( boolean editable ) {
-
-        // Set enabled state of all of the option components in the dialog.
-        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-            DialogOptionComponent comp = 
-                (DialogOptionComponent) i.nextElement();
-            comp.setEditable( editable );
-        }
-
-        // If the panel is editable, the player can commit and save.
-        texPass.setEnabled( editable );
-        butOkay.setEnabled( editable && client != null );
-        butSave.setEnabled( editable );
-
-        // Update our data element.
-        this.editable = editable;
-    }
-
-    /**
-     * Determine whether the dialog is editable or view-only.
-     *
-     * @return  <code>true</code> if the contents of the dialog are
-     *          editable, <code>false</code> if they are view-only.
-     */
-    public boolean isEditable() {
-        return this.editable;
-    }
+    
+    private class OptionComponent extends Panel implements MouseListener
+    {
+        GameOption option;
         
+        private Checkbox checkbox;
+        private TextField textField;
+        private Label label;
+        
+        public OptionComponent(GameOption option) {
+            this.option = option;
+            
+            addMouseListener(this);
+            
+            setLayout(new BorderLayout());
+            switch(option.getType()) {
+                case GameOption.BOOLEAN :
+                    checkbox = new Checkbox(option.getFullName(), option.booleanValue());
+                    checkbox.addMouseListener(this);
+                    add(checkbox, BorderLayout.CENTER);
+                    break;
+                default :
+                    textField = new TextField(option.stringValue(), 2);
+                    textField.addMouseListener(this);
+                    add(textField, BorderLayout.WEST);
+                    label = new Label(option.getFullName());
+                    label.addMouseListener(this);
+                    add(label, BorderLayout.CENTER);
+                    break;
+            }
+            
+        }
+        
+        public boolean hasChanged() {
+            return !option.getValue().equals(getValue());
+        }
+        
+        private Object getValue() {
+            switch(option.getType()) {
+                case GameOption.BOOLEAN :
+                    return new Boolean(checkbox.getState());
+                case GameOption.INTEGER :
+                    return Integer.valueOf(textField.getText());
+                case GameOption.FLOAT :
+                    return Float.valueOf(textField.getText());
+                default :
+                    return null;
+            }
+        }
+        
+        /**
+         * Returns a new option, representing the option in it's changed state.
+         */
+        public GameOption changedOption() {
+            return new GameOption(option.getShortName(), "", "", option.getType(), getValue());
+        }
+        
+        public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+            showDescFor(option);
+        }
+        public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+        }
+        public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+        }
+        
+    }
 }

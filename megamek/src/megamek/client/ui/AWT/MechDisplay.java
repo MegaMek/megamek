@@ -1,14 +1,14 @@
 /**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it 
+ *  under the terms of the GNU General Public License as published by the Free 
+ *  Software Foundation; either version 2 of the License, or (at your option) 
  *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * 
+ *  This program is distributed in the hope that it will be useful, but 
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
 
@@ -26,15 +26,15 @@ import megamek.common.*;
  * Displays the info for a mech.  This is also a sort
  * of interface for special movement and firing actions.
  */
-public class MechDisplay extends BufferedPanel
+public class MechDisplay extends BufferedPanel 
 
 
 {
     // buttons & gizmos for top level
-
+    
     MechPanelTabStrip tabStrip;
-
-
+    
+    
     public BufferedPanel        displayP;
     public MovementPanel        mPan;
     public ArmorPanel           aPan;
@@ -42,19 +42,19 @@ public class MechDisplay extends BufferedPanel
     public SystemPanel          sPan;
     public ExtraPanel           ePan;
     private Client              client;
-
+    
     private Entity              currentlyDisplaying = null;
-
+    
     /**
      * Creates and lays out a new mech display.
      */
     public MechDisplay(Client client) {
         super(new GridBagLayout());
-
+        
         this.client = client;
-
+        
         tabStrip = new MechPanelTabStrip(this);
-
+        
         displayP = new BufferedPanel(new CardLayout());
         mPan = new MovementPanel();
         displayP.add("movement", mPan);
@@ -66,46 +66,40 @@ public class MechDisplay extends BufferedPanel
         displayP.add("systems", sPan);
         ePan = new ExtraPanel(client);
         displayP.add("extras", ePan);
-
+        
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 1, 0, 1);
-
+        
         c.weightx = 1.0;    c.weighty = 0.0;
-
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(tabStrip, c);
         c.insets = new Insets(0, 1, 1, 1);
         c.weighty = 1.0;
         addBag(displayP, c);
-
+        
         ((CardLayout)displayP.getLayout()).show(displayP, "movement");
         //tabStrip.setTab(0);
-        
-        client.mechW.addKeyListener(client.menuBar);
     }
-
+    
     public void addBag(Component comp, GridBagConstraints c) {
         ((GridBagLayout)getLayout()).setConstraints(comp, c);
         add(comp);
     }
-
+    
     /**
      * @deprecated use displayEntity instead
      */
     public void displayMech(Entity en) {
         displayEntity(en);
     }
-
+    
     /**
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
-
-        // 2003-12-30, nemchenk
-        client.mechW.setTitle(en.getShortName());
-
         this.currentlyDisplaying = en;
 
         mPan.displayMech(en);
@@ -114,38 +108,38 @@ public class MechDisplay extends BufferedPanel
         sPan.displayMech(en);
         ePan.displayMech(en);
     }
-
+    
     /**
      * Returns the entity we'return currently displaying
      */
-
+    
     public Entity getCurrentEntity() {
         return currentlyDisplaying;
     }
-
-
+    
+    
     /**
-	 * Changes to the specified panel.
-	 */
+     * Changes to the specified panel.
+     */
     public void showPanel(String s) {
-        ((CardLayout) displayP.getLayout()).show(displayP, s);
+        ((CardLayout)displayP.getLayout()).show(displayP, s);
         if (s == "movement") {
-            tabStrip.setTab(0);
-        } else if (s == "armor") {
-            tabStrip.setTab(1);
-        } else if (s == "weapons") {
-            tabStrip.setTab(3);
-        } else if (s == "systems") {
-            tabStrip.setTab(2);
-        } else if (s == "extras") {
-            tabStrip.setTab(4);
-        }
+	       tabStrip.setTab(0);
+	    } else if (s == "armor") {
+	    	tabStrip.setTab(1);
+	    } else if (s == "weapons"){
+	    	tabStrip.setTab(3);
+	    } else if (s == "systems") {
+	    	tabStrip.setTab(2);
+	    } else if (s == "extras") {
+	    	tabStrip.setTab(4);
+	    }
     }
-
+    
 }
 /**
  * The movement panel contains all the buttons, readouts
- * and gizmos relating to moving around on the
+ * and gizmos relating to moving around on the 
  * battlefield.
  */
 class MovementPanel extends PicMap{
@@ -154,32 +148,31 @@ class MovementPanel extends PicMap{
 
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
-
-    public MovementPanel() {
+    
+    
+    
+    public void addNotify(){
+        super.addNotify();
         gi = new GeneralInfoMapSet(this);
         addElement(gi.getContentGroup());
         Vector v = gi.getBackgroundDrawers();
         Enumeration enum = v.elements();
         while(enum.hasMoreElements()){
-          addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
-    }
-
-    public void addNotify(){
-        super.addNotify();
         update();
     }
-
+    
     public void onResize(){
-      int w = getSize().width;
-      Rectangle r = getContentBounds();
-      int dx = (int) Math.round((w - r.width)/2);
-      if (dx < minLeftMargin) dx = minLeftMargin;
-      int dy = minTopMargin;
-        if( r != null) setContentMargins(dx, dy, dx, dy);
+    	int w = getSize().width;
+    	Rectangle r = getContentBounds();
+    	int dx = (int) Math.round((w - r.width)/2);
+    	if (dx < minLeftMargin) dx = minLeftMargin;
+    	int dy = minTopMargin;
+      	if( r != null) setContentMargins(dx, dy, dx, dy);
     }
-
+        
     /**
      * updates fields for the specified mech
      */
@@ -187,25 +180,26 @@ class MovementPanel extends PicMap{
        gi.setEntity(en);
        onResize();
        update();
-    }
+    }     
 
+
+    
 }
-
+    
 /**
  * This panel contains the armor readout display.
  */
-class ArmorPanel  extends PicMap
+class ArmorPanel  extends PicMap 
 {
     private TankMapSet tank;
     private MechMapSet mech;
     private InfantryMapSet infantry;
     private BattleArmorMapSet battleArmor;
-    private ProtomechMapSet proto;
     private int minTopMargin = 0;
     private int minLeftMargin = 0;
     private int minBottomMargin = 0;
     private int minRightMargin = 0;
-
+    
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
     private static final int minMechTopMargin = 18;
@@ -214,131 +208,116 @@ class ArmorPanel  extends PicMap
     private static final int minMechRightMargin = 0;
     private static final int minInfTopMargin = 8;
     private static final int minInfLeftMargin = 8;
-
-    public void addNotify() {
+    
+    
+    public void addNotify(){
         super.addNotify();
         tank = new TankMapSet(this);
         mech = new MechMapSet(this);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtomechMapSet(this);
     }
-
+    
     public void onResize(){
-      Rectangle r = getContentBounds();
-      if( r == null) return;
-      int w = (int) Math.round((getSize().width - r.width)/2);
-      int h = (int) Math.round((getSize().height - r.height)/2);
-      int dx = (w < minLeftMargin) ? minLeftMargin : w;
-      int dy = (h < minTopMargin) ? minTopMargin : h;
-        setContentMargins(dx, dy, minRightMargin, minBottomMargin);
+    	Rectangle r = getContentBounds();
+    	if( r == null) return;
+    	int w = (int) Math.round((getSize().width - r.width)/2);
+    	int h = (int) Math.round((getSize().height - r.height)/2);
+    	int dx = (w < minLeftMargin) ? minLeftMargin : w;
+    	int dy = (h < minTopMargin) ? minTopMargin : h;
+      	setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
-
+        
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-        // Look out for a race condition.
-        if (null == en) {
-            return;
-        }
-        DisplayMapSet ams = (DisplayMapSet) mech;
-        removeAll();
-        if (en instanceof Mech) {
-            ams = (DisplayMapSet) mech;
-            minLeftMargin = minMechLeftMargin;
-            minTopMargin = minMechTopMargin;
+    	DisplayMapSet ams = (DisplayMapSet) mech;
+    	removeAll();
+        if(en instanceof Mech){
+        	ams = (DisplayMapSet) mech;
+         	minLeftMargin = minMechLeftMargin;
+        	minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
-        } else if (en instanceof Tank) {
-            ams = (DisplayMapSet) tank;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
+        } else if (en instanceof Tank){
+        	ams = (DisplayMapSet) tank;
+        	minLeftMargin = minTankLeftMargin;
+        	minTopMargin = minTankTopMargin;
+        	minBottomMargin = minTankTopMargin;
             minRightMargin = minTankLeftMargin;
-        } else if (en instanceof BattleArmor) {
-            ams = (DisplayMapSet) battleArmor;
+        } else if (	en instanceof BattleArmor){
+        	ams = (DisplayMapSet) battleArmor;
             minLeftMargin = minInfLeftMargin;
-            minTopMargin = minInfTopMargin;
-            minBottomMargin = minInfTopMargin;
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-
-        } else if (en instanceof Infantry) {
-            ams = (DisplayMapSet) infantry;
+        	       	
+        } else if (en instanceof Infantry){
+        	ams = (DisplayMapSet)infantry;
             minLeftMargin = minInfLeftMargin;
-            minTopMargin = minInfTopMargin;
-            minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;
-
-        } else if (en instanceof Protomech) {
-            ams = (DisplayMapSet) proto;
-            minLeftMargin = minTankLeftMargin;
-            minTopMargin = minTankTopMargin;
-            minBottomMargin = minTankTopMargin;
-            minRightMargin = minTankLeftMargin;
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;        	
+        	         	
         }
-        if (null == ams) {
-            System.err.println("The armor panel is null.");
-            return;
-        }
-        ams.setEntity(en);
+        ams.setEntity(en); 
         this.addElement(ams.getContentGroup());
         Vector v = ams.getBackgroundDrawers();
         Enumeration enum = v.elements();
-        while (enum.hasMoreElements()) {
-            addBgDrawer((BackGroundDrawer) enum.nextElement());
+        while(enum.hasMoreElements()){
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();
     }
 }
-
-
+    
+    
 /**
  * This class contains the all the gizmos for firing the
  * mech's weapons.
  */
-class WeaponPanel extends BufferedPanel
+class WeaponPanel extends BufferedPanel 
     implements ItemListener
 {
     public java.awt.List weaponList;
     public Choice m_chAmmo;
-
+        
     public TransparentLabel wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL, wMedL, wLongL;
     public TransparentLabel wNameR, wHeatR, wDamR, wMinR, wShortR,wMedR, wLongR;
     public TransparentLabel currentHeatBuildupL, currentHeatBuildupR;
-
+        
     public TransparentLabel wTargetL, wRangeL, wToHitL;
     public TransparentLabel wTargetR, wRangeR, wToHitR;
-
+        
     public TextArea toHitText;
-
+        
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
     private Vector weapons;
     private Vector vAmmo;
     private Entity entity;
     private Client client;
-
+    
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 10);
-
-    public WeaponPanel(Client client) {
+        
+    public WeaponPanel(Client client) {        
         super(new GridBagLayout());
-
+        
         this.client = client;
-
+         
         FontMetrics fm = getFontMetrics(FONT_VALUE);
-
+        
         Color clr = Color.white;
 
         // weapon list
         weaponList = new java.awt.List(4, false);
         weaponList.addItemListener(this);
-        weaponList.addKeyListener(client.menuBar);
-
+        
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
-
+        
         //adding Weapon List
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 9);
@@ -346,41 +325,40 @@ class WeaponPanel extends BufferedPanel
         c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout)getLayout()).setConstraints(weaponList, c);
         add(weaponList);
-
+        
         //adding Ammo choice + label
-
+        
         wAmmo = new TransparentLabel("Ammo", fm, clr, TransparentLabel.LEFT);
         m_chAmmo = new Choice();
         m_chAmmo.addItemListener(this);
-        m_chAmmo.addKeyListener(client.menuBar);
-
+        
         c.insets = new Insets(1, 9, 1, 1);
-
+        
         c.gridwidth = 1;
         c.weighty = 0.0;
         c.fill = GridBagConstraints.NONE;
         ((GridBagLayout)getLayout()).setConstraints(wAmmo, c);
         add(wAmmo);
-
-        c.insets = new Insets(1, 1, 1, 9);
+        
+        c.insets = new Insets(1, 1, 1, 9);        
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         ((GridBagLayout)getLayout()).setConstraints(m_chAmmo, c);
         add(m_chAmmo);
-
+        
         //Adding Heat Buildup
-
+            
         currentHeatBuildupL = new TransparentLabel("Heat Buildup: ", fm, clr, TransparentLabel.RIGHT);
         currentHeatBuildupR = new TransparentLabel("--", fm, clr, TransparentLabel.LEFT);
-
+        
         c.insets = new Insets(2, 9, 2, 1);
         c.gridwidth = 2; c.gridx = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         ((GridBagLayout)getLayout()).setConstraints(currentHeatBuildupL, c);
         add(currentHeatBuildupL);
-
+        
         c.insets = new Insets(2, 1, 2, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridx = 2;
@@ -389,7 +367,7 @@ class WeaponPanel extends BufferedPanel
         ((GridBagLayout)getLayout()).setConstraints(currentHeatBuildupR, c);
         add(currentHeatBuildupR);
 
-
+            
         //Adding weapon display labels
         wNameL = new TransparentLabel("Name", fm, clr, TransparentLabel.CENTER);
         wHeatL = new TransparentLabel("Heat", fm, clr, TransparentLabel.CENTER);
@@ -397,45 +375,45 @@ class WeaponPanel extends BufferedPanel
         wNameR = new TransparentLabel("", fm, clr, TransparentLabel.CENTER);
         wHeatR = new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
         wDamR =  new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
-
-
-         c.anchor = GridBagConstraints.CENTER;
+        
+        
+         c.anchor = GridBagConstraints.CENTER;    
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(2, 9, 1, 1);
-        c.gridwidth = 2; c.gridx = 0;
+        c.gridwidth = 2; c.gridx = 0;            
         ((GridBagLayout)getLayout()).setConstraints(wNameL, c);
         add(wNameL);
-
-
+        
+        
         c.insets = new Insets(2, 1, 1, 1);
-        c.gridwidth = 1; c.gridx = 2;
+        c.gridwidth = 1; c.gridx = 2; 
         ((GridBagLayout)getLayout()).setConstraints(wHeatL, c);
         add(wHeatL);
-
-        c.insets = new Insets(2, 1, 1, 9);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.gridx = 3;
+        
+        c.insets = new Insets(2, 1, 1, 9);    
+        c.gridwidth = GridBagConstraints.REMAINDER; 
+        c.gridx = 3;            
         ((GridBagLayout)getLayout()).setConstraints(wDamL, c);
         add(wDamL);
-
+        
         c.insets = new Insets(1, 9, 2, 1);
         c.gridwidth = 2;
-        c.gridx = 0; c.gridy = 4;
+        c.gridx = 0; c.gridy = 4;            
         ((GridBagLayout)getLayout()).setConstraints(wNameR, c);
         add(wNameR);
-
+        
         c.gridwidth = 1;
-        c.gridx = 2;
+        c.gridx = 2; 
         ((GridBagLayout) getLayout()).setConstraints(wHeatR, c);
         add(wHeatR);
-
+        
         c.insets = new Insets(1, 1, 2, 9);
-        c.gridx = 3;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 3;    
+        c.gridwidth = GridBagConstraints.REMAINDER;            
         ((GridBagLayout) getLayout()).setConstraints(wDamR, c);
         add(wDamR);
-
-
+        
+        
         // Adding range labels
         wMinL = new TransparentLabel("Min", fm, clr, TransparentLabel.CENTER);
         wShortL = new TransparentLabel("Short", fm, clr, TransparentLabel.CENTER);
@@ -445,59 +423,59 @@ class WeaponPanel extends BufferedPanel
         wShortR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wMedR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wLongR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-
+        
         c.weightx = 1.0;
         c.insets = new Insets(2, 9, 1, 1);
         c.gridx = 0; c.gridy = 5; c.gridwidth = 1;
         ((GridBagLayout) getLayout()).setConstraints(wMinL, c);
         add(wMinL);
-
+        
         c.insets = new Insets(2, 1, 1, 1);
         c.gridx = 1; c.gridy = 5;
         ((GridBagLayout) getLayout()).setConstraints(wShortL, c);
         add(wShortL);
-
+        
         c.gridx = 2; c.gridy = 5;
         ((GridBagLayout) getLayout()).setConstraints(wMedL, c);
         add(wMedL);
-
+        
         c.insets = new Insets(2, 1, 1, 9);
         c.gridx = 3; c.gridy = 5; c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout) getLayout()).setConstraints(wLongL, c);
         add(wLongL);
-        //----------------
-
+        //---------------- 
+        
          c.insets = new Insets(1, 9, 2, 1);
         c.gridx = 0; c.gridy = 6; c.gridwidth = 1;
         ((GridBagLayout) getLayout()).setConstraints(wMinR, c);
         add(wMinR);
-
+        
         c.insets = new Insets(1, 1, 2, 1);
         c.gridx = 1; c.gridy = 6;
         ((GridBagLayout) getLayout()).setConstraints(wShortR, c);
         add(wShortR);
-
+        
         c.gridx = 2; c.gridy = 6;
         ((GridBagLayout) getLayout()).setConstraints(wMedR, c);
         add(wMedR);
-
+        
         c.insets = new Insets(1, 1, 2, 9);
         c.gridx = 3; c.gridy = 6; c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout) getLayout()).setConstraints(wLongR, c);
-        add(wLongR);
-
-
+        add(wLongR);        
+        
+            
         // target panel
         wTargetL = new TransparentLabel("Target:", fm, clr, TransparentLabel.CENTER);
         wRangeL = new TransparentLabel("Range:", fm, clr, TransparentLabel.CENTER);
         wToHitL = new TransparentLabel("To Hit:", fm, clr, TransparentLabel.CENTER);
-
+            
         wTargetR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wRangeR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
         wToHitR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
-
+        
         c.weightx = 0.0;
-        c.insets = new Insets(2, 9, 1, 1);
+        c.insets = new Insets(2, 9, 1, 1);    
         c.gridx = 0; c.gridy = 7; c.gridwidth = 1;
         ((GridBagLayout) getLayout()).setConstraints(wTargetL, c);
         add(wTargetL);
@@ -530,91 +508,90 @@ class WeaponPanel extends BufferedPanel
         // to-hit text
         toHitText = new TextArea("", 2, 20, TextArea.SCROLLBARS_VERTICAL_ONLY);
         toHitText.setEditable(false);
-        toHitText.addKeyListener(client.menuBar);
-
+        
         c.insets = new Insets(1, 9, 15, 9);
         c.gridx = 0; c.gridy = 10; c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout) getLayout()).setConstraints(toHitText, c);
         add(toHitText);
-
-
+ 
+        
         setBackGround();
-
-
+        
+        
     }
-
+    
     private void setBackGround(){
         Image tile = getToolkit().getImage("data/widgets/tile.gif");
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
-        addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-
-            b = BackGroundDrawer.NO_TILING |
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/tl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/bl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/tr_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/br_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
+         
     }
 
-
+        
     /**
      * updates fields for the specified mech
-     *
+     * 
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {
         // update pointer to weapons
         this.weapons = en.getWeaponList();
         this.entity = en;
-
+            
         int currentHeatBuildup = en.heat // heat from last round
             + en.getEngineCritHeat() // heat engine crits will add
             + en.heatBuildup; // heat we're building up this round
@@ -624,47 +601,47 @@ class WeaponPanel extends BufferedPanel
         if ( en instanceof Mech && en.isStealthActive() ) {
             currentHeatBuildup += 10; // active stealth heat
         }
-
+        
         // update weapon list
         weaponList.removeAll();
         m_chAmmo.removeAll();
         m_chAmmo.setEnabled(false);
-
+        
         for(int i = 0; i < weapons.size(); i++) {
             Mounted mounted = (Mounted)weapons.elementAt(i);
             WeaponType wtype = (WeaponType)mounted.getType();
-            String wn = mounted.getDesc()
+            String wn = mounted.getDesc() 
                         + " [" + en.getLocationAbbr(mounted.getLocation()) + "]";
             // determine shots left & total shots left
-            if (wtype.getAmmoType() != AmmoType.T_NA && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
                 int shotsLeft = 0;
                 if (mounted.getLinked() != null && !mounted.getLinked().isDumping()) {
                     shotsLeft = mounted.getLinked().getShotsLeft();
                 }
-
+                
                 EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
                 int totalShotsLeft = entity.getTotalAmmoOfType(typeUsed);
-
+                
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
             }
 
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {
                 wn += " " + mounted.curMode();
-            }
+            }    
             weaponList.add(wn);
-            if (mounted.isUsedThisRound() && client.game.getPhase() == Game.PHASE_FIRING) {
+            if (mounted.isUsedThisRound() && client.game.phase == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }
         }
-
+        
         // This code block copied from the MovementPanel class,
         //  bad coding practice (duplicate code).
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
         String heatCapacityStr = Integer.toString(heatCap);
-
+        
         if ( heatCap < heatCapWater ) {
           heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
@@ -676,7 +653,7 @@ class WeaponPanel extends BufferedPanel
         }
         this.currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ")");
     }
-
+  
     /**
      * Selects the weapon at the specified index in the list
      */
@@ -684,12 +661,12 @@ class WeaponPanel extends BufferedPanel
         if (wn == -1) {
             weaponList.select(-1);
             return;
-        }
+        }        
         int index = weapons.indexOf(entity.getEquipment(wn));
         weaponList.select(index);
         displaySelected();
     }
-
+        
     /**
      * Selects the weapon at the specified index in the list
      */
@@ -700,7 +677,7 @@ class WeaponPanel extends BufferedPanel
         }
         return entity.getEquipmentNum((Mounted)weapons.elementAt(selected));
     }
-
+        
     /**
      * displays the selected item from the list in the weapon
      * display panel.
@@ -733,30 +710,27 @@ class WeaponPanel extends BufferedPanel
         } else {
             wDamR.setText(new Integer(wtype.getDamage()).toString());
         }
-
+            
         // update range
-        int shortR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWShortRange() : wtype.getShortRange();
-        int mediumR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWMediumRange() : wtype.getMediumRange();
-        int longR = entity.getLocationStatus(mounted.getLocation()) == Entity.LOC_WET ? wtype.getWLongRange() : wtype.getLongRange();
         if(wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
             wMinR.setText("---");
         }
-        if(shortR > 1) {
-            wShortR.setText("1 - " + shortR);
+        if(wtype.getShortRange() > 1) {
+            wShortR.setText("1 - " + wtype.getShortRange());
         } else {
-            wShortR.setText("" + shortR);
+            wShortR.setText("" + wtype.getShortRange());
         }
-        if(mediumR - shortR > 1) {
-            wMedR.setText((shortR + 1) + " - " + mediumR);
+        if(wtype.getMediumRange() - wtype.getShortRange() > 1) {
+            wMedR.setText((wtype.getShortRange() + 1) + " - " + wtype.getMediumRange());
         } else {
-            wMedR.setText("" + mediumR);
+            wMedR.setText("" + wtype.getMediumRange());
         }
-        if(longR - mediumR > 1) {
-            wLongR.setText((mediumR + 1) + " - " + longR);
+        if(wtype.getLongRange() - wtype.getMediumRange() > 1) {
+            wLongR.setText((wtype.getMediumRange() + 1) + " - " + wtype.getLongRange());
         } else {
-            wLongR.setText("" + longR);
+            wLongR.setText("" + wtype.getLongRange());
         }
 
         // Update the range display to account for the weapon's loaded ammo.
@@ -799,7 +773,7 @@ class WeaponPanel extends BufferedPanel
             }
         }
     }
-
+    
     private String formatAmmo(Mounted m)
     {
         StringBuffer sb = new StringBuffer(64);
@@ -849,7 +823,7 @@ class WeaponPanel extends BufferedPanel
 
     } // End private void updateRangeDisplayForAmmo( AmmoType )
 
-    //
+    // 
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ev) {
@@ -880,72 +854,65 @@ class WeaponPanel extends BufferedPanel
                                         entity.getEquipmentNum(mAmmo) );
         }
     }
-
+        
 }
 
 /**
  * This class shows the critical hits and systems for a mech
  */
-class SystemPanel
+class SystemPanel 
     extends BufferedPanel
     implements ItemListener, ActionListener
 {
     private static Object SYSTEM = new Object();
-
+    
     private TransparentLabel locLabel, slotLabel, modeLabel;
     public java.awt.List slotList;
     public java.awt.List locList;
-
+    
     private Vector vEquipment = new Vector(16);
-
+    
     public Choice m_chMode;
     public Button m_bDumpAmmo;
     //public Label modeLabel;
     private Client client;
-
+    
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
-
+    
     Entity en;
-
+    
     public SystemPanel(Client client) {
         super();
-
+        
         FontMetrics fm = getFontMetrics(FONT_VALUE);
-
+        
         this.client = client;
         locLabel = new TransparentLabel("Location", fm, Color.white,TransparentLabel.CENTER);
         slotLabel = new TransparentLabel("Slot", fm, Color.white,TransparentLabel.CENTER);
-
+        
         locList = new List(8, false);
         locList.addItemListener(this);
-        locList.addKeyListener(client.menuBar);
-
         slotList = new List(12, false);
         slotList.addItemListener(this);
-        slotList.addKeyListener(client.menuBar);
         //slotList.setEnabled(false);
-
+        
         m_chMode = new Choice();
         m_chMode.add("   ");
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
-        m_chMode.addKeyListener(client.menuBar);
-
         m_bDumpAmmo = new Button("Dump");
         m_bDumpAmmo.setEnabled(false);
         m_bDumpAmmo.setActionCommand("dump");
         m_bDumpAmmo.addActionListener(this);
-        m_bDumpAmmo.addKeyListener(client.menuBar);
-
         modeLabel = new TransparentLabel("Mode", fm, Color.white,TransparentLabel.RIGHT);
         //modeLabel.setEnabled(false);
-
-
+        
+        
         // layout main panel
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-
+        
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 1);
         c.gridy = 0; c.gridx = 0;
@@ -953,14 +920,14 @@ class SystemPanel
         c.gridwidth = 1; c.gridheight = 1;
         gridbag.setConstraints(locLabel, c);
         add(locLabel);
-
+        
         c.weightx = 0.0;
         c.gridy = 0; c.gridx = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(15, 1, 1, 9);
         gridbag.setConstraints(slotLabel, c);
         add(slotLabel);
-
+        
         c.weightx = 0.5;
         //c.weighty = 1.0;
         c.gridy = 1; c.gridx = 0;
@@ -969,7 +936,7 @@ class SystemPanel
         c.gridheight = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(locList, c);
         add(locList);
-
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 1;
         c.gridy = 1;
@@ -979,7 +946,7 @@ class SystemPanel
         c.insets = new Insets(1, 1, 1, 9);
         gridbag.setConstraints(slotList, c);
         add(slotList);
-
+        
         c.gridwidth = 1;
         c.gridy = 2;
         c.gridx = 1;
@@ -988,7 +955,7 @@ class SystemPanel
         gridbag.setConstraints(modeLabel, c);
         c.insets = new Insets(1, 1, 1, 1);
         add(modeLabel);
-
+        
         c.weightx = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridy = 2;
@@ -996,7 +963,7 @@ class SystemPanel
         c.insets = new Insets(1, 1, 1, 9);
         gridbag.setConstraints(m_chMode, c);
         add(m_chMode);
-
+        
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = GridBagConstraints.REMAINDER;
         c.gridy = 3;
@@ -1004,15 +971,15 @@ class SystemPanel
         c.insets = new Insets(4, 4, 15, 9);
         gridbag.setConstraints(m_bDumpAmmo, c);
         add(m_bDumpAmmo);
-
-
+        
+        
         setBackGround();
     }
-
+    
     public int getSelectedLocation() {
         return locList.getSelectedIndex();
     }
-
+    
     public Mounted getSelectedEquipment() {
         int n = slotList.getSelectedIndex();
         if (n == -1) {
@@ -1030,7 +997,7 @@ class SystemPanel
      */
     public void displayMech(Entity en) {
         this.en = en;
-
+        
         locList.removeAll();
         for(int i = 0; i < en.locations(); i++) {
             if(en.getNumberOfCriticals(i) > 0) {
@@ -1040,7 +1007,7 @@ class SystemPanel
         locList.select(0);
         displaySlots();
     }
-
+    
     public void displaySlots() {
         int loc = locList.getSelectedIndex();
         slotList.removeAll();
@@ -1053,19 +1020,12 @@ class SystemPanel
             } else {
                 switch(cs.getType()) {
                 case CriticalSlot.TYPE_SYSTEM :
-                    sb.append(cs.isDestroyed() ? "*" : "")
-                        .append(cs.isBreached() ? "x" : "");
-                    // Protomechs have different systme names.
-                    if ( en instanceof Protomech ) {
-                        sb.append(Protomech.systemNames[cs.getIndex()]);
-                    } else {
-                        sb.append(Mech.systemNames[cs.getIndex()]);
-                    }
+                    sb.append(cs.isDestroyed() ? "*" : "").append(Mech.systemNames[cs.getIndex()]);
                     vEquipment.addElement(SYSTEM);
                     break;
                 case CriticalSlot.TYPE_EQUIPMENT :
                     Mounted m = en.getEquipment(cs.getIndex());
-                    sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc());
+                    sb.append(cs.isDestroyed() ? "*" : "").append(m.getDesc());
                     if (m.getType().hasModes()) {
                         sb.append(" (").append(m.curMode()).append(")");
                     }
@@ -1077,7 +1037,7 @@ class SystemPanel
         }
     }
 
-    //
+    // 
     // ItemListener
     //
     public void itemStateChanged(ItemEvent ev) {
@@ -1089,14 +1049,14 @@ class SystemPanel
             m_chMode.setEnabled(false);
             modeLabel.setEnabled(false);
             Mounted m = getSelectedEquipment();
-
+          
             boolean bOwner = (client.getLocalPlayer() == en.getOwner());
-            if (m != null && bOwner && m.getType() instanceof AmmoType
-                && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
+            if (m != null && bOwner && m.getType() instanceof AmmoType 
+                    && m.getShotsLeft() > 0 && !m.isDumping()) {
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && bOwner && m.getType().hasModes()) {
-                if (!m.isDestroyed() && en.isActive()) {
+                if (!m.isDestroyed()) {
                     m_chMode.setEnabled(true);
                 }
                 modeLabel.setEnabled(true);
@@ -1112,123 +1072,109 @@ class SystemPanel
             Mounted m = getSelectedEquipment();
             if (m != null && m.getType().hasModes()) {
                 int nMode = m.setMode(m_chMode.getSelectedItem());
-
-
+            
+            
                 // send the event to the server
                 client.sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
-
+                    
                 // notify the player
                 if (m.getType().hasInstantModeSwitch()) {
                     client.cb.systemMessage("Switched " + m.getName() + " to " + m.curMode());
                 }
                 else {
-                    client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() +
+                    client.cb.systemMessage(m.getName() + " will switch to " + m.pendingMode() + 
                             " at end of turn.");
                 }
                 displaySlots();
             }
         }
     }
-
+    
     // ActionListener
     public void actionPerformed(ActionEvent ae)
     {
         if (ae.getActionCommand().equals("dump")) {
             Mounted m = getSelectedEquipment();
             boolean bOwner = (client.getLocalPlayer() == en.getOwner());
-            if (m == null || !bOwner || !(m.getType() instanceof AmmoType) ||
+            if (m == null || !bOwner || !(m.getType() instanceof AmmoType) || 
                         m.getShotsLeft() <= 0) {
                 return;
             }
-
+            
             boolean bDumping;
-            boolean bConfirmed = false;
-
+            
             if (m.isPendingDump()) {
                 bDumping = false;
-                String title = "Cancel Dumping Ammo?";
-                String body = "Do you want to cancel dumping " + m.getName() + "?";
-                bConfirmed = client.doYesNoDialog(title, body);
+                client.cb.systemMessage(m.getName() + " WON'T be dumped next turn.");
             }
             else {
                 bDumping = true;
-                String title = "Dump Ammo?";
-                String body = "Do you want to dump " + m.getName() + "?\n\n"
-                    + "Ammo dumping will start at the beginning of the next game turn.\n"
-                    + "You will not be able to use the ammo while it is being dumped,\n"
-                    + "but it can still be critically hit or explode from heat buildup.\n"
-                    + "It will also explode as the result of any rear torso hit that\n"
-                    + "turn.  Additionally, you will not be able to run or jump while\n"
-                    + "you are dumping ammo.";
-                bConfirmed = client.doYesNoDialog(title, body);
+                client.cb.systemMessage(m.getName() + " will be dumped next turn.");
             }
-
-            if (bConfirmed) {
-                m.setPendingDump(bDumping);
-                client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
-            }
+            m.setPendingDump(bDumping);
+            client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
         }
     }
-
+    
     private void setBackGround(){
         Image tile = getToolkit().getImage("data/widgets/tile.gif");
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
-        addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-
-            b = BackGroundDrawer.NO_TILING |
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/tl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/bl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/tr_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/br_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
+         
     }
 
 }
@@ -1237,7 +1183,7 @@ class SystemPanel
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
-class ExtraPanel
+class ExtraPanel 
     extends BufferedPanel
 {
     private TransparentLabel  narcLabel, unusedL, carrysL;
@@ -1245,36 +1191,29 @@ class ExtraPanel
     public TextArea unusedR, carrysR;
     public java.awt.List narcList;
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
-
+    
     private Client client;
-
+    
     public ExtraPanel(Client client) {
         super();
-
+        
         this.client = client;
-
+        
         FontMetrics fm = getFontMetrics(FONT_VALUE);
-
-        narcLabel = new TransparentLabel
-            ("Affected By:", fm, Color.white,TransparentLabel.CENTER);
-
+        
+        narcLabel = new TransparentLabel("NARCed By:", fm, Color.white,TransparentLabel.CENTER);
+        
         narcList = new List(3, false);
-        narcList.addKeyListener(client.menuBar);
 
         // transport stuff
         //unusedL = new Label( "Unused Space:", Label.CENTER );
-
-        unusedL = new TransparentLabel
-            ("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
+                
+        unusedL = new TransparentLabel("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
-        unusedR.addKeyListener(client.menuBar);
-
-        carrysL = new TransparentLabel
-            ( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
+        carrysL = new TransparentLabel( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
-        carrysR.addKeyListener(client.menuBar);
 
         // layout choice panel
         GridBagLayout gridbag = new GridBagLayout();
@@ -1283,7 +1222,7 @@ class ExtraPanel
         gridbag = new GridBagLayout();
         c = new GridBagConstraints();
         setLayout(gridbag);
-
+        
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -1294,17 +1233,17 @@ class ExtraPanel
         c.weighty = 0.0;
         gridbag.setConstraints(narcLabel, c);
         add(narcLabel);
-
-
+        
+        
         c.insets = new Insets(1, 9, 1, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(narcList, c);
         add(narcList);
-
+        
         c.weighty = 0.0;
         gridbag.setConstraints(unusedL, c);
         add(unusedL);
-
+        
         c.weighty = 1.0;
         gridbag.setConstraints(unusedR, c);
         add(unusedR);
@@ -1312,142 +1251,98 @@ class ExtraPanel
         c.weighty = 0.0;
         gridbag.setConstraints(carrysL, c);
         add(carrysL);
-
+        
         c.insets = new Insets(1, 9, 18, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(carrysR, c);
         add(carrysR);
-
+        
         setBackGround();
-
+        
 
     }
-
-
-
+    
+    
+    
    private void setBackGround(){
         Image tile = getToolkit().getImage("data/widgets/tile.gif");
         PMUtil.setImage(tile, (Component) this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
-        addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_HORIZONTAL |
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
                 BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage("data/widgets/h_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.TILING_VERTICAL |
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/v_line.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-
-            b = BackGroundDrawer.NO_TILING |
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/tl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage("data/widgets/bl_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_TOP |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/tr_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
-            b = BackGroundDrawer.NO_TILING |
+        
+            b = BackGroundDrawer.NO_TILING | 
                 BackGroundDrawer.VALIGN_BOTTOM |
                 BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage("data/widgets/br_corner.gif");
         PMUtil.setImage(tile, (Component) this);
         addBgDrawer(new BackGroundDrawer (tile,b));
-
+         
     }
-
+    
 
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
 
-        // Clear the "Affected By" list.
-        narcList.removeAll();
-
         // Walk through the list of teams.  There
         // can't be more teams than players.
-        StringBuffer buff = null;
         Enumeration loop = client.game.getPlayers();
         while ( loop.hasMoreElements() ) {
             Player player = (Player) loop.nextElement();
             int team = player.getTeam();
             if ( !player.equals(client.getLocalPlayer()) &&
                  en.isNarcedBy( team ) ) {
-                buff = new StringBuffer( player.getName() );
+                StringBuffer buff = new StringBuffer( player.getName() );
                 buff.append( " [" )
                     .append( Player.teamNames[team] )
                     .append( "]" );
-                narcList.add( buff.toString() );
-            }
-        }
-
-        // Show inferno track.
-        if ( en.infernos.isStillBurning() ) {
-            buff = new StringBuffer( "Inferno burn remaining: " );
-            buff.append( en.infernos.getTurnsLeftToBurn() );
-            narcList.add( buff.toString() );
-        }
-
-        // Show ECM affect.
-        Coords pos = en.getPosition();
-        if ( Compute.isAffectedByECM( en, pos, pos ) ) {
-            narcList.add( "In enemy ECM field." );
-        }
-
-        // Show Turret Locked.
-        if ( en instanceof Tank &&
-             !( (Tank) en ).hasNoTurret() &&
-             !en.canChangeSecondaryFacing() ) {
-            narcList.add( "Turret locked" );
-        }
-
-        // Show jammed weapons.
-        Enumeration weaps = en.getWeapons();
-        while ( weaps.hasMoreElements() ) {
-            Mounted weapon = (Mounted) weaps.nextElement();
-            if ( weapon.isJammed() ) {
-                buff = new StringBuffer( weapon.getName() );
-                buff.append( " is Jammed" );
-                narcList.add( buff.toString() );
-            }
-        }
-
-        // Show breached locations.
-        for ( int loc = 0; loc < en.locations(); loc++ ) {
-            if ( Entity.LOC_BREACHED == en.getLocationStatus(loc) ) {
-                buff = new StringBuffer( en.getLocationName(loc) );
-                buff.append( " Breached" );
                 narcList.add( buff.toString() );
             }
         }
@@ -1458,22 +1353,11 @@ class ExtraPanel
         this.unusedR.setText( unused );
         Enumeration iter = en.getLoadedUnits().elements();
         carrysR.setText( null );
-        boolean hasText = false;
         while ( iter.hasMoreElements() ) {
             carrysR.append( ((Entity)iter.nextElement()).getShortName() );
-            hasText = true;
             if ( iter.hasMoreElements() ) {
                 carrysR.append( "\n" );
             }
-        }
-
-        // Show club.
-        Mounted club = Compute.clubMechHas( en );
-        if ( null != club ) {
-            if ( hasText ) {
-                carrysR.append( "\n" );
-            }
-            carrysR.append( club.getName() );
         }
 
     } // End public void displayMech( Entity )

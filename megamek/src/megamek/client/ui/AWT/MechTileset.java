@@ -42,7 +42,7 @@ public class MechTileset {
     private String QUAD_STRING = "default_quad";
     private String TANK_STRING = "default_tank";
     private String INF_STRING = "default_infantry";
-    private String PROTO_STRING = "default_proto";
+    
     
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -51,16 +51,13 @@ public class MechTileset {
     private MechEntry default_quad;
     private MechEntry default_tank;
     private MechEntry default_inf;
-    private MechEntry default_proto;
     
     private HashMap exact = new HashMap();
     private HashMap chassis = new HashMap();
     
-    private String dir;
-
     /** Creates new MechTileset */
-    public MechTileset(String dir) {
-		this.dir = dir;
+    public MechTileset() {
+        ;
     }
     
     public Image imageFor(Entity entity, Component comp) {
@@ -99,9 +96,6 @@ public class MechTileset {
         if (entity instanceof Infantry) {
             return default_inf;
         }
-        if (entity instanceof Protomech) {
-        	return default_proto;
-        }
         // mech, by weight
         if (entity.getWeight() <= Mech.WEIGHT_LIGHT) {
             return default_light;
@@ -120,7 +114,7 @@ public class MechTileset {
     public void loadFromFile(String filename) {
         try {
             // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(dir + filename));
+            Reader r = new BufferedReader(new FileReader("data/mex/" + filename));
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -158,7 +152,6 @@ public class MechTileset {
         default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
         default_tank = (MechEntry)exact.get(TANK_STRING.toUpperCase());
         default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
-        default_proto = (MechEntry)exact.get(PROTO_STRING.toUpperCase());
     }
     
     /**
@@ -185,7 +178,7 @@ public class MechTileset {
         }
         
         public void loadImage(Component comp) {
-            image = comp.getToolkit().getImage(dir + imageFile);
+            image = comp.getToolkit().getImage("data/mex/" + imageFile);
         }
     }
 }

@@ -41,18 +41,17 @@ public class ReportDisplay
     
     // buttons
     private Button            readyB;
-    private Button            rerollInitiativeB;
     
     // let's keep track of what we're moving, too
     private int                cen;    // current entity number
-    private MovePath    md;        // movement data
-    private MovePath    cmd;    // considering movement data
+    private MovementData    md;        // movement data
+    private MovementData    cmd;    // considering movement data
     
     /**
      * Creates and lays out a new movement phase display 
      * for the specified client.
      */
-    public ReportDisplay(Client client, boolean showRerollInitiativeButton) {
+    public ReportDisplay(Client client) {
         this.client = client;
         
         cb = client.cb;
@@ -65,10 +64,6 @@ public class ReportDisplay
         readyB = new Button("Done");
         readyB.setActionCommand("ready");
         readyB.addActionListener(this);
-        
-        rerollInitiativeB = new Button("Reroll");
-        rerollInitiativeB.setActionCommand("reroll_initiative");
-        rerollInitiativeB.addActionListener(this);
         
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -89,12 +84,6 @@ public class ReportDisplay
         c.weightx = 1.0;    c.weighty = 0.0;
         addBag(cb.getComponent(), gridbag, c);
         
-        if (showRerollInitiativeButton) {
-            c.gridwidth = 1;
-            c.weightx = 0.0;    c.weighty = 0.0;
-            addBag(rerollInitiativeB, gridbag, c);
-        }
-
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
         addBag(readyB, gridbag, c);
@@ -113,24 +102,10 @@ public class ReportDisplay
      * Sets you as ready and disables the ready button.
      */
     public void ready() {
-        rerollInitiativeB.setEnabled(false);
         readyB.setEnabled(false);
         client.sendDone(true);
     }
-
-    /**
-     * Requests an initiative reroll and disables the ready button.
-     */
-    public void rerollInitiative() {
-        rerollInitiativeB.setEnabled(false);
-        readyB.setEnabled(false);
-        client.sendRerollInitiativeRequest();
-    }
     
-    public void resetReadyButton() {
-        readyB.setEnabled(true);
-    }
-
     /**
      * Refreshes the report
      */
@@ -144,9 +119,6 @@ public class ReportDisplay
     public void actionPerformed(ActionEvent ev) {
         if(ev.getActionCommand().equalsIgnoreCase("ready")) {
             ready();
-        }
-        if(ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
-            rerollInitiative();
         }
     }
     

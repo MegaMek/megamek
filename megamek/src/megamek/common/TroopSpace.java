@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -29,17 +29,17 @@ import java.io.IOException;
     /**
      * The troops being carried.
      */
-    /* package */ Vector troops = new Vector();
+    Vector troops = new Vector();
 
     /**
      * The total amount of space available for troops.
      */
-    /* package */ int totalSpace;
+    int totalSpace;
 
     /**
      * The current amount of space available for troops.
      */
-    /* package */ int currentSpace;
+    int currentSpace;
 
     /* ### I don't think that I need this code ### *#/
     /**

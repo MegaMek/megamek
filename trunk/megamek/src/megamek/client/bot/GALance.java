@@ -44,7 +44,7 @@ public class GALance extends GA {
       for (int i=1; i < populationDim; i++) {
         for (int iGene=0; iGene < chromosomeDim; iGene++) {
           ((ChromVector)this.chromosomes[i]).genes[iGene] =
-          Compute.random.nextInt(((EntityState[])(moves.elementAt(iGene))).length);
+          Compute.randomInt(((EntityState[])(moves.elementAt(iGene))).length);
         }
         this.chromosomes[i].fitness = getFitness(i);
       }
@@ -228,16 +228,16 @@ public class GALance extends GA {
   
   protected void doRandomMutation(int iChromIndex) {
     ChromVector c1 = (ChromVector)this.chromosomes[iChromIndex];
-    int r1 = Compute.random.nextInt(c1.genes.length - 1);
+    int r1 = Compute.randomInt(c1.genes.length - 1);
     boolean done = false;
     if (r1%2 == 1) {
-      c1.genes[r1] = Compute.random.nextInt(((EntityState[])this.moves.elementAt(r1)).length);
+      c1.genes[r1] = Compute.randomInt(((EntityState[])this.moves.elementAt(r1)).length);
       return;
     }
     for (int i = 0; (i < c1.genes.length) && !done; i++) {
       int iGene = (i + r1)%(c1.genes.length - 1);
       if (((EntityState[])this.moves.elementAt(iGene)).length > 1) {
-        c1.genes[iGene] = Compute.random.nextInt(((EntityState[])this.moves.elementAt(iGene)).length);
+        c1.genes[iGene] = Compute.randomInt(((EntityState[])this.moves.elementAt(iGene)).length);
         return;
       }
     }
@@ -248,7 +248,7 @@ public class GALance extends GA {
     ChromVector c1 = (ChromVector)Chrom1;
     ChromVector c2 = (ChromVector)Chrom2;
     for (int iGene=0; iGene < chromosomeDim; iGene++) {
-      if (Compute.random.nextInt(2) == 1) {
+      if (Compute.randomInt(2) == 1) {
         gene = c1.genes[iGene];
         c1.genes[iGene] = c2.genes[iGene];
         c2.genes[iGene] = gene;

@@ -202,7 +202,7 @@ public class BotClient extends Client
         }
         
         // recurse in a random direction
-        return getCoordsAround(c.translated(Compute.random.nextInt(6)));
+        return getCoordsAround(c.translated(Compute.randomInt(6)));
      }
      
      private Coords getStartingCoords(int nPos) {

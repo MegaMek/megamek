@@ -224,7 +224,7 @@ public class GAAttack extends GA {
    */
   protected void doRandomMutation(int iChromIndex) {
     ChromVector c1 = (ChromVector)this.chromosomes[iChromIndex];
-    int r1 = Compute.random.nextInt(c1.genes.length - 1);
+    int r1 = Compute.randomInt(c1.genes.length - 1);
     CEntity target = null;
     boolean done = false;
     if (r1%2 == 1) {
@@ -242,7 +242,7 @@ public class GAAttack extends GA {
       }
     }
     if (target == null) { //then not shooting, so shoot something
-      c1.genes[r1] = Compute.random.nextInt(((Vector)(attack.elementAt(r1))).size() - 1);
+      c1.genes[r1] = Compute.randomInt(((Vector)(attack.elementAt(r1))).size() - 1);
       TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(r1))).elementAt(c1.genes[r1]);
       if (a.target != null) {
         c1.genes[c1.genes.length - 1] = a.target.enemy_num;
@@ -270,7 +270,7 @@ public class GAAttack extends GA {
     ChromVector c1 = (ChromVector)Chrom1;
     ChromVector c2 = (ChromVector)Chrom2;
     for (int iGene=0; iGene < chromosomeDim; iGene++) {
-      if (Compute.random.nextInt(2) == 1) {
+      if (Compute.randomInt(2) == 1) {
         gene = c1.genes[iGene];
         c1.genes[iGene] = c2.genes[iGene];
         c2.genes[iGene] = gene;
@@ -291,14 +291,14 @@ public class GAAttack extends GA {
     for (int i=1; i < populationDim; i++) {
       ChromVector cv = (ChromVector)this.chromosomes[i];
       for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
-        cv.genes[iGene] = Compute.random.nextInt(((Vector)(attack.elementAt(iGene))).size());
+        cv.genes[iGene] = Compute.randomInt(((Vector)(attack.elementAt(iGene))).size());
         if (i <= this.attack.size()) {
           if (iGene + 1 == i) cv.genes[iGene] = 0; //fire
           else cv.genes[iGene] = ((Vector)(attack.elementAt(iGene))).size() - 1; //don't fire
         } 
       }
       cv.genes[chromosomeDim -1] =
-      ((Integer)this.valid_target_indexes.elementAt(Compute.random.nextInt(this.valid_target_indexes.size()))).intValue();
+      ((Integer)this.valid_target_indexes.elementAt(Compute.randomInt(this.valid_target_indexes.size()))).intValue();
       this.chromosomes[i].fitness = getFitness(i);
     }
   }

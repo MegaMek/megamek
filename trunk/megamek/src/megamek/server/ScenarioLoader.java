@@ -116,7 +116,7 @@ public class ScenarioLoader
         }
         
         // recurse in a random direction
-        return getCoordsAround(c.translated(Compute.random.nextInt(6)), g);
+        return getCoordsAround(c.translated(Compute.randomInt(6)), g);
     }
 
     // taken from Server.java, with Center added    
@@ -271,7 +271,7 @@ public class ScenarioLoader
         
         // essentially loop forever, but fall out in case of weirdness
         for (int x = 0; x < 200; x++) {
-            int nRand = Compute.random.nextInt(DIRS.length);
+            int nRand = Compute.randomInt(DIRS.length);
             if (bAllTaken || !m_baTakenDirs[nRand]) {
                 m_baTakenDirs[nRand] = true;
                 return nRand;
@@ -280,7 +280,7 @@ public class ScenarioLoader
         
         // should never get here
         System.out.println("Warning! getRandomStartingPos looped 200 times, but not all taken");
-        return Compute.random.nextInt(DIRS.length);
+        return Compute.randomInt(DIRS.length);
     }
 
     
@@ -335,7 +335,7 @@ public class ScenarioLoader
                 
                 String sBoardFile;
                 if (sBoard.equals("RANDOM")) {
-                    sBoardFile = (String)(vBoards.elementAt(Compute.random.nextInt(vBoards.size()))) + ".board";
+                    sBoardFile = (String)(vBoards.elementAt(Compute.randomInt(vBoards.size()))) + ".board";
                 }
                 else {
                     sBoardFile = sBoard + ".board";

@@ -40,8 +40,64 @@ public class Compute
     public static final int        GEAR_CHARGE      = 3;
     public static final int        GEAR_DFA         = 4;
     public static final int        GEAR_TURN        = 5;
-    
-    public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
+
+    /**
+     * Move the RNG out of the public interface.  Start with a good RNG
+     * and try to get a cryptographically strong one to replace it.
+     * Please note, there have been many complaints about the default RNG,
+     * but NO ONE has been able to demonstrate a bias with more than
+     * anecdotal evidence.  Still, the people are demanding a change.
+     */
+    private static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
+    private static StrongRNG strongRNG = null;
+    static {
+        // Initialize the cryptographically strong RNG in its own thread.
+        Thread makeRNG = new Thread( new Runnable() {
+                public void run() {
+                    try {
+                        Date start = new Date();
+                        StrongRNG newRNG = new StrongRNG();
+                        Date end = new Date();
+                        Compute.strongRNG = newRNG;
+                        Compute.d6(); // Initialize the RNG.
+                        System.out.println( "Using a cryptographic RNG." );System.out.flush();//killme
+                    }
+                    catch ( Exception exp ) {
+                        // Report it.
+                        System.err.println
+                            ( "Compute could not generate a stong RNG." );
+                    }
+                }
+            } );
+        makeRNG.start();
+    }
+
+    /**
+     * Provide a local sub-class of a cryptographically strong RNG.  We need
+     * this to gain access to the protected <code>next(int)</code> method.
+     */
+    private static class MyCryptoRNG extends java.security.SecureRandom {
+        public MyCryptoRNG() { super(); }
+        public int myNext( int input ) { return next(input); }
+    } // End private static class MyCryptoRNG
+
+    /**
+     * Provide a wrapper for a cryptographically strong RNG that uses the
+     * same methods as the default RNG.
+     */
+    private static class StrongRNG
+        extends com.sun.java.util.collections.Random {
+        // The cryptographic RNG that will produce our random values.
+        private MyCryptoRNG crypto = null;
+
+        // Default constructor.  Create the cryptographic RNG.
+        public StrongRNG() { super(); crypto = new MyCryptoRNG(); }
+
+        // Redirect all calls for new values to the cryptographic RNG.
+        protected synchronized int next( int input ) {
+            return crypto.myNext( input );
+        }
+    } // End private static class StrongRNG
     
     /**
      * Simulates six-sided die rolls.
@@ -49,7 +105,7 @@ public class Compute
     public static int d6(int dice) {
         int total = 0;
         for (int i = 0; i < dice; i++) {
-            total += random.nextInt(6) + 1;
+            total += randomInt(6) + 1;
         }
         return total;
     }
@@ -60,7 +116,26 @@ public class Compute
     public static int d6() {
         return d6(1);
     }
-    
+
+    /**
+     * Returns a random <code>int</code> in the range from 0 to one
+     * less than the supplied max value.
+     *
+     * @param   maxValue - the smallest <code>int</code> value which
+     *          will exceed any random number returned by this method.
+     * @return  a random <code>int</code> from the value set [0, maxValue).
+     */
+    public static int randomInt( int maxValue ) {
+        int result = -1;
+        // Use the strong RNG if we have one.
+        if ( null != strongRNG ) {
+            result = strongRNG.nextInt( maxValue );
+        } else {
+            result = random.nextInt( maxValue );
+        }
+        return result;
+    }
+
     /**
      * Returns the odds that a certain number or above 
      * will be rolled on 2d6.
@@ -2163,7 +2238,6 @@ public class Compute
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
         // randomly if the BattleMech is attacking from the same hex."
         if ( 0 == range && te instanceof Tank ) {
-            toHit.setRandom( Compute.random );
             toHit.setSideTable( ToHitData.SIDE_RANDOM );
         }
 
@@ -3916,4 +3990,4 @@ public class Compute
         return 0;
     }
 
-}
+} // End public class Compute

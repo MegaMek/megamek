@@ -82,6 +82,18 @@ public class BattleArmor
      */
     private boolean     isInitialized = false;
 
+    /**
+     * Flag that is <code>true</code> when this unit is equipped with stealth.
+     */
+    private boolean     isStealthy = false;
+
+    /**
+     * Modifiers to <code>ToHitData</code> for stealth.
+     */
+    private TargetRoll  shortStealthMod = null;
+    private TargetRoll  mediumStealthMod = null;
+    private TargetRoll  longStealthMod = null;
+
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -120,6 +132,21 @@ public class BattleArmor
      * The internal name for the Mine Launcher weapon.
      */
     public static final String MINE_LAUNCHER = "BAMineLauncher";
+
+    /**
+     * The internal name for Stealth equipment.
+     */
+    public static final String STEALTH = "Stealth";
+
+    /**
+     * The internal name for Advanced Stealth equipment.
+     */
+    public static final String ADVANCED_STEALTH = "Advanced Stealth";
+
+    /**
+     * The internal name for Expert Stealth equipment.
+     */
+    public static final String EXPERT_STEALTH = "Expert Stealth";
 
     /**
      * The maximum number of men in an Inner Sphere battle armor squad.
@@ -411,6 +438,28 @@ public class BattleArmor
         addCritical( loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
                                            getEquipmentNum(mounted),
                                            true) );
+
+        // Is the item a stealth equipment?
+        String name = mounted.getType().getInternalName();
+        if ( name.equals( BattleArmor.STEALTH ) ) {
+            this.isStealthy = true;
+            this.shortStealthMod = new TargetRoll( 0, "stealth" );
+            this.mediumStealthMod = new TargetRoll( 1, "stealth" );
+            this.longStealthMod = new TargetRoll( 2, "stealth" );
+        }
+        else if ( name.equals( BattleArmor.ADVANCED_STEALTH ) ) {
+            this.isStealthy = true;
+            this.shortStealthMod = new TargetRoll( 1, "advanced stealth" );
+            this.mediumStealthMod = new TargetRoll( 1, "advanced stealth" );
+            this.longStealthMod = new TargetRoll( 2, "advanced stealth" );
+        }
+        else if ( name.equals( BattleArmor.EXPERT_STEALTH ) ) {
+            this.isStealthy = true;
+            this.shortStealthMod = new TargetRoll( 1, "expert stealth" );
+            this.mediumStealthMod = new TargetRoll( 2, "expert stealth" );
+            this.longStealthMod = new TargetRoll( 3, "expert stealth" );
+        }
+
     }
 
     /**

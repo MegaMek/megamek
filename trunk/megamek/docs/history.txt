@@ -90,6 +90,7 @@ v 0.28.1 (01-11-03, 11:36am)
 + Better support for targeting units in the attacker's hex.
 + Anti-Mek Leg Attacks (Swarm Mek is not implemented).
 + BattleArmor initial implementation (many special rules not implemented).
++ 638815: Allow players to rotate maps 180 degrees.
 
 v 0.28.0 (01-10-03, 3:50pm)
 + 662333: ams doesn't fire on non-locked streaks

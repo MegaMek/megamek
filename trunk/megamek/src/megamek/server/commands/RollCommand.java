@@ -61,7 +61,7 @@ public class RollCommand extends ServerCommand {
         StringBuffer diceBuffer = new StringBuffer();
         int total = 0;
         for (int i = 0; i < dice; i++) {
-            int roll = Compute.random.nextInt(sides) + 1;
+            int roll = Compute.randomInt(sides) + 1;
             total += roll;
             
             // for one die, we're all set

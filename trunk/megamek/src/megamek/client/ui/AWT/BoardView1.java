@@ -2843,6 +2843,9 @@ public class BoardView1
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
+            if (Settings.showUnitId) {
+                shortName+=(" ID:"+entity.getId());
+            }
             Font font = new Font("SansSerif", Font.PLAIN, 10);
             Rectangle tempRect =
                 new Rectangle(47, 55,

@@ -88,9 +88,14 @@ v 0.27
 - deployment phase
 - ammo switching
 - level 2 tech
+- better mech loader
 
 VERSION HISTORY:
 ----------------
+v 0.26.0 
++ the words "level" & "depth" no longer display on top of each other on a hex
++ some more fixes to boards, added mountainlake
+
 v 0.25.7 (05-30-02, 6pm)
 + properly disable flee button
 + 540326: mech elevation while mid-DFA calculated correctly

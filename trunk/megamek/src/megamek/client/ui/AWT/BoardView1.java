@@ -332,11 +332,13 @@ public class BoardView1
         if (null != this.vScrollbar) {
             this.vScrollbar.setVisibleAmount (size.height);
             this.vScrollbar.setBlockIncrement (size.height);
+            this.vScrollbar.setUnitIncrement ((int) (scale * HEX_H / 2.0));
             this.vScrollbar.setMaximum (boardSize.height);
         }
         if (null != this.hScrollbar) {
             this.hScrollbar.setVisibleAmount (size.width);
             this.hScrollbar.setBlockIncrement (size.width);
+            this.hScrollbar.setUnitIncrement ((int) (scale * HEX_W / 2.0));
             this.hScrollbar.setMaximum (boardSize.width);
         }
 

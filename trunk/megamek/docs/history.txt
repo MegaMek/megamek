@@ -2,7 +2,6 @@ VERSION HISTORY:
 ----------------
 v0.29.47 (CVS)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.
-+ Added scrollbars to Board Editor.  In-game scrollbars coming soon.
 + Bug 988798: Mechs with dodge ability auto-dodge when appropriate.
 + Bug 999146: Server NPE on client disconnect fixed.
 + Bug 996032: Exception in Customize Mech Dialog fixed.  Thanks weaselflink!
@@ -12,6 +11,7 @@ v0.29.47 (CVS)
     Gunnery/Ballistic: Pilot gets a -1 to-hit bonus on all ballistic weapons (MGs, any ACs, Gaussrifles)
     Iron Man: A pilot with this skill receives only 1 pilot hit from ammunition explosions.
     Thanks schoelling!
++ RFE 543601: Added scroll bars to Board view (in the game and in the editor).
 
 v0.29.46 (2004-08-23 9:00pm)
 + Switch to numpad arrows for scrolling

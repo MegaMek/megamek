@@ -138,7 +138,7 @@ public class BoardEditor extends Container
         // Create a scroll bars to surround the board view.
         Panel scrollPane = new Panel();
         scrollPane.setLayout (new BorderLayout());
-        final Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
+        Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
         Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
         scrollPane.add (bv, BorderLayout.CENTER);
         scrollPane.add (vertical, BorderLayout.EAST);

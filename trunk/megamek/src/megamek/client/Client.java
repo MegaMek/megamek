@@ -486,7 +486,7 @@ public class Client implements Runnable {
     /**
      * Sends a "player done" message to the server.
      */
-    public void sendDone(boolean done) {
+    public synchronized void sendDone(boolean done) {
         send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
     }
 

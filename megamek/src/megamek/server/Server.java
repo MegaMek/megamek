@@ -1965,6 +1965,7 @@ implements Runnable {
             // miss
             phaseReport.append("misses.\n");
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                // this is sort of a hack...
                 ae.heatBuildup -= wtype.getHeat();
                 ammo.setShotsLeft(ammo.getShotsLeft() + 1);
                 phaseReport.append("    Streak fails to achieve lock on target.\n");

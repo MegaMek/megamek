@@ -346,7 +346,7 @@ public class PhysicalDisplay
     /**
      * Targets an entity
      */
-    private void target(int en) {
+    void target(int en) {
         this.ten = en;
         updateTarget();
     }

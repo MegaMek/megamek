@@ -26,7 +26,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 
 public class Client extends Panel
-    implements Runnable
+    implements Runnable, MouseListener
 {
     // a frame, to show stuff in
     public Frame                frame;
@@ -61,6 +61,7 @@ public class Client extends Panel
     public MechDisplay          mechD;
     public Dialog		minimapW;
     public MiniMap		minimap;
+    public PopupMenu            popup;
         
     protected Panel             curPanel;
     
@@ -130,9 +131,14 @@ public class Client extends Panel
         local_pn = -1;
                 
         game = new Game();
+        
+        popup = new PopupMenu("board popup");
 
         bv = new BoardView1(game, frame);
 //        bc = new BoardComponent(bv);
+        bv.addMouseListener(this);
+        bv.add(popup);
+        
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
         mechW.setSize(210, 340);
@@ -374,6 +380,38 @@ public class Client extends Panel
     protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
+    }
+    
+    protected void showBoardPopup(Point point) {
+        fillPopup(bv.getCoordsAt(point));
+        
+        if (popup.getItemCount() > 0) {
+            popup.show(bv, point.x, point.y);
+        }
+    }
+    
+    private boolean canTargetEntities() {
+        return isMyTurn() && (curPanel instanceof FiringDisplay 
+                              || curPanel instanceof PhysicalDisplay);
+    }
+    
+    protected void fillPopup(Coords coords) {
+        popup.removeAll();
+        
+        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            popup.add(new ViewMenuItem(entity));
+        }
+        
+        if (canTargetEntities()) {
+            if (popup.getItemCount() > 0) {
+                popup.addSeparator();
+            }
+            for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                popup.add(new TargetMenuItem(entity));
+            }
+        }
     }
     
     
@@ -845,4 +883,62 @@ public class Client extends Panel
             }
         }
     }
+    
+    public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+    }
+    
+    public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+    }
+    
+    public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+    }
+    
+    public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+    }
+    
+    public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {
+        if (mouseEvent.isPopupTrigger()) {
+            showBoardPopup(mouseEvent.getPoint());
+        }
+    }
+    
+    /**
+     * A menu item that lives to view an entity.
+     */
+    private class ViewMenuItem extends MenuItem implements ActionListener {
+        Entity entity;
+        
+        public ViewMenuItem(Entity entity) {
+            super("View " + entity.getDisplayName());
+            this.entity = entity;
+            addActionListener(this);
+        }
+        
+        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+            mechD.displayMech(entity);
+        }        
+    }
+    
+    /**
+     * A menu item that will target an entity, provided that it's sensible to
+     * do so
+     */
+    private class TargetMenuItem extends MenuItem implements ActionListener {
+        Entity entity;
+        
+        public TargetMenuItem(Entity entity) {
+            super("Target " + entity.getDisplayName());
+            this.entity = entity;
+            addActionListener(this);
+        }
+        
+        public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+            if (curPanel instanceof FiringDisplay) {
+                ((FiringDisplay)curPanel).target(entity.getId());
+            } else if (curPanel instanceof PhysicalDisplay) {
+                ((PhysicalDisplay)curPanel).target(entity.getId());
+            }
+        }        
+    }
+    
 }

@@ -5122,6 +5122,9 @@ implements Runnable, ConnectionHandler {
       }
       final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
+      if(bArtillery && game.getPhase()==game.PHASE_FIRING) { //if direct artillery
+          wr.artyAttackerCoords=ae.getPosition();
+      }
 
       // Which building takes the damage?
       Building bldg = game.board.getBuildingAt(target.getPosition());
@@ -5306,6 +5309,9 @@ implements Runnable, ConnectionHandler {
            Entity entity = (Entity)impactHexHits.nextElement();
            int hits = wtype.getRackSize();
            while(hits>0) {
+             if(wr.artyAttackerCoords!=null) {
+                 toHit.setSideTable(Compute.targetSideTable(wr.artyAttackerCoords,entity.getPosition(),entity.getFacing(),entity instanceof Tank));
+             }
              HitData hit = entity.rollHitLocation
                      ( toHit.getHitTable(),
                        toHit.getSideTable(),
@@ -9748,7 +9754,7 @@ implements Runnable, ConnectionHandler {
                 coords = c;
                 size = s;
             }
-                        
+
             public SmokeDrift(SmokeDrift sd) {
                 sd.coords = coords;
                 sd.size = size;
@@ -9816,7 +9822,7 @@ implements Runnable, ConnectionHandler {
 
             debugTime("resolve smoke 3 end", false);
 
-        } // end smoke resolution        
+        } // end smoke resolution
     }
 
     public Coords driftAddSmoke(int x, int y, int windDir, int windStr){
@@ -9836,7 +9842,7 @@ implements Runnable, ConnectionHandler {
      * in MaxTech (revised ed.) under "Dissipation" on page 51.  The
      * added complexity was not worth it given that smoke-delivering
      * weapons were not even implemented yet (and might never be).
-     */ 
+     */
     public boolean driftSmokeDissipate(Hex smokeHex, int roll, int smokeSize, int windStr) {
         // Dissipate in various winds
         if (roll > 10 || (roll > 9 && windStr == 2) || (roll > 7 && windStr == 3)) {
@@ -11650,6 +11656,8 @@ implements Runnable, ConnectionHandler {
 
             if (aaa.turnsTilHit <= 0) {
                 final WeaponResult wr = aaa.getWR();
+                //HACK, for correct hit table resolution.
+                wr.artyAttackerCoords=aaa.getCoords();
                 final Vector spottersBefore=aaa.getSpotterIds();
                 Entity bestSpotter=null;
 
@@ -11668,7 +11676,7 @@ implements Runnable, ConnectionHandler {
                                     if ( player == entity.getOwnerId() &&
                                          spottersBefore.contains(id) &&
                                          !( LosEffects.calculateLos
-                                            (game, entity.getId(), target) 
+                                            (game, entity.getId(), target)
                                             ).isBlocked() &&
                                          entity.isActive() ) {
                                         return true;
@@ -11759,7 +11767,7 @@ implements Runnable, ConnectionHandler {
                 }
                 aaa = new ArtilleryAttackAction( wr, game,
                                                  firingEntity.getOwnerId(),
-                                                 spotterIds );
+                                                 spotterIds, firingEntity.getPosition());
                 game.addArtilleryAttack(aaa);
             }
         }

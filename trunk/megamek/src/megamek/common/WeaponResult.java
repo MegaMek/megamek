@@ -27,4 +27,5 @@ implements Serializable {
     public boolean revertsToSingleShot = false;
     public int[] amsShotDown = new int[0];
     public int amsShotDownTotal = 0;
+    public Coords artyAttackerCoords=null; //HACK.  Someone do something much neater, PLEASE.
 }

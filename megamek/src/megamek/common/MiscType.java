@@ -75,7 +75,7 @@ public class MiscType extends EquipmentType {
                 return (float)Math.round(entity.getWeight() / 20.0f);
             }
         } else if (hasFlag(F_TARGCOMP)) {
-            // 1 ton for every 5 tons of direct_fire weaponry
+            // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
                 Mounted m = (Mounted)e.nextElement();
@@ -84,7 +84,12 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            return (float)Math.ceil(fTons / 5.0);
+            if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+                return (float)Math.ceil(fTons / 5.0f);
+            }
+            else {
+                return (float)Math.ceil(fTons / 4.0f);
+            }
         }
         
         // okay, I'm out of ideas
@@ -110,7 +115,7 @@ public class MiscType extends EquipmentType {
                 return Math.round(entity.getWeight() / 20.0f);
             }
         } else if (hasFlag(F_TARGCOMP)) {
-            // 1 slot for every 5 tons of direct_fire weaponry
+           // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (Enumeration e = entity.getWeapons(); e.hasMoreElements(); ) {
                 Mounted m = (Mounted)e.nextElement();
@@ -119,7 +124,12 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            return (int)Math.ceil(fTons / 5.0);
+            if (entity.getTechLevel() == TechConstants.T_CLAN_LEVEL_2) {
+                return (int)Math.ceil(fTons / 5.0f);
+            }
+            else {
+                return (int)Math.ceil(fTons / 4.0f);
+            }
         }
         // right, well I'll just guess then
         return 1;
@@ -185,6 +195,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLArtemis());
         EquipmentType.addType(createGECM());
         EquipmentType.addType(createCLECM());
+        EquipmentType.addType(createISTargComp());
         EquipmentType.addType(createCLTargComp());
     }
     
@@ -524,6 +535,33 @@ public class MiscType extends EquipmentType {
         return misc;
     }
     
+    /**
+     * Targeting comps should NOT be spreadable.  However, I've set them such
+     * as a temp measure to overcome the following bug:
+     * TC space allocation is calculated based on tonnage of direct-fire weaponry.
+     * However, since meks are loaded location-by-location, when the TC is loaded
+     * it's very unlikely that all of the weaponry will be attached, resulting in
+     * undersized comps.  Any remaining TC crits after the last expected one are
+     * being handled as a 2nd TC, causing LocationFullExceptions.
+     */
+    
+    public static MiscType createISTargComp() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "Targeting Computer";
+        misc.internalName = "ISTargeting Computer";
+        misc.mepName = misc.internalName;
+        misc.mtfName = misc.internalName;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.bv = BV_VARIABLE;
+        misc.flags |= F_TARGCOMP;
+        // see note above
+        misc.spreadable = true;
+        
+        return misc;
+    }
+    
     public static MiscType createCLTargComp() {
         MiscType misc = new MiscType();
         
@@ -535,6 +573,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = BV_VARIABLE;
         misc.flags |= F_TARGCOMP;
+        // see note above
+        misc.spreadable = true;
         
         return misc;
     }

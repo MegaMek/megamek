@@ -1364,6 +1364,9 @@ implements Runnable {
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
         
+        // dead mek walking
+        if (!entity.isActive()) return false;
+        
         // if you're charging or finding a club, it's already declared
         if (entity.isUnjammingRAC()) return false;
         if (entity.isCharging() || entity.isMakingDfa() || entity.isFindingClub()) {
@@ -2942,6 +2945,13 @@ implements Runnable {
         // loop thru received attack actions
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
             Object o = i.nextElement();
+            
+            // verify that the attacker is still active
+            AttackAction aa = (AttackAction)o;
+            if (!(game.getEntity(aa.getEntityId()).isActive())) {
+                continue;
+            }
+            
             if (o instanceof PunchAttackAction) {
                 PunchAttackAction paa = (PunchAttackAction)o;
                 if (paa.getArm() == PunchAttackAction.BOTH) {

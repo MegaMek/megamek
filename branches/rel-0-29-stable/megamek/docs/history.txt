@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-9 (CVS)
+v 0.29-stable-9 (2004-07-11 6:25 EDT)
 + Bug 931003: spelling fix in TestBot.java
 + Bug 845271, 876771, 917814: The offscreen buffer wasn't resizing with window.
 + MechDisplay.SystemPanel#getSelectedEquipment() didn't handle empty slots.

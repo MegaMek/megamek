@@ -100,14 +100,14 @@ public class MegaMek
      */
     public void showEditor() {
         Game            game = new Game();
-        BoardView        bv;
+        BoardView1        bv;
         BoardEditor        be;
         
         frame.removeAll();
         
-        bv = new BoardView(game);
+        bv = new BoardView1(game, frame);
         
-        be = new BoardEditor(frame, game.board);
+        be = new BoardEditor(frame, game.board, bv);
         game.board.addBoardListener(be);
         be.setSize(120, 120);
         

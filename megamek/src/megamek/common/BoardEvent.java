@@ -27,11 +27,9 @@ public class BoardEvent
     
     public static final int        BOARD_NEW_BOARD            = 6;
     //public static final int        BOARD_NEW_ENTITIES        = 7;
-    public static final int        BOARD_NEW_VIS            = 8;
     
     public static final int        BOARD_CHANGED_HEX        = 9;
     //public static final int        BOARD_CHANGED_ENTITY    = 10;
-    public static final int        BOARD_CHANGED_VIS        = 11;
     
     private Coords        c;
     private Entity            entity;

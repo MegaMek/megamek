@@ -24,7 +24,6 @@ public interface BoardListener
     public void boardHexSelected(BoardEvent b);
 
     public void boardNewBoard(BoardEvent b);
-    public void boardNewVis(BoardEvent b);
     
     public void boardChangedHex(BoardEvent b);
 }

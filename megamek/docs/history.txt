@@ -127,6 +127,7 @@ v 0.28.16 CVS
 + bug 712051: ECM now correctly prevents narc & artemis iv bonus
 + Bug 724556: Fixed Multiple MASC failure checks 
 + Feature 698967: Added /seeall command to let an observer see in double blind
++ MegaMek.exe is now MegaMek.bat (the functionality has remained unchanged)
 
 v 0.28.15 (04-27-03, 7:30pm)
 + Added BAP, TAG, and AP Pods just to calc BV correctly, rules not implemented.

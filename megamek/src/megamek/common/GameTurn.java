@@ -52,7 +52,7 @@ public class GameTurn implements Serializable {
     public boolean isValidEntity(Entity entity, Game game) {
         return entity != null
             && entity.getOwnerId() == playerId
-            && entity.isSelectableThisTurn(game)
+            && entity.isSelectableThisTurn()
             //This next bit enforces the "A players Infantry/Protos
             // move after that players other units" options.
             && !( game.getPhase() == Game.PHASE_MOVEMENT

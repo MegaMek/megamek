@@ -1084,7 +1084,7 @@ implements Runnable, ConnectionHandler {
                         private final char unitNum = movingUnit;
                         public boolean accept( Entity entity ) {
                             if ( entity instanceof Protomech &&
-                                 entity.isSelectableThisTurn(Server.this.game) &&
+                                 entity.isSelectableThisTurn() &&
                                  ownerId == entity.getOwnerId() &&
                                  entityId != entity.getId() &&
                                  unitNum == entity.getUnitNumber() )
@@ -1871,7 +1871,7 @@ implements Runnable, ConnectionHandler {
         // N.B. protomechs declare weapons fire based on their point.
         for (Enumeration loop = game.getEntities(); loop.hasMoreElements();) {
             final Entity entity = (Entity)loop.nextElement();
-            if (entity.isSelectableThisTurn(game)) {
+            if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
                 final Team team = game.getTeamForPlayer( player );
                 if ( entity instanceof Infantry ) {
@@ -3232,7 +3232,7 @@ implements Runnable, ConnectionHandler {
                         // The moving unit should be able to load the other
                         // unit and the other should be able to have a turn.
                         if ( !entity.canLoad(loaded) ||
-                             !loaded.isSelectableThisTurn(game) ) {
+                             !loaded.isSelectableThisTurn() ) {
                             // Something is fishy in Denmark.
                             System.err.println( entity.getShortName() +
                                                 " can not load " +
@@ -3503,7 +3503,7 @@ implements Runnable, ConnectionHandler {
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP()
-        && entity.isSelectableThisTurn(game) && !entity.isDoomed()) {
+        && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());

@@ -164,10 +164,10 @@ public class MovePath implements Serializable {
     public void compile(Game g, Entity en) {
         this.game = g;
         this.entity = en;
-        Vector temp = new Vector(steps);
-        steps.clear();
+        Vector temp = (Vector)steps.clone();
+        steps.removeAllElements();
         for (int i = 0; i < temp.size(); i++) {
-            MoveStep step = (MoveStep)temp.get(i);
+            MoveStep step = (MoveStep)temp.elementAt(i);
             if (step.getTarget(game) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
             } else {

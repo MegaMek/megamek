@@ -202,9 +202,9 @@ public class TdbFile implements MechLoader {
         } else if (node.getName().equals(LOCATION)) {
             int loc = -1;
             int i = 0;
-            if (node.getAttribute(NAME).equals("LA"))
+            if (node.getAttribute(NAME).equals("LA") || node.getAttribute(NAME).equals("FLL"))
                 loc = Mech.LOC_LARM;
-            else if (node.getAttribute(NAME).equals("RA"))
+            else if (node.getAttribute(NAME).equals("RA") || node.getAttribute(NAME).equals("FRL"))
                 loc = Mech.LOC_RARM;
             else if (node.getAttribute(NAME).equals("LT"))
                 loc = Mech.LOC_LT;
@@ -214,9 +214,9 @@ public class TdbFile implements MechLoader {
                 loc = Mech.LOC_CT;
             else if (node.getAttribute(NAME).equals("H"))
                 loc = Mech.LOC_HEAD;
-            else if (node.getAttribute(NAME).equals("LL"))
+            else if (node.getAttribute(NAME).equals("LL") || node.getAttribute(NAME).equals("RLL"))
                 loc = Mech.LOC_LLEG;
-            else if (node.getAttribute(NAME).equals("RL"))
+            else if (node.getAttribute(NAME).equals("RL") || node.getAttribute(NAME).equals("RRL"))
                 loc = Mech.LOC_RLEG;
             if (loc == -1)
                 throw new EntityLoadingException("   Bad Mech location");
@@ -235,12 +235,13 @@ public class TdbFile implements MechLoader {
         }
     }
     
-    private static Vector readArmor(String fileName) throws EntityLoadingException {
+    private Vector readArmor(String fileName) throws EntityLoadingException {
         /**
            In a Drawing Board .dbm file, the bytes that hold the armor
            distribution for each location seem to always be followed by
            the following string of bytes (in hex): 0,4D,0,8,0,53.  That
            is how we find them in the binary file.
+
            Note: The above method for finding the armor is invalid for
            clan omni mechs.  In the case of a clan omni mech, only the
            following couple of bytes follow the armor (in hex): 0,4D.
@@ -250,6 +251,10 @@ public class TdbFile implements MechLoader {
            when a mechs name/model/etc starts with "M".  So we won't
            start looking for armor until address 100h or so in the
            file.
+
+           Note2: Both above methods fail for quad mechs (isn't this
+           fun?).  The following two bytes seem to follow armor in
+           the case of a quad mech (in hex): 0, 41.
         */
         try {
             File BASE = new File(Settings.mechDirectory);
@@ -259,6 +264,13 @@ public class TdbFile implements MechLoader {
 
             Vector armorValues = new Vector(28);
             int a = 0;
+
+            int keyByte;
+            if (chassisConfig.equals("Quad")) {
+                keyByte = 65; //hex 41
+            } else {
+                keyByte = 77; //hex 4d
+            }
 
             for (int i = 0; i < 27; i++) {
                 armorValues.addElement(new Integer(dStream.readUnsignedByte()));
@@ -276,7 +288,7 @@ public class TdbFile implements MechLoader {
                  //    ((Integer)armorValues.elementAt(23)).intValue() == 0 &&
                  //    ((Integer)armorValues.elementAt(22)).intValue() == 77 &&
                  //    ((Integer)armorValues.elementAt(21)).intValue() == 0) {
-                 if (((Integer)armorValues.elementAt(22)).intValue() == 77 &&
+                 if (((Integer)armorValues.elementAt(22)).intValue() == keyByte &&
                      ((Integer)armorValues.elementAt(21)).intValue() == 0 && a > 256) {
                      break;
                  }

@@ -94,13 +94,6 @@ public class MechDisplay extends BufferedPanel
     }
 
     /**
-     * @deprecated use displayEntity instead
-     */
-    public void displayMech(Entity en) {
-        displayEntity(en);
-    }
-
-    /**
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
@@ -1098,6 +1091,18 @@ class SystemPanel
         if (loc == -1 || slot == -1) {
             return null;
         }
+        if (en instanceof Tank) {
+            if (en.hasTargComp()) {
+                Enumeration equip = en.getEquipment();
+                while (equip.hasMoreElements()) {
+                    Mounted m = (Mounted)equip.nextElement();
+                    if (m.getType() instanceof MiscType && 
+                        m.getType().hasFlag(MiscType.F_TARGCOMP) ) {
+                        return m;
+                    }
+                }
+            }
+        }
         final CriticalSlot cs = en.getCritical(loc, slot);
         if (null == cs) {
             return null;
@@ -1118,6 +1123,11 @@ class SystemPanel
         for(int i = 0; i < en.locations(); i++) {
             if(en.getNumberOfCriticals(i) > 0) {
                 locList.add(en.getLocationName(i), i);
+            }
+        }
+        if (en instanceof Tank) {
+            if (en.hasTargComp()) {
+                locList.add(en.getLocationName(0));
             }
         }
         locList.select(0);
@@ -1154,6 +1164,23 @@ class SystemPanel
                 }
             }
             slotList.add(sb.toString());
+        }
+        if (en instanceof Tank) {
+            if (en.hasTargComp()) {
+                Enumeration equip = en.getEquipment();
+                while (equip.hasMoreElements()) {
+                    Mounted m = (Mounted)equip.nextElement();
+                    if (m.getType() instanceof MiscType && 
+                        m.getType().hasFlag(MiscType.F_TARGCOMP) ) {
+                        StringBuffer sb = new StringBuffer(32);
+                        sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc());
+                        if (m.getType().hasModes()) {
+                            sb.append(" (").append(m.curMode()).append(")");
+                        }
+                        slotList.add(sb.toString());                                                
+                    }                    
+                }
+            }
         }
     }
 

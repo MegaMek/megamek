@@ -30,16 +30,30 @@ public class AlertDialog
     public AlertDialog(Frame parent, String title, String message) {
         super(parent, title, true);
         
-        butOkay.addActionListener(this);
         labMessage = new Label(message, Label.CENTER);
+        butOkay.addActionListener(this);
         
-        setLayout(new BorderLayout());
-        
-        add(labMessage, BorderLayout.CENTER);
-        add(butOkay, BorderLayout.SOUTH);
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1.0;	c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMessage, c);
+        add(labMessage);
+            
+        c.weightx = 1.0;	c.weighty = 1.0;
+        c.fill = GridBagConstraints.VERTICAL;
+		c.ipadx = 20;	c.ipady = 5;
+        gridbag.setConstraints(butOkay, c);
+        add(butOkay);
         
         pack();
-        setLocation(parent.getLocation().x + 150 , parent.getLocation().y + 150);
+        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
+                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     }
     
 	public void actionPerformed(ActionEvent e) {

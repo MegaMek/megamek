@@ -325,6 +325,14 @@ public class BoardView1
         boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
                            rect.width, rect.height);
         
+        // clear, if we need to
+        if (rect.x < 21) {
+            boardGraph.clearRect(0, rect.y - boardRect.y, 21 - rect.x, rect.height);
+        }
+        if (rect.y < 36) {
+            boardGraph.clearRect(rect.x - boardRect.x, 0, rect.width, 36 - rect.y);
+        }
+        
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {

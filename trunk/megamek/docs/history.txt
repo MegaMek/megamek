@@ -97,6 +97,11 @@ v 0.24
 
 VERSION HISTORY:
 ----------------
+v next
++ slightly better dialogs
++ now counting upper leg crits for piloting roll purposes (thx jerrymeander)
++ now applying immobile modifier to unconcious pilots (jerrymeander again)
+
 v 0.23.2 (03-06-02, 10pm)
 + fast-drawin' cursors
 + image filters for tint, transparency (slower?)

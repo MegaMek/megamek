@@ -100,7 +100,11 @@ public abstract class BotClient extends Client {
                 case Game.PHASE_INITIATIVE :
                 case Game.PHASE_MOVEMENT_REPORT :
                 case Game.PHASE_FIRING_REPORT :
-                case Game.PHASE_END :
+                case Game.PHASE_END :/*
+                case Game.PHASE_OFFBOARD_REPORT :
+                case Game.PHASE_SET_ARTYAUTOHITHEXES:
+                case Game.PHASE_OFFBOARD:
+                case Game.PHASE_TARGETING:*/
                     sendDone(true);
                     break;
                 case Game.PHASE_VICTORY :

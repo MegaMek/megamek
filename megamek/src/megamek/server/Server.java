@@ -12914,7 +12914,7 @@ implements Runnable, ConnectionHandler {
                         if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
                             int j=step.getMpUsed();
                             int damage = 0;
-                            while (j > entity.getRunMP()) {
+                            while (j > entity.getRunMP(false)) {
                                 j--;
                                 damage++;
                             }
@@ -12930,7 +12930,7 @@ implements Runnable, ConnectionHandler {
                             if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
                                 int j=step.getMpUsed();
                                 int damage = 0;
-                                while (j > entity.getRunMP() + 1) {
+                                while (j > entity.getRunMP(false) + 1) {
                                     j--;
                                     damage++;
                                 }
@@ -12950,7 +12950,7 @@ implements Runnable, ConnectionHandler {
                             if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
                                 int j=step.getMpUsed();
                                 int damage = 0;
-                                while (j > entity.getRunMP() + k) {
+                                while (j > entity.getRunMP(false) + k) {
                                     j--;
                                     damage++;
                                 }

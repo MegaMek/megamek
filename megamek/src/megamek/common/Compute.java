@@ -1157,8 +1157,15 @@ public class Compute
             return new ToHitData(ToHitData.AUTOMATIC_FAIL, "Target out of range");
         }
         if (range > wtype.getMediumRange()) {
-            // long range, add +4
-            toHit.addModifier(4, "long range");
+            // Infantry LRMs suffer an additional maximum range penaltie.
+            if ( isAttackerInfantry &&
+                 wtype.getAmmoType() == AmmoType.T_LRM &&
+		 range == wtype.getLongRange() ) {
+                toHit.addModifier(5, "infantry LRM maximum range");
+            } else {
+		// long range, add +4
+		toHit.addModifier(4, "long range");
+            }
             // reduce range modifier back to short if a C3 spotter is at short range
             if (c3range <= wtype.getShortRange()) 
               toHit.addModifier(-4, "c3: " + c3spotter.getDisplayName() + " at short range");
@@ -1179,19 +1186,25 @@ public class Compute
 	    }
 
 	    // Infantry can attack in the same hex with a base of 2.
-	    // Except for flamers and SRMs, which have a base of 3.
+	    // Except for flamers and SRMs, which have a base of 3
+	    // and except LRMs, which suffer badly. 
 	    if ( (wtype.getFlags() & WeaponType.F_FLAMER) ==
 		 WeaponType.F_FLAMER ) {
 		toHit.addModifier(-1, "infantry flamer assault");
 	    } else if ( wtype.getAmmoType() == AmmoType.T_SRM ) {
 		toHit.addModifier(-1, "infantry SRM assault");
-	    } else {
+	    } else if ( wtype.getAmmoType() != AmmoType.T_LRM ) {
 		toHit.addModifier(-2, "infantry assault");
 	    }
-        } else {
-            // also check for minimum range
-            if (range <= wtype.getMinimumRange()) {
-                int minPenalty = wtype.getMinimumRange() - range + 1;
+        }
+        // also check for minimum range
+        if (range <= wtype.getMinimumRange()) {
+            int minPenalty = wtype.getMinimumRange() - range + 1;
+            // Infantry LRMs suffer double minimum range penalties.
+            if ( isAttackerInfantry &&
+                 wtype.getAmmoType() == AmmoType.T_LRM ) {
+                toHit.addModifier(minPenalty*2, "infantry LRM minumum range");
+            } else {
                 toHit.addModifier(minPenalty, "minumum range");
             }
         }

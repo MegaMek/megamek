@@ -319,16 +319,12 @@ public class Hex
     }
     
     /**
-     * Hexes are equal if their terrains equal each other and if the 
-     * elevations are equal
+     * Hexes are equal if they are the same object.
      */
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if (object == null || getClass() != object.getClass()) {
-            return false;
         }
-        Hex other = (Hex)object;
         return false;
     }
 }

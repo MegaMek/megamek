@@ -369,7 +369,6 @@ public abstract class GA implements Runnable {
    * very fit chromosomes.
    */
   void computeFitnessRankings() {
-    double rValue;
     
     // recalc the fitness of each chromosome
     for (int i=0; i < populationDim; i++)
@@ -378,16 +377,16 @@ public abstract class GA implements Runnable {
     for (int i=0; i < populationDim; i++)
       this.chromosomes[i].fitnessRank = getFitnessRank(this.chromosomes[i].fitness);
     
-    double rBestFitnessVal;
-    double rWorstFitnessVal;
+    // double rBestFitnessVal; // not read
+    // double rWorstFitnessVal; // not read
     for (int i=0; i < populationDim; i++) {
       if (this.chromosomes[i].fitnessRank == populationDim-1) {
-        rBestFitnessVal = this.chromosomes[i].fitness;
-        this.bestFitnessChromIndex = i;
+          // rBestFitnessVal = this.chromosomes[i].fitness;
+          this.bestFitnessChromIndex = i;
       }
       if (this.chromosomes[i].fitnessRank == 0) {
-        rWorstFitnessVal = this.chromosomes[i].fitness;
-        this.worstFitnessChromIndex = i;
+          // rWorstFitnessVal = this.chromosomes[i].fitness;
+          this.worstFitnessChromIndex = i;
       }
     }
   }
@@ -398,7 +397,7 @@ public abstract class GA implements Runnable {
    *  an extremely fit chromosome is never lost from our chromosome pool.
    */
   void doGeneticMating() {
-    int iCnt, iRandom;
+    int iCnt;
     int indexParent1 = -1, indexParent2 = -1;
     Chromosome Chrom1, Chrom2;
     

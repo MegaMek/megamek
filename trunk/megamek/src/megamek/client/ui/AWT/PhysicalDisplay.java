@@ -410,7 +410,6 @@ public class PhysicalDisplay
         StringBuffer    right = null;
         StringBuffer    both  = null;
         String[]        choices = null;
-        int             choice;
         SingleChoiceDialog dlg = null;
 
         // If the entity can't brush off, display an error message and abort.

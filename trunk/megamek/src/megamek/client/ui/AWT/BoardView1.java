@@ -1392,7 +1392,6 @@ public class BoardView1
             Rectangle modelRect = new Rectangle(47, 55,
                                  getFontMetrics(font).stringWidth(shortName) + 1,
                                  getFontMetrics(font).getAscent());
-            Rectangle wholeRect = new Rectangle(HEX_SIZE).union(modelRect);
 
             // create image for buffer
             Image tempImage;
@@ -1741,7 +1740,6 @@ public class BoardView1
             this.entityId = e.getId();
             this.masterId = m.getId();
 
-            Coords mp = m.getPosition();
             if(e.getPosition() == null || m.getPosition() == null) {
                 C3Poly = new Polygon();
                 C3Poly.addPoint(0, 0);

@@ -660,13 +660,13 @@ public class MovementData
         }
         
         public void clearAllFlags() {
-            Coords position = null;
-            int facing = 0;
-            int mpUsed = 0;
-            int distance = 0;
-            int movementType = 0;
-            boolean danger = false;
-            boolean pastDanger = false;
+            this.position = null;
+            this.facing = 0;
+            this.mpUsed = 0;
+            this.distance = 0;
+            this.movementType = 0;
+            this.danger = false;
+            this.pastDanger = false;
         }
         
         public Object clone() {

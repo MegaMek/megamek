@@ -67,7 +67,6 @@ public class GALance extends GA {
     Object[] move_array = possible.toArray();
     for (int e = 0; e < enemy_array.length; e++) { // for each enemy
       EntityState max = (EntityState)move_array[0];
-      int targets = 0;
       for(int m = 1; m < move_array.length; m++) {
         if (((EntityState)move_array[m]).threats[e] > max.threats[e]) {
           max = (EntityState)move_array[m];
@@ -149,7 +148,6 @@ public class GALance extends GA {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    int max_e = 0;
     double max = 0;
     //bonuses for endangering or dooming opponent mechs
     for (int e = 0; e < enemy_array.length; e++) {

@@ -261,20 +261,19 @@ public class Tank
      */
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        Mounted e = getEquipment(wn);
-        if (e.getLocation() == LOC_FRONT) {
+        if (mounted.getLocation() == LOC_FRONT) {
             return Compute.ARC_FORWARD;
         }
-        else if (e.getLocation() == LOC_RIGHT) {
+        else if (mounted.getLocation() == LOC_RIGHT) {
             return Compute.ARC_RIGHTSIDE;
         }
-        else if (e.getLocation() == LOC_LEFT) {
+        else if (mounted.getLocation() == LOC_LEFT) {
             return Compute.ARC_LEFTSIDE;
         }
-        else if (e.getLocation() == LOC_REAR) {
+        else if (mounted.getLocation() == LOC_REAR) {
             return Compute.ARC_REAR;
         }
-        else if (e.getLocation() == LOC_TURRET) {
+        else if (mounted.getLocation() == LOC_TURRET) {
             return Compute.ARC_FORWARD;
         }
         else {

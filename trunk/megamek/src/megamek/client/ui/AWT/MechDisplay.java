@@ -111,8 +111,7 @@ public class MechDisplay extends Panel
      */
     public void displayEntity(Entity en) {
         this.currentlyDisplaying = en;
-        
-        boolean bOwner = (en.getOwner() == client.getLocalPlayer());
+
         mPan.displayMech(en);
         aPan.displayMech(en);
         wPan.displayMech(en);

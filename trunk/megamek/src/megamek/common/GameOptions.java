@@ -84,7 +84,7 @@ public class GameOptions extends Options implements Serializable {
         
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);
-        addOption(ruleBreakers, new GameOption("inf_proto_move_multi", "number of Protomech/Infantry to move per 'Mech", "The number of Infantry units/Protomechs that have to move for every Mek or Vehicle, if the inf_move_multi or the protos_move_multi option is selected.\n\nDefault of 3.", 3));
+        addOption(ruleBreakers, new GameOption("inf_proto_move_multi", "number of Protomech/Infantry to move per Mek", "The number of Infantry units/Protomechs that have to move for every Mek or Vehicle, if the inf_move_multi or the protos_move_multi option is selected.\n\nDefault of 3.", 3));
         addOption(ruleBreakers, new GameOption("no_tac", "No through-armor criticals", "If checked, rolls of '2' on hit location will only result in a torso hit, and no critical roll.  Only applies to mechs.  Supercedes the floating criticals option.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_immobile_vehicles", "Vehicles not immobilized by crits", "If checked, vehicles with a drive or engine hit will not be counted as 'immobile' for purposes of determining to-hit numbers.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("vehicles_can_eject", "Vehicles can be abandoned", "If checked, vehicle crews can leave their unit (effectively removing it from the game).\n\nUnchecked by default.", false));
@@ -106,7 +106,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("protos_safe_from_infernos", "Protomechs may not be the target of an Inferno missile attack.", "If checked, Protomechs cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("lobby_ammo_dump", "Allow Ammo Dumping in the Lobby", "If checked, Players may dump their Mech's ammo before the game starts.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("set_arty_player_homeedge", "Automatically set artillery home edge", "If checked, all of the players' artillery units will have their homeedge set to the deployment edge of the player,\nNW and NE are North, SW and SE are South.\n\nUnchecked by default.", false));
-        addOption(ruleBreakers, new GameOption("no_premove_vibra", "Do not damage 'Mech by Vibrabomb if it has not yet moved.", "If checked, vibrabombs that explode will not damage 'Mechs that have not yet finished their move.\n\nUnchecked by default.", false));
+        addOption(ruleBreakers, new GameOption("no_premove_vibra", "Do not damage Mek by Vibrabomb if it has not yet moved.", "If checked, vibrabombs that explode will not damage Meks that have not yet finished their move.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

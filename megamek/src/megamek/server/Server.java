@@ -8092,7 +8092,7 @@ implements Runnable, ConnectionHandler {
         for ( Enumeration iter = entity.getMisc(); iter.hasMoreElements(); ) {
             Mounted mount = (Mounted) iter.nextElement();
             EquipmentType equip = mount.getType();
-            if ( BattleArmor.ASSAULT_CLAW.equals(equip.getInternalName()) ) {
+            if ( BattleArmor.FIRE_PROTECTION.equals(equip.getInternalName()) ) {
                 phaseReport.append(entity.getDisplayName() )
                     .append( " is on fire, but is protected by its gear.\n" );
                 return;

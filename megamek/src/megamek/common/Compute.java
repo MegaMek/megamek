@@ -888,7 +888,7 @@ public class Compute
     //makes it so that parallel hexes will be next to one another
     public static Coords[] toLineOrder(Coords[] in, final Coords root) {
       if (in.length <= 1) return in;
-      Arrays.sort(in, new Comparator() {
+      com.sun.java.util.collections.Arrays.sort(in, new com.sun.java.util.collections.Comparator() {
         public int compare(Object obj, Object obj1) {
           Coords coord = (Coords)obj;
           Coords coord1 = (Coords)obj1;

@@ -400,7 +400,7 @@ chassis "Nova" "Blackhawk.gif"
 
 # made by BH-21
 chassis "flatbed truck" "truck.gif"
-# chassis "jeep" "jeep.gif"
+chassis "jeep" "jeep.gif"
 chassis "skimmer" "skimmer.gif"
 chassis "swift wind scout car" "swiftwind.gif"
 exact "j-27 ordnance transport" "j27.gif"

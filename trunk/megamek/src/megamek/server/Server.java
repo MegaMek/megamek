@@ -633,6 +633,11 @@ implements Runnable {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             
+            if (entity.crew.isDoomed()) {
+                entity.crew.setDead(true);
+                entity.setDestroyed(true);
+            }
+            
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
             }
@@ -6116,7 +6121,7 @@ implements Runnable {
             if (en.crew.getHits() < 6) {
                 en.crew.setRollsNeeded(en.crew.getRollsNeeded() + damage);
             } else {
-                en.crew.setDead(true);
+                en.crew.setDoomed(true);
                 en.crew.setRollsNeeded(0);
                 s += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
             }
@@ -6473,7 +6478,7 @@ implements Runnable {
             } else if (loc == Mech.LOC_HEAD) {
                 desc += "<<<HEAD BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
                 destroyLocation(en, loc);
-                en.crew.setDead(true);
+                en.crew.setDoomed(true);
                 desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                 return desc;
             } else {
@@ -6502,7 +6507,7 @@ implements Runnable {
                         }
                         else {
                             desc += "\n            <<<CRITICAL HIT>>> " + mWeap.getName() +
-                            " jams.";
+                            " jams for 1 turn.";
                             tank.setJammedWeapon(mWeap);
                         }
                         break;
@@ -6556,7 +6561,7 @@ implements Runnable {
                         switch(cs.getIndex()) {
                             case Mech.SYSTEM_COCKPIT :
                                 // boink!
-                                en.crew.setDead(true);
+                                en.crew.setDoomed(true);
                                 desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                                 break;
                             case Mech.SYSTEM_ENGINE :

@@ -27,7 +27,14 @@ public class ScenarioLoader
 {
     private File m_scenFile;
     // copied from ChatLounge.java
-    private Vector m_vDamagePlans = new Vector();        
+    private Vector m_vDamagePlans = new Vector(); 
+    
+    //Used to store Crit Hits
+    private Vector m_vCritHitPlans = new Vector();
+
+    //Used to set ammo Spec Ammounts
+    private Vector m_vSetAmmoTo = new Vector();
+
     
     public ScenarioLoader(File f)
     {
@@ -46,6 +53,120 @@ public class ScenarioLoader
                 HitData hit = dp.entity.rollHitLocation(ToHitData.HIT_NORMAL, 
                         ToHitData.SIDE_FRONT);
                 System.out.println(s.damageEntity(dp.entity, hit, 5));
+            }
+                
+            //Apply Spec Dammage
+            for (int dpspot = 0, dpcount = dp.specificDammage.size();dpspot < dpcount; dpspot++) {
+                //Get the SpecDam
+                SpecDam sd = ((SpecDam)dp.specificDammage.elementAt(dpspot));
+            
+                if (dp.entity.locations() <= sd.loc)    //Make sure the the location is valid 
+                    System.out.println("\tInvalid Location Specified " + sd.loc);
+                else {
+                    //Infantry only take dammage to "internal"
+                    if  (sd.internal || ((dp.entity instanceof Infantry ) && !(dp.entity instanceof BattleArmor ))) {
+                      if (dp.entity.getOInternal(sd.loc) > sd.setArmorTo) {
+                        dp.entity.setInternal(sd.setArmorTo,sd.loc);
+                        System.out.println("\tSet Armor Value for (Internal  " + dp.entity.getLocationName(sd.loc) + ") To " +  sd.setArmorTo);
+                        if (sd.setArmorTo == 0) {
+                            //Mark destroy if internal armor is set to zero
+                            System.out.println("\tSection Destoyed " + dp.entity.getLocationName(sd.loc));
+                            s.destroyLocation(dp.entity,sd.loc);
+                        }
+                      }
+                    }
+                    else {
+                      if (sd.rear && dp.entity.hasRearArmor(sd.loc)) {
+                        if (dp.entity.getOArmor(sd.loc,true) > sd.setArmorTo) {
+                          System.out.println("\tSet Armor Value for (Rear " + dp.entity.getLocationName(sd.loc) + ") To " +  sd.setArmorTo);
+                          dp.entity.setArmor(sd.setArmorTo,sd.loc,true);
+                        }
+                      }
+                      else {
+                        if (dp.entity.getOArmor(sd.loc,false) > sd.setArmorTo) {
+                          System.out.println("\tSet Armor Value for (" + dp.entity.getLocationName(sd.loc) + ") To " +  sd.setArmorTo);
+                          
+                          //Battle Armor Handled Differently
+                          //If armor set to Zero kill the Armor sport which represents
+                          //one member of the squad
+                          if (dp.entity instanceof BattleArmor ) {
+                              if (sd.setArmorTo ==0 ) {
+                                dp.entity.setArmor(Entity.ARMOR_DOOMED, sd.loc, false);
+                                dp.entity.setInternal(Entity.ARMOR_DOOMED, sd.loc);
+                              }
+                              else {
+                                  //For some reason setting armor to 1 will result in 2 armor points
+                                  //left on the GUI Dont know why but adjust here!
+                                dp.entity.setArmor(sd.setArmorTo-1,sd.loc);
+                              }
+                          }
+                          else {
+                            dp.entity.setArmor(sd.setArmorTo,sd.loc);
+                          }
+                        }
+                      }
+                    }
+                }
+            }
+        }
+        
+        //Loop throught Crit Hits
+        for (int chSpot = 0, chCount = m_vCritHitPlans.size(); chSpot < chCount; chSpot++) {
+            CritHitPlan chp = (CritHitPlan)m_vCritHitPlans.elementAt(chSpot);
+            System.out.println("Applying Critical Hits to " + chp.entity.getShortName());
+
+            for (int chpspot = 0, chpcount = chp.critHits.size();chpspot < chpcount; chpspot++) {
+                 //Get the ScritHit
+                CritHit ch = ((CritHit)chp.critHits.elementAt(chpspot));
+                    
+                //Note need to adjust the Slot to a base of -100
+                //See notes in the criticalEntity function.
+                int conSlot = (ch.slot*-1) - 100; 
+                if (chp.entity.locations() <= ch.loc)
+                    System.out.println("\tInvalid Location Specified " + ch.loc);
+                else {
+                    //Make sure that we have crit spot to hit
+                    //Also handle Mech and Tank differently
+                    if (chp.entity instanceof Mech || chp.entity instanceof Protomech ) { 
+                        if (ch.slot < chp.entity.getNumberOfCriticals(ch.loc)) {
+                            //If this spot is not dammagable or been hit before then do nothing
+                              CriticalSlot cs = chp.entity.getCritical(ch.loc, ch.slot);
+                              if (!(cs == null || !cs.isHittable())) {
+                                System.out.println(s.criticalEntity(chp.entity,ch.loc,conSlot));
+                              }
+                        }
+                    }
+                    else if (chp.entity instanceof Tank) //This handles tanks and other entity types
+                        System.out.println(s.criticalEntity(chp.entity,ch.loc,conSlot));
+                }
+            }
+        }
+        
+        
+        //Loop throught Set Ammo To
+        for (int saSpot = 0, saCount = m_vSetAmmoTo.size(); saSpot < saCount; saSpot++) {
+            SetAmmoPlan sap = (SetAmmoPlan)m_vSetAmmoTo.elementAt(saSpot);
+            System.out.println("Applying Ammo Adjustment to " + sap.entity.getShortName());
+
+            for (int sapSpot = 0, sapCount = sap.ammoSetTo.size();sapSpot < sapCount; sapSpot++) {
+                 //Get the ScritHit
+                SetAmmoTo sa = ((SetAmmoTo)sap.ammoSetTo.elementAt(sapSpot));
+                
+                //Only can be done against Mechs
+                if (sap.entity instanceof Mech ) { 
+                    if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
+                        //Get the piece of Eqipment and Check to make sure it is
+                        //a ammo item then set its amount!
+                        CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
+                        if (!(cs == null)) {
+                            Mounted ammo = sap.entity.getEquipment(sap.entity.getCritical(sa.loc, sa.slot).getIndex());
+                            if (ammo.getType() instanceof AmmoType ) {
+                              //Also make sure we dont exceed the max aloud
+                              ammo.setShotsLeft(Math.min(sa.setAmmoTo,ammo.getShotsLeft()));
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -161,11 +282,55 @@ public class ScenarioLoader
             }
             else {
                 Entity e = parseEntityLine(s);
+                
+                //Damage Plan Stuff
+                boolean dpCreated = false;
+                DamagePlan dp = new DamagePlan(e);
                 s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
                 if (s != null) {
                     int nBlocks = Integer.parseInt(s);
                     m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
                 }
+                
+                //Add the Specif Dammage if it exists
+                s = p.getProperty("Unit_" + sFaction + "_" + i + "_DamageSpecific");
+                if (s != null) {
+                  StringTokenizer st = new StringTokenizer(s,",");
+                  while (st.hasMoreTokens()) {
+                    dp.AddSpecificDammage(st.nextToken());
+                  }
+                  dpCreated = true;
+                }
+
+                //Add Crit Hits if it exists
+                boolean chpCreated = false;
+                s = p.getProperty("Unit_" + sFaction + "_" + i + "_CritHit");
+                CritHitPlan chp = new CritHitPlan(e);
+                if (s != null) {
+                  StringTokenizer st = new StringTokenizer(s,",");
+                  while (st.hasMoreTokens()) {
+                    chp.AddCritHit(st.nextToken());
+                  }
+                  chpCreated = true;
+                }
+                
+                //Add Set Ammo Locations
+                boolean sapCreated = false;
+                s = p.getProperty("Unit_" + sFaction + "_" + i + "_SetAmmoTo");
+                SetAmmoPlan sap = new SetAmmoPlan(e);
+                if (s != null) {
+                  StringTokenizer st = new StringTokenizer(s,",");
+                  while (st.hasMoreTokens()) {
+                    sap.AddSetAmmoTo(st.nextToken());
+                  }
+                  sapCreated = true;
+                }
+                
+                
+                if (chpCreated) m_vCritHitPlans.addElement(chp);
+                if (dpCreated) m_vDamagePlans.addElement(dp);
+                if (sapCreated) m_vSetAmmoTo.addElement(sap);
+                
                 
                 //Check for advantages
                   s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
@@ -421,13 +586,166 @@ public class ScenarioLoader
         System.out.println("Successfully loaded.");
     }
     
+    /*
+     * This is used specify the critical hit location
+     */
+    public class CritHit {
+      public int loc;
+      public int slot;
+
+      public CritHit(int l,int s) {
+        loc = l;
+        slot = s;
+      }
+    }
+
+    /*
+     * 
+     * This class is used to store the critical hit plan for a entity
+     * it is loaded from the scenario file.  It contains a vector 
+     * of CritHit.
+     * 
+     */
+    class CritHitPlan {
+        public Entity entity;
+        Vector critHits = new Vector();
+
+        public CritHitPlan(Entity e) {
+          entity = e;
+        }
+
+        public void AddCritHit(String s) {
+          int loc;
+          int slot;
+
+          //Get the pos of the ":"
+          int ewSpot = s.indexOf(":");
+
+            loc = Integer.parseInt(s.substring(0,ewSpot));
+            slot = Integer.parseInt(s.substring(ewSpot+1));
+          critHits.addElement(new CritHit(loc,slot));
+        }
+    }
+    
+    
+    
+    /*
+     * This is used to store the ammour to change ammo at a given location 
+     */
+    public class SetAmmoTo {
+        public int loc;
+        public int slot;
+        public int setAmmoTo;
+        
+        public SetAmmoTo(int Location,int Slot,int SetAmmoTo) {
+            loc = Location;
+            slot = Slot;
+            setAmmoTo = SetAmmoTo;
+        }
+    }
+
+    
+    /*
+     * 
+     * This class is used to store the ammo Adjustments
+     * it is loaded from the scenario file.  It contains a vector 
+     * of SetAmmoTo.
+     * 
+     */
+    class SetAmmoPlan {
+        public Entity entity;
+        Vector ammoSetTo = new Vector();
+
+        public SetAmmoPlan(Entity e) {
+          entity = e;
+        }
+
+        /*
+         * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
+         */
+        public void AddSetAmmoTo(String s) {
+            int loc = 0;
+            int slot = 0;
+            int setTo = 0;
+            
+            //Get the pos of the ":"
+            int ewSpot = s.indexOf(":");
+            int amSpot = s.indexOf("-");
+            
+            
+            loc = Integer.parseInt(s.substring(0,ewSpot));
+            slot = Integer.parseInt(s.substring(ewSpot+1,amSpot));
+            setTo = Integer.parseInt(s.substring(amSpot+1));
+            
+            ammoSetTo.addElement(new SetAmmoTo(loc,slot,setTo));
+            
+        }
+    }
+    
+    
+    /*
+     * This is used specify the one damage location
+     */
+    public class  SpecDam {
+       public int loc;
+       public int setArmorTo;
+       public boolean rear;
+       public boolean internal;
+       public SpecDam(int Location,int SetArmorTo,boolean RearHit,boolean Internal) {
+         loc = Location;
+         setArmorTo = SetArmorTo;
+         rear = RearHit;
+         internal = Internal;
+       }
+    }
+
+    
+    /*
+     * 
+     * This class is used to store the dammage plan for a entity
+     * it is loaded from the scenario file.  It contains a vector 
+     * of SpecDam.
+     * 
+     */
     class DamagePlan {
         public Entity entity;
         public int nBlocks;
-        
-        public DamagePlan(Entity e, int n) {
-            entity = e;
-            nBlocks = n;
+        Vector specificDammage = new Vector();
+        Vector ammoSetTo = new Vector();
+        public  DamagePlan(Entity e, int n) {
+          entity = e;
+          nBlocks = n;
+        }
+        public  DamagePlan(Entity e) {
+          entity = e;
+          nBlocks = 0;
+        }
+
+
+        /*
+         * Converts N2:1 to Nornam hit to location 2 set armor to 1!
+         */
+        public void AddSpecificDammage(String s)
+        {
+            int loc = 0;
+            int setTo = 0;
+            boolean rear = false;
+            boolean internal = false;
+
+            //Get the type of set to make
+            if (s.substring(0,1).equals("R"))
+              rear = true;
+
+            if (s.substring(0,1).equals("I"))
+              internal = true;
+
+            //Get the pos of the ":"
+            int ewSpot = s.indexOf(":");
+
+            //Get the Location this is the number starting at Character 2 in the string
+            loc = Integer.parseInt(s.substring(1,ewSpot));
+            setTo = Integer.parseInt(s.substring(ewSpot+1));
+            specificDammage.addElement(new SpecDam(loc,setTo,rear,internal));
         }
     }
 }

@@ -99,38 +99,20 @@ public class BotClient extends Client
     
     protected void changePhase(int phase) {
         super.changePhase(phase);
-
-        switch(phase) {
-        case Game.PHASE_LOUNGE :
-            notifyOfBot();
-            // let the human set the bot up
-            break;
-/*        case Game.PHASE_MOVEMENT :
-            curPanel = new MovementDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
-            break;
-        case Game.PHASE_FIRING :
-            curPanel = new FiringDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
-            break;
-        case Game.PHASE_PHYSICAL :
-            curPanel = new PhysicalDisplay(this);
-            this.add(curPanel);
-            curPanel.requestFocus();
-            break;
-*/      
         
-        // just skip over the report screens
-	    /* 2002-10-28 Suvarov454: workaround for the "beginning of turn" race condition.
-        case Game.PHASE_INITIATIVE :
-	    */
-        case Game.PHASE_MOVEMENT_REPORT :
-        case Game.PHASE_FIRING_REPORT :
-        case Game.PHASE_END :
-            sendReady(true);
-            break;
+        switch(phase) {
+            case Game.PHASE_LOUNGE :
+                notifyOfBot();
+                // let the human set the bot up
+                break;
+                
+                // just skip over the report screens
+            case Game.PHASE_INITIATIVE :
+            case Game.PHASE_MOVEMENT_REPORT :
+            case Game.PHASE_FIRING_REPORT :
+            case Game.PHASE_END :
+                sendReady(true);
+                break;
         }
     }
     

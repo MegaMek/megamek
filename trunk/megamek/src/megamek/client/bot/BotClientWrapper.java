@@ -48,7 +48,7 @@ public abstract class BotClientWrapper extends BotClient {
           this.die();
         }
         initMovement();
-        sendReady(true);
+//        sendReady(true); BAD BAD BAD!
         break;
       case Game.PHASE_FIRING :
         initFiring();

@@ -761,11 +761,11 @@ public class Compute
                                              Entity entering,
                                              Coords coords,
                                              Entity transport ) {
-	boolean isInfantry = entering instanceof Infantry;
-	boolean isMech = entering instanceof Mech;
+        boolean isInfantry = entering instanceof Infantry;
+        boolean isMech = entering instanceof Mech;
         Entity firstEntity = transport;
 
-	// Walk through the entities in the given hex.
+        // Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
             
@@ -801,7 +801,7 @@ public class Compute
                 }
             }
 
-	}
+        }
         
         // okay, all clear
         return null;
@@ -1330,8 +1330,12 @@ public class Compute
         if (entity.isShutDown()) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
         }
+        // Pilot dead?
+        if ( entity.getCrew().isDead() ) {
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+        }
         // pilot awake?
-        if (!entity.getCrew().isActive()) {
+        else if (!entity.getCrew().isActive()) {
             return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
         }
         

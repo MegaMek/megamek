@@ -135,7 +135,7 @@ public abstract class MMRandom {
                     public void run() { 
                         random.nextInt(); 
                     }
-                } );
+                }, "Random Number Init (CryptoRandom)" );
             initRNG.start();
         }
 

@@ -137,7 +137,7 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
         button = new Button( "Listen" );
         button.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    (new Thread(PacketTool.this)).start();
+                    (new Thread(PacketTool.this, "Packet Reader")).start();
                 }
             } );
         panConnect.add( button );

@@ -61,18 +61,19 @@ public class UnitLoadingDialog extends Dialog {
             screenSize.width / 2 - getSize().width / 2,
             screenSize.height / 2 - getSize().height / 2);
         
-        Thread t = new Thread() {
+        Runnable r = new Runnable() {
             public void run() {
                 while (!MechSummaryCache.isInitialized()) {
                     updateCounts();
                     try {
-                        sleep(UPDATE_FREQUENCY);
+                        Thread.sleep(UPDATE_FREQUENCY);
                     } catch (Exception e) {
                         ;
                     }
                 }
             }
         };
+        Thread t = new Thread(r, "Unit Loader");
         t.start();
     }
     

@@ -27,13 +27,21 @@ Maps=RANDOM,RANDOM
 # Faction list
 # The player name used to log into the server MUST match this name to play as that faction
 #
-Factions=PlayerA,PlayerB
+Factions=PlayerA,PlayerB,PlayerC
 
 # Faction location
 # Determines deployment area
 # Valid values are Any,N,NE,E,SE,S,SW,W,NW,C (center), and R (random)
 Location_PlayerA=W
 Location_PlayerB=E
+Location_PlayerC=S
+
+# Faction Teams
+# Determines which players are on what teams.
+# Valid values are any positive integer less than 2^31.
+Team_PlayerA=1
+Team_PlayerB=2
+Team_PlayerC=2
 
 # Faction minefields
 # Gives the player minefields to deploy, the first number is conventional, the second
@@ -57,7 +65,7 @@ Unit_PlayerA_1=Archer ARC-2R,PilotA1,3,4
 Unit_PlayerA_2=Hunchback HBK-4G,PilotA2,4,3
 
 Unit_PlayerB_1=Atlas AS7-D,PilotB1,3,3
-Unit_PlayerB_2=Locust LCT-1M,PilotB2,4,5
+Unit_PlayerC_1=Locust LCT-1M,PilotB2,4,5
 
 # Additional advantages to add to pilots. Most of these require the 'MaxTech Level3 Pilot Advantages' game
 # option to be turned on. The possible values are:

@@ -185,9 +185,12 @@ public class FiringDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
+        c.weightx = 1.0;    c.weighty = 0;
+        c.gridwidth = 1;
+        addBag(client.cb.getComponent(), gridbag, c);
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;    c.weighty = 0.0;
-        c.ipady = 20;
         addBag(panButtons, gridbag, c);
         
         addKeyListener(this);
@@ -208,7 +211,7 @@ public class FiringDisplay
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(1, 8));
+        panButtons.setLayout(new GridLayout(2, 4));
         
         switch (buttonLayout) {
         case 0 :

@@ -7,6 +7,7 @@ v 0.29.16 (CVS)
 + Removed java 1.1 incompatible method.
 + Removed change mode from the M key.
 + Shows wreck after ammo explosion.
++ Removed the new chat box.
 
 v 0.29.15 (10-19-03, 9:30pm)
 + Fa Shih units have superior mine-clearing capabilities.

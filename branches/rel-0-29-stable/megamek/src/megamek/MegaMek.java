@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.29-stable-9";
+    public static String    VERSION = "0.29-stable-10 (CVS)";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
 
     public Frame            frame;

@@ -79,6 +79,16 @@ public class InfernoTracker
     public static final Inferno INFERNO_IV_ROUND = new Inferno(10,3);
 
     /**
+     * A single burn turn from a standard Inferno round.
+     */
+    public static final Inferno STANDARD_TURN   = new Inferno(6,1);
+
+    /**
+     * A single burn turn from an Inferno IV round.
+     */
+    public static final Inferno INFERNO_IV_TURN = new Inferno(10,1);
+
+    /**
      * Create an empty tracker.
      */
     public InfernoTracker() {}

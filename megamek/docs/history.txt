@@ -5,6 +5,7 @@ v0.29.62 (CVS)
 + Bug 1044814, 1013474: restructured how end-of-move steps are calculated to
         allow players to move Meks through any number of friendly Meks;
         also fixes infantry jumping over river.
++ RFE 1107326: list beginning and ending IS for units in entitystatus.txt.
 
 v0.29.61 (2005-01-17 8:00am)
 + Bug 1099792: Glancing blows with missiles for no damage

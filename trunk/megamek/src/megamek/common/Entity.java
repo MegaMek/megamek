@@ -524,10 +524,10 @@ public abstract class Entity
     }
 
     /**
-     * Is this entity shut down or is the crew unconcious?
+     * Is this entity shut down or is the crew unconscious?
      */
     public boolean isImmobile() {
-        return shutDown || crew.isUnconcious();
+        return shutDown || crew.isUnconscious();
     }
 
     public boolean isCharging() {
@@ -2529,7 +2529,7 @@ public abstract class Entity
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
+            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconscious");
         }
         // gyro operational?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
@@ -3462,7 +3462,7 @@ public abstract class Entity
 	public boolean canFlee() {
 		Coords pos = getPosition();
 		return pos != null && getWalkMP() > 0 && !isProne()
-			&& !isShutDown() && !getCrew().isUnconcious()
+			&& !isShutDown() && !getCrew().isUnconscious()
 			&& (pos.x == 0 || pos.x == game.board.width - 1
 				|| pos.y == 0 || pos.y == game.board.height - 1);
 	}

@@ -1854,7 +1854,12 @@ public class Compute
         if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
-        
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
         //Quads can't punch
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
@@ -2035,6 +2040,11 @@ public class Compute
         }
         if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
+        }
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
         
         // check if both legs are present
@@ -2226,6 +2236,11 @@ public class Compute
         //Quads can't club
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         if (bothArms) {
@@ -2428,6 +2443,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not push.");
         }
 
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
         // check if both arms are present
         if (ae.isLocationDestroyed(Mech.LOC_RARM)
             || ae.isLocationDestroyed(Mech.LOC_LARM)) {
@@ -2574,6 +2594,11 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
 
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
         // determine last valid step
         compile(game, attackerId, md);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
@@ -2631,6 +2656,11 @@ public class Compute
 	if ( ae instanceof Infantry ) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
 	}
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
 
         // check range
         if (src.distance(te.getPosition()) > 1 ) {
@@ -2769,6 +2799,11 @@ public class Compute
         if (!md.contains(MovementData.STEP_START_JUMP)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. must involve jumping");
         }
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
         
         // determine last valid step
         compile(game, attackerId, md);
@@ -2821,6 +2856,11 @@ public class Compute
 	if ( ae instanceof Infantry ) {
 	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
 	}
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != te.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
 
         // check range
         if (src.distance(te.getPosition()) > 1 ) {
@@ -3673,6 +3713,11 @@ public class Compute
             reason.append( "Defender is not a Mek." );
         }
 
+        // Can't target a transported entity.
+        if ( Entity.NONE != defender.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+        }
+
         // Handle BattleArmor attackers.
         else if ( attacker instanceof BattleArmor ) {
             BattleArmor inf = (BattleArmor) attacker;
@@ -3731,6 +3776,11 @@ public class Compute
         // Can only swarm a Mek.
         if ( !(defender instanceof Mech) ) {
             reason.append( "Defender is not a Mek." );
+        }
+
+        // Can't target a transported entity.
+        if ( Entity.NONE != defender.getTransportId() ) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Handle BattleArmor attackers.

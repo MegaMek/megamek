@@ -1063,6 +1063,17 @@ public abstract class Entity
         }
     }
     
+    public int getTotalAmmoOfType(EquipmentType et) {
+        int totalShotsLeft = 0;
+        for (Enumeration j = getAmmo(); j.hasMoreElements();) {
+            Mounted amounted = (Mounted)j.nextElement();
+            if (amounted.getType() == et && !amounted.isDumping()) {
+                totalShotsLeft += amounted.getShotsLeft();
+            }
+        }
+        return totalShotsLeft;
+    }
+    
     /**
      * Returns the Rules.ARC that the weapon, specified by 
      * number, fires into.

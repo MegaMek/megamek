@@ -638,13 +638,7 @@ class WeaponPanel
                 }
                 
                 EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
-                int totalShotsLeft = 0;
-                for (Enumeration j = entity.getAmmo(); j.hasMoreElements();) {
-                    Mounted amounted = (Mounted)j.nextElement();
-                    if (amounted.getType() == typeUsed && !amounted.isDumping()) {
-                        totalShotsLeft += amounted.getShotsLeft();
-                    }
-                }
+                int totalShotsLeft = entity.getTotalAmmoOfType(typeUsed);
                 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
                 // Fire Mode - lots of things have variable modes

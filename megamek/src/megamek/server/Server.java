@@ -1895,7 +1895,7 @@ implements Runnable {
         // 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
- 	    !isWeaponInfantry;
+            !isWeaponInfantry;
         Mounted ammo = null;
         Infantry platoon = null;
         if (usesAmmo) {
@@ -1928,6 +1928,12 @@ implements Runnable {
             return;
         }
         
+        // is it jammed?
+        if (weapon.isJammed()) {
+            phaseReport.append(" but the weapon is jammed!\n");
+            return;
+        }
+        
         // try reloading
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
             ae.loadWeapon(weapon);
@@ -1952,35 +1958,43 @@ implements Runnable {
         }
         
         
+        int nShots = 1;
+        // figure out # of shots for variable-shot weapons
+        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
+            nShots = 2;
+        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (weapon.curMode().equals("2-shot")) {
+                nShots = 2;
+            } else if (weapon.curMode().equals("4-shot")) {
+                nShots = 4;
+            } else if (weapon.curMode().equals("6-shot")) {
+                nShots = 6;
+            }
+        }
+        
+        // make sure there's enough ammo to support that many shots
+        if (usesAmmo && nShots > 1) {
+            int nAvail = ae.getTotalAmmoOfType(atype);
+            if (nAvail < nShots) {
+                phaseReport.append("(Not enough ammo for " + weapon.curMode() + ". ");
+                phaseReport.append("Firing at single rate");
+                nShots = 1;
+            }
+        }
+        
         // use up ammo (if weapon is out of ammo, we shouldn't be here)
         if (usesAmmo) {
-            ammo.setShotsLeft(ammo.getShotsLeft() - 1);
-                /*
-                Fire Mode - Takes 2 shots of ammo away if we are firing uAC Double Rate.
-                If you don't have enough ammo for a Double Rate shot, you can't do it!
-                Rasia
-                 */
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && ammo != null && weapon.curMode().equals("Ultra")) {
+            for (int x = 0; x < nShots; x++) {
                 if (ammo.getShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
                     ammo = weapon.getLinked();
-                    if (ammo.getShotsLeft() <= 0) {
-                        weapon.switchMode();
-                        phaseReport.append("(Out of Ammo, Single Rate Only):");
-                    } else {
-                        ammo.setShotsLeft(ammo.getShotsLeft() - 1);
-                    }
-                    
-                } else {
-                    ammo.setShotsLeft(ammo.getShotsLeft() - 1);
                 }
+                ammo.setShotsLeft(ammo.getShotsLeft() - 1);
             }
         }
         
         // build up some heat
-        ae.heatBuildup += wtype.getHeat();
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) // Fire Mode - If we are shooting an Ultra AC twice
-            ae.heatBuildup += wtype.getHeat();
+        ae.heatBuildup += (wtype.getHeat() * nShots);
         
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
@@ -2007,25 +2021,31 @@ implements Runnable {
         phaseReport.append("rolls " + roll + " : ");
         
         // check for AC jams
-        int jamCheck = 0;
-        if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
-            jamCheck = 2;
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-            if (weapon.curMode().equals("2-shot")) {
+        if (nShots > 1) {
+            int jamCheck = 0;
+            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
                 jamCheck = 2;
+            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                if (nShots == 2) {
+                    jamCheck = 2;
+                }
+                else if (nShots == 4) {
+                    jamCheck = 3;
+                }
+                else if (nShots == 6) {
+                    jamCheck = 4;
+                }
             }
-            else if (weapon.curMode().equals("4-shot")) {
-                jamCheck = 3;
-            }
-            else if (weapon.curMode().equals("6-shot")) {
-                jamCheck = 4;
-            }
-        }
         
-        if (jamCheck > 0 && roll <= jamCheck) {
-            phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
-            weapon.setHit(true);
-            return;
+            if (jamCheck > 0 && roll <= jamCheck) {
+                phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+                weapon.setJammed(true);
+                // ultras are destroyed by jamming
+                if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                    weapon.setHit(true);
+                }
+                return;
+            }
         }
         
         // do we hit?
@@ -2101,31 +2121,23 @@ implements Runnable {
             }
             
         } else if (atype != null && atype.hasFlag(AmmoType.F_CLUSTER)) {
-	    // Cluster shots break into single point clusters.
+            // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = Compute.missilesHit(wtype.getRackSize());
             nDamPerHit = 1;
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.curMode().equals("Ultra")) {
+        } else if (nShots > 1) {
+            // this should handle multiple attacks from ultra and rotary ACs
             bSalvo = true;
-            hits = Compute.missilesHit(2);
-        } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY && !weapon.curMode().equals("Single")) {
-            bSalvo = true;
-            if (weapon.curMode().equals("2-shot")) {
-                hits = Compute.missilesHit(2);
-            } else if (weapon.curMode().equals("4-shot")) {
-                hits = Compute.missilesHit(4);
-            } else if (weapon.curMode().equals("6-shot")) {
-                hits = Compute.missilesHit(6);
-            }
+            hits = Compute.missilesHit(nShots);
         } else if (atype != null && atype.hasFlag(AmmoType.F_MG) && !isWeaponInfantry && (te instanceof Infantry)) {
             // Mech and Vehicle MGs do *DICE* of damage to PBI.
-	    // 2002-10-24 Suvarov454 : no need for so many lines in the report.
+            // 2002-10-24 Suvarov454 : no need for so many lines in the report.
             nDamPerHit = Compute.d6(wtype.getDamage());
-	    phaseReport.append( "riddles the target with " + 
-				nDamPerHit + sSalvoType + "and " );
+            phaseReport.append( "riddles the target with " + 
+                nDamPerHit + sSalvoType + "and " );
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
-	    // HGR does range-dependent damage
+            // HGR does range-dependent damage
             int nRange = ae.getPosition().distance(te.getPosition());
             if (nRange <= wtype.getShortRange()) {
                 nDamPerHit = 25;
@@ -2136,37 +2148,34 @@ implements Runnable {
             }
         }
 
-	// Report the number of hits.
+        // Report the number of hits.
         if (bSalvo) {
             phaseReport.append(hits + sSalvoType + "hit" + toHit.getTableDesc() + ".");
             
             if (amsHits > 0) {
                 phaseReport.append("\n\tAMS shoots down " + amsHits + " missile(s).");
             }
-	    /* 2002-10-24 Suvarov454 : commented out to clean up weapons phase.
-            phaseReport.append("\n\t");
-	    */
         }
 
         // for each cluster of hits, do a chunk of damage
         while (hits > 0) {
             int nDamage;
 
-	    // Flamers do heat, not damage.
+            // Flamers do heat, not damage.
             if (wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
-		nDamage = nDamPerHit * hits;
-		phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
-		te.heatBuildup += nDamage;
-		hits = 0;
+                nDamage = nDamPerHit * hits;
+                phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
+                te.heatBuildup += nDamage;
+                hits = 0;
             }
-	    else {
-		HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-		nDamage = nDamPerHit * Math.min(nCluster, hits);
-		if (!bSalvo) {
-		    phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
-		}
-		phaseReport.append(damageEntity(te, hit, nDamage));
-		hits -= nCluster;
+            else {
+                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                nDamage = nDamPerHit * Math.min(nCluster, hits);
+                if (!bSalvo) {
+                    phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
+                }
+                phaseReport.append(damageEntity(te, hit, nDamage));
+                hits -= nCluster;
             }
         } // Handle the next cluster.
         phaseReport.append("\n");
@@ -3447,6 +3456,14 @@ implements Runnable {
             System.err.println("server: explodeEquipment called on destroyed"
             + " equipment (" + mounted.getName() + ")");
             return "";
+        }
+        
+        // special-case.  RACs only explode when jammed
+        if (mounted.getType() instanceof WeaponType && 
+                ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (!mounted.isJammed()) {
+                return "";
+            }
         }
         
         int damage = mounted.getExplosionDamage();

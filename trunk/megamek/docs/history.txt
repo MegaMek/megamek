@@ -23,6 +23,7 @@ v0.29.54 (CVS)
 + Bug 1013571: Selected Mech not highlighted in physical phase
 + Bug 912094: Per the new Hardcover BMRr, a loss of movement points should not cancel
    a charge, eventhough the number of MPs might not be sufficient anymore, see page 42.
++ Bug 1042849: Wheeled & tracked vehicles won't displace into water
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

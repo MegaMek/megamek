@@ -17,6 +17,9 @@ v0.29.54 (CVS)
    are now implemented, except for the picking up of ejected mechwarriors.
 + Bug 1025518: Loss of Heat Sink bug
 + Picture for Scorpion Light Tank (LRM)
++ Implemented picking-up of ejected MechWarriors, MegaMek will choose which units
+   picks up an ejected MechWarrior, giving preference to those that are controlled
+   by the same player
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

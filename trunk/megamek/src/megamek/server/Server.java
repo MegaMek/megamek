@@ -1281,6 +1281,7 @@ implements Runnable, ConnectionHandler {
                 resolveAmmoDumps();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
+                resolveMechWarriorPickUp();
                 checkForObservers();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -8438,10 +8439,12 @@ implements Runnable, ConnectionHandler {
      * @param areaSatArty Is the damage from an area saturating artillery attack?
      */
     private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag, boolean damageIS, boolean areaSatArty) {
+        boolean autoEject = false;
         if (ammoExplosion) {
             if (te instanceof Mech) {
                 Mech mech = (Mech)te;
                 if (mech.isAutoEject()) {
+                    autoEject = true;
                     ejectEntity(te, true);
                 }
             }
@@ -8777,7 +8780,7 @@ implements Runnable, ConnectionHandler {
                                                          Mech.LOC_CT ) ) );
                           // If the head is destroyed, kill the crew.
                           if (hit.getLocation() == Mech.LOC_HEAD ||
-                              (hit.getLocation() == Mech.LOC_CT && (ammoExplosion || areaSatArty))) {
+                              (hit.getLocation() == Mech.LOC_CT && ((ammoExplosion && autoEject) || areaSatArty))) {
                           	te.getCrew().setDoomed(true);
                           }
                         }
@@ -9666,9 +9669,21 @@ implements Runnable, ConnectionHandler {
             sb.append("! ***\n");
 
             entity.setDoomed(true);
+            
+            // Kill any picked up MechWarriors            
+            Enumeration iter = entity.getPickedUpMechWarriors().elements();
+            while (iter.hasMoreElements() ) {
+                Integer mechWarriorId = (Integer)iter.nextElement();
+                Entity mw = game.getEntity(mechWarriorId.intValue());
+                game.moveToGraveyard(mw.getId());
+                send( createRemoveEntityPacket(mw.getId(),
+                        condition) );
+                sb.append("\n*** " ).append( mw.getDisplayName() + 
+                          " died in the wreckage. ***\n");
+            }
 
             // Handle escape of transported units.
-            Enumeration iter = entity.getLoadedUnits().elements();
+            iter = entity.getLoadedUnits().elements();
             if ( iter.hasMoreElements() ) {
                 Entity other = null;
                 Coords curPos = entity.getPosition();
@@ -12881,16 +12896,9 @@ implements Runnable, ConnectionHandler {
             if (!entity.getCrew().isUnconscious()) {
                 if (game.board.contains(targetCoords)) {
                     phaseReport.append("and the pilot ejects safely!\n");
-                    Infantry pilot = new Infantry();
-                    pilot.setCrew(entity.getCrew());
-                    pilot.setDeployed(true);
+                    MechWarrior pilot = new MechWarrior(entity);
                     pilot.setPosition(targetCoords);
-                    pilot.setChassis("MechWarrior");
-                    pilot.setModel(entity.getCrew().getName());
-                    pilot.setMechWarrior(true);
-                    pilot.setWeight(1);
-                    pilot.setOwner(entity.getOwner());
-                    pilot.initializeInternal(1, Infantry.LOC_INFANTRY);
+                    pilot.setDeployed(true);
                     if ( Entity.NONE == pilot.getId() ) {
                         pilot.setId(getFreeEntityId());
                     }
@@ -12902,9 +12910,69 @@ implements Runnable, ConnectionHandler {
             }
         }
         destroyEntity(entity, "ejection", true, true);
-        // Now remove the unit that ejected.
-        game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
-        send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
-
+        
+        // only remove the unit that ejected in the movement phase
+        if (game.getPhase() == Game.PHASE_MOVEMENT) {
+            game.removeEntity( entity.getId(), Entity.REMOVE_EJECTED );
+            send(createRemoveEntityPacket(entity.getId(), Entity.REMOVE_EJECTED));
+        }
+    }
+    
+    private void resolveMechWarriorPickUp() {
+        // fetch all mechWarriors that are not picked up
+        Enumeration mechWarriors =
+            game.getSelectedEntities( new EntitySelector() {
+                public boolean accept(Entity entity) {
+                    if (entity instanceof MechWarrior) {
+                        MechWarrior mw = (MechWarrior)entity;
+                        if (mw.getPickedUpById() == Entity.NONE) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            } );
+        // loop through them, check if they are in a hex occupied by another
+        // unit
+        while ( mechWarriors.hasMoreElements() ) {
+            boolean pickedUp = false;
+            MechWarrior e = (MechWarrior) mechWarriors.nextElement();
+            Enumeration pickupEntities = game.getEntities(e.getPosition());
+            while (pickupEntities.hasMoreElements() ) {
+                Entity pe = (Entity) pickupEntities.nextElement();
+                if (!pickedUp && pe.getOwnerId() == e.getOwnerId() && pe.getId() != e.getId()) {
+                    // Load the unit.
+                    pe.pickUp(e);
+                    // The loaded unit is being carried by the loader.
+                    e.setPickedUpById(pe.getId());
+                    e.setPickedUpByExternalId(pe.getExternalId());
+                    pickedUp = true;
+                    phaseReport.append(e.getDisplayName()).append(" has been picked up by ")
+                         .append(pe.getDisplayName()).append(".\n");
+                }
+            }
+            if (!pickedUp) {
+                Enumeration pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
+                while (pickupEnemyEntities.hasMoreElements() ) {
+                    Entity pe = (Entity) pickupEnemyEntities.nextElement();
+                    if (!pickedUp) {
+                        // Load the unit.
+                        pe.pickUp(e);
+                        // The loaded unit is being carried by the loader.
+                        e.setPickedUpById(pe.getId());
+                        e.setPickedUpByExternalId(pe.getExternalId());
+                        pickedUp = true;
+                        phaseReport.append(e.getDisplayName()).append(" has been picked up by ")
+                        .append(pe.getDisplayName()).append(".\n");
+                    }
+                }
+            }
+            if (pickedUp) {
+                // Remove the picked-up unit from the screen.
+                e.setPosition( null );
+                // Update the loaded unit.
+                this.entityUpdate( e.getId() );
+            }
+        }
     }
 }

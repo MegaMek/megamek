@@ -821,11 +821,8 @@ public class Compute
         }
         
         // Ejected MechWarriors are harder to hit
-        if ( te != null && te instanceof Infantry ) {
-            Infantry ti = (Infantry)te;
-            if (ti.isMechWarrior()) {
-                toHit.addModifier( 2, "ejected MechWarrior target" );
-            }
+        if ( te != null && te instanceof MechWarrior ) {
+            toHit.addModifier( 2, "ejected MechWarrior target" );
         }
 
         // Indirect fire has a +1 mod

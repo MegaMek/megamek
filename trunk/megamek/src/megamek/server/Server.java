@@ -929,7 +929,7 @@ public class Server
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             // check previous initiative and that the player is on this level
-            if (player.getInitiativeSize() <= level || (level > 0 &&player.getInitiative(level - 1) != previousInit)) {
+            if (player.getInitiativeSize() <= level || (level > 0 && player.getInitiative(level - 1) != previousInit)) {
                 continue;
             }
             if (player.getInitiative(level) == init) {
@@ -1584,6 +1584,12 @@ public class Server
             return;
         }
 
+        // is the weapon functional?
+        if (mounted.isDestroyed()) {
+            phaseReport.append(" but the weapon has been destroyed in a previous round!\n");
+            return;
+        }
+
         // check ammo
         if (mounted.getLinked() != null) {
             if (mounted.getLinked().getShotsLeft() == 0) {
@@ -1613,8 +1619,11 @@ public class Server
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
             mounted.setUsedThisRound(true);
             return;
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_MISS) {
+            phaseReport.append(", the shot is an automatic miss, ");
+        } else {
+            phaseReport.append("; needs " + toHit.getValue() + ", ");
         }
-        phaseReport.append("; needs " + toHit.getValue() + ", ");
         
         // set the weapon as having fired
         mounted.setUsedThisRound(true);
@@ -2549,9 +2558,11 @@ public class Server
                 en.crew.setDead(true);
                 desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                 return desc;
+            } else {
+                // torso hit
+                hits = 3;
+                desc += " 3 locations.";
             }
-            hits = 3;
-            desc += " 3 locations.";
         }
         // transfer criticals, if needed
         if (hits > 0 && !en.hasHitableCriticals(loc)

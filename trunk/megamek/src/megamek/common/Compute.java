@@ -878,6 +878,11 @@ public class Compute
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
         
+        // weapon operational?
+        if (mounted.isDestroyed()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
+        }
+        
         // sensors operational?
         final int sensorHits = ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if (sensorHits > 1) {
@@ -963,7 +968,7 @@ public class Compute
         final int range = ae.getPosition().distance(te.getPosition());
         // if out of range, short circuit logic
         if (range > wtype.getLongRange()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target out of range");
+            return new ToHitData(ToHitData.AUTOMATIC_MISS, "Target out of range");
         }
         if (range > wtype.getMediumRange()) {
             // long range, add +4

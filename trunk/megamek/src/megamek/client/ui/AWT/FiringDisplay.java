@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -387,12 +387,18 @@ public class FiringDisplay
             ToHitData toHit = Compute.toHitWeapon(client.game, cen, ten, weaponId, attacks);
             client.mechD.wPan.wTargetR.setText(te().getDisplayName());
             client.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(te().getPosition()));
-            if (toHit.getValue() <= 12) {
-                client.mechD.wPan.wToHitR.setText(toHit.getValue() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
-                butFire.setEnabled(true);
-            } else {
+            if (ce().getEquipment(weaponId).isUsedThisRound()) {
+                client.mechD.wPan.wToHitR.setText("Already fired");
+                butFire.setEnabled(false);
+            } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
                 client.mechD.wPan.wToHitR.setText("Impossible");
                 butFire.setEnabled(false);
+            } else if (toHit.getValue() == ToHitData.AUTOMATIC_MISS) {
+                client.mechD.wPan.wToHitR.setText("Automatic miss");
+                butFire.setEnabled(true);
+            } else {
+                client.mechD.wPan.wToHitR.setText(toHit.getValue() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)");
+                butFire.setEnabled(true);
             }
             client.mechD.wPan.toHitText.setText(toHit.getDesc());
             butSkip.setEnabled(true);

@@ -123,6 +123,8 @@ v 0.28.19-dev (CVS)
 + centralized all out-of-game entity storage
 + Bug 741214: clients sent all entities, living & dead, during victory phase
 + Prettier confirmation dialogs
++ Feature 722106: Automatic MASC engagement
++ No longer possible to change the mode of destroyed equipment
 
 v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.

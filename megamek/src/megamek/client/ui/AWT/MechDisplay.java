@@ -1067,7 +1067,9 @@ class SystemPanel
                 m_bDumpAmmo.setEnabled(true);
             }
             else if (m != null && bOwner && m.getType().hasModes()) {
-                m_chMode.setEnabled(true);
+                if (!m.isDestroyed()) {
+                    m_chMode.setEnabled(true);
+                }
                 modeLabel.setEnabled(true);
                 m_chMode.removeAll();
                 String[] saModes = m.getType().getModes();

@@ -1618,16 +1618,7 @@ public class Server
                 // try reloading?
                 ae.loadWeapon(mounted);
             }
-            if (mounted.getLinked().getShotsLeft() == 0) {
-                phaseReport.append(" but the weapon is out of ammo.\n");
-                return;
-            }
-            // use ammo
-            mounted.getLinked().setShotsLeft(mounted.getLinked().getShotsLeft() - 1);
         }
-
-        // build up some heat
-        ae.heatBuildup += wtype.getHeat();
 
         // should we even bother?
         if (te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
@@ -1639,7 +1630,6 @@ public class Server
         ToHitData toHit = Compute.toHitWeapon(game, waa, attacks);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             phaseReport.append(", but the shot is impossible (" + toHit.getDesc() + ")\n");
-            mounted.setUsedThisRound(true);
             return;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             phaseReport.append(", the shot is an automatic miss, ");
@@ -1647,8 +1637,16 @@ public class Server
             phaseReport.append("; needs " + toHit.getValue() + ", ");
         }
         
+        // build up some heat
+        ae.heatBuildup += wtype.getHeat();
+
         // set the weapon as having fired
         mounted.setUsedThisRound(true);
+        
+        // use ammo
+        if (mounted.getLinked() != null) {
+            mounted.getLinked().setShotsLeft(mounted.getLinked().getShotsLeft() - 1);
+        }
 
         // roll
         int roll = Compute.d6(2);
@@ -2220,7 +2218,7 @@ public class Server
             }
 
             // heat effects: shutdown!
-            if (entity.heat >= 14 && entity.isActive()) {
+            if (entity.heat >= 14 && !entity.isShutDown()) {
                 if (entity.heat >= 30) {
                     roundReport.append(entity.getDisplayName() + " automatically shuts down.\n");
                     // add a piloting roll and resolve immediately

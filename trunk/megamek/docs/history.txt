@@ -92,6 +92,10 @@ v 0.26
 VERSION HISTORY:
 ----------------
 v next
++ use ammo and build heat for automatic misses, none for impossible shots
++ 549900: mechs make shutdown rolls even if pilot is KO
+
+v 0.25.3 (04-28-02, 5pm)
 + added Dima Nemchenko's patch for confirm dialogs on physical attacks
 + added Cord Awtry's patch for a next target button
 + weapons with no ammo left can't fire

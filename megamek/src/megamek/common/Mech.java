@@ -26,12 +26,6 @@ public abstract class Mech
     implements Serializable
 {
     public static final int      NUM_MECH_LOCATIONS = 8;
-    
-    // weight class limits
-    public static final int        WEIGHT_LIGHT        = 35;
-    public static final int        WEIGHT_MEDIUM        = 55;
-    public static final int        WEIGHT_HEAVY        = 75;
-    public static final int        WEIGHT_ASSAULT        = 100;
 
     // system designators for critical hits
     public static final int        SYSTEM_LIFE_SUPPORT    = 0;
@@ -348,13 +342,13 @@ public abstract class Mech
 	 * Count the number of destroyed or breached legs on the mech
 	 */
     public int countBadLegs() {
-        int destroyed = 0;
+        int badLegs = 0;
 
         for (int i = 0; i < locations(); i++) {
-            destroyed += (locationIsLeg(i) && isLocationBad(i)) ? 1 : 0;
+            badLegs += (locationIsLeg(i) && isLocationBad(i)) ? 1 : 0;
         }
 
-        return destroyed;
+        return badLegs;
     }
 
     /**
@@ -393,21 +387,21 @@ public abstract class Mech
             return 0;
         }
           
-        int crits = 0;
+        int legCrits = 0;
         
         if (locationIsLeg(loc)) {
             if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
-                crits++;
+                legCrits++;
             }
             if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
-                crits++;
+                legCrits++;
             }
             if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) == 0) {
-                crits++;
+                legCrits++;
             }
         }
 
-        return crits;
+        return legCrits;
     }
     
     /**
@@ -446,9 +440,9 @@ public abstract class Mech
      * Allocates torso engine crits for an XL engine.
      */
     public void giveXL(boolean clan) {
-        int crits = clan ? 2 : 3;
+        int slots = clan ? 2 : 3;
         
-        for (int i = 0; i < crits; i++) {
+        for (int i = 0; i < slots; i++) {
             setCritical(LOC_RT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
             setCritical(LOC_LT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
         }
@@ -1404,14 +1398,14 @@ public abstract class Mech
         
         // spreadable or split equipment only gets added to 1 crit at a time, 
         // since we don't know how many are in this location
-        int crits = mounted.getType().getCriticals(this);
+        int slots = mounted.getType().getCriticals(this);
         if (mounted.getType().isSpreadable() || mounted.isSplit()) {
-            crits = 1;
+            slots = 1;
         }
         
         // check criticals for space
-        if(getEmptyCriticals(loc) < crits) {
-            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + crits);
+        if(getEmptyCriticals(loc) < slots) {
+            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + slots);
         }
         
         // add it
@@ -1420,7 +1414,7 @@ public abstract class Mech
         // add criticals
         int num = getEquipmentNum(mounted);        
         
-        for(int i = 0; i < crits; i++) {
+        for(int i = 0; i < slots; i++) {
             addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable()));
         }        
     }    

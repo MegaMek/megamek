@@ -2522,9 +2522,10 @@ public class BoardView1
             // figure out size
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
+            Rectangle tempRect =
+                new Rectangle(47, 55,
+                              getFontMetrics(font).stringWidth(shortName) + 1,
+                              getFontMetrics(font).getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2554,16 +2555,20 @@ public class BoardView1
 
             graph.setFont(font);
             graph.setColor(bord);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            modelRect.translate(-1, -1);
+            graph.fillRect(tempRect.x, tempRect.y,
+                           tempRect.width, tempRect.height);
+            tempRect.translate(-1, -1);
             graph.setColor(bkgd);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            graph.fillRect(tempRect.x, tempRect.y,
+                           tempRect.width, tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1,
+                             tempRect.y + tempRect.height - 1);
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            this.image = createImage
+                (new FilteredImageSource(tempImage.getSource(),
+                                         new KeyAlphaFilter(TRANSPARENT)));
         }
 
         /**
@@ -2636,9 +2641,10 @@ public class BoardView1
             // figure out size
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10);
-            Rectangle modelRect = new Rectangle(47, 55,
-                                                getFontMetrics(font).stringWidth(shortName) + 1,
-                                                getFontMetrics(font).getAscent());
+            Rectangle tempRect =
+                new Rectangle(47, 55,
+                              getFontMetrics(font).stringWidth(shortName) + 1,
+                              getFontMetrics(font).getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2675,12 +2681,15 @@ public class BoardView1
             }
             graph.setFont(font);
             graph.setColor(bord);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
-            modelRect.translate(-1, -1);
+            graph.fillRect(tempRect.x, tempRect.y,
+                           tempRect.width, tempRect.height);
+            tempRect.translate(-1, -1);
             graph.setColor(bkgd);
-            graph.fillRect(modelRect.x, modelRect.y, modelRect.width, modelRect.height);
+            graph.fillRect(tempRect.x, tempRect.y,
+                           tempRect.width, tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, modelRect.x + 1, modelRect.y + modelRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1,
+                             tempRect.y + tempRect.height - 1);
 
             // draw facing
             graph.setColor(Color.white);

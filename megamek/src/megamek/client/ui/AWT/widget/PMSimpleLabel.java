@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -87,14 +87,14 @@ public class PMSimpleLabel  implements PMLabel{
       * Draw the label.
       */
      public void drawInto(Graphics g) {
-     	  if(!visible) return;
-	      Font f = g.getFont();
-	      Color temp = g.getColor();
-	      g.setColor(color);
-	      g.setFont(fm.getFont());
-	      g.drawString(string, x, y);
-	      g.setColor(temp);
-	      g.setFont(f);
+         if(!visible) return;
+         Font font = g.getFont();
+         Color temp = g.getColor();
+         g.setColor(color);
+         g.setFont(fm.getFont());
+         g.drawString(string, x, y);
+         g.setColor(temp);
+         g.setFont(font);
      }
      
      public void setVisible(boolean v){

@@ -217,7 +217,7 @@ public class MMRoll extends Roll {
 
         // Parse the input.
         int count = 2;
-        int faces = 6;
+        int sides = 6;
         int start = 1;
         int whichRNG = MMRandom.R_DEFAULT;
         try {
@@ -229,12 +229,12 @@ public class MMRoll extends Roll {
             }
             else if (2 == args.length) {
                 count = Integer.parseInt (args[0]);
-                faces = Integer.parseInt (args[1]);
+                sides = Integer.parseInt (args[1]);
                 start = 0;
             }
             else {
                 count = Integer.parseInt (args[0]);
-                faces = Integer.parseInt (args[1]);
+                sides = Integer.parseInt (args[1]);
                 start = Integer.parseInt (args[2]);
             }
 
@@ -243,7 +243,7 @@ public class MMRoll extends Roll {
                 System.err.println ("You must specify at least one roll.");
                 System.exit(2);
             }
-            if (faces < 2) {
+            if (sides < 2) {
                 System.err.println ("You must specify at least two faces.");
                 System.exit(3);
             }
@@ -258,7 +258,7 @@ public class MMRoll extends Roll {
         rng = MMRandom.generate (whichRNG);
 
         // Roll the virtual dice.
-        MMRoll roll = new MMRoll (rng, faces, start);
+        MMRoll roll = new MMRoll (rng, sides, start);
         for (int loop = 1; loop < count; loop++) 
             roll.addRoll (rng);
 
@@ -266,12 +266,12 @@ public class MMRoll extends Roll {
         Roll.output (roll);
 
         // Get a second roll.
-        MMRoll second = new MMRoll (rng, faces, start);
+        MMRoll roll2 = new MMRoll (rng, sides, start);
         for (int loop = 1; loop < count; loop++) 
-            second.addRoll (rng);
+            roll2.addRoll (rng);
 
         // Output second results.
-        Roll.output (second);
+        Roll.output (roll2);
 
     }
 

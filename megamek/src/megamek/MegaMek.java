@@ -671,9 +671,10 @@ public class MegaMek implements ActionListener {
                 // kick off a RNG check
                 megamek.common.Compute.d6();
                 // start server
-                Server server = new Server(Settings.lastServerPass, Settings.lastServerPort);
+                Server dedicated = new Server(Settings.lastServerPass,
+                                              Settings.lastServerPort);
                 if (null != savegameFileName) {
-                    server.loadGame(new File(savegameFileName));
+                    dedicated.loadGame(new File(savegameFileName));
                 };
                 return;
             } else if (args[i].equals("-log")) {

@@ -46,10 +46,10 @@ public class MiniMap extends Canvas
     private BoardView1   m_bview;
     private Game         m_game;
     private Dialog       m_dialog;
-    private final int    margin = 6;
+    private static final int    margin = 6;
     private int          topMargin;
     private int          leftMargin;
-    private final int    buttonHeight = 14;
+    private static final int    buttonHeight = 14;
     private boolean      minimized = false;
     private int          heightBufer;
     private int          unitSize = 6;//variable which define size of triangle for unit representation
@@ -310,16 +310,16 @@ public class MiniMap extends Canvas
 
             // draw declared fire
             if (Game.PHASE_FIRING==m_game.getPhase() || Game.PHASE_PHYSICAL==m_game.getPhase()) {
-                for (Enumeration enum = m_game.getActions(); enum.hasMoreElements(); ) {
-                    Object action = enum.nextElement();
+                for (Enumeration iter = m_game.getActions(); iter.hasMoreElements(); ) {
+                    Object action = iter.nextElement();
                     if (action instanceof AttackAction) {
                         paintAttack(g,(AttackAction) action);
                     };
                 };
             };
 
-            for (Enumeration enum = m_game.getEntities(); enum.hasMoreElements(); ) {
-                Entity e = (Entity)enum.nextElement();
+            for (Enumeration iter = m_game.getEntities(); iter.hasMoreElements(); ) {
+                Entity e = (Entity)iter.nextElement();
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
             }
@@ -522,8 +522,8 @@ public class MiniMap extends Canvas
 
 
         // if this is mutual fire, draw a half-and-half line
-        for (Enumeration enum = m_game.getActions(); enum.hasMoreElements(); ) {
-            Object action = enum.nextElement();
+        for (Enumeration iter = m_game.getActions(); iter.hasMoreElements(); ) {
+            Object action = iter.nextElement();
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if (attack.getEntityId() == otherAttack.getTargetId()
@@ -633,8 +633,8 @@ public class MiniMap extends Canvas
         int [] yPoints = new int[4];
         Color oldColor = g.getColor();
         g.setColor(m_terrainColors[Terrain.ROAD]);
-        for (Enumeration enum = roadHexIndexes.elements(); enum.hasMoreElements(); ){
-            int[] hex = (int[])enum.nextElement();
+        for (Enumeration iter = roadHexIndexes.elements(); iter.hasMoreElements(); ){
+            int[] hex = (int[])iter.nextElement();
             x = hex[0];
             y = hex[1];
             baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -19,11 +19,6 @@ import megamek.common.*;
 /* Yet another marker class, until energy specific things happen */
 
 public abstract class EnergyType extends WeaponType {
-
-//      protected int     heat;
-//      protected int     damage;
-    protected RangeType range;
-
 
     // Used to get the amount of heat. 
     public int getHeat(EquipmentState state) {

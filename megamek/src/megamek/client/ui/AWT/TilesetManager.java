@@ -227,22 +227,23 @@ public class TilesetManager {
     }
     
     // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(Entity entity, Image camo, int tint, BufferedPanel bp) {
-		Image base = mechTileset.imageFor(entity, comp);
-		EntityImage entityImage = new EntityImage(base, tint, camo, bp);
-		Image preview = entityImage.loadPreviewImage();
+    public void loadPreviewImage(Entity entity, Image camo, int tint,
+                                 BufferedPanel bp) {
+        Image base = mechTileset.imageFor(entity, comp);
+        EntityImage entityImage = new EntityImage(base, tint, camo, bp);
+        Image preview = entityImage.loadPreviewImage();
 		
-		BackGroundDrawer bgdPreview = new BackGroundDrawer(preview);
-		bp.removeBgDrawers();
-		bp.addBgDrawer(bgdPreview);
+        BackGroundDrawer bgdPreview = new BackGroundDrawer(preview);
+        bp.removeBgDrawers();
+        bp.addBgDrawer(bgdPreview);
 
-		MediaTracker tracker = new MediaTracker(comp);
-		tracker.addImage(preview, 0);
-		try {
-			tracker.waitForID(0);
-		} catch (InterruptedException e) {
-			;
-		}
+        MediaTracker loadTracker = new MediaTracker(comp);
+        loadTracker.addImage(preview, 0);
+        try {
+            loadTracker.waitForID(0);
+        } catch (InterruptedException e) {
+            ;
+        }
 
     }
 
@@ -339,9 +340,9 @@ public class TilesetManager {
         private Image[] wreckFacings = new Image[6];
         private Component comp;
         
-        private final int IMG_WIDTH = 84;        
-        private final int IMG_HEIGHT = 72;
-        private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+        private static final int IMG_WIDTH = 84;        
+        private static final int IMG_HEIGHT = 72;
+        private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
         
         public EntityImage(Image base, int tint, Image camo, Component comp) {
         	this(base, null, tint, camo, comp);

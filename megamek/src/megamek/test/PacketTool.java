@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -351,9 +351,9 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
                 /*
                 ** Save the board here.
                 */
-                Board board = (Board) packet.getObject(0);
+                Board recvBoard = (Board) packet.getObject(0);
                 try {
-                    board.save( new FileOutputStream("xmit.board") );
+                    recvBoard.save( new FileOutputStream("xmit.board") );
                 } catch ( IOException ioErr ) {
                     ioErr.printStackTrace();
                 }

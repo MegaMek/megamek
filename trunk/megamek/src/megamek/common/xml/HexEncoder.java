@@ -60,9 +60,9 @@ public class HexEncoder {
         // OK, so elevation and theme aren't *strictly speaking* part of
         // terrain, but it's convenient to store this info here.  Cope.
         out.write( "<terrains count=\"" );
-        out.write( hex.terrainsPresent() );
+        out.write( Integer.toString(hex.terrainsPresent()) );
         out.write( "\" elevation=\"" );
-        out.write( hex.getElevation() );
+        out.write( Integer.toString(hex.getElevation()) );
         out.write( "\" theme=\"" );
         out.write( hex.getTheme() );
         out.write( "\" >" );
@@ -71,17 +71,18 @@ public class HexEncoder {
             if ( hex.contains(loop) ) {
                 terrain = hex.getTerrain(loop);
                 out.write( "<terrain type=\"" );
-                out.write( terrain.getType() );
+                out.write( Integer.toString(terrain.getType()) );
                 out.write( "\" level=\"" );
-                out.write( terrain.getLevel() );
+                out.write( Integer.toString(terrain.getLevel()) );
                 out.write( "\" exits=\"" );
-                out.write( terrain.getExits() );
+                out.write( Integer.toString(terrain.getExits()) );
                 out.write( "\" exitsSpecified=\"" );
                 out.write( terrain.hasExitsSpecified() ? "true" : "false" );
                 out.write( "\" />" );
             }
         }
         out.write( "</terrains>" );
+        out.write( "</hex>" );
     }
 
     /**

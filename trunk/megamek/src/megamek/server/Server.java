@@ -1991,6 +1991,18 @@ implements Runnable {
             ( game, entityId, target ).getValue()
             != ToHitData.IMPOSSIBLE;
                 
+        Mounted club = Compute.clubMechHas( game.getEntity(entityId) );
+        if ( null != club ) {
+            canHit |= Compute.toHitClub
+                ( game, entityId, target,
+                  club ).getValue()
+                != ToHitData.IMPOSSIBLE;
+        }
+
+        canHit |= Compute.toHitPush
+            ( game, entityId, target ).getValue()
+            != ToHitData.IMPOSSIBLE;
+
         return canHit;
     }
 

@@ -16,6 +16,7 @@ starcaptaintorc
 LeTigre
 brandfuchs
 ploopy
+ploppy (is he the same as "ploopy"? :)
 vertigo
 majortom88
 Niels Naumann
@@ -213,7 +214,7 @@ chassis "Hover Tank" "hover_tank.gif"
 chassis "Huitzilopochtli Assault Tank" "huey.gif"
 chassis "Hunter Light Support Tank" "hunter.gif"
 #chassis "Indra Infantry Transport" " .gif"
-#chassis "Interloper Urban Scout Tank" " .gif"
+chassis "Interloper Urban Scout Tank" "V_Interloper.gif"
 #chassis "Iroquois Helicopter Transport" " .gif"
 chassis "Ishtar Heavy Fire Support Tank" "ishtar.gif"
 chassis "J. Edgar Light Hover Tank" "jedgar.gif"
@@ -250,7 +251,7 @@ chassis "Manticore Heavy Tank" "manticore.gif"
 #chassis "Marksman" " .gif"
 chassis "Mars Assault Vehicle" "mars.gif"
 #chassis "Martiobarbuli SP" " .gif"
-#chassis "Mauler City Tank" " .gif"
+chassis "Mauler City Tank" "V_Mauler.gif"
 #chassis "Maultier Hover APC" " .gif"
 #chassis "Maxim Heavy Hover Transport" " .gif"
 #chassis "Mercy Class Helicopter" " .gif"
@@ -290,7 +291,7 @@ chassis "Pilum Heavy Tank" "pilum.gif"
 #chassis "Pinto Attack VTOL" " .gif"
 #chassis "Plainsman Medium Hovertank" " .gif"
 #chassis "Plainsmaster" " .gif"
-#chassis "Po Heavy Tank" " .gif"
+chassis "Po Heavy Tank" "V_po.gif"
 #chassis "Predator Tank Destroyer" " .gif"
 #chassis "Prowler Explorer Vehicle" " .gif"
 #chassis "Puma" " .gif"

@@ -893,7 +893,9 @@ public class HmpFile
 
     private String getCriticalName(Long critical, TechType techType)  {
 
+        short thirdByte = 0;
         if (critical.longValue() > Short.MAX_VALUE) {
+            thirdByte = (short)(critical.longValue() >> 16);
             critical = new Long(critical.longValue() & 0xFFFF);
         }
         final long value = critical.longValue();
@@ -904,6 +906,11 @@ public class HmpFile
             if (techCriticals != null) {
                 critName = (String) techCriticals.get(critical);
             }
+        }
+
+        // Lame kludge for MG ammo (which can come in half ton increments)
+        if (critName != null && critName.endsWith("MG Ammo")) {
+            critName += " (" + thirdByte + ")";
         }
 
         // Unexpected parsing failures should be passed on so that

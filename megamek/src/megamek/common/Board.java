@@ -1877,8 +1877,12 @@ public class Board
         return (int)(result * (double)scale);
     } // craterProfile
      
-    /* calculate the
-       public int distance(
+    // calculate the distance between two points
+    private static double distance(Point p1, Point p2) {
+        double x = p1.x - p2.x;
+        double y = p1.y - p2.y;
+        return Math.sqrt(x*x + y*y);
+    }
  
        /** add a crater to the board */
     public void addCraters(int minRadius, int maxRadius, 
@@ -1913,7 +1917,7 @@ public class Board
             /* now recalculate every hex */
             for (int h = 0; h < height; h++) {
                 for (int w = 0; w < width; w++) {
-                    int distance = (int)center.distance(new Point(w,h));
+                    int distance = (int)distance(center, new Point(w,h));
                     if (distance < radius) {
                         double fac = (double)distance / (double)radius;
                         Hex field = getHex(w, h);

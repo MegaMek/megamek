@@ -25,14 +25,23 @@ public class Hex
   implements Serializable
 {
     private Terrain      terrain;
-    private int                    elevation;
+    private int          elevation;
+    private int          depth;
+    
+    /**
+     * Constructs a hex at depth 0
+     */
+    public Hex(Terrain terrain, int elevation) {
+        this(terrain, elevation, 0);
+    }
     
     /**
      * Constructs a hex with all parameters
      */
-    public Hex(Terrain terrain, int elevation) {
+    public Hex(Terrain terrain, int elevation, int depth) {
         this.terrain = terrain;
         this.elevation = elevation;
+        this.depth = depth;
     }
     
     /**
@@ -42,7 +51,7 @@ public class Hex
      * @param hex            the hex to use.
      */
     public Hex(Hex hex) {
-        this(hex.terrain, hex.elevation);
+        this(hex.terrain, hex.elevation, hex.depth);
     }
   
     public int getTerrainType() {
@@ -63,6 +72,14 @@ public class Hex
   
     public void setElevation(int elevation) {
         this.elevation = elevation;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+  
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     /**

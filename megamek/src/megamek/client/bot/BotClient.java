@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -355,13 +355,12 @@ public class BotClient extends Client
 	if ( fen instanceof Infantry ) {
             return null;
         }
-        
         ToHitData odds = Compute.toHitPunch(game, from, to, PunchAttackAction.LEFT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
             damage = Compute.getPunchDamageFor(fen, PunchAttackAction.LEFT);
             bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
         }
-        
+
         odds = Compute.toHitPunch(game, from, to, PunchAttackAction.RIGHT);
         if (odds.getValue() != ToHitData.IMPOSSIBLE) {
             damage = Compute.getPunchDamageFor(fen, PunchAttackAction.RIGHT);

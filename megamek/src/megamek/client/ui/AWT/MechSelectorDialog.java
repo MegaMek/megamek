@@ -16,6 +16,7 @@ package megamek.client;
  
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.AWTEvent.*;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -55,6 +56,8 @@ public class MechSelectorDialog
     private Button m_bPick = new Button("Select Mech");
     private Button m_bCancel = new Button("Cancel");
     private Panel m_pButtons = new Panel();
+    private TextArea m_mechView = new TextArea(17,48);
+    private Panel m_pLeft = new Panel();
     
     public MechSelectorDialog(Client cl)
     {
@@ -76,19 +79,24 @@ public class MechSelectorDialog
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bCancel);
         
-        setLayout(new BorderLayout());
-        add(m_pParams, BorderLayout.NORTH);
+        m_pLeft.setLayout(new BorderLayout());
+        m_pLeft.add(m_pParams, BorderLayout.NORTH);
         m_mechList.setFont(new Font("Courier", Font.PLAIN, 12));
         m_mechList.addKeyListener(this);
-        add(m_mechList, BorderLayout.CENTER);
-        add(m_pButtons, BorderLayout.SOUTH);
+        m_pLeft.add(m_mechList, BorderLayout.CENTER);
+        m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
+
+        setLayout(new FlowLayout(FlowLayout.CENTER));
+        add(m_pLeft);
+        add(m_mechView);
         
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
         m_chSort.addItemListener(this);
+        m_mechList.addItemListener(this);
         m_bPick.addActionListener(this);
         m_bCancel.addActionListener(this);
-        setSize(360, 320);
+        setSize(720, 320);
         setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
                     m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
         populateChoices(MechSummaryCache.getInstance().getAllMechs());
@@ -154,6 +162,8 @@ public class MechSelectorDialog
         for (int i = 0; i < m_mechsCurrent.length; i++) {
             if (m_mechsCurrent[i].getName().toLowerCase().startsWith(search)) {
                 m_mechList.select(i);
+                ItemEvent event = new ItemEvent(m_mechList,ItemEvent.ITEM_STATE_CHANGED,m_mechList,ItemEvent.SELECTED);
+                itemStateChanged(event);
                 break;
             }
         }
@@ -204,6 +214,23 @@ public class MechSelectorDialog
         }
         else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType) {
             filterMechs();
+        } else if (ie.getSource() == m_mechList) {
+            MechSummary ms = m_mechsCurrent[m_mechList.getSelectedIndex()];
+            try {
+                Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                MechView mechView = new MechView(entity);
+		m_mechView.setEditable(false);
+                if (mechView.isValid()) {
+                    m_mechView.setText(mechView.getMechReadout());
+                } else {
+                    m_mechView.setText("");
+                }
+                m_mechView.setCaretPosition(0);
+            } catch (EntityLoadingException ex) {
+                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                ex.printStackTrace();
+                return;
+            }
         }
     }
     

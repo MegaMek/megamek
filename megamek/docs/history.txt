@@ -2,6 +2,8 @@ VERSION HISTORY:
 ----------------
 v0.29.72 (CVS)
 + Data 1171465: Use the "lunar" theme in moonscapes boards.
++ Patch 1171880, Bug 1091243: after /reseting a game with minefields,
+    can't start new game.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

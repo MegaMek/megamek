@@ -52,7 +52,15 @@
 	public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
 	public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
 	public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
-}
-
  	
- 	
+	public int getWeightClass() {
+	     if (m_nTons <= Entity.WEIGHT_LIGHT) {
+	        return Entity.WEIGHT_LIGHT;
+	    } else if (m_nTons <= Entity.WEIGHT_MEDIUM) {
+	         return Entity.WEIGHT_MEDIUM;
+	    } else if (m_nTons <= Entity.WEIGHT_HEAVY) {
+	         return Entity.WEIGHT_HEAVY;
+	    } else {
+	         return Entity.WEIGHT_ASSAULT;
+     }
+}}

@@ -36,7 +36,7 @@ public class MechSelectorDialog
     private final static int KEY_TIMEOUT = 1000;
      
     // these indices should match up with the static values in the MechSummaryComparator
-    private String[] m_saSorts = { "Name", "Ref", "Weight", "BV" };
+    private String[] m_saSorts = { "Name", "Ref", "Weight", "BV", "Year" };
     
     private MechSummary[] m_mechsCurrent;
     private Client m_client;
@@ -44,8 +44,8 @@ public class MechSelectorDialog
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
     
-    private Label m_labelYear = new Label("Year: ", Label.RIGHT);
-    private Choice m_chYear = new Choice();
+    private Label m_labelWeightClass = new Label("Weight Class: ", Label.RIGHT);
+    private Choice m_chWeightClass = new Choice();
     private Label m_labelType = new Label("Type: ", Label.RIGHT);
     private Choice m_chType = new Choice();
     private Label m_labelSort = new Label("Sort: ", Label.RIGHT);
@@ -65,8 +65,8 @@ public class MechSelectorDialog
             m_chSort.addItem(m_saSorts[x]);
         }
         m_pParams.setLayout(new GridLayout(3, 2));
-        m_pParams.add(m_labelYear);
-        m_pParams.add(m_chYear);
+        m_pParams.add(m_labelWeightClass);
+        m_pParams.add(m_chWeightClass);
         m_pParams.add(m_labelType);
         m_pParams.add(m_chType);
         m_pParams.add(m_labelSort);
@@ -83,7 +83,7 @@ public class MechSelectorDialog
         add(m_mechList, BorderLayout.CENTER);
         add(m_pButtons, BorderLayout.SOUTH);
         
-        m_chYear.addItemListener(this);
+        m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
         m_chSort.addItemListener(this);
         m_bPick.addActionListener(this);
@@ -97,16 +97,12 @@ public class MechSelectorDialog
     
     
     private void populateChoices(MechSummary[] msa) {
-        HashSet hsYears = new HashSet();
-        for (int x = 0; x < msa.length; x++) {
-            hsYears.add(String.valueOf(msa[x].getYear()));
-        }
         
-        Object[] oa = hsYears.toArray();
-        for (int x = 0; x < oa.length; x++) {
-            m_chYear.addItem((String)oa[x]);
-        }
-        m_chYear.select("3025");
+        
+        m_chWeightClass.addItem("Light");
+        m_chWeightClass.addItem("Medium");
+        m_chWeightClass.addItem("Heavy");
+        m_chWeightClass.addItem("Assault");
         
         for (int i = 0; i < TechConstants.T_NAMES.length; i++) {
             m_chType.addItem(TechConstants.T_NAMES[i]);
@@ -117,11 +113,24 @@ public class MechSelectorDialog
     private void filterMechs()
     {
         Vector vMechs = new Vector();
-        int nYear = Integer.parseInt(m_chYear.getSelectedItem());
+        String sClass = m_chWeightClass.getSelectedItem();
+        int nWeight;
+        if (sClass.equals("Light")) {
+            nWeight = Entity.WEIGHT_LIGHT;
+        }
+        else if (sClass.equals("Medium")) {
+            nWeight = Entity.WEIGHT_MEDIUM;
+        }
+        else if (sClass.equals("Heavy")) {
+            nWeight = Entity.WEIGHT_HEAVY;
+        }
+        else {
+            nWeight = Entity.WEIGHT_ASSAULT;
+        }
         int nType = m_chType.getSelectedIndex();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         for (int x = 0; x < mechs.length; x++) {
-            if (mechs[x].getYear() == nYear && 
+            if (mechs[x].getWeightClass() == nWeight && 
                     mechs[x].getType() == nType) {
                 vMechs.addElement(mechs[x]);
             }
@@ -161,7 +170,8 @@ public class MechSelectorDialog
         return makeLength(ms.getRef(), 10) + " " + 
                 makeLength(ms.getName(), 20) + " " + 
                 makeLength("" + ms.getTons(), 3) + " " + 
-                ms.getBV();
+                makeLength("" + ms.getBV(),5)+""+
+		    ms.getYear();
     }
     
     public void actionPerformed(ActionEvent ae) {
@@ -192,7 +202,7 @@ public class MechSelectorDialog
         if (ie.getSource() == m_chSort) {
             sortMechs();
         }
-        else if (ie.getSource() == m_chYear || ie.getSource() == m_chType) {
+        else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType) {
             filterMechs();
         }
     }

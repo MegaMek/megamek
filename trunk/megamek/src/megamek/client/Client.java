@@ -69,6 +69,7 @@ public class Client extends Panel
     private BoardSelectionDialog    boardSelectionDialog;
     private GameOptionsDialog       gameOptionsDialog;
     private MechSelectorDialog      mechSelectorDialog;
+    public Thread                   mechSelectorDialogThread;
     private StartingPositionDialog  startingPositionDialog;
 
     // message pump listening to the server
@@ -133,6 +134,21 @@ public class Client extends Panel
         this.frame = frame;
         this.name = playername;
 
+        Dialog waitDialog = new Dialog(frame,"Please wait...");
+        waitDialog.setLayout(new GridLayout(4,2));
+        waitDialog.add(new Label("Loading mechs..."));
+        waitDialog.add(new Label());
+        waitDialog.add(new Label("  ...from cache: "));
+        waitDialog.add(new Label());
+        waitDialog.add(new Label("  ...from files: "));
+        waitDialog.add(new Label());
+        waitDialog.add(new Label("  ...from zips: "));
+        waitDialog.add(new Label());
+        waitDialog.setSize(250,130);
+        waitDialog.setLocation(frame.getLocation().x + frame.getSize().width/2 - waitDialog.getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - waitDialog.getSize().height/2);
+        waitDialog.show();
+
         gameListeners = new Vector();
                 
         local_pn = -1;
@@ -160,8 +176,10 @@ public class Client extends Panel
         minimap = new MiniMap(minimapW, this, bv);
         minimapW.add(minimap);
         
-        mechSelectorDialog = new MechSelectorDialog(this);
-            
+        mechSelectorDialog = new MechSelectorDialog(this,waitDialog);
+        mechSelectorDialogThread = new Thread(mechSelectorDialog);
+        mechSelectorDialogThread.start();
+
         changePhase(Game.PHASE_UNKNOWN);
                 
         // layout

@@ -145,13 +145,13 @@ public class MechTileset {
             ;
         }
         
-        default_light = (MechEntry)exact.get(LIGHT_STRING);
-        default_medium = (MechEntry)exact.get(MEDIUM_STRING);
-        default_heavy = (MechEntry)exact.get(HEAVY_STRING);
-        default_assault = (MechEntry)exact.get(ASSAULT_STRING);
-        default_quad = (MechEntry)exact.get(QUAD_STRING);
-        default_tank = (MechEntry)exact.get(TANK_STRING);
-        default_inf = (MechEntry)exact.get(INF_STRING);
+        default_light = (MechEntry)exact.get(LIGHT_STRING.toUpperCase());
+        default_medium = (MechEntry)exact.get(MEDIUM_STRING.toUpperCase());
+        default_heavy = (MechEntry)exact.get(HEAVY_STRING.toUpperCase());
+        default_assault = (MechEntry)exact.get(ASSAULT_STRING.toUpperCase());
+        default_quad = (MechEntry)exact.get(QUAD_STRING.toUpperCase());
+        default_tank = (MechEntry)exact.get(TANK_STRING.toUpperCase());
+        default_inf = (MechEntry)exact.get(INF_STRING.toUpperCase());
     }
     
     /**

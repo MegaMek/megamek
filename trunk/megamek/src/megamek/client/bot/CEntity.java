@@ -106,7 +106,7 @@ public class CEntity  {
   }
   
   public boolean canMove() {
-    return (entity.isSelectable() && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
+    return (entity.isSelectableThisTurn(game) && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
   }
   
   public void reset() {
@@ -131,7 +131,7 @@ public class CEntity  {
   
   public void refresh() {
     this.entity = game.getEntity(this.entity.getId()); //fresh entity object ensured
-    if (this.refresh && !this.entity.isSelectable()) {
+    if (this.refresh && !this.entity.isSelectableThisTurn(game)) {
       //clear it out just in case
       for (int a = this.FIRST_ARC; a <= this.LAST_ARC; a++) {
         for (int r = 1; r <= this.MAX_RANGE; r++) {
@@ -759,7 +759,7 @@ public class CEntity  {
           self.engaged = true;
           int mod = modifiers[EntityState.DEFENCE_MOD];
           double max = option.getMaxModifiedDamage(enemy.old, this.tb.enemies.get(en), mod, modifiers[EntityState.DEFENCE_PC]);
-          if (en.isSelectable()) { // let him turn a little
+          if (en.isSelectableThisTurn(game)) { // let him turn a little
             enemy.old.curFacing = (enemy.old.curFacing+1)%6;
             max = Math.max(option.getMaxModifiedDamage(enemy.old, this.tb.enemies.get(en), mod+1, modifiers[EntityState.DEFENCE_PC]),max);
             enemy.old.curFacing = (enemy.old.curFacing+4)%6;

@@ -50,7 +50,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
     private Label labC3 = new Label("C3 Network: ", Label.RIGHT);;
     private Choice choC3 = new Choice();
     private int[] entityCorrespondance;
-
+    private Label labDeployment = new Label("Deployment Round: ", Label.RIGHT);
+    private Choice choDeployment = new Choice();
+    
     private Panel panButtons = new Panel();
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
@@ -123,6 +125,17 @@ extends Dialog implements ActionListener, DialogOptionListener {
         gridbag.setConstraints(fldPiloting, c);
         add(fldPiloting);
         
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(labDeployment, c);
+        add(labDeployment);
+      
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(choDeployment, c);
+        add(choDeployment);
+        refreshDeployment();
+
         if ( client.game.getOptions().booleanOption("pilot_advantages") ) {
           scrOptions.add(panOptions);
         
@@ -178,6 +191,7 @@ extends Dialog implements ActionListener, DialogOptionListener {
             fldGunnery.setEnabled(false);
             fldPiloting.setEnabled(false);
             choC3.setEnabled(false);
+            choDeployment.setEnabled(false);
         }
         
         addWindowListener(new WindowAdapter() {
@@ -368,6 +382,21 @@ extends Dialog implements ActionListener, DialogOptionListener {
         return okay;
     }
 
+    private void refreshDeployment() {
+      choDeployment.removeAll();
+      choDeployment.add("Start of game");
+      
+      if ( entity.getDeployRound() < 1 )
+        choDeployment.select(0);
+        
+      for ( int i = 1; i <= 15; i++ ) {
+        choDeployment.add("After round " + i);
+        
+        if ( entity.getDeployRound() == i )
+          choDeployment.select(i);
+      }
+    }
+    
     private void refreshC3() {
         choC3.removeAll();
         int listIndex = 0;
@@ -465,6 +494,8 @@ extends Dialog implements ActionListener, DialogOptionListener {
             else if(entity.hasC3i() && choC3.getSelectedIndex() > -1) {
                 entity.setC3NetId(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
             }
+            
+            entity.setDeployRound(choDeployment.getSelectedIndex());
             
             // update munitions selections
             for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {

@@ -163,9 +163,9 @@ public class Tank
         m_bImmobile |= m_bImmobileHit;
     }
     
-    public void newRound()
+    public void newRound(int roundNumber)
     {
-        super.newRound();
+        super.newRound(roundNumber);
         
         // check for crew stun
         if (m_nStunnedTurns > 0) {

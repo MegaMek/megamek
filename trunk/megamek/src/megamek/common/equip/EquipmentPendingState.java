@@ -32,18 +32,18 @@ public class EquipmentPendingState extends EquipmentState implements RoundUpdate
     protected int pending_mode;
 
     public EquipmentPendingState(Mounted location, EquipmentType type) {
-	super(location,type);
-	pending_mode = mode;
+  super(location,type);
+  pending_mode = mode;
     }
 
     public String curMode() {
-	return type.getModes()[pending_mode];
+  return type.getModes()[pending_mode];
     }
 
     public int switchMode() {
         if (type.hasModes()) {
             int nMode = 0;
-	    nMode = (pending_mode + 1) % type.getModes().length;
+      nMode = (pending_mode + 1) % type.getModes().length;
             setMode(nMode);
             return nMode;
         }
@@ -52,12 +52,12 @@ public class EquipmentPendingState extends EquipmentState implements RoundUpdate
 
     public void setMode(int n) {
         if (type.hasModes()) {
-	    pending_mode = n;
-	}
+      pending_mode = n;
+  }
     }
 
-    public void newRound() {
-	mode = pending_mode;
+    public void newRound(int roundNumber) {
+  mode = pending_mode;
     }
 
 }

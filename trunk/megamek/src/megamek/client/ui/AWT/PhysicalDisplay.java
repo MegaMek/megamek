@@ -734,7 +734,7 @@ public class PhysicalDisplay
     // GameListener
     //
     public void gameTurnChange(GameEvent ev) {
-        if (client.game.phase == Game.PHASE_PHYSICAL) {
+        if (client.game.getPhase() == Game.PHASE_PHYSICAL) {
             endMyTurn();
 
             if (client.isMyTurn()) {
@@ -748,11 +748,11 @@ public class PhysicalDisplay
         }
     }
     public void gamePhaseChange(GameEvent ev) {
-        if (client.isMyTurn() && client.game.phase != Game.PHASE_PHYSICAL) {
+        if (client.isMyTurn() && client.game.getPhase() != Game.PHASE_PHYSICAL) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (client.game.phase !=  Game.PHASE_PHYSICAL) {
+        if (client.game.getPhase() !=  Game.PHASE_PHYSICAL) {
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.bv.removeKeyListener(this);

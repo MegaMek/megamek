@@ -120,7 +120,7 @@ public class ScenarioLoader
         // build the entities
         int nIndex = 0;
         for (int x = 0; x < players.length; x++) {
-            Entity[] entities = buildFactionEntities(p, players[x].getName());
+            Entity[] entities = buildFactionEntities(p, players[x]);
             for (int y = 0; y < entities.length; y++) {
                 entities[y].setOwner(players[x]);
                 entities[y].setId(nIndex++);
@@ -138,13 +138,18 @@ public class ScenarioLoader
   // Set up the teams (for initiative)
   setupTeams(g);
 
-        g.phase = Game.PHASE_INITIATIVE;
+        g.setPhase(Game.PHASE_INITIATIVE);
+        
+        g.setupRoundDeployment();
+        
         return g;
     }
     
-    private Entity[] buildFactionEntities(Properties p, String sFaction)
+    private Entity[] buildFactionEntities(Properties p, Player player)
         throws Exception
     {
+        String sFaction = player.getName();
+        
         Vector vEntities = new Vector();
         for (int i = 1; true; i++) {
             String s = p.getProperty("Unit_" + sFaction + "_" + i);
@@ -166,6 +171,32 @@ public class ScenarioLoader
                   s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
                   if ( null != s ) {
                     parseAdvantages(e, s);
+                  }
+                
+                //Check for deployment
+                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
+                  if ( null != s ) {
+                    int round = 0;
+                    
+                    try {
+                      round = Integer.parseInt(s);
+                    } catch ( Exception ex ) {
+                      throw new Exception("Bad deployment round setting (" + s + ") for unit " + sFaction + ":" + i);
+                    }
+                    
+                    if ( round < 0 ) {
+                      System.out.println("Deployment round setting of '" + round + "' for " + sFaction + ":" + i + " will be ignored and set to 0");
+                      round = 0;
+                    }
+                    
+                    if ( round > 0 ) {
+                      if ( player.getStartingPos() == 0 ) {
+                        throw new Exception("Can not combine a starting position of 'any' with delayed deployment.");
+                      }
+                      
+                      System.out.println(e.getDisplayName() + " will be deployed after round " + round);
+                      e.setDeployRound(round);
+                    }
                   }
                   
                 vEntities.addElement(e);

@@ -315,7 +315,7 @@ implements Runnable {
         }
         
         // if it is not the lounge phase, this player becomes an observer
-        if (game.phase != Game.PHASE_LOUNGE
+        if (game.getPhase() != Game.PHASE_LOUNGE
         && game.getEntitiesOwnedBy(getPlayer(connId)) < 1) {
             getPlayer(connId).setObserver(true);
         }
@@ -367,7 +367,7 @@ implements Runnable {
         else {
             send(connId, createEntitiesPacket());
         }
-        switch (game.phase) {
+        switch (game.getPhase()) {
             case Game.PHASE_LOUNGE :
                 send(connId, createMapSettingsPacket());
                 break;
@@ -382,7 +382,7 @@ implements Runnable {
                 send(connId, createBoardPacket());
                 break;
         }
-        send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
+        send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.getPhase())));
         if (game.getPhase() == Game.PHASE_FIRING || game.getPhase() == Game.PHASE_PHYSICAL) {
             // can't go above, need board to have been sent
             send(createAttackPacket(game.getActionsVector(), false));
@@ -450,7 +450,7 @@ implements Runnable {
         }
         
         // in the lounge, just remove all entities for that player
-        if (game.phase == Game.PHASE_LOUNGE) {
+        if (game.getPhase() == Game.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
         }
         
@@ -489,7 +489,7 @@ implements Runnable {
     public void checkForObservers() {
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
             Player p = (Player)e.nextElement();
-            p.setObserver(game.getEntitiesOwnedBy(p) < 1 && game.phase != Game.PHASE_LOUNGE);
+            p.setObserver(game.getEntitiesOwnedBy(p) < 1 && game.getPhase() != Game.PHASE_LOUNGE);
         }
     }
     
@@ -628,7 +628,7 @@ implements Runnable {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             Entity entity = (Entity)e.nextElement();
             
-            entity.newRound();
+            entity.newRound(game.getRoundCount());
         }
     }
     
@@ -636,7 +636,7 @@ implements Runnable {
      * Called at the beginning of each phase.  Sets and resets
      * any entity parameters that need to be reset.
      */
-    private void resetEntityPhase() {
+    private void resetEntityPhase(int phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector toRemove = new Vector(0, 10);
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
@@ -694,7 +694,12 @@ implements Runnable {
             entity.dodging = false;
             
             // reset done to false
-            entity.setDone(!entity.isActive());
+            
+            if ( phase == Game.PHASE_DEPLOYMENT ) {
+              entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
+            } else {
+              entity.setDone(!entity.isActive());
+            }
         }
     }
     
@@ -751,6 +756,29 @@ implements Runnable {
             roundReport.append("Survivors are:\n");
             while ( survivors.hasMoreElements() ) {
                 Entity entity = (Entity) survivors.nextElement();
+                
+                if ( !entity.isDeployed() )
+                  continue;
+                  
+                roundReport.append(entity.victoryReport());
+                roundReport.append('\n');
+            }
+        }
+        Enumeration undeployed = game.getEntities();
+        if ( undeployed.hasMoreElements() ) {
+            boolean wroteHeader = false;
+            
+            while ( undeployed.hasMoreElements() ) {
+                Entity entity = (Entity) undeployed.nextElement();
+                
+                if ( entity.isDeployed() )
+                  continue;
+
+                if ( !wroteHeader ) {
+                  roundReport.append("The following units never entered the field of battle:\n");
+                  wroteHeader = true;
+                }
+                                  
                 roundReport.append(entity.victoryReport());
                 roundReport.append('\n');
             }
@@ -885,8 +913,8 @@ implements Runnable {
             }
         }
         // need at least one entity in the game for the lounge phase to end
-        if (allAboard && !game.phaseHasTurns(game.phase)
-        && (game.phase != Game.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
+        if (allAboard && !game.phaseHasTurns(game.getPhase())
+        && (game.getPhase() != Game.PHASE_LOUNGE || game.getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
     }
@@ -928,7 +956,8 @@ implements Runnable {
      * then tells the players.
      */
     private void changePhase(int phase) {
-        game.phase = phase;
+        game.setLastPhase(game.getPhase());
+        game.setPhase(phase);
 
         // prepare for the phase
         prepareForPhase(phase);
@@ -962,13 +991,17 @@ implements Runnable {
                 game.resetRoundReport();
                 roundReport = game.getRoundReport(); //HACK
                 resetEntityRound();
-                resetEntityPhase();
+                resetEntityPhase(phase);
                 checkForObservers();
                 // roll 'em
                 resetActivePlayersDone();
                 rollInitiative();
+                
+                if ( !game.shouldDeployThisRound() )
+                  incrementAndSendGameRound();
+                  
                 //setIneligible(phase);
-                determineTurnOrder();
+                determineTurnOrder(phase);
                 writeInitiativeReport();
                 send(createReportPacket());
                 autoSave();
@@ -977,10 +1010,10 @@ implements Runnable {
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
-                resetEntityPhase();
+                resetEntityPhase(phase);
                 checkForObservers();
                 setIneligible(phase);
-                determineTurnOrder();
+                determineTurnOrder(phase);
                 resetActivePlayersDone();
                 //send(createEntitiesPacket());
                 entityAllUpdate();
@@ -995,7 +1028,7 @@ implements Runnable {
                 resolveFire();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
-                resetEntityPhase();
+                resetEntityPhase(phase);
                 checkForObservers();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1043,7 +1076,7 @@ implements Runnable {
                 // Build teams vector
                 setupTeams();        
                 applyBoardSettings();
-                game.setHasDeployed(false);
+                game.setupRoundDeployment();
                 game.determineWindDirection();
                 // If we add transporters for any Magnetic Clamp
                 // equiped squads, then update the clients' entities.
@@ -1066,7 +1099,7 @@ implements Runnable {
      * Ends this phase and moves on to the next.
      */
     private void endCurrentPhase() {
-        switch (game.phase) {
+        switch (game.getPhase()) {
             case Game.PHASE_LOUNGE :
                 changePhase(Game.PHASE_EXCHANGE);
                 break;
@@ -1074,15 +1107,17 @@ implements Runnable {
                 changePhase(Game.PHASE_INITIATIVE);
                 break;
             case Game.PHASE_DEPLOYMENT :
-                game.setHasDeployed(true);
+                game.clearDeploymentThisRound();
+                game.checkForCompleteDeployment();
                 changePhase(Game.PHASE_INITIATIVE);
                 break;
             case Game.PHASE_INITIATIVE :
-                if (game.hasDeployed()) {
-                    changePhase(Game.PHASE_MOVEMENT);
-                }
-                else {
-                    changePhase(Game.PHASE_DEPLOYMENT);
+                boolean doDeploy = game.shouldDeployThisRound() && (game.getLastPhase() != Game.PHASE_DEPLOYMENT);
+                
+                if ( doDeploy ) {
+                  changePhase(Game.PHASE_DEPLOYMENT);
+                } else {
+                  changePhase(Game.PHASE_MOVEMENT);
                 }
                 break;
             case Game.PHASE_MOVEMENT :
@@ -1145,7 +1180,7 @@ implements Runnable {
                 if (victory()) {
                     changePhase(Game.PHASE_VICTORY);
                 } else {
-                    changePhase(Game.PHASE_INITIATIVE);
+                  changePhase(Game.PHASE_INITIATIVE);
                 }
                 break;
             case Game.PHASE_VICTORY :
@@ -1153,6 +1188,14 @@ implements Runnable {
                 break;
         }
     }
+
+    /**
+     * Increment's the server's game round and send it to all the clients
+     */
+    private void incrementAndSendGameRound() {
+      game.incrementRoundCount();
+      send(new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(game.getRoundCount())));
+    }    
     
     /**
      * Tries to change to the next turn.  If there are no more turns, ends the
@@ -1259,7 +1302,7 @@ implements Runnable {
         for (Enumeration e = game.getPlayers(); e.hasMoreElements();) {
             Player player = (Player)e.nextElement();
             int team = player.getTeam();
-            if (game.getLiveEntitiesOwnedBy(player) <= 0) {
+            if (game.getLiveDeployedEntitiesOwnedBy(player) <= 0) {
                 continue;
             }
             // we found a live one!
@@ -1443,15 +1486,13 @@ implements Runnable {
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
-        game.incrementRoundCount();
-
         // Roll for initative on the teams.
         TurnOrdered.rollInitiative(game.getTeamsVector());
 
         transmitAllPlayerUpdates();
     }
 
-    private void determineTurnOrder() {
+    private void determineTurnOrder(int phase) {
 
         // Reset all of the turn counts
 
@@ -1465,7 +1506,7 @@ implements Runnable {
         // Go through all entities, and update the player objects
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
-            if (entity.isSelectable()) {
+            if (entity.isSelectableThisTurn(game)) {
                 final Player player = entity.getOwner();
                 if ( entity instanceof Infantry )
                     player.incrementInfantryCount();
@@ -1546,11 +1587,14 @@ implements Runnable {
      */
     private void writeInitiativeReport() {
         // write to report
-        if (game.hasDeployed()) {
+        if ((game.getLastPhase() == Game.PHASE_DEPLOYMENT) || game.isDeploymentComplete() || !game.shouldDeployThisRound()) {
             roundReport.append("\nInitiative Phase for Round #").append(game.getRoundCount());
-        }
-        else {
+        } else {
+          if ( game.getRoundCount() == 0 ) {
             roundReport.append("\nInitiative Phase for Deployment");
+          } else {
+            roundReport.append("\nInitiative Phase for Deployment for Round #").append(game.getRoundCount());
+          }
         }
         roundReport.append("\n------------------------------\n");
 
@@ -1609,6 +1653,14 @@ implements Runnable {
      * Determines if an entity is eligible for a phase.
      */
     private boolean isEligibleFor(Entity entity, int phase) {
+        if ( phase == Game.PHASE_DEPLOYMENT ) {
+          if ( entity.isDeployed() )
+            return false;
+        } else {
+          if ( !entity.isDeployed() )
+            return false;
+        }
+        
         switch (phase) {
             case Game.PHASE_FIRING :
                 return isEligibleForFiring(entity, phase);
@@ -1678,7 +1730,7 @@ implements Runnable {
             }
 
             // No physical attack works at distances > 1.
-            if ( target.getPosition() != null &&
+            if ( target.getPosition() == null ||
                  entity.getPosition().distance(target.getPosition()) > 1 ) {
                 continue;
             }
@@ -1980,7 +2032,7 @@ implements Runnable {
         }
         
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity)) {
+        if (!game.getTurn().isValid(connId, entity, game)) {
             System.err.println("error: server got invalid movement packet");
             return;
         }
@@ -2655,7 +2707,7 @@ implements Runnable {
                         // The moving unit should be able to load the other
                         // unit and the other should be able to have a turn.
                         if ( !entity.canLoad(loaded) ||
-                             !loaded.isSelectable() ) {
+                             !loaded.isSelectableThisTurn(game) ) {
                             // Something is fishy in Denmark.
                             System.err.println( entity.getShortName() +
                                                 " can not load " +
@@ -2905,7 +2957,7 @@ implements Runnable {
 
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() 
-        && entity.isSelectable() && !entity.isDoomed()) {
+        && entity.isSelectableThisTurn(game) && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
@@ -3387,7 +3439,7 @@ implements Runnable {
         }
         
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity)
+        if (!game.getTurn().isValid(connId, entity, game)
         || !game.board.isLegalDeployment(coords, entity.getOwner())) {
             System.err.println("error: server got invalid deployment packet");
             return;
@@ -3422,6 +3474,7 @@ implements Runnable {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
         entity.setDone(true);
+        entity.setDeployed(true);
         entityUpdate(entity.getId());
     }
     
@@ -3441,7 +3494,7 @@ implements Runnable {
         }
         
         // can this player/entity act right now?
-        if (!game.getTurn().isValid(connId, entity)) {
+        if (!game.getTurn().isValid(connId, entity, game)) {
             System.err.println("error: server got invalid attack packet");
             return;
         }
@@ -6792,7 +6845,7 @@ implements Runnable {
             if ( entitesHit.containsKey(entity) )
               continue;
             
-            if ( entity.isDoomed() || entity.isDestroyed() )
+            if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
               continue;
             
             int range = en.getPosition().distance(entity.getPosition());
@@ -7786,7 +7839,7 @@ implements Runnable {
     
     private boolean doBlind() {
         return (game.getOptions().booleanOption("double_blind") &&
-        game.phase >= Game.PHASE_INITIATIVE);
+        game.getPhase() >= Game.PHASE_INITIATIVE);
     }
     
     /**

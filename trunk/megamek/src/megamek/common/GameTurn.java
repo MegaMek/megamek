@@ -48,16 +48,16 @@ public class GameTurn implements Serializable {
     /**
      * Returns true if the specified entity is a valid one to use for this turn.
      */
-    public boolean isValidEntity(Entity entity) {
+    public boolean isValidEntity(Entity entity, Game game) {
         return entity != null && entity.getOwnerId() == playerId
-        && entity.isSelectable();
+        && entity.isSelectableThisTurn(game);
     }
     
     /**
      * Returns true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity) {
-        return playerId == this.playerId && isValidEntity(entity);
+    public boolean isValid(int playerId, Entity entity, Game game) {
+        return playerId == this.playerId && isValidEntity(entity, game);
     }
     
     public String toString() {
@@ -87,8 +87,8 @@ public class GameTurn implements Serializable {
          * Returns true if the entity is normally valid and it is the specific
          * entity that can move this turn.
          */
-        public boolean isValidEntity(Entity entity) {
-            return super.isValidEntity(entity) && entity.getId() == entityId;
+        public boolean isValidEntity(Entity entity, Game game) {
+            return super.isValidEntity(entity, game) && entity.getId() == entityId;
         }
     }
     
@@ -103,8 +103,8 @@ public class GameTurn implements Serializable {
         /**
          * Returns true if the entity is normally valid and it is infantry.
          */
-        public boolean isValidEntity(Entity entity) {
-            return super.isValidEntity(entity) && entity instanceof Infantry;
+        public boolean isValidEntity(Entity entity, Game game) {
+            return super.isValidEntity(entity, game) && entity instanceof Infantry;
         }
     }
     
@@ -119,8 +119,8 @@ public class GameTurn implements Serializable {
         /**
          * Returns true if the entity is normally valid and it is not infantry.
          */
-        public boolean isValidEntity(Entity entity) {
-            return super.isValidEntity(entity) && !(entity instanceof Infantry);
+        public boolean isValidEntity(Entity entity, Game game) {
+            return super.isValidEntity(entity, game) && !(entity instanceof Infantry);
         }
     }
 }

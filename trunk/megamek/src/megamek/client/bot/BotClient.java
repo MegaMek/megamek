@@ -151,7 +151,7 @@ public class BotClient extends Client
      
      private void calculateDeployment() {
         // Use the old clumping algorithm until someone puts AI in here
-        int entNum = game.getFirstEntityNum();
+        int entNum = game.getFirstDeployableEntityNum();
         Coords cStart = getStartingCoords(getLocalPlayer().getStartingPos());
         Coords cDeploy = getCoordsAround(cStart);
         
@@ -304,9 +304,9 @@ public class BotClient extends Client
      public PhysicalOption getBestPhysical(Entity entity) {
 
         // Infantry can't conduct physical attacks.
-	if ( entity instanceof Infantry ) {
-	    return null;
-	}
+  if ( entity instanceof Infantry ) {
+      return null;
+  }
 
         // if you're charging, it's already declared
         if (entity.isCharging() || entity.isMakingDfa()) {
@@ -319,6 +319,7 @@ public class BotClient extends Client
 
             if (target.equals(entity)) continue;
             if (!target.isEnemyOf(entity)) continue;
+            if ( null == target.getPosition() ) continue;
             PhysicalOption one = getBestPhysicalAttack(game.getEntityID(entity),
                                                         game.getEntityID(target));
             if (one != null) {
@@ -340,7 +341,7 @@ public class BotClient extends Client
         int bestType = PhysicalOption.PUNCH_LEFT;
         
         // Infantry can't conduct physical attacks.
-	if ( fen instanceof Infantry ) {
+  if ( fen instanceof Infantry ) {
             return null;
         }
         ToHitData odds = Compute.toHitPunch(game, from, to, PunchAttackAction.LEFT);
@@ -382,14 +383,14 @@ public class BotClient extends Client
             }
         }
 
-	// Infantry in the open suffer double damage.
-	if ( ten instanceof Infantry ) {
-	    Hex e_hex = game.getBoard().getHex( ten.getPosition() );
-	    if ( !e_hex.contains(Terrain.WOODS) &&
-		 !e_hex.contains(Terrain.BUILDING) ) {
-		bestDmg *= 2;
-	    }
-	}
+  // Infantry in the open suffer double damage.
+  if ( ten instanceof Infantry ) {
+      Hex e_hex = game.getBoard().getHex( ten.getPosition() );
+      if ( !e_hex.contains(Terrain.WOODS) &&
+     !e_hex.contains(Terrain.BUILDING) ) {
+    bestDmg *= 2;
+      }
+  }
 
         if (bestDmg > 0) {
             return new PhysicalOption(ten, bestDmg, bestType);    
@@ -559,7 +560,7 @@ public class BotClient extends Client
         Enumeration ents = game.getEntities();
         while (ents.hasMoreElements()) {
             Entity e = (Entity)ents.nextElement();
-            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn))) {
+            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn)) && (null != e.getPosition())) {
                 // sendChat("Calculating threat from entity " + e.getName());
                 total += calculateOneThreat(game.getEntityID(e), to);
             }
@@ -605,31 +606,31 @@ public class BotClient extends Client
              // calculate expected value of attack
             if (th.getValue() != ToHitData.IMPOSSIBLE) {
                 double odds = Compute.oddsAbove(th.getValue())/ 100.0;
-		double expectedDmg;
+    double expectedDmg;
 
-		// Is the atttacker an Infantry platoon?
-		if ( fen instanceof Infantry ) {
-		    // Get the expected damage, given its current 
-		    // manpower level.
-		    Infantry inf = (Infantry) fen;
-		    expectedDmg = 
-			inf.getDamage(inf.getShootingStrength());
-		} else {
-		    // Get the expected damage of the weapon.
-		    expectedDmg = 
-			getExpectedDamage((WeaponType)w.getType());
-		}
+    // Is the atttacker an Infantry platoon?
+    if ( fen instanceof Infantry ) {
+        // Get the expected damage, given its current 
+        // manpower level.
+        Infantry inf = (Infantry) fen;
+        expectedDmg = 
+      inf.getDamage(inf.getShootingStrength());
+    } else {
+        // Get the expected damage of the weapon.
+        expectedDmg = 
+      getExpectedDamage((WeaponType)w.getType());
+    }
 
-		// Infantry in the open suffer double damage.
-		if ( ten instanceof Infantry ) {
-		    Hex e_hex = game.getBoard().getHex( ten.getPosition() );
-		    if ( !e_hex.contains(Terrain.WOODS) &&
-			 !e_hex.contains(Terrain.BUILDING) ) {
-			expectedDmg *= 2;
-		    }
-		}
+    // Infantry in the open suffer double damage.
+    if ( ten instanceof Infantry ) {
+        Hex e_hex = game.getBoard().getHex( ten.getPosition() );
+        if ( !e_hex.contains(Terrain.WOODS) &&
+       !e_hex.contains(Terrain.BUILDING) ) {
+      expectedDmg *= 2;
+        }
+    }
 
-		// Modify the expected damage by the odds.
+    // Modify the expected damage by the odds.
                 total += odds * expectedDmg;
 
 //                sendChat(" -> threat " + w.getType().getName() + " needs " + th.getValue() + ": " + (odds*expectedDmg));                                   
@@ -739,36 +740,36 @@ public class BotClient extends Client
         Enumeration ents = game.getEntities();
         while (ents.hasMoreElements()) {
             Entity e = (Entity)ents.nextElement();
-            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn))) {
+            if (e.getOwner().isEnemyOf(game.getPlayer(this.local_pn)) && (null != e.getPosition())) {
                 ToHitData th = Compute.toHitWeapon(game, from, e, weaponID);    
                 if (th.getValue() != ToHitData.IMPOSSIBLE) {
                     double odds = Compute.oddsAbove(th.getValue())/ 100.0;
                     double expectedDmg;
 
-		    // Are we an Infantry platoon?
-		    if ( en instanceof Infantry ) {
-			// Get the expected damage, given our current 
-			// manpower level.
-			Infantry inf = (Infantry) en;
-			expectedDmg = 
-			    inf.getDamage(inf.getShootingStrength());
-		    } else {
-			// Get the expected damage of the weapon.
-			expectedDmg = 
-			    getExpectedDamage((WeaponType)mw.getType());
-		    }
+        // Are we an Infantry platoon?
+        if ( en instanceof Infantry ) {
+      // Get the expected damage, given our current 
+      // manpower level.
+      Infantry inf = (Infantry) en;
+      expectedDmg = 
+          inf.getDamage(inf.getShootingStrength());
+        } else {
+      // Get the expected damage of the weapon.
+      expectedDmg = 
+          getExpectedDamage((WeaponType)mw.getType());
+        }
 
-		    // Infantry in the open suffer double damage.
-		    if ( e instanceof Infantry ) {
-			Hex e_hex = game.getBoard().getHex( e.getPosition() );
-			if ( !e_hex.contains(Terrain.WOODS) &&
-			     !e_hex.contains(Terrain.BUILDING) ) {
-			    expectedDmg *= 2;
-			}
-		    }
+        // Infantry in the open suffer double damage.
+        if ( e instanceof Infantry ) {
+      Hex e_hex = game.getBoard().getHex( e.getPosition() );
+      if ( !e_hex.contains(Terrain.WOODS) &&
+           !e_hex.contains(Terrain.BUILDING) ) {
+          expectedDmg *= 2;
+      }
+        }
 
-		    // Modify the expected damage by the odds.
-		    expectedDmg = odds * expectedDmg;
+        // Modify the expected damage by the odds.
+        expectedDmg = odds * expectedDmg;
                     if (expectedDmg > bestValue) {
                         bestTarget = e;
                         bestValue = expectedDmg;

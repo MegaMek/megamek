@@ -496,10 +496,10 @@ public class BattleArmor
     /**
      * Prepare the entity for a new round of action.
      */    
-    public void newRound()
+    public void newRound(int roundNumber)
     {
         // Perform all base-class behavior.
-        super.newRound();
+        super.newRound(roundNumber);
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.

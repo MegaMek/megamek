@@ -970,7 +970,7 @@ public class Board
         // of burning and see if  the fire is still burning.
         tracker = (InfernoTracker) this.infernos.get( coords );
         if ( null != tracker ) {
-            tracker.newRound();
+            tracker.newRound(-1);
             if ( tracker.isStillBurning() ) {
                 result = true;
             }

@@ -43,7 +43,7 @@ public class Game implements Serializable
      * The number of Infantry platoons that have to move for every Mek
      * or Vehicle, if the "inf_move_multi" option is selected.
      */
-    public static final int INF_MOVE_MULTI     	    = 3;
+    public static final int INF_MOVE_MULTI          = 3;
 
     /**
      * Define constants to describe the condition a
@@ -66,8 +66,8 @@ public class Game implements Serializable
     private Hashtable playerIds = new Hashtable();
     
     /** have the entities been deployed? */
-    private boolean m_bHasDeployed = false;
-    
+    private boolean deploymentComplete = false;
+
     /** how's the weather? */
     private int windDirection;
     private String stringWindDirection;
@@ -80,7 +80,10 @@ public class Game implements Serializable
     private int turnIndex = 0;
     
     /** The present phase */
-    public int phase = PHASE_UNKNOWN;
+    private int phase = PHASE_UNKNOWN;
+
+    /** The past phase */
+    private int lastPhase = PHASE_UNKNOWN;
 
     // phase state
     private Vector actions = new Vector();
@@ -94,7 +97,10 @@ public class Game implements Serializable
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
-	
+
+    private Hashtable deploymentTable = new Hashtable();
+    private int lastDeploymentRound = 0;
+  
     // Settings for the LOS tool.
     private boolean mechInFirstHex = true;
     private boolean mechInSecondHex = true;
@@ -108,22 +114,22 @@ public class Game implements Serializable
     
     // If it's a mech in the first hex used by the LOS tool
     public boolean getMechInFirst() {
-    	return mechInFirstHex;
+      return mechInFirstHex;
     }
 
     // If it's a mech in the second hex used by the LOS tool
     public boolean getMechInSecond() {
-    	return mechInSecondHex;
+      return mechInSecondHex;
     }
 
     // If it's a mech in the first hex used by the LOS tool
     public void setMechInFirst(boolean mech) {
-    	mechInFirstHex = mech;
+      mechInFirstHex = mech;
     }
 
     // If it's a mech in the second hex used by the LOS tool
     public void setMechInSecond(boolean mech) {
-    	mechInSecondHex = mech;
+      mechInSecondHex = mech;
     }
 
     public GameOptions getOptions() {
@@ -144,12 +150,12 @@ public class Game implements Serializable
      * Return an enumeration of teams in the game
      */
     public Enumeration getTeams() {
-	return teams.elements();
+  return teams.elements();
     }
 
     /** Return the teams vector */
     public Vector getTeamsVector() {
-	return teams;
+  return teams;
     }
 
     /**
@@ -228,6 +234,20 @@ public class Game implements Serializable
     }    
   
     /**
+     * Returns the number of non-destroyed deployed entityes owned by the player
+     */
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        int count = 0;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if (entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()) {
+                count++;
+            }
+        }
+        return count;
+    }    
+  
+    /**
      * Get a vector of entity objects that are "acceptable" to attack with this entity
      */
     public Vector getValidTargets(Entity entity) {
@@ -240,7 +260,7 @@ public class Game implements Serializable
 
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
-            if ( null != otherEntity.getPosition() &&
+            if ( (null != otherEntity.getPosition()) &&
                  ( entity.isEnemyOf(otherEntity) || 
                    (friendlyFire && entity.getId() != otherEntity.getId()) ) ) {
                 ents.addElement( otherEntity );
@@ -278,7 +298,7 @@ public class Game implements Serializable
   
     /** Changes to the next turn, returning it. */
     public GameTurn changeToNextTurn() {
-        turnIndex++;	
+        turnIndex++;  
         return getTurn();
     }
     
@@ -294,7 +314,7 @@ public class Game implements Serializable
     
     /** Inserts a turn that will come directly after the current one */
     public void insertNextTurn(GameTurn turn) {
-	turnVector.insertElementAt(turn, turnIndex + 1);
+  turnVector.insertElementAt(turn, turnIndex + 1);
     }
 
     /** Returns an Enumeration of the current turn list */
@@ -330,12 +350,96 @@ public class Game implements Serializable
         this.phase = phase;
     }
     
-    public boolean hasDeployed() {
-        return m_bHasDeployed;
+    public int getLastPhase() {
+        return lastPhase;
     }
     
-    public void setHasDeployed(boolean in) {
-        m_bHasDeployed = in;
+    public void setLastPhase(int lastPhase) {
+        this.lastPhase = lastPhase;
+    }
+    
+    public void setDeploymentComplete(boolean deploymentComplete) {
+      this.deploymentComplete = deploymentComplete;
+    }
+    
+    public boolean isDeploymentComplete() {
+      return deploymentComplete;
+    }
+
+  /**
+   * Sets up up the hashtable of who deploys when
+   */
+    public void setupRoundDeployment() {
+      deploymentTable = new Hashtable();
+      
+      for ( int i = 0; i < entities.size(); i++ ) {
+        Entity ent = (Entity)entities.elementAt(i);
+        
+        Vector roundVec = (Vector)deploymentTable.get(new Integer(ent.getDeployRound()));
+        
+        if ( null == roundVec ) {
+          roundVec = new Vector();
+          deploymentTable.put(new Integer(ent.getDeployRound()), roundVec);
+        }
+        
+        roundVec.addElement(ent);
+        lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
+      }
+    }
+    
+  /**
+   * Checks to see if we've past our deployment completion
+   */
+    public void checkForCompleteDeployment() {
+      setDeploymentComplete(lastDeploymentRound < getRoundCount());
+    }
+   
+   /**
+    * Check to see if we should deploy this round
+    */
+    public boolean shouldDeployThisRound() {
+      return shouldDeployForRound(getRoundCount());
+    }
+
+    public boolean shouldDeployForRound(int round) {
+      Vector vec = getEntitiesToDeployForRound(round);
+
+      return ( ((null == vec) || (vec.size() == 0)) ? false : true);
+    }
+   /**
+    * Returns a vector of entities to deploy this round
+    */
+    private Vector getEntitiesToDeployThisRound() {
+      return getEntitiesToDeployForRound(getRoundCount());
+    }
+    
+    private Vector getEntitiesToDeployForRound(int round) {
+      return (Vector)deploymentTable.get(new Integer(round));
+    }
+    
+   /**
+    * Clear this round from this list of entities to deploy
+    */
+    public void clearDeploymentThisRound() {
+      deploymentTable.remove(new Integer(getRoundCount()));
+    }
+    
+   /**
+    * Returns a vector of entities that have not yet deployed
+    */
+    public Vector getUndeployedEntities() {
+      Vector entList = new Vector();
+      Enumeration enum = deploymentTable.elements();
+      
+      while ( enum.hasMoreElements() ) {
+        Vector vecTemp = (Vector)enum.nextElement();
+        
+        for ( int i = 0; i < vecTemp.size(); i++ ) {
+          entList.addElement(vecTemp.elementAt(i));
+        }
+      }
+      
+      return entList;
     }
     
     /**
@@ -536,6 +640,23 @@ public class Game implements Serializable
         if (condition != Entity.REMOVE_NEVER_JOINED) {
             vOutOfGame.addElement(toRemove);
         }
+        
+        //We also need to remove it from the list of things to be deployed... 
+        //we might still be in this list if we never joined the game
+          if ( deploymentTable.size() > 0 ) {
+            Enumeration enum = deploymentTable.elements();
+            
+            while ( enum.hasMoreElements() ) {
+              Vector vec = (Vector)enum.nextElement();
+              
+              for ( int i = vec.size() - 1; i >= 0; i-- ) {
+                Entity en = (Entity)vec.elementAt(i);
+                
+                if ( en.getId() == id ) 
+                  vec.remove(i);
+              }
+            }
+          }
     }
     
     /**
@@ -637,9 +758,9 @@ public class Game implements Serializable
     /**
      * See if the <code>Entity</code> with the given ID is out of the game.
      *
-     * @param	id - the ID of the <code>Entity</code> to be checked.
+     * @param id - the ID of the <code>Entity</code> to be checked.
      * @return  <code>true</code> if the <code>Entity</code> is in the
-     *		graveyard, <code>false</code> otherwise.
+     *    graveyard, <code>false</code> otherwise.
      */
     public boolean isOutOfGame( int id ) {
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
@@ -656,9 +777,9 @@ public class Game implements Serializable
     /**
      * See if the <code>Entity</code> is out of the game.
      *
-     * @param	entity - the <code>Entity</code> to be checked.
+     * @param entity - the <code>Entity</code> to be checked.
      * @return  <code>true</code> if the <code>Entity</code> is in the
-     *		graveyard, <code>false</code> otherwise.
+     *    graveyard, <code>false</code> otherwise.
      */
     public boolean isOutOfGame( Entity entity ) {
         return isOutOfGame(entity.getId());
@@ -674,7 +795,7 @@ public class Game implements Serializable
     
     /**
      * Returns the first entity that can act in the specified turn, or null if
-     * none can.
+     * none can.33
      */
     public Entity getFirstEntity(GameTurn turn) {
         return getEntity(getFirstEntityNum(getTurn()));
@@ -698,7 +819,8 @@ public class Game implements Serializable
         }
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if (turn.isValidEntity(entity)) {
+            
+            if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
         }
@@ -732,13 +854,53 @@ public class Game implements Serializable
             final Entity entity = (Entity)i.nextElement();
             if (entity.getId() == start) {
                 startPassed = true;
-            } else if (startPassed && turn.isValidEntity(entity)) {
+            } else if (startPassed && turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
         }
         return getFirstEntityNum(turn);
     }
 
+    /**
+     * Returns the number of the first deployable entity
+     */
+    public int getFirstDeployableEntityNum() {
+      return getFirstDeployableEntityNum(getTurn());
+    }
+    
+    public int getFirstDeployableEntityNum(GameTurn turn) {
+      int num = getFirstEntityNum(turn);
+      Entity en = getEntity(num);
+      
+      while ( (null == en) || ((null != en) && !en.shouldDeploy(getRoundCount())) ) {
+        num = getNextEntityNum(turn, num);
+        en = getEntity(num);
+      }
+      
+      //Sanity check
+      return ((null != en) && en.shouldDeploy(getRoundCount())) ? num : -1;
+    }
+    
+    /**
+     * Returns the number of the next deployable entity
+     */
+    public int getNextDeployableEntityNum(int entityId) {
+      return getNextDeployableEntityNum(getTurn(), entityId);
+    }
+    
+    public int getNextDeployableEntityNum(GameTurn turn, int entityId) {
+      int num = getNextEntityNum(turn, entityId);
+      Entity en = getEntity(num);
+      
+      while ( (null == en) || ((null != en) && !en.shouldDeploy(getRoundCount())) ) {
+        num = getNextDeployableEntityNum(turn, num);
+        en = getEntity(num);
+      }
+      
+      //Sanity check
+      return ((null != en) && en.shouldDeploy(getRoundCount())) ? num : -1;
+    }
+    
 
     public void determineWindDirection() {
         windDirection = Compute.d6(1)-1;
@@ -774,18 +936,18 @@ public class Game implements Serializable
     /**
      * Determines if the indicated player has any remaining selectable infanty.
      *
-     * @param	playerId - the <code>int</code> ID of the player
-     * @return	<code>true</code> if the player has any remaining
-     *		active infantry, <code>false</code> otherwise.
+     * @param playerId - the <code>int</code> ID of the player
+     * @return  <code>true</code> if the player has any remaining
+     *    active infantry, <code>false</code> otherwise.
      */
     public boolean hasInfantry( int playerId ) {
-	Player player = this.getPlayer( playerId );
+  Player player = this.getPlayer( playerId );
 
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
-		 entity.isSelectable() &&
-		 entity instanceof Infantry ) {
+     entity.isSelectableThisTurn(this) &&
+     entity instanceof Infantry ) {
                 return true;
             }          
         }
@@ -796,14 +958,14 @@ public class Game implements Serializable
      * Returns the number of remaining selectable infantry owned by a player.
      */
     public int infantryLeft(int playerId) {
-	Player player = this.getPlayer( playerId );
+  Player player = this.getPlayer( playerId );
         int remaining = 0;
 
         for (Enumeration i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if ( player.equals(entity.getOwner()) &&
-		 entity.isSelectable() &&
-		 entity instanceof Infantry ) {
+     entity.isSelectableThisTurn(this) &&
+     entity instanceof Infantry ) {
                 remaining++;
             }          
         }
@@ -818,7 +980,7 @@ public class Game implements Serializable
     public void removeTurnFor(Entity entity) {
         for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
             GameTurn turn = (GameTurn)turnVector.elementAt(i);
-            if (turn.isValidEntity(entity)) {
+            if (turn.isValidEntity(entity, this)) {
                 turnVector.removeElementAt(i);
                 break;
             }
@@ -995,6 +1157,10 @@ public class Game implements Serializable
      */
     public int getRoundCount() {
         return roundCount;
+    }
+    
+    public void setRoundCount(int roundCount) {
+        this.roundCount = roundCount;
     }
     
     /** Increments the round counter */

@@ -36,51 +36,51 @@ public class AmmoState extends EquipmentState implements AmmoBin,RoundUpdated {
     protected boolean dumping = false; 
 
     public AmmoState(Mounted location, AmmoType type) {
-	super(location,type);
-	// Default the number of shots to the normal number
-	this.shots = type.getShots();
+  super(location,type);
+  // Default the number of shots to the normal number
+  this.shots = type.getShots();
     }
 
     public AmmoState(Mounted location, AmmoType type, int shots) {
-	super(location,type);
-	this.shots = shots;
+  super(location,type);
+  this.shots = shots;
     }
 
     public void depleteAmmo() {
-	shots--;
+  shots--;
     }
     public int shotsLeft() {
-	return shots;
+  return shots;
     }
 
     public AmmoType getAmmoType() {
-	return (AmmoType) type;
+  return (AmmoType) type;
     }
   
     public boolean isPendingDump() {
-	return pending_dump;
+  return pending_dump;
     }
 
     public void setPendingDump(boolean b) {
-	this.pending_dump = b;
+  this.pending_dump = b;
     }
 
     public boolean isDumping () {
-	return dumping;
+  return dumping;
     }
     
     // If a dump was pending, set dumping and clear pending.
     // If a dump has completed, clear the shots, clear both flags
-    public void newRound() {
-    	if (dumping) {
-	    shots = 0;
-	    dumping = false;
-	    pending_dump = false;
-	}
-	if (pending_dump) {
-	    dumping = true;
-	    pending_dump = false;
-	}
+    public void newRound(int roundNumber) {
+      if (dumping) {
+      shots = 0;
+      dumping = false;
+      pending_dump = false;
+  }
+  if (pending_dump) {
+      dumping = true;
+      pending_dump = false;
+  }
     }
 
 }

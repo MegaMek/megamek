@@ -124,16 +124,16 @@ public class MechDisplay extends BufferedPanel
     public void showPanel(String s) {
         ((CardLayout)displayP.getLayout()).show(displayP, s);
         if (s == "movement") {
-	       tabStrip.setTab(0);
-	    } else if (s == "armor") {
-	    	tabStrip.setTab(1);
-	    } else if (s == "weapons"){
-	    	tabStrip.setTab(3);
-	    } else if (s == "systems") {
-	    	tabStrip.setTab(2);
-	    } else if (s == "extras") {
-	    	tabStrip.setTab(4);
-	    }
+         tabStrip.setTab(0);
+      } else if (s == "armor") {
+        tabStrip.setTab(1);
+      } else if (s == "weapons"){
+        tabStrip.setTab(3);
+      } else if (s == "systems") {
+        tabStrip.setTab(2);
+      } else if (s == "extras") {
+        tabStrip.setTab(4);
+      }
     }
     
 }
@@ -158,19 +158,19 @@ class MovementPanel extends PicMap{
         Vector v = gi.getBackgroundDrawers();
         Enumeration enum = v.elements();
         while(enum.hasMoreElements()){
-        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
+          addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();
     }
     
     public void onResize(){
-    	int w = getSize().width;
-    	Rectangle r = getContentBounds();
-    	int dx = (int) Math.round((w - r.width)/2);
-    	if (dx < minLeftMargin) dx = minLeftMargin;
-    	int dy = minTopMargin;
-      	if( r != null) setContentMargins(dx, dy, dx, dy);
+      int w = getSize().width;
+      Rectangle r = getContentBounds();
+      int dx = (int) Math.round((w - r.width)/2);
+      if (dx < minLeftMargin) dx = minLeftMargin;
+      int dy = minTopMargin;
+        if( r != null) setContentMargins(dx, dy, dx, dy);
     }
         
     /**
@@ -219,54 +219,54 @@ class ArmorPanel  extends PicMap
     }
     
     public void onResize(){
-    	Rectangle r = getContentBounds();
-    	if( r == null) return;
-    	int w = (int) Math.round((getSize().width - r.width)/2);
-    	int h = (int) Math.round((getSize().height - r.height)/2);
-    	int dx = (w < minLeftMargin) ? minLeftMargin : w;
-    	int dy = (h < minTopMargin) ? minTopMargin : h;
-      	setContentMargins(dx, dy, minRightMargin, minBottomMargin);
+      Rectangle r = getContentBounds();
+      if( r == null) return;
+      int w = (int) Math.round((getSize().width - r.width)/2);
+      int h = (int) Math.round((getSize().height - r.height)/2);
+      int dx = (w < minLeftMargin) ? minLeftMargin : w;
+      int dy = (h < minTopMargin) ? minTopMargin : h;
+        setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
         
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-    	DisplayMapSet ams = (DisplayMapSet) mech;
-    	removeAll();
+      DisplayMapSet ams = (DisplayMapSet) mech;
+      removeAll();
         if(en instanceof Mech){
-        	ams = (DisplayMapSet) mech;
-         	minLeftMargin = minMechLeftMargin;
-        	minTopMargin = minMechTopMargin;
+          ams = (DisplayMapSet) mech;
+          minLeftMargin = minMechLeftMargin;
+          minTopMargin = minMechTopMargin;
             minBottomMargin = minMechBottomMargin;
             minRightMargin = minMechRightMargin;
         } else if (en instanceof Tank){
-        	ams = (DisplayMapSet) tank;
-        	minLeftMargin = minTankLeftMargin;
-        	minTopMargin = minTankTopMargin;
-        	minBottomMargin = minTankTopMargin;
+          ams = (DisplayMapSet) tank;
+          minLeftMargin = minTankLeftMargin;
+          minTopMargin = minTankTopMargin;
+          minBottomMargin = minTankTopMargin;
             minRightMargin = minTankLeftMargin;
-        } else if (	en instanceof BattleArmor){
-        	ams = (DisplayMapSet) battleArmor;
+        } else if ( en instanceof BattleArmor){
+          ams = (DisplayMapSet) battleArmor;
             minLeftMargin = minInfLeftMargin;
-        	minTopMargin = minInfTopMargin;
-        	minBottomMargin = minInfTopMargin;
+          minTopMargin = minInfTopMargin;
+          minBottomMargin = minInfTopMargin;
             minRightMargin = minInfLeftMargin;
-        	       	
+                  
         } else if (en instanceof Infantry){
-        	ams = (DisplayMapSet)infantry;
+          ams = (DisplayMapSet)infantry;
             minLeftMargin = minInfLeftMargin;
-        	minTopMargin = minInfTopMargin;
-        	minBottomMargin = minInfTopMargin;
-            minRightMargin = minInfLeftMargin;        	
-        	         	
+          minTopMargin = minInfTopMargin;
+          minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;          
+                    
         }
         ams.setEntity(en); 
         this.addElement(ams.getContentGroup());
         Vector v = ams.getBackgroundDrawers();
         Enumeration enum = v.elements();
         while(enum.hasMoreElements()){
-        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
+          addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
         onResize();
         update();
@@ -630,7 +630,7 @@ class WeaponPanel extends BufferedPanel
                 wn += " " + mounted.curMode();
             }    
             weaponList.add(wn);
-            if (mounted.isUsedThisRound() && client.game.phase == Game.PHASE_FIRING) {
+            if (mounted.isUsedThisRound() && client.game.getPhase() == Game.PHASE_FIRING) {
                 // add heat from weapons fire to heat tracker
                 currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
             }

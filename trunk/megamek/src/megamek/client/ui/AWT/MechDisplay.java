@@ -696,10 +696,12 @@ class WeaponPanel
         // update weapon display
         wNameR.setText(mounted.getDesc());
         wHeatR.setText(wtype.getHeat() + "");
-        if(wtype.getDamage() != WeaponType.DAMAGE_MISSILE) {
-            wDamR.setText(wtype.getDamage() + "");
+        if(wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            wDamR.setText("Missile");
+        } else if(wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+            wDamR.setText("Variable");
         } else {
-            wDamR.setText("missile");
+            wDamR.setText(new Integer(wtype.getDamage()).toString());
         }
             
         // update range

@@ -20,6 +20,7 @@ package megamek.common;
  */
 public class WeaponType extends EquipmentType {
     public static final int     DAMAGE_MISSILE = -2;
+    public static final int     DAMAGE_VARIABLE = -3;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
     
     // weapon flags (note: many weapons can be identified by their ammo type)
@@ -1926,7 +1927,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry Rifle";
         weapon.mtfName = "ISInfantryRifle";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
@@ -1948,7 +1949,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry MG";
         weapon.mtfName = "ISInfantryMG";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_MG;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
@@ -1970,7 +1971,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry SRM";
         weapon.mtfName = "ISInfantrySRM";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 2;
@@ -1992,7 +1993,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry LRM";
         weapon.mtfName = "ISInfantryLRM";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 2;
@@ -2014,7 +2015,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry Laser";
         weapon.mtfName = "ISInfantryLaser";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
@@ -2036,7 +2037,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "IS Infantry Flamer";
         weapon.mtfName = "ISInfantryFlamer";
         weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;

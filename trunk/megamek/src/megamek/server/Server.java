@@ -1003,7 +1003,7 @@ implements Runnable {
      * @param towards another point that the deployed mechs will face towards
      */
     private boolean deploy(Entity entity, Coords pos, Coords towards, int recurse) {
-        if (game.board.contains(pos) && game.getEntity(pos) == null
+        if (game.board.contains(pos) && game.getFirstEntity(pos) == null
         && !entity.isHexProhibited(game.board.getHex(pos))) {
             placeEntity(entity, pos, pos.direction(towards));
             return true;
@@ -1399,7 +1399,8 @@ implements Runnable {
             
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
-                Entity target = game.getEntity(step.getPosition());
+                //FIXME: find the acutal target, not just the likely target
+                Entity target = game.getFirstEntity(step.getPosition());
                 
                 distance = step.getDistance();
                 
@@ -1411,7 +1412,8 @@ implements Runnable {
             
             // check for dfa
             if (step.getType() == MovementData.STEP_DFA) {
-                Entity target = game.getEntity(step.getPosition());
+                //FIXME: find the acutal target, not just the likely target
+                Entity target = game.getFirstEntity(step.getPosition());
                 
                 distance = step.getDistance();
                 
@@ -1887,8 +1889,7 @@ implements Runnable {
         final Mounted weapon = ae.getEquipment(waa.getWeaponId());
         final WeaponType wtype = (WeaponType)weapon.getType();
  	// 2002-09-16 Infantry weapons have unlimited ammo.
- 	final boolean isWeaponInfantry = 
- 	    (wtype.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY;
+ 	final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
 	final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
  	    !isWeaponInfantry;
         Mounted ammo = null;
@@ -2011,7 +2012,9 @@ implements Runnable {
             return;
         }
         
-        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
+        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE 
+        || wtype.getDamage() == WeaponType.DAMAGE_VARIABLE
+        || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
              if (isWeaponInfantry || ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
@@ -2427,7 +2430,7 @@ implements Runnable {
             doEntityDisplacement(te, src, dest, new PilotingRollData(te.getId(), 0, "was pushed"));
             
             // if push actually moved the target, attacker follows thru
-            if (game.getEntity(src) == null) {
+            if (!te.getPosition().equals(src)) {
                 ae.setPosition(src);
             }
         } else {
@@ -2435,10 +2438,7 @@ implements Runnable {
                 game.moveToGraveyard(te.getId());
                 send(createRemoveEntityPacket(te.getId()));
                 phaseReport.append("\n*** " + te.getDisplayName() + " has been forced from the field. ***\n");
-                // if push actually moved the target, attacker follows thru
-                if (game.getEntity(src) == null) {
-                    ae.setPosition(src);
-                }
+                ae.setPosition(src);
             } else {
                 phaseReport.append("succeeds, but target can't be moved.\n");
                 pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));

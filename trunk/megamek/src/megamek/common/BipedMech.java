@@ -1,92 +1,91 @@
 /*
- * MegaMek - 
- *  Copyright (C) 2000-2002 
+ * MegaMek -
+ *  Copyright (C) 2000-2002
  *    Ben Mazur (bmazur@sev.org)
  *    Cord Awtry (kipsta@bs-interactive.com)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common;
 
-public class BipedMech extends Mech
-{
-  private static final String[] LOCATION_NAMES = {"Head",
-      "Center Torso", "Right Torso", "Left Torso", 
-      "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
-  
-  private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
-      "LT", "RA", "LA", "RL", "LL"};
-  
-  private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};
-
-  private int movementType = Entity.MovementType.BIPED;
-  
-  public BipedMech() {
-    super();
-
-    setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-    setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-    setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-    setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
-
-    setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
-    setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
-    setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
-    setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
-  }
-  
-  /**
-   * Returns true if the entity can flip its arms
-   */
-    public boolean canFlipArms() {
-      boolean canFlip = true;
-      
-      if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
-        canFlip = false;
-      } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
-        canFlip = false;
-      } else if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
-        canFlip = false;
-      } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
-        canFlip = false;
-      }
-      
-      return canFlip;
-    }
+public class BipedMech extends Mech {
+    private static final String[] LOCATION_NAMES = {"Head",
+    "Center Torso", "Right Torso", "Left Torso",
+    "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
+    
+    private static final String[] LOCATION_ABBRS = {"HD", "CT", "RT",
+    "LT", "RA", "LA", "RL", "LL"};
+    
+    private static final int[] NUM_OF_SLOTS = {6, 12, 12, 12, 12, 12, 6, 6};
+    
+    public BipedMech() {
+        super();
         
-  /**
-   * Returns this entity's walking/cruising mp, factored
-   * for heat and leg damage.
-   */
-    public int getWalkMP() {
-      int wmp = getOriginalWalkMP();
-      int legsDestroyed = 0;
-      int hipHits = 0;
-      int actuatorHits = 0;
-
-      for ( int i = 0; i < locations(); i++ ) {    
-        if ( locationIsLeg(i) ) {
-          if ( !isLocationDestroyed(i) ) {
-            if ( legHasHipCrit(i) )
-              hipHits++;
-            else {
-              actuatorHits += countLegActuatorCrits(i);
-            }
-          } else {
-            legsDestroyed++;
-          }
+        movementType = Entity.MovementType.BIPED;
+        
+        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
+        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
+        setCritical(LOC_RARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
+        setCritical(LOC_RARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
+        
+        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER));
+        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM));
+        setCritical(LOC_LARM, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM));
+        setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND));
+    }
+    
+    /**
+     * Returns true if the entity can flip its arms
+     */
+    public boolean canFlipArms() {
+        boolean canFlip = true;
+        
+        if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
+            canFlip = false;
+        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ) {
+            canFlip = false;
+        } else if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ) {
+            canFlip = false;
+        } else if ( hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ) {
+            canFlip = false;
         }
-      }
-      
-      // leg damage effects
+        
+        return canFlip;
+    }
+    
+    /**
+     * Returns this entity's walking/cruising mp, factored
+     * for heat and leg damage.
+     */
+    public int getWalkMP() {
+        int wmp = getOriginalWalkMP();
+        int legsDestroyed = 0;
+        int hipHits = 0;
+        int actuatorHits = 0;
+        
+        for ( int i = 0; i < locations(); i++ ) {
+            if ( locationIsLeg(i) ) {
+                if ( !isLocationDestroyed(i) ) {
+                    if ( legHasHipCrit(i) )
+                        hipHits++;
+                    else {
+                        actuatorHits += countLegActuatorCrits(i);
+                    }
+                } else {
+                    legsDestroyed++;
+                }
+            }
+        }
+        
+        // leg damage effects
         if(legsDestroyed > 0) {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
@@ -96,112 +95,112 @@ public class BipedMech extends Mech
                 wmp -= actuatorHits;
             }
         }
-      
-      //For sanity sake...
+        
+        //For sanity sake...
         wmp = Math.max(0, wmp);
         
-      // and we still need to factor in heat!
-      return Math.max(wmp - (int)(heat / 5), 0);
-    }
-
-  /**
-   * Returns this mech's running/flank mp modified for leg loss & stuff.
-   */
-    public int getRunMP() {
-      int destroyedLegs = countDestroyedLegs();
-      
-      if ( countDestroyedLegs() == 0 ) {
-          return (int)Math.ceil(getWalkMP() * 1.5);
-      } else {
-          return getWalkMP();
-      }
+        // and we still need to factor in heat!
+        return Math.max(wmp - (int)(heat / 5), 0);
     }
     
-  /**
-   * Returns true is the location is a leg
-   */
-    public boolean locationIsLeg(int loc) {
-      return ((loc == Mech.LOC_RLEG) || (loc == Mech.LOC_LLEG));
-    }
-
-  /**
-   * Sets the internal structure for the mech.
-   * 
-   * @param head head
-   * @param ct center torso
-   * @param t right/left torso
-   * @param arm right/left arm
-   * @param leg right/left leg
-   */
-    public void setInternal(int head, int ct, int t, int arm, int leg) {
-      initializeInternal(head, LOC_HEAD);
-      initializeInternal(ct, LOC_CT);
-      initializeInternal(t, LOC_RT);
-      initializeInternal(t, LOC_LT);
-      initializeInternal(arm, LOC_RARM);
-      initializeInternal(arm, LOC_LARM);
-      initializeInternal(leg, LOC_RLEG);
-      initializeInternal(leg, LOC_LLEG);
-    }
-
-  /**
-   * Add in any piloting skill mods
-   */
-    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-      int[] locsToCheck = new int[2];
-      int destroyedLegs = 0;
-      
-      locsToCheck[0] = Mech.LOC_RLEG;
-      locsToCheck[1] = Mech.LOC_LLEG;
-      
-      for ( int i = 0; i < locsToCheck.length; i++ ) {
-        int loc = locsToCheck[i];
+    /**
+     * Returns this mech's running/flank mp modified for leg loss & stuff.
+     */
+    public int getRunMP() {
+        int destroyedLegs = countDestroyedLegs();
         
-        if (isLocationDestroyed(loc)) {
-          roll.addModifier(5, getLocationName(loc) + " destroyed");
+        if ( countDestroyedLegs() == 0 ) {
+            return (int)Math.ceil(getWalkMP() * 1.5);
         } else {
-            // check for damaged hip actuators
-            if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
-                roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+            return getWalkMP();
+        }
+    }
+    
+    /**
+     * Returns true is the location is a leg
+     */
+    public boolean locationIsLeg(int loc) {
+        return ((loc == Mech.LOC_RLEG) || (loc == Mech.LOC_LLEG));
+    }
+    
+    /**
+     * Sets the internal structure for the mech.
+     *
+     * @param head head
+     * @param ct center torso
+     * @param t right/left torso
+     * @param arm right/left arm
+     * @param leg right/left leg
+     */
+    public void setInternal(int head, int ct, int t, int arm, int leg) {
+        initializeInternal(head, LOC_HEAD);
+        initializeInternal(ct, LOC_CT);
+        initializeInternal(t, LOC_RT);
+        initializeInternal(t, LOC_LT);
+        initializeInternal(arm, LOC_RARM);
+        initializeInternal(arm, LOC_LARM);
+        initializeInternal(leg, LOC_RLEG);
+        initializeInternal(leg, LOC_LLEG);
+    }
+    
+    /**
+     * Add in any piloting skill mods
+     */
+    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        int[] locsToCheck = new int[2];
+        int destroyedLegs = 0;
+        
+        locsToCheck[0] = Mech.LOC_RLEG;
+        locsToCheck[1] = Mech.LOC_LLEG;
+        
+        for ( int i = 0; i < locsToCheck.length; i++ ) {
+            int loc = locsToCheck[i];
+            
+            if (isLocationDestroyed(loc)) {
+                roll.addModifier(5, getLocationName(loc) + " destroyed");
             } else {
-                // upper leg actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
-                }
-                // lower leg actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
-                }
-                // foot actuators?
-                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
-                    roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                // check for damaged hip actuators
+                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
+                    roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                } else {
+                    // upper leg actuators?
+                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
+                    }
+                    // lower leg actuators?
+                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
+                    }
+                    // foot actuators?
+                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                    }
                 }
             }
         }
-      }
-
-      return super.addEntityBonuses(roll);
+        
+        return super.addEntityBonuses(roll);
     }
     
-  /**
-   * Returns a vector of slot counts for all locations
-   */
+    /**
+     * Returns a vector of slot counts for all locations
+     */
     protected int[] getNoOfSlots() {
-      return NUM_OF_SLOTS;
+        return NUM_OF_SLOTS;
     }
     
-  /**
-   * Returns a vector of names for all locations
-   */
+    /**
+     * Returns a vector of names for all locations
+     */
     protected String[] getLocationNames() {
-      return LOCATION_NAMES;
+        return LOCATION_NAMES;
     }
     
-  /**
-   * Returns a vector of abbreviations for all locations
-   */
+    /**
+     * Returns a vector of abbreviations for all locations
+     */
     protected String[] getLocationAbbrs() {
-      return LOCATION_ABBRS;
+        return LOCATION_ABBRS;
     }
 }
 

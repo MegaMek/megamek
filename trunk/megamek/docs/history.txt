@@ -88,7 +88,10 @@ v 0.26
 VERSION HISTORY:
 ----------------
 v next
++ fixed a few new clubbing bugs
++ added flags for equipment
 + added Cord Awtry's mega-patch for quads, flipping arms, small bugfixes
++ minor changes to the client & server for Helge
 
 v 0.25.4 (05-03-02, 8:20pm)
 + use ammo and build heat for automatic misses, none for impossible shots

@@ -22,6 +22,14 @@ public class WeaponType extends EquipmentType
 {
     public static final int     DAMAGE_MISSILE = -2;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
+    
+    // weapon flags (note: many weapons can be identified by their ammo type)
+    public static final int     F_DIRECT_FIRE   = 0x0001; // marks any weapon affected by a targetting computer
+    public static final int     F_FLAMER        = 0x0002;
+    public static final int     F_LASER         = 0x0004; // for eventual glazed armor purposes
+    public static final int     F_PPC           = 0x0008; //              "
+    public static final int     F_LBX           = 0x0010;
+    public static final int     F_ULTRA         = 0x0020;
 
     private int     heat;
     private int     damage;
@@ -102,13 +110,14 @@ public class WeaponType extends EquipmentType
         weapon.mtfName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 2;
-        weapon.ammoType = AmmoType.TYPE_NA;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
+        weapon.flags |= F_FLAMER;
         weapon.bv = 9;
         
         return weapon;
@@ -123,13 +132,14 @@ public class WeaponType extends EquipmentType
         weapon.mtfName = weapon.name;
         weapon.heat = 8;
         weapon.damage = 8;
-        weapon.ammoType = AmmoType.TYPE_NA;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
         weapon.longRange = 15;
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
+        weapon.flags |= F_LASER;
         weapon.bv = 124;
         
         return weapon;
@@ -144,13 +154,14 @@ public class WeaponType extends EquipmentType
         weapon.mtfName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 5;
-        weapon.ammoType = AmmoType.TYPE_NA;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
         weapon.longRange = 9;
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
+        weapon.flags |= F_LASER;
         weapon.bv = 46;
         
         return weapon;
@@ -165,13 +176,14 @@ public class WeaponType extends EquipmentType
         weapon.mtfName = weapon.name;
         weapon.heat = 1;
         weapon.damage = 3;
-        weapon.ammoType = AmmoType.TYPE_NA;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
+        weapon.flags |= F_LASER;
         weapon.bv = 9;
         
         return weapon;
@@ -186,13 +198,14 @@ public class WeaponType extends EquipmentType
         weapon.mtfName = weapon.mepName;
         weapon.heat = 10;
         weapon.damage = 10;
-        weapon.ammoType = AmmoType.TYPE_NA;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = 3;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
         weapon.longRange = 18;
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
+        weapon.flags |= F_PPC;
         weapon.bv = 176;
         
         return weapon;
@@ -208,13 +221,14 @@ public class WeaponType extends EquipmentType
         weapon.heat = 0;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.TYPE_MG;
+        weapon.ammoType = AmmoType.T_MG;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
+        weapon.flags |= F_LASER;
         weapon.bv = 5;
         
         return weapon;
@@ -230,7 +244,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.TYPE_AC;
+        weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = 4;
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
@@ -252,7 +266,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.TYPE_AC;
+        weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = 3;
         weapon.shortRange = 6;
         weapon.mediumRange = 12;
@@ -274,7 +288,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.TYPE_AC;
+        weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 5;
         weapon.mediumRange = 10;
@@ -296,7 +310,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.TYPE_AC;
+        weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -318,7 +332,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.TYPE_LRM;
+        weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -340,7 +354,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
-        weapon.ammoType = AmmoType.TYPE_LRM;
+        weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -362,7 +376,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
-        weapon.ammoType = AmmoType.TYPE_LRM;
+        weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -384,7 +398,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
-        weapon.ammoType = AmmoType.TYPE_LRM;
+        weapon.ammoType = AmmoType.T_LRM;
         weapon.minimumRange = 6;
         weapon.shortRange = 7;
         weapon.mediumRange = 14;
@@ -406,7 +420,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.TYPE_SRM;
+        weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -428,7 +442,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.TYPE_SRM;
+        weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;
@@ -450,7 +464,7 @@ public class WeaponType extends EquipmentType
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.TYPE_SRM;
+        weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
         weapon.mediumRange = 6;

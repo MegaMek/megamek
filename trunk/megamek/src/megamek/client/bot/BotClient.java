@@ -682,7 +682,7 @@ public class BotClient extends Client
             
             // AIOPT: penalize missile damage because it has less penetrative power?
             //        or enhance it, if the enemy has holes in their armor?  hmm.
-            if (weap.getAmmoType() == AmmoType.TYPE_SRM) {
+            if (weap.getAmmoType() == AmmoType.T_SRM) {
                 switch (weap.getRackSize()) {
                     case 2:return 1.41666*2;
                     case 4:return 2.63888*2;

@@ -1,4 +1,4 @@
-/*s
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -17,11 +17,38 @@ package megamek.common;
 import java.io.Serializable;
 
 public class AmmoType extends EquipmentType {
-    public static final int    TYPE_NA = 0;
-    public static final int    TYPE_MG = 1;
-    public static final int    TYPE_AC = 2;
-    public static final int    TYPE_LRM = 3;
-    public static final int    TYPE_SRM = 4;
+    // ammo types
+    public static final int     T_NA                = -1;
+    public static final int     T_AC                = 1;
+    public static final int     T_VEHICLE_FLAMER    = 2;
+    public static final int     T_MG                = 3;
+    public static final int     T_MG_HEAVY          = 4;
+    public static final int     T_MG_LIGHT          = 5;
+    public static final int     T_GAUSS             = 6;
+    public static final int     T_LRM               = 7;
+    public static final int     T_LRM_TORPEDO       = 8;
+    public static final int     T_SRM               = 9;
+    public static final int     T_SRM_TORPEDO       = 10;
+    public static final int     T_SRM_STREAK        = 11;
+    public static final int     T_MRM               = 12;
+    public static final int     T_NARC              = 13;
+    public static final int     T_AMS               = 14;
+    public static final int     T_ARROW_IV          = 15;
+    public static final int     T_LONG_TOM          = 16;
+    public static final int     T_SNIPER            = 17;
+    public static final int     T_THUMPER           = 18;
+    
+    // ammo flags
+    public static final int     F_CLUSTER           = 0x0001; // for lbx
+    public static final int     F_FLARE             = 0x0002;
+    public static final int     F_FRAGMENTATION     = 0x0004;
+    public static final int     F_INCENDIARY        = 0x0008;
+    public static final int     F_SEMIGUIDED        = 0x0010;
+    public static final int     F_SWARM             = 0x0020;
+    public static final int     F_SWARM_I           = 0x0040;
+    public static final int     F_THUNDER           = 0x0080;
+    public static final int     F_INFERNO           = 0x0100;
+    public static final int     F_EXPLOSIVE         = 0x0200; // for narc
     
     private int damagePerShot;
     private int rackSize;
@@ -76,7 +103,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.TYPE_AC;
+        ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 45;
         ammo.bv = 5;
         
@@ -92,7 +119,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.TYPE_AC;
+        ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 20;
         ammo.bv = 9;
         
@@ -108,7 +135,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.TYPE_AC;
+        ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 10;
         ammo.bv = 15;
         
@@ -124,7 +151,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.TYPE_AC;
+        ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 5;
         ammo.bv = 20;
         
@@ -140,7 +167,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "MG Ammo (200)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.TYPE_MG;
+        ammo.ammoType = AmmoType.T_MG;
         ammo.shots = 200;
         ammo.bv = 1;
         
@@ -156,7 +183,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = "MG Ammo (100)";
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.TYPE_MG;
+        ammo.ammoType = AmmoType.T_MG;
         ammo.shots = 100;
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
@@ -173,7 +200,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.TYPE_LRM;
+        ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
         ammo.bv = 6;
         
@@ -189,7 +216,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.TYPE_LRM;
+        ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
         
@@ -205,7 +232,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.TYPE_LRM;
+        ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 8;
         ammo.bv = 17;
         
@@ -221,7 +248,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.TYPE_LRM;
+        ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 6;
         ammo.bv = 23;
         
@@ -237,7 +264,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.TYPE_SRM;
+        ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 50;
         ammo.bv = 3;
         
@@ -253,7 +280,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.TYPE_SRM;
+        ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 25;
         ammo.bv = 5;
         
@@ -269,7 +296,7 @@ public class AmmoType extends EquipmentType {
         ammo.mtfName = ammo.name;
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.TYPE_SRM;
+        ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 15;
         ammo.bv = 7;
         

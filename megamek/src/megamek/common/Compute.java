@@ -997,23 +997,31 @@ public class Compute
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
-        // secondary targets modifier
+        // secondary targets modifier...
         int primaryTarget = Entity.NONE;
+        boolean curInFrontArc = isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD);
         for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-            // set first declared target as primary
             if (prevAttack.getEntityId() == attackerId) {
-                primaryTarget = prevAttack.getTargetId();
-                break;
+                // first front arc target is our primary.
+                // if first target is non-front, and either a later target or
+                // the current one is in front, use that instead.
+                Entity pte = game.getEntity(prevAttack.getTargetId());
+                if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), pte.getPosition(), ARC_FORWARD)) {
+                    primaryTarget = prevAttack.getTargetId();
+                    break;
+                } else if (primaryTarget == Entity.NONE && !curInFrontArc) {
+                    primaryTarget = prevAttack.getTargetId();
+                }
             }
         }
         
         if (primaryTarget != Entity.NONE && primaryTarget != targetId) {
-            if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD)) {
+            if (curInFrontArc) {
                 toHit.addModifier(1, "secondary target modifier");
             } else {
                 toHit.addModifier(2, "secondary target modifier");

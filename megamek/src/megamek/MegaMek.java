@@ -17,6 +17,7 @@ package megamek;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 
 import megamek.common.*;
 import megamek.client.*;
@@ -53,6 +54,12 @@ public class MegaMek
         frame.setForeground(SystemColor.menuText);
         
         showMainMenu();
+        
+        // echo some useful stuff
+        System.out.println("Starting MegaMek v" + VERSION + " ...");
+        System.out.println("Timestamp " + new Date(TIMESTAMP).toString());
+        System.out.println("Java vendor " + System.getProperty("java.vendor"));
+        System.out.println("Java version " + System.getProperty("java.version"));
         
         frame.setVisible(true);
     }

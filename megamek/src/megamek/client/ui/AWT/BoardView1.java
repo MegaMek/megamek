@@ -1618,13 +1618,21 @@ public class BoardView1
                 return;
             }
         }
-        if ( (me.getModifiers() & (InputEvent.CTRL_MASK |
-                                   InputEvent.ALT_MASK |
-                                   InputEvent.BUTTON2_MASK |
-                                   InputEvent.BUTTON3_MASK) ) == 0 ) {
-            // left-clicking scrolls the board
-            isScrolling = true;
+
+        // Disable scrolling when ctrl or alt is held down, since this
+        //  means the user wants to use the LOS/ruler tools.
+        int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
+        if (game.getPhase() == Game.PHASE_FIRING) {
+            // In the firing phase, also disable scrolling if
+            //  the right or middle buttons are clicked, since
+            //  this means the user wants to activate the
+            //  popup menu or ruler tool.
+            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
         }
+        if ( (me.getModifiers() & mask ) == 0 ) {
+            isScrolling = true; //activate scrolling
+        }
+
         if (isTipShowing()) {
             hideTooltip();
         }
@@ -1668,13 +1676,21 @@ public class BoardView1
 			}
 		}
         mousePos = me.getPoint();
-        if ( (me.getModifiers() & (InputEvent.CTRL_MASK |
-                                   InputEvent.ALT_MASK |
-                                   InputEvent.BUTTON2_MASK |
-                                   InputEvent.BUTTON3_MASK) ) == 0 ) {
-            // left-clicking scrolls the board
-            isScrolling = true;
+
+        // Disable scrolling when ctrl or alt is held down, since this
+        //  means the user wants to use the LOS/ruler tools.
+        int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
+        if (game.getPhase() == Game.PHASE_FIRING) {
+            // In the firing phase, also disable scrolling if
+            //  the right or middle buttons are clicked, since
+            //  this means the user wants to activate the
+            //  popup menu or ruler tool.
+            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
         }
+        if ( (me.getModifiers() & mask ) == 0 ) {
+            isScrolling = true; //activate scrolling
+        }
+
         if (backSize != null) {
             if (doScroll()) {
 				repaint();

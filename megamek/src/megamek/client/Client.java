@@ -26,7 +26,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 
 public class Client extends Panel
-    implements Runnable, MouseListener
+    implements Runnable, MouseListener, WindowListener
 {
     // a frame, to show stuff in
     public Frame                frame;
@@ -167,6 +167,7 @@ public class Client extends Panel
         mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
         mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
         mechW.setResizable(true);
+        mechW.addWindowListener(this);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
         // minimap
@@ -174,6 +175,7 @@ public class Client extends Panel
         minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
         minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
         minimap = new MiniMap(minimapW, this, bv);
+        minimapW.addWindowListener(this);
         minimapW.add(minimap);
         
         mechSelectorDialog = new MechSelectorDialog(this,waitDialog);
@@ -1151,6 +1153,7 @@ public class Client extends Panel
             showBoardPopup(mouseEvent.getPoint());
         }
     }
+    
 
     /**
      * Allow the player to select a MegaMek Unit List file to load.  The
@@ -1271,7 +1274,31 @@ public class Client extends Panel
             }
         }
     }
-
+    
+    //
+    // WindowListener
+    //
+    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+        if (windowEvent.getWindow() == minimapW) {
+            setMapVisible(false);
+        }
+        else if (windowEvent.getWindow() == mechW) {
+            setDisplayVisible(false);
+        }
+    }    
+    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+    }
+    
     /**
      * A menu item that lives to view an entity.
      */

@@ -364,8 +364,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   public boolean isStepLegal() {
     if ( !game.board.contains(this.curPos) ) return false;
     if (this.overallMoveType != Entity.MOVE_JUMP
-    && game.getEntity(this.curPos) != null
-    && this.entity.isEnemyOf(game.getEntity(this.curPos))) {
+    && game.getFirstEntity(this.curPos) != null
+    && this.entity.isEnemyOf(game.getFirstEntity(this.curPos))) {
       return false;
     }
     return (this.overallMoveType != Entity.MOVE_ILLEGAL);
@@ -422,14 +422,14 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     toHita.append(Compute.getAttackerMovementModifier(game, ae.getId()));
     //this.offensive_mod = Compute.getAttackerMovementModifier(game, ae.getId()).getValue();
     toHita.append(Compute.getTargetMovementModifier(game, te.getId()));
-    toHita.append(Compute.getTargetTerrainModifier(game, te.getId()));
+    toHita.append(Compute.getTargetTerrainModifier(game, te));
     toHita.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
     
     toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
     toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
     //this.defensive_mod = Compute.getTargetMovementModifier(game, ae.getId()).getValue();
     if (!(this.isPhysical && this.isJumping)) {
-      toHitd.append(Compute.getTargetTerrainModifier(game, ae.getId()));
+      toHitd.append(Compute.getTargetTerrainModifier(game, ae));
       //this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
     }
     toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));

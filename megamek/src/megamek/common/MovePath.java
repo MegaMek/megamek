@@ -93,18 +93,6 @@ public class MovePath implements Cloneable, Serializable {
         return entity;
     }
 
-    public boolean isInfantry() {
-        return entity instanceof Infantry;
-    }
-    
-    public boolean isProtomech() {
-        return entity instanceof Protomech;
-    }
-    
-    public boolean isClan() {
-        return entity.isClan();
-    }
-
     public Key getKey() {
         return new Key(getFinalCoords(), getFinalFacing(), getFinalProne()?0:isJumping()?1:2);
     }

@@ -76,6 +76,7 @@ v next
 + 607207: no get-up retries should a mech become disabled during an attempt
 + movement points already used during current turn displayed
 + 607206: jammed turrets no longer reset to face front
++ added lbx cluster ammo mtf designations for clan mechs
 
 v 0.26.12 (09-07-02, 11am)
 + fixed crashbug when no ammo was available to a weapon

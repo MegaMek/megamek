@@ -74,6 +74,8 @@ public class Infantry
      * Identify this platoon as anti-mek trained.
      */
     private boolean     antiMek = false;
+    
+    protected int       runMP = 1;
 
     /**
      * Set up the damage array for this platoon for the given weapon type.
@@ -249,13 +251,13 @@ public class Infantry
     }
 
     /**
-     * Infantry have only one speed.
+     * Return this Infantry's run MP.
      */
-    
     public int getRunMP(boolean gravity) {
-        if (gravity) return applyGravityEffectsOnMP(this.getWalkMP());
-        else return this.getWalkMP();
+        if (gravity) return applyGravityEffectsOnMP(this.getOriginalRunMP());
+        else return this.getOriginalRunMP();
     }
+
 
     /**
      * Infantry don't have MASC
@@ -265,10 +267,10 @@ public class Infantry
     }
 
     /**
-     * Infantry have only one speed.
+     * Get this infantry's orignal Run MP
      */
     protected int getOriginalRunMP() {
-        return this.getOriginalWalkMP();
+        return this.runMP;
     }
 
     /**
@@ -329,10 +331,11 @@ public class Infantry
         case MOVE_NONE :
             return "N";
         case MOVE_WALK :
+            return "W";
         case MOVE_RUN :
             switch (this.getMovementType()) {
             case INF_LEG:
-                return "W";
+                return "R";
             case INF_MOTORIZED:
                 return "B";
             default :
@@ -847,4 +850,11 @@ public class Infantry
         // Infantry can't DFA
         return false;
     };
+    
+    /**
+     * Sets this entity's original walking movement points
+     */
+    public void setOriginalRunMP(int runMP) {
+        this.runMP = runMP;
+    }
 } // End class Infantry

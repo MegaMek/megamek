@@ -266,6 +266,19 @@ public class BattleArmor
         return j;
     }
 
+    /**
+    * Returns this entity's running mp, factored
+    * for extreme temperatures and gravity.
+     */
+    public int getRunMP(boolean gravity) {
+        int i;
+        int j = applyGravityEffectsOnMP(getOriginalRunMP());
+        if (game != null) {
+            i = game.getTemperatureDifference();
+            return Math.max(j - i, 0);
+        }
+        return j;
+    }
     
     /**
      * Returns this entity's current jumping MP, not effected by terrain,
@@ -317,8 +330,9 @@ public class BattleArmor
         case MOVE_NONE :
             return "N";
         case MOVE_WALK :
-        case MOVE_RUN :
             return "W";
+        case MOVE_RUN :
+            return "R";
         case MOVE_JUMP :
             return "J";
         default :

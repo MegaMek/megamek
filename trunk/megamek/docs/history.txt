@@ -15,6 +15,9 @@ v0.29.59 (CVS)
    PSR" should be made after the move, not before
 + Bug 1093082: according to the new BMRr errata, jumping in high gravity should
    cause a PSR, with damage to the legs if the PSR is failed
++ Bug 1093084: Infantry movement errata. Infantry can now walk and run,
+   and we need to keep track of the movementtype because now infantry movement
+   does count for spotting
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

@@ -176,6 +176,18 @@ public abstract class Mech
         nMASCLevel = Math.max(0, nMASCLevel - 1);        
         setSecondaryFacing(getFacing());
         
+        // resolve ammo dumps 
+        for (Enumeration e = getAmmo(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.isPendingDump()) {
+                m.setPendingDump(false);
+                m.setDumping(true);
+            }
+            else if (m.isDumping()) {
+                m.setDumping(false);
+                m.setShotsLeft(0);
+            }
+        }
     }
     
     

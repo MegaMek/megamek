@@ -35,7 +35,6 @@ public class Mounted implements Serializable{
     private boolean hit = false;
     private boolean missing = false;
     
-    private int shotsLeft; // for ammo
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     
@@ -48,6 +47,11 @@ public class Mounted implements Serializable{
     
     private transient EquipmentType type;
     private String typeName;
+
+    // ammo-specific stuff.  Probably should be a subclass
+    private int shotsLeft;
+    private boolean m_bPendingDump;
+    private boolean m_bDumping;
     
     // handle split weapons
     private boolean bSplit = false;
@@ -203,6 +207,22 @@ public class Mounted implements Serializable{
     
     public void setShotsLeft(int shotsLeft) {
         this.shotsLeft = shotsLeft;
+    }
+    
+    public boolean isPendingDump() {
+        return m_bPendingDump;
+    }
+    
+    public void setPendingDump(boolean b) {
+        m_bPendingDump = b;
+    }
+    
+    public boolean isDumping() {
+        return m_bDumping;
+    }
+    
+    public void setDumping(boolean b) {
+        m_bDumping = b;
     }
     
     

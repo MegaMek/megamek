@@ -1928,7 +1928,7 @@ implements Runnable {
         }
         
         // try reloading
-        if (usesAmmo && ammo != null && ammo.getShotsLeft() == 0) {
+        if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isDumping())) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
@@ -3021,6 +3021,20 @@ implements Runnable {
                 crits = 0;
             }
             
+            // is this a mech dumping ammo being hit in the rear torso?
+            int nLoc = hit.getLocation();
+            boolean bTorso = (nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT || nLoc == Mech.LOC_LT);
+            if (te instanceof Mech && hit.isRear() && bTorso) {
+                for (Enumeration e = te.getAmmo(); e.hasMoreElements(); ) {
+                    Mounted mAmmo = (Mounted)e.nextElement();
+                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
+                        // doh.  explode it
+                        desc += explodeEquipment(te, mAmmo.getLocation(), mAmmo);
+                        mAmmo.setHit(true);
+                    }
+                }
+            }
+            
             // is there armor in the location hit?
             if (!ammoExplosion && te.getArmor(hit) > 0) {
                 if (te.getArmor(hit) > damage) {
@@ -3390,7 +3404,10 @@ implements Runnable {
      * ammo, or an explosive weapon.
      */
     private String explodeEquipment(Entity en, int loc, int slot) {
-        Mounted mounted = en.getEquipment(en.getCritical(loc, slot).getIndex());
+        return explodeEquipment(en, loc, en.getEquipment(en.getCritical(loc, slot).getIndex()));
+    } 
+    
+    private String explodeEquipment(Entity en, int loc, Mounted mounted) {
         StringBuffer desc = new StringBuffer();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
@@ -3736,7 +3753,14 @@ implements Runnable {
         int mode = c.getIntValue(2);
         Entity e = game.getEntity(entityId);
         Mounted m = e.getEquipment(equipId);
-        m.setMode(mode);
+        
+        // a mode change for ammo means dumping
+        if (m.getType() instanceof AmmoType) {
+            m.setPendingDump(mode == 1);
+        }
+        else {
+            m.setMode(mode);
+        }
     }
     
     /**

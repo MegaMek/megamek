@@ -12,6 +12,7 @@ v0.29.32 (CVS)
 	again
 + RFE 934547: MiniMap now shows Drop Zone
 + Bug 935510: don't allow to replace the game options with a null.
++ Promoted code from the bot to move path to refine the A* path finder.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

@@ -1112,6 +1112,11 @@ public abstract class Mech
                 tonnage = 1.0f;
             }
             
+            // RACs don't really count
+            if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
+                tonnage = 0.0f;
+            }
+           
             ammoPenalty += 20.0 * tonnage;
         }
         dbv = Math.max(1, dbv - ammoPenalty);

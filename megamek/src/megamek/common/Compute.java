@@ -724,6 +724,19 @@ public class Compute
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier( -2, "weapon specialist" );
         }
+        
+        // Has the pilot the appropriate gunnery skill?
+        if (ae.crew.getOptions().booleanOption("gunnery_laser") == true && wtype.hasFlag(WeaponType.F_ENERGY) ) {
+            toHit.addModifier ( -1, "Gunnery/Laser" );
+        }
+              
+        if (ae.crew.getOptions().booleanOption("gunnery_ballistic") == true && wtype.hasFlag(WeaponType.F_BALLISTIC) ) {
+            toHit.addModifier ( -1, "Gunnery/Ballistic" );
+        }
+ 
+        if (ae.crew.getOptions().booleanOption("gunnery_missile") == true && wtype.hasFlag(WeaponType.F_MISSILE) ) {
+            toHit.addModifier ( -1, "Gunnery/Missile" );
+        }
 
         // determine some more variables
         int aElev = ae.getElevation();

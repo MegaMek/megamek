@@ -122,6 +122,19 @@ public class MovePath
         }
         steps.addElement(step);
     }
+    
+    /**
+     * Resets the "prev" variable on all steps
+     * TODO: remove prev variable
+     */
+    void rePrev() {
+        MoveStep prev = null;
+        for (Enumeration i =steps.elements();i.hasMoreElements();) {
+            MoveStep step = (MoveStep)i.nextElement();
+            step.setPrev(prev);
+            prev = step;
+        }   
+    }
 
     public void removeLastStep() {
         if (steps.size() > 0) {
@@ -313,10 +326,14 @@ public class MovePath
         int index;
         while ((index = firstLateralShift()) != -1) {
             int stepType = getStep(index).getType();
+            // remove all old steps
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             steps.removeElementAt(index);
-            steps.insertElementAt(new MoveStep(this, lateralShiftForTurn(stepType)), index);
+            // add new step
+            MoveStep shift = new MoveStep(this, lateralShiftForTurn(stepType));
+            steps.insertElementAt(shift, index);
+            rePrev();
         }
     }
 
@@ -331,10 +348,14 @@ public class MovePath
         int index;
         while ((index = firstLateralShiftBackwards()) != -1) {
             int stepType = getStep(index).getType();
+            // remove all old steps
             steps.removeElementAt(index);
             steps.removeElementAt(index);
             steps.removeElementAt(index);
-            steps.insertElementAt(new MoveStep(this, lateralShiftBackwardsForTurn(stepType)), index);
+            // add new step
+            MoveStep shift = new MoveStep(this, lateralShiftBackwardsForTurn(stepType));
+            steps.insertElementAt(shift, index);
+            rePrev();
         }
     }
     

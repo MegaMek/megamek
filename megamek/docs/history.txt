@@ -14,6 +14,8 @@ v 0.29.26 (CVS)
 + Added level 3 "Weapon Specialist" pilot advantage.
 + Bug 875008: Don't try to display null wreck images.
 + Clan mechs now auto-dodge when available if "No Clan Physicals" opt. in use.
++ Added static (decode|encode)Transporters to Entity.
++ Moved a bunch of Entity#set* methods into public access.
 
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -17,6 +17,7 @@ package megamek.common.xml;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Vector;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
 
@@ -69,8 +70,14 @@ public class EntityEncoder {
         out.write( entity.getModel() );
         out.write( "\" type=\"" );
         out.write( entity.getMovementTypeAsString() );
+        out.write( "\" typeVal=\"" );
+        out.write( String.valueOf(entity.getMovementType()) );
         out.write( "\" techBase=\"" );
-        out.write( entity.isClan() ? "Clan" : "IS" );
+        if ( TechConstants.T_MIXED_LEVEL_2 == entity.getTechLevel() ) {
+            out.write( "Mixed" );
+        } else {
+            out.write( entity.isClan() ? "Clan" : "IS" );
+        }
         out.write( "\" year=\"" );
         out.write( String.valueOf(entity.getYear()) );
         out.write( "\" mass=\"" );
@@ -214,6 +221,14 @@ public class EntityEncoder {
                 out.write( "\" />" );
             }
             out.write( "</inferno>" );
+        }
+
+        // Do we have any transporters?
+        String transporters = Entity.encodeTransporters( entity );
+        if ( null != transporters && 0 == transporters.length() ) {
+            out.write( "<transporters value=\"" );
+            out.write( transporters );
+            out.write( "\" />" );
         }
 
         // Record the IDs of all transported units (if any).
@@ -543,6 +558,279 @@ public class EntityEncoder {
     } // End private static String getLocString( Entity )
 
     /**
+     * Helper function to decode the pilot (crew) of an <code>Entity</code>
+     * object from the passed node.
+     *
+     * @param   node - the <code>ParsedXML</code> node for this object.
+     *          This value must not be <code>null</code>.
+     * @param   entity - the <code>Entity</code> the decoded object belongs to.
+     * @throws  <code>IllegalArgumentException</code> if the node is
+     *          <code>null</code>.
+     * @throws  <code>IllegalStateException</code> if the node does not
+     *          contain a valid <code>Entity</code>.
+     */
+    private static void decodePilot( ParsedXML node, Entity entity ) {
+        // TODO : implement me
+    }
+
+    /**
+     * Helper function to decode the equipment of an <code>Entity</code>
+     * object from the passed node.
+     *
+     * @param   node - the <code>ParsedXML</code> node for this object.
+     *          This value must not be <code>null</code>.
+     * @param   entity - the <code>Entity</code> the decoded object belongs to.
+     * @throws  <code>IllegalArgumentException</code> if the node is
+     *          <code>null</code>.
+     * @throws  <code>IllegalStateException</code> if the node does not
+     *          contain a valid <code>Entity</code>.
+     */
+    private static void decodeEntityEquipment( ParsedXML node, Entity entity ) {
+        // TODO : implement me
+    }
+
+    /**
+     * Helper function to decode a location of an <code>Entity</code>
+     * object from the passed node.
+     *
+     * @param   node - the <code>ParsedXML</code> node for this object.
+     *          This value must not be <code>null</code>.
+     * @param   entity - the <code>Entity</code> the decoded object belongs to.
+     * @throws  <code>IllegalArgumentException</code> if the node is
+     *          <code>null</code>.
+     * @throws  <code>IllegalStateException</code> if the node does not
+     *          contain a valid <code>Entity</code>.
+     */
+    private static void decodeLocation( ParsedXML node, Entity entity ) {
+        // TODO : implement me
+    }
+
+    /**
+     * Helper function to decode the inferno rounds on an <code>Entity</code>
+     * object from the passed node.
+     *
+     * @param   node - the <code>ParsedXML</code> node for this object.
+     *          This value must not be <code>null</code>.
+     * @param   entity - the <code>Entity</code> the decoded object belongs to.
+     * @throws  <code>IllegalArgumentException</code> if the node is
+     *          <code>null</code>.
+     * @throws  <code>IllegalStateException</code> if the node does not
+     *          contain a valid <code>Entity</code>.
+     */
+    private static void decodeInferno( ParsedXML node, Entity entity ) {
+        String attrStr = null;
+        int attrVal = 0;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The inferno is null." );
+        }
+
+        // Make sure that the node is for a EntityData object.
+        if ( !node.getName().equals( "inferno" ) ) {
+            throw new IllegalStateException( "Not passed a inferno node." );
+        }
+
+        // Try to find the inferno detail nodes.
+        Enumeration details = node.elements();
+        while ( details.hasMoreElements() ) {
+            ParsedXML detail = (ParsedXML) 
+                details.nextElement();
+
+            // Have we found the Arrow IV inferno detail?
+            if ( detail.getName().equals("arrowiv") ) {
+
+                // Get the burn turns attribute.
+                attrStr = detail.getAttribute( "turns" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the burn turns for an Arrow IV inferno round." );
+                }
+
+                // Try to pull the value from the string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Add the number of Arrow IV burn turns.
+                entity.infernos.add( InfernoTracker.INFERNO_IV_TURN,
+                                     attrVal );
+
+            } // End found-arrowiv-detail
+
+            // Have we found the standard inferno entry?
+            else if ( detail.getName().equals("standard") ) {
+
+                // Get the burn turns attribute.
+                attrStr = detail.getAttribute( "turns" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the burn turns for a standard inferno round." );
+                }
+
+                // Try to pull the value from the string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+
+                // Add the number of standard burn turns.
+                entity.infernos.add( InfernoTracker.STANDARD_TURN,
+                                     attrVal );
+
+            } // End found-standard-detail
+
+        } // Handle the next detail node.
+
+    }
+
+    /**
+     * Helper function to decode a <code>Entity</code> object from the
+     * passed node.
+     *
+     * @param   node - the <code>ParsedXML</code> node for this object.
+     *          This value must not be <code>null</code>.
+     * @param   game - the <code>Game</code> the decoded object belongs to.
+     * @return  the <code>Entity</code> object based on the node.
+     * @throws  <code>IllegalArgumentException</code> if the node is
+     *          <code>null</code>.
+     * @throws  <code>IllegalStateException</code> if the node does not
+     *          contain a valid <code>Entity</code>.
+     */
+    private static Entity decodeEntityData( ParsedXML node, Game game ) {
+        String attrStr = null;
+        int attrVal = 0;
+        boolean attrTrue = false;
+        Entity entity = null;
+        Coords coords = null;
+        ParsedXML actionNode = null;
+        ParsedXML narcNode = null;
+        ParsedXML infernoNode = null;
+        ParsedXML loadedUnitsNode = null;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The entityData is null." );
+        }
+
+        // Make sure that the node is for a EntityData object.
+        if ( !node.getName().equals( "entityData" ) ) {
+            throw new IllegalStateException( "Not passed a entityData node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Walk the entityData node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the coords node?
+            else if ( childName.equals("coords") ) {
+
+                // We can decode the coords immediately.
+                coords = CoordsEncoder.decode( child, game );
+
+            } // End found-"coords"-child
+
+            // Did we find the action node?
+            // TODO : rename me
+            else if ( childName.equals("action") ) {
+
+                // Save the action node for later decoding.
+                actionNode = child;
+
+            } // End found-"action"-child
+
+            // Did we find the narcs node?
+            else if ( childName.equals("narcs") ) {
+
+                // Save the narc node for later decoding.
+                narcNode = child;
+
+            } // End found-"narc"-child
+
+            // Did we find the inferno node?
+            else if ( childName.equals("inferno") ) {
+
+                // Save the inferno node for later decoding.
+                infernoNode = child;
+
+            } // End found-"inferno"-child
+
+            // Did we find the loadedUnits node?
+            else if ( childName.equals("loadedUnits") ) {
+
+                // Save the loadedUnits node for later decoding.
+                loadedUnitsNode = child;
+
+            } // End found-"loadedUnits"-child
+
+            // Did we find the class node?
+            else if ( childName.equals("class") ) {
+
+                // Create the appropriate sub-class of Entity.
+                attrStr = child.getAttribute( "name" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the name of a class node." );
+                }
+                else if ( attrStr.equals("BipedMech") ) {
+                    entity = BipedMechEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("QuadMech") ) {
+                    entity = QuadMechEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("Tank") ) {
+                    entity = TankEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("BattleArmor") ) {
+                    entity = BattleArmorEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("Infantry") ) {
+                    entity = InfantryEncoder.decode( child, game );
+                }
+                else if ( attrStr.equals("Protomech") ) {
+                    entity = ProtomechEncoder.decode( child, game );
+                }
+                else {
+                    throw new IllegalStateException
+                        ( "Unexpected name for a class node: " + attrStr );
+                }
+
+            } // End found-"class"-child
+
+        } // Look at the next child.
+
+        // Did we find the entity yet?
+        if ( null == entity ) {
+            throw new IllegalStateException
+                ( "Couldn't locate the class for an entityData node." );
+        }
+
+        // Decode the inferno node.
+        EntityEncoder.decodeInferno( infernoNode, entity );
+
+        // TODO : a whole lot more decoding needed.
+
+        return entity;
+    }
+
+    /**
      * Decode a <code>Entity</code> object from the passed node.
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
@@ -555,7 +843,245 @@ public class EntityEncoder {
      *          contain a valid <code>Entity</code>.
      */
     public static Entity decode( ParsedXML node, Game game ) {
-        return null;
+        String attrStr = null;
+        int attrVal = 0;
+        Entity entity = null;
+        Coords coords = null;
+        Vector locations = new Vector();
+        ParsedXML pilotNode = null;
+        ParsedXML equipNode = null;
+        Enumeration children = null;
+        ParsedXML child = null;
+        String childName;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The entity is null." );
+        }
+
+        // Make sure that the node is for a Entity object.
+        if ( !node.getName().equals( "entity" ) ) {
+            throw new IllegalStateException( "Not passed a entity node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Walk the entity node's children, finding bits for later parsing..
+        children = node.elements();
+        while ( children.hasMoreElements() ) {
+            child = (ParsedXML) children.nextElement();
+            childName = child.getName();
+
+            // Handle null child childNames.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the pilot node?
+            else if ( childName.equals( "pilot" ) ) {
+
+                // Save the entity's pilot for later decoding.
+                pilotNode = child;
+
+            } // End found-"entityEquipment"-node
+
+            // Did we find the entityData node?
+            else if ( childName.equals( "entityData" ) ) {
+
+                // Did we find the entity already?
+                if ( null != entity ) {
+                    throw new IllegalStateException
+                        ( "Found two entityData nodes for an Entity node." );
+                }
+
+                // Decode the entity data.
+                entity = EntityEncoder.decodeEntityData( child, game );
+
+            } // End found-"entityData"-node
+
+            // Did we find the entityEquipment node?
+            else if ( childName.equals( "entityEquipment" ) ) {
+
+                // Save the entity equipment for later decoding.
+                equipNode = child;
+
+            } // End found-"entityEquipment"-node
+
+            // Did we find the location node?
+            else if ( childName.equals( "location" ) ) {
+
+                // Save this location for later decoding.
+                locations.addElement( child );
+
+            } // End found-"location"-node
+
+        } // Look at the next child.
+
+        // Did we find the needed elements?
+        if ( null == entity ) {
+            throw new IllegalStateException
+                ( "Couldn't locate the entityData for an Entity node." );
+        }
+        else if ( null == pilotNode ) {
+            throw new IllegalStateException
+                ( "Couldn't locate the pilot for an Entity node." );
+        }
+        else if ( null == equipNode ) {
+            throw new IllegalStateException
+                ( "Couldn't locate the entityEquipment for an Entity node." );
+        }
+        else if ( locations.size() != entity.locations() ) {
+            StringBuffer msgBuf = new StringBuffer();
+            msgBuf.append( "Found " )
+                .append( locations.size() )
+                .append( " locations for an Entity node. " )
+                .append( "Was expecting to find " )
+                .append( entity.locations() )
+                .append( "." );
+            throw new IllegalStateException( msgBuf.toString() );
+        }
+
+        // Decode the entity node's chassis.
+        attrStr = node.getAttribute( "chassis" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the chassis from an Entity node." );
+        }
+        entity.setChassis( attrStr );
+
+        // Decode the entity node's model.
+        attrStr = node.getAttribute( "model" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the model from an Entity node." );
+        }
+        entity.setModel( attrStr );
+
+        // Decode the entity node's movement type.
+        attrStr = node.getAttribute( "typeVal" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the typeVal from an Entity node." );
+        }
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+        entity.setMovementType( attrVal );
+
+        // Decode the entity node's year.
+        attrStr = node.getAttribute( "year" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the year from an Entity node." );
+        }
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+        entity.setYear( attrVal );
+
+        // Decode the entity node's techBase.
+        attrStr = node.getAttribute( "techBase" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the techBase from an Entity node." );
+        }
+        if ( attrStr.equals("Mixed") ) {
+            entity.setTechLevel( TechConstants.T_MIXED_LEVEL_2 );
+        } else if ( attrStr.equals("Clan") ) {
+            entity.setTechLevel( TechConstants.T_CLAN_LEVEL_2 );
+        } else if ( 3025 == entity.getYear() ) {
+            entity.setTechLevel( TechConstants.T_IS_LEVEL_1 );
+        } else {
+            entity.setTechLevel( TechConstants.T_IS_LEVEL_2 );
+        }
+
+        // Decode the entity node's mass.
+        attrStr = node.getAttribute( "mass" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the mass from an Entity node." );
+        }
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+        entity.setWeight( attrVal );
+
+        // Decode the entity node's walkMp.
+        attrStr = node.getAttribute( "walkMp" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the walkMp from an Entity node." );
+        }
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+        entity.setOriginalWalkMP( attrVal );
+
+        // Decode the entity node's jumpMp.
+        attrStr = node.getAttribute( "jumpMp" );
+        if ( null == attrStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the jumpMp from an Entity node." );
+        }
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+        entity.setOriginalJumpMP( attrVal );
+
+        // Try to pull the value from the string
+        try {
+            attrVal = Integer.parseInt( attrStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't get an integer from " + attrStr );
+        }
+
+        // Decode the entity's pilot.
+        EntityEncoder.decodePilot( pilotNode, entity );
+
+        // Decode the entity's equipment.
+        EntityEncoder.decodeEntityEquipment( equipNode, entity );
+
+        // Decode the entity's locations.
+        children = locations.elements();
+        while ( children.hasMoreElements() ) {
+            child = (ParsedXML) children.nextElement();
+            EntityEncoder.decodeLocation( child, entity );
+        }
+
+        return entity;
     }
 
 }

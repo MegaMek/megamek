@@ -197,12 +197,16 @@ Drawing Board.
         chassis - required - the chassis of the entity.
         model - optional - the entity's specfic model within the chassis.
                 This value must be supplied, if available.
-        type - optional - type of entity being described.  Valid values are
-                Biped, Quad, Tracked, Wheeled, Hover, Leg, Motorized, and
-                Jump.  Note that not all entity types are valid for all
-                template types.
+        type - optional - movement type of entity being described.  Valid
+                values are Biped, Quad, Tracked, Wheeled, Hover, Leg,
+                Motorized, and Jump.  Note that not all entity types are
+                valid for all template types.
+        typeVal - optional - numeric movement type of entity being described.
+                Valid values are any integer between 0 and 5 (inclusive).
+                Note that not all entity types are valid for all template
+                types.
         techBase - optional - the technology base used to construct the
-                entity.  Valid values are: Clan or IS.
+                entity.  Valid values are: Mixed, Clan or IS.
         year - optional - the year the entity entered service.  Any 
                 numberic value between 2750 and 3100 is valid.  The value
                 of 3025 means that the entity uses Level 1 rules.

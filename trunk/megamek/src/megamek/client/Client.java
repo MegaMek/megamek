@@ -76,7 +76,13 @@ public class Client extends Panel
         
     // I send out game events!
     private Vector              gameListeners;
-    
+
+    /**
+     * Save and Open dialogs for MegaMek Unit List (mul) files.
+     */
+    private FileDialog dlgLoadList = null;
+    private FileDialog dlgSaveList = null;
+
     /**
      * Construct a non-standalone client.  This client will try to dispose of
      * itself as much as possible when it's done playing, but will not call
@@ -946,6 +952,28 @@ public class Client extends Panel
             case Packet.COMMAND_END_OF_GAME :
                 String sReport = (String)c.getObject(0);
                 saveEntityStatus(sReport);
+
+                // Make a list of the player's living units.
+                Vector living = game.getPlayerEntities( getLocalPlayer() );
+
+                // Be sure to include all units that have retreated.
+                for ( Enumeration iter = game.getRetreatedEntities();
+                      iter.hasMoreElements(); ) {
+                    living.addElement( iter.nextElement() );
+                }
+
+                // Allow players to save their living units to a file.
+                // Don't bother asking if none survived.
+                if ( !living.isEmpty() &&
+                     doYesNoDialog( "Save Units?",
+                                    "Do you want to save all surviving units\n"
+                                    + "(including retreated units) to a file?")
+                     ) {
+
+                    // Allow the player to save the units to a file.
+                    saveListFile( living );
+
+                } // End user-wants-a-MUL
                 break;
             }
         }
@@ -971,7 +999,119 @@ public class Client extends Panel
             showBoardPopup(mouseEvent.getPoint());
         }
     }
-    
+
+    /**
+     * Allow the player to select a MegaMek Unit List file to load.  The
+     * <code>Entity</code>s in the file will replace any that the player
+     * has already selected.  As such, this method should only be called
+     * in the chat lounge.  The file can record damage sustained, non-
+     * standard munitions selected, and ammunition expended in a prior
+     * engagement.
+     */
+    protected void loadListFile() {
+
+        // Build the "load unit" dialog, if necessary.
+        if ( null == dlgLoadList ) {
+            dlgLoadList = new FileDialog( frame,
+                                          "Open Unit List File",
+                                          FileDialog.LOAD );
+
+            // Add a filter for MUL files
+            dlgLoadList.setFilenameFilter( new FilenameFilter() {
+                    public boolean accept( File dir, String name ) {
+                        return ( null != name && name.endsWith( ".mul" ) );
+                    }
+                } );
+
+            // Default to the player's name.
+            dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
+        }
+
+        // Display the "load unit" dialog.
+        dlgLoadList.show();
+
+        // Did the player select a file?
+        String unitFile = dlgLoadList.getFile();
+        if ( null != unitFile ) {
+            try {
+                // Read the units from the file.
+                Vector loadedUnits = EntityListFile.loadFrom( unitFile );
+
+                // Clear the player's current units.
+                Vector currentUnits =
+                    game.getPlayerEntities( getLocalPlayer() );
+                for ( Enumeration iter = currentUnits.elements();
+                      iter.hasMoreElements(); ) {
+                    final Entity entity = (Entity) iter.nextElement();
+                    sendDeleteEntity( entity.getId() );
+                }
+
+                // Add the units from the file.
+                for ( Enumeration iter = loadedUnits.elements();
+                      iter.hasMoreElements(); ) {
+                    final Entity entity = (Entity) iter.nextElement();
+                    entity.setOwner( getLocalPlayer() );
+                    sendAddEntity( entity );
+                }
+            } catch ( IOException excep ) {
+                excep.printStackTrace( System.err );
+                doAlertDialog( "Error Loading File", excep.getMessage() );
+            }
+        }
+    }
+
+    /**
+     * Allow the player to save a list of entities to a MegaMek Unit List
+     * file.  A "Save As" dialog will be displayed that allows the user to
+     * select the file's name and directory. The player can later load this
+     * file to quickly select the units for a new game.  The file will record
+     * damage sustained, non-standard munitions selected, and ammunition
+     * expended during the course of the current engagement.
+     *
+     * @param   unitList - the <code>Vector</code> of <code>Entity</code>s
+     *          to be saved to a file.  If this value is <code>null</code>
+     *          or empty, the "Save As" dialog will not be displayed.
+     */
+    protected void saveListFile( Vector unitList ) {
+
+        // Handle empty lists.
+        if ( null == unitList || unitList.isEmpty() ) {
+            return;
+        }
+
+        // Build the "save unit" dialog, if necessary.
+        if ( null == dlgSaveList ) {
+            dlgSaveList = new FileDialog( frame,
+                                          "Save Unit List As",
+                                          FileDialog.SAVE );
+
+            // Add a filter for MUL files
+            dlgSaveList.setFilenameFilter( new FilenameFilter() {
+                    public boolean accept( File dir, String name ) {
+                        return ( null != name && name.endsWith( ".mul" ) );
+                    }
+                } );
+
+            // Default to the player's name.
+            dlgSaveList.setFile( getLocalPlayer().getName() + ".mul" );
+        }
+
+        // Display the "save unit" dialog.
+        dlgSaveList.show();
+
+        // Did the player select a file?
+        String unitFile = dlgSaveList.getFile();
+        if ( null != unitFile ) {
+            try {
+                // Save the player's entities to the file.
+                EntityListFile.saveTo( unitFile, unitList );
+            } catch ( IOException excep ) {
+                excep.printStackTrace( System.err );
+                doAlertDialog( "Error Saving File", excep.getMessage() );
+            }
+        }
+    }
+
     /**
      * A menu item that lives to view an entity.
      */

@@ -63,15 +63,13 @@ falling:
 
 infantry:
 - implement the following special rules:
--- Infernos
--- Fire Protection
 -- VTOL movement
 -- Underwater movement
 -- Torpedos
 -- Minefields
 -- Mindsweepers
 - implement BattleArmor units as their special rules are implemented
-        (e.g. Inferno rounds for Salamander points, or VTOL for Sylph).
+        (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
 
 
 FUTURE VERSION PLANS:
@@ -96,6 +94,10 @@ v CVS
 + 678789: wind direction set properly (randomly) in scenarios
 + players may enter the game as an observer
 + message indicates game data transmission
++ Allow players to save and load lists of units in chat lounge.
++ Allow players to save lists of units (includes damage) at end-of-game.
++ 678795: Possible fix -- can't test
++ Don't allocate AMS for non-entity targets.
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

@@ -824,6 +824,7 @@ public class BoardView1
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
+        // TODO: Remove these lines once "targetable" is proven sound.
         System.out.println("Got an attack against " + t.getDisplayName());
         System.out.println("at " + t.getPosition());
         if (ae == null || t == null) {

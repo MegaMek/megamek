@@ -128,7 +128,7 @@ Physical Attacks
 - Death From Above		Yes		Buildings may not be DFA'd
 - Different Elevations		Yes		None
 - Prone Battlemechs		Yes		None
-- Protomech Physical            Yes             None
+- Protomech Physical		Yes		None
 
 Heat (Heat Points)
 
@@ -313,6 +313,7 @@ Special Case Rules (Underwater Operations)
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
 - Hull Integrity		Yes		None
+
 Equipment
 
 - Active Probe			Yes		Hidden units is not implemented.

@@ -415,9 +415,6 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     int targEl = 0;
     attEl = ae.elevation() + attHeight;
     targEl = te.elevation() + targHeight;
-    int ilw = 0;  // intervening light woods
-    int ihw = 0;  // intervening heavy woods
-    Coords in[] = Compute.intervening(this.curPos, te.getPosition());
     
     boolean pc = false;
     boolean apc = false;
@@ -457,140 +454,18 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
       }
     }
+
+    // calc & add attacker los mods
+    LosEffects los = Compute.calculateLos(game, ae.getId(), te);
+    toHita.append(Compute.losModifiers(los));
+    // save variables
+    pc = los.isTargetCover();
+    apc = los.isAttackerCover();
+    // reverse attacker & target partial cover & calc defender los mods
+    los.setTargetCover(apc);
+    los.setAttackerCover(pc);
+    toHitd.append(Compute.losModifiers(los));
     
-    double degree = ae.getPosition().degree(te.getPosition());
-    if (degree > 180) degree = (degree + 180)%360;
-    if (degree == 30 || degree == 90 || degree == 150) {
-      Vector result = new Vector();
-      result.addElement(in[0]); //attacker spot
-      int w_total = 0;
-      for (int i = 1; i < in.length - 2 && toHita.getValue() != ToHitData.IMPOSSIBLE; i+=3) {
-        Coords c1 = in[i];
-        Coords c2 = in[i+1];
-        result.addElement(in[i+2]);
-        if (!game.board.contains(c1)) {
-          result.addElement(c2);
-        } else if (!game.board.contains(c2)) {
-          result.addElement(c1);
-        } else {
-          final Hex h = game.board.getHex(c1);
-          final int hexEl = h.floor();
-          final Hex h1 = game.board.getHex(c2);
-          final int hexEl1 = h1.floor();
-          int w = 0;
-          int w1 = 0;
-          if ((hexEl > attEl && hexEl > targEl)
-          || (i == 1 && hexEl > attEl)
-          || (i == in.length - 3 && hexEl > targEl)) {
-            toHita.addModifier(ToHitData.IMPOSSIBLE, "");
-            toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
-          } else if ((hexEl1 > attEl && hexEl1 > targEl)
-          || (i == 1 && hexEl1 > attEl)
-          || (i == in.length - 3 && hexEl1 > targEl)) {
-            toHita.addModifier(ToHitData.IMPOSSIBLE, "");
-            toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
-          } else {
-            if (h.levelOf(Terrain.WOODS) > 0) {
-              if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
-              || (i == 1 && hexEl + 2 > attEl)
-              || (i == in.length - 3 && hexEl + 2 > targEl)) {
-                w = (h.levelOf(Terrain.WOODS) == 1)?1:2;
-              }
-            }
-            if (h1.levelOf(Terrain.WOODS) > 0) {
-              if ((hexEl1 + 2 > attEl && hexEl1 + 2 > targEl)
-              || (i == 1 && hexEl1 + 2 > attEl)
-              || (i == in.length - 3 && hexEl1 + 2 > targEl)) {
-                w1 = (h1.levelOf(Terrain.WOODS)==1)?1:2;
-              }
-            }
-            if (i == in.length -3) {
-              if (w1 + w_total > 2) {
-                result.addElement(c2);
-                toHita.addModifier(ToHitData.IMPOSSIBLE, "");
-                toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
-                continue;
-              } else if (w + w_total > 2) {
-                result.addElement(c1);
-                toHita.addModifier(ToHitData.IMPOSSIBLE, "");
-                toHitd.addModifier(ToHitData.IMPOSSIBLE, "");
-                continue;
-              } else if (hexEl == targEl && attEl <= targEl && te.height() > 0) {
-                result.addElement(c1);
-                continue;
-              } else if (hexEl1 == targEl && attEl <= targEl && te.height() > 0) {
-                result.addElement(c2);
-                continue;
-              }
-            }
-            if (w1 > w) {
-              result.addElement(c2);
-              w_total += w1;
-            } else {
-              result.addElement(c1);
-              w_total += w;
-            }
-          }
-        }
-      }
-      in = new Coords[result.size()];
-      result.copyInto(in);
-    }
-   
-    for (int i = 0; i < in.length && toHita.getValue() != ToHitData.IMPOSSIBLE; i++) {
-      // don't count attacker or target hexes
-      if (in[i].equals(this.curPos) || in[i].equals(te.getPosition())) {
-        continue;
-      }
-      final Hex h = game.board.getHex(in[i]);
-      if (h == null) continue;
-      final int hexEl = h.getElevation();
-      // check for block by terrain
-      if ((hexEl > attEl && hexEl > targEl)
-      || (hexEl > attEl && this.curPos.distance(in[i]) <= 1)
-      || (hexEl > targEl && te.getPosition().distance(in[i]) <= 1)) {
-        toHita.addModifier(ToHitData.IMPOSSIBLE, "Terrain");
-        toHitd.addModifier(ToHitData.IMPOSSIBLE, "Terrain");
-      }
-      // determine number of woods hexes in the way
-      if (h.levelOf(Terrain.WOODS) > 0) {
-        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
-        || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1)
-        || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
-          ilw += (h.levelOf(Terrain.WOODS) == 1 ? 1 : 0);
-          ihw += (h.levelOf(Terrain.WOODS) > 1 ? 1 : 0);
-        }
-      }
-      // check for partial cover
-      if (te.getPosition().distance(in[i]) <= 1 && hexEl == targEl && attEl <= targEl && targHeight > 0) {
-        pc = true;
-      }
-      // check for attacker partial cover
-      if (this.curPos.distance(in[i]) <= 1 && hexEl == attEl && attEl >= targEl && attHeight > 0) {
-        apc = true;
-      }
-    }
-    // more than 1 heavy woods or more than two light woods block LOS
-    if (ilw + ihw * 2 >= 3) {
-      toHita.addModifier(ToHitData.IMPOSSIBLE, "Terrain");
-      toHitd.addModifier(ToHitData.IMPOSSIBLE, "Terrain");
-    }
-    // partial cover
-    if (pc) {
-      toHita.addModifier(3, "target has partial cover");
-    }
-    if (apc) {
-      toHitd.addModifier(3, "attacker has partial cover");
-    }
-    // intervening terrain
-    if (ilw > 0) {
-      toHita.addModifier(ilw, ilw + " light woods intervening");
-      toHitd.addModifier(ilw, ilw + " light woods intervening");
-    }
-    if (ihw > 0) {
-      toHita.addModifier(ihw * 2, ihw + " heavy woods intervening");
-      toHitd.addModifier(ihw * 2, ihw + " heavy woods intervening");
-    }
     // heatBuildup
     if (ae.getHeatFiringModifier() != 0) {
       toHita.addModifier(ae.getHeatFiringModifier(), "heatBuildup");

@@ -281,6 +281,7 @@ public class MovementDisplay
         butJump.setEnabled(false);
         butBackup.setEnabled(false);
         butTurn.setEnabled(false);
+        butFlee.setEnabled(false);
         butUp.setEnabled(false);
         butDown.setEnabled(false);
         butCharge.setEnabled(false);

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -991,9 +991,13 @@ public class Compute
             toHit.addModifier(-1, "melee specialist");
         }
 
-        if (target instanceof Mech &&
-            target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
-            (target.dodging || !target.isEligibleForPhysical())) {
+        // Mek targets that have the dodge maneuver but didn't get a physical
+        // turn (unless they're charging or DFAing) get the dodge bonus.
+        if ( target instanceof Mech &&
+             target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
+             ( target.dodging ||
+               ( !target.hasDisplacementAttack() &&
+                 !target.isEligibleForPhysical() ) ) ) {
             toHit.addModifier(2, "target is dodging");
         }
     }

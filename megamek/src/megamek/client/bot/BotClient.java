@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -166,7 +166,14 @@ public abstract class BotClient extends Client {
                 calculateFiringTurn();
             } else if (game.getPhase() == Game.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
-                sendAttackData(po.attacker.getId(), po.getVector());
+                // Bug #1072137: don't crash if the bot can't find a physical.
+                if (null != po) {
+                    sendAttackData(po.attacker.getId(), po.getVector());
+                }
+                else {
+                    // Send a "no attack" to clear the game turn, if any.
+                    sendAttackData( getLocalPlayer().getId(), new Vector(0) );
+                }
             } else if (game.getPhase() == Game.PHASE_DEPLOYMENT) {
                 calculateDeployment();
             } else if (game.getPhase() == Game.PHASE_DEPLOY_MINEFIELDS) {

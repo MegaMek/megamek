@@ -335,8 +335,8 @@ Equipment
 - Missile Munitions		Partial		Incendiary, Semiguided, Swarm, and Swarm-I not implemented
 - MASC				Yes		None
 - Narc				Yes		None
-- Narc Munitions		Yes		None
-- iNarc				Yes		None
+- Narc Munitions		Yes		Currently, MegaMek assumes that all standard missile munitions
+- iNarc				Yes		is capable of homing in on Narc/iNarc pods.
 - Rocket Lauchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None

@@ -2647,18 +2647,9 @@ implements Runnable {
                         entityUpdate( swarmerId );
                     }
                 }
-
-                // Mech on fire with infernos can wash them off.
-                // Check if enterning depth 2 water or prone in depth 1.
-                if ( entity instanceof Mech &&
-                     entity.infernos.isStillBurning() ) {
-                    if ( ( 1 == curHex.levelOf(Terrain.WATER) &&
-                           entity.isProne() ) ||
-                         ( 2 <= curHex.levelOf(Terrain.WATER) ) ) {
-                        washInferno(entity, curPos);
-                    }
-                }
-
+                
+                // check for inferno wash-off
+                checkForWashedInfernos(entity, curPos);
             }
 
             // Handle loading units.
@@ -2800,11 +2791,7 @@ implements Runnable {
                 mpUsed = step.getMpUsed();
                 entity.setProne(true);
                 // check to see if we washed off infernos
-                if ( entity instanceof Mech
-                && entity.infernos.isStillBurning()
-                && curHex.levelOf(Terrain.WATER) >= 1 ) {
-                    washInferno(entity, curPos);
-                }
+                checkForWashedInfernos(entity, curPos);
                 break;
             }
             
@@ -2933,6 +2920,9 @@ implements Runnable {
                 } // End successful-PSR
 
             } // End try-to-dislodge-swarmers
+            
+            // one more check for inferno wash-off
+            checkForWashedInfernos(entity, curPos);
 
         } // End entity-is-jumping
 
@@ -2981,6 +2971,23 @@ implements Runnable {
         // if we generated a charge attack, report it now
         if (charge != null) {
             send(createAttackPacket(charge, true));
+        }
+    }
+    
+    /**
+     * Checks to see if we may have just washed off infernos.  Call after
+     * a step which may have done this.
+     */
+    void checkForWashedInfernos(Entity entity, Coords coords) {
+        Hex hex = game.board.getHex(coords);
+        int waterLevel = hex.levelOf(Terrain.WATER);
+        // Mech on fire with infernos can wash them off.
+        if (!(entity instanceof Mech) || !entity.infernos.isStillBurning()) {
+            return;
+        }
+        // Check if entering depth 2 water or prone in depth 1.
+        if (waterLevel > entity.getHeight() ) {
+            washInferno(entity, coords);
         }
     }
     

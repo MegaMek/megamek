@@ -102,6 +102,10 @@ chassis "Nighthawk"     "isbattlearmor-b.gif"
 chassis "Purifier"      "isbattlearmor-b.gif"
 chassis "Raiden"        "isbattlearmor-b.gif"
 chassis "Sloth"         "slotharmor-b.gif"
+chassis "Haubrek Assault Battle Armor"  "isbattlearmor-b.gif"
+chassis "Advanced Clan Armor"           "elementals-b.gif"
+exact   "Haubrek Assault Battle Armor (Clan)"  "elementals-b.gif"
+exact   "Advanced Clan Armor (IS)"      "isbattlearmor-b.gif"
 
 # by grfx_slade
 chassis "Stinger" "stinger.gif"

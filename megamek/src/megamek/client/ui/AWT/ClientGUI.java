@@ -844,17 +844,26 @@ public class ClientGUI
                 }
                 if (h != null && curPanel instanceof FiringDisplay) {
                     popup.add(
-                        new TargetMenuItem(
-                            new HexTarget(coords, client.game.board, Targetable.TYPE_MINEFIELD_DELIVER)));
-                }
-                if (h != null && curPanel instanceof FiringDisplay) {
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_MINEFIELD_DELIVER)));
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_ARTILLERY)));
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_FASCAM)));
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_INFERNO_IV)));
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_VIBRABOMB_IV)));
+                    
                 }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
                     popup.add(
                         new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_ARTILLERY)));
-                }
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_FASCAM)));
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_INFERNO_IV)));
+                    popup.add(
+                        new TargetMenuItem(new HexTarget(coords, client.game.board, Targetable.TYPE_HEX_VIBRABOMB_IV)));                }
             }
 
         }

@@ -338,7 +338,9 @@ extends Dialog implements ActionListener, DialogOptionListener {
                           muniType == AmmoType.M_THUNDER_AUGMENTED ||
                           muniType == AmmoType.M_THUNDER_INFERNO   ||
                           muniType == AmmoType.M_THUNDER_VIBRABOMB ||
-                          muniType == AmmoType.M_THUNDER_ACTIVE )) {
+                          muniType == AmmoType.M_THUNDER_ACTIVE ||
+                          muniType == AmmoType.M_INFERNO_IV ||
+                          muniType == AmmoType.M_VIBRABOMB_IV)) {
                     bTechMatch = false;
 		        }
 		        

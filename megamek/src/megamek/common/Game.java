@@ -863,6 +863,12 @@ public class Game implements Serializable
                 return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
             case Targetable.TYPE_HEX_ARTILLERY:
                 return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_FASCAM:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_INFERNO_IV:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
+            case Targetable.TYPE_HEX_VIBRABOMB_IV:
+                return new HexTarget(HexTarget.idToCoords(nID), board, nType);
             default :
                 return null;
         }

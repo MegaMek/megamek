@@ -3728,6 +3728,32 @@ implements Runnable, ConnectionHandler {
         revealMinefield(minefield);
     }
     
+    /** 
+     *Delivers a Arrow IV FASCAM shot to the targetted hex area.
+     */
+    private void deliverFASCAMMinefield( Coords coords, int playerId) {
+        // Only if this is on the board...
+        if ( game.board.contains(coords) ) {
+        	Minefield minefield = null;
+            Enumeration minefields = game.getMinefields(coords).elements();
+            // Check if there already are Thunder minefields in the hex.
+            while (minefields.hasMoreElements()) {
+            	Minefield mf = (Minefield) minefields.nextElement();
+                if (mf.getType() == Minefield.TYPE_THUNDER) {
+                	minefield = mf;
+                    break;
+                }
+            }
+            // Did we find a Thunder minefield in the hex?
+            // N.B. damage of FASCAM minefields is 30
+            if (minefield == null) minefield = Minefield.createThunderMF( coords, playerId, 30 );
+            removeMinefield(minefield);
+            minefield.setDamage(30);
+            game.addMinefield(minefield);
+            revealMinefield(minefield);
+        } // End coords-on-board
+    }
+    
     /**
      * Adds a Thunder-Active minefield to the hex.
      */
@@ -3772,7 +3798,6 @@ implements Runnable, ConnectionHandler {
                 break;
             }
         }
-        
         // Create a new Thunder-Vibra minefield
         if (minefield == null) {
             minefield = Minefield.createThunderVibrabombMF(coords, playerId, damage, sensitivity);
@@ -5363,9 +5388,9 @@ implements Runnable, ConnectionHandler {
         final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         // 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-        wtype.getAmmoType() != AmmoType.T_BA_MG &&
-        wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-        !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
+            wtype.getAmmoType() != AmmoType.T_BA_MG &&
+            wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
+            !isWeaponInfantry && !wtype.hasFlag(WeaponType.F_ONESHOT);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         Infantry platoon = null;
@@ -5544,6 +5569,123 @@ implements Runnable, ConnectionHandler {
             //}
             return;
         }
+        // FASCAM Artillery
+        if (target.getTargetType() == Targetable.TYPE_HEX_FASCAM) {
+            Coords coords = target.getPosition();
+            if (!bMissed) {
+                phaseReport.append("hits the intended hex ")
+                .append(coords.getBoardNum())
+                .append("\n");
+            }
+            else {
+                coords = Compute.scatter(coords);
+                if (game.board.contains(coords)) {
+                    phaseReport.append("misses and scatters to hex ")
+                    .append(coords.getBoardNum())
+                    .append("\n");
+                }
+                else {
+                    phaseReport.append("misses and scatters off the board\n");
+                    return;
+                }
+            }
+            if (game.board.contains(coords)) {
+                deliverFASCAMMinefield(coords, ae.getOwner().getId());
+            }
+            return;
+        }
+        // Vibrabomb-IV Artillery
+        if (target.getTargetType() == Targetable.TYPE_HEX_VIBRABOMB_IV) {
+            Coords coords = target.getPosition();
+            if (!bMissed) {
+                phaseReport.append("hits the intended hex ")
+                .append(coords.getBoardNum())
+                .append("\n");
+            }
+            else {
+                coords = Compute.scatter(coords);
+                if (game.board.contains(coords)) {
+                    phaseReport.append("misses and scatters to hex ")
+                    .append(coords.getBoardNum())
+                    .append("\n");
+                }
+                else {
+                    phaseReport.append("misses and scatters off the board\n");
+                }
+            }
+            if (game.board.contains(coords)) {
+                deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
+                        wr.waa.getOtherAttackInfo());
+            }
+            return;
+        }
+        // Inferno IV artillery
+        if (target.getTargetType() == Targetable.TYPE_HEX_INFERNO_IV) {
+            Coords coords = target.getPosition();
+            if (!bMissed) {
+                phaseReport.append("hits the intended hex ")
+                .append(coords.getBoardNum())
+                .append("\n");
+            }
+            else {
+                coords = Compute.scatter(coords);
+                if (game.board.contains(coords)) {
+                    phaseReport.append("misses and scatters to hex ")
+                    .append(coords.getBoardNum())
+                    .append("\n");
+                }
+                else {
+                    phaseReport.append("misses and scatters off the board\n");
+                    return;
+                }                
+            }
+            Hex h = game.getBoard().getHex(coords);
+            //Unless there is a fire in the hex already, start one.
+            if ( !h.contains( Terrain.FIRE ) ) {
+            	  phaseReport.append( "       Fire started in hex " )
+                          .append( coords.getBoardNum() )
+                          .append( ".\n" );
+               h.addTerrain(new Terrain(Terrain.FIRE, 1));
+            }  
+            game.board.addInfernoTo( coords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+            sendChangedHex(coords);
+        	for(Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+                Entity entity = (Entity)impactHexHits.nextElement();
+                entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
+                phaseReport.append( entity.getDisplayName() )
+                           .append( " now on fire for ")
+                           .append( entity.infernos.getTurnsLeftToBurn() )
+                           .append(" turns.\n"); 
+            }
+            for(int dir=0;dir<=5;dir++) {
+                Coords tempcoords=coords.translated(dir);
+                if(!game.board.contains(tempcoords)) {
+                    continue;
+                }
+                if(coords.equals(tempcoords)) {
+                    continue;
+                }
+                h = game.getBoard().getHex(tempcoords);
+                // Unless there is a fire in the hex already, start one.
+                if ( !h.contains( Terrain.FIRE ) ) {
+                	  phaseReport.append( "       Fire started in hex " )
+                              .append( tempcoords.getBoardNum() )
+                              .append( ".\n" );
+                   h.addTerrain(new Terrain(Terrain.FIRE, 1));
+                }  
+                game.board.addInfernoTo( tempcoords, InfernoTracker.INFERNO_IV_ROUND, 1 );
+                sendChangedHex(tempcoords);
+                for(Enumeration splashHexHits = game.getEntities(tempcoords);splashHexHits.hasMoreElements();) {
+                	Entity entity = (Entity)splashHexHits.nextElement();
+                    entity.infernos.add( InfernoTracker.INFERNO_IV_ROUND, 1 );
+                    phaseReport.append( entity.getDisplayName() )
+                               .append( " now on fire for ")
+                               .append( entity.infernos.getTurnsLeftToBurn() )
+                               .append(" turns.\n");
+                }
+            }
+            return;
+        }
         //special case artillery
         if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
             Coords coords = target.getPosition();
@@ -5599,29 +5741,21 @@ implements Runnable, ConnectionHandler {
                     phaseReport.append("in hex " + tempcoords.getBoardNum());
                 }
                 for(;splashHexHits.hasMoreElements();) {;
-                Entity entity = (Entity)splashHexHits.nextElement();
-                int hits = wtype.getRackSize()/2;
-                while(hits>0) {
-                    HitData hit = entity.rollHitLocation
-                    ( toHit.getHitTable(),
+                    Entity entity = (Entity)splashHexHits.nextElement();
+                    int hits = wtype.getRackSize()/2;
+                    while(hits>0) {
+                        HitData hit = entity.rollHitLocation
+                        ( toHit.getHitTable(),
                             toHit.getSideTable(),
                             wr.waa.getAimedLocation(),
                             wr.waa.getAimingMode() );
-                    
-                    phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
-                    hits -= Math.min(nCluster,hits);
+                        phaseReport.append(damageEntity(entity, hit, Math.min(nCluster, hits)) + "\n");
+                        hits -= Math.min(nCluster,hits);
+                    }
                 }
-                
-                }
-                
-                
             }
-            
             return;
         }
-        
-        
-        
         if (bMissed) {
             // Report the miss.
             if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {

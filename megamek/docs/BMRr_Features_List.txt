@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 21st July 2004.  MegaMek Version 42. Best viewed in 1024x768.
+The Great MegaMek Feature list. 13th August 2004.  MegaMek Version 0.22.45. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -234,8 +234,8 @@ Special Case Rules (Artillery)
 - Damage			Yes		None
 - Smoke Rounds			No		None
 - Onboard Artillery		Yes		None
-- Arrows IV Artillery		Partial		Only standard munitions available.
-- Arrows IV Munitions		No		Special munitions appear as standard.
+- Arrows IV Artillery		Partial		Homing munition not implemented.
+- Arrows IV Munitions		Partial		Homing munition not implemented.
 
 Special Case Rules (Miscellaneous)
 
@@ -309,7 +309,7 @@ Special Case Rules (Underwater Operations)
 - Line Of Sight			Yes		None
 - Weapons Attacks		Yes		None
 - Physical Attacks		Yes		None
-- Hull Integrity		Yes		Buggy.
+- Hull Integrity		Yes		None
 
 Equipment
 

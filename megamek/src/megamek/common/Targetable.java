@@ -16,14 +16,17 @@ package megamek.common;
 
 public interface Targetable
 {
-    public static final int TYPE_ENTITY				= 0;
-    public static final int TYPE_HEX_CLEAR			= 1;
-    public static final int TYPE_HEX_IGNITE			= 2;
-    public static final int TYPE_BUILDING			= 3;
-    public static final int TYPE_BLDG_IGNITE		= 4;
-    public static final int TYPE_MINEFIELD_CLEAR	= 5;
-    public static final int TYPE_MINEFIELD_DELIVER	= 6;
-    public static final int TYPE_HEX_ARTILLERY         = 7;
+    public static final int TYPE_ENTITY               = 0;
+    public static final int TYPE_HEX_CLEAR            = 1;
+    public static final int TYPE_HEX_IGNITE           = 2;
+    public static final int TYPE_BUILDING             = 3;
+    public static final int TYPE_BLDG_IGNITE          = 4;
+    public static final int TYPE_MINEFIELD_CLEAR   	  = 5;
+    public static final int TYPE_MINEFIELD_DELIVER    = 6;
+    public static final int TYPE_HEX_ARTILLERY        = 7;
+    public static final int TYPE_HEX_FASCAM           = 8;
+    public static final int TYPE_HEX_INFERNO_IV       = 9;
+    public static final int TYPE_HEX_VIBRABOMB_IV     = 10;
 
     public int getTargetType();
     public int getTargetId();

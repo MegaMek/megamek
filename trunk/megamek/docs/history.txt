@@ -9,6 +9,7 @@ v0.29.52 (CVS)
 + Bug 1040547: Arctic Fox B & C have incorrect heatsinks
 + Bug 1039779: Immobile tanks that are not unconscious should be able unjam RACs
 + Bug 1032713: breached legs act as if leg is destroyed
++ Bug 1032711: jumping into water w/ open leg breaches it, psr is missing
 
 v0.29.51 (2004-10-03 8:15am)
 + Bug 1028638: a quad 'Mechs front legs are as restrictive as its rear legs

@@ -98,7 +98,7 @@ public class MepFile implements MechLoader {
             jumpMP = r.readLine();
             heatSinks = r.readLine();
             
-            r.readLine(); // weapons table -- useless?
+            r.readLine(); // weapons table descriptor -- useless?
             
             armorPoints = r.readLine();
             armorPoints1 = r.readLine(); // what are these two?
@@ -235,7 +235,12 @@ public class MepFile implements MechLoader {
                 int slot = Integer.parseInt(critData[i].substring(5, 7));
                 boolean rearMounted = false;
                 String critName = critData[i].substring(7).trim();
-                
+
+                // if the slot's full already, skip it.
+                if (mech.getCritical(loc, slot) != null) {
+                    continue;
+                }
+
                 if (critName.startsWith("(R)")) {
                     rearMounted = true;
                     critName = critName.substring(3).trim();

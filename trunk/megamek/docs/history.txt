@@ -41,6 +41,7 @@ v 0.29.27 (CVS)
 + Made NARC missile beacon indidcation more obvious in extras tab.
 + Bug 905261: missing minimapcolours no longer NPEs. Also, better exception handling in Client#initializeDialogs()
 + New "SINKHOLE" MiniMap colour/setting
++ Patch 870086: mechW now stays open when the same player moves several units
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

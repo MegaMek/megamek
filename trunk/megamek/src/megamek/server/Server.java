@@ -4632,6 +4632,7 @@ implements Runnable, ConnectionHandler {
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
         boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
+	boolean bFragmentation = (usesAmmo && atype.getMunitionType() == AmmoType.M_FRAGMENTATION);
         if (!bInferno) {
             // also check for inferno infantry
             bInferno = (isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO));
@@ -5032,6 +5033,12 @@ implements Runnable, ConnectionHandler {
                     nSalvoBonus = 0;
                     sSalvoType = " inferno missile(s) ";
                     bSalvo = false;
+            }
+            
+            // If dealing with fragmentation missiles,
+            // it does double damage to infantry...
+            if (bFragmentation) {
+                sSalvoType = " fragmentation missile(s) ";
             }
 
             // Large MRM missile racks roll twice.
@@ -5556,6 +5563,10 @@ implements Runnable, ConnectionHandler {
                         phaseReport.append( "\n        " )
                             .append( entityTarget.getDisplayName() )
                             .append( " suffers no damage." );
+                    } else if (bFragmentation) {
+                    	// If it's a frag missile...
+                        phaseReport.append
+                            ( damageEntity(entityTarget, hit, nDamage, false, true) );
                     } else {
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage) );
@@ -7244,8 +7255,12 @@ implements Runnable, ConnectionHandler {
         }
     }
     
+    public String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
+        return damageEntity(te, hit, damage, ammoExplosion, false);
+    }
+    
     public String damageEntity(Entity te, HitData hit, int damage) {
-        return damageEntity(te, hit, damage, false);
+        return damageEntity(te, hit, damage, false, false);
     }
     
     /**
@@ -7258,8 +7273,9 @@ implements Runnable, ConnectionHandler {
      * @param hit the hit data for the location hit
      * @param damage the damage to apply
      * @param ammoExplosion ammo explosion type damage is handled slightly differently
+     * @param bFrag damage is from a fragmenation missile
      */
-    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
+    private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, boolean bFrag) {
         String desc = new String();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
@@ -7282,6 +7298,16 @@ implements Runnable, ConnectionHandler {
                 damage = damage * 2;
                 desc += "\n        Infantry platoon caught in the open!!!  Damage doubled." ;
             }
+        }
+        // If dealing with fragmentation missiles,
+        // it does double damage to infantry...
+        if (isPlatoon && bFrag) {
+            damage *= 2;
+            desc += "\n        Infantry platoon hit by fragmentation missiles!!!  Damage doubled." ;
+        }
+        else if ((te != null) && bFrag) {
+            damage = 0;
+            desc += "\n        Hardened unit hit by fragmentation missiles!!!  No damage." ;
         }
 
         // Allocate the damage

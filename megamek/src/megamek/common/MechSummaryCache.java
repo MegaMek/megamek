@@ -74,16 +74,16 @@ public class MechSummaryCache {
         return m_data;
     }
     
-    private void block() {
-		if (!initialized) {
-			synchronized (m_instance) {
-				try {
-					m_instance.wait();
-				} catch (Exception e) {
-				    ;	
-				}
-			}
-		}
+    public static void block() {
+        if (!initialized) {
+            synchronized (m_instance) {
+                try {
+                    m_instance.wait();
+                } catch (Exception e) {
+                    ;	
+                }
+            }
+        }
     }
 
     public MechSummary getMech(String sRef) {

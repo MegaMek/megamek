@@ -27,6 +27,12 @@ import megamek.client.util.widget.*;
 public class Client extends Panel
     implements Runnable, MouseListener, WindowListener, ActionListener
 {
+	// Action commands.
+	public static final String VIEW_MEK_DISPLAY      = "viewMekDisplay";
+	public static final String VIEW_MINI_MAP         = "viewMiniMap";
+	public static final String VIEW_LOS_SETTING      = "viewLOSSetting";
+	public static final String VIEW_UNIT_OVERVIEW    = "viewUnitOverview";
+
     // a frame, to show stuff in
     public Frame                frame;
 
@@ -273,6 +279,15 @@ public class Client extends Panel
         if(event.getActionCommand().equalsIgnoreCase("viewTurnReport")) {
             showTurnReport();
         }
+		if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
+			toggleDisplay();
+		} else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
+			toggleMap();
+		} else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
+			toggleUnitOverview();
+		} else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
+			showLOSSettingDialog();
+		}
     }
     
     /**
@@ -652,12 +667,18 @@ public class Client extends Panel
      */
     public void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
+        if (mechW.isVisible()) {
+        	frame.requestFocus();
+        }
     }
     
     /** Sets the visibility of the entity display window
      */
     public void setDisplayVisible(boolean visible) {
         mechW.setVisible(visible);
+        if (visible) {
+        	frame.requestFocus();
+        }
     }
     
 	public void toggleUnitOverview() {
@@ -675,12 +696,18 @@ public class Client extends Panel
             Settings.minimapEnabled = true;
         }
         minimapW.setVisible(!minimapW.isVisible());
+        if (minimapW.isVisible()) {
+        	frame.requestFocus();
+        }
     }
     
     /** Sets the visibility of the minimap window
      */
     public void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
+        if (visible) {
+        	frame.requestFocus();
+        }
     }
     
     protected void fillPopup(Coords coords) {

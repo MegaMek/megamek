@@ -731,6 +731,8 @@ public abstract class Entity
         return (int)Math.ceil(getWalkMP() * 1.5);
     }
 
+    public abstract int getRunMPwithoutMASC();
+
     /**
      * Returns this entity's original jumping mp.
      */

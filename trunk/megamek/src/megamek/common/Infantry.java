@@ -257,6 +257,13 @@ public class Infantry
     }
 
     /**
+     * Infantry don't have MASC
+     */
+    public int getRunMPwithoutMASC() {
+        return getRunMP();
+    }
+
+    /**
      * Infantry have only one speed.
      */
     protected int getOriginalRunMP() {

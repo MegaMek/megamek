@@ -1612,6 +1612,9 @@ public class BoardView1
                 col = Settings.moveDefaultColor;
                 break;
             }
+            if (step.isUsingMASC()) {
+                col = Settings.moveMASCColor;
+            }
 
             // draw arrows and cost for the step
             switch (step.getType()) {
@@ -1733,6 +1736,12 @@ public class BoardView1
             if (step.isPastDanger()) {
                 costStringBuf.insert( 0, "(" );
                 costStringBuf.append( ")" );
+            }
+
+            if (step.isUsingMASC()) {
+                costStringBuf.append("[");
+                costStringBuf.append(step.getMASCNumber());
+                costStringBuf.append("+]");
             }
 
             // Convert the buffer to a String and draw it.

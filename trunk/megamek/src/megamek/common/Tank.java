@@ -487,6 +487,13 @@ public class Tank
     {
         return NUM_OF_SLOTS;
     }
+
+    /**
+     * Tanks don't have MASC
+     */
+    public int getRunMPwithoutMASC() {
+        return getRunMP();
+    }
     
     public int getHeatCapacity() {
         return 999;

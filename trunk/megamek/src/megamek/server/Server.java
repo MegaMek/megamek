@@ -3517,8 +3517,6 @@ implements Runnable, ConnectionHandler {
                     // Damage from Thunder minefields are capped.
                     if ( newDamage > Minefield.MAX_DAMAGE ) {
                         newDamage = Minefield.MAX_DAMAGE;
-                    } else {
-                        newDamage = newDamage;
                     }
                     minefield.setDamage(newDamage);
                 }

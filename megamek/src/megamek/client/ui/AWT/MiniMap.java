@@ -476,7 +476,7 @@ scan:
                 if (attack.getEntityId() == otherAttack.getTargetId()
                     && otherAttack.getEntityId() == attack.getTargetId() ) {
                         // attackTarget _must_ be an entity since it's shooting back (?)
-                        Entity attackTarget = m_game.getEntity(otherAttack.getTargetId());
+                        Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
                         g.setColor(attackTarget.getOwner().getColor());
 
                         xPoints[0] = xPoints[3];

@@ -1312,10 +1312,10 @@ class SystemPanel
 class ExtraPanel
     extends BufferedPanel
 {
-    private TransparentLabel  narcLabel, unusedL, carrysL;
-    //public Label    unusedL, carrysL;
-    public TextArea unusedR, carrysR;
+    private TransparentLabel  narcLabel, unusedL, carrysL, heatL;
+    public TextArea unusedR, carrysR, heatR;
     public java.awt.List narcList;
+
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
 
     private ClientGUI clientgui;
@@ -1347,6 +1347,12 @@ class ExtraPanel
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
         carrysR.addKeyListener(clientgui.menuBar);
+
+        heatL = new TransparentLabel
+            ( "Heat Effects:", fm, Color.white, TransparentLabel.CENTER);
+        heatR = new TextArea ("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        heatR.setEditable(false);
+        heatR.addKeyListener(clientgui.menuBar);
 
         // layout choice panel
         GridBagLayout gridbag = new GridBagLayout();
@@ -1389,6 +1395,15 @@ class ExtraPanel
         c.weighty = 1.0;
         gridbag.setConstraints(carrysR, c);
         add(carrysR);
+
+        c.weighty = 0.0;
+        gridbag.setConstraints(heatL, c);
+        add(heatL);
+
+        c.insets = new Insets(1, 9, 18, 9);
+        c.weighty = 1.0;
+        gridbag.setConstraints(heatR, c);
+        add(heatR);
 
         setBackGround();
 
@@ -1549,6 +1564,77 @@ class ExtraPanel
             carrysR.append( club.getName() );
         }
 
+        // Show Heat Effects, but only for Mechs.
+        heatR.setText("");
+        if (en instanceof Mech) {
+            boolean moreHeatMove = false, moreHeatFire = false;
+            boolean hasTSM = false;
+            if (((Mech)en).hasTSM()) hasTSM = true;
+
+            if (en.heat>=30) {
+                heatR.append("Was automaticly shut down\n");
+                moreHeatMove = true;
+            }
+            if (en.heat >=25 && !moreHeatMove) {
+                if (hasTSM) {
+                    heatR.append ("-4 Movement Points\n");
+                } else {
+                    heatR.append("-5 Movement Points\n");
+                }
+                moreHeatMove = true;
+            }
+            if (en.heat >= 24) {
+                heatR.append("+4 Modifier to Fire\n");
+                moreHeatFire = true;
+            }
+            if (en.heat >= 20 && !moreHeatMove) {
+                if (hasTSM) {
+                    heatR.append ("-3 Movement Points\n");
+                } else {
+                    heatR.append ("-4 Movement Points\n");
+                }
+                moreHeatMove = true;
+            }
+            if (en.heat >= 17 && !moreHeatFire) {
+                heatR.append ("+3 Modifier to Fire\n");
+                moreHeatFire = true;
+            }
+            if (en.heat >= 15 && !moreHeatMove) {
+                if (hasTSM) {
+                    heatR.append ("-2 Movement Points\n");
+                } else {
+                    heatR.append ("-3 Movement Points\n");
+                }
+                moreHeatMove = true;
+            }
+            if (en.heat >= 13 && !moreHeatFire) {
+                heatR.append ("+2 Modifier to Fire\n");
+                moreHeatFire = true;
+            }
+            if (en.heat >= 10 && !moreHeatMove) {
+                if (hasTSM) {
+                    heatR.append ("-1 Movement Point\n");
+                } else {
+                    heatR.append ("-2 Movement Points\n");
+                }
+                moreHeatMove = true;
+            }
+            if (en.heat == 9 && !moreHeatMove && hasTSM) {
+                heatR.append ("+1 Movement Point (TSM)\n");
+                moreHeatMove = true;
+            }
+            if (en.heat >= 8 && !moreHeatFire) {
+                heatR.append ("+1 Modifier to Fire\n");
+                moreHeatFire = true;
+            }
+            if (en.heat >= 5 && !moreHeatMove) {
+                heatR.append ("-1 Movement Point\n");
+                moreHeatMove = true;
+            }
+            if (en.heat <=4) {
+                heatR.append ("None\n");
+            }
+        }
     } // End public void displayMech( Entity )
 
 } // End class ExtraPanel extends Panel

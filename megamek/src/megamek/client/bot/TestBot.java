@@ -263,6 +263,12 @@ public class TestBot extends BotClientWrapper {
   public void calculateMoveTurn() {
     int initiative = 0;
     EntityState min = null;
+    //I'm not quite sure where to put this, but we need to make sure that if
+    //an entity falls, and gets another turn, that it takes it -- Ben
+    if (game.getTurn().getEntityNum() != GameTurn.ENTITY_ANY) {
+        Entity mustMove = game.getEntity(game.getTurn().getEntityNum());
+        this.enemies.get(mustMove).moved = false;
+    }
     //first check and make sure that someone else has moved so that we don't replan
     Object[] enemy_array = this.getEnemyEntities().toArray();
     for (int j = 0; j < enemy_array.length; j++) {

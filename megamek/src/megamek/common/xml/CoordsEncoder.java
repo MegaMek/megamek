@@ -71,13 +71,36 @@ public class CoordsEncoder {
      */
     public static Coords decode( ParsedXML node, Game game ) {
 
-        if ( 1 == 0 ) {
-            // Try to pull the hash code from the node.
-            int hash = 0;
-
-            Coords coords = Coords.getFromHashCode( hash );
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The coords is null." );
         }
-        return null;
+
+        // Make sure that the node is for a Coords object.
+        if ( !node.getName().equals( "coords" ) ) {
+            throw new IllegalStateException( "Not passed a coords node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Get the hash code.
+        String hashStr = node.getAttribute( "hash" );
+        if ( null == hashStr ) {
+            throw new IllegalStateException
+                ( "Couldn't decode the coords node." );
+        }
+        // Try to pull the hash code from the string
+        int hash = 0;
+        try {
+            hash = Integer.parseInt( hashStr );
+        }
+        catch ( NumberFormatException exp ) {
+            throw new IllegalStateException
+                ( "Couldn't find coords for " + hashStr );
+        }
+
+        // Return the coords for this hash code.
+        return Coords.getFromHashCode( hash );
     }
 
 }

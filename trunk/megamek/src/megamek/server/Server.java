@@ -983,13 +983,13 @@ implements Runnable {
             case Game.PHASE_END :
                 game.resetPhaseReport();
                 phaseReport = game.getPhaseReport(); //HACK
-                resetEntityPhase();
-                checkForObservers();
                 resolveHeat();
                 checkForSuffocation();
+                resolveFire();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
-                resolveFire();
+                resetEntityPhase();
+                checkForObservers();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
                 }
@@ -6151,7 +6151,8 @@ implements Runnable {
             || (curHex.levelOf(Terrain.WATER) == 1 && entity.isProne()))
             && entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, Mech.LOC_HEAD) > 0) {
                 roundReport.append("\n" ).append( entity.getDisplayName() ).append( " is underwater with damaged life support.  Mechwarrior takes 1 damage.\n");
-                damageCrew(entity, 1);
+                roundReport.append( damageCrew(entity, 1) );
+
             }
         }
     }

@@ -20,6 +20,7 @@ v0.29.59 (CVS)
    does count for spotting
 + Bug 1093536: missed DFA with target on the board edge crashes megamek
 + Bug 1018871: gravity PSR when losing movement points in movement phase
++ Bug 1093083: falling in water, BMRr errata
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

@@ -40,6 +40,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
     private Checkbox    rightDragScroll;
     private Checkbox    ctlScroll;
     private Checkbox    clickEdgeScroll;
+    private Checkbox    alwaysRightClickScroll;
     private Checkbox    autoEdgeScroll;
     private TextField   scrollSensitivity;
 
@@ -143,6 +144,10 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
             = new Checkbox( "By right-clicking near the edge of the map." );
             tempPanel.add( clickEdgeScroll );
 
+        alwaysRightClickScroll
+            = new Checkbox( "Use the right-click near the edge of the map scrolling also in the firing phase." );
+            tempPanel.add( alwaysRightClickScroll );
+        
         autoEdgeScroll
             = new Checkbox( "Automatically, whenever you left-click near the edge of the map." );
             tempPanel.add( autoEdgeScroll );
@@ -236,6 +241,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         rightDragScroll.setState( Settings.rightDragScroll );
         ctlScroll.setState( Settings.ctlScroll );
         clickEdgeScroll.setState( Settings.clickEdgeScroll );
+        alwaysRightClickScroll.setState( Settings.alwaysRightClickScroll );
         autoEdgeScroll.setState( Settings.autoEdgeScroll );
         scrollSensitivity.setText( Integer.toString(Settings.getScrollSensitivity() ) );
 
@@ -267,13 +273,14 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.tooltipDelay =   Integer.parseInt(tooltipDelay.getText());
         Settings.unitStartChar=   unitStartChar.getSelectedItem().charAt(0);
 
-        Settings.rightDragScroll   = rightDragScroll.getState();
-        Settings.ctlScroll         = ctlScroll.getState();
-        Settings.clickEdgeScroll   = clickEdgeScroll.getState();
-        Settings.autoEdgeScroll    = autoEdgeScroll.getState();
+        Settings.rightDragScroll        = rightDragScroll.getState();
+        Settings.ctlScroll              = ctlScroll.getState();
+        Settings.clickEdgeScroll        = clickEdgeScroll.getState();
+        Settings.alwaysRightClickScroll = alwaysRightClickScroll.getState();
+        Settings.autoEdgeScroll         = autoEdgeScroll.getState();
         Settings.setScrollSensitivity( Integer.parseInt(scrollSensitivity.getText()) );
 
-        Settings.maxPathfinderTime = Integer.parseInt(maxPathfinderTime.getText());
+        Settings.maxPathfinderTime    = Integer.parseInt(maxPathfinderTime.getText());
 
         Settings.getFocus =       getFocus.getState();
         Settings.save();

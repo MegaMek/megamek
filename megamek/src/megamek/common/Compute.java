@@ -676,30 +676,35 @@ public class Compute
 	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
+            
+            // Don't compare the entering entity to itself.
+            if (inHex.equals(entering)) {
+                continue;
+            }
+            
+            // DFAing units don't count towards stacking
+            if (inHex.isMakingDfa()) {
+                continue;
+            }
+            
+            // If the entering entity is a mech,
+            // then any other mech in the hex is a violation.
+            if (isMech && (inHex instanceof Mech)) {
+                return inHex;
+            }
+            
+            // Otherwise, if there are two present entities controlled
+            // by this player, returns a random one of the two.
+            // Somewhat arbitrary, but how else should we resolve it?
+            if (!inHex.getOwner().isEnemyOf(entering.getOwner())) {
+                if (firstEntity == null) {
+                    firstEntity = inHex;
+                } else {
+                    return d6() > 3 ? firstEntity : inHex;
+                }
+            }
 
-	    // Don't compare the entering entity to itself.
-	    if ( !(inHex.equals(entering)) ) {
-
-		// If the entering entity is a mech,
-		// then any other mech in the hex is a violation.
-		if ( isMech && (inHex instanceof Mech) ) {
-                    return inHex;
-		}
-
-		// Otherwise, if there are two present entities controlled
-		// by this player, returns a random one of the two.
-		// Somewhat arbitrary, but how else should we resolve it?
-		if ( !inHex.getOwner().isEnemyOf(entering.getOwner()) ) {
-		    if (firstEntity == null) {
-			firstEntity = inHex;
-		    } else {
-			return d6() > 3 ? firstEntity : inHex;
-		    }
-		}
-
-	    } // End different-entity
-
-	} // Check the next entity
+	}
         
         // okay, all clear
         return null;
@@ -962,13 +967,15 @@ public class Compute
     
     /**
      * Returns true if there is a mech that is an enemy of the specified unit
-     * in the specified hex
+     * in the specified hex.  This is only called for stacking purposes, and
+     * so does not return true if the enemy mech is currenly making a DFA.
      */
     public static boolean isEnemyMechIn(Game game, int entityId, Coords coords) {
         Entity entity = game.getEntity(entityId);
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-            if (inHex instanceof Mech && inHex.getOwner().isEnemyOf(entity.getOwner())) {
+            if (inHex instanceof Mech && inHex.isEnemyOf(entity)
+            && !inHex.isMakingDfa()) {
                 return true;
             }
         }
@@ -977,13 +984,14 @@ public class Compute
     
     /**
      * Returns true if there is any unit that is an enemy of the specified unit
-     * in the specified hex
+     * in the specified hex.  This is only called for stacking purposes, and
+     * so does not return true if the enemy unit is currenly making a DFA.
      */
     public static boolean isEnemyUnitIn(Game game, int entityId, Coords coords) {
         Entity entity = game.getEntity(entityId);
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity)i.nextElement();
-            if (inHex.getOwner().isEnemyOf(entity.getOwner())) {
+            if (inHex.isEnemyOf(entity) && !inHex.isMakingDfa()) {
                 return true;
             }
         }

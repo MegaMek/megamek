@@ -37,7 +37,13 @@ public class PilotOptions extends Options implements Serializable {
         addOption(adv, new GameOption("pain_resistance", "Pain Resistance", "When making consciousness rolls, 1 is added to all rolls. Also, damage received from ammo explosions is reduced by one point.\n\nNote: This ability is only used for BattleMechs.", false));
 //        addOption(adv, new GameOption("sixth_sense", "Sixth Sense", "NOTE: Not implemented. Enables a pilot to move his/her initiative all the way to the end of the list one time per fight.", false));
 //        addOption(adv, new GameOption("speed_demon", "Speed Demon", "NOTE: Not implemented. Enables a pilot to add one to his/her running/flank speed. Enabling this disallows any weapons or physical attacks for the round.", false));
-        addOption(adv, new GameOption("tactical_genius", "Tactical Genius", "A player who has a Tactical Genius may reroll their initiative once per turn.  The second roll must be accepted.\n\nNote: Only one Tactical Genius may be utilized per team.", false));
-        addOption(adv, new GameOption("weapon_specialist", "Weapon Specialist", "A player who specializes in a particular weapon receives a -2 to hit modifier on all attacks with that weapon.", new Vector()));
+        addOption(adv, new GameOption("tactical_genius", "Tactical Genius", "A pilot who has a Tactical Genius may reroll their initiative once per turn.  The second roll must be accepted.\n\nNote: Only one Tactical Genius may be utilized per team.", false));
+        addOption(adv, new GameOption("weapon_specialist", "Weapon Specialist", "A pilot who specializes in a particular weapon receives a -2 to hit modifier on all attacks with that weapon.", new Vector()));
+        addOption(adv, new GameOption("gunnery_laser", "Gunnery/Laser", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all energy-based weapons (Laser, PPC, and Flamer).", false));
+        addOption(adv, new GameOption("gunnery_missile", "Gunnery/Missile", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all missile weapons (LRM, SRM, MRM, RL and ATM).", false));
+        addOption(adv, new GameOption("gunnery_ballistic", "Gunnery/Ballistic", "NOTE: This is a unofficial rule. Pilot gets a -1 to-hit bonus on all ballistic weapons (MGs, all ACs, Gaussrifles).", false));
+        addOption(adv, new GameOption("iron_man", "Iron Man", "NOTE: This is a unofficial rule. A pilot with this skill receives only 1 pilot hit from ammunition explosions.", false));
+        
+        
     }
 }

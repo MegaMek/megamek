@@ -9684,7 +9684,10 @@ implements Runnable, ConnectionHandler {
         desc.append(damageEntity(en, new HitData(loc), damage, true));
         desc.append("\n");
         if (!en.isDoomed() && !en.isDestroyed()) {
-            desc.append(damageCrew(en, en.getCrew().getOptions().booleanOption("pain_resistance") ? 1 : 2));
+            int pilotDamage = 2;
+            if (en.getCrew().getOptions().booleanOption("pain_resistance")) pilotDamage = 1;
+            if (en.getCrew().getOptions().booleanOption("iron_man")) pilotDamage = 1;
+            desc.append(damageCrew(en, pilotDamage));
             if ( en.crew.isDoomed() || en.crew.isDead() ) {
                 desc.append( destroyEntity(en, "crew death", true) );
             } else {

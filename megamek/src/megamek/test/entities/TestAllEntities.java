@@ -127,7 +127,6 @@ public class TestAllEntities implements MechSummaryCache.Listener
                         ms[i].getEntryName());
                 if (entity==null)
                     continue;
-                System.out.println("\nchecking entity #" + i);
                 checkEntity(entity, false);
             }
         }

@@ -55,13 +55,10 @@ weapon attacks:
 
 physical attacks:
 - dfa should violate stacking, charging should not
-- opposing pushes should counter each other
 
 displacement issues:
 - domino effect: mechs with movement available can roll to step out of the way
 
-falling:
-- Examine code that controls falls to surface of water.
 
 infantry:
 - implement the following special rules:

@@ -1876,8 +1876,8 @@ public class Compute
         }
 
         // check facing
-	// 2002-10-21 Suvarov454 : Don't check arc for stomping infantry.
-        if (( 0 != range || !(te instanceof Infantry) ) &&
+	// Don't check arc for stomping infantry or tanks.
+        if (0 != range &&
 	    !isInArc(ae.getPosition(), ae.getFacing(), 
                      te.getPosition(), Compute.ARC_FORWARD)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
@@ -1946,6 +1946,12 @@ public class Compute
         
         // factor in target side
         toHit.setSideTable(targetSideTable(ae,te));
+
+        // BMRr pg. 42, "The side on which a vehicle takes damage is determined
+        // randomly if the BattleMech is attacking from the same hex."
+        if ( 0 == range && te instanceof Tank ) {
+            toHit.setSideTable( random.nextInt(4) ); // results in 0 through 3
+        }
 
         // done!
         return toHit;

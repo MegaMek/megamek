@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.58 (CVS)
+v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.
 + Patch 1087661: Show BV when real_blind_drop option is enabled
 + Bug 1090777: Vehicles not handled correctly at extreme G's

@@ -86,6 +86,13 @@ public class Connection {
         return id;
     }
 
+    /**
+     * Be careful with this...
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public Socket getSocket() {
         return socket;
     }

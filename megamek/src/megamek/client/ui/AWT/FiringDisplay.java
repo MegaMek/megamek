@@ -492,7 +492,7 @@ public class FiringDisplay
         ce().getEquipment(wn).setUsedThisRound(true);
         selectedWeapon = ce().getNextWeapon(wn);
         // check; if there are no ready weapons, you're done.
-        if(selectedWeapon == -1) {
+        if(selectedWeapon == -1 && Settings.autoEndFiring) {
             ready();
             return;
         }

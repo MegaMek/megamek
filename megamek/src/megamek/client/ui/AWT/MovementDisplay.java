@@ -74,9 +74,6 @@ public class MovementDisplay
     private boolean            mouseheld;
     private boolean            shiftheld;
 
-    // stuff for the current turn
-    private int                 turnInfMoved = 0;
-
     /**
      * A local copy of the current entity's loaded units.
      */
@@ -261,11 +258,6 @@ public class MovementDisplay
      */
     public void selectEntity(int en) {
         boolean isInfantry;
-        boolean infMoveLast =
-            client.game.getOptions().booleanOption("inf_move_last");
-        boolean infMoveMulti =
-            client.game.getOptions().booleanOption("inf_move_multi");
-
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
@@ -274,55 +266,6 @@ public class MovementDisplay
         // okay.
         this.cen = en;
         isInfantry = (ce() instanceof Infantry);
-
-        // If the current entity is Infantry, and infantry move last, then
-        // make sure that all other entities for the player have moved.
-        if ( isInfantry && infMoveLast && turnInfMoved == 0 ) {
-
-            // Walk through the list of entities for this player.
-            for ( int nextId = client.getNextEntityNum(en);
-                  nextId != en;
-                  nextId = client.getNextEntityNum(nextId) ) {
-
-                // If we find a non-Infantry entity, make the
-                // player move it instead, and stop looping.
-                if ( !(client.game.getEntity(nextId) instanceof Infantry) ) {
-                    this.cen = nextId;
-                    isInfantry = false;
-                    break;
-                }
-
-            } // Check the player's next entity.
-
-        } // End check-inf_move_last
-
-        // If the current entity is not infantry, and we're in a middle of an
-        // infantry move block, make sure that the player has no other infantry
-        else if ( !isInfantry && infMoveMulti &&
-                  (turnInfMoved % Game.INF_MOVE_MULTI) > 0 ) {
-
-            // Walk through the list of entities for this player.
-            for ( int nextId = client.getNextEntityNum(en);
-                  nextId != en;
-                  nextId = client.getNextEntityNum(nextId) ) {
-
-                // If we find an Infantry platoon, make the
-                // player move it instead, and stop looping.
-                if ( client.game.getEntity(nextId) instanceof Infantry ) {
-                    this.cen = nextId;
-                    isInfantry = true;
-                    break;
-                }
-
-            } // Check the player's next entity.
-
-            // If the current entity isn't infantry, all player's infantry
-            // have been moved; reset the counter so we never check again.
-            if ( !isInfantry ) {
-                turnInfMoved = 0;
-            }
-
-        } // End check-inf_move_multi
 
         md = new MovementData();
         cmd = new MovementData();
@@ -430,10 +373,6 @@ public class MovementDisplay
         disableButtons();
         client.bv.clearMovementData();
         client.moveEntity(cen, md);
-        // If we've moved an Infantry platoon, increment our turn counter.
-        if ( ce() instanceof Infantry ) {
-            turnInfMoved++;
-        }
     }
 
     /**
@@ -804,8 +743,6 @@ public class MovementDisplay
             client.cb.getComponent().removeKeyListener(this);
             client.mechD.removeMouseListener(this);
             client.frame.removeComponentListener(this);
-            // Reset the infantry move counter;
-            turnInfMoved = 0;
         }
     }
 

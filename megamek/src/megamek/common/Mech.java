@@ -72,6 +72,8 @@ public abstract class Mech
     private int nMASCLevel = 0;
     // Has masc been used?
     private boolean usedMASC = false;
+    private int sinksOn;
+    private boolean sinksChanged=false;
 
     /**
      * Construct a new, blank, mech.
@@ -717,6 +719,7 @@ public abstract class Mech
      */
     public int getHeatCapacity() {
         int capacity = 0;
+        boolean doubleSinks=false;
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
@@ -726,8 +729,13 @@ public abstract class Mech
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
             } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                doubleSinks=true;
                 capacity += 2;
             }
+        }
+        //test for disabled sinks
+        if(sinksChanged) {
+            capacity-=(getNumberOfSinks() - sinksOn)*(doubleSinks? 2: 1);
         }
         
         return capacity;
@@ -1933,4 +1941,30 @@ public abstract class Mech
         // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
     };
+    
+    //gives total number of sinks
+    public int getNumberOfSinks() {
+        int sinks=0;
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                sinks++;
+            } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                sinks++;
+            }
+        }
+        return sinks;
+    }
+    
+    public void setActiveSinks(int sinks) {
+        if(sinks!=getNumberOfSinks()) {
+            sinksChanged=true;
+        } else {
+            sinksChanged=false;
+        }
+        sinksOn=sinks;
+    }
 }

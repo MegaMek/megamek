@@ -706,7 +706,13 @@ public class MoveStep implements Serializable {
         boolean isUnjammingRAC = entity.isUnjammingRAC();
 
         if (prev != null) {
-            setFirstStep(parent.isInfantry() && getMpUsed() == 0);
+               // infantry get a first step if all they've done is spin on the spot:
+               //   getMpUsed() is the MPs used in the whole MovePath
+               //   getMp() is the MPs used in the last (illegal) step (this step)
+               //   if the difference between the whole path and this step is 0
+               //   then this must be their first step
+            setFirstStep(parent.isInfantry() && (getMpUsed()-getMp()) == 0);
+
             prevStepOnPavement = prev.isPavementStep();
             isTurning = prev.isTurning();
             isUnloaded = prev.isUnloaded();

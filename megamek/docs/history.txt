@@ -20,6 +20,7 @@ v0.29.54 (CVS)
 + Implemented picking-up of ejected MechWarriors, MegaMek will choose which units
    picks up an ejected MechWarrior, giving preference to those that are controlled
    by the same player
++ Bug 1013571: Selected Mech not highlighted in physical phase
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

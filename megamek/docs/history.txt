@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.68 (CVS)
++ Bug 1153269 "configure unit" not remembering burst fire mg setup.
 
 v0.29.67 (2005-02-27 9:40am)
 + Added an interface, so external programs can be notified when the client is closed

@@ -536,45 +536,9 @@ implements Runnable {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             
-            // mark all damaged equipment destroyed and empty
-            for (Enumeration i = entity.getEquipment(); i.hasMoreElements();) {
-                Mounted mounted = (Mounted)i.nextElement();
-                if (mounted.isHit() || mounted.isMissing()) {
-                    mounted.setShotsLeft(0);
-                    mounted.setDestroyed(true);
-                }
-            }
+            entity.applyDamage();
             
-            // destroy criticals that were hit last phase
-            for (int i = 0; i < entity.locations(); i++) {
-                for (int j = 0; j < entity.getNumberOfCriticals(i); j++) {
-                    final CriticalSlot cs = entity.getCritical(i, j);
-                    if (cs != null) {
-                        cs.setDestroyed(cs.isDamaged());
-                    }
-                }
-            }
-            
-            // destroy armor/internals if the section was removed
-            for (int i = 0; i < entity.locations(); i++) {
-                if (entity.getInternal(i) == Entity.ARMOR_DOOMED) {
-                    entity.setArmor(Entity.ARMOR_DESTROYED, i);
-                    entity.setArmor(Entity.ARMOR_DESTROYED, i, true);
-                    entity.setInternal(Entity.ARMOR_DESTROYED, i);
-                }
-            }
-            
-            // try to reload weapons
-            for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
-                Mounted mounted = (Mounted)i.nextElement();
-                WeaponType wtype = (WeaponType)mounted.getType();
-                
-                if (wtype.getAmmoType() != AmmoType.T_NA) {
-                    if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
-                        entity.loadWeapon(mounted);
-                    }
-                }
-            }
+            entity.reloadEmptyWeapons();
             
             // reset damage this phase
             entity.damageThisPhase = 0;
@@ -1485,6 +1449,7 @@ implements Runnable {
         
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
+            entity.applyDamage();
             entity.ready = true;
             turns.insertElementAt(new GameTurn(entity.getOwner().getId(), entity.getId()), turnIndex);
         } else {

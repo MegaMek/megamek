@@ -1511,6 +1511,58 @@ public abstract class Entity
             mounted.setUsedThisRound(false);
         }
     }
+    
+    /**
+     * Applies any damage that the entity has suffered.  When anything gets hit
+     * it is simply marked as "hit" but does not stop working until this
+     * is called.
+     */
+    public void applyDamage() {
+        // mark all damaged equipment destroyed and empty
+        for (Enumeration i = getEquipment(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            if (mounted.isHit() || mounted.isMissing()) {
+                mounted.setShotsLeft(0);
+                mounted.setDestroyed(true);
+            }
+        }
+
+        // destroy criticals that were hit last phase
+        for (int i = 0; i < locations(); i++) {
+            for (int j = 0; j < getNumberOfCriticals(i); j++) {
+                final CriticalSlot cs = getCritical(i, j);
+                if (cs != null) {
+                    cs.setDestroyed(cs.isDamaged());
+                }
+            }
+        }
+
+        // destroy armor/internals if the section was removed
+        for (int i = 0; i < locations(); i++) {
+            if (getInternal(i) == Entity.ARMOR_DOOMED) {
+                setArmor(Entity.ARMOR_DESTROYED, i);
+                setArmor(Entity.ARMOR_DESTROYED, i, true);
+                setInternal(Entity.ARMOR_DESTROYED, i);
+            }
+        }
+    }
+    
+    /**
+     * Attempts to reload any empty weapons with the first ammo found
+     */
+    public void reloadEmptyWeapons() {
+        // try to reload weapons
+        for (Enumeration i = getWeapons(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            WeaponType wtype = (WeaponType)mounted.getType();
+
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
+                if (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() <= 0) {
+                    loadWeapon(mounted);
+                }
+            }
+        }
+    }
   
     /**
      * Calculates the battle value of this entity

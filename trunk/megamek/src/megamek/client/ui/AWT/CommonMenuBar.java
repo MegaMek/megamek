@@ -249,44 +249,42 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         // Create the Mines sub-menu.
         submenu = new Menu( "Mines" );
-        menu.add( submenu );
+
         deployMinesConventional = new MenuItem( "Conventional" );
         deployMinesConventional.addActionListener( this );
-        deployMinesConventional.setActionCommand( "deployMinesConventional" );
+        deployMinesConventional.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_CONV );
         submenu.add( deployMinesConventional );
         deployMinesCommand = new MenuItem( "Command" );
         deployMinesCommand.addActionListener( this );
-        deployMinesCommand.setActionCommand( "deployMinesCommand" );
+        deployMinesCommand.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_COM );
         submenu.add( deployMinesCommand );
         deployMinesVibrabomb = new MenuItem( "Vibrabomb" );
         deployMinesVibrabomb.addActionListener( this );
-        deployMinesVibrabomb.setActionCommand( "deployMinesVibrabomb" );
+        deployMinesVibrabomb.setActionCommand( DeployMinefieldDisplay.DEPLOY_MINE_VIBRA );
         submenu.add( deployMinesVibrabomb );
 
         // Finish off the deploy menu.
         deployNext = new MenuItem( "Next Unit" );
         deployNext.addActionListener( this );
-        deployNext.setActionCommand( "deployNext" );
+        deployNext.setActionCommand( DeploymentDisplay.DEPLOY_NEXT );
         menu.add( deployNext );
         deployTurn = new MenuItem( "Turn" );
         deployTurn.addActionListener( this );
-        deployTurn.setActionCommand( "deployTurn" );
+        deployTurn.setActionCommand( DeploymentDisplay.DEPLOY_TURN );
         menu.add( deployTurn );
         deployLoad = new MenuItem( "Load" );
         deployLoad.addActionListener( this );
-        deployLoad.setActionCommand( "deployLoad" );
+        deployLoad.setActionCommand( DeploymentDisplay.DEPLOY_LOAD );
         menu.add( deployLoad );
         deployUnload = new MenuItem( "Unload" );
         deployUnload.addActionListener( this );
-        deployUnload.setActionCommand( "deployUnload" );
+        deployUnload.setActionCommand( DeploymentDisplay.DEPLOY_UNLOAD );
         menu.add( deployUnload );
 
-        /* begin killme
-        ** Remove this block when implementing the DeploymentDisplay.
-        */
-        menu.setEnabled( false );
-        /* end killme */
-
+        menu.addSeparator();
+        
+        menu.add( submenu );
+        
         // *** Create the move menu.
         menu = new Menu( "Move" );
         this.add( menu );
@@ -324,33 +322,33 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         fireFire = new MenuItem( "Fire" );
         fireFire.addActionListener( this );
-        fireFire.setActionCommand( "fireFire" );
+        fireFire.setActionCommand(FiringDisplay.FIRE_FIRE);
         menu.add( fireFire );
         fireSkip = new MenuItem( "Skip" );
         fireSkip.addActionListener( this );
-        fireSkip.setActionCommand( "fireSkip" );
+        fireSkip.setActionCommand(FiringDisplay.FIRE_SKIP);
         menu.add( fireSkip );
         fireNextTarg = new MenuItem( "Next Target" );
         fireNextTarg.addActionListener( this );
-        fireNextTarg.setActionCommand( "fireNextTarg" );
+        fireNextTarg.setActionCommand(FiringDisplay.FIRE_NEXT_TARG);
         menu.add( fireNextTarg );
         fireNext = new MenuItem( "Next Unit" );
         fireNext.addActionListener( this );
-        fireNext.setActionCommand( "fireNext" );
+        fireNext.setActionCommand(FiringDisplay.FIRE_NEXT);
         menu.add( fireNext );
         menu.addSeparator();
         fireTwist = new MenuItem( "Twist" );
         fireTwist.addActionListener( this );
-        fireTwist.setActionCommand( "fireTwist" );
+        fireTwist.setActionCommand(FiringDisplay.FIRE_TWIST);
         menu.add( fireTwist );
         fireFlipArms = new MenuItem( "Flip Arms" );
         fireFlipArms.addActionListener( this );
-        fireFlipArms.setActionCommand( "fireFlipArms" );
+        fireFlipArms.setActionCommand(FiringDisplay.FIRE_FLIP_ARMS);
         menu.add( fireFlipArms );
         menu.addSeparator();
         fireMode = new MenuItem( "Mode" );
         fireMode.addActionListener( this );
-        fireMode.setActionCommand( "fireMode" );
+        fireMode.setActionCommand(FiringDisplay.FIRE_MODE);
         menu.add( fireMode );
 
         // Create the Exclusive sub-menu.
@@ -358,16 +356,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         menu.add( submenu );
         fireFindClub = new MenuItem( "Find Club" );
         fireFindClub.addActionListener( this );
-        fireFindClub.setActionCommand( "fireFindClub" );
+        fireFindClub.setActionCommand(FiringDisplay.FIRE_FIND_CLUB);
         submenu.add( fireFindClub );
         fireSpot = new MenuItem( "Spot" );
         fireSpot.addActionListener( this );
-        fireSpot.setActionCommand( "fireSpot" );
+        fireSpot.setActionCommand(FiringDisplay.FIRE_SPOT);
         submenu.add( fireSpot );
 
         fireCancel = new MenuItem( "Cancel" );
         fireCancel.addActionListener( this );
-        fireCancel.setActionCommand( "fireCancel" );
+        fireCancel.setActionCommand(FiringDisplay.FIRE_CANCEL);
         menu.add( fireCancel );
 
         // *** Create the help menu.
@@ -530,11 +528,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         // As of 2003-09-04, we can't ever deploy command mines.
         // If the phase is "deploy minefields", we can specify the mine type.
-        if ( this.phase == Game.PHASE_DEPLOY_MINEFIELDS ) {
-            deployMinesConventional.setEnabled( true );
-            deployMinesCommand.setEnabled( false );
-            deployMinesVibrabomb.setEnabled( true );
-        } else {
+        if ( this.phase != Game.PHASE_DEPLOY_MINEFIELDS ) {
             deployMinesConventional.setEnabled( false );
             deployMinesCommand.setEnabled( false );
             deployMinesVibrabomb.setEnabled( false );
@@ -689,5 +683,17 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         this.hasFireChoice = available;
         manageMenu();
     }
+
+	public synchronized void updateDeployMinefields(int conv, 
+													int command, 
+													int vibra) {
+        deployMinesConventional.setLabel("Minefield(" + conv + ")");
+        deployMinesCommand.setLabel("Command(" + command + ")");
+        deployMinesVibrabomb.setLabel("Vibrabomb(" + vibra + ")");
+
+        deployMinesConventional.setEnabled(conv > 0);
+        deployMinesCommand.setEnabled(command > 0);
+        deployMinesVibrabomb.setEnabled(vibra > 0);
+	}
 
 }

@@ -26,6 +26,12 @@ public class DeploymentDisplay
     implements BoardListener,  ActionListener,
     KeyListener, GameListener
 {    
+	// Action command names
+	public static final String DEPLOY_TURN        = "deployTurn";
+	public static final String DEPLOY_NEXT        = "deployNext";
+	public static final String DEPLOY_LOAD        = "deployLoad";
+	public static final String DEPLOY_UNLOAD      = "deployUnload";
+
     // parent game
     public Client client;
     
@@ -60,6 +66,7 @@ public class DeploymentDisplay
 
         butTurn = new Button("Turn");
         butTurn.addActionListener(this);
+        butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
                         
         butSpace = new Button(".");
@@ -67,14 +74,17 @@ public class DeploymentDisplay
 
         butLoad = new Button("Load");
         butLoad.addActionListener(this);
+        butLoad.setActionCommand(DEPLOY_LOAD);
         butLoad.setEnabled(false);
 
         butUnload = new Button("Unload");
         butUnload.addActionListener(this);
+        butUnload.setActionCommand(DEPLOY_UNLOAD);
         butUnload.setEnabled(false);
 
         butNext = new Button("Next Unit");
         butNext.addActionListener(this);
+        butNext.setActionCommand(DEPLOY_NEXT);
         butNext.setEnabled(true);
 
         butDone = new Button("Deploy");
@@ -147,6 +157,9 @@ public class DeploymentDisplay
         client.game.board.cursor(null);
         client.mechD.displayEntity(ce());
         client.mechD.showPanel("movement");
+
+        // Update the menu bar.
+        client.getMenuBar().setEntity( ce() );
     }
 
     /**
@@ -313,7 +326,7 @@ public class DeploymentDisplay
         
         if (ev.getSource() == butDone) {
             deploy();
-        } else if (ev.getSource() == butNext) { 
+        } else if (ev.getActionCommand().equals(DEPLOY_NEXT)) { 
             ce().setPosition(null);
             client.bv.redrawEntity(ce());
             // Unload any loaded units.
@@ -327,10 +340,10 @@ public class DeploymentDisplay
             }
             
             selectEntity(client.getNextDeployableEntityNum(cen));
-        } else if (ev.getSource() == butTurn) {
+        } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {
             turnMode = true;
         } 
-        else if ( ev.getSource() == butLoad ) {
+        else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
 
             // What undeployed units can we load?
             Vector choices = new Vector();
@@ -388,7 +401,7 @@ public class DeploymentDisplay
 
         } // End load-unit
 
-        else if ( ev.getSource() == butUnload ) {
+        else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
 
             // Do we have anyone to unload?
             Vector choices = ce().getLoadedUnits();

@@ -6269,8 +6269,9 @@ implements Runnable, ConnectionHandler {
                 // weapons that can't normally start fires.  that's weird.
                 // Buildings can't be accidentally ignited.
                 if ( bldg == null) {
+                	boolean alreadyIgnited = game.board.getHex(target.getPosition()).contains(Terrain.FIRE);
                 	boolean ignited = tryIgniteHex(target.getPosition(), bInferno, 9);
-					if (ignited) return;
+					if (!alreadyIgnited && ignited) return;
                 }
 
                 int tn = 14 - nDamage;

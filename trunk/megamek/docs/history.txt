@@ -15,6 +15,7 @@ v0.29.67 (CVS)
 + New picture for Goblin Medium Tank (Kurita).
 + more Night Combat stuff, still not complete.
 + Bug 1152127: HMPRead 1.0: Chassis name
++ Data 1152289: New pics for Arcas, Bowman and Canis.
 
 v0.29.66 (2005-02-21 7:45am)
 + Data 1100263: HMPRead Mixed Tech RAC Codes

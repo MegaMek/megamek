@@ -74,11 +74,12 @@ public class BipedMech extends Mech {
         for ( int i = 0; i < locations(); i++ ) {
             if ( locationIsLeg(i) ) {
                 if ( !isLocationDestroyed(i) ) {
-                    if ( legHasHipCrit(i) )
+                    if ( legHasHipCrit(i) ) {
                         hipHits++;
-                    else {
-                        actuatorHits += countLegActuatorCrits(i);
+                        if (!game.getOptions().booleanOption("maxtech_leg_damage"))
+                            continue;
                     }
+                    actuatorHits += countLegActuatorCrits(i);
                 } else {
                     legsDestroyed++;
                 }
@@ -185,19 +186,20 @@ public class BipedMech extends Mech {
                 // check for damaged hip actuators
                 if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                } else {
-                    // upper leg actuators?
-                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
-                        roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
-                    }
-                    // lower leg actuators?
-                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
-                        roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
-                    }
-                    // foot actuators?
-                    if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
-                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
-                    }
+                    if (!game.getOptions().booleanOption("maxtech_leg_damage"))
+                        continue;
+                }
+                // upper leg actuators?
+                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+                    roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
+                }
+                // lower leg actuators?
+                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+                    roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
+                }
+                // foot actuators?
+                if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+                    roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
                 }
             }
         }

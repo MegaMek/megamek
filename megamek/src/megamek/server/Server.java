@@ -1978,8 +1978,8 @@ implements Runnable, ConnectionHandler {
                 // "leftovers" the number of "leftovers" we started with,
                 // the number of times we've added a turn for a "leftover",
                 // and the total number of times we're going to check.
-                numEven += Math.round (evenTracker[0] * (teamEvenTurns % min)
-                                       / min) - evenTracker[1];
+                numEven += Math.ceil (evenTracker[0] * (teamEvenTurns % min)
+                                       / min - 0.5) - evenTracker[1];
 
                 // Update the number of turns actually added for "leftovers".
                 evenTracker[1] += numEven;
@@ -12687,13 +12687,18 @@ implements Runnable, ConnectionHandler {
 
         // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-            ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
+            ArtilleryAttackAction aaa =
+                (ArtilleryAttackAction) i.nextElement();
 
+            // Does the attack land this turn?
             if (aaa.turnsTilHit <= 0) {
                 final WeaponResult wr = aaa.getWR();
                 //HACK, for correct hit table resolution.
                 wr.artyAttackerCoords=aaa.getCoords();
                 final Vector spottersBefore=aaa.getSpotterIds();
+                final Targetable target = wr.waa.getTarget(game);
+                final Coords targetPos = target.getPosition();
+                final int playerId = aaa.getPlayerId();
                 Entity bestSpotter=null;
 
                 // Are there any valid spotters?
@@ -12702,16 +12707,14 @@ implements Runnable, ConnectionHandler {
                     //fetch possible spotters now
                     Enumeration spottersAfter=
                         game.getSelectedEntities( new EntitySelector() {
-                                public int player =
-                                    wr.waa.getEntity(game).getOwnerId();
-                                public Targetable target =
-                                    wr.waa.getTarget(game);
+                                public int player = playerId;
+                                public Targetable targ = target;
                                 public boolean accept(Entity entity) {
                                     Integer id = new Integer( entity.getId() );
                                     if ( player == entity.getOwnerId() &&
                                          spottersBefore.contains(id) &&
                                          !( LosEffects.calculateLos
-                                            (game, entity.getId(), target)
+                                            (game, entity.getId(), targ)
                                             ).isBlocked() &&
                                          entity.isActive() ) {
                                         return true;
@@ -12720,37 +12723,61 @@ implements Runnable, ConnectionHandler {
                                 }
                             } );
 
-                    //Out of any valid spotters, pick the best.
+                    // Out of any valid spotters, pick the best.
                     while ( spottersAfter.hasMoreElements() ) {
-                        Entity e = (Entity) spottersAfter.nextElement();
-                        if ( bestSpotter == null || e.crew.getGunnery() <
+                        Entity ent = (Entity) spottersAfter.nextElement();
+                        if ( bestSpotter == null || ent.crew.getGunnery() <
                              bestSpotter.crew.getGunnery() ){
-                            bestSpotter=e;
+                            bestSpotter = ent;
                         }
                     }
 
                 } // End have-valid-spotters
 
                 //If at least one valid spotter, then get the benefits thereof.
-                if(bestSpotter!=null) {
-                    int mod=(bestSpotter.crew.getGunnery()-4)/2;
-
-
-                    wr.toHit.addModifier(mod,"Spotting modifier");
+                if (null != bestSpotter) {
+                    int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
+                    wr.toHit.addModifier(mod, "Spotting modifier");
                 }
 
-                // TODO : break into 80 column lines.
-                //HACK...but I gotta know HERE whether it hits, for purposes of adjusting fire.
-                if(wr.roll >= wr.toHit.getValue()) {
-                    wr.waa.getEntity(game).aTracker.setModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),ToHitData.AUTOMATIC_SUCCESS,wr.waa.getTarget(game).getPosition());
-                } else {
-                    wr.waa.getEntity(game).aTracker.setModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),wr.waa.getEntity(game).aTracker.getModifier(wr.waa.getEntity(game).getEquipment(wr.waa.getWeaponId()),wr.waa.getTarget(game).getPosition())-1,wr.waa.getTarget(game).getPosition());
-                }
+                // Is the attacker still alive?
+                Entity artyAttacker = wr.waa.getEntity( game );
+                if (null != artyAttacker) {
+
+                    // Get the arty weapon.
+                    Mounted weapon = artyAttacker.getEquipment
+                        ( wr.waa.getWeaponId() );
+
+                    // If the shot hit the target hex, then all subsequent
+                    // fire will hit the hex automatically.
+                    if(wr.roll >= wr.toHit.getValue()) {
+                        artyAttacker.aTracker.setModifier
+                            ( weapon,
+                              ToHitData.AUTOMATIC_SUCCESS,
+                              targetPos );
+                    }
+                    // If the shot missed, but was adjusted by a
+                    // spotter, future shots are more likely to hit.
+                    else if (null != bestSpotter) {
+                        artyAttacker.aTracker.setModifier
+                            ( weapon,
+                              artyAttacker.aTracker.getModifier
+                              ( weapon, targetPos ) - 1,
+                              targetPos );
+                    }
+
+                } // End artyAttacker-alive
+
+                // Schedule this attack to be resolved.
                 results.addElement(wr);
                 attacks.addElement( aaa );
-            }
+
+            } // End attack-hits-this-turn
+
+            // This attack is one round closer to hitting.
             aaa.turnsTilHit--;
-        }
+
+        } // Handle the next attack
 
         // loop through weapon results and resolve
         int lastEntityId = Entity.NONE;
@@ -12779,7 +12806,8 @@ implements Runnable, ConnectionHandler {
                 final WeaponAttackAction waa = (WeaponAttackAction) ea;
                 WeaponResult wr = preTreatWeaponAttack(waa);
                 boolean firingAtNewHex = false;
-                for (Enumeration j = game.getArtilleryAttacks(); j.hasMoreElements();) {
+                for (Enumeration j = game.getArtilleryAttacks();
+                     !firingAtNewHex && j.hasMoreElements();) {
                     ArtilleryAttackAction oaaa = (ArtilleryAttackAction) j.nextElement();
                     if ( oaaa.getWR().waa.getEntityId() == wr.waa.getEntityId() &&
                          !oaaa.getWR().waa.getTarget(game).getPosition().equals(wr.waa.getTarget(game).getPosition())) {
@@ -12787,7 +12815,8 @@ implements Runnable, ConnectionHandler {
                     }
                 }
                 if (firingAtNewHex) {
-                    clearArtillerySpotters(firingEntity.getId(),waa.getWeaponId());
+                    clearArtillerySpotters( firingEntity.getId(),
+                                            waa.getWeaponId() );
                 }
                 Enumeration spotters = game.getSelectedEntities(new EntitySelector() {
                     public int player = firingEntity.getOwnerId();

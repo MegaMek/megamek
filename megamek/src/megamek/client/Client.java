@@ -148,7 +148,8 @@ public class Client extends Panel
         
         cb = new ChatterBox(this);
         mechW = new Dialog(frame, "Mech Display", false);
-        mechW.setSize(210, 340);
+        mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
+        mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
         mechW.setResizable(true);
         mechD = new MechDisplay(this);
         mechW.add(mechD);
@@ -418,6 +419,30 @@ public class Client extends Panel
         return isMyTurn() && (curPanel instanceof FiringDisplay 
                               || curPanel instanceof PhysicalDisplay
                               || curPanel instanceof MovementDisplay);
+    }
+    
+    /** Toggles the entity display window
+     */
+    public void toggleDisplay() {
+        mechW.setVisible(!mechW.isVisible());
+    }
+    
+    /** Sets the visibility of the entity display window
+     */
+    public void setDisplayVisible(boolean visible) {
+        mechW.setVisible(visible);
+    }
+    
+    /** Toggles the minimap window
+     */
+    public void toggleMap() {
+        minimapW.setVisible(!minimapW.isVisible());
+    }
+    
+    /** Sets the visibility of the minimap window
+     */
+    public void setMapVisible(boolean visible) {
+        minimapW.setVisible(visible);
     }
     
     protected void fillPopup(Coords coords) {
@@ -1185,6 +1210,7 @@ public class Client extends Panel
         }
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+            setDisplayVisible(true);
             mechD.displayEntity(entity);
         }        
     }

@@ -33,6 +33,11 @@ public class Settings
     public static int       minimapSizeWidth        = 168;
     public static int       minimapSizeHeight       = 204;
     
+    public static int       displayPosX             = 0;
+    public static int       displayPosY             = 0;
+    public static int       displaySizeWidth        = 210;
+    public static int       displaySizeHeight       = 340;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
     
@@ -116,6 +121,18 @@ scan:
                         minimapSizeWidth = (int)st.nval;
                         st.nextToken();
                         minimapSizeHeight = (int)st.nval;
+                    }
+                    else if(key.equals("displaypos")) {
+                        st.nextToken();
+                        displayPosX = (int)st.nval;
+                        st.nextToken();
+                        displayPosY = (int)st.nval;
+                    }
+                    else if(key.equals("displaysize")) {
+                        st.nextToken();
+                        displaySizeWidth = (int)st.nval;
+                        st.nextToken();
+                        displaySizeHeight = (int)st.nval;
                     }
                     else if(key.equals("playername")) {
                         st.nextToken();
@@ -205,6 +222,8 @@ scan:
             cw.write("minimapenabled " + minimapEnabled + "\r\n");
             cw.write("minimappos " + minimapPosX + " " + minimapPosY + "\r\n");
             cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
+            cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
+            cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

@@ -4177,12 +4177,70 @@ implements Runnable, ConnectionHandler {
 
         // hmmm... somebody there... problems.
         if (fallElevation >= 2) {
-            // accidental death from above
-            // TODO : code me!!!
-            System.err.println( "MegaMek should perform an accidental DFA for "
-                                + entity.getShortName() +
-                                " to land on " + violation.getShortName()
-                                + " but it doesn't.  We're working on it." );
+            // accidental fall from above: havoc!
+            phaseReport.append(entity.getDisplayName() ).append( " falls "
+            ).append( fallElevation ).append( " levels into hex "
+            ).append( dest.getBoardNum() ).append( ", violating stacking with "
+            ).append( violation.getDisplayName() ).append( ".\n");
+
+            // determine to-hit number
+            ToHitData toHit = new ToHitData(7, "base");
+            toHit.append(Compute.getTargetMovementModifier(game, violation.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, violation));
+
+            // roll dice
+            final int diceRoll = Compute.d6(2);
+            phaseReport.append("Collision occurs on a " ).append( toHit.getValue()
+            ).append( " or greater.  Rolls " ).append( diceRoll);
+            if (diceRoll >= toHit.getValue()) {
+                phaseReport.append(", hits!\n");
+                // deal damage to target
+                int damage = Compute.getAffaDamageFor(entity);
+                phaseReport.append(violation.getDisplayName() ).append( " takes "
+                ).append( damage ).append( " from the collision.");
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = violation.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                    phaseReport.append(damageEntity(violation, hit, cluster));
+                    damage -= cluster;
+                }
+                phaseReport.append("\n");
+
+                // attacker falls as normal, on his back
+                // only given a modifier, so flesh out into a full piloting roll
+                PilotingRollData pilotRoll = entity.getBasePilotingRoll();
+                pilotRoll.append(roll);
+                doEntityFall(entity, dest, fallElevation, 3, pilotRoll);
+                doEntityDisplacementMinefieldCheck(entity, src, dest);
+
+                // defender pushed away, or destroyed
+                Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
+                if (targetDest != null) {
+                    doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
+                    // Update the violating entity's postion on the client.
+                    entityUpdate( violation.getId() );
+                } else {
+                    // ack!  automatic death!  Tanks
+                    // suffer an ammo/power plant hit.
+                    // TODO : a Mech suffers a Head Blown Off crit.
+                    phaseReport.append(destroyEntity(violation, "impossible displacement", (violation instanceof Mech), (violation instanceof Mech)));
+                }
+            } else {
+                phaseReport.append(", misses.\n");
+                //TODO: this is not quite how the rules go
+                Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+                if (targetDest != null) {
+                    doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"));
+                    // Update the entity's postion on the client.
+                    entityUpdate( entity.getId() );
+                } else {
+                    // ack!  automatic death!  Tanks
+                    // suffer an ammo/power plant hit.
+                    // TODO : a Mech suffers a Head Blown Off crit.
+                    phaseReport.append(destroyEntity(entity, "impossible displacement", (entity instanceof Mech), (entity instanceof Mech)));
+                }
+            }   
+            return;
         } else {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);
@@ -4209,6 +4267,7 @@ implements Runnable, ConnectionHandler {
             System.err.println( "Can not displace " + entity.getShortName() +
                                 " from " + src +
                                 " to " + dest + "." );
+            return;
         }
         int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
         Entity violation =Compute.stackingViolation(game, entity.getId(), dest);
@@ -4288,7 +4347,7 @@ implements Runnable, ConnectionHandler {
             if (diceRoll >= toHit.getValue()) {
                 phaseReport.append(", hits!\n");
                 // deal damage to target
-                int damage = (int)Math.ceil(entity.getWeight() / 10.0);
+                int damage = Compute.getAffaDamageFor(entity);
                 phaseReport.append(violation.getDisplayName() ).append( " takes "
                 ).append( damage ).append( " from the collision.");
                 while (damage > 0) {

@@ -105,7 +105,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(ruleBreakers, new GameOption("protos_safe_from_infernos", "Protomechs may not be the target of an Inferno missile attack.", "If checked, Protomechs cannot be the target of an Inferno SRM attack.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("lobby_ammo_dump", "Allow Ammo Dumping in the Lobby", "If checked, Players may dump their Mech's ammo before the game starts.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("set_arty_player_homeedge", "Automatically set artillery home edge", "If checked, all of the players' artillery units will have their homeedge set to the deployment edge of the player,\nNW and NE are North, SW and SE are South.\n\nUnchecked by default.", false));
-        
+        addOption(ruleBreakers, new GameOption("no_premove_vibra", "Do not damage 'Mech by Vibrabomb if it has not yet moved.", "If checked, vibrabombs that explode will not damage 'Mechs that have not yet finished their move.\n\nUnchecked by default.", false));
     }
 
     public void loadOptions(Client client, String password) {

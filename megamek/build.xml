@@ -10,9 +10,8 @@
   <property name="timestampfile" value="timestamp"/>
   <property name="jarfile" value="MegaMek.jar"/>
   <property name="jarmanifest" value="manifest.txt"/> 
-  <property name="exefile" value="MegaMek.exe"/>
   <property name="cvsdir" value="cvsdev"/>
-  <property name="libraries" value="TinyXML.jar"/>
+  <property name="libraries" value="collections.jar;TinyXML.jar"/>
 
   <target description="Initialize system before build" name="init">
      <!-- Create the time stamp -->
@@ -30,13 +29,6 @@
       <jar basedir="${build}" jarfile="${jarfile}" manifest="${jarmanifest}"/>
   </target>
 
-  <target depends="compile" description="Creates application exe file" name="exe">
-        <!-- jexegen /out:MegaMek.exe /base:classes /main:megamek.MegaMek /r  *.class -->
-     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe">
-        <arg line="/out:${exefile} /base:${build} /main:megamek.MegaMek /r /w *.class"/>
-     </exec>
-  </target>
-  
   <target depends="init" description="Test-compiles classes under MS JDK" name="test-msjdk">
      <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jvc.exe">
         <arg line="/d classes megamek/*.java"/>
@@ -63,10 +55,9 @@
     <delete dir="${doc}"/>
     <delete file="${timestampfile}"/>
     <delete file="${jarfile}"/>
-    <delete file="${exefile}"/>
   </target>
 
-  <target depends="compile, jar, exe" name="all"/>
+  <target depends="compile, jar" name="all"/>
 
   <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
   <target name="cvsdev-init">
@@ -91,6 +82,7 @@
   </target>
 
   <target depends="cvsdev-init" name="cvsdev-package">
+    <delete dir="${build}"/>
     <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
   </target>
   

@@ -2773,7 +2773,7 @@ implements Runnable {
         
         // can this player/entity act right now?
         if (!game.getTurn().isValid(connId, entity)
-        || game.board.isLegalDeployment(coords, entity.getOwner())) {
+        || !game.board.isLegalDeployment(coords, entity.getOwner())) {
             System.err.println("error: server got invalid deployment packet");
             return;
         }

@@ -27,6 +27,7 @@ import java.awt.MediaTracker;
 import java.io.*;
 
 import megamek.common.*;
+import megamek.client.util.StringUtil;
 
 /**
  * Matches each hex with an appropriate image.
@@ -314,10 +315,15 @@ public class HexTileset {
         private Hex hex;
         private String imageFile;
         private Image image;
+        private java.util.Vector images;
+        private java.util.Vector filenames;
+		private java.util.Random r;
         
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;
             this.imageFile = imageFile;
+            r = new java.util.Random();
+            filenames = StringUtil.splitString(imageFile, ";");
         }
         
         public Hex getHex() {
@@ -333,14 +339,29 @@ public class HexTileset {
        }
         
         public Image getImage(Component comp) {
-            if (image == null) {
+            if (images == null) {
                 loadImage(comp);
             }
-            return image;
-        }
+			if (images.size() > 1) {
+				int rand = r.nextInt(images.size());
+				return (Image) images.elementAt(rand);
+			} else {
+				return (Image) images.firstElement();
+			}
+/*			if (image == null) {
+				return image    loadImage(comp);
+			}
+			return image;
+*/
+		}
         
         public void loadImage(Component comp) {
-            image = comp.getToolkit().getImage("data/hexes/" + imageFile);
+        	images = new java.util.Vector();
+        	for (int i = 0; i < filenames.size(); i++) {
+        		String filename = (String) filenames.elementAt(i);
+        		images.add(comp.getToolkit().getImage("data/hexes/" + filename));
+        	}
+//			image = comp.getToolkit().getImage("data/hexes/" + imageFile);
         }
     }
 }

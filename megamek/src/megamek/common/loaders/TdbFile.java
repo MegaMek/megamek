@@ -226,7 +226,7 @@ public class TdbFile implements MechLoader {
         } else if (node.getName().equals(JUMP)) {
             jumpMP = ((ParsedXML)children.nextElement()).getContent();
         } else if (node.getName().equals(HEAT_SINKS)) {
-            if (((ParsedXML)children.nextElement()).getContent().equals(DOUBLE)) {
+            if (((ParsedXML)children.nextElement()).getContent().indexOf(DOUBLE) != -1) {
                 dblSinks = true;
             } else {
                 dblSinks = false;

@@ -318,7 +318,7 @@ public class MoveOption extends MovePath {
                 } else {
                     addStep(MovePath.STEP_CHARGE, en);
                 }
-                compileLastStep();
+                compile(game, entity);
                 return true;
             }
         }

@@ -1042,8 +1042,6 @@ public class BoardView1
 
         clearMovementData();
 
-        md.compileLastStep();
-
         for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
             // check old movement path for reusable step sprites

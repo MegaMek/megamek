@@ -1226,10 +1226,13 @@ public class BoardView1
         }
         
         public String[] getTooltip() {
-            String[] tipStrings = new String[2];
-            tipStrings[0] = entity.getName() + "  (" + entity.getOwner().getName() + ")"
-                + "; Heat " + entity.heat;
-            tipStrings[1] = "Armor " + entity.getTotalArmor() 
+            String[] tipStrings = new String[3];
+            tipStrings[0] = entity.getName() + " (" + entity.getOwner().getName() + "); "
+            + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
+            tipStrings[1] = "Move " + entity.getMovementAbbr(entity.moved) + ":" + entity.delta_distance 
+            + " (+" + Compute.getTargetMovementModifier(game, entity.getId()).getValue() + ");" 
+            + " Heat " + entity.heat; 
+            tipStrings[2] = "Armor " + entity.getTotalArmor() 
                             + "; Internal " + entity.getTotalInternal();
             return tipStrings;
         }

@@ -287,6 +287,25 @@ public class Mech
         }
     }
     
+    /**
+     * Returns the name of the type of movement used.
+     * This is mech-specific.
+     */
+    public String getMovementAbbr(int mtype) {
+        switch(mtype) {
+        case MOVE_NONE :
+            return "N";
+        case MOVE_WALK :
+            return "W";
+        case MOVE_RUN :
+            return "R";
+        case MOVE_JUMP :
+            return "J";
+        default :
+            return "?";
+        }
+    }
+    
     public boolean canChangeSecondaryFacing() {
         return !isProne();
     }

@@ -30,7 +30,7 @@ import java.util.Properties;
  */
 public class BoardView1
     extends Canvas
-    implements BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable
+    implements BoardListener, MouseListener, MouseMotionListener, KeyListener, Runnable, AdjustmentListener
 {
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
@@ -76,6 +76,8 @@ public class BoardView1
     private Dimension boardSize;
 
     // scrolly stuff:
+    private Scrollbar vScrollbar = null;
+    private Scrollbar hScrollbar = null;
     private boolean isScrolling = false;
     private Thread scroller = new Thread(this);
     private Point scroll = new Point();
@@ -280,6 +282,38 @@ public class BoardView1
         displayables.removeElement(disp);
     }
 
+    /**
+     * Specify the scrollbars that control this view's positioning.
+     *
+     * @param   vertical - the vertical <code>Scrollbar</code>
+     * @param   horizontal - the horizontal <code>Scrollbar</code>
+     */
+    public void setScrollbars (Scrollbar vertical, Scrollbar horizontal) {
+        this.vScrollbar = vertical;
+        this.hScrollbar = horizontal;
+
+        // When the scroll bars are adjusted, update our offset.
+        this.vScrollbar.addAdjustmentListener (this);
+        this.hScrollbar.addAdjustmentListener (this);
+    }
+
+    /**
+     * Update ourself when a scroll bar is adjusted.
+     *
+     * @param   event - the <code>AdjustmentEvent</code> that caused this call.
+     */
+    public void adjustmentValueChanged (AdjustmentEvent event) {
+        Point oldPt = this.scroll;
+        Point newPt = new Point (oldPt.x, oldPt.y);
+        if (event.getAdjustable().getOrientation() == Adjustable.VERTICAL) {
+            newPt.y = event.getValue();
+        } else {
+            newPt.x = event.getValue();
+        }
+        this.scroll.setLocation (newPt);
+        this.repaint();
+    }
+
     public void paint(Graphics g) {
         update(g);
     }
@@ -288,8 +322,23 @@ public class BoardView1
      * Draw the screen!
      */
     public void update(Graphics g) {
+        // Limit our size to the viewport of the scroll pane.
         final Dimension size = getSize();
         //         final long startTime = System.currentTimeMillis(); // commentme
+
+        // Make sure our scrollbars have the right sizes.
+        // N.B. A buggy Sun implementation makes me to do this here instead 
+        // of updateBoardSize() (which is where *I* think it belongs).
+        if (null != this.vScrollbar) {
+            this.vScrollbar.setVisibleAmount (size.height);
+            this.vScrollbar.setBlockIncrement (size.height);
+            this.vScrollbar.setMaximum (boardSize.height);
+        }
+        if (null != this.hScrollbar) {
+            this.hScrollbar.setVisibleAmount (size.width);
+            this.hScrollbar.setBlockIncrement (size.width);
+            this.hScrollbar.setMaximum (boardSize.width);
+        }
 
         // update view, offset
         view.setLocation(scroll);
@@ -727,6 +776,9 @@ public class BoardView1
             /* ----- */
 
             boardGraph = boardImage.getGraphics();
+
+            // Handle resizes correctly.
+            checkScrollBounds();
             boardRect = new Rectangle(view);
             System.out.println("boardview1: made a new board buffer " + boardRect);
             drawHexes(view);
@@ -1703,6 +1755,14 @@ public class BoardView1
         } else if (scroll.y > (boardSize.height - view.height)) {
             scroll.y = (boardSize.height - view.height);
         }
+
+        // Update our scroll bars.
+        if (null != this.vScrollbar) {
+            this.vScrollbar.setValue (scroll.y);
+        }
+        if (null != this.hScrollbar) {
+            this.hScrollbar.setValue (scroll.x);
+        }
     }
 
     protected void stopScrolling() {
@@ -1975,15 +2035,17 @@ public class BoardView1
     //
     public void mousePressed(MouseEvent me) {
         scrolled = false; // not scrolled yet
-        if ( null == me.getPoint() ) {
+
+        Point point = me.getPoint();
+        if ( null == point ) {
             return;
         }
-        oldMousePosition = me.getPoint();
+        oldMousePosition = point;
 
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
-            if (disp.isHit(me.getPoint(), backSize)) {
+            if (disp.isHit(point, backSize)) {
                 return;
             }
         }
@@ -2024,12 +2086,13 @@ public class BoardView1
             hideTooltip();
         }
 
-        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
+        game.board.mouseAction(getCoordsAt(point), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
 
     public void mouseReleased(MouseEvent me) {
         isTipPossible = true;
         oldMousePosition = null;
+
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
             if (disp.isReleased()) {
@@ -2064,14 +2127,20 @@ public class BoardView1
     //
     public void mouseDragged(MouseEvent me) {
         isTipPossible = false;
+
+        Point point = me.getPoint();
+        if ( null == point ) {
+            return;
+        }
+
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
-            if (disp.isDragged(me.getPoint(), backSize)) {
+            if (disp.isDragged(point, backSize)) {
                 repaint();
                 return;
             }
         }
-        mousePos = me.getPoint();
+        mousePos = point;
 
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
@@ -2107,10 +2176,15 @@ public class BoardView1
             isScrolling = false; //activate scrolling
         };
 
-        game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers());
+        game.board.mouseAction(getCoordsAt(point), Board.BOARD_HEX_DRAG, me.getModifiers());
     }
 
     public void mouseMoved(MouseEvent me) {
+        Point point = me.getPoint();
+        if ( null == point ) {
+            return;
+        }
+
         for (int i = 0; i < displayables.size(); i++) {
             Displayable disp = (Displayable) displayables.elementAt(i);
             if (disp.isBeingDragged()) {
@@ -2118,10 +2192,10 @@ public class BoardView1
                 return;
             }
             if (backSize != null) {
-                disp.isMouseOver(me.getPoint(), backSize);
+                disp.isMouseOver(point, backSize);
             }
         }
-        mousePos = me.getPoint();
+        mousePos = point;
         if (isTipShowing()) {
             hideTooltip();
         }

@@ -137,8 +137,8 @@ public class Board
         selected = null;
         
         initializeAll();
-		// good time to ensure hex cache
-		IdealHex.ensureCacheSize(width + 1, height + 1);
+        // good time to ensure hex cache
+        IdealHex.ensureCacheSize(width + 1, height + 1);
         processBoardEvent(new BoardEvent(this, new Coords(), null, BoardEvent.BOARD_NEW_BOARD, 0));
     }
     

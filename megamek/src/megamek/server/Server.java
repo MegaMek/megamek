@@ -8902,7 +8902,7 @@ implements Runnable, ConnectionHandler {
         StringBuffer desc = new StringBuffer();
         Pilot crew = en.getCrew();
 
-        if (!crew.isDead() && !crew.isEjected()) {
+        if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits( crew.getHits() + damage );
             desc.append( "        Pilot of " )
                 .append( en.getDisplayName() )

@@ -1488,16 +1488,16 @@ public class BoardView1
             // set color
             switch (step.getMovementType()) {
             case Entity.MOVE_RUN :
-                col = Color.yellow;
+                col = Settings.moveRunColor;
                 break;
             case Entity.MOVE_JUMP :
-                col = Color.red;
+                col = Settings.moveJumpColor;
                 break;
             case Entity.MOVE_ILLEGAL :
-                col = Color.darkGray;
+                col = Settings.moveIllegalColor;
                 break;
             default :
-                col = Color.cyan;
+                col = Settings.moveDefaultColor;
                 break;
             }
 

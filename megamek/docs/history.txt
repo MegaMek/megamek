@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.54 (CVS)
+v0.29.54 (2004-10-30 3:15pm)
 + Data 1047918: Image for Sunder Omnimech
 + Bug 1036351: scrolling bug fixed for real
 + Bug 1048960: attack sprites were not being reused

@@ -12859,7 +12859,7 @@ implements Runnable, ConnectionHandler {
                     rollTarget.addModifier(targetHex.levelOf(Terrain.BLDG_ELEV), "landing in a building");
                 } else rollTarget.addModifier(-2, "landing in clear terrain");
             } else {
-                    rollTarget.addModifier(-2, "landing off the boad");
+                    rollTarget.addModifier(-2, "landing off the board");
             }
             if (autoEject) {
                 phaseReport.append("\n").append(entity.getDisplayName())

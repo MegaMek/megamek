@@ -218,6 +218,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISSRM2InfernoAmmo());
         EquipmentType.addType(createISSRM4InfernoAmmo());
         EquipmentType.addType(createISSRM6InfernoAmmo());
+        EquipmentType.addType(createISSRM2FragAmmo());
+        EquipmentType.addType(createISSRM4FragAmmo());
+        EquipmentType.addType(createISSRM6FragAmmo());
         EquipmentType.addType(createISLB2XAmmo());
         EquipmentType.addType(createISLB5XAmmo());
         EquipmentType.addType(createISLB10XAmmo());
@@ -257,6 +260,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISThunderAugmentedLRM10Ammo());
         EquipmentType.addType(createISThunderAugmentedLRM15Ammo());
         EquipmentType.addType(createISThunderAugmentedLRM20Ammo());
+        EquipmentType.addType(createISFragLRM5Ammo());
+        EquipmentType.addType(createISFragLRM10Ammo());
+        EquipmentType.addType(createISFragLRM15Ammo());
+        EquipmentType.addType(createISFragLRM20Ammo());
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -274,6 +281,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM2InfernoAmmo());
         EquipmentType.addType(createCLSRM4InfernoAmmo());
         EquipmentType.addType(createCLSRM6InfernoAmmo());
+        EquipmentType.addType(createCLSRM2FragAmmo());
+        EquipmentType.addType(createCLSRM4FragAmmo());
+        EquipmentType.addType(createCLSRM6FragAmmo());
         EquipmentType.addType(createCLStreakSRM2Ammo());
         EquipmentType.addType(createCLStreakSRM4Ammo());
         EquipmentType.addType(createCLStreakSRM6Ammo());
@@ -314,6 +324,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLThunderAugmentedLRM10Ammo());
         EquipmentType.addType(createCLThunderAugmentedLRM15Ammo());
         EquipmentType.addType(createCLThunderAugmentedLRM20Ammo());
+        EquipmentType.addType(createCLFragLRM5Ammo());
+        EquipmentType.addType(createCLFragLRM10Ammo());
+        EquipmentType.addType(createCLFragLRM15Ammo());
+        EquipmentType.addType(createCLFragLRM20Ammo());
 
         // Start of BattleArmor ammo
         EquipmentType.addType( createBASRM2Ammo() );
@@ -514,6 +528,24 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
+
+    public static AmmoType createISFragLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 5 Fragmentation Ammo";
+        ammo.internalName = "IS Fragmentation Ammo LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 24;
+        ammo.bv = 6;
+        
+        return ammo;
+    }
     
     public static AmmoType createISThunderLRM5Ammo() {
         AmmoType ammo = new AmmoType();
@@ -564,6 +596,24 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 12;
+        ammo.bv = 11;
+        
+        return ammo;
+    }
+
+    public static AmmoType createISFragLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 10 Fragmentation Ammo";
+        ammo.internalName = "IS Fragmentation Ammo LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 11;
         
@@ -624,6 +674,24 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
+
+    public static AmmoType createISFragLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 15 Fragmentation Ammo";
+        ammo.internalName = "IS Fragmentation Ammo LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 8;
+        ammo.bv = 17;
+        
+        return ammo;
+    }
     
     public static AmmoType createISThunderLRM15Ammo() {
         AmmoType ammo = new AmmoType();
@@ -675,6 +743,24 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 6;
+        ammo.bv = 23;
+        
+        return ammo;
+    }
+
+    public static AmmoType createISFragLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 20 Fragmentation Ammo";
+        ammo.internalName = "IS Fragmentation Ammo LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 12;
         ammo.bv = 23;
         
         return ammo;
@@ -820,6 +906,63 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.munitionType = M_INFERNO;
+        ammo.shots = 15;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRM2FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 2 Fragmentation Ammo";
+        ammo.internalName = "IS Ammo SRM-2 Fragmentation";
+        ammo.mepName = "IS Ammo SRM-2 Fragmentation";
+        ammo.mtfName = "ISSRM2 Fragmentation Ammo";
+        ammo.tdbName = "IS SRM 2 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
+        ammo.shots = 50;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRM4FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Fragmentation Ammo";
+        ammo.internalName = "IS Ammo SRM-4 Fragmentation";
+        ammo.mepName = "IS Ammo SRM-4 Fragmentation";
+        ammo.mtfName = "ISSRM4 Fragmentation Ammo";
+        ammo.tdbName = "IS SRM 4 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
+        ammo.shots = 25;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createISSRM6FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 6 Fragmentation Ammo";
+        ammo.internalName = "IS Ammo SRM-6 Fragmentation";
+        ammo.mepName = "IS Ammo SRM-6 Fragmentation";
+        ammo.mtfName = "ISSRM6 Fragmentation Ammo";
+        ammo.tdbName = "IS SRM 6 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_IS_LEVEL_2;
@@ -1797,7 +1940,26 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
+    public static AmmoType createCLFragLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 5 Fragmentation Ammo";
+        ammo.internalName = "CL Fragmentation Ammo LRM-5";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 24;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createCLThunderLRM5Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1847,6 +2009,25 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
+        ammo.shots = 12;
+        ammo.bv = 14;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
+    public static AmmoType createCLFragLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 10 Fragmentation Ammo";
+        ammo.internalName = "CL Fragmentation Ammo LRM-10";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;
@@ -1909,7 +2090,26 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
+    public static AmmoType createCLFragLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 15 Fragmentation Ammo";
+        ammo.internalName = "CL Fragmentation Ammo LRM-15";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 8;
+        ammo.bv = 21;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createCLThunderLRM15Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -1965,7 +2165,26 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
+    public static AmmoType createCLFragLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "LRM 20 Fragmentation Ammo";
+        ammo.internalName = "CL Fragmentation Ammo LRM-20";
+        ammo.mepName = "N/A";
+        ammo.mtfName = "N/A";
+        ammo.tdbName = "N/A";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM;
+        ammo.munitionType = AmmoType.M_FRAGMENTATION;
+        ammo.shots = 6;
+        ammo.bv = 27;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+
     public static AmmoType createCLThunderLRM20Ammo() {
         AmmoType ammo = new AmmoType();
         
@@ -2108,6 +2327,63 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.munitionType = M_INFERNO;
+        ammo.shots = 15;
+        ammo.bv = 7;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM2FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 2 Fragmentation Ammo";
+        ammo.internalName = "Clan Ammo SRM-2 Fragmentation";
+        ammo.mepName = "Clan Ammo SRM-2 Fragmentation";
+        ammo.mtfName = "CLSRM2 Fragmentation Ammo";
+        ammo.tdbName = "Clan SRM 2 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
+        ammo.shots = 50;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM4FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 4 Fragmentation Ammo";
+        ammo.internalName = "Clan Ammo SRM-4 Fragmentation";
+        ammo.mepName = "Clan Ammo SRM-4 Fragmentation";
+        ammo.mtfName = "CLSRM4 Fragmentation Ammo";
+        ammo.tdbName = "Clan SRM 4 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
+        ammo.shots = 25;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSRM6FragAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "SRM 6 Fragmentation Ammo";
+        ammo.internalName = "Clan Ammo SRM-6 Fragmentation";
+        ammo.mepName = "Clan Ammo SRM-6 Fragmentation";
+        ammo.mtfName = "CLSRM6 Fragmentation Ammo";
+        ammo.tdbName = "Clan SRM 6 Ammo - Fragmentation";
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM;
+        ammo.munitionType = M_FRAGMENTATION;
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.techType = TechConstants.T_CLAN_LEVEL_2;

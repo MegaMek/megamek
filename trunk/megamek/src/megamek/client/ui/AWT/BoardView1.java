@@ -885,8 +885,10 @@ public class BoardView1
         moveCursor(highlightSprite, b.getCoords());
     }
     public void boardChangedHex(BoardEvent b) {
-        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
-        redrawAround(b.getCoords());
+        if (boardGraph != null) {
+            boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+            redrawAround(b.getCoords());
+        }
     }
     public void boardNewBoard(BoardEvent b) {
         boardSize = new Dimension(game.board.width * 63 + 21, 

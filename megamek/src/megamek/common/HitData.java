@@ -72,8 +72,12 @@ public class HitData
         glancing = -2;
     }
     
+    public int glancingMod () {
+        return glancing;
+    }
+
     public int getSpecCritMod() {
-        return specCritMod+glancing;
+        return specCritMod;
     }
     
     public int getLocation() {

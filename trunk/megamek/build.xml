@@ -81,7 +81,7 @@
 
   <target depends="cvsdev-init" name="cvsdev-build">
     <!-- compile -->
-    <javac classpath="${cvsdir}/megamek" destdir="${cvsdir}/megamek/classes" srcdir="${cvsdir}/megamek" target="1.1"/>
+    <javac classpath="${cvsdir}/megamek;${libraries}" destdir="${cvsdir}/megamek/classes" srcdir="${cvsdir}/megamek" target="1.1"/>
     <!-- build -->
     <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe">
       <arg line="/out:${cvsdir}/megamek/MegaMek.exe /base:${cvsdir}/megamek/classes /main:megamek.MegaMek /r *.class"/>

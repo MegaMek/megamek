@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -30,8 +30,8 @@ public class ACAPHandler extends AmmoWeaponHandler {
 	 * @param w
 	 * @param g
 	 */
-	public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g) {
-		super(t, w, g);
+	public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g,Server s) {
+		super(t, w, g,s);
 	}
 	
 	/* (non-Javadoc)

@@ -21,7 +21,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.*;
-
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -32,8 +32,8 @@ public class FlamerHeatHandler extends WeaponHandler {
 	 * @param waa
 	 * @param g
 	 */
-	public FlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa, Game g) {
-		super(toHit, waa, g);
+	public FlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa, Game g,Server s) {
+		super(toHit, waa, g,s);
 	}
 	protected void handleEntityDamage(Entity entityTarget, StringBuffer phaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
 		if(entityTarget instanceof Mech && game.getOptions().booleanOption("flamer_heat")) {

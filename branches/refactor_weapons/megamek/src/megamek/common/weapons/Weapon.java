@@ -36,6 +36,7 @@ import megamek.common.WeaponType;
 import megamek.common.TargetRoll;
 
 import megamek.common.actions.*;
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  * A class representing a weapon.
@@ -44,18 +45,17 @@ public abstract class Weapon extends WeaponType {
 	public Weapon() {
 		
 	}
-	public AttackHandler fire(WeaponAttackAction waa, Game game) {
-		System.out.println("called weapon#fire");
+	public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
 		ToHitData toHit=this.toHit(waa,game);
 		Entity ae = game.getEntity(waa.getEntityId());
 		Mounted weapon=ae.getEquipment(waa.getWeaponId());
        
-        return toHit.getValue()==TargetRoll.IMPOSSIBLE ? null : getCorrectHandler(toHit, waa, game);
+        return toHit.getValue()==TargetRoll.IMPOSSIBLE ? null : getCorrectHandler(toHit, waa, game,server);
                
 		
 	}
-	protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game) {
-		return new WeaponHandler(toHit, waa, game);
+	protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
+		return new WeaponHandler(toHit, waa, game,server);
 	}
 	public ToHitData toHit(WeaponAttackAction waa, Game game) {
 		Targetable target = waa.getTarget(game);

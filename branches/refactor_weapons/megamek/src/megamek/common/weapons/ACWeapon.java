@@ -19,6 +19,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.client.FiringDisplay;
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  * N.B.  This class is overriden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC. 
@@ -74,15 +75,15 @@ public class ACWeapon extends AmmoWeapon {
 	 * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.Game)
 	 */
 	protected AttackHandler getCorrectHandler(ToHitData toHit,
-			WeaponAttackAction waa, Game game) {
+			WeaponAttackAction waa, Game game,Server server) {
 		AmmoType atype=(AmmoType)game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
 		switch(atype.getMunitionType()) {
 			case AmmoType.M_ARMOR_PIERCING:
-				return new ACAPHandler(toHit,waa,game);
+				return new ACAPHandler(toHit,waa,game,server);
 			case AmmoType.M_FLECHETTE:
-				return new ACFlechetteHandler(toHit,waa,game);
+				return new ACFlechetteHandler(toHit,waa,game,server);
 			default:
-				return super.getCorrectHandler(toHit, waa, game);
+				return super.getCorrectHandler(toHit, waa, game,server);
 		}
 		
 	}

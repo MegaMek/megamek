@@ -36,10 +36,6 @@ public class WeaponHandler implements AttackHandler {
 		}
 		return false;
 	}
-	public void setServer(Server server) {
-		this.server=server;
-	}
-
 	protected void doChecks() {
 		
 	}
@@ -213,9 +209,9 @@ public class WeaponHandler implements AttackHandler {
 	                
 	                hits -= nCluster;
 	            }
+		        phaseReport.append("\n");
 	        } // Handle the next cluster.
 
-	        phaseReport.append("\n");
 		return false;
 	}
 	protected int calcDamagePerHit() {
@@ -322,16 +318,15 @@ public class WeaponHandler implements AttackHandler {
 		phaseReport.append("misses.\n");
 	}
 	//Among other things, basically a refactored Server#preTreatWeaponAttack
-	public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
+	public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
 		toHit=t;
 		waa=w;
 		game=g;
 		ae=game.getEntity(waa.getEntityId());
 		weapon = ae.getEquipment(waa.getWeaponId());
 		wtype = (WeaponType)weapon.getType();
-		target = game.getTarget(waa.getTargetType(),waa.getTargetId());
-		
-        
+		target = game.getTarget(waa.getTargetType(),waa.getTargetId());	
+        server=s;
 		
 		
 		roll=Compute.d6(2);

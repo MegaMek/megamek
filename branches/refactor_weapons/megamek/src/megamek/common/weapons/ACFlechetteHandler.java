@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -30,8 +30,8 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 	 * @param w
 	 * @param g
 	 */
-	public ACFlechetteHandler(ToHitData t, WeaponAttackAction w, Game g) {
-		super(t, w, g);
+	public ACFlechetteHandler(ToHitData t, WeaponAttackAction w, Game g,Server s) {
+		super(t, w, g,s);
 	}
 	
 	/* (non-Javadoc)

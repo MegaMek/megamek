@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -34,13 +35,13 @@ public abstract class FlamerWeapon extends EnergyWeapon {
 		this.setModes(modes);
 				
 	}
-	protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game) {
+	protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
 		if((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode())=="Heat") {
 			
-			return new FlamerHeatHandler(toHit,waa,game);
+			return new FlamerHeatHandler(toHit,waa,game,server);
 			
 		} else {
-				return new WeaponHandler(toHit,waa,game);						
+				return new WeaponHandler(toHit,waa,game,server);						
 		}
 	}
 }

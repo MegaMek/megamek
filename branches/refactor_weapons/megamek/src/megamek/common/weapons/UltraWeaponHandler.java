@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-
+import megamek.server.Server;
 /**
  * @author Andrew Hunter
  *
@@ -31,9 +31,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 	 * @param w
 	 * @param g
 	 */
-	public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g) {
-		super(t, w, g);
-		
+	public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,Server s) {
+		super(t, w, g, s);
+		server.sendServerChat("Hi, I'm an ultraweaponhandler.  Go!");
 	}
 	
 	/* (non-Javadoc)
@@ -43,6 +43,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 		setDone();       
 		checkAmmo();
 		int total =ae.getTotalAmmoOfType(ammo.getType());
+		server.sendServerChat("UWH#useAmmo. Total=" + total);
 		if(total>1) {
 			howManyShots=2;
 		}
@@ -51,12 +52,16 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 		}
 		if(total==0) {
 			//can't happen?
+			server.sendServerChat("Why am I getting total=0?");
 			
 		}
+		server.sendServerChat("OK, hms=" + howManyShots);
 		if(ammo.getShotsLeft()==0) {
-			//Ugh, we need a new ammo!
+			
+			server.sendServerChat("//Ugh, we need a new ammo!");
 			ae.loadWeapon(weapon);
 			ammo = weapon.getLinked();
+			server.sendServerChat("New ammo has shots=" + ammo.getShotsLeft());
 			//there will be some ammo somewhere, otherwise shot will not have been fired.
 		}
 		if(ammo.getShotsLeft()==1)  {
@@ -89,11 +94,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 		switch(howManyShots) {//necessary, missilesHit not defined for missiles=1
 			case 2:
 				shotsHit = allShotsHit()? 2:Compute.missilesHit(howManyShots);
+				game.getPhaseReport().append("Hits with " + shotsHit + " shot(s)\n");
+				break;
 			default:
 				shotsHit = 1;
-		}
-		if(howManyShots==2) {
-			game.getPhaseReport().append("Hits with " + shotsHit + " shot(s)\n");
+				break;
 		}
 		return shotsHit;
 	}

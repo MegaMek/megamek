@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -54,15 +55,31 @@ public abstract class AmmoWeapon extends Weapon {
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.Weapon#fire(megamek.common.actions.WeaponAttackAction, megamek.common.Game)
 	 */
-	public AttackHandler fire(WeaponAttackAction waa, Game game) {
-		return super.fire(waa, game);
+	public AttackHandler fire(WeaponAttackAction waa, Game game,Server server) {
+		//Just in case.  Often necessary when/if multiple ammo weapons are fired; if this line not present
+		//then when one ammo slots run dry the rest silently don't fire.
+		checkAmmo(waa, game);
+		return super.fire(waa, game,server);
 	}
+	/**
+	 * 
+	 */
+	protected void checkAmmo(WeaponAttackAction waa, Game g) {
+		Entity ae=waa.getEntity(g);
+		Mounted weapon=ae.getEquipment(waa.getWeaponId());
+		Mounted ammo=weapon.getLinked();
+		if(ammo==null || ammo.getShotsLeft()<1) {
+			ae.loadWeapon(weapon);
+            ammo = weapon.getLinked();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.Game)
 	 */
 	protected AttackHandler getCorrectHandler(ToHitData toHit,
-			WeaponAttackAction waa, Game game) {
-		return new AmmoWeaponHandler(toHit, waa, game);
+			WeaponAttackAction waa, Game game,Server server) {
+		return new AmmoWeaponHandler(toHit, waa, game,server);
 	}
 	/* (non-Javadoc)
 	 * @see megamek.common.weapons.Weapon#impossibilityCheck(megamek.common.Game, megamek.common.Targetable, int, int, megamek.common.Entity, megamek.common.Entity, megamek.common.Mounted, megamek.common.WeaponType, boolean, megamek.common.AmmoType, boolean, megamek.common.ToHitData, megamek.common.LosEffects)

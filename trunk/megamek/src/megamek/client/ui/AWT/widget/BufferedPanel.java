@@ -46,7 +46,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
      */
     
     public void addBgDrawer(BackGroundDrawer bd){
-       bgDrawers.add(bd);      
+       bgDrawers.addElement(bd);      
     }
     
     /**

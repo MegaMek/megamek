@@ -1820,6 +1820,8 @@ public class Compute
 		int[] weaponRanges = wtype.getRanges();
 		boolean isWeaponInfantry = (ae instanceof Infantry);
 		boolean isLRMInfantry = isWeaponInfantry && wtype.getAmmoType() == AmmoType.T_LRM;
+		boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
+			&& weapon.curMode().equals("Indirect");
 		
 		ToHitData mods = new ToHitData();
 		
@@ -1849,6 +1851,9 @@ public class Compute
 
 		// find any c3 spotters that could help
 		Entity c3spotter = findC3Spotter(game, ae, target);
+		if (isIndirect) {
+			c3spotter = ae; // no c3 when using indirect fire
+		}
 		int c3dist = effectiveDistance(game, c3spotter, target);
 		int c3range = rangeBracket(c3dist, weaponRanges);
 		

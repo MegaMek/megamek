@@ -141,7 +141,7 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_HATCHET)) {
-            return (float)Math.ceil(entity.getWeight() / 15.0);
+            return ((float)Math.ceil(entity.getWeight() / 5.0) * 1.5f);
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;

@@ -450,6 +450,22 @@ public abstract class Mech
     }
     
     /**
+     * Returns the number of heat sinks, functional or not.
+     */
+    public int heatSinks() {
+        int sinks = 0;
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            EquipmentType etype= mounted.getType();
+            if (etype.hasFlag(MiscType.F_HEAT_SINK)
+            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                sinks++;
+            }
+        }
+        return sinks;
+    }
+    
+    /**
      * Returns the about of heat that the entity can sink each 
      * turn.
      */
@@ -1042,6 +1058,20 @@ public abstract class Mech
         // add weight
         dbv += getWeight();
         
+        // add defensive equipment
+        double dEquipmentBV = 0;
+        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            EquipmentType etype = mounted.getType();
+            //TODO: antipersonal pods
+            if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
+            || etype.hasFlag(MiscType.F_ECM)) {
+                dEquipmentBV += etype.getBV(this);
+            }
+        }
+        dbv += dEquipmentBV;
+        
         // subtract for explosive ammo
         for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
@@ -1066,11 +1096,9 @@ public abstract class Mech
                     // if arm & torso not CASEed
                     if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
                         continue;
-                    }
-                    if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
+                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
                         continue;
-                    }
-                    if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
+                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
                         continue;
                     }
                 }
@@ -1141,6 +1169,11 @@ public abstract class Mech
             WeaponType wtype = (WeaponType)mounted.getType();
             double dBV = wtype.getBV(this);
             
+            // don't count AMS, it's defensive
+            if (wtype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+            
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
@@ -1164,11 +1197,30 @@ public abstract class Mech
             weaponBV += (weaponsBVFront * 0.5);
         }
         
+        // add offensive misc. equipment BV (only really hatchets, BAP)
+        double oEquipmentBV = 0;
+        for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            MiscType mtype = (MiscType)mounted.getType();
+            
+            if (mtype.hasFlag(MiscType.F_HATCHET)) {
+                //TODO: || mtype.hasFlag(MiscType.F_BAP)
+                oEquipmentBV += mtype.getBV(this);
+            }
+        }
+        weaponBV += oEquipmentBV;
+        
         // add ammo bv
         double ammoBV = 0;
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();
+            
+            // don't count AMS, it's defensive
+            if (atype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+            
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;

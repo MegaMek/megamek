@@ -4612,7 +4612,6 @@ implements Runnable, ConnectionHandler {
     /** Called during the fire phase to resolve all (and only) weapon attacks
      */
     private void resolveOnlyWeaponAttacks() {
-    	System.out.println("resolving only weapon attacks");
         Vector results = new Vector(game.actionsSize());
 
         // loop thru received attack actions, getting weapon results
@@ -4625,19 +4624,14 @@ implements Runnable, ConnectionHandler {
                 Weapon w=(Weapon)m.getType();
                 AttackHandler ah=w.fire(waa,game);
                 if(ah!=null) {
-                	System.out.println("adding attack");
                 	ah.setServer(this);
                 	game.addAttack(ah);
                 }
                 
             }
         }
-        System.out.print("there are #");
-        System.out.println(game.getAttacksVector().size());
-
         
         game.resetActions();
-        System.out.println("resolved only weapon attacks");
     }
 
     /**

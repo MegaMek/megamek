@@ -221,6 +221,7 @@ public class EquipmentType {
     	//Flamers
     	addType(new CLFlamer());
     	addType(new ISFlamer());
+    	addType(new ISAC10());
     }
     
 }

@@ -751,6 +751,7 @@ public class FiringDisplay
         }
         
         // update target panel
+        //TODO:  replace tohitweapon calls with weapon to hit calls.
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         if (target != null && weaponId != -1) {
             ToHitData toHit;

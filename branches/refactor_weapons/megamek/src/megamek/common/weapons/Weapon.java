@@ -49,22 +49,9 @@ public abstract class Weapon extends WeaponType {
 		ToHitData toHit=this.toHit(waa,game);
 		Entity ae = game.getEntity(waa.getEntityId());
 		Mounted weapon=ae.getEquipment(waa.getWeaponId());
-//		 has this weapon fired already?
-        if (weapon.isUsedThisRound()) {
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
-        }
-        // is the weapon functional?
-        if (weapon.isDestroyed() || weapon.isBreached() || weapon.isMissing()) {
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
-        }
-        // is it jammed?
-        if (weapon.isJammed()) {
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
-        }
        
-        		return getCorrectHandler(toHit, waa, game);
-        	
-        
+        return toHit.getValue()==TargetRoll.IMPOSSIBLE ? null : getCorrectHandler(toHit, waa, game);
+               
 		
 	}
 	protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game) {
@@ -441,10 +428,18 @@ public abstract class Weapon extends WeaponType {
         if (ae.equals(te)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
-
-        // weapon operational?
-        if (weapon.isDestroyed() || weapon.isBreached()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
+//		 has this weapon fired already?
+        if (weapon.isUsedThisRound()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon has already been used this round");
+        }
+        
+        // is the weapon functional?
+        if (weapon.isDestroyed() || weapon.isBreached() || weapon.isMissing()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon was destroyed in a previous round");
+        }
+        // is it jammed?
+        if (weapon.isJammed()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon is jammed");
         }
 
         // is the attacker even active?

@@ -1509,7 +1509,7 @@ implements Runnable {
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"), true);
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
-                if (overallMoveType == Entity.MOVE_RUN
+                if (overallMoveType == Entity.MOVE_RUN && !entity.isProne()
                 && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) > 0
                 || entity.hasHipCrit())) {
                     doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "running with damaged hip actuator or gyro"), false);
@@ -4553,6 +4553,9 @@ implements Runnable {
         // scan files
         String[] fileList = boardDir.list();
         for (int i = 0; i < fileList.length; i++) {
+            if (fileList[i].indexOf(".board") == -1) {
+                continue;
+            }
             if (Board.boardIsSize(fileList[i], boardWidth, boardHeight)) {
                 boards.addElement(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
             }

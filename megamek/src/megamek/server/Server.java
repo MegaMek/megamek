@@ -3850,9 +3850,12 @@ implements Runnable {
         HitData nextHit = null;
 
  	// Is the infantry in the open?
+        // TODO : do infantry take double damage in Swamp or Smoke
  	if ( isInfantry && !te.isDestroyed() && !te.isDoomed() ) {
  	    te_hex = game.board.getHex( te.getPosition() );
  	    if ( !te_hex.contains( Terrain.WOODS ) &&
+ 		 !te_hex.contains( Terrain.ROUGH ) &&
+ 		 !te_hex.contains( Terrain.RUBBLE ) &&
  		 !te_hex.contains( Terrain.BUILDING ) ) {
  		// PBI.  Damage is doubled.
  		damage = damage * 2;

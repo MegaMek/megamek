@@ -61,6 +61,10 @@ displacement issues:
 falling:
 - only fall to surface of water
 
+infantry:
+- read MP from the BLK file instead of calculating it
+- implement BattleArmor as a sub-class of Infantry with multiple hit locations
+
 
 FUTURE VERSION PLANS:
 ---------------------
@@ -73,6 +77,8 @@ VERSION HISTORY:
 v CVS
 + 652291: Mechs can "stomp" (kick) vehicles in their hex.
 + 657119: streak SRMs fire again
++ Infantry don't take double damage in Rough or Rubble.
++ 649338: SRM and Laser jump infantry have jump MP of 2, *not* 3.
 
 v 0.27.12 (12-20-02, 4:30pm)
 + 652106: possible fix for linux flickering in lobby

@@ -179,7 +179,7 @@ public class Infantry
             else if ( INF_MOTORIZED == type )
                 this.movePoints= 2;
             else if ( INF_JUMP == type )
-                this.movePoints= 3;
+                this.movePoints= 2; // BMRr, pg. 61
             else
                 throw new IllegalArgumentException
                     ( "Unknown movement type: " + type );

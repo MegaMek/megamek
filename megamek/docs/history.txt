@@ -1,6 +1,6 @@
 nVERSION HISTORY:
 ----------------
-v0.29.34 (CVS)
+v0.29.34 (2004-05-11, 10:30pm)
 + Bug 945047, Patch 946170: Lvl3-rules smoke now stack with terrain right.
 	Thanks AlbinoSquirrel!
 + Patch 946255, RFE 734354: beerockxs' patch to show blown off limbs

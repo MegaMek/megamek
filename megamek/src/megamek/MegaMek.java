@@ -367,6 +367,20 @@ public class MegaMek
     }
     
     public static void main(String[] args) {
+        // redirect output to logfiles
+        try {
+            System.out.println("Redirecting output to MegaMek.log");
+            PrintStream ps = new PrintStream(new BufferedOutputStream(
+                        new FileOutputStream("MegaMek.log")));
+            System.setOut(ps);
+            System.setErr(ps);
+        } catch (Exception e) {
+            System.err.println("Unable to redirect output to log");
+            e.printStackTrace();
+        }
+            
+                        
+        
         Settings.load();
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {

@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29.6 (06-03-03, 7pm)
+v 0.29.6 (08-03-03, 7pm)
 + Merge of underwater patch undid the Inferno SRM2 fix.
 + Bug 776023: Made "Warhammer IIC" the model for all clan whammys.
 + Bug 755993: fixed NPE when closing a non-initialized connection

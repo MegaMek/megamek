@@ -3,6 +3,8 @@ VERSION HISTORY:
 v 0.29.22 (CVS)
 + In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.
 + From coralbeach: split unofficial and Dark Age (TM) units in "data/mechfiles"
++ Bug 857284, Data 861076: Fixed Road Runner (and 10 and 15 ton Meks).
++ Data 830353: Added "reseen" Marauder (as the 3067 variants)
 
 v 0.29.21 (2004-01-10 11:45am)
 + Patch 867652: cleaned up megamek-icon.gif

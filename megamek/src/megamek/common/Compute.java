@@ -1489,9 +1489,9 @@ public class Compute
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
         ToHitData toHit;
 
-	// Infantry CAN'T punch!!!
-	if ( ae instanceof Infantry ) {
-	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't punch");
+	// non-mechs can't punch
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
 	}
 
         // arguments legal?
@@ -1645,9 +1645,9 @@ public class Compute
         final int targetElevation = te.elevation();
         int[] kickLegs = new int[2];
 
-	// Infantry CAN'T kick!!!
-	if ( ae instanceof Infantry ) {
-	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't kick");
+	// non-mechs can't kick
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
 	}
 
         if ( ae.entityIsQuad() ) {
@@ -1821,9 +1821,9 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
 
-	// Infantry CAN'T club!!!
-	if ( ae instanceof Infantry ) {
-	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't club");
+	// non-mechs can't club
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't club");
 	}
 
         //Quads can't club
@@ -1994,9 +1994,9 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
-	// Infantry CAN'T push!!!
-	if ( ae instanceof Infantry ) {
-	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't push");
+	// non-mechs can't push
+	if (!(ae instanceof Mech)) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't push");
 	}
 
         //Quads can't push

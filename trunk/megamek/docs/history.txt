@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.56 (CVS)
++ Patch 1067681: Set Autoejected MW to dead when killed.
 + Bug 1065147: Handle null targets better in CAA#toHit and Compute#toHitDFA.
 + Patch 1065371: Show status of auto-eject in General tab of Unit Display.
 + RFE 1058008: Players now have a setting to disable auto-eject by default.

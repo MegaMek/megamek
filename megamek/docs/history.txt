@@ -5,8 +5,9 @@ v 0.29.26 (CVS)
 + Bug 893185: Protomechs get to roll to regain conciousness.
 + Bug 848517: Anti-mek infantry can only swarm enemy units.
 + Added level 3 "Tactical Genius" pilot advantage.
-+ Battle Value calculation for damaged units more accurate.
++ RFE 729854: Battle Value calculation for damaged units more accurate.
 + RFE 678287: dedicated server can now load saved games
++ Bug 893423: Don't use AMS ammo that is being dumped.
 
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated

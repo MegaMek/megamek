@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -43,10 +43,8 @@ public class BipedMechEncoder {
     public static void encode( Entity entity, Writer out )
         throws IOException
     {
-        Enumeration iter; // used when marching through a list of sub-elements
-        Coords coords;
-        int turns;
-        String substr;
+        Mech mech = (Mech) entity;
+        int value;
 
         // First, validate our input.
         if ( null == entity ) {
@@ -57,7 +55,12 @@ public class BipedMechEncoder {
         }
 
         // Our EntityEncoder already gave us our root element.
-        // TODO : write BipedMech-specific elements.
+        out.write( "<mascTurns value=\"" );
+        value = mech.getMASCTurns();
+        out.write( String.valueOf(value) );
+        out.write( "\" /><mascUsed value=\"" );
+        out.write( mech.isMASCUsed() ? "true" : "false" );
+        out.write( "\" />" );
     }
 
     /**
@@ -73,7 +76,79 @@ public class BipedMechEncoder {
      *          contain a valid <code>Entity</code>.
      */
     public static Entity decode( ParsedXML node, Game game ) {
-        BipedMech entity = new BipedMech();
+        BipedMech entity = null;
+        String attrStr;
+        int attrVal;
+
+        // Did we get a null node?
+        if ( null == node ) {
+            throw new IllegalArgumentException( "The BipedMech node is null." );
+        }
+
+        // Make sure that the node is for an Mech unit.
+        attrStr = node.getAttribute( "name" );
+        if ( !node.getName().equals( "class" ) ||
+             null == attrStr || !attrStr.equals( "BipedMech" ) ) {
+            throw new IllegalStateException( "Not passed a BipedMech node." );
+        }
+
+        // TODO : perform version checking.
+
+        // Create the entity.
+        entity = new BipedMech();
+
+        // Walk the board node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the stunnedTurns node?
+            else if ( childName.equals( "mascTurns" ) ) {
+
+                // Get the Mech's stunned turns.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the mascTurns for a BipedMech unit." );
+                }
+
+                // Try to pull the number from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                entity.setMASCTurns( attrVal );
+            }
+
+            // Did we find the mascUsed node?
+            else if ( childName.equals( "mascUsed" ) ) {
+
+                // See if the Mech used MASC.
+                attrStr = child.getAttribute( "value" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode mascUsed for a BipedMech unit." );
+                }
+
+                // If the value is "true", the Mech used MASC.
+                if ( attrStr.equals( "true" ) ) {
+                    entity.setMASCUsed( true );
+                }
+            }
+
+        } // Handle the next element.
+
+        // Return the entity.
         return entity;
     }
 

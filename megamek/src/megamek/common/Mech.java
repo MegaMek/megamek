@@ -1607,6 +1607,11 @@ public abstract class Mech
             WeaponType wtype = (WeaponType)mounted.getType();
             double weaponHeat = wtype.getHeat();
             
+            // Bug #1112073 says not to count RocketLaunchers.
+            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER) {
+                continue;
+            }
+
             // double heat for ultras
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 weaponHeat *= 2;

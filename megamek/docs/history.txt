@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.49 (CVS)
 + RFE 1022892, Patch 1023640: Maxtech Missile Hit Penalties, MaxTech revised page 23.
++ Bug 1026657: Flank MP not recalculated in extreme temperatures
 
 v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.

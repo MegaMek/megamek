@@ -107,7 +107,7 @@ public class TestBot extends BotClient {
             Iterator i = this.getEntitiesOwned().iterator();
             boolean short_circuit = false;
 
-            while (i.hasNext()) {
+            while (i.hasNext() && !short_circuit) {
                 Entity entity = (Entity) i.next();
                 CEntity cen = centities.get(entity);
 
@@ -119,14 +119,12 @@ public class TestBot extends BotClient {
 
                 MoveOption[] result = calculateMove(entity);
 
-                if (cen.getEntity().isImmobile()) {
+                if (game.getOptions().booleanOption("skip_ineligable_movement") && cen.getEntity().isImmobile()) {
                     cen.moved = true;
                 } else if (!cen.moved) {
-                    if (result.length < 6 && result.length > 0) {
-                        //move to the head of the class...
-                        min = (MoveOption) result[0];
+                    if (result.length < 6) {
+                        min = result.length > 0 ? (MoveOption) result[0]:null;
                         short_circuit = true;
-                        //break;
                     }
                     possible.add(result);
                 }
@@ -140,7 +138,7 @@ public class TestBot extends BotClient {
                     lance.evolve();
                     min = lance.getResult();
                     this.old_moves = lance;
-                } else if (((MoveOption[]) possible.elementAt(0)).length > 0) {
+                } else if (((MoveOption[]) possible.elementAt(0)) != null && ((MoveOption[]) possible.elementAt(0)).length > 0) {
                     min = ((MoveOption[]) possible.elementAt(0))[0];
                 }
             }
@@ -524,7 +522,7 @@ public class TestBot extends BotClient {
             CEntity enemy = centities.get(en);
             //engage in speculation on "best choices" when you loose iniative
             if (enemy.canMove()) {
-                Object[] enemy_move_array = enemy.getAllMoves().values().toArray();
+                Object[] enemy_move_array = enemy.pass.values().toArray();
                 Vector to_check = new Vector();
                 //check some enemy moves
                 for (int j = 0; j < move_array.length; j++) {

@@ -2209,13 +2209,22 @@ public class Compute
         IdealHex bHex = new IdealHex(b);
         
         // test any hexes that we think might be in the way
+        int minumumX = Math.min(a.x, b.x);
+        int minumumY = Math.min(a.y, b.y);
         int rangeWidth = Math.abs(a.x - b.x) + 1;
         int rangeHeight = Math.abs(a.y - b.y) + 1;
+        
+        // adjust if we're along the x line
+        if (a.y == b.y && (a.x & 1) == (b.x & 1)) {
+            rangeHeight += 2;
+            minumumY--;
+        }
+        
         int rangeArea = rangeWidth * rangeHeight; // hexes to test
         Vector trueCoords = new Vector();
         
         for (int i = 0; i < rangeArea; i++) {
-            Coords c = new Coords(i % rangeWidth + Math.min(a.x, b.x), i / rangeWidth + Math.min(a.y, b.y));
+            Coords c = new Coords(i % rangeWidth + minumumX, i / rangeWidth + minumumY);
             IdealHex cHex = new IdealHex(c);
             // test the polygon
             if (cHex.isIntersectedBy(aHex.cx, aHex.cy, bHex.cx, bHex.cy)) {
@@ -2227,12 +2236,12 @@ public class Compute
         Coords[] trueArray = new Coords[trueCoords.size()];
         trueCoords.copyInto(trueArray);
         
-//        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
-//        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
-//            final Coords coords = (Coords)i.nextElement();
-//            System.out.print(coords.getBoardNum() + " ");
-//        }
-//        System.out.print("]\n");
+        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
+        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
+            final Coords coords = (Coords)i.nextElement();
+            System.out.print(coords.getBoardNum() + " ");
+        }
+        System.out.print("]\n");
         
         return trueArray;
     }
@@ -2411,6 +2420,18 @@ public class Compute
             }
         }
         return null;
+    }
+    
+    /**
+     * Returns whether an entity can flee from its current position.  Currently
+     * returns true if the entity is on the edge of the board.
+     */
+    public static boolean canEntityFlee(Game game, int entityId) {
+        Entity entity = game.getEntity(entityId);
+        Coords pos = entity.getPosition();
+        return entity.getWalkMP() > 0 && !entity.isProne()
+        && (pos.x == 0 || pos.x == game.board.width - 1 
+            || pos.y == 0 || pos.x == game.board.height - 1);
     }
     
     /**

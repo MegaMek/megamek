@@ -238,7 +238,6 @@ public class Game implements Serializable
      * Returns the entity with the given id number, if any.
      */
 
-// + HentaiZonga
     /* The Entity ID space has been polluted; negative ID's below -1000 are targeted coordinates */
 
     public static Coords IdToCoords(int id) {
@@ -257,16 +256,13 @@ public class Game implements Serializable
         return id;
     }
 
-// - HentaiZonga
 
     public Entity getEntity(int id) {
-// + HentaiZonga
         if(id <= -1000) {
            final Entity te = new HexEntity(IdToCoords(id));
            te.setGame(this);
            return te;
         }
-// - HentaiZonga
         return (Entity)entityIds.get(new Integer(id));
     }
  

@@ -470,9 +470,7 @@ public class MovementData
             case MovementData.STEP_LATERAL_RIGHT:return "ShR";	
             case MovementData.STEP_LATERAL_LEFT_BACKWARDS:return "ShLB";	
             case MovementData.STEP_LATERAL_RIGHT_BACKWARDS:return "ShRB";	
-// + HentaiZonga
             case MovementData.STEP_UNJAM_RAC:return "Unjam";	
-// - HentaiZonga
             }
             return"";
         }

@@ -47,9 +47,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
     private Button            butDfa;
     private Button            butFlee;
     
-    // + HentaiZonga
     private Button            butRAC; // Hentai - for unjamming RAC (sets to Walk only)
-    // - HentaiZonga
     
     private Button            butSpace;
     
@@ -127,11 +125,9 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         butFlee.addActionListener(this);
         butFlee.setEnabled(false);
         
-        // + HentaiZonga
         butRAC = new Button(".");
         butRAC.addActionListener(this);
         butRAC.setEnabled(false);
-        // - HentaiZonga
         butMore = new Button("More...");
         butMore.addActionListener(this);
         butMore.setEnabled(false);
@@ -197,9 +193,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                 panButtons.add(butBackup);
                 panButtons.add(butNext);
                 panButtons.add(butTurn);
-                // + HentaiZonga
                 panButtons.add(butRAC);
-                // - HentaiZonga
                 panButtons.add(butMore);
                 panButtons.add(butDone);
                 break;
@@ -222,9 +216,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                     butCharge.setEnabled(true);
                 }
                 
-                // + HentaiZonga
                 UpdateRACButton();
-                // - HentaiZonga
                 
                 break;
         }
@@ -323,9 +315,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         } else {
             butDown.setEnabled(false);
         }
-        // + HentaiZonga
         UpdateRACButton();
-        // - HentaiZonga
         butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
@@ -372,9 +362,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         butBackup.setEnabled(false);
         butTurn.setEnabled(false);
         butFlee.setEnabled(false);
-        // + HentaiZonga
         butRAC.setEnabled(false);
-        // - HentaiZonga
         butUp.setEnabled(false);
         butDown.setEnabled(false);
         butCharge.setEnabled(false);
@@ -394,9 +382,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         cmd = new MovementData();
         client.bv.clearMovementData();
         butDone.setLabel("Done");;
-        // + HentaiZonga
         UpdateRACButton();
-        // - HentaiZonga
     }
     
     /**
@@ -556,7 +542,6 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             }
             
             butDone.setLabel("Move");
-            // + HentaiZonga
             UpdateRACButton();
         }
     }
@@ -565,7 +550,6 @@ KeyListener, ComponentListener, MouseListener, GameListener {
         butRAC.setEnabled(ce().canUnjamRAC() && (gear == Compute.GEAR_LAND || gear == Compute.GEAR_TURN || gear == Compute.GEAR_BACKUP) && md.getMpUsed() <= ce().getWalkMP() );
         butRAC.setLabel( ce().hasRAC() ? "Unjam RAC" : ".");
     }
-    // - HentaiZonga
     
     //
     // GameListener
@@ -619,7 +603,6 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             buttonLayout++;
             buttonLayout %= NUM_BUTTON_LAYOUTS;
             setupButtonPanel();
-            // + HentaiZonga
         } else if (ev.getSource() == butRAC) {
             if (gear == Compute.GEAR_JUMP || gear == Compute.GEAR_CHARGE || gear == Compute.GEAR_DFA || md.getMpUsed() > ce().getWalkMP()) { // in the wrong gear
                 //clearAllMoves();
@@ -630,7 +613,6 @@ KeyListener, ComponentListener, MouseListener, GameListener {
                 md.addStep(MovementData.STEP_UNJAM_RAC);
                 moveTo(md);
             }
-            // - HentaiZonga
         } else if (ev.getSource() == butWalk) {
             if (gear == Compute.GEAR_JUMP) {
                 clearAllMoves();
@@ -677,9 +659,7 @@ KeyListener, ComponentListener, MouseListener, GameListener {
             md.addStep(MovementData.STEP_FLEE);
             moveTo(md);
         }
-        // + HentaiZonga
         UpdateRACButton();
-        // - HentaiZonga
     }
     
     

@@ -12,8 +12,6 @@
  *  for more details.
  */
 
-// + HentaiZonga
-
 package megamek.common.actions;
 
 public class UnjamAction
@@ -25,4 +23,3 @@ public class UnjamAction
     }
     
 }
-// - HentaiZonga

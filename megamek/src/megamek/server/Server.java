@@ -2226,18 +2226,7 @@ implements Runnable {
                     if ( ( 1 == curHex.levelOf(Terrain.WATER) &&
                            entity.isProne() ) ||
                          ( 2 <= curHex.levelOf(Terrain.WATER) ) ) {
-
-                        // Wash off inferno from mech and add one to hex.
-                        game.board.addInfernoTo
-                            ( curPos, InfernoTracker.STANDARD_ROUND, 1 );
-                        entity.infernos.clear();
-
-                        // start a fire in the hex
-                        phaseReport.append( " Inferno removed from " )
-                            .append( entity.getDisplayName() )
-                            .append( " and fire started in hex!\n" );
-                        curHex.addTerrain(new Terrain(Terrain.FIRE, 1));
-                        sendChangedHex(curPos);
+                        washInferno(entity, curPos);
                     }
                 }
 
@@ -2315,6 +2304,12 @@ implements Runnable {
             if (step.getType() == MovementData.STEP_GO_PRONE) {
                 mpUsed = step.getMpUsed();
                 entity.setProne(true);
+                // check to see if we washed off infernos
+                if ( entity instanceof Mech
+                && entity.infernos.isStillBurning()
+                && curHex.levelOf(Terrain.WATER) >= 1 ) {
+                    washInferno(entity, curPos);
+                }
                 break;
             }
             
@@ -2492,6 +2487,22 @@ implements Runnable {
         if (charge != null) {
             send(createAttackPacket(charge, true));
         }
+    }
+    
+    /**
+     * Washes off an inferno from a mech and adds it to the (water) hex.
+     */
+    void washInferno(Entity entity, Coords coords) {
+        game.board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
+        entity.infernos.clear();
+
+        // start a fire in the hex
+        Hex hex = game.board.getHex(coords);
+        phaseReport.append( " Inferno removed from " )
+            .append( entity.getDisplayName() )
+            .append( " and fire started in hex!\n" );
+        hex.addTerrain(new Terrain(Terrain.FIRE, 1));
+        sendChangedHex(coords);
     }
 
     /**

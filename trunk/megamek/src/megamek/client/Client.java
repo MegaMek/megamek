@@ -1225,6 +1225,18 @@ public class Client extends Panel
                 if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
                     gameOptionsDialog.update(game.getOptions());
                 }
+                if (curPanel instanceof ChatLounge) {
+                	ChatLounge cl = (ChatLounge) curPanel;
+                	boolean useMinefields = game.getOptions().booleanOption("minefields");
+                	cl.enableMinefields(useMinefields);
+                	
+                	if (!useMinefields) {
+						getLocalPlayer().setNbrMFConventional(0);
+						getLocalPlayer().setNbrMFCommand(0);
+						getLocalPlayer().setNbrMFVibra(0);
+						sendPlayerInfo();
+					}
+                }
                 processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS :

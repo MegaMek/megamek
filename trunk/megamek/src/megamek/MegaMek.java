@@ -81,7 +81,7 @@ public class MegaMek implements ActionListener {
         // BEGIN DEBUG memory
         if ( System.getProperties().getProperty( "java.version" ).charAt(2)
              >= '4' ) {
-            Long maxMemory = new Long(Runtime.getRuntime().maxMemory() / 1024);
+            long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
             System.out.println("Total memory available to MegaMek: " 
                                + MegaMek.commafy.format(maxMemory) + " kB");
         }

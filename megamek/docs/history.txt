@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.48 (CVS)
+v0.29.48 (2004-09-06 2:45pm)
 + RFE 1018683: have unit list expand to fill available space.
 + Bug 1001924: Freeze when displacement does not work correctly, thanks weaselflink
 + Accidental fall from above now working.
@@ -18,7 +18,6 @@ v0.29.48 (CVS)
 + Fixed Settings#get(String, String) where defaults weren't appling correctly.
 + RFE 1022891, Patch 1023125: Altered Energy Weapons Damage, MaxTech revised page 22.
 + RFE 999917, Patch 1019888: Drastic Blind Drop option added
-
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

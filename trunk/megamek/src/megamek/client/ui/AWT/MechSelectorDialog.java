@@ -56,7 +56,8 @@ public class MechSelectorDialog
     private Button m_bPick = new Button("Select Mech");
     private Button m_bCancel = new Button("Cancel");
     private Panel m_pButtons = new Panel();
-    private TextArea m_mechView = new TextArea(17,48);
+    private TextArea m_mechViewLeft = new TextArea(18,24);
+    private TextArea m_mechViewRight = new TextArea(18,28);
     private Panel m_pLeft = new Panel();
     
     public MechSelectorDialog(Client cl)
@@ -88,7 +89,8 @@ public class MechSelectorDialog
 
         setLayout(new FlowLayout(FlowLayout.CENTER));
         add(m_pLeft);
-        add(m_mechView);
+        add(m_mechViewLeft);
+        add(m_mechViewRight);
         
         m_chWeightClass.addItemListener(this);
         m_chType.addItemListener(this);
@@ -219,13 +221,12 @@ public class MechSelectorDialog
             try {
                 Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 MechView mechView = new MechView(entity);
-		m_mechView.setEditable(false);
-                if (mechView.isValid()) {
-                    m_mechView.setText(mechView.getMechReadout());
-                } else {
-                    m_mechView.setText("");
-                }
-                m_mechView.setCaretPosition(0);
+		m_mechViewLeft.setEditable(false);
+		m_mechViewRight.setEditable(false);
+		m_mechViewLeft.setText(mechView.getMechReadoutBasic());
+		m_mechViewRight.setText(mechView.getMechReadoutLoadout());
+                m_mechViewLeft.setCaretPosition(0);
+                m_mechViewRight.setCaretPosition(0);
             } catch (EntityLoadingException ex) {
                 System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName());
                 ex.printStackTrace();
@@ -252,6 +253,10 @@ public class MechSelectorDialog
     }
     
     public void keyPressed(java.awt.event.KeyEvent ke) {
+	if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+	    ActionEvent event = new ActionEvent(m_bPick,ActionEvent.ACTION_PERFORMED,"");
+	    actionPerformed(event);
+	}
         long curTime = System.currentTimeMillis();
         if (curTime - m_nLastSearch > KEY_TIMEOUT) {
             m_sbSearch = new StringBuffer();

@@ -474,7 +474,7 @@ public class MovePath implements Cloneable, Serializable {
     public void findPathTo(Coords dest, int type) {
         int timeLimit = Settings.maxPathfinderTime;
 
-        if (10000 <= timeLimit) {
+        if (timeLimit >= 5000) {
             System.out.print("WARNING!!!  Settings allow up to ");
             System.out.print(timeLimit);
             System.out.println(" milliseconds to find the optimum path!");
@@ -516,13 +516,7 @@ public class MovePath implements Cloneable, Serializable {
             return;
         }
 
-        //should rules like this be in here?
-        if (step == MovePath.STEP_BACKWARDS
-            && game.board.getHex(dest).getElevation() > game.board.getHex(getFinalCoords()).getElevation()) {
-            return;
-        }
-
-        MovePathComparator mpc = new MovePathComparator(dest);
+        MovePathComparator mpc = new MovePathComparator(dest, step == MovePath.STEP_BACKWARDS);
 
         MovePath bestPath = (MovePath) this.clone();
 
@@ -567,7 +561,7 @@ public class MovePath implements Cloneable, Serializable {
                     }
                     candidates.add(index, expandedPath);
                     discovered.put(expandedPath.getKey(), expandedPath);
-                    if (candidates.size() > 500) {
+                    if (candidates.size() > 100) {
                         candidates.remove(candidates.size() - 1);
                     }
                 }
@@ -587,7 +581,42 @@ public class MovePath implements Cloneable, Serializable {
             //Make the path we found, this path.
             this.steps = bestPath.steps;
         }
+        if (!getFinalCoords().equals(dest)) {
+            lazyPathfinder(dest, type);
+        }
     }
+    
+	/**
+	 * Find the shortest path to the destination <code>Coords</code> by
+	 * hex count.  This right choice <em>only</em> when making a simple
+	 * move like a straight line or one with a single turn.
+	 *
+	 * @param   dest the destination <code>Coords</code> of the move.
+	 * @param   type the type of movment step required.
+	 */
+	private void lazyPathfinder(Coords dest, int type) {
+		int step = STEP_FORWARDS;
+		if (type == STEP_BACKWARDS) {
+			step = STEP_BACKWARDS;
+		}
+		Coords subDest = dest;
+		if (!dest.equals(getFinalCoords())) {
+			subDest = dest.translated(dest.direction(getFinalCoords()));
+		}
+
+		while (!getFinalCoords().equals(subDest)) {
+			// adjust facing
+			rotatePathfinder((getFinalCoords().direction(subDest)
+							  + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
+			// step forwards
+			addStep(step);
+		}
+		rotatePathfinder((getFinalCoords().direction(dest)
+						  + (step == STEP_BACKWARDS ? 3 : 0)) % 6);
+		if (!dest.equals(getFinalCoords())) {
+			addStep(type);
+		}
+	}
 
     /**
      * Returns a list of possible moves that result in a
@@ -670,20 +699,34 @@ public class MovePath implements Cloneable, Serializable {
 
     protected class MovePathComparator implements Comparator {
         private Coords destination;
+        boolean backward;
 
-        public MovePathComparator(Coords destination) {
+        public MovePathComparator(Coords destination, boolean backward) {
             this.destination = destination;
+            this.backward = backward;
         }
 
         public int compare(Object o1, Object o2) {
             MovePath first = (MovePath) o1;
             MovePath second = (MovePath) o2;
 
-            int firstMP = 0, secondMP = 0;
+            int firstDist = first.getMpUsed() + first.getFinalCoords().distance(destination) + getFacingDiff(first);
+            int secondDist = second.getMpUsed() + second.getFinalCoords().distance(destination) + getFacingDiff(second);
+            return firstDist - secondDist;
+        }
 
-            firstMP = first.getMpUsed() + first.getFinalCoords().distance(destination);
-            secondMP = second.getMpUsed() + second.getFinalCoords().distance(destination);
-            return firstMP - secondMP;
+        private int getFacingDiff(MovePath first) {
+            if (first.isJumping()) {
+                return 0;
+            }
+            int firstFacing = Math.abs((first.getFinalCoords().direction(destination) + (backward?3:0))%6 - first.getFinalFacing());
+            if (firstFacing > 3) {
+                firstFacing = 6 - firstFacing;
+            }
+            if (first.isUsingManAce()) {
+                firstFacing = Math.max(firstFacing, firstFacing -1);
+            }
+            return firstFacing;
         }
     }
 }

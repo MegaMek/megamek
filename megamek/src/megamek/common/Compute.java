@@ -3528,7 +3528,7 @@ public class Compute
                                              Coords src, Coords dest ) {
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
-        final int src2destDir = src.direction1(dest);
+        final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
 

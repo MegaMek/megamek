@@ -299,13 +299,8 @@ class ArmorPanel
         // update armor panel
         for(int i = 0; i < en.locations(); i++) {
             this.locL[i].setText(en.getLocationName(i));
-            if (en.isRearLocation(i)) {
-                this.internalL[i].setText("N/A");
-            } else {
-                this.internalL[i].setText(en.getInternalString(i));
-            }
-
-            this.armorL[i].setText(en.getArmorString(i));
+            this.internalL[i].setText(en.getInternalString(i));
+            this.armorL[i].setText(en.getArmorString(i) + (en.hasRearArmor(i) ? " (" + en.getArmorString(i, true) + ")" : ""));
         }
         
         this.validate();
@@ -480,7 +475,7 @@ class WeaponPanel
         for(int i = 0; i < en.weapons.size(); i++) {
             MountedWeapon w = en.getWeapon(i);
             String wn = i + " : " + (w.isReady() ? "" : "*" ) 
-                        + w.getType().getName() 
+                        + w.getName() 
                         + " [" + en.getLocationAbbr(w.getLocation()) + "]";
             if (w.getType().getAmmoType() != Ammo.TYPE_NA) {
                 if (w.getAmmoFeed() == null || w.getAmmoFeed().shots == 0) {
@@ -626,9 +621,6 @@ class SystemPanel
     
     public void displaySlots() {
         int loc = locList.getSelectedIndex();
-        if(loc > Mech.LOC_LT) {
-            loc += 3;
-        }
         slotList.removeAll();
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
@@ -640,7 +632,7 @@ class SystemPanel
                     slotList.add((cs.isDestroyed() ? "*" : "") + Mech.systemNames[cs.getIndex()]);
                     break;
                 case CriticalSlot.TYPE_WEAPON :
-                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getWeapon(cs.getIndex()).getType().getName());
+                    slotList.add((cs.isDestroyed() ? "*" : "") + en.getWeapon(cs.getIndex()).getName());
                     break;
                 case CriticalSlot.TYPE_AMMO :
                     slotList.add((cs.isDestroyed() ? "*" : "") + en.getAmmo(cs.getIndex()).getName());

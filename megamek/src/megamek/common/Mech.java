@@ -54,38 +54,42 @@ public class Mech
         "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
     
     // locations
-    public static final int        LOC_HEAD            = 0;
-    public static final int        LOC_CT                = 1;
-    public static final int        LOC_RT                = 2;
-    public static final int        LOC_LT                = 3;
-    public static final int        LOC_CTR                = 4;
-    public static final int        LOC_RTR                = 5;
-    public static final int        LOC_LTR                = 6;
-    public static final int        LOC_RARM            = 7;
-    public static final int        LOC_LARM            = 8;
-    public static final int        LOC_RLEG            = 9;
-    public static final int        LOC_LLEG            = 10;
+    public static final int        LOC_HEAD             = 0;
+    public static final int        LOC_CT               = 1;
+    public static final int        LOC_RT               = 2;
+    public static final int        LOC_LT               = 3;
+    public static final int        LOC_RARM             = 4;
+    public static final int        LOC_LARM             = 5;
+    public static final int        LOC_RLEG             = 6;
+    public static final int        LOC_LLEG             = 7;
     
     public static final String[] locationNames = {"Head",
         "Center Torso", "Right Torso", "Left Torso", 
-        "Center Torso Rear", "Right Torso Rear", "Left Torso Rear", 
+//        "Center Torso Rear", "Right Torso Rear", "Left Torso Rear", 
         "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
     
     public static final String[] locationAbbrs = {"HD", "CT", "RT",
-        "LT", "CTR", "RTR", "LTR", "RA", "LA", "RL", "LL"};
+        "LT", /*"CTR", "RTR", "LTR",*/ "RA", "LA", "RL", "LL"};
     
     // critical hit slots
-    public static final int[] noOfSlots = {6, 12, 12, 12, 0, 0, 0, 12, 12, 6, 6};
+    public static final int[] noOfSlots = {6, 12, 12, 12, 12, 12, 6, 6};
+    
+    // rear armor
+    private int[] rearArmor;
     
     /**
      * Construct a new, blank, mech.
      */
     public Mech() {
         super();
-
-        internal[LOC_CTR] = ARMOR_NA;
-        internal[LOC_RTR] = ARMOR_NA;
-        internal[LOC_LTR] = ARMOR_NA;
+        
+        rearArmor = new int[locations()];
+        
+        for (int i = 0; i < locations(); i++) {
+            if (!hasRearArmor(i)) {
+                setArmor(ARMOR_NA, i, true);
+            }
+        }
 
         setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
         setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
@@ -130,44 +134,7 @@ public class Mech
      * Returns the number of locations in the entity
      */
     public int locations() {
-        return 11;
-    }
-                                    
-    /**
-     * @return true if this location is a rear location;
-     */
-    public boolean isRearLocation(int loc) {
-        return (loc == LOC_CTR || loc == LOC_RTR || loc == LOC_LTR);
-    }
-  
-    /**
-    * Returns the rear location for the specified front location
-    */
-    public int getRearLocation(int loc) {
-        if (loc == LOC_CT) {
-            return LOC_CTR;
-        } else if (loc == LOC_RT) {
-            return LOC_RTR;
-        } else if (loc == LOC_LT) {
-            return LOC_LTR;
-        } else {
-            return loc;
-        }
-    }
-                                    
-    /**
-    * Returns the front location for the specified rear location
-    */
-    public int getFrontLocation(int loc) {
-        if (loc == LOC_CTR) {
-            return LOC_CT;
-        } else if (loc == LOC_RTR) {
-            return LOC_RT;
-        } else if (loc == LOC_LTR) {
-            return LOC_LT;
-        } else {
-            return loc;
-        }
+        return 8;
     }
                                     
     /**
@@ -251,8 +218,7 @@ public class Mech
         int jump = 0;
         
         for (int i = 0; i < locations(); i++) {
-            jump += getGoodCriticals(CriticalSlot.TYPE_SYSTEM, 
-                                     Mech.SYSTEM_JUMP_JET, i);
+            jump += getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_JUMP_JET, i);
         }
         
         return jump;
@@ -343,7 +309,49 @@ public class Mech
                                                 MovementData.STEP_TURN_RIGHT);
         }
     }
+    
+    public boolean hasRearArmor(int loc) {
+        return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
+    }
+    
+    /**
+     * Returns the amount of armor in the location specified.  Mech version,
+     * handles rear armor.
+     */
+    public int getArmor(int loc, boolean rear) {
+        if (rear && hasRearArmor(loc)) {
+            return rearArmor[loc];
+        } else {
+            return super.getArmor(loc, rear);
+        }
+    }
 
+    /**
+     * Sets the amount of armor in the location specified.  Mech version, handles
+     * rear armor.
+     */
+    public void setArmor(int val, int loc, boolean rear) {
+        if (rear && hasRearArmor(loc)) {
+            rearArmor[loc] = val;
+        } else {
+            super.setArmor(val, loc, rear);
+        }
+    }
+
+    /**
+     * Returns the name of the location specified.
+     */
+    public String getLocationName(HitData hit) {
+        return locationNames[hit.getLocation()];
+    }
+    
+    /**
+     * Returns the abbreviated name of the location specified.
+     */
+    public String getLocationAbbr(HitData hit) {
+        return locationAbbrs[hit.getLocation()] + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "") + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)" : "");
+    }
+  
     /**
      * Returns the name of the location specified.
      */
@@ -371,51 +379,16 @@ public class Mech
     }
     
     /**
-     * Special mech version, accouting for rear torso locations
-     */
-    public int getInternal(int loc) {
-        if(loc == LOC_CTR) {
-            loc = LOC_CT;
-        } else if(loc == LOC_RTR) {
-            loc = LOC_RT;
-        } else if(loc == LOC_LTR) {
-            loc = LOC_LT;
-        }
-        return super.getInternal(loc);
-    }
-    
-    /**
-     * Special mech version, accouting for rear torso locations
-     */
-    public void setInternal(int val, int loc) {
-        if(loc == LOC_CTR) {
-            loc = LOC_CT;
-        } else if(loc == LOC_RTR) {
-            loc = LOC_RT;
-        } else if(loc == LOC_LTR) {
-            loc = LOC_LT;
-        }
-        super.setInternal(val, loc);
-    }
-    
-    /**
-     * Special mech version, accouting for rear torso locations
-     */
-    public int getTotalInternal() {
-        int totalInternal = 0;
-        for (int i = 0; i < locations(); i++) {
-          if (!isRearLocation(i) && getInternal(i) > 0) {
-            totalInternal += getInternal(i);
-          }
-        }
-        return totalInternal;
-    }
-    
-    /**
      * Returns the Compute.ARC that the weapon fires into.
      */
     public int getWeaponArc(int wn) {
-        switch(getWeapon(wn).getLocation()) {
+        final MountedWeapon weapon = getWeapon(wn);
+        // rear mounted?
+        if (weapon.isRearMounted()) {
+            return Compute.ARC_REAR;
+        }
+        // front mounted
+        switch(weapon.getLocation()) {
         case LOC_HEAD :
         case LOC_CT :
         case LOC_RT :
@@ -427,10 +400,6 @@ public class Mech
             return Compute.ARC_RIGHTARM;
         case LOC_LARM :
             return Compute.ARC_LEFTARM;
-        case LOC_CTR :
-        case LOC_RTR :
-        case LOC_LTR :
-            return Compute.ARC_REAR;
         default :
             return Compute.ARC_360;
         }
@@ -445,102 +414,102 @@ public class Mech
                 // normal front hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_CT, false, HitData.EFFECT_CRITICAL);
                 case 3:
                 case 4:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM);
                 case 5:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG);
                 case 6:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT);
                 case 7:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 8:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT);
                 case 9:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG);
                 case 10:
                 case 11:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_LT, false, HitData.EFFECT_CRITICAL);
                 case 3:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG);
                 case 4:
                 case 5:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM);
                 case 6:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG);
                 case 7:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT);
                 case 8:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 9:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT);
                 case 10:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM);
                 case 11:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_RIGHT) {
                 // normal right side hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_RT, false, HitData.EFFECT_CRITICAL);
                 case 3:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG);
                 case 4:
                 case 5:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM);
                 case 6:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG);
                 case 7:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT);
                 case 8:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 9:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT);
                 case 10:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM);
                 case 11:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 switch(Compute.d6(2)) {
                 case 2:
-                    return new HitData(Mech.LOC_CTR, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_CT, true, HitData.EFFECT_CRITICAL);
                 case 3:
                 case 4:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM, true);
                 case 5:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG, true);
                 case 6:
-                    return new HitData(Mech.LOC_RTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT, true);
                 case 7:
-                    return new HitData(Mech.LOC_CTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT, true);
                 case 8:
-                    return new HitData(Mech.LOC_LTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT, true);
                 case 9:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG, true);
                 case 10:
                 case 11:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM, true);
                 case 12:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD, true);
                 }
             }
         }
@@ -549,17 +518,17 @@ public class Mech
                 // front punch hits
                 switch(Compute.d6(1)) {
                 case 1:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM);
                 case 2:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT);
                 case 3:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 4:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT);
                 case 5:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_LEFT) {
@@ -567,14 +536,14 @@ public class Mech
                 switch(Compute.d6(1)) {
                 case 1:
                 case 2:
-                    return new HitData(Mech.LOC_LT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT);
                 case 3:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 4:
                 case 5:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_RIGHT) {
@@ -582,31 +551,31 @@ public class Mech
                 switch(Compute.d6(1)) {
                 case 1:
                 case 2:
-                    return new HitData(Mech.LOC_RT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT);
                 case 3:
-                    return new HitData(Mech.LOC_CT, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT);
                 case 4:
                 case 5:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             if(side == ToHitData.SIDE_REAR) {
                 // rear punch hits
                 switch(Compute.d6(1)) {
                 case 1:
-                    return new HitData(Mech.LOC_LARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LARM, true);
                 case 2:
-                    return new HitData(Mech.LOC_LTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LT, true);
                 case 3:
-                    return new HitData(Mech.LOC_CTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_CT, true);
                 case 4:
-                    return new HitData(Mech.LOC_RTR, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RT, true);
                 case 5:
-                    return new HitData(Mech.LOC_RARM, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RARM, true);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_HEAD, true);
                 }
             }
         }
@@ -617,20 +586,20 @@ public class Mech
                 case 1:
                 case 2:
                 case 3:
-                    return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_RLEG);
                 case 4:
                 case 5:
                 case 6:
-                    return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                    return new HitData(Mech.LOC_LLEG);
                 }
             }
             if(side == ToHitData.SIDE_LEFT) {
                 // left side kick hits
-                return new HitData(Mech.LOC_LLEG, HitData.EFFECT_NONE);
+                return new HitData(Mech.LOC_LLEG);
             }
             if(side == ToHitData.SIDE_RIGHT) {
                 // right side kick hits
-                return new HitData(Mech.LOC_RLEG, HitData.EFFECT_NONE);
+                return new HitData(Mech.LOC_RLEG);
             }
         }
         return null;
@@ -639,25 +608,21 @@ public class Mech
     /**
      * Gets the location that excess damage transfers to
      */
-    public int getTransferLocation(int loc) {
-        switch(loc) {
+    public HitData getTransferLocation(HitData hit) {
+        switch(hit.getLocation()) {
         case LOC_RT :
         case LOC_LT :
-            return LOC_CT;
-        case LOC_RTR :
-        case LOC_LTR :
-            return LOC_CTR;
+            return new HitData(LOC_CT, hit.isRear());
         case LOC_LLEG :
         case LOC_LARM :
-            return LOC_LT;
+            return new HitData(LOC_LT, hit.isRear());
         case LOC_RLEG :
         case LOC_RARM :
-            return LOC_RT;
+            return new HitData(LOC_RT, hit.isRear());
         case LOC_HEAD :
         case LOC_CT :
-        case LOC_CTR :
         default:
-            return LOC_DESTROYED;
+            return new HitData(LOC_DESTROYED);
         }
     }
     
@@ -667,10 +632,8 @@ public class Mech
     public int getDependentLocation(int loc) {
         switch(loc) {
         case LOC_RT :
-        case LOC_RTR :
             return LOC_RARM;
         case LOC_LT :
-        case LOC_LTR :
             return LOC_LARM;
         case LOC_LLEG :
         case LOC_LARM :
@@ -678,7 +641,6 @@ public class Mech
         case LOC_RARM :
         case LOC_HEAD :
         case LOC_CT :
-        case LOC_CTR :
         default:
             return LOC_NONE;
         }
@@ -699,11 +661,11 @@ public class Mech
                          int tr, int arm, int leg) {
         armor[LOC_HEAD] = head;
         armor[LOC_CT] = ct;
-        armor[LOC_CTR] = ctr;
+//        armor[LOC_CTR] = ctr;
         armor[LOC_RT] = t;
         armor[LOC_LT] = t;
-        armor[LOC_RTR] = tr;
-        armor[LOC_LTR] = tr;
+//        armor[LOC_RTR] = tr;
+//        armor[LOC_LTR] = tr;
         armor[LOC_RARM] = arm;
         armor[LOC_LARM] = arm;
         armor[LOC_RLEG] = leg;
@@ -722,11 +684,8 @@ public class Mech
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         internal[LOC_HEAD] = head;
         internal[LOC_CT] = ct;
-        internal[LOC_CTR] = ARMOR_NA;
         internal[LOC_RT] = t;
         internal[LOC_LT] = t;
-        internal[LOC_RTR] = ARMOR_NA;
-        internal[LOC_LTR] = ARMOR_NA;
         internal[LOC_RARM] = arm;
         internal[LOC_LARM] = arm;
         internal[LOC_RLEG] = leg;
@@ -746,9 +705,7 @@ public class Mech
      * Throw exception if full, maybe?
      */
     public void addWeapon(MountedWeapon w, int loc) {
-    int frontLocation = getFrontLocation(loc);
-    
-        if(getEmptyCriticals(frontLocation) < w.getType().getCriticals()) {
+        if(getEmptyCriticals(loc) < w.getType().getCriticals()) {
             System.err.println("mech: tried to add weapon to full location");
             return;
         }
@@ -759,7 +716,7 @@ public class Mech
         int wn = this.weapons.indexOf(w);
 
         for(int i = 0; i < w.getType().getCriticals(); i++) {
-            addCritical(frontLocation, new CriticalSlot(CriticalSlot.TYPE_WEAPON, wn));
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_WEAPON, wn));
         }        
     }    
 
@@ -805,11 +762,11 @@ public class Mech
     int maxumumHeatRear = 0;
     for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
       MountedWeapon weapon = (MountedWeapon)i.nextElement();
-      if (isRearLocation(weapon.getLocation())) {
-        maxumumHeatRear += weapon.getType().getHeat();
-      } else {
+//      if (isRearLocation(weapon.getLocation())) {
+//        maxumumHeatRear += weapon.getType().getHeat();
+//      } else {
         maxumumHeatFront += weapon.getType().getHeat();
-      }
+//      }
     }
     int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);
     if (getJumpMP() > 0) {
@@ -839,11 +796,11 @@ public class Mech
     int weaponsBVRear = 0;
     for (Enumeration i = weapons.elements(); i.hasMoreElements();) {
       MountedWeapon weapon = (MountedWeapon)i.nextElement();
-      if (isRearLocation(weapon.getLocation())) {
-        weaponsBVRear += weapon.getType().getBV();
-      } else {
+//      if (isRearLocation(weapon.getLocation())) {
+//        weaponsBVRear += weapon.getType().getBV();
+//      } else {
         weaponsBVFront += weapon.getType().getBV();
-      }
+//      }
     }
     if (weaponsBVFront > weaponsBVRear) {
       weaponBV += weaponsBVFront;

@@ -22,6 +22,7 @@ public class MountedWeapon
     private boolean             ready = true;
     private boolean             destroyed = false;
     private int                 location = Entity.LOC_NONE;
+    private boolean             rearMounted = false;
     private Ammo                ammoFeed = null;
     private boolean             firedThisRound = false;
     
@@ -29,11 +30,19 @@ public class MountedWeapon
     private String              weaponName;
     
     /**
-     * Create w/ weapon
+     * Create w/ weapon.  Makes a front-mounted weapon
      */
     public MountedWeapon(Weapon weapon) {
+        this(weapon, false);
+    }
+    
+    /**
+     * Create with weapon, rear specified
+     */
+    public MountedWeapon(Weapon weapon, boolean rearMounted) {
         this.weapon = weapon;
         this.weaponName = weapon.getName();
+        this.rearMounted = rearMounted;
     }
     
     /**
@@ -45,6 +54,10 @@ public class MountedWeapon
         if (this.weapon == null) {
             System.err.println("MountedWeapon.restore: could not restore weapon \"" + weaponName + "\"");
         }
+    }
+    
+    public String getName() {
+        return weapon.getName() + (rearMounted ? " (R)" : "");
     }
     
     public Weapon getType() {
@@ -73,6 +86,14 @@ public class MountedWeapon
     
     public void setLocation(int location) {
         this.location = location;
+    }
+    
+    public boolean isRearMounted() {
+        return rearMounted;
+    }
+    
+    public void setRearMounted(boolean rearMounted) {
+        this.rearMounted = rearMounted;
     }
     
     public Ammo getAmmoFeed() {

@@ -1457,7 +1457,7 @@ public class Server
         if (w.getType().getDamage() != Weapon.DAMAGE_MISSILE) {
             // normal weapon; deal damage
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
+            phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
             phaseReport.append(damageEntity(te, hit, w.getType().getDamage()));
         } else {
             // missiles; determine number of missiles hitting
@@ -1571,7 +1571,7 @@ public class Server
         int damage = Compute.getPunchDamageFor(ae, paa.getArm());
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
+        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
 
         phaseReport.append("\n");
@@ -1617,7 +1617,7 @@ public class Server
         int damage = Compute.getKickDamageFor(ae, kaa.getLeg());
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit.loc));
+        phaseReport.append("hits" + toHit.getTableDesc() + " " + te.getLocationAbbr(hit));
         phaseReport.append(damageEntity(te, hit, damage));
 
         pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was kicked"));
@@ -2162,25 +2162,26 @@ public class Server
     private String damageEntity(Entity te, HitData hit, int damage) {
         String desc = new String();
 
-        int crits = hit.effect == HitData.EFFECT_CRITICAL ? 1 : 0;
+        int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
 
-        int loc = hit.loc, nextLoc = Entity.LOC_NONE;
+        //int loc = hit.getLocation();
+        HitData nextHit = null;
         while (damage > 0 && !te.isDestroyed() && !te.isDoomed()) {
             // let's resolve some damage!
-            desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(loc) + (hit.effect == HitData.EFFECT_CRITICAL ? " (critical.)" : ".");
+            desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
             te.damageThisPhase += damage;
 
             // is there armor in the location hit?
-            if (te.getArmor(loc) > 0) {
-                if (te.getArmor(loc) > damage) {
+            if (te.getArmor(hit) > 0) {
+                if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
-                    te.setArmor(te.getArmor(loc) - damage, loc);
+                    te.setArmor(te.getArmor(hit) - damage, hit);
                     damage = 0;
-                    desc += " " + te.getArmor(loc) + " Armor remaining";
+                    desc += " " + te.getArmor(hit) + " Armor remaining";
                 } else {
                     // damage goes on to internal
-                    damage -= te.getArmor(loc);
-                    te.setArmor(Entity.ARMOR_DESTROYED, loc);
+                    damage -= te.getArmor(hit);
+                    te.setArmor(Entity.ARMOR_DESTROYED, hit);
                     desc += " Armor destroyed,";
                 }
             }
@@ -2188,30 +2189,31 @@ public class Server
             // is there damage remaining?
             if (damage > 0) {
                 // is there internal structure in the location hit?
-                if (te.getInternal(loc) > 0) {
+                if (te.getInternal(hit) > 0) {
                     // triggers a critical hit
                     crits++;
-                    if (te.getInternal(loc) > damage) {
+                    if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
-                        te.setInternal(te.getInternal(loc) - damage, loc);
+                        te.setInternal(te.getInternal(hit) - damage, hit);
                         damage = 0;
-                        desc += " " + te.getInternal(loc) + " Internal Structure remaining";
+                        desc += " " + te.getInternal(hit) + " Internal Structure remaining";
                     } else {
                         // damage transfers, maybe
-                        damage -= te.getInternal(loc);
-                        te.setInternal(Entity.ARMOR_DESTROYED, loc);
+                        damage -= te.getInternal(hit);
+                        te.setInternal(Entity.ARMOR_DESTROYED, hit);
                         desc += " <<<SECTION DESTROYED>>>,";
                     }
                 }
 
                 // is the internal structure gone?
-                if (te.isLocationDestroyed(loc)) {
-                    destroyLocation(te, loc);
-                    if (loc == Mech.LOC_RLEG || loc == Mech.LOC_LLEG) {
+                if (te.isLocationDestroyed(hit.getLocation())) {
+                    destroyLocation(te, hit.getLocation());
+                    if (hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_LLEG) {
                         pilotRolls.addElement(new PilotingRollData(te.getId(),
                         PilotingRollData.AUTOMATIC_FALL, "leg destroyed"));
                     }
-                    if (te.getTransferLocation(loc) == Entity.LOC_DESTROYED) {
+                    nextHit = te.getTransferLocation(hit);
+                    if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         // entity destroyed.
                         desc += " Entity destroyed!\n";
                         desc += "*** " + te.getDisplayName() + " DESTROYED! ***";
@@ -2221,24 +2223,23 @@ public class Server
                         crits = 0;
                     } else {
                         // remaining damage transfers
-                        nextLoc = te.getTransferLocation(loc);
-                        desc += " " + damage + " damage transfers to "
-                            + te.getLocationAbbr(nextLoc) + ";";
+                         desc += " " + damage + " damage transfers to "
+                            + te.getLocationAbbr(nextHit) + ".";
                     }
                 }
             }
             // roll all critical hits against this location
             for (int i = 0; i < crits; i++) {
-                desc += "\n" + criticalEntity(te, loc);
+                desc += "\n" + criticalEntity(te, hit.getLocation());
             }
             crits = 0;
 
-            if (loc == Mech.LOC_HEAD) {
+            if (hit.getLocation() == Mech.LOC_HEAD) {
                 desc += "\n" + damageCrew(te, 1);
             }
 
             // loop to next location
-            loc = nextLoc;
+            hit = nextHit;
         }
 
 
@@ -2251,9 +2252,9 @@ public class Server
      * Currently mech only
      */
     private String criticalEntity(Entity en, int loc) {
-        if (en.isRearLocation(loc)) {
-            loc = en.getFrontLocation(loc);
-        }
+//        if (en.isRearLocation(loc)) {
+//            loc = en.getFrontLocation(loc);
+//        }
         String desc = "        Critical hit on " + en.getLocationAbbr(loc) + ". ";
         int hits = 0;
         int roll = Compute.d6(2);
@@ -2284,8 +2285,8 @@ public class Server
         }
         // transfer criticals, if needed
         if (hits > 0 && en.getHitableCriticals(loc) <= 0
-                && en.getTransferLocation(loc) != Entity.LOC_DESTROYED) {
-            loc = en.getTransferLocation(loc);
+                && en.getTransferLocation(new HitData(loc)).getLocation() != Entity.LOC_DESTROYED) {
+            loc = en.getTransferLocation(new HitData(loc)).getLocation();
             desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
         }
         // roll criticals
@@ -2361,9 +2362,9 @@ public class Server
         // mark armor, internal as destroyed
         en.setArmor(Entity.ARMOR_DESTROYED, loc);
         en.setInternal(Entity.ARMOR_DESTROYED, loc);
-        if (en.getRearLocation(loc) != loc) {
-            en.setArmor(Entity.ARMOR_DESTROYED, en.getRearLocation(loc));
-        }
+//        if (en.getRearLocation(loc) != loc) {
+//            en.setArmor(Entity.ARMOR_DESTROYED, en.getRearLocation(loc));
+//        }
         // weapons destroyed
         for (int i = 0; i < en.weapons.size(); i++) {
             if (en.getWeapon(i).getLocation() == loc) {

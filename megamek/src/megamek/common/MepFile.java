@@ -162,11 +162,11 @@ public class MepFile
         decodeArmorAndInternals(mech, Mech.LOC_HEAD, headArmor);
         decodeArmorAndInternals(mech, Mech.LOC_LARM, larmArmor);
         decodeArmorAndInternals(mech, Mech.LOC_LT, ltArmor);
-        decodeRearArmor(mech, Mech.LOC_LTR, ltrArmor);
+        decodeRearArmor(mech, Mech.LOC_LT, ltrArmor);
         decodeArmorAndInternals(mech, Mech.LOC_CT, ctArmor);
-        decodeRearArmor(mech, Mech.LOC_CTR, ctrArmor);
+        decodeRearArmor(mech, Mech.LOC_CT, ctrArmor);
         decodeArmorAndInternals(mech, Mech.LOC_RT, rtArmor);
-        decodeRearArmor(mech, Mech.LOC_RTR, rtrArmor);
+        decodeRearArmor(mech, Mech.LOC_RT, rtrArmor);
         decodeArmorAndInternals(mech, Mech.LOC_RARM, rarmArmor);
         decodeArmorAndInternals(mech, Mech.LOC_RLEG, rlegArmor);
         decodeArmorAndInternals(mech, Mech.LOC_LLEG, llegArmor);
@@ -205,11 +205,7 @@ public class MepFile
             }
             Weapon weaponType = Weapon.getWeaponByMepName(critName);
             if (weaponType != null) {
-                if (rearMounted) {
-                    mech.addWeapon(new MountedWeapon(weaponType), mech.getRearLocation(loc));
-                } else {
-                    mech.addWeapon(new MountedWeapon(weaponType), loc);
-                }
+                mech.addWeapon(new MountedWeapon(weaponType, rearMounted), loc);
             }
       
             // ammo?
@@ -237,7 +233,7 @@ public class MepFile
    * Decodes and sets the mech's armor and internal structure values
    */
   private void decodeArmorAndInternals(Mech mech, int loc, String s) {
-    mech.setArmor(Integer.parseInt(s.substring(2, 4)), loc);
+    mech.setArmor(Integer.parseInt(s.substring(2, 4)), loc, false);
     mech.setInternal(Integer.parseInt(s.substring(12)), loc);
   }
   
@@ -245,7 +241,7 @@ public class MepFile
    * Decodes and sets the mech's rear armor values
    */
   private void decodeRearArmor(Mech mech, int loc, String string) {
-    mech.setArmor(Integer.parseInt(string.substring(2, 4)), loc);
+    mech.setArmor(Integer.parseInt(string.substring(2, 4)), loc, true);
   }
   
 }

@@ -151,12 +151,6 @@ public abstract class Entity
      */
     public abstract int locations();
     
-    public abstract boolean isRearLocation(int loc);
-
-    public abstract int getRearLocation(int loc);
-
-    public abstract int getFrontLocation(int loc);
-
     /**
      * Returns the player that "owns" this entity.
      */
@@ -402,6 +396,16 @@ public abstract class Entity
     /**
      * Returns the name of the location specified.
      */
+    public abstract String getLocationName(HitData hit);
+
+    /**
+     * Returns the abbreviated name of the location specified.
+     */
+    public abstract String getLocationAbbr(HitData hit);
+
+    /**
+     * Returns the name of the location specified.
+     */
     public abstract String getLocationName(int loc);
 
     /**
@@ -417,25 +421,59 @@ public abstract class Entity
     /**
      * Gets the location that excess damage transfers to
      */
-    public abstract int getTransferLocation(int loc);
+    public abstract HitData getTransferLocation(HitData hit);
                                                     
     /**
      * Gets the location that is destroyed recursively
      */
     public abstract int getDependentLocation(int loc);
+    
+    /**
+     * Does this location have rear armor?
+     */
+    public abstract boolean hasRearArmor(int loc);
+
+    /**
+     * Returns the amount of armor in the location specified,
+     * or ARMOR_NA, or ARMOR_DESTROYED.  Only works on front locations.
+     */
+    public int getArmor(int loc) {
+        return getArmor(loc, false);
+    }
+
+    /**
+     * Returns the amount of armor in the location hit.
+     */
+    public int getArmor(HitData hit) {
+        return getArmor(hit.getLocation(), hit.isRear());
+    }
 
     /**
      * Returns the amount of armor in the location specified,
      * or ARMOR_NA, or ARMOR_DESTROYED.
      */
-    public int getArmor(int loc) {
+    public int getArmor(int loc, boolean rear) {
         return armor[loc];
     }
 
     /**
      * Sets the amount of armor in the location specified.
      */
+    public void setArmor(int val, HitData hit) {
+        setArmor(val, hit.getLocation(), hit.isRear());
+    }
+
+    /**
+     * Sets the amount of armor in the front location specified.
+     */
     public void setArmor(int val, int loc) {
+        setArmor(val, loc, false);
+    }
+
+    /**
+     * Sets the amount of armor in the location specified.
+     */
+    public void setArmor(int val, int loc, boolean rear) {
         armor[loc] = val;
     }
 
@@ -453,6 +491,13 @@ public abstract class Entity
     }
     
     /**
+     * Returns the amount of internal structure in the location hit.
+     */
+    public int getInternal(HitData hit) {
+        return getInternal(hit.getLocation());
+    }
+
+    /**
      * Returns the amount of internal structure in the 
      * location specified, or ARMOR_NA, or ARMOR_DESTROYED.
      */
@@ -460,6 +505,13 @@ public abstract class Entity
         return internal[loc];
     }
     
+    /**
+     * Sets the amount of armor in the location specified.
+     */
+    public void setInternal(int val, HitData hit) {
+        setInternal(val, hit.getLocation());
+    }
+  
     /**
      * Sets the amount of armor in the location specified.
      */
@@ -491,13 +543,20 @@ public abstract class Entity
      * Returns a string representing the armor in the location
      */
     public String getArmorString(int loc) {
-        if (getArmor(loc) == ARMOR_NA) {
+        return getArmorString(loc, false);
+    }
+    
+    /**
+     * Returns a string representing the armor in the location
+     */
+    public String getArmorString(int loc, boolean rear) {
+        if (getArmor(loc, rear) == ARMOR_NA) {
             return "N/A";
-        }
-        if (getArmor(loc) == ARMOR_DESTROYED) {
+        } else if (getArmor(loc, rear) == ARMOR_DESTROYED) {
             return "***";
+        } else {
+            return Integer.toString(getArmor(loc, rear));
         }
-        return Integer.toString(getArmor(loc));
     }
     
     /**
@@ -508,8 +567,9 @@ public abstract class Entity
             return "N/A";
         } else if (getInternal(loc) == ARMOR_DESTROYED) {
             return "***";
+        } else {
+            return Integer.toString(getInternal(loc));
         }
-        return Integer.toString(getInternal(loc));
     }
     
     /**
@@ -518,16 +578,16 @@ public abstract class Entity
     public int getHeatFiringModifier() {
         int mod = 0;
         if (heat > 8) {
-            mod += 1;
+            mod++;
         }
         if (heat > 13) {
-            mod += 1;
+            mod++;
         }
         if (heat > 17) {
-            mod += 1;
+            mod++;
         }
         if (heat > 24) {
-            mod += 1;
+            mod++;
         }
         return mod;
     }

@@ -14,21 +14,42 @@
 
 package megamek.common;
 
+/**
+ * This is a result from the hit chart.
+ */
 public class HitData
 {
     public static final int        EFFECT_NONE = 0;
     public static final int        EFFECT_CRITICAL = 1;
     public static final int        EFFECT_VEHICLES_ARE_DUMB = 2;
     
-    public int loc;
-    public int effect;
+    private int location;
+    private boolean rear;
+    private int effect;
     
-    public HitData(int loc) {
-        this(loc, EFFECT_NONE);
+    public HitData(int location) {
+        this(location, false, EFFECT_NONE);
     }
     
-    public HitData(int loc, int effect) {
-        this.loc = loc;
+    public HitData(int location, boolean rear) {
+        this(location, rear, EFFECT_NONE);
+    }
+    
+    public HitData(int location, boolean rear, int effect) {
+        this.location = location;
+        this.rear = rear;
         this.effect = effect;
+    }
+    
+    public int getLocation() {
+        return location;
+    }
+    
+    public boolean isRear() {
+        return rear;
+    }
+    
+    public int getEffect() {
+        return effect;
     }
 }

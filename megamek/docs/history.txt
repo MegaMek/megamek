@@ -32,6 +32,7 @@ v 0.29.27 (CVS)
 + Slight tweak to Systems tab Mode box
 + MegaMek.bat now more user friendly.  Defaults to Sun JVM if possible.
 + Artillery implemented.  Right now, just onboard direct fire with Arrow IVs, nothing else, no special ammo.
++ RFE 898795: MiniMap now shows declared fire
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

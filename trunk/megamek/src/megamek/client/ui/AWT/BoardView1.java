@@ -852,6 +852,15 @@ public class BoardView1
                 if (aa instanceof PushAttackAction) {
                     sprite.addWeapon((PushAttackAction)aa);
                 }
+                if (aa instanceof ClubAttackAction) {
+                    sprite.addWeapon((ClubAttackAction)aa);
+                }
+                if (aa instanceof ChargeAttackAction) {
+                    sprite.addWeapon((ChargeAttackAction)aa);
+                }
+                if (aa instanceof DfaAttackAction) {
+                    sprite.addWeapon((DfaAttackAction)aa);
+                }                
                 return;
             }
         }
@@ -1875,6 +1884,15 @@ public class BoardView1
             if (attack instanceof PushAttackAction) {
                 addWeapon((PushAttackAction)attack);
             }
+            if (attack instanceof ClubAttackAction) {
+                addWeapon((ClubAttackAction)attack);
+            }
+            if (attack instanceof ChargeAttackAction) {
+                addWeapon((ChargeAttackAction)attack);
+            }
+            if (attack instanceof DfaAttackAction) {
+                addWeapon((DfaAttackAction)attack);
+            }
 
             // nullify image
             this.image = null;
@@ -1999,6 +2017,21 @@ public class BoardView1
               final String roll = Compute.toHitPush(game, attack).getValueAsString();
               weaponDescs.addElement("Pushes. Needs " + roll);
         }
+        
+        public void addWeapon(ClubAttackAction attack) {
+              final String roll = Compute.toHitClub(game, attack).getValueAsString();
+              weaponDescs.addElement("Hits with club. Needs " + roll);
+        }
+        
+        public void addWeapon(ChargeAttackAction attack) {
+              final String roll = Compute.toHitCharge(game, attack).getValueAsString();
+              weaponDescs.addElement("Charges. Needs " + roll);
+        }
+        public void addWeapon(DfaAttackAction attack) {
+              final String roll = Compute.toHitDfa(game, attack).getValueAsString();
+              weaponDescs.addElement("DFA. Needs " + roll);
+        }
+                
 
         private String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];

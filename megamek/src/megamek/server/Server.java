@@ -475,10 +475,9 @@ public class Server
                     mounted.setShotsLeft(0);
                     mounted.setDestroyed(true);
                 }
-                mounted.setUsedThisTurn(false);
             }
 
-            // weapons are readied, except destroyed ones.
+            // set destroyed weapons properly
             for (Enumeration i = entity.getWeapons(); i.hasMoreElements();) {
                Mounted mounted = (Mounted)i.nextElement();
                WeaponType wtype = (WeaponType)mounted.getType();
@@ -492,7 +491,6 @@ public class Server
                        entity.loadWeapon(mounted);
                    }
                }              
-               mounted.setUsedThisTurn(false);
             }
 
             // destroy criticals that were hit last phase
@@ -2454,7 +2452,7 @@ public class Server
                     } else {
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
-                        te.setInternal(Entity.ARMOR_DESTROYED, hit);
+                        te.setInternal(0, hit);
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
                         desc += " <<<SECTION DESTROYED>>>,";
@@ -2600,8 +2598,11 @@ public class Server
                     break;
                 case CriticalSlot.TYPE_AMMO :
                     desc += "\n            <<<CRITICAL HIT>>> on " + en.getAmmo(cs.getIndex()).getName() + ".";
-                    en.getWeapon(cs.getIndex()).setDestroyed(true);
                     desc += explodeAmmo(en, loc, slot);
+                    break;
+                case CriticalSlot.TYPE_MISC :
+                    desc += "\n            <<<CRITICAL HIT>>> on " + en.getMisc(cs.getIndex()).getName() + ".";
+                    en.getMisc(cs.getIndex()).setDestroyed(true);
                     break;
                 }
                 hits--;

@@ -226,7 +226,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Auto Cannon/2";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
-        weapon.mtfName = "AC/5";
+        weapon.mtfName = "AC/2";
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;

@@ -442,8 +442,8 @@ public class BoardView1
      * onscreen.
      */
     private synchronized void drawSprites(Vector spriteVector) {
-        for (final Iterator i = spriteVector.iterator(); i.hasNext();) {
-            final Sprite sprite = (Sprite)i.next();
+        for (int i = 0; i < spriteVector.size(); i++) {
+            final Sprite sprite = (Sprite)spriteVector.get(i);
             drawSprite(sprite);
         }
     }

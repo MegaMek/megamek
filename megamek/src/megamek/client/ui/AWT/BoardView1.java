@@ -3285,7 +3285,7 @@ public class BoardView1
             costStringBuf.append( step.getMpUsed() );
 
             // If the step is using a road bonus, mark it.
-            if ( step.isPavementStep() ) {
+            if ( step.isPavementStep() && step.getParent().getEntity() instanceof Tank ) {
                 costStringBuf.append( "+" );
             }
 

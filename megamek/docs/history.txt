@@ -7,6 +7,7 @@ v0.29.70 (CVS)
 + Bug 1123395: NPE when unit dies in scenario initial damage.
 + Bug 1165423: When the "showunitid" option is set, variant mech images
     do not show.
++ Only display "+" in movementsteps if the unit actually got a road movement bonus.
 
 v0.29.69 (2005-03-14 7:45am)
 + Data 1157247: New pictures for Burrock, Great Wyrm, Highlander IIC, Scylla.

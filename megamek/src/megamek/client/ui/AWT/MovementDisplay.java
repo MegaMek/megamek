@@ -269,8 +269,6 @@ public class MovementDisplay
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
-            System.err.println("MovementDisplay: sending ready signal...");
-            moveTo(new MovementData());
             return;
         }
         // okay.
@@ -624,7 +622,8 @@ public class MovementDisplay
         if ( ( gear != Compute.GEAR_LAND &&
                gear != Compute.GEAR_TURN &&
                gear != Compute.GEAR_BACKUP ) ||
-             loadedUnits.size() == 0 ) {
+             loadedUnits.size() == 0 
+             || cen == Entity.NONE) {
             butUnload.setEnabled( false );
         }
         else {
@@ -632,7 +631,7 @@ public class MovementDisplay
         }
 
         // If the current entity has moved, disable "Load" button.
-        if ( md.length() > 0 ) {
+        if ( md.length() > 0 || cen == Entity.NONE ) {
 
             butLoad.setEnabled( false );
 

@@ -822,39 +822,24 @@ public class Compute
                                         Vector prevAttacks) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final Mounted mounted = ae.getEquipment(weaponId);
-        final WeaponType wtype = (WeaponType)mounted.getType();
+        final Mounted weapon = ae.getEquipment(weaponId);
+        final WeaponType wtype = (WeaponType)weapon.getType();
         final Coords[] in = intervening(ae.getPosition(), te.getPosition());
-        boolean usesAmmo;
-        Mounted amounted;
-        AmmoType atype;
-        
-        // check if weapon uses ammo
-        if (wtype.getAmmoType() != AmmoType.T_NA) {
-            usesAmmo = true;
-            amounted = mounted.getLinked();
-            if (amounted != null) {
-                atype = (AmmoType)amounted.getType();
-            } else {
-                atype = null;
-            }
-        } else {
-            usesAmmo = false;
-            amounted = null;
-            atype = null;
-        }
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
+        final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         
         ToHitData toHit;
         boolean pc = false; // partial cover
         boolean apc = false; // attacker partial cover
         
         // weapon operational?
-        if (mounted.isDestroyed()) {
+        if (weapon.isDestroyed()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon not operational.");
         }
         
         // got ammo?
-        if (usesAmmo && (amounted == null || amounted.getShotsLeft() == 0)) {
+        if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Weapon out of ammo.");
         }
         
@@ -930,7 +915,7 @@ public class Compute
         }
         
         // attacker partial cover means no leg weapons
-        if (apc && (mounted.getLocation() == Mech.LOC_RLEG || mounted.getLocation() == Mech.LOC_LLEG)) {
+        if (apc && (weapon.getLocation() == Mech.LOC_RLEG || weapon.getLocation() == Mech.LOC_LLEG)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Nearby terrain blocks leg weapons");
         }
         
@@ -1010,25 +995,25 @@ public class Compute
         }
         
         // secondary targets modifier
+        int primaryTarget = Entity.NONE;
         for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-            // stop when we get to this weaponattack (does this always work?)
-            if (prevAttack.getEntityId() == attackerId && prevAttack.getWeaponId() == weaponId) {
+            // set first declared target as primary
+            if (prevAttack.getEntityId() == attackerId) {
+                primaryTarget = prevAttack.getTargetId();
                 break;
             }
-            // check for secondary target
-            if (prevAttack.getEntityId() == attackerId && prevAttack.getTargetId() != targetId) {
-                if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD)) {
-                    toHit.addModifier(1, "secondary target modifier");
-                    break;
-                } else {
-                    toHit.addModifier(2, "secondary target modifier");
-                    break;
-                }
+        }
+        
+        if (primaryTarget != targetId) {
+            if (isInArc(ae.getPosition(), ae.getSecondaryFacing(), te.getPosition(), ARC_FORWARD)) {
+                toHit.addModifier(1, "secondary target modifier");
+            } else {
+                toHit.addModifier(2, "secondary target modifier");
             }
         }
 
@@ -1039,14 +1024,14 @@ public class Compute
         }
 
         // arm critical hits to attacker
-        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, mounted.getLocation()) > 0) {
+        if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
             toHit.addModifier(4, "shoulder actuator destroyed");
         } else {
             int actuatorHits = 0;
-            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, mounted.getLocation()) > 0) {
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
                 actuatorHits++;
             }
-            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, mounted.getLocation()) > 0) {
+            if (ae.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
                 actuatorHits++;
             }
             if (actuatorHits > 0) {
@@ -1077,8 +1062,8 @@ public class Compute
               }
               
               // arm-mounted weapons have addidional trouble
-              if (mounted.getLocation() == Mech.LOC_RARM || mounted.getLocation() == Mech.LOC_LARM) {
-                  int otherArm = mounted.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+              if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                  int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                   // check previous attacks for weapons fire from the other arm
                   for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
                       Object o = i.nextElement();
@@ -1096,7 +1081,7 @@ public class Compute
                   }
               }
               // can't fire leg weapons
-              if (mounted.getLocation() == Mech.LOC_LLEG && mounted.getLocation() == Mech.LOC_RLEG) {
+              if (weapon.getLocation() == Mech.LOC_LLEG && weapon.getLocation() == Mech.LOC_RLEG) {
                   return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire rear leg-mounted weapons while prone with destroyed legs");
               }
               toHit.addModifier(2, "attacker prone");
@@ -1109,8 +1094,8 @@ public class Compute
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Prone with one or both arms destroyed");
             }
             // arm-mounted weapons have addidional trouble
-            if (mounted.getLocation() == Mech.LOC_RARM || mounted.getLocation() == Mech.LOC_LARM) {
-                int otherArm = mounted.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
+            if (weapon.getLocation() == Mech.LOC_RARM || weapon.getLocation() == Mech.LOC_LARM) {
+                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 for (Enumeration i = prevAttacks.elements(); i.hasMoreElements();) {
                     Object o = i.nextElement();
@@ -1128,7 +1113,7 @@ public class Compute
                 }
             }
             // can't fire leg weapons
-            if (mounted.getLocation() == Mech.LOC_LLEG && mounted.getLocation() == Mech.LOC_RLEG) {
+            if (weapon.getLocation() == Mech.LOC_LLEG && weapon.getLocation() == Mech.LOC_RLEG) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Can't fire leg-mounted weapons while prone");
             }
             toHit.addModifier(2, "attacker prone");
@@ -2270,12 +2255,12 @@ public class Compute
         Coords[] trueArray = new Coords[trueCoords.size()];
         trueCoords.copyInto(trueArray);
         
-        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
-        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
-            final Coords coords = (Coords)i.nextElement();
-            System.out.print(coords.getBoardNum() + " ");
-        }
-        System.out.print("]\n");
+//        System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
+//        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
+//            final Coords coords = (Coords)i.nextElement();
+//            System.out.print(coords.getBoardNum() + " ");
+//        }
+//        System.out.print("]\n");
         
         return trueArray;
     }

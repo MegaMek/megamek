@@ -2289,7 +2289,11 @@ public class BoardView1
             // set color
             switch (step.getMovementType()) {
             case Entity.MOVE_RUN :
-                col = Settings.moveRunColor;
+                if (step.isUsingMASC()) {
+                    col = Settings.moveMASCColor;
+                } else {
+                    col = Settings.moveRunColor;
+                }
                 break;
             case Entity.MOVE_JUMP :
                 col = Settings.moveJumpColor;
@@ -2300,9 +2304,6 @@ public class BoardView1
             default :
                 col = Settings.moveDefaultColor;
                 break;
-            }
-            if (step.isUsingMASC()) {
-                col = Settings.moveMASCColor;
             }
 
             // draw arrows and cost for the step

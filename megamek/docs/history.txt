@@ -9,6 +9,7 @@ v 0.29.26 (CVS)
 + RFE 678287: dedicated server can now load saved games
 + Bug 893423: Don't use AMS ammo that is being dumped.
 + Bug 887207: Ensure that the wr.amsShotDown vector is not null.
++ Bug 798849: Illegal moves now grayed out when MASC in use.
 
 v 0.29.25 (2004-02-08 10:00pm)
 + Data 887963: added images for Berserker, Lao Hu, and Naginata; updated

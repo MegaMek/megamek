@@ -94,12 +94,12 @@ v 0.25
 ? map selection
 ? custom pilots
 
-v 0.24
-? dunno, release it?
-
 VERSION HISTORY:
 ----------------
 v next
++ changed RNG routine to avoid impossible chance of rounding errors (:P)
+
+v 0.24.0 (03-18-02, 12:30pm)
 + mechs making a dfa attack can't be physically attacked
 + prone mechs automatically miss charging and DFA attacks
 + falling damage for mechs doing DFA is saved until they miss the DFA

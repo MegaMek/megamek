@@ -332,7 +332,7 @@ implements Runnable {
         sendCurrentInfo(connId);
 
         try {
-            sendServerChat("Host IP is " + InetAddress.getLocalHost().getHostAddress());
+            sendServerChat("Machine IP is " + InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException  e) {
             // oh well.
         }

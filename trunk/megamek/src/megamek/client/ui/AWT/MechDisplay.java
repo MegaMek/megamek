@@ -19,19 +19,23 @@ import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
 
+import megamek.client.util.widget.*;
 import megamek.common.*;
 
 /**
  * Displays the info for a mech.  This is also a sort
  * of interface for special movement and firing actions.
  */
-public class MechDisplay extends Panel 
-    implements ActionListener
+public class MechDisplay extends BufferedPanel 
+
+
 {
     // buttons & gizmos for top level
-    public Button                movBut, armBut, weaBut, criBut, extBut;
     
-    public Panel                displayP;
+    MechPanelTabStrip tabStrip;
+    
+    
+    public BufferedPanel        displayP;
     public MovementPanel        mPan;
     public ArmorPanel           aPan;
     public WeaponPanel          wPan;
@@ -48,18 +52,10 @@ public class MechDisplay extends Panel
         super(new GridBagLayout());
         
         this.client = client;
-        movBut = new Button("Movement");
-        movBut.addActionListener(this);
-        armBut = new Button("Armor");
-        armBut.addActionListener(this);
-        weaBut = new Button("Weapons");
-        weaBut.addActionListener(this);
-        criBut = new Button("Systems");
-        criBut.addActionListener(this);
-        extBut = new Button("Extras");
-        extBut.addActionListener(this);
         
-        displayP = new Panel(new CardLayout());
+        tabStrip = new MechPanelTabStrip(this);
+        
+        displayP = new BufferedPanel(new CardLayout());
         mPan = new MovementPanel();
         displayP.add("movement", mPan);
         aPan = new ArmorPanel();
@@ -74,24 +70,18 @@ public class MechDisplay extends Panel
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
+        c.insets = new Insets(4, 1, 0, 1);
         
         c.weightx = 1.0;    c.weighty = 0.0;
-        addBag(movBut, c);
-        
-        addBag(armBut, c);
-        
-        addBag(weaBut, c);
-        
-        addBag(criBut, c);
         
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(extBut, c);
-        
-        c.weightx = 1.0;    c.weighty = 1.0;
+        addBag(tabStrip, c);
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weighty = 1.0;
         addBag(displayP, c);
         
         ((CardLayout)displayP.getLayout()).show(displayP, "movement");
+        //tabStrip.setTab(0);
     }
     
     public void addBag(Component comp, GridBagConstraints c) {
@@ -133,27 +123,17 @@ public class MechDisplay extends Panel
      */
     public void showPanel(String s) {
         ((CardLayout)displayP.getLayout()).show(displayP, s);
-    }
-    
-    //
-    // ActionListener
-    //
-    public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equalsIgnoreCase("movement")) {
-            showPanel("movement");
-        }
-        if(e.getActionCommand().equalsIgnoreCase("armor")) {
-            showPanel("armor");
-        }
-        if(e.getActionCommand().equalsIgnoreCase("weapons")) {
-            showPanel("weapons");
-        }
-        if(e.getActionCommand().equalsIgnoreCase("systems")) {
-            showPanel("systems");
-        }
-        if(e.getActionCommand().equalsIgnoreCase("extras")) {
-            showPanel("extras");
-        }
+        if (s == "movement") {
+	       tabStrip.setTab(0);
+	    } else if (s == "armor") {
+	    	tabStrip.setTab(1);
+	    } else if (s == "weapons"){
+	    	tabStrip.setTab(3);
+	    } else if (s == "systems") {
+	    	tabStrip.setTab(2);
+	    } else if (s == "extras") {
+	    	tabStrip.setTab(4);
+	    }
     }
     
 }
@@ -162,306 +142,157 @@ public class MechDisplay extends Panel
  * and gizmos relating to moving around on the 
  * battlefield.
  */
-class MovementPanel 
-    extends Panel 
-{
-    public Panel    statusP, terrainP, moveP;
-    public Label    mechTypeL;
-    public Label    statusL, statusR, playerL, playerR, teamL, teamR, weightL, weightR, pilotL, pilotR;
-    public Label    mpL, mpR, curMoveL, curMoveR, heatL, heatR;
-        
-    public MovementPanel() {
-        super();
-        
-        GridBagLayout gridbag;
-        GridBagConstraints c;
-            
-        mechTypeL = new Label("Loc0st LCT-1L", Label.CENTER);
+class MovementPanel extends PicMap{
 
-        // status stuff
-        statusL = new Label("Status:", Label.RIGHT);
-        playerL = new Label("Player:", Label.RIGHT);
-        teamL = new Label("Team:", Label.RIGHT);
-        weightL = new Label("Weight:", Label.RIGHT);
-        pilotL = new Label("Pilot:", Label.RIGHT);
-            
-        statusR = new Label("?", Label.LEFT);
-        playerR = new Label("?", Label.LEFT);
-        teamR = new Label("?", Label.LEFT);
-        weightR = new Label("?", Label.LEFT);
-        pilotR = new Label("?", Label.LEFT);
-            
-        // movement stuff
-        mpL = new Label("Movement:", Label.RIGHT);
-        curMoveL = new Label("Currently:", Label.RIGHT);
-        heatL = new Label("Heat:", Label.RIGHT);
+    private GeneralInfoMapSet gi;
 
-        mpR = new Label("8/12/0", Label.LEFT);
-        curMoveR = new Label("No Movement", Label.LEFT);
-        heatR = new Label("2 (10 capacity)", Label.LEFT);
-            
-        statusP = new Panel();
-        gridbag = new GridBagLayout();
-        c = new GridBagConstraints();
-        statusP.setLayout(gridbag);
-        
-        c.insets = new Insets(1, 1, 1, 1);
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
-        
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(statusL, c);
-        statusP.add(statusL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(statusR, c);
-        statusP.add(statusR);
-
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(playerL, c);
-        statusP.add(playerL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(playerR, c);
-        statusP.add(playerR);
-        
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(teamL, c);
-        statusP.add(teamL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(teamR, c);
-        statusP.add(teamR);
-
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(weightL, c);
-        statusP.add(weightL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(weightR, c);
-        statusP.add(weightR);
-
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(pilotL, c);
-        statusP.add(pilotL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(pilotR, c);
-        statusP.add(pilotR);
-        
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(mpL, c);
-        statusP.add(mpL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(mpR, c);
-        statusP.add(mpR);
-        
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(curMoveL, c);
-        statusP.add(curMoveL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(curMoveR, c);
-        statusP.add(curMoveR);
-        
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(heatL, c);
-        statusP.add(heatL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(heatR, c);
-        statusP.add(heatR);
-
-        // layout main panel
-        gridbag = new GridBagLayout();
-        c = new GridBagConstraints();
-        setLayout(gridbag);
-        
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(mechTypeL, c);
-        add(mechTypeL);
-        
-        c.weightx = 1.0;    c.weighty = 1.0;
-        gridbag.setConstraints(statusP, c);
-        add(statusP);
+    private int minTopMargin = 8;
+    private int minLeftMargin = 8;
+    
+    
+    
+    public void addNotify(){
+        super.addNotify();
+        gi = new GeneralInfoMapSet(this);
+        addElement(gi.getContentGroup());
+        Vector v = gi.getBackgroundDrawers();
+        Enumeration enum = v.elements();
+        while(enum.hasMoreElements()){
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        }
+        onResize();
+        update();
+    }
+    
+    public void onResize(){
+    	int w = getSize().width;
+    	int h = getSize().height;
+    	Rectangle r = getContentBounds();
+    	int dx = (int) Math.round((w - r.width)/2);
+    	if (dx < minLeftMargin) dx = minLeftMargin;
+    	int dy = minTopMargin;
+      	if( r != null) setContentMargins(dx, dy, dx, dy);
     }
         
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-        this.mechTypeL.setText(en.getShortName());
+       gi.setEntity(en);
+       onResize();
+       update();
+    }     
 
-        this.statusR.setText(en.isProne() ? "prone" : "normal");
-        this.playerR.setText(en.getOwner().getName());
-        this.teamR.setText(en.getOwner().getTeam() == 0 ? "No Team" : "Team " + en.getOwner().getTeam());
-        this.weightR.setText(Integer.toString((int)en.getWeight()));
-        this.pilotR.setText(en.crew.getDesc());
 
-        StringBuffer mp = new StringBuffer();
-        mp.append(en.getWalkMP());
-        mp.append('/');
-        mp.append(en.getRunMP());
-        mp.append('/');
-        mp.append(en.getJumpMPWithTerrain());
-        if (en.mpUsed > 0) {
-            mp.append(" (");
-            mp.append(en.mpUsed);
-            mp.append(" used)");
-        }
-        this.mpR.setText(mp.toString());
-        this.curMoveR.setText(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));
-        
-        int heatCap = en.getHeatCapacity();
-        int heatCapWater = en.getHeatCapacityWithWater();
-        String heatCapacityStr = Integer.toString(heatCap);
-        
-        if ( heatCap < heatCapWater ) {
-          heatCapacityStr = heatCap + " [" + heatCapWater + "]";
-        }
-        
-        this.heatR.setText(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
-
-        validate();
-    }
+    
 }
     
 /**
  * This panel contains the armor readout display.
  */
-class ArmorPanel
-    extends Panel 
+class ArmorPanel  extends PicMap 
 {
-    public Label    locHL, internalHL, armorHL;
-    public Label[]    locL, internalL, armorL;
-        
-    public ArmorPanel() {
-        super(new GridBagLayout());
-            
-        locHL = new Label("Location", Label.CENTER);
-        internalHL = new Label("Internal", Label.CENTER);
-        armorHL = new Label("Armor", Label.CENTER);
-            
+    private TankMapSet tank;
+    private MechMapSet mech;
+    private InfantryMapSet infantry;
+    private BattleArmorMapSet battleArmor;
+    private int minTopMargin = 0;
+    private int minLeftMargin = 0;
+    private int minBottomMargin = 0;
+    private int minRightMargin = 0;
+    
+    private static final int minTankTopMargin = 8;
+    private static final int minTankLeftMargin = 8;
+    private static final int minMechTopMargin = 18;
+    private static final int minMechLeftMargin = 7;
+    private static final int minMechBottomMargin = 0;
+    private static final int minMechRightMargin = 0;
+    private static final int minInfTopMargin = 8;
+    private static final int minInfLeftMargin = 8;
+    
+    
+    public void addNotify(){
+        super.addNotify();
+        tank = new TankMapSet(this);
+        mech = new MechMapSet(this);
+        infantry = new InfantryMapSet(this);
+        battleArmor = new BattleArmorMapSet(this);
+    }
+    
+    public void onResize(){
+    	Rectangle r = getContentBounds();
+    	if( r == null) return;
+    	int w = (int) Math.round((getSize().width - r.width)/2);
+    	int h = (int) Math.round((getSize().height - r.height)/2);
+    	int dx = (w < minLeftMargin) ? minLeftMargin : w;
+    	int dy = (h < minTopMargin) ? minTopMargin : h;
+      	setContentMargins(dx, dy, minRightMargin, minBottomMargin);
     }
         
     /**
      * updates fields for the specified mech
      */
     public void displayMech(Entity en) {
-        this.removeAll();
-        
-        locL = new Label[en.locations()];
-        internalL = new Label[en.locations()];
-        armorL = new Label[en.locations()];
-            
-        // initialize
-        for(int i = 0; i < en.locations(); i++) {
-            locL[i] = new Label("Center Torso Rear", Label.LEFT);
-            internalL[i] = new Label("99", Label.CENTER);
-            armorL[i] = new Label("999", Label.CENTER);
+    	DisplayMapSet ams = (DisplayMapSet) mech;
+    	removeAll();
+        if(en instanceof Mech){
+        	ams = (DisplayMapSet) mech;
+         	minLeftMargin = minMechLeftMargin;
+        	minTopMargin = minMechTopMargin;
+            minBottomMargin = minMechBottomMargin;
+            minRightMargin = minMechRightMargin;
+        } else if (en instanceof Tank){
+        	ams = (DisplayMapSet) tank;
+        	minLeftMargin = minTankLeftMargin;
+        	minTopMargin = minTankTopMargin;
+        	minBottomMargin = minTankTopMargin;
+            minRightMargin = minTankLeftMargin;
+        } else if (	en instanceof BattleArmor){
+        	ams = (DisplayMapSet) battleArmor;
+            minLeftMargin = minInfLeftMargin;
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;
+        	       	
+        } else if (en instanceof Infantry){
+        	ams = (DisplayMapSet)infantry;
+            minLeftMargin = minInfLeftMargin;
+        	minTopMargin = minInfTopMargin;
+        	minBottomMargin = minInfTopMargin;
+            minRightMargin = minInfLeftMargin;        	
+        	         	
         }
-
-        // layout main panel
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(2, 2, 2, 2);
-        
-        c.weightx = 1.0;    c.weighty = 1.0;
-        c.gridwidth = 1;
-        ((GridBagLayout)getLayout()).setConstraints(locHL, c);
-        add(locHL);
-        
-        ((GridBagLayout)getLayout()).setConstraints(armorHL, c);
-        add(armorHL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        ((GridBagLayout)getLayout()).setConstraints(internalHL, c);
-        add(internalHL);
-            
-        for(int i = 0; i < en.locations(); i++) {
-            c.gridwidth = 1;
-            ((GridBagLayout)getLayout()).setConstraints(locL[i], c);
-            add(locL[i]);
-        
-            ((GridBagLayout)getLayout()).setConstraints(armorL[i], c);
-            add(armorL[i]);
-        
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout)getLayout()).setConstraints(internalL[i], c);
-            add(internalL[i]);
+        ams.setEntity(en); 
+        this.addElement(ams.getContentGroup());
+        Vector v = ams.getBackgroundDrawers();
+        Enumeration enum = v.elements();
+        while(enum.hasMoreElements()){
+        	addBgDrawer( (BackGroundDrawer) enum.nextElement());
         }
-        
-        // update armor panel
-        for(int i = 0; i < en.locations(); i++) {
-            this.locL[i].setText(en.getLocationName(i));
-            this.internalL[i].setText(en.getInternalString(i));
-            this.armorL[i].setText(en.getArmorString(i) + (en.hasRearArmor(i) ? " (" + en.getArmorString(i, true) + ")" : ""));
-        }
-        
-        this.validate();
+        onResize();
+        update();
     }
 }
+    
     
 /**
  * This class contains the all the gizmos for firing the
  * mech's weapons.
  */
-class WeaponPanel 
-    extends Panel 
+class WeaponPanel extends BufferedPanel 
     implements ItemListener
 {
     public java.awt.List weaponList;
     public Choice m_chAmmo;
-    public Panel displayP, rangeP, targetP, buttonP;
         
-    public Label wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL,
-        wMedL, wLongL;
-    public Label wNameR, wHeatR, wDamR, wMinR, wShortR,
-        wMedR, wLongR;
-    public Label currentHeatBuildupL, currentHeatBuildupR;
+    public TransparentLabel wAmmo, wNameL, wHeatL, wDamL, wMinL, wShortL, wMedL, wLongL;
+    public TransparentLabel wNameR, wHeatR, wDamR, wMinR, wShortR,wMedR, wLongR;
+    public TransparentLabel currentHeatBuildupL, currentHeatBuildupR;
         
-    public Label wTargetL, wRangeL, wToHitL;
-    public Label wTargetR, wRangeR, wToHitR;
+    public TransparentLabel wTargetL, wRangeL, wToHitL;
+    public TransparentLabel wTargetR, wRangeR, wToHitR;
         
     public TextArea toHitText;
-        
-    public Button ammoB;
         
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
@@ -469,185 +300,288 @@ class WeaponPanel
     private Vector vAmmo;
     private Entity entity;
     private Client client;
+    
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 10);
         
     public WeaponPanel(Client client) {        
         super(new GridBagLayout());
         
         this.client = client;
-            
+         
+        FontMetrics fm = getFontMetrics(FONT_VALUE);
+        
+        Color clr = Color.white;
+
         // weapon list
         weaponList = new java.awt.List(4, false);
         weaponList.addItemListener(this);
         
-        // ammo choice panel
-        wAmmo = new Label("Ammo", Label.LEFT);
-        m_chAmmo = new Choice();
-        m_chAmmo.addItemListener(this);
-        
-        Panel ammoP = new Panel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.fill = GridBagConstraints.NONE;
-        ((GridBagLayout)ammoP.getLayout()).setConstraints(wAmmo, c);
-        ammoP.add(wAmmo);
-        
-        c.gridwidth = 3;
-        c.gridx = 1;
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        ((GridBagLayout)ammoP.getLayout()).setConstraints(m_chAmmo, c);
-        ammoP.add(m_chAmmo);
-            
-        currentHeatBuildupL = new Label("Heat Buildup");
-        currentHeatBuildupR = new Label("--");
-        Panel currentHeatP = new Panel(new GridBagLayout());
-        c = new GridBagConstraints();
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
-        c.fill = GridBagConstraints.NONE;
-        ((GridBagLayout)currentHeatP.getLayout()).setConstraints(currentHeatBuildupL, c);
-        currentHeatP.add(currentHeatBuildupL);
-        
-        c.gridwidth = 3;
-        c.gridx = 1;
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        ((GridBagLayout)currentHeatP.getLayout()).setConstraints(currentHeatBuildupR, c);
-        currentHeatP.add(currentHeatBuildupR);
-
-            
-        // weapon display panel
-        wNameL = new Label("Name", Label.LEFT);
-        wHeatL = new Label("Heat", Label.CENTER);
-        wDamL = new Label("Damage", Label.CENTER);
-        wNameR = new Label("", Label.LEFT);
-        wHeatR = new Label("--", Label.CENTER);
-        wDamR = new Label("--", Label.CENTER);
-            
-        displayP = new Panel(new GridBagLayout());
-            
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        
-        c.gridwidth = 1;            
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wNameL, c);
-        displayP.add(wNameL);
-        
-        c.weightx = 0.0;    c.weighty = 0.0;
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wHeatL, c);
-        displayP.add(wHeatL);
-            
-        c.gridwidth = GridBagConstraints.REMAINDER;            
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wDamL, c);
-        displayP.add(wDamL);
-        
-        c.gridwidth = 1;            
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wNameR, c);
-        displayP.add(wNameR);
-        
-        c.weightx = 0.0;    c.weighty = 0.0;
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wHeatR, c);
-        displayP.add(wHeatR);
-            
-        c.gridwidth = GridBagConstraints.REMAINDER;            
-        ((GridBagLayout)displayP.getLayout()).setConstraints(wDamR, c);
-        displayP.add(wDamR);
-        
-        
-        // range panel
-        wMinL = new Label("Min", Label.CENTER);
-        wShortL = new Label("Short", Label.CENTER);
-        wMedL = new Label("Med", Label.CENTER);
-        wLongL = new Label("Long", Label.CENTER);
-        wMinR = new Label("---", Label.CENTER);
-        wShortR = new Label("---", Label.CENTER);
-        wMedR = new Label("---", Label.CENTER);
-        wLongR = new Label("---", Label.CENTER);
-            
-        rangeP = new Panel(new GridLayout(2, 4));
-        rangeP.add(wMinL);
-        rangeP.add(wShortL);
-        rangeP.add(wMedL);
-        rangeP.add(wLongL);
-        rangeP.add(wMinR);
-        rangeP.add(wShortR);
-        rangeP.add(wMedR);
-        rangeP.add(wLongR);
-            
-        // target panel
-        wTargetL = new Label("Target:");
-        wRangeL = new Label("Range:");
-        wToHitL = new Label("To Hit:");
-            
-        wTargetR = new Label("---");
-        wRangeR = new Label("---");
-        wToHitR = new Label("---");
-            
-        targetP = new Panel(new GridLayout(3, 2));
-        targetP.add(wTargetL);
-        targetP.add(wTargetR);
-        targetP.add(wRangeL);
-        targetP.add(wRangeR);
-        targetP.add(wToHitL);
-        targetP.add(wToHitR);
-            
-        // to-hit text
-        toHitText = new TextArea("", 4, 20, TextArea.SCROLLBARS_VERTICAL_ONLY);
-        toHitText.setEditable(false);
-            
-        // button panel
-        ammoB = new Button("Change Ammo");
-        ammoB.setEnabled(false);
-            
-        buttonP = new Panel();
-        buttonP.add(ammoB);
-            
-            
         // layout main panel
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
+        GridBagConstraints c = new GridBagConstraints();
         
-        c.weightx = 1.0;    c.weighty = 1.0;
+        //adding Weapon List
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(15, 9, 1, 9);
+        c.weightx = 0.0;    c.weighty = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         ((GridBagLayout)getLayout()).setConstraints(weaponList, c);
         add(weaponList);
         
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)getLayout()).setConstraints(ammoP, c);
-        add(ammoP);
+        //adding Ammo choice + label
         
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)getLayout()).setConstraints(currentHeatP, c);
-        add(currentHeatP);
+        wAmmo = new TransparentLabel("Ammo", fm, clr, TransparentLabel.LEFT);
+        m_chAmmo = new Choice();
+        m_chAmmo.addItemListener(this);
+        
+        c.insets = new Insets(1, 9, 1, 1);
+        
+        c.gridwidth = 1;
+        c.weighty = 0.0;
+        c.fill = GridBagConstraints.NONE;
+        ((GridBagLayout)getLayout()).setConstraints(wAmmo, c);
+        add(wAmmo);
+        
+        c.insets = new Insets(1, 1, 1, 9);        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        ((GridBagLayout)getLayout()).setConstraints(m_chAmmo, c);
+        add(m_chAmmo);
+        
+        //Adding Heat Buildup
+            
+        currentHeatBuildupL = new TransparentLabel("Heat Buildup: ", fm, clr, TransparentLabel.RIGHT);
+        currentHeatBuildupR = new TransparentLabel("--", fm, clr, TransparentLabel.LEFT);
+        
+        c.insets = new Insets(2, 9, 2, 1);
+        c.gridwidth = 2; c.gridx = 0;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.EAST;
+        ((GridBagLayout)getLayout()).setConstraints(currentHeatBuildupL, c);
+        add(currentHeatBuildupL);
+        
+        c.insets = new Insets(2, 1, 2, 9);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridx = 2;
+        c.anchor = GridBagConstraints.WEST;
+        //c.fill = GridBagConstraints.HORIZONTAL;
+        ((GridBagLayout)getLayout()).setConstraints(currentHeatBuildupR, c);
+        add(currentHeatBuildupR);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)getLayout()).setConstraints(displayP, c);
-        add(displayP);
+            
+        //Adding weapon display labels
+        wNameL = new TransparentLabel("Name", fm, clr, TransparentLabel.CENTER);
+        wHeatL = new TransparentLabel("Heat", fm, clr, TransparentLabel.CENTER);
+        wDamL =  new TransparentLabel("Damage", fm, clr, TransparentLabel.CENTER);
+        wNameR = new TransparentLabel("", fm, clr, TransparentLabel.CENTER);
+        wHeatR = new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
+        wDamR =  new TransparentLabel("--", fm, clr, TransparentLabel.CENTER);
         
-        ((GridBagLayout)getLayout()).setConstraints(rangeP, c);
-        add(rangeP);
         
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)getLayout()).setConstraints(targetP, c);
-        add(targetP);
-                
-        c.weightx = 1.0;    c.weighty = 1.0;
-        ((GridBagLayout)getLayout()).setConstraints(toHitText, c);
+         c.anchor = GridBagConstraints.CENTER;    
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(2, 9, 1, 1);
+        c.gridwidth = 2; c.gridx = 0;            
+        ((GridBagLayout)getLayout()).setConstraints(wNameL, c);
+        add(wNameL);
+        
+        
+        c.insets = new Insets(2, 1, 1, 1);
+        c.gridwidth = 1; c.gridx = 2; 
+        ((GridBagLayout)getLayout()).setConstraints(wHeatL, c);
+        add(wHeatL);
+        
+        c.insets = new Insets(2, 1, 1, 9);    
+        c.gridwidth = GridBagConstraints.REMAINDER; 
+        c.gridx = 3;            
+        ((GridBagLayout)getLayout()).setConstraints(wDamL, c);
+        add(wDamL);
+        
+        c.insets = new Insets(1, 9, 2, 1);
+        c.gridwidth = 2;
+        c.gridx = 0; c.gridy = 4;            
+        ((GridBagLayout)getLayout()).setConstraints(wNameR, c);
+        add(wNameR);
+        
+        c.gridwidth = 1;
+        c.gridx = 2; 
+        ((GridBagLayout) getLayout()).setConstraints(wHeatR, c);
+        add(wHeatR);
+        
+        c.insets = new Insets(1, 1, 2, 9);
+        c.gridx = 3;    
+        c.gridwidth = GridBagConstraints.REMAINDER;            
+        ((GridBagLayout) getLayout()).setConstraints(wDamR, c);
+        add(wDamR);
+        
+        
+        // Adding range labels
+        wMinL = new TransparentLabel("Min", fm, clr, TransparentLabel.CENTER);
+        wShortL = new TransparentLabel("Short", fm, clr, TransparentLabel.CENTER);
+        wMedL = new TransparentLabel("Med", fm, clr, TransparentLabel.CENTER);
+        wLongL = new TransparentLabel("Long", fm, clr, TransparentLabel.CENTER);
+        wMinR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wShortR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wMedR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wLongR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        
+        c.weightx = 1.0;
+        c.insets = new Insets(2, 9, 1, 1);
+        c.gridx = 0; c.gridy = 5; c.gridwidth = 1;
+        ((GridBagLayout) getLayout()).setConstraints(wMinL, c);
+        add(wMinL);
+        
+        c.insets = new Insets(2, 1, 1, 1);
+        c.gridx = 1; c.gridy = 5;
+        ((GridBagLayout) getLayout()).setConstraints(wShortL, c);
+        add(wShortL);
+        
+        c.gridx = 2; c.gridy = 5;
+        ((GridBagLayout) getLayout()).setConstraints(wMedL, c);
+        add(wMedL);
+        
+        c.insets = new Insets(2, 1, 1, 9);
+        c.gridx = 3; c.gridy = 5; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wLongL, c);
+        add(wLongL);
+        //---------------- 
+        
+         c.insets = new Insets(1, 9, 2, 1);
+        c.gridx = 0; c.gridy = 6; c.gridwidth = 1;
+        ((GridBagLayout) getLayout()).setConstraints(wMinR, c);
+        add(wMinR);
+        
+        c.insets = new Insets(1, 1, 2, 1);
+        c.gridx = 1; c.gridy = 6;
+        ((GridBagLayout) getLayout()).setConstraints(wShortR, c);
+        add(wShortR);
+        
+        c.gridx = 2; c.gridy = 6;
+        ((GridBagLayout) getLayout()).setConstraints(wMedR, c);
+        add(wMedR);
+        
+        c.insets = new Insets(1, 1, 2, 9);
+        c.gridx = 3; c.gridy = 6; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wLongR, c);
+        add(wLongR);        
+        
+            
+        // target panel
+        wTargetL = new TransparentLabel("Target:", fm, clr, TransparentLabel.CENTER);
+        wRangeL = new TransparentLabel("Range:", fm, clr, TransparentLabel.CENTER);
+        wToHitL = new TransparentLabel("To Hit:", fm, clr, TransparentLabel.CENTER);
+            
+        wTargetR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wRangeR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        wToHitR = new TransparentLabel("---", fm, clr, TransparentLabel.CENTER);
+        
+        c.weightx = 0.0;
+        c.insets = new Insets(2, 9, 1, 1);    
+        c.gridx = 0; c.gridy = 7; c.gridwidth = 1;
+        ((GridBagLayout) getLayout()).setConstraints(wTargetL, c);
+        add(wTargetL);
+
+        c.insets = new Insets(2, 1, 1, 9);
+        c.gridx = 1; c.gridy = 7; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wTargetR, c);
+        add(wTargetR);
+
+        c.insets = new Insets(1, 9, 1, 1);
+        c.gridx = 0; c.gridy = 8; c.gridwidth = 1;
+        ((GridBagLayout) getLayout()).setConstraints(wRangeL, c);
+        add(wRangeL);
+
+        c.insets = new Insets(1, 1, 1, 9);
+        c.gridx = 1; c.gridy = 8; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wRangeR, c);
+        add(wRangeR);
+
+        c.insets = new Insets(1, 9, 1, 1);
+        c.gridx = 0; c.gridy = 9; c.gridwidth = 1;
+        ((GridBagLayout) getLayout()).setConstraints(wToHitL, c);
+        add(wToHitL);
+
+        c.insets = new Insets(1, 1, 1, 9);
+        c.gridx = 1; c.gridy = 9; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(wToHitR, c);
+        add(wToHitR);
+
+        // to-hit text
+        toHitText = new TextArea("", 2, 20, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        toHitText.setEditable(false);
+        
+        c.insets = new Insets(1, 9, 15, 9);
+        c.gridx = 0; c.gridy = 10; c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(toHitText, c);
         add(toHitText);
-                
-        /*
-        c.weightx = 1.0;    c.weighty = 0.0;
-        ((GridBagLayout)getLayout()).setConstraints(buttonP, c);
-        add(buttonP);
-        */
+ 
+        
+        setBackGround();
+        
+        
     }
+    
+    private void setBackGround(){
+        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        PMUtil.setImage(tile, (Component) this);
+        int b = BackGroundDrawer.TILING_BOTH;
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_TOP;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_BOTTOM;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+         
+    }
+
         
     /**
      * updates fields for the specified mech
@@ -919,13 +853,12 @@ class WeaponPanel
  * This class shows the critical hits and systems for a mech
  */
 class SystemPanel 
-    extends Panel
+    extends BufferedPanel
     implements ItemListener, ActionListener
 {
     private static Object SYSTEM = new Object();
     
-    public Label locLabel;
-    public Label slotLabel;
+    private TransparentLabel locLabel, slotLabel, modeLabel;
     public java.awt.List slotList;
     public java.awt.List locList;
     
@@ -933,18 +866,21 @@ class SystemPanel
     
     public Choice m_chMode;
     public Button m_bDumpAmmo;
-    public Label modeLabel;
+    //public Label modeLabel;
     private Client client;
+    
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
     
     Entity en;
     
     public SystemPanel(Client client) {
         super();
         
-        this.client = client;
+        FontMetrics fm = getFontMetrics(FONT_VALUE);
         
-        locLabel = new Label("Location", Label.CENTER);
-        slotLabel = new Label("Slot", Label.CENTER);
+        this.client = client;
+        locLabel = new TransparentLabel("Location", fm, Color.white,TransparentLabel.CENTER);
+        slotLabel = new TransparentLabel("Slot", fm, Color.white,TransparentLabel.CENTER);
         
         locList = new List(8, false);
         locList.addItemListener(this);
@@ -953,38 +889,83 @@ class SystemPanel
         //slotList.setEnabled(false);
         
         m_chMode = new Choice();
-        m_chMode.add("      ");
+        m_chMode.add("   ");
         m_chMode.setEnabled(false);
         m_chMode.addItemListener(this);
         m_bDumpAmmo = new Button("Dump");
         m_bDumpAmmo.setEnabled(false);
         m_bDumpAmmo.setActionCommand("dump");
         m_bDumpAmmo.addActionListener(this);
-        modeLabel = new Label("Mode", Label.CENTER);
-        modeLabel.setEnabled(false);
+        modeLabel = new TransparentLabel("Mode", fm, Color.white,TransparentLabel.RIGHT);
+        //modeLabel.setEnabled(false);
         
-        // layout choice panel
-        Panel choicePanel = new Panel();
-        choicePanel.setLayout(new BorderLayout());
-        choicePanel.add(modeLabel, BorderLayout.NORTH);
-        choicePanel.add(m_chMode, BorderLayout.CENTER);
-        choicePanel.add(m_bDumpAmmo, BorderLayout.SOUTH);
         
         // layout main panel
-        Panel leftPanel = new Panel();
-        leftPanel.setLayout(new BorderLayout());
-        leftPanel.add(locLabel, BorderLayout.NORTH);
-        leftPanel.add(locList, BorderLayout.CENTER);
-
-        Panel rightPanel = new Panel();
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.add(slotLabel, BorderLayout.NORTH);
-        rightPanel.add(slotList, BorderLayout.CENTER);
-        rightPanel.add(choicePanel, BorderLayout.SOUTH);
-
-        setLayout(new GridLayout(1,2));
-        add(leftPanel);
-        add(rightPanel);
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(15, 9, 1, 1);
+        c.gridy = 0; c.gridx = 0;
+        c.weightx = 0.5;    c.weighty = 0.0;
+        c.gridwidth = 1; c.gridheight = 1;
+        gridbag.setConstraints(locLabel, c);
+        add(locLabel);
+        
+        c.weightx = 0.0;
+        c.gridy = 0; c.gridx = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(15, 1, 1, 9);
+        gridbag.setConstraints(slotLabel, c);
+        add(slotLabel);
+        
+        c.weightx = 0.5;
+        //c.weighty = 1.0;
+        c.gridy = 1; c.gridx = 0;
+        c.gridwidth = 1;
+        c.insets = new Insets(1, 9, 15, 1);
+        c.gridheight = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(locList, c);
+        add(locList);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = 1;
+        c.gridy = 1;
+        c.gridx = 1;
+        c.weightx = 0.0;
+        c.weighty = 1.0;
+        c.insets = new Insets(1, 1, 1, 9);
+        gridbag.setConstraints(slotList, c);
+        add(slotList);
+        
+        c.gridwidth = 1;
+        c.gridy = 2;
+        c.gridx = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(modeLabel, c);
+        c.insets = new Insets(1, 1, 1, 1);
+        add(modeLabel);
+        
+        c.weightx = 1.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridy = 2;
+        c.gridx = 2;
+        c.insets = new Insets(1, 1, 1, 9);
+        gridbag.setConstraints(m_chMode, c);
+        add(m_chMode);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridheight = GridBagConstraints.REMAINDER;
+        c.gridy = 3;
+        c.gridx = 1;
+        c.insets = new Insets(4, 4, 15, 9);
+        gridbag.setConstraints(m_bDumpAmmo, c);
+        add(m_bDumpAmmo);
+        
+        
+        setBackGround();
     }
     
     public int getSelectedLocation() {
@@ -1126,6 +1107,68 @@ class SystemPanel
             client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
         }
     }
+    
+    private void setBackGround(){
+        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        PMUtil.setImage(tile, (Component) this);
+        int b = BackGroundDrawer.TILING_BOTH;
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_TOP;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_BOTTOM;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+         
+    }
+
 }
 
 
@@ -1133,15 +1176,15 @@ class SystemPanel
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel 
-    extends Panel
+    extends BufferedPanel
 {
     private static Object SYSTEM = new Object();
-    
-    public Label    unusedL, carrysL;
+    private TransparentLabel  narcLabel, unusedL, carrysL;
+    //public Label    unusedL, carrysL;
     public TextArea unusedR, carrysR;
-    public Label narcLabel;
     public java.awt.List narcList;
-
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
+    
     private Client client;
     
     public ExtraPanel(Client client) {
@@ -1149,15 +1192,19 @@ class ExtraPanel
         
         this.client = client;
         
-        narcLabel = new Label("NARCed By:", Label.CENTER);
+        FontMetrics fm = getFontMetrics(FONT_VALUE);
+        
+        narcLabel = new TransparentLabel("NARCed By:", fm, Color.white,TransparentLabel.CENTER);
         
         narcList = new List(3, false);
 
         // transport stuff
-        unusedL = new Label( "Unused Space:", Label.CENTER );
+        //unusedL = new Label( "Unused Space:", Label.CENTER );
+                
+        unusedL = new TransparentLabel("Unused Space:", fm, Color.white,TransparentLabel.CENTER);
         unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         unusedR.setEditable(false);
-        carrysL = new Label( "Carrying:", Label.CENTER );
+        carrysL = new TransparentLabel( "Carrying:", fm, Color.white,TransparentLabel.CENTER);
         carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
         carrysR.setEditable(false);
 
@@ -1170,15 +1217,18 @@ class ExtraPanel
         setLayout(gridbag);
         
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
+        c.insets = new Insets(15, 9, 1, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
         c.weightx = 1.0;
+
 
         c.weighty = 0.0;
         gridbag.setConstraints(narcLabel, c);
         add(narcLabel);
         
+        
+        c.insets = new Insets(1, 9, 1, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(narcList, c);
         add(narcList);
@@ -1195,11 +1245,79 @@ class ExtraPanel
         gridbag.setConstraints(carrysL, c);
         add(carrysL);
         
+        c.insets = new Insets(1, 9, 18, 9);
         c.weighty = 1.0;
         gridbag.setConstraints(carrysR, c);
         add(carrysR);
+        
+        setBackGround();
+        
 
     }
+    
+    
+    
+   private void setBackGround(){
+        Image tile = getToolkit().getImage("data/widgets/tile.gif");
+        PMUtil.setImage(tile, (Component) this);
+        int b = BackGroundDrawer.TILING_BOTH;
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_TOP;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));                
+        
+            b = BackGroundDrawer.TILING_HORIZONTAL | 
+                BackGroundDrawer.VALIGN_BOTTOM;
+        tile = getToolkit().getImage("data/widgets/h_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.TILING_VERTICAL | 
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/v_line.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+                
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/tl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_LEFT;
+        tile = getToolkit().getImage("data/widgets/bl_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_TOP |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/tr_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+        
+            b = BackGroundDrawer.NO_TILING | 
+                BackGroundDrawer.VALIGN_BOTTOM |
+                BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage("data/widgets/br_corner.gif");
+        PMUtil.setImage(tile, (Component) this);
+        addBgDrawer(new BackGroundDrawer (tile,b));
+         
+    }
+    
 
     /**
      * updates fields for the specified mech
@@ -1238,4 +1356,3 @@ class ExtraPanel
     } // End public void displayMech( Entity )
 
 } // End class ExtraPanel extends Panel
-

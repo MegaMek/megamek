@@ -1042,7 +1042,7 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_PLAYER_READY :
                 getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
                 break;
             case Packet.COMMAND_PLAYER_ADD :
                 receivePlayerInfo(c);

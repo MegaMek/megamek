@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.bot;
 
 import megamek.client.bot.ga.*;
@@ -114,7 +127,6 @@ public class GAAttack extends GA {
   protected double getFitness(ChromVector chromVector) {
     targets.clear(); //could use vector and not hashtable
     int heat_total = 0;
-    Iterator i = attack.iterator();
     Entity target = null;
     try {
       target = (Entity)this.target_array[chromVector.genes[chromosomeDim - 1]];
@@ -217,12 +229,18 @@ public class GAAttack extends GA {
    */
   protected void doRandomMutation(int iChromIndex) {
     ChromVector c1 = (ChromVector)this.chromosomes[iChromIndex];
-    int r1 = Compute.randomInt(c1.genes.length - 1);
+    // skip if it's an empty chomosome
+    if ( c1.genes.length < 1 ) return;
+    int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1) : 0;
     CEntity target = null;
     boolean done = false;
     if (r1%2 == 1) {
       c1.genes[r1]--;
-      if (c1.genes[r1] < 0) c1.genes[r1] = ((Vector)this.attack.elementAt(r1)).size() - 1;
+      if ( c1.genes[r1] < 0 && attack.size() > r1 ) {
+          c1.genes[r1] = ((Vector)this.attack.elementAt(r1)).size() - 1;
+      } else {
+          c1.genes[r1] = 0; // TODO : what is a good value here?
+      }
       return;
     }
     //else try to move all to one target
@@ -235,13 +253,18 @@ public class GAAttack extends GA {
       }
     }
     if (target == null) { //then not shooting, so shoot something
-      c1.genes[r1] = Compute.randomInt(((Vector)(attack.elementAt(r1))).size() - 1);
+        if ( attack.size() > r1 && r1 > 1 ) {
+            c1.genes[r1] = Compute.randomInt(((Vector)(attack.elementAt(r1))).size() - 1);
+        } else {
+            // TODO : Is this the correct action to take?
+            c1.genes[r1] = Compute.randomInt(((Vector)(attack.elementAt(0))).size() - 1);
+        }
       TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(r1))).elementAt(c1.genes[r1]);
       if (a.target != null) {
         c1.genes[c1.genes.length - 1] = a.target.enemy_num;
       }
     } else { //let's switch as many attacks as we can to this guy
-      for (int i = 0; (i < c1.genes.length - 1); i++) {
+      for (int i = 0; (i < (c1.genes.length - 1)) && (i < attack.size()); i++) {
         Object[] weapon = ((Vector)(attack.elementAt(i))).toArray();
         if (c1.genes[i] != weapon.length - 1) {
           done = false;

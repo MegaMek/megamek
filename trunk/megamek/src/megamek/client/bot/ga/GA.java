@@ -187,7 +187,7 @@ public abstract class GA implements Runnable {
    */
   public int evolve() {
     int iGen;
-    int iPrelimChrom, iPrelimChromToUsePerRun;
+    //    int iPrelimChrom, iPrelimChromToUsePerRun;
     
     if (this.shouldDoExhaustive()) {
       this.doExhaustiveSearch();

@@ -76,7 +76,6 @@ public class MovementDisplay
     private int                gear;
 
     // is the shift key held?
-    private boolean            mouseheld;
     private boolean            shiftheld;
 
     /**

@@ -1818,7 +1818,6 @@ implements Runnable {
         // We can only unload Entities.
         Entity unit = null;
         if ( unloaded instanceof Entity ) {
-            System.err.println( unloaded.getDisplayName() + " is an entity." );//killme
             unit = (Entity) unloaded;
         } else {
             System.err.println( unloaded.getDisplayName() + " is not an entity." );//killme

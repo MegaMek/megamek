@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -26,14 +26,12 @@ import java.util.*;
 
 public class PMPicPolygonalArea extends PMGenericHotArea{
      
-    private ActionListener actionListener = null;
     private Image idleImage;
     private Image activeImage;
     private boolean highlight = true;
     private Polygon areaShape;
     private boolean selected = false;
     private boolean visible = true;
-    private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     public PMPicPolygonalArea(Polygon p, Image idle, Image active){
            this.areaShape = p;

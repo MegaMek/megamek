@@ -1075,6 +1075,33 @@ public class Game implements Serializable
     }
     
     /**
+     * Returns a Target for an Accidental Fall From above, or null if no
+     * possible target is there
+     * @param c The <code>Coords</code> of the hex in which the accidental fall
+     *          from above happens
+     * @return  The <code>Entity</code> that should be an AFFA target.
+     */
+    public Entity getAffaTarget(Coords c) {
+        Vector vector = new Vector();
+        if ( this.board.contains(c) ) {
+            for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+                final Entity entity = (Entity)i.nextElement();
+                if (c.equals(entity.getPosition()) && entity.isTargetable() &&
+                    !(entity instanceof Infantry)) {
+                    vector.addElement(entity);
+                }
+            }
+        }
+        if (!vector.isEmpty()) {
+            int count = vector.size();
+            int random = Compute.randomInt(count);
+            return (Entity)vector.get(random);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Returns an <code>Enumeration</code> of the enemy's active
      * entities at the given coordinates.
      *

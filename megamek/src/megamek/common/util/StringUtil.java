@@ -58,8 +58,8 @@ public class StringUtil {
      * <code>String</code>.  Treat all <code>null</code> values
      * as <code>false</code>.  The default is <code>false</code>.
      *
-     * This also ensures the <code>String</code> will always be 
-     * parsed against the us "true"
+     * This ensures the <code>String</code> will always be 
+     * parsed against the English "true"
      *
      * @param   input - the <code>String</code> to be evaluated.
      *          This value may be <code>null</code>.
@@ -73,5 +73,5 @@ public class StringUtil {
         }
         return false;
     }
-
+    
 }

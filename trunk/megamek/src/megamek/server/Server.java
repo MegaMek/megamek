@@ -2642,7 +2642,7 @@ implements Runnable, ConnectionHandler {
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
                 if (entity.canCharge()) {
-                    checkMovedTooFast(entity, step, curPos);
+                    checkExtremeGravityMovement(entity, step, curPos);
                     Targetable target = step.getTarget( game );
                     ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                     entity.setDisplacementAttack(caa);
@@ -2661,7 +2661,7 @@ implements Runnable, ConnectionHandler {
             // check for dfa
             if (step.getType() == MovePath.STEP_DFA) {
                 if (entity.canDFA()) {
-                    checkMovedTooFast(entity, step, curPos);
+                    checkExtremeGravityMovement(entity, step, curPos);
                     Targetable target = step.getTarget( game );
                     DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
                     entity.setDisplacementAttack(daa);
@@ -3147,9 +3147,9 @@ implements Runnable, ConnectionHandler {
                         doFlamingDeath(entity);
                 }
             }
-            // check if we used more MPs than the Mech/Vehicle would have in normal gravity
+            // check for extreme gravity movement
             if (!i.hasMoreElements() && !firstStep) {
-                checkMovedTooFast(entity, step, curPos);
+                checkExtremeGravityMovement(entity, step, curPos);
             }
             // check for minefields.
             if ((!lastPos.equals(curPos) && (step.getMovementType() != Entity.MOVE_JUMP))
@@ -13014,7 +13014,7 @@ implements Runnable, ConnectionHandler {
         }
     }
     
-    private void checkMovedTooFast(Entity entity, MoveStep step, Coords curPos) {
+    private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
         HitData hit;
         PilotingRollData rollTarget;
         if (entity instanceof Mech) {
@@ -13079,7 +13079,31 @@ implements Runnable, ConnectionHandler {
                             }
                         }
                     }
-                }    
+                } else if (game.getOptions().floatOption("gravity") > 1) {
+                    rollTarget = entity.getBasePilotingRoll();
+                    rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                        if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
+                            int damage = entity.getWalkMP(false) - entity.getWalkMP();
+                            // Wee, direct internal damage
+                            if (entity instanceof BipedMech) {
+                                hit = new HitData (Mech.LOC_LLEG);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                hit = new HitData (Mech.LOC_RLEG);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                            } else if (entity instanceof QuadMech) {
+                                hit = new HitData (Mech.LOC_LLEG);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                hit = new HitData (Mech.LOC_RLEG);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                hit = new HitData (Mech.LOC_LARM);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                                hit = new HitData (Mech.LOC_RARM);
+                                phaseReport.append(damageEntity(entity, hit, damage, false, 0, true));
+                            }
+                        }
+                    }
+                }
               }
         } else if (entity instanceof Tank) {
             if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {

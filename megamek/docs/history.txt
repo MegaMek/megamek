@@ -6,6 +6,7 @@ v0.29.54 (CVS)
 + Bug 1048960: attack sprites were not being reused
 + Bug 1049929: /reset crashes MS JRE
 + Bug 1050887: Artillery crashes MS JRE
++ Tweaked offboard postions (the middle of xx01 and xx17 is xx09, *not* xx08).
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

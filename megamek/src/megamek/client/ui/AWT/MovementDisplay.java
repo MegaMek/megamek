@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -46,6 +46,7 @@ public class MovementDisplay
     private Button            butDown;
     private Button            butCharge;
     private Button            butDfa;
+    private Button            butFlee;
     
     private Button            butSpace;
    
@@ -115,6 +116,10 @@ public class MovementDisplay
         butDfa = new Button("D.F.A.");
         butDfa.addActionListener(this);
         butDfa.setEnabled(false);
+        
+        butFlee = new Button("Flee");
+        butFlee.addActionListener(this);
+        butFlee.setEnabled(false);
         
         butSpace = new Button(".");
         butSpace.setEnabled(false);
@@ -194,7 +199,7 @@ public class MovementDisplay
             panButtons.add(butDfa);
             panButtons.add(butNext);
             panButtons.add(butDown);
-            panButtons.add(butSpace);
+            panButtons.add(butFlee);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -230,6 +235,7 @@ public class MovementDisplay
         } else {
             butDown.setEnabled(false);
         }
+        butFlee.setEnabled(Compute.canEntityFlee(client.game, cen));
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
         client.game.board.cursor(null);
@@ -542,6 +548,10 @@ public class MovementDisplay
             }
             client.bv.drawMovementData(ce(), cmd);
             butDone.setLabel("Move");
+        } else if (ev.getSource() == butFlee && client.doYesNoDialog("Escape?", "Do you want to flee?")) {
+            clearAllMoves();
+            md.addStep(MovementData.STEP_FLEE);
+            moveTo(md);
         }
     }
     

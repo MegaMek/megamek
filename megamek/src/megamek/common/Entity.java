@@ -2675,14 +2675,21 @@ public abstract class Entity
     
     public PilotingRollData checkMovedTooFast(MoveStep step) {
         PilotingRollData roll = getBasePilotingRoll();
-        
-        if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
-            roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+        switch (step.getMovementType()) {
+            case Entity.MOVE_WALK:
+            case Entity.MOVE_RUN:
+                if (step.getMpUsed() > (int)Math.ceil(getOriginalWalkMP() * 1.5)) {
+                    roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
+                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+                break;
+            case Entity.MOVE_JUMP:
+                if (step.getMpUsed() > getOriginalJumpMP()) {
+                    roll.append(new PilotingRollData(getId(), 0, "used more MPs than at 1G possible"));
+                } else roll.addModifier(TargetRoll.CHECK_FALSE,"Check false");
+                break;
         }
         return roll;
-        }
+    }
 
     /**
      * Checks if the entity might skid on pavement.  If so, returns

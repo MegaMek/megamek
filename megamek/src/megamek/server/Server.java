@@ -3025,7 +3025,7 @@ implements Runnable, ConnectionHandler {
                         }
                     } else if (step.getMovementType() == Entity.MOVE_JUMP) {
                         if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
-//                          // We jumped too fast, let's make PSR to see if we get damage
+                            // We jumped too fast, let's make PSR to see if we get damage
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
@@ -7702,7 +7702,7 @@ implements Runnable, ConnectionHandler {
      */
     private void resolveDfaAttack(PhysicalResult pr, int lastEntityId) {
         final DfaAttackAction daa = (DfaAttackAction)pr.aaa;
-    	final Entity ae = game.getEntity(daa.getEntityId());
+        final Entity ae = game.getEntity(daa.getEntityId());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;

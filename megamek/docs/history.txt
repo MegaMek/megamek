@@ -9,6 +9,7 @@ v 0.29.14-dev
 + Bug 821063: Fixed BV of some precision AC ammo
 + In-game unit list/selector/overview.
 + Larger, bold font in chat.
++ Patch 819951: MaxTech Crunchy Hip Rule by Alexander Schölling.
 
 v 0.29.13 (10-05-03, 11pm)
 + RFE 814576: Show PlayerColor when Camo is missing.

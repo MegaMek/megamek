@@ -790,7 +790,7 @@ public class Client implements Runnable {
     // Runnable
     //
     public void run() {
-		Thread currentThread = Thread.currentThread();
+        Thread currentThread = Thread.currentThread();
         while(pump == currentThread) {
             Packet c = readPacket();
             if (c == null) {

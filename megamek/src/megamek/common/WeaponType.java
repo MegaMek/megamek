@@ -2397,7 +2397,9 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY;
-        weapon.bv = 4; // ???
+        // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
+        // pg. 23, Randall Wills says "No" to flamer-equipped infantry
+        // doing heat instead of damage.
 
         return weapon;
     }

@@ -1831,6 +1831,12 @@ public abstract class Entity
       if(isEnemyOf(e)) return false;
       if (isShutDown() || e.isShutDown()) return false;
 
+      // Active Mek Stealth prevents entity from participating in C3.
+      // Turn off the stealth, and your back in the network.
+      if ( this instanceof Mech && this.isStealthActive() ) return false;
+      if ( e instanceof Mech && e.isStealthActive() ) return false;
+
+
       // C3i is easy - if they both have C3i, and their net ID's match, they're on the same network!
       if(hasC3i() && e.hasC3i() && getC3NetID().equals(e.getC3NetID())) {
         // check for ECM interference

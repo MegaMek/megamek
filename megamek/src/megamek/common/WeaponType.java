@@ -99,6 +99,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Flamer";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 2;
         weapon.ammoType = AmmoType.TYPE_NA;
@@ -119,6 +120,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Large Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = weapon.name;
         weapon.heat = 8;
         weapon.damage = 8;
         weapon.ammoType = AmmoType.TYPE_NA;
@@ -139,6 +141,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Medium Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = weapon.name;
         weapon.heat = 3;
         weapon.damage = 5;
         weapon.ammoType = AmmoType.TYPE_NA;
@@ -159,6 +162,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Small Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = weapon.name;
         weapon.heat = 1;
         weapon.damage = 3;
         weapon.ammoType = AmmoType.TYPE_NA;
@@ -179,6 +183,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Particle Cannon";
         weapon.internalName = weapon.name;
         weapon.mepName = "PPC";
+        weapon.mtfName = weapon.mepName;
         weapon.heat = 10;
         weapon.damage = 10;
         weapon.ammoType = AmmoType.TYPE_NA;
@@ -199,6 +204,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Machine Gun";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = weapon.name;
         weapon.heat = 0;
         weapon.damage = 2;
         weapon.rackSize = 2;
@@ -220,6 +226,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Auto Cannon/2";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = "AC/5";
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
@@ -241,6 +248,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Auto Cannon/5";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = "AC/5";
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
@@ -262,6 +270,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Auto Cannon/10";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = "AC/10";
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
@@ -283,6 +292,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "Auto Cannon/20";
         weapon.internalName = weapon.name;
         weapon.mepName = weapon.name;
+        weapon.mtfName = "AC/20";
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;
@@ -304,6 +314,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "LRM 5";
         weapon.internalName = weapon.name;
         weapon.mepName = "LRM-5";
+        weapon.mtfName = weapon.name;
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -325,6 +336,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "LRM 10";
         weapon.internalName = weapon.name;
         weapon.mepName = "LRM-10";
+        weapon.mtfName = weapon.name;
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -346,6 +358,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "LRM 15";
         weapon.internalName = weapon.name;
         weapon.mepName = "LRM-15";
+        weapon.mtfName = weapon.name;
         weapon.heat = 5;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -367,6 +380,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "LRM 20";
         weapon.internalName = weapon.name;
         weapon.mepName = "LRM-20";
+        weapon.mtfName = weapon.name;
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;
@@ -388,6 +402,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "SRM 2";
         weapon.internalName = weapon.name;
         weapon.mepName = "SRM-2";
+        weapon.mtfName = weapon.name;
         weapon.heat = 2;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -409,6 +424,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "SRM 4";
         weapon.internalName = weapon.name;
         weapon.mepName = "SRM-4";
+        weapon.mtfName = weapon.name;
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -430,6 +446,7 @@ public class WeaponType extends EquipmentType
         weapon.name = "SRM 6";
         weapon.internalName = weapon.name;
         weapon.mepName = "SRM-6";
+        weapon.mtfName = weapon.name;
         weapon.heat = 4;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;

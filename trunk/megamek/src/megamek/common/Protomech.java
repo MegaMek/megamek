@@ -75,10 +75,12 @@ public class Protomech
     //"Systems".  These represent protomech critical hits; which remain constant regardless of proto.
     //doesn't matter what gets hit in a proto section, just the number of times it's been critted
     //so just have the right number of these systems and it works.
-    public static final int		SYSTEM_ARMCRIT 			= 0;
-    public static final int		SYSTEM_LEGCRIT			= 1;
-    public static final int		SYSTEM_HEADCRIT			= 2;
-    public static final int		SYSTEM_TORSOCRIT		= 3;
+    public static final int             SYSTEM_ARMCRIT                  = 0;
+    public static final int             SYSTEM_LEGCRIT                  = 1;
+    public static final int             SYSTEM_HEADCRIT                 = 2;
+    public static final int             SYSTEM_TORSOCRIT                = 3;
+    public static final int             SYSTEM_TORSO_WEAPON_A           = 4;
+    public static final int             SYSTEM_TORSO_WEAPON_B           = 5;
     private static final int[] NUM_OF_SLOTS = {2, 3, 2, 2, 3, 0};
     public static final int[] POSSIBLE_PILOT_DAMAGE = {1, 3, 1, 1, 1, 0};
     public static final String systemNames[] = {"Arm", "Leg", "Head", "Torso"};
@@ -164,25 +166,23 @@ public class Protomech
      */
     public boolean shaded(int loc, int numHit)
     {
-    	switch(loc)
-    	{
+    	switch(loc){
         case LOC_HEAD:
-    	case LOC_LARM:
-    	case LOC_RARM:
-    	return (2==numHit);
-    	case LOC_TORSO:
-        return true;
+        case LOC_LARM:
+        case LOC_RARM:
+            return (2 == numHit);
+        case LOC_TORSO:
+            return (0 < numHit);
         case LOC_MAINGUN:
-    	case LOC_NMISS:
-    	return false;
-    	case LOC_LEG:
-    	return (3==numHit);
-    	}
+        case LOC_NMISS:
+            return false;
+        case LOC_LEG:
+            return (3 == numHit);
+        }
         return false;
-    	}
+    }
 
-
-     public int getWalkMP() {
+    public int getWalkMP() {
      	int wmp=getOriginalWalkMP();
      	int legCrits=this.getCritsHit(LOC_LEG);
      	switch(legCrits)
@@ -233,18 +233,17 @@ public class Protomech
    */
     public int getNumberOfCriticals(int loc)
     {
-    	switch(loc)
-    	{
-    		case LOC_MAINGUN:
-    		return 0;
-    		case LOC_HEAD:
-    		case LOC_LARM:
-    		case LOC_RARM:
-    		return 2;
-    		case LOC_LEG:
-    		case LOC_TORSO:
-    		return 3;
-    	}
+    	switch(loc) {
+        case LOC_MAINGUN:
+            return 0;
+        case LOC_HEAD:
+        case LOC_LARM:
+        case LOC_RARM:
+            return 2;
+        case LOC_LEG:
+        case LOC_TORSO:
+            return 3;
+        }
         return 0;
 }
     /**

@@ -12,21 +12,24 @@ v0.29.32 (CVS)
 	again
 + RFE 934547: MiniMap now shows Drop Zone
 + Bug 935510: don't allow to replace the game options with a null.
-+ Refactored code from the bot to MovePath to refine the A* path finder.
++ Bug 933474: Refactored code from the bot to MovePath to refine the A* path finder.
 + Refactored lots of other code.
 + Players can set the time for the pathfinder to "think".
 + Bug 936861: LOS dialog no longer locks up MM client
-+ Patch 927127, RFE 711582: allow players to zoom in and out on the board.
++ Patch 927127, RFE 711582: Allow players to zoom in and out on the board.
 + RFE 936863: ConfirmDialog can now have the Yes or No button focused
 + RFE 867650: More obvious help for a newbie
-+ Indirect Artillery Fire.  INCOMPLETE and EXPERIMENTAL.  Working, but USE AT YOUR OWN RISK.
++ Indirect Artillery Fire.  INCOMPLETE and EXPERIMENTAL.  USE AT YOUR OWN RISK.
 + Removed extraneous bug-testing System.out prints.  Woops.
 + RFE 923247: Bot and Map Editor now have "stop nagging me" options
 + RFE 937330: HelpDialog no longer eating empty lines (nicer formating for
-	the radmes)
+	the readmes)
 + Bug 934527: "Board" menu no longer enabled in Client. Also tidied up some
 	other menu items.
 + RFE 933543: Right/middle-click scrolling in fire phase restored as option.
++ Bug 932393: Once the pilot is dead, stop showing "PILOT DEAD" messages.
++ Patch 933200: Allow scenario authors to specify specific damage.
++ Changed build.xml to leave classes/ behind to stop annoying CVS errors.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

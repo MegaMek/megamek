@@ -272,7 +272,13 @@ public abstract class Entity
                 throw new IllegalStateException
                     ( "Entity doesn't know its owner's ID." );
             } else {
-                setOwner( game.getPlayer(ownerId) );
+                Player player = game.getPlayer(ownerId);
+                if ( null == player ) {
+                    System.err.println
+                        ( "Entity can't find player #" + ownerId );
+                } else {
+                    setOwner( player );
+                }
             }
         }
 

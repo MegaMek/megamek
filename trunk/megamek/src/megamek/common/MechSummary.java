@@ -18,7 +18,7 @@
  import java.io.Serializable;
  
  /* 
-  * Contains minimal information about a single mech
+  * Contains minimal information about a single entity
   */
  
  public class MechSummary implements Serializable
@@ -26,6 +26,7 @@
  	private String m_sName;
  	private String m_sChassis;
  	private String m_sModel;
+        private String m_sUnitType;
  	private File m_sSourceFile;
  	private String m_sEntryName; // for files in zips
  	private int m_nYear;
@@ -38,6 +39,19 @@
 	public String getName() { return (this.m_sName); }
 	public String getChassis() { return (this.m_sChassis); }
 	public String getModel() { return (this.m_sModel); }
+        public String getUnitType() { return (this.m_sUnitType); }
+        public static String determineUnitType(Entity e) {
+             if (e instanceof Infantry) {
+                  return "Infantry";
+             } else if (e instanceof Tank) {
+                  return "Tank";
+             } else if (e instanceof Mech) {
+                  return "Mek";
+             } else {
+                  //Hmm...this is not a good case, should throw excep. instead?
+                  return "Unknown";
+             }
+        }
 	public File getSourceFile() { return (this.m_sSourceFile); }
 	public String getEntryName() { return (this.m_sEntryName); }
 	public int getYear() { return (this.m_nYear); }
@@ -49,6 +63,7 @@
 	public void setName(String m_sName) { this.m_sName = m_sName; }
 	public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
 	public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
+        public void setUnitType(String m_sUnitType) { this.m_sUnitType = m_sUnitType; }
 	public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
 	public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
 	public void setYear(int m_nYear) { this.m_nYear = m_nYear; }

@@ -66,6 +66,9 @@ public class MechSummaryCache
                     ms.setModel(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setUnitType(s.substring(nIndex1 + 1, nIndex2));
+                    nIndex1 = nIndex2;
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
@@ -132,6 +135,7 @@ public class MechSummaryCache
             wr.write(m_data[x].getName() + SEPARATOR + 
                     m_data[x].getChassis() + SEPARATOR + 
                     m_data[x].getModel() + SEPARATOR + 
+                    m_data[x].getUnitType() + SEPARATOR + 
                     m_data[x].getSourceFile().getPath() + SEPARATOR + 
                     m_data[x].getEntryName() + SEPARATOR + 
                     m_data[x].getYear() + SEPARATOR +
@@ -174,6 +178,7 @@ public class MechSummaryCache
                 ms.setName(m.getShortName());
                 ms.setChassis(m.getChassis());
                 ms.setModel(m.getModel());
+                ms.setUnitType(MechSummary.determineUnitType(m));
                 ms.setSourceFile(f);
                 ms.setEntryName(null);
                 ms.setYear(m.getYear());
@@ -221,6 +226,7 @@ public class MechSummaryCache
                 ms.setName(m.getShortName());
                 ms.setChassis(m.getChassis());
                 ms.setModel(m.getModel());
+                ms.setUnitType(MechSummary.determineUnitType(m));
                 ms.setSourceFile(fZipFile);
                 ms.setEntryName(zEntry.getName());
                 ms.setYear(m.getYear());
@@ -244,5 +250,4 @@ public class MechSummaryCache
         
         return bNeedsUpdate;
     }
-    
 }

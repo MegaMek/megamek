@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v 0.29.22 (2004-01-17 2:10pm)
+v 0.29.22 (2004-01-17 2:25pm)
 + In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.
 + From coralbeach: split unofficial and Dark Age (TM) units in "data/mechfiles"
 + Bug 857284, Data 861076: Fixed Road Runner (and 10 and 15 ton Meks).

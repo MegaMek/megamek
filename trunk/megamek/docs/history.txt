@@ -100,6 +100,7 @@ v next
 + 543645: weapons shows shots in ton and total shots left in firing display
 + 543589: shots from destroyed or already-fired weapons prevented
 + 543239: firing not prevented when out of range or to-hit 13+
++ 544122: no pushing after firing weapons from either arm
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

@@ -615,9 +615,10 @@ class BoardNewDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(cancelB, c);
         add(cancelB);
         
-        setSize(200, 150);
-    doLayout();
-    validate();
+        pack();
+        setResizable(false);
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
     }
     
     public void actionPerformed(ActionEvent e) {

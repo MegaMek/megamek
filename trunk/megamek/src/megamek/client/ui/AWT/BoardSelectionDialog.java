@@ -118,6 +118,7 @@ public class BoardSelectionDialog
 	});
         
         pack();
+        setResizable(false);
         setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
                     client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
     }

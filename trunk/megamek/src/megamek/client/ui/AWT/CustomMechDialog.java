@@ -54,14 +54,10 @@ extends Dialog implements ActionListener {
 
     /** Creates new CustomMechDialog */
     public CustomMechDialog(Frame frame, Entity entity, boolean editable) {
-        super(frame);
+        super(frame, "Customize pilot stats...", true);
         
         this.entity = entity;
         this.frame = frame;
-        
-        setTitle("Customize pilot stats...");
-        setModal(true);
-        setResizable(false);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -128,6 +124,7 @@ extends Dialog implements ActionListener {
 	});
 
         pack();
+        setResizable(false);
         setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
                     frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
     }

@@ -1,28 +1,28 @@
-Credits:
-vestifex
-grfx_slade
-RAw
-Ben Mazur
-Dima Nemchenko (nemchenk)
-Exo
-Cyric27
-Charlie Brown
-rakkasan@users.sourceforge.net
-Sung Mehta
-Captain Torc
-Blazindizzy
-BH-21
-starcaptaintorc
-LeTigre
-brandfuchs
-ploopy
-ploppy (is he the same as "ploopy"? :)
-vertigo
-majortom88
-Niels Naumann
-Jan Rzadkowski
-Warhammer6R
-Cyric anvil3a@hotmail.com
+# Credits:
+# vestifex
+# grfx_slade
+# RAw
+# Ben Mazur
+# Dima Nemchenko (nemchenk)
+# Exo
+# Cyric27
+# Charlie Brown
+# rakkasan@users.sourceforge.net
+# Sung Mehta
+# Captain Torc
+# Blazindizzy
+# BH-21
+# starcaptaintorc
+# LeTigre
+# brandfuchs
+# ploopy
+# ploppy (is he the same as "ploopy"? :)
+# vertigo
+# majortom88
+# Niels Naumann
+# Jan Rzadkowski
+# Warhammer6R
+# Cyric anvil3a@hotmail.com
 
 # The format goes as follows:
 # {chassis/exact} [model] [image filename]
@@ -52,7 +52,7 @@ exact "default_infantry" "default_infantry.gif"
 exact "default_proto" "default_proto.gif"
 
 
-Infantry
+# Infantry
 chassis "Achileus" "isbattlearmor-b.gif"
 exact "Advanced Clan Armor (IS)" "isbattlearmor-b.gif"
 chassis "Advanced Clan Armor" "elementals-b.gif"
@@ -92,7 +92,7 @@ chassis "Sloth" "quadbattlearmor.gif"
 chassis "MechWarrior" "mechwarrior.gif"
 
 
-Vehicles
+# Vehicles
 chassis "AC-2 Carrier" "ac2carrier.gif"
 #chassis "Aikuchi" " .gif"
 #chassis "Air Car" " .gif"
@@ -123,7 +123,7 @@ chassis "Behemoth Belfry" "behemoth.gif"
 chassis "Behemoth Heavy Tank" "behemoth.gif"
 chassis "Behemoth II Tank" "behemoth.gif"
 #chassis "Blizzard Hover Transport" " .gif"
-#hassis "Bludgen" " .gif"
+#chassis "Bludgen" " .gif"
 #chassis "Brutus Assault Tank" " .gif"
 chassis "Bulldog II (C)" "bulldog.gif"
 chassis "Bulldog Medium Tank" "bulldog.gif"
@@ -175,9 +175,9 @@ chassis "Galleon Light Tank" "galleon.gif"
 chassis "Goblin IIC" "goblin.gif"
 chassis "Goblin Infantry Support Vehicle" "goblin.gif"
 chassis "Goblin Medium Tank" "goblin.gif"
-exact   "Goblin Medium Tank (SRM)" "goblin_srm.gif"
-exact   "Goblin Medium Tank (Kurita)" "goblin_srm.gif"
-exact   "Goblin Medium Tank (LRM)" "goblin_lrm.gif"
+exact "Goblin Medium Tank (SRM)" "goblin_srm.gif"
+exact "Goblin Medium Tank (Kurita)" "goblin_srm.gif"
+exact "Goblin Medium Tank (LRM)" "goblin_lrm.gif"
 #chassis "Goshawk Gunship" " .gif"
 #chassis "Ground Car" " .gif"
 chassis "Hachiman Fire Support Tank" "hachiman.gif"
@@ -318,9 +318,9 @@ chassis "Schrek PPC Carrier" "schrek.gif"
 #chassis "Scimitar Medium Hover Tank" " .gif"
 #chassis "Scimitar Mk II Hover Combat Vehicle" " .gif"
 chassis "Scorpion Light Tank" "scorpion.gif"
-exact   "Scorpion Light Tank (SRM)" "scorpion_srm.gif"
-exact   "Scorpion Light Tank (LRM)" "scorpion_lrm.gif"
-exact   "Scorpion Light Tank (Laser)" "scorpion_laser.gif"
+exact "Scorpion Light Tank (SRM)" "scorpion_srm.gif"
+exact "Scorpion Light Tank (LRM)" "scorpion_lrm.gif"
+exact "Scorpion Light Tank (Laser)" "scorpion_laser.gif"
 #chassis "Sea Skimmer Hydrofoil" " .gif"
 #chassis "Self Propelled Sniper" " .gif"
 #chassis "Shamash Reconnaissance Vehicle" " .gif"
@@ -353,9 +353,9 @@ chassis "Truck" "truck.gif"
 #chassis "Tyr Infantry Support Tank" " .gif"
 #chassis "Urban Guerilla" " .gif"
 chassis "Vedette Medium Tank" "vedette.gif"
-exact   "Vedette Medium Tank (Laser)" "vedette_l.gif"
-exact   "Vedette Medium Tank (AC2)" "vedette_ac2.gif"
-##chassis "Viking Hydrofoil" " .gif"
+exact "Vedette Medium Tank (Laser)" "vedette_l.gif"
+exact "Vedette Medium Tank (AC2)" "vedette_ac2.gif"
+#chassis "Viking Hydrofoil" " .gif"
 chassis "Von Luckner Heavy Tank" "vonluckner.gif"
 #exact "Warrior H-7 Attack Helicopter" " .gif"
 #exact "Warrior H-7A Attack Helicopter" " .gif"

@@ -5097,7 +5097,8 @@ implements Runnable, ConnectionHandler {
 
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_MRM ||
-                 wtype.getAmmoType() == AmmoType.T_ATM) {
+                 wtype.getAmmoType() == AmmoType.T_ATM ||
+                 wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }
 

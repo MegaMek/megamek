@@ -23,11 +23,11 @@ import megamek.common.*;
 
 public class BoardEditor extends Container
     implements BoardListener, ItemListener, ActionListener, TextListener,
-    KeyListener
-{
+    KeyListener, WindowListener {
+
     private Frame               frame = new Frame();
     
-    private Game				game = new Game();
+    private Game        game = new Game();
     private Board               board = game.getBoard();
     private BoardView1          bv = new BoardView1(game, frame);
     
@@ -73,54 +73,59 @@ public class BoardEditor extends Container
     private Panel               panButtons;
     private Button              butBoardNew, butBoardLoad;
     private Button              butBoardSave, butBoardSaveAs;
+    private Button              butMiniMap;
+    
+    private Dialog               minimapW;
+    private MiniMap              minimap;
     
     /**
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
-    	Settings.load();
-    	
-		this.addKeyListener(bv);
-		this.addKeyListener(this);
-		bv.addKeyListener(this);
+      Settings.load();
+      
+    this.addKeyListener(bv);
+    this.addKeyListener(this);
+    bv.addKeyListener(this);
         board.addBoardListener(this);
         
         bv.setUseLOSTool(false);
         
-		setupEditorPanel();
-		setupFrame();
-		
-		frame.show();
-		
-		new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
+    setupEditorPanel();
+    setupFrame();
+    
+    frame.show();
+    
+    new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
     }
     
     /**
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
-		frame.setTitle("MegaMek Board Editor : Unnamed");
-    	frame.setLayout(new BorderLayout());
-    	frame.add(bv, BorderLayout.CENTER);
-    	frame.add(this, BorderLayout.EAST);
-    	
-		frame.setBackground(SystemColor.menu);
-		frame.setForeground(SystemColor.menuText);
-		
-    	// maybe we should have our own settings, instead of using the client's
-		if (Settings.windowSizeHeight != 0) {
-			frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-			frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
-		} else {
-			frame.setSize(800, 600);
-		}
-		
-		// when frame is closing, just hide it
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				frame.setVisible(false);
-			}
-		});
+    frame.setTitle("MegaMek Board Editor : Unnamed");
+      frame.setLayout(new BorderLayout());
+      frame.add(bv, BorderLayout.CENTER);
+      frame.add(this, BorderLayout.EAST);
+      
+    frame.setBackground(SystemColor.menu);
+    frame.setForeground(SystemColor.menuText);
+    
+      // maybe we should have our own settings, instead of using the client's
+    if (Settings.windowSizeHeight != 0) {
+      frame.setLocation(Settings.windowPosX, Settings.windowPosY);
+      frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
+    } else {
+      frame.setSize(800, 600);
+    }
+    
+    // when frame is closing, just hide it
+    frame.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        frame.setVisible(false);
+        setMapVisible(false);
+      }
+    });
     }
     
     /**
@@ -128,112 +133,125 @@ public class BoardEditor extends Container
      * controls for editing the current square.
      */
     private void setupEditorPanel() {
-		canHex = new HexCanvas();
-		labElev = new Label("Elev:", Label.RIGHT);
-		texElev = new TextField("0", 1);
-		texElev.addActionListener(this);
-		texElev.addTextListener(this);
-		butElevUp = new Button("U");
-		butElevUp.addActionListener(this);
-		butElevDown = new Button("D");
-		butElevDown.addActionListener(this);
+    canHex = new HexCanvas();
+    labElev = new Label("Elev:", Label.RIGHT);
+    texElev = new TextField("0", 1);
+    texElev.addActionListener(this);
+    texElev.addTextListener(this);
+    butElevUp = new Button("U");
+    butElevUp.addActionListener(this);
+    butElevDown = new Button("D");
+    butElevDown.addActionListener(this);
     
-		labTerrain = new Label("Terrain:", Label.LEFT);
-		lisTerrain = new java.awt.List(6);
-		lisTerrain.addItemListener(this);
-		refreshTerrainList();
+    labTerrain = new Label("Terrain:", Label.LEFT);
+    lisTerrain = new java.awt.List(6);
+    lisTerrain.addItemListener(this);
+    refreshTerrainList();
         
-		butDelTerrain = new Button("Remove Terrain");
-		butDelTerrain.addActionListener(this);
+    butDelTerrain = new Button("Remove Terrain");
+    butDelTerrain.addActionListener(this);
         
-		choTerrainType = new Choice();
-		for (int i = 1; i < Terrain.SIZE; i++) {
-			choTerrainType.add(Terrain.getName(i));
-		}
+    choTerrainType = new Choice();
+    for (int i = 1; i < Terrain.SIZE; i++) {
+      choTerrainType.add(Terrain.getName(i));
+    }
         
-		texTerrainLevel = new TextField("0", 1);
+    texTerrainLevel = new TextField("0", 1);
         
-		butAddTerrain = new Button("Add/Set Terrain");
-		butAddTerrain.addActionListener(this);
+    butAddTerrain = new Button("Add/Set Terrain");
+    butAddTerrain.addActionListener(this);
         
-		panTerrainType = new Panel(new BorderLayout());
-		panTerrainType.add(choTerrainType, BorderLayout.WEST);
-		panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
+    butMiniMap = new Button("Toggle MiniMap");
+    butMiniMap.addActionListener(this);
         
-		cheTerrExitSpecified = new Checkbox("Set Exits : ");
-		butTerrExits = new Button("A");
-		texTerrExits = new TextField("0", 1);
-		butTerrExits.addActionListener(this);
+    panTerrainType = new Panel(new BorderLayout());
+    panTerrainType.add(choTerrainType, BorderLayout.WEST);
+    panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
+        
+    cheTerrExitSpecified = new Checkbox("Set Exits : ");
+    butTerrExits = new Button("A");
+    texTerrExits = new TextField("0", 1);
+    butTerrExits.addActionListener(this);
     
-		panTerrExits = new Panel(new FlowLayout());
-		panTerrExits.add(cheTerrExitSpecified);
-		panTerrExits.add(butTerrExits);
-		panTerrExits.add(texTerrExits);
+    panTerrExits = new Panel(new FlowLayout());
+    panTerrExits.add(cheTerrExitSpecified);
+    panTerrExits.add(butTerrExits);
+    panTerrExits.add(texTerrExits);
 
-		panRoads = new Panel(new FlowLayout());
-		cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
-		cheRoadsAutoExit.addItemListener( this );
-		panRoads.add(cheRoadsAutoExit);
+    panRoads = new Panel(new FlowLayout());
+    cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
+    cheRoadsAutoExit.addItemListener( this );
+    panRoads.add(cheRoadsAutoExit);
 
-		labTheme = new Label("Theme:", Label.LEFT);
-		texTheme = new TextField("", 15);
-		texTheme.addTextListener(this);
+    labTheme = new Label("Theme:", Label.LEFT);
+    texTheme = new TextField("", 15);
+    texTheme.addTextListener(this);
 
-		labBoard = new Label("Board:", Label.LEFT);
-		butBoardNew = new Button("New...");
-		butBoardNew.addActionListener(this);
+    labBoard = new Label("Board:", Label.LEFT);
+    butBoardNew = new Button("New...");
+    butBoardNew.addActionListener(this);
 
-		butBoardLoad = new Button("Load...");
-		butBoardLoad.addActionListener(this);
+    butBoardLoad = new Button("Load...");
+    butBoardLoad.addActionListener(this);
 
-		butBoardSave = new Button("Save");
-		butBoardSave.addActionListener(this);
+    butBoardSave = new Button("Save");
+    butBoardSave.addActionListener(this);
 
-		butBoardSaveAs = new Button("Save As...");
-		butBoardSaveAs.addActionListener(this);
+    butBoardSaveAs = new Button("Save As...");
+    butBoardSaveAs.addActionListener(this);
         
-		panButtons = new Panel(new GridLayout(2, 2, 2, 2));
-		panButtons.add(butBoardNew);
-		panButtons.add(butBoardLoad);
-		panButtons.add(butBoardSave);
-		panButtons.add(butBoardSaveAs);
+    panButtons = new Panel(new GridLayout(2, 2, 2, 2));
+    panButtons.add(butBoardNew);
+    panButtons.add(butBoardLoad);
+    panButtons.add(butBoardSave);
+    panButtons.add(butBoardSaveAs);
         
-		blankL = new Label("", Label.CENTER);
+    blankL = new Label("", Label.CENTER);
         
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		setLayout(gridbag);
+    GridBagLayout gridbag = new GridBagLayout();
+    GridBagConstraints c = new GridBagConstraints();
+    setLayout(gridbag);
         
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.0;    c.weighty = 0.0;
-		c.insets = new Insets(4, 4, 1, 1);
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 0.0;    c.weighty = 0.0;
+    c.insets = new Insets(4, 4, 1, 1);
         
-		c.gridwidth = GridBagConstraints.REMAINDER; 
-		addBag(canHex, gridbag, c);
-		c.gridwidth = 1; 
-		addBag(labElev, gridbag, c);
-		addBag(butElevUp, gridbag, c);
-		addBag(butElevDown, gridbag, c);
-		c.gridwidth = GridBagConstraints.REMAINDER; 
-		addBag(texElev, gridbag, c);
+    c.gridwidth = GridBagConstraints.REMAINDER; 
+    addBag(canHex, gridbag, c);
+    c.gridwidth = 1; 
+    addBag(labElev, gridbag, c);
+    addBag(butElevUp, gridbag, c);
+    addBag(butElevDown, gridbag, c);
+    c.gridwidth = GridBagConstraints.REMAINDER; 
+    addBag(texElev, gridbag, c);
         
-		addBag(labTerrain, gridbag, c);
-		addBag(lisTerrain, gridbag, c);
-		addBag(butDelTerrain, gridbag, c);
-		addBag(panTerrainType, gridbag, c);
-		addBag(panTerrExits, gridbag, c);
-		addBag(panRoads, gridbag, c);
-		addBag(labTheme, gridbag, c);
-		addBag(texTheme, gridbag, c);
-		addBag(butAddTerrain, gridbag, c);
+    addBag(labTerrain, gridbag, c);
+    addBag(lisTerrain, gridbag, c);
+    addBag(butDelTerrain, gridbag, c);
+    addBag(panTerrainType, gridbag, c);
+    addBag(panTerrExits, gridbag, c);
+    addBag(panRoads, gridbag, c);
+    addBag(labTheme, gridbag, c);
+    addBag(texTheme, gridbag, c);
+    addBag(butAddTerrain, gridbag, c);
+    addBag(butMiniMap, gridbag, c);
     
-		c.weightx = 1.0;    c.weighty = 1.0;
-		addBag(blankL, gridbag, c);
+    c.weightx = 1.0;    c.weighty = 1.0;
+    addBag(blankL, gridbag, c);
         
-		c.weightx = 1.0;    c.weighty = 0.0;
-		addBag(labBoard, gridbag, c);
-		addBag(panButtons, gridbag, c);
-	}
+    c.weightx = 1.0;    c.weighty = 0.0;
+    addBag(labBoard, gridbag, c);
+    addBag(panButtons, gridbag, c);
+
+    minimapW = new Dialog(frame, "MiniMap", false);
+    minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+    minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+    minimap = new MiniMap(minimapW, game, bv);
+    minimapW.addWindowListener(this);
+    minimapW.add(minimap);
+
+    setMapVisible(true);
+  }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
@@ -574,6 +592,8 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
+        } else if (ae.getSource() == butMiniMap) {
+            toggleMap();
         }
     }
 
@@ -616,6 +636,34 @@ public class BoardEditor extends Container
         return frame;
     }
 
+    /** Toggles the minimap window
+         Also, toggles the minimap enabled setting
+     */
+    public void toggleMap() {
+        setMapVisible(!minimapW.isVisible());
+    }    
+
+    public void setMapVisible(boolean visible) {
+        minimapW.setVisible(visible);
+    }
+    
+    //
+    // WindowListener
+    //
+    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+    }
 }
 
 /**
@@ -788,5 +836,4 @@ class ExitsDialog extends Dialog implements ActionListener
     public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
         setVisible(false);
     }    
-    
 }

@@ -21,13 +21,12 @@ public class GAAttack extends GA {
   protected Vector valid_target_indexes = null;
   
   public GAAttack(Game game, CEntity attacker, Vector attack, int population, int generations) throws GAException {
-    super(attack.size()+1, population, .7, 5, generations, 0, 0, .3,
+    super(attack.size()+1, population, .7, 5, generations, 0, 0, .4,
     Crossover.ctUniform, false, false);
     this.attack = attack;
     this.attacker = attacker;
     this.game = game;
-    //this.target_array = game.getEntitiesVector().toArray();
-    this.target_array = vectorToArray(game.getEntitiesVector());
+    this.target_array = Compute.vectorToArray(game.getEntitiesVector());
     Vector temp = new Vector();
     for (int i = 0; i < target_array.length; i++) {
       Entity entity = (Entity)target_array[i];
@@ -39,33 +38,42 @@ public class GAAttack extends GA {
     this.initPopulation();
   }
   
-  
-  //an expensive last check to see if combining fire is a good idea
-  public int[] getResultChromosome() {
-    /*ChromVector c1 = (ChromVector)this.chromosomes[bestFitnessChromIndex];
-    TreeMap tm = new TreeMap();
-    tm.put(new Double(this.getFitness(c1)), c1);
-    for (Iterator val = this.valid_target_indexes.iterator(); val.hasNext();) {
-      ChromVector c2 = new ChromVector(c1.genes.length);
-      c1.copyChromGenes(c1);
-      int target = ((Integer)val.next()).intValue();
-      for (int j = 0; (j < c1.genes.length - 1); j++) {
-        TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(j))).elementAt(c1.genes[j]);
-        if (a.target != null) {
-          boolean done = false;
-          Object[] weapon = ((Vector)(attack.elementAt(j))).toArray();
-          for (int w = 0; (w < weapon.length - 1) && !done; w++) {
-            TestBot.AttackOption a1 = (TestBot.AttackOption)weapon[w];
-            if (a1.target.enemy_num == target) {
-              c2.genes[j] = w;
-              done = true;
+
+  //an expensive check to see if combining fire is a good idea
+  /*protected void doHeuristicPass() {
+    for (int i = 0; i < this.populationDim; i++) {
+      ChromVector c1 = (ChromVector)this.chromosomes[i];
+      ChromVector max = c1;
+      double maxfitness = this.getFitness(c1); 
+      for (Iterator val = this.valid_target_indexes.iterator(); val.hasNext();) {
+        ChromVector c2 = new ChromVector(c1.genes.length);
+        c2.copyChromGenes(c1);
+        int target = ((Integer)val.next()).intValue();
+        for (int j = 0; (j < c1.genes.length - 1); j++) {
+          TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(j))).elementAt(c1.genes[j]);
+          if (a.target != null) {
+            boolean done = false;
+            Object[] weapon = ((Vector)(attack.elementAt(j))).toArray();
+            for (int w = 0; (w < weapon.length - 1) && !done; w++) {
+              TestBot.AttackOption a1 = (TestBot.AttackOption)weapon[w];
+              if (a1.target.enemy_num == target) {
+                c2.genes[j] = w;
+                done = true;
+              }
             }
           }
         }
+        double tempfitness = this.getFitness(c2);
+        if (tempfitness > maxfitness) {
+          maxfitness = tempfitness;
+          max = c2;
+        }
       }
-      tm.put(new Double(this.getFitness(c2)), c2);
+      this.chromosomes[i] = max;
     }
-    return(((ChromVector)tm.get(tm.lastKey())).genes);*/
+  }*/
+   
+  public int[] getResultChromosome() {
     return(((ChromVector)chromosomes[bestFitnessChromIndex]).genes);
   }
   
@@ -159,7 +167,8 @@ public class GAAttack extends GA {
     boolean hasPrimary = false;
     boolean fired = false;
     for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
-      TestBot.AttackOption a = (TestBot.AttackOption)(((Vector)(attack.elementAt(iGene))).elementAt(chromVector.genes[iGene]));
+      final int[] genes = chromVector.genes;
+      TestBot.AttackOption a = (TestBot.AttackOption)(((Vector)(attack.elementAt(iGene))).elementAt(genes[iGene]));
       if (a.target != null) { //if not the no fire option
         fired = true;
         targets.put(a.target);
@@ -205,6 +214,7 @@ public class GAAttack extends GA {
     int capacity = attacker.entity.getHeatCapacityWithWater();
     int currentHeat = attacker.entity.heatBuildup + attacker.entity.heat;
     int overheat = currentHeat + heat_total - capacity;
+    //need to determine the situation -- readlining will help in certian situations
     //bonus for cooling down
     if (attacker.entity.heat > 0 && overheat < 0) {
       //always perfer smaller heat numbers
@@ -217,6 +227,9 @@ public class GAAttack extends GA {
         total_utility += attacker.bv/50;
       }
       if (attacker.entity.heat > 12) {
+        total_utility += attacker.bv/20;
+      }
+      if (attacker.entity.heat > 16) {
         total_utility += attacker.bv/10;
       }
     } else if (overheat > 0) {
@@ -252,9 +265,9 @@ public class GAAttack extends GA {
     int r1 = Compute.random.nextInt(c1.genes.length - 1);
     CEntity target = null;
     boolean done = false;
-    //just flip a bit
     if (r1%2 == 1) {
-      c1.genes[r1] = Compute.random.nextInt(((Vector)this.attack.elementAt(r1)).size());
+      c1.genes[r1]--;
+      if (c1.genes[r1] < 0) c1.genes[r1] = ((Vector)this.attack.elementAt(r1)).size() - 1;
       return;
     }
     //else try to move all to one target
@@ -308,16 +321,21 @@ public class GAAttack extends GA {
     for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
       ((ChromVector)this.chromosomes[0]).genes[iGene] = 0;
     }
+ 
     //use first weapon target as primary, not smart but good enough...
     TestBot.AttackOption a = (TestBot.AttackOption)((Vector)(attack.elementAt(0))).elementAt(0);
     ((ChromVector)this.chromosomes[0]).genes[chromosomeDim -1] = a.target.enemy_num;
     
     for (int i=1; i < populationDim; i++) {
+      ChromVector cv = (ChromVector)this.chromosomes[i];
       for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
-        ((ChromVector)this.chromosomes[i]).genes[iGene] =
-        Compute.random.nextInt(((Vector)(attack.elementAt(iGene))).size());
+        cv.genes[iGene] = Compute.random.nextInt(((Vector)(attack.elementAt(iGene))).size());
+        if (i <= this.attack.size()) {
+          if (iGene + 1 == i) cv.genes[iGene] = 0; //fire
+          else cv.genes[iGene] = ((Vector)(attack.elementAt(iGene))).size() - 1; //don't fire
+        } 
       }
-      ((ChromVector)this.chromosomes[i]).genes[chromosomeDim -1] =
+      cv.genes[chromosomeDim -1] =
       ((Integer)this.valid_target_indexes.elementAt(Compute.random.nextInt(this.valid_target_indexes.size()))).intValue();
       this.chromosomes[i].fitness = getFitness(i);
     }
@@ -326,11 +344,5 @@ public class GAAttack extends GA {
   protected Chromosome getNewChrom(int chromDim) {
     return new ChromVector(chromDim);
   }
-  
-    private Object[] vectorToArray(java.util.Vector vector) {
-        Object[] array = new Object[vector.size()];
-        vector.copyInto(array);
-        return array;
-    }
 }
 

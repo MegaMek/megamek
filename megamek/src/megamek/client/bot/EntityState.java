@@ -42,9 +42,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   boolean Doomed = false;
   
   double self_threat = 0;
-  
-  //skidding or falling
   double movement_threat = 0;
+  double self_damage = 0;
   
   double damage = 0;
   
@@ -55,8 +54,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   
   int delta_distance = 0;
   int heatBuildup;
-  int defensive_mod = 0;
-  int offensive_mod = 0;
+  //int defensive_mod = 0;
+  //int offensive_mod = 0;
   
   CEntity PhysicalTarget;
   boolean isPhysical = false;
@@ -106,6 +105,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     this.Doomed = base.Doomed;
     this.isPhysical = base.isPhysical;
     this.PhysicalTarget = base.PhysicalTarget;
+    this.self_damage = base.self_damage;
   }
   public EntityState(CEntity en) {
     this.centity = en;
@@ -172,6 +172,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
           stepMp = 0;
       }
       isDanger = false;
+      boolean runningDanger = false;
       mpUsed += stepMp;
       // check for running
       if (overallMoveType == Entity.MOVE_WALK && mpUsed > entity.getWalkMP()) {
@@ -184,6 +185,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         || entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
         Mech.ACTUATOR_HIP, Mech.LOC_LLEG) > 0)) {
           isDanger = true;
+          runningDanger = true;
         }
       } else if (overallMoveType != Entity.MOVE_JUMP && overallMoveType != Entity.MOVE_ILLEGAL) {
         overallMoveType = Entity.MOVE_WALK; //walk before you run
@@ -229,11 +231,19 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       //for example it should actaully be a proportion of the threat if you end up stuck in
       //this state
       if (isDanger) {
+        double mod = 1;
         if (centity.base_psr_odds < .1) {
           moveType = Entity.MOVE_ILLEGAL;
+        } else if (runningDanger) {
+          if (centity.base_psr_odds < .5) {
+            moveType = Entity.MOVE_ILLEGAL; 
+          } else {
+            mod = 5;
+          }
         } else {
-          this.movement_threat += this.centity.getThreatUtility(.2*this.entity.getWeight(),CEntity.SIDE_REAR)*(1-Math.pow(this.centity.base_psr_odds, 2));
-          this.tv.add(this.centity.getThreatUtility(.2*this.entity.getWeight(),CEntity.SIDE_REAR)*(1-Math.pow(this.centity.base_psr_odds, 2)) +" Movement Threat \n");
+          double threat = mod*this.centity.getThreatUtility(.2*this.entity.getWeight(),CEntity.SIDE_REAR)*(1-Math.pow(this.centity.base_psr_odds, 2));
+          this.movement_threat += threat;
+          this.tv.add(threat +" Movement Threat \n");
         }
       }
       this.overallMoveType = isMovementLegal ? moveType : Entity.MOVE_ILLEGAL;
@@ -393,28 +403,29 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     ToHitData toHita = new ToHitData();
     ToHitData toHitd = new ToHitData();
     
-    //it would seem that there was a bug here, pretty fundimental
     toHita.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-    this.offensive_mod = Compute.getAttackerMovementModifier(game, ae.getId()).getValue();
+    //this.offensive_mod = Compute.getAttackerMovementModifier(game, ae.getId()).getValue();
     toHita.append(Compute.getTargetMovementModifier(game, te.getId()));
     toHita.append(Compute.getTargetTerrainModifier(game, te.getId()));
+    toHita.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
     
     toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
     toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
-    this.defensive_mod = Compute.getTargetMovementModifier(game, ae.getId()).getValue();
+    //this.defensive_mod = Compute.getTargetMovementModifier(game, ae.getId()).getValue();
     if (!this.isPhysical) {
       toHitd.append(Compute.getTargetTerrainModifier(game, ae.getId()));
-      this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
+      //this.defensive_mod += Compute.getTargetTerrainModifier(game, ae.getId()).getValue();
     }
+    toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
+    
     Hex attHex = game.board.getHex(ae.getPosition());
     if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
       toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
       toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
-      this.offensive_mod += ToHitData.IMPOSSIBLE;
-      this.defensive_mod += ToHitData.IMPOSSIBLE;
+      //this.offensive_mod += ToHitData.IMPOSSIBLE;
+      //this.defensive_mod += ToHitData.IMPOSSIBLE;
     } else if (attHex.surface() == attEl && ae.height() > 0) {
       apc = true;
-      toHita.addModifier(1, "Attacker in water");
     }
     Hex targHex = game.board.getHex(te.getPosition());
     if (targHex.contains(Terrain.WATER)) {
@@ -423,8 +434,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       } else if (targHex.surface() > targEl) {
         toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
         toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
-        this.offensive_mod += ToHitData.IMPOSSIBLE;
-        this.defensive_mod += ToHitData.IMPOSSIBLE;
+        //this.offensive_mod += ToHitData.IMPOSSIBLE;
+        //this.defensive_mod += ToHitData.IMPOSSIBLE;
       }
     }
     
@@ -485,7 +496,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     // heatBuildup
     if (ae.getHeatFiringModifier() != 0) {
       toHita.addModifier(ae.getHeatFiringModifier(), "heatBuildup");
-      this.offensive_mod += ae.getHeatFiringModifier();
+      //this.offensive_mod += ae.getHeatFiringModifier();
     }
     if (te.getHeatFiringModifier() != 0) {
       toHitd.addModifier(te.getHeatFiringModifier(), "heatBuildup");
@@ -496,7 +507,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
     }
     if (ae.isImmobile()) {
       toHitd.addModifier(-4, "target immobile");
-      this.defensive_mod -= 4;
+      //this.defensive_mod -= 4;
     }
     final int range = ae.getPosition().distance(te.getPosition());
     // target prone
@@ -532,21 +543,24 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
   }
   
   public double getUtility() {
-    double temp_threat = (this.threat + this.movement_threat + (double)this.getMovementheatBuildup()/20)/this.centity.strategy.attack;
-    double temp_damage = (this.damage + this.self_threat)*this.centity.strategy.attack;
-    //should set a flag depending on the following, such as
-    // in_danger, or doomed
-    if (this.threat + this.movement_threat > this.centity.avg_armor) {
-      if (this.threat + this.movement_threat > 4*this.centity.avg_armor) {
-        temp_threat += this.centity.bv/10; //likely to die
+    //self threat and self damage are considered transient
+    double temp_threat = (this.threat + this.movement_threat + this.self_threat + (double)this.getMovementheatBuildup()/20)/this.centity.strategy.attack;
+    double temp_damage = (this.damage + this.self_damage)*this.centity.strategy.attack;
+    double ratio = (this.threat + this.movement_threat)/(this.centity.avg_armor + .5*this.centity.avg_iarmor);
+    if (ratio > .4) {
+      if (ratio > 2) {
+        temp_threat += this.centity.bv/15.0; //likely to die
         this.Doomed = true;
         this.inDanger = true;
-      } else {
-        temp_threat += this.centity.bv/100; //in danger
+      } else if (ratio > 1) {
+        temp_threat += this.centity.bv/50.0; //in danger
         this.inDanger = true;
+      } else {
+        temp_threat += this.centity.bv/100.0; //in danger
+        this.inDanger = true;        
       }
-    } else if (this.threat + this.movement_threat > 40) {
-      temp_threat += (1 - this.centity.base_psr_odds)*this.centity.entity.getWeight();
+    } else if (this.threat + this.movement_threat > 30) {
+      temp_threat += this.centity.entity.getWeight();
     }
     return (temp_threat - temp_damage);
   }
@@ -604,7 +618,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       Hex h = game.board.getHex(this.curPos);
       Hex h1 = game.board.getHex(enemy.curPos);
       if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?2:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.075:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100;
+        max += ((h1.getElevation() - h.getElevation() == 1 || this.isProne)?2:1)*((enemy_firing_arcs[0]==CEntity.SIDE_FRONT)?.1:.05)*ce.entity.getWeight()*Compute.oddsAbove(3+modifier)/100
+            + (1 - enemy.centity.base_psr_odds)*enemy.entity.getWeight()/10.0;
       }
     }
     return max;

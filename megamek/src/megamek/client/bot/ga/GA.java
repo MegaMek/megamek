@@ -60,6 +60,7 @@ public abstract class GA implements Runnable {
   abstract protected void doUniformCrossover(Chromosome Chrom1, Chromosome Chrom2);
   abstract protected double getFitness(int iChromIndex);
   abstract protected Chromosome getNewChrom(int chromDim);
+  protected void doHeuristicPass() {}; // override if you want
   
   public void run() {
     evolve();
@@ -172,6 +173,14 @@ public abstract class GA implements Runnable {
       System.out.println(s);
   }
   
+  protected boolean shouldDoExhaustive() {
+    return false;
+  }
+  
+  protected void doExhaustiveSearch() {
+    
+  }
+  
   /**
    * Do genetic evolution of this population of chromosomes.
    * Returns: number of generations
@@ -180,9 +189,14 @@ public abstract class GA implements Runnable {
     int iGen;
     int iPrelimChrom, iPrelimChromToUsePerRun;
     
+    if (this.shouldDoExhaustive()) {
+      this.doExhaustiveSearch();
+      return 0;
+    }
+    
     log("GA start time: " + new Date().toString());
     
-    if (numPrelimRuns > 0) {
+    /*if (numPrelimRuns > 0) {
       iPrelimChrom = 0;
       //number of fittest prelim chromosomes to use with final run
       iPrelimChromToUsePerRun = populationDim / numPrelimRuns;
@@ -225,6 +239,7 @@ public abstract class GA implements Runnable {
     
     //Add Preliminary Chromosomes to list box
     addChromosomesToLog(0, 10);
+    */
     
     iGen = 0;
     boolean converged = false;
@@ -237,8 +252,12 @@ public abstract class GA implements Runnable {
         this.genAvgFitness[iGen] = getAvgFitness();
       }
       
+      if (iGen != 0 && iGen%5 == 0) {
+        this.doHeuristicPass();
+      }
+      
       if ( //test for improvement and convergence
-      (iGen > 2) && 
+      (iGen > 5) && 
       (this.getESquared() - (this.genAvgFitness[iGen]*this.genAvgFitness[iGen]) < .2*this.genAvgFitness[iGen]) && 
       (this.genAvgFitness[iGen] - this.genAvgFitness[iGen - 1] <= 0)
       ) {

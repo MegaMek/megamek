@@ -126,4 +126,10 @@ public class Compute extends megamek.common.Compute {
       A[j] = temp;
     }
   } 
+  
+  public static Object[] vectorToArray(java.util.Vector vector) {
+    Object[] array = new Object[vector.size()];
+    vector.copyInto(array);
+    return array;
+  }
 }

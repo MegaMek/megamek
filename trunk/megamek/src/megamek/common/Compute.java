@@ -2088,7 +2088,7 @@ public class Compute
             
         
         // target must be within 1 elevation level
-        if (attackerElevation > targetHeight || attackerElevation > targetHeight) {
+        if (attackerElevation > targetHeight || attackerHeight < targetElevation) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
         

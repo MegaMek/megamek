@@ -75,6 +75,7 @@ v next
 + 609840: immobilixed vehicles can't complete their charges
 + 609356: vehicles do not make piloting skill rolls to avoid falling
 + 609201: fixed crash when a charging vehicle is destroyed by weapons fire
++ 568291: typo in determining charge elevation levels (thx to suvarov454)
 
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points

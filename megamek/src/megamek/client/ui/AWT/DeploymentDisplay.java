@@ -288,6 +288,7 @@ public class DeploymentDisplay
             if (client.isMyTurn()) {
                 endMyTurn();
             }
+            client.bv.markDeploymentHexesFor(null);
             client.removeGameListener(this);
             client.game.board.removeBoardListener(this);
             client.bv.removeKeyListener(this);

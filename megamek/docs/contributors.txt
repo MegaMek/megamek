@@ -25,9 +25,10 @@ Lot of people have contributed to the MegaMek project.
      Ryan "Oscar" McConnell  <oscarmm@users.sourceforge.net>
      Slava Zipunov <zipp32@users.sourceforge.net>
      Michael Newcomb <mnewcomb@users.sourceforge.net>
-     Wirianto Djunaidi
+     Wirianto Djunaidi <wdjunai@users.sourceforge.net>
      Dirk Wilhelm <wayne07@users.sourceforge.net>
      David Smith <xylaan@users.sourceforge.net>
+     David Taylor <dtaylor@swiftdsl.com.au>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

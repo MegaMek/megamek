@@ -4015,20 +4015,44 @@ implements Runnable {
             bMissed = true;
             phaseReport.append("misses.\n"); 
             if (wr.amsShotDown > 0) {
-                phaseReport.append("\tAMS activates, firing " ).append( wr.amsShotDown ).append( " shot(s).\n");
+                phaseReport.append( "\tAMS activates, firing " )
+                    .append( wr.amsShotDown )
+                    .append( " shot(s).\n" );
+            }
+
+            // Figure out the maximum number of missile hits.
+            // TODO: handle this in a different place.
+            int maxMissiles = 0;
+            if ( usesAmmo ) {
+                maxMissiles = wtype.getRackSize();
+                if ( wtype.hasFlag(WeaponType.F_DOUBLE_HITS) ) {
+                    maxMissiles *= 2;
+                }
+                if ( ae instanceof BattleArmor ) {
+                    platoon = (Infantry) ae;
+                    maxMissiles *= platoon.getShootingStrength();
+                }
+            }
+
+            // If the AMS shot down *all* incoming missiles, if
+            // the shot is an automatic failure, or if it's from
+            // a Streak rack, then Infernos can't ignite the hex
+            // and any building is safe from damage.
+            if ( (usesAmmo && wr.amsShotDown >= maxMissiles) ||
+                 toHit.getValue() == TargetRoll.AUTOMATIC_FAIL ||
+                 wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+                return;
             }
             
-            // Non-streaks can set fires on misses
-            // Buildings can't be accidentally ignited.
-            if ( bldg == null &&
-                 entityTarget != null &&
-                 toHit.getValue() != TargetRoll.AUTOMATIC_FAIL &&
-                 wtype.getAmmoType() != AmmoType.T_SRM_STREAK ) {
-                
-                // make sure it's a fire-setting weapon
-                if (bInferno || wtype.getFireTN() != TargetRoll.IMPOSSIBLE) {
-                    tryIgniteHex(target.getPosition(), bInferno, 11);
-                }
+            // Shots that miss an entity can set fires.
+            // Infernos always set fires.  Otherwise
+            // Buildings can't be accidentally ignited,
+            // and some weapons can't ignite fires.
+            if ( entityTarget != null && 
+                 ( bInferno ||
+                   ( bldg == null &&
+                     wtype.getFireTN() != TargetRoll.IMPOSSIBLE ) ) ) {
+                tryIgniteHex(target.getPosition(), bInferno, 11);
             }
 
             // BMRr, pg. 51: "All shots that were aimed at a target inside
@@ -6372,7 +6396,9 @@ implements Runnable {
                     if ( 0 < passenger.getArmor( nextPassHit ) ) {
                         absorb += passenger.getArmor( nextPassHit );
                     }
-                    absorb += passenger.getInternal( nextPassHit );
+                    if ( 0 < passenger.getInternal( nextPassHit ) ) {
+                        absorb += passenger.getInternal( nextPassHit );
+                    }
                     nextPassHit = passenger.getTransferLocation( nextPassHit );
                 } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
 
@@ -7617,7 +7643,86 @@ implements Runnable {
             m.setMode(mode);
         }
     }
-    
+
+    private void receiveEntityAmmoChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int weaponId = c.getIntValue(1);
+        int ammoId = c.getIntValue(2);
+        Entity e = game.getEntity(entityId);
+
+        // Did we receive a request for a valid Entity?
+        if ( null == e ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: could not find entity #" );
+            System.err.println( entityId );
+            return;
+        }
+        if (e.getOwner() != getPlayer(connIndex)) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: player " );
+            System.err.print( getPlayer(connIndex).getName() );
+            System.err.print( " does not own the entity " );
+            System.err.println( e.getDisplayName() );
+            return;
+        }
+
+        // Make sure that the entity has the given equipment.
+        Mounted mWeap = e.getEquipment(weaponId);
+        Mounted mAmmo = e.getEquipment(ammoId);
+        if ( null == mAmmo ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " does not have ammo #" );
+            System.err.println( ammoId );
+            return;
+        }
+        if ( !(mAmmo.getType() instanceof AmmoType) ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: item # " );
+            System.err.print( ammoId );
+            System.err.print( " of entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " is a " );
+            System.err.print( mAmmo.getName() );
+            System.err.println( " and not ammo." );
+            return;
+        }
+        if ( null == mWeap ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " does not have weapon #" );
+            System.err.println( weaponId );
+            return;
+        }
+        if ( !(mWeap.getType() instanceof WeaponType) ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: item # " );
+            System.err.print( weaponId );
+            System.err.print( " of entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " is a " );
+            System.err.print( mWeap.getName() );
+            System.err.println( " and not a weapon." );
+            return;
+        }
+        if ( ((WeaponType) mWeap.getType()).getAmmoType() == AmmoType.T_NA ) {
+            System.err.print
+                ( "Server.receiveEntityAmmoChange: item # " );
+            System.err.print( weaponId );
+            System.err.print( " of entity " );
+            System.err.print( e.getDisplayName() );
+            System.err.print( " is a " );
+            System.err.print( mWeap.getName() );
+            System.err.println( " and does not use ammo." );
+            return;
+        }
+
+        // Load the weapon.
+        e.loadWeapon( mWeap, mAmmo );
+    }
+
     /**
      * Deletes an entity owned by a certain player from the list
      */
@@ -8087,6 +8192,9 @@ implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_MODECHANGE :
                 receiveEntityModeChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_AMMOCHANGE :
+                receiveEntityAmmoChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_REMOVE :
                 receiveEntityDelete(packet, connId);

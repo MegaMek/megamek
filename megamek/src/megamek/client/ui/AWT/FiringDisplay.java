@@ -618,7 +618,7 @@ public class FiringDisplay
     /**
      * Targets something
      */
-    private void updateTarget() {
+    protected void updateTarget() {
         butFire.setEnabled(false);
         
         // make sure we're showing the current entity in the mech display

@@ -471,11 +471,19 @@ public class MovementDisplay
 
     private void removeLastStep() {
         cmd.removeLastStep();
-        
+
         if (cmd.length() == 0) {
-	        clearAllMoves();
+            clearAllMoves();
         } else {
-	        clientgui.bv.drawMovementData(ce(), cmd);
+            clientgui.bv.drawMovementData(ce(), cmd);
+
+            // Set the button's label to "Done"
+            // if the entire move is impossible.
+            MovePath possible = (MovePath) cmd.clone();
+            possible.clipToPossible();
+            if (possible.length() == 0) {
+                butDone.setLabel( "Done" );
+            }
         }
     }
 
@@ -483,6 +491,7 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private synchronized void moveTo(MovePath md) {
+        md.clipToPossible();
         if (md.length() == 0 && Settings.nagForNoAction) {
             //Hmm....no movement steps, comfirm this action
             String title = "Remain stationary?";
@@ -832,6 +841,14 @@ public class MovementDisplay
 
             if (shiftheld || gear == MovementDisplay.GEAR_TURN) {
                 butDone.setLabel("Move");
+
+                // Set the button's label to "Done"
+                // if the entire move is impossible.
+                MovePath possible = (MovePath) cmd.clone();
+                possible.clipToPossible();
+                if (possible.length() == 0) {
+                    butDone.setLabel( "Done" );
+                }
                 return;
             }
 
@@ -1444,7 +1461,7 @@ public class MovementDisplay
         }
         if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             if (client.isMyTurn()) {
-	            removeLastStep();
+                removeLastStep();
             }
         }
         if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {

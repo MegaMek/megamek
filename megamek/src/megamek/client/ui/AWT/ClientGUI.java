@@ -319,7 +319,7 @@ public class ClientGUI
         client.changePhase(Game.PHASE_UNKNOWN);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        new Thread(mechSelectorDialog).start();
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
 
         client.addGameListener(this);
     }

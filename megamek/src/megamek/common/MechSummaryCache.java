@@ -53,7 +53,7 @@ public class MechSummaryCache {
                 public void run() {
                     m_instance.loadMechData();
                 }
-            });
+            }, "Mech Cach Loader");
             t.setPriority(Thread.NORM_PRIORITY - 1);
             t.start();
         }

@@ -109,7 +109,7 @@ implements Runnable, ConnectionHandler {
 
         System.out.println("s: password = " + this.password);
 
-        connector = new Thread(this);
+        connector = new Thread(this, "Connection Listener");
         connector.start();
 
         // register commands

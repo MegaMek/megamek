@@ -88,7 +88,7 @@ public class Client implements Runnable {
      */
     public void connect() throws UnknownHostException, IOException {
         socket = new Socket(host, port);
-        pump = new Thread(this);
+        pump = new Thread(this, "Client Pump");
         pump.start();
     }
 

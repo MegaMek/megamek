@@ -3054,13 +3054,21 @@ public class Compute
             || pos.y == 0 || pos.y == game.board.height - 1);
     }
     
+    
+    public static int missilesHit(int missiles) {
+        return missilesHit(missiles, 0);
+    }
+    
     /**
      * Roll the number of missiles (or whatever) on the missile
-     * hit table.
+     * hit table, with the specified mod to the roll.
      */
-    public static int missilesHit(int missiles) {
+    public static int missilesHit(int missiles, int nMod) {
+        int nRoll = d6(2) + nMod;
+        nRoll = Math.min(Math.max(nRoll, 2), 12);
+        
         if (missiles == 2) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
             case 3 :
             case 4 :
@@ -3078,7 +3086,7 @@ public class Compute
         }
         
         if (missiles == 4) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
                 return 1;
             case 3 :
@@ -3098,7 +3106,7 @@ public class Compute
         }
         
         if (missiles == 5) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
                 return 1;
             case 3 :
@@ -3119,7 +3127,7 @@ public class Compute
         }
         
         if (missiles == 6) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
             case 3 :
                 return 2;
@@ -3140,7 +3148,7 @@ public class Compute
         }
         
         if (missiles == 10) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
             case 3 :
                 return 3;
@@ -3161,7 +3169,7 @@ public class Compute
         }
         
         if (missiles == 15) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
             case 3 :
                 return 5;
@@ -3182,7 +3190,7 @@ public class Compute
         }
 
         if (missiles == 20) {
-            switch(d6(2)) {
+            switch(nRoll) {
             case 2 :
             case 3 :
                 return 6;

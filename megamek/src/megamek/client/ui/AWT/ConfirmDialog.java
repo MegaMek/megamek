@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -44,6 +44,7 @@ public class ConfirmDialog
 
     public ConfirmDialog(Frame p, String title, String question, boolean includeCheckbox) {
         super(p, title, true);
+        
         super.setResizable(false);
         useCheckbox = includeCheckbox;
 
@@ -101,8 +102,20 @@ public class ConfirmDialog
             });
 
         pack();
-        setLocation(p.getLocation().x + p.getSize().width/2 - getSize().width/2,
-                    p.getLocation().y + p.getSize().height/2 - getSize().height/2);
+        Dimension size = getSize();
+        boolean updateSize = false;
+        if ( size.width < Settings.minimumSizeWidth ) {
+            size.width = Settings.minimumSizeWidth;
+        }
+        if ( size.height < Settings.minimumSizeHeight ) {
+            size.height = Settings.minimumSizeHeight;
+        }
+        if ( updateSize ) {
+            setSize( size );
+            size = getSize();
+        }
+        setLocation(p.getLocation().x + p.getSize().width/2 - size.width/2,
+                    p.getLocation().y + p.getSize().height/2 - size.height/2);
     }
     
     public boolean getAnswer() {

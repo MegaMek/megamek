@@ -17,6 +17,7 @@ package megamek.client;
 import java.awt.*;
 import java.awt.event.*;
 import megamek.client.util.AdvancedLabel;
+import megamek.common.Settings;
 
 /**
  * A (somewhat primitive) dialog with a message and an okay button that makes
@@ -58,9 +59,21 @@ public class AlertDialog
 	});
         
         pack();
+        Dimension size = getSize();
+        boolean updateSize = false;
+        if ( size.width < Settings.minimumSizeWidth ) {
+            size.width = Settings.minimumSizeWidth;
+        }
+        if ( size.height < Settings.minimumSizeHeight ) {
+            size.height = Settings.minimumSizeHeight;
+        }
+        if ( updateSize ) {
+            setSize( size );
+            size = getSize();
+        }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
+                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
     }
 
     public AlertDialog(Frame parent, String title, String message) {
@@ -92,9 +105,21 @@ public class AlertDialog
 	});
         
         pack();
+        Dimension size = getSize();
+        boolean updateSize = false;
+        if ( size.width < Settings.minimumSizeWidth ) {
+            size.width = Settings.minimumSizeWidth;
+        }
+        if ( size.height < Settings.minimumSizeHeight ) {
+            size.height = Settings.minimumSizeHeight;
+        }
+        if ( updateSize ) {
+            setSize( size );
+            size = getSize();
+        }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
+                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
     }
     
     public void actionPerformed(ActionEvent e) {

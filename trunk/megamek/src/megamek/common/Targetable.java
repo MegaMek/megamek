@@ -20,11 +20,14 @@ public interface Targetable
     public static final int TYPE_HEX_CLEAR  = 1;
     public static final int TYPE_HEX_IGNITE = 2;
     public static final int TYPE_BUILDING   = 3;
+    public static final int TYPE_BLDG_IGNITE= 4;
     
     public int getTargetType();
-    public int getTargetID();    
+    public int getTargetId();    
     public Coords getPosition();
+    public int absHeight();
     public int getHeight();
+    public int getElevation();
     public boolean isImmobile();
     public String getDisplayName();
 }

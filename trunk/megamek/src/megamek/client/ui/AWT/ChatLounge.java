@@ -495,7 +495,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             if(entity.hasC3i()) {
                 TreeSet = "";
                 if(entity.calculateFreeC3Nodes() == 5) TreeSet = "**";
-                TreeView = " (" + entity.getC3NetID() + ")";
+                TreeView = " (" + entity.getC3NetId() + ")";
             }
             else if(entity.hasC3()) {
                 if(entity.getC3Master() == null) {

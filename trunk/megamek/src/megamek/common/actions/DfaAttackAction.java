@@ -36,4 +36,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
         super(entityId, targetId, targetPos);
     }
 
+    public DfaAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+        super(entityId, targetType, targetId, targetPos);
+    }
+
 }

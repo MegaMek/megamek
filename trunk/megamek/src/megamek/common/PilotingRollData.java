@@ -17,7 +17,6 @@ package megamek.common;
 public class PilotingRollData extends TargetRoll
 {
     private int entityId;
-    private boolean forSkid = false;
     private boolean m_bCumulative = true;
     
     public PilotingRollData(int entityId) {
@@ -39,17 +38,6 @@ public class PilotingRollData extends TargetRoll
         addModifier(pilotValue, desc);
         this.entityId = entityId;
     }
-
-    /**
-     * Record where a PSR is to avoid a skid.
-     */
-    public PilotingRollData(int entityId, int value, String desc, boolean isForSkid) {
-        super(value, desc);
-        this.entityId = entityId;
-	this.forSkid = isForSkid;
-    }
-
-    public boolean isForSkid() { return this.forSkid; }
     
     public int getEntityId() {
         return entityId;

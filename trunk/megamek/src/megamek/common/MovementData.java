@@ -102,10 +102,10 @@ public class MovementData
      * Add a new step to the movement data with the given target.
      * 
      * @param type the type of movement.
-     * @param target the <code>Entity</code> that is the target of this step.
-     *          For example, the enemy being charged.
+     * @param target the <code>Targetable</code> object that is the target
+     *          of this step. For example, the enemy being charged.
      */
-    public void addStep(int type, Entity target) {
+    public void addStep(int type, Targetable target) {
         steps.addElement(new Step(type, target));
     }
 
@@ -461,6 +461,7 @@ public class MovementData
     {
         private int type;
 	private int targetId;
+	private int targetType;
         private boolean onPavement;
 
         // these are all set using Compute.compile:
@@ -481,6 +482,7 @@ public class MovementData
         public Step(int type) {
             this.type = type;
             this.targetId = Entity.NONE;
+            this.targetType = Targetable.TYPE_ENTITY;
             this.onPavement = false;
         }
 
@@ -489,12 +491,13 @@ public class MovementData
          *
          * @param       type - should match one of the MovementData constants,
          *              but this is not currently checked.
-         * @param       target - the <code>Entity</code> that is the target
+         * @param       target - the <code>Targetable</code> that is the target
          *              of this step. For example, the enemy being charged.
          */
-        public Step( int type, Entity target ) {
+        public Step( int type, Targetable target ) {
             this.type = type;
-            this.targetId = target.getId();
+            this.targetId = target.getTargetId();
+            this.targetType = target.getTargetType();
             this.onPavement = false;
         }
 
@@ -506,6 +509,7 @@ public class MovementData
         public Step(Step other) {
             this.type = other.type;
             this.targetId = other.targetId;
+            this.targetType = other.targetType;
             this.onPavement = other.onPavement;
             this.position = new Coords(other.position);
             this.facing = other.facing;
@@ -545,15 +549,17 @@ public class MovementData
         /**
          * Set the target of the current step.
          *
-         * @param       target - the <code>Entity</code> that is the target
+         * @param       target - the <code>Targetable</code> that is the target
          *              of this step. For example, the enemy being charged.
          *              If there is no target, pass a <code>null</code>
          */
-        public void setTarget( Entity target ) {
+        public void setTarget( Targetable target ) {
             if ( target == null ) {
                 this.targetId = Entity.NONE;
+                this.targetType = Targetable.TYPE_ENTITY;
             } else {
-                this.targetId = target.getId();
+                this.targetId = target.getTargetId();
+                this.targetType = target.getTargetType();
             }
         }
 
@@ -561,15 +567,15 @@ public class MovementData
          * Get the target of the current step.
          *
          * @param       game - The <code>Game</code> object.
-         * @return      The <code>Entity</code> that is the target of
+         * @return      The <code>Targetable</code> that is the target of
          *              this step. For example, the enemy being charged.
          *              This value may be <code>null</code>
          */
-        public Entity getTarget( Game game ) {
+        public Targetable getTarget( Game game ) {
             if ( this.targetId == Entity.NONE ) {
                 return null;
             }
-            return game.getEntity( this.targetId );
+            return game.getTarget( this.targetType, this.targetId );
         }
 
         /**

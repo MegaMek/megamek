@@ -410,8 +410,8 @@ public abstract class Mech
      * Returns the elevation of this entity.  Mechs do funny stuff in the 
      * middle of a DFA.
      */
-    public int elevation() {
-        int cElev = super.elevation();
+    public int getElevation() {
+        int cElev = super.getElevation();
         if (!isMakingDfa()) {
             return cElev;
         }

@@ -237,12 +237,16 @@ public class FiringDisplay
             panButtons.add(butDone);
             break;
         case 1 :
-            panButtons.add(butAim);
+            panButtons.add(butFire);
             panButtons.add(butFindClub);
             panButtons.add(butFlipArms);
             panButtons.add(butNext);
+            panButtons.add(butAim);
+            /* 2003-03-30 Suvarov454: I'd rather see the "Fire"
+            **            button on this panel than a spaceholder.
             panButtons.add(butSpace);
-            panButtons.add(butFireMode); // Fire Mode - Adding a Fire mode Button - Rasia
+            */
+            panButtons.add(butFireMode);
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
@@ -482,7 +486,7 @@ public class FiringDisplay
         Mounted m = ce().getEquipment(wn);
         
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
-                target.getTargetID(), wn);
+                target.getTargetId(), wn);
         
         if (((WeaponType)m.getType()).getAmmoType() != AmmoType.T_NA) {
             waa.setAmmoId(ce().getEquipmentNum(m.getLinked()));
@@ -535,21 +539,22 @@ public class FiringDisplay
      * Removes all current fire
      */
     private void clearAttacks() {
-        if (ce() == null) {
-            return;
-        }
-        if (attacks.size() > 0) {
-            for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
-                Object o = i.nextElement();
-                if (o instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction)o;
-                    ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        // We may not have an entity selected yet (race condition).
+        if ( ce() != null ) {
+            Enumeration i = attacks.elements();
+            if ( i.hasMoreElements() ) {
+                while ( i.hasMoreElements() ) {
+                    Object o = i.nextElement();
+                    if (o instanceof WeaponAttackAction) {
+                        WeaponAttackAction waa = (WeaponAttackAction)o;
+                        ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+                    }
                 }
+                attacks.removeAllElements();
             }
-            attacks.removeAllElements();
+            ce().setSecondaryFacing(ce().getFacing());
+            ce().setArmsFlipped(false);
         }
-        ce().setSecondaryFacing(ce().getFacing());
-        ce().setArmsFlipped(false);
     }
     
     /**

@@ -16,7 +16,18 @@ could almost be combined:
   instead of a large report string.  This would allow some customizing of the
   display, or even translation (vieleicht zum Deutcher sprache.)
 - more server validation of client data
-  
+
+- Both Server and Compute are getting WAY overcrowded.  We need to re-factor.
+
+- The following rules in BMRr iterrupt the resolution of a unit's movement or
+  attacks to immediately allow a player to react.  We can handle this by having
+  the Server spawn a new thread that sends a "special turn" packet to the
+  targeted player's client, and holding the current movement processing until
+  the special turn thread ends.  The targeted player would take their action,
+  and the special turn thread would process the result and end.
+-- avoiding skid collisions
+-- revealing hidden units to make point blank shots
+-- stepping out of a domino effects chain
 
 RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
@@ -76,6 +87,29 @@ infantry:
 - change BattleArmor names from "X (Y) Battle Armor" to "X Battle Armor (Y)"
         (after Mech Selection's "advanced filters and sorts" is implemented)
 
+buildings:
+- Test all of my assumptions.
+- Where do I put the attacker when it charges or DFAs a building?!?
+- Buildings can be intentionally ignited:
+-- Buildings can *not* be accidentally ignited.
+-- Buildings auto-ignite when hex suffers inferno hit.
+-- Burning buildings lose 2 CF per heat phase (skip first round???).
+- Combat inside a multi-hex building is wierd:
+-- Targets get +3 cover bonus.
+-- Each level difference is an additional +1 hex to range.
+-- No minimum ranges mod (Archers go yay!).
+-- Shots from above or below use special hit location tables.
+-- Do multihex buildings absorb damage charges within the building?
+-- When a unit is displaced through a building, do we handle it like normal
+   movement through a wall?
+- Buildings need to roll for basements.
+-- Roll when first unit enters.
+-- Basement collapse drops floor of hex, but not surface or ceiling.
+-- Building collapse drops Meks and Tanks into basement.
+- Meks and Infantry can be on a non-ground building floor.
+- Meks and Tanks that exceed the Building's current CF collapse building.
+- Bridges can be targeted and collapse like buildings, but provide no cover.
+
 
 FUTURE VERSION PLANS:
 ---------------------
@@ -85,6 +119,14 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.13-dev
++ Players aren't allowed to target infantry with Inferno rounds.
++ Physical attacks can now use Targetable interface.
++ Initial implementation of buildings.  You can't burn them or climb on them,
+        they have no basements, and multi-hex combat doesn't work correctly.
++ 705262: The EXE can't seem to handle UTF-8 output.  We'll restore UTF-8 when
+  we can figure out the root cause of the problem.
+
 v 0.28.12 (04-05-03, 1pm)
 + Stealth Armor should affect the BV calculation.
 + The +2 skid modifier is *in addition to* the movement modifiers.

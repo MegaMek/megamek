@@ -495,12 +495,21 @@ public class Client extends Panel
                 final Entity entity = (Entity)i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
-            // can also target the hex if it contains woods
-            if (curPanel instanceof FiringDisplay) {
+            // Can target weapons at the hex if it contains woods or building.
+            // Can target physical attacks at the hex if it contains building.
+            if ( curPanel instanceof FiringDisplay ||
+                 curPanel instanceof PhysicalDisplay ) {
                 Hex h = game.board.getHex(coords);
-                if (h != null && h.contains(Terrain.WOODS)) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords, false)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords, true)));
+                if (h != null && h.contains(Terrain.WOODS) &&
+                    curPanel instanceof FiringDisplay ) {
+                    popup.add(new TargetMenuItem(new HexTarget
+                        (coords, game.board, false) ) );
+                    popup.add(new TargetMenuItem(new HexTarget
+                        (coords, game.board, true) ) );
+                }
+                else if ( h != null && h.contains( Terrain.BUILDING ) ) {
+                    popup.add( new TargetMenuItem( new BuildingTarget
+                        ( coords, game.board, false ) ) );
                 }
             }
         }
@@ -784,7 +793,7 @@ public class Client extends Panel
      */
     protected void receiveBoard(Packet c) {
         Board newBoard = (Board)c.getObject(0);
-        game.board.newData(newBoard.width, newBoard.height, newBoard.data);
+        game.board.newData( newBoard );
     }
     
     /**
@@ -854,7 +863,21 @@ public class Client extends Panel
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX
         //XXX
     }
-    
+
+    protected void receiveBuildingUpdateCF(Packet packet) {
+        Vector bldgs = (Vector) packet.getObject(0);
+
+        // Update the board.  The board will notify listeners.
+        game.board.updateBuildingCF( bldgs );
+    }
+
+    protected void receiveBuildingCollapse(Packet packet) {
+        Vector bldgs = (Vector) packet.getObject(0);
+
+        // Update the board.  The board will notify listeners.
+        game.board.collapseBuilding( bldgs );
+    }
+
     /**
      * Loads entity firing data from the data in the net command
      */
@@ -1000,6 +1023,12 @@ public class Client extends Panel
                 break;
             case Packet.COMMAND_CHANGE_HEX :
                 game.board.setHex((Coords)c.getObject(0), (Hex)c.getObject(1));
+                break;
+            case Packet.COMMAND_BLDG_UPDATE_CF :
+                receiveBuildingUpdateCF( c );
+                break;
+            case Packet.COMMAND_BLDG_COLLAPSE :
+                receiveBuildingCollapse( c );
                 break;
             case Packet.COMMAND_PHASE_CHANGE :
                 changePhase(c.getIntValue(0));
@@ -1275,7 +1304,7 @@ public class Client extends Panel
             if (curPanel instanceof FiringDisplay) {
                 ((FiringDisplay)curPanel).target(target);
             } else if (curPanel instanceof PhysicalDisplay) {
-                ((PhysicalDisplay)curPanel).target(target.getTargetID());
+                ((PhysicalDisplay)curPanel).target(target);
             }
         }        
     }

@@ -25,4 +25,8 @@ public class PushAttackAction
     public PushAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);
     }
+
+    public PushAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+        super(entityId, targetType, targetId, targetPos);
+    }
 }

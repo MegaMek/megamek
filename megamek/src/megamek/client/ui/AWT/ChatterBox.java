@@ -158,5 +158,9 @@ implements GameListener, KeyListener {
     public void gameReport(GameEvent e) {
         ;
     }
+    
+	public void gameMapQuery(GameEvent e) {
+		;
+	}
 
 }

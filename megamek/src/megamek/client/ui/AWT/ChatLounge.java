@@ -19,6 +19,9 @@ import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.bot.BotClient;
+import megamek.client.bot.BotGUI;
+import megamek.client.bot.TestBot;
 import megamek.client.util.widget.BufferedPanel;
 import megamek.client.util.widget.ImageButton;
 import megamek.common.*;
@@ -102,7 +105,10 @@ public class ChatLounge
 
     private Label labStatus;
     private Button butDone;
-
+    
+    private Button butAddBot;
+    private Button butRemoveBot;
+    
     /**
      * Creates a new chat lounge for the client.
      */
@@ -192,7 +198,16 @@ public class ChatLounge
         labPlayerInfo = new Label("Player Setup");
 
         lisPlayerInfo = new List(5);
-
+        
+        butAddBot = new Button("Add Bot");
+        butAddBot.setActionCommand("add_bot");
+        butAddBot.addActionListener(this);
+        
+		butRemoveBot = new Button("Remove Bot");
+		butRemoveBot.setEnabled(false);
+        butRemoveBot.setActionCommand("remove_bot");
+		butRemoveBot.addActionListener(this);
+		
         labTeam = new Label("Team:", Label.RIGHT);
         labCamo = new Label("Camo:", Label.RIGHT);
 
@@ -259,6 +274,18 @@ public class ChatLounge
         c.weighty = 0.0;
         gridbag.setConstraints(butCamo, c);
         panPlayerInfo.add(butCamo);
+        
+		c.gridwidth = 1;
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		gridbag.setConstraints(butAddBot, c);
+		panPlayerInfo.add(butAddBot);
+
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 1.0;
+		c.weighty = 0.0;
+		gridbag.setConstraints(butRemoveBot, c);
+		panPlayerInfo.add(butRemoveBot);
 
         refreshPlayerInfo();
     }
@@ -1252,6 +1279,21 @@ public class ChatLounge
             clientgui.getGameOptionsDialog().show();
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
             clientgui.getStartingPositionDialog().update();
+			if (lisStarts.getSelectedIndex() != -1) {
+				String name = lisStarts.getSelectedItem().substring(
+						0,
+						Math.max(0, lisStarts.getSelectedItem().indexOf(" :")));
+				Client c = (BotClient) clientgui.getBots().get(name);
+				if (c == null) {
+				    if (client.getName().equals(name)) {
+				        c = client;
+				    } else {
+				        clientgui.doAlertDialog("Improper command", "Please select a bot you control or your player from the player list.");
+				        return;
+				    }
+				}
+				clientgui.getStartingPositionDialog().setClient(c);
+			}
             clientgui.getStartingPositionDialog().show();
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
@@ -1267,9 +1309,34 @@ public class ChatLounge
             updateMinefield();
         } else if (ev.getSource() == butCamo) {
             camoDialog.show();
+        } else if (ev.getSource() == butAddBot) {
+            String name = "Bot" + lisPlayerInfo.getItemCount();
+			BotClient c = new TestBot(name, client.getHost(), client.getPort());
+			c.addGameListener(new BotGUI(c));
+			try {
+				c.connect();
+			} catch (Exception e) {
+				;
+			}
+			c.retrieveServerInfo();
+			clientgui.getBots().put(name, c);
+			butRemoveBot.setEnabled(true);
+        } else if (ev.getSource() == butRemoveBot) {
+            if (lisPlayerInfo.getSelectedIndex() == -1) {
+                clientgui.doAlertDialog("Improper command", "Please select the bot you wish to remove from the player list.");
+            } else {
+                String name = lisPlayerInfo.getSelectedItem().substring(0, Math.max(0,lisPlayerInfo.getSelectedItem().indexOf(" :")));
+                BotClient c = (BotClient)clientgui.getBots().remove(name);
+                if (c != null) {
+                    c.die();
+                }
+                if (clientgui.getBots().size() == 0) {
+                    butRemoveBot.setEnabled(false);
+                }
+            }
         }
     }
-
+    
     /**
      * Determine if the listener is currently distracted.
      *

@@ -330,6 +330,8 @@ public class Client implements Runnable {
                 case GameEvent.GAME_REPORT:
                     l.gameReport(ge);
                     break;
+                case GameEvent.GAME_MAP_QUERY:
+                    l.gameMapQuery(ge);
             }
         }
     }
@@ -888,7 +890,7 @@ public class Client implements Runnable {
                     processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
                     break;
                 case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                    processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_SETTINGS, null, null));
+                    processGameEvent(new GameEvent(c.getObject(0), GameEvent.GAME_MAP_QUERY, null, null));
                     break;
                 case Packet.COMMAND_END_OF_GAME :
                     String sReport = (String) c.getObject(0);
@@ -938,6 +940,14 @@ public class Client implements Runnable {
     
     public String getName() {
         return name;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getHost() {
+        return host;
     }
 
 }

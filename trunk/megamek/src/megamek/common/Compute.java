@@ -2681,6 +2681,9 @@ public class Compute
             toHit.addModifier(2, "target in heavy woods");
         }
 
+        if (hex.contains(Terrain.SMOKE)) {
+            toHit.addModifier(2, "target in smoke");
+        }
         
         return toHit;
     }

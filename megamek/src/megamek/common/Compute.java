@@ -1186,36 +1186,24 @@ public class Compute
     }
     
     /**
-     * Gets a valid displacement, preferably in the direction indicated.
+     * Gets a valid displacement, from the hexes around src, as close to the
+     * original direction as is possible.
      * 
      * @return valid displacement coords, or null if none
      */
     public static Coords getValidDisplacement(Game game, int entityId, 
                                               Coords src, int direction) {
+        // check the surrounding hexes, nearest to the original direction first
         final Entity entity = game.getEntity(entityId);
-        // check the surrounding hexes
-        if (isValidDisplacement(game, entityId, src, direction)) {
-            // direction already valid?  (probably)
-            return src.translated(direction);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 1) % 6)) {
-            // 1 right?
-            return src.translated((direction + 1) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 5) % 6)) {
-            // 1 left?
-            return src.translated((direction + 5) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 2) % 6)) {
-            // 2 right?
-            return src.translated((direction + 2) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 4) % 6)) {
-            // 2 left?
-            return src.translated((direction + 4) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 3) % 6)) {
-            // opposite?
-            return src.translated((direction + 3) % 6);
-        } else {
-            // well, tried to accomodate you... too bad.
-            return null;
+        int[] offsets = {0, 1, 5, 2, 4, 3};
+        for (int i = 0; i < offsets.length; i++) {
+            Coords dest = src.translated((direction + offsets[i]) % 6);
+            if (isValidDisplacement(game, entityId, src, dest)) {
+                return dest;
+            }
         }
+        // have fun being insta-killed!
+        return null;
     }
     
     /**
@@ -1227,29 +1215,24 @@ public class Compute
     public static Coords getPreferredDisplacement(Game game, int entityId, 
                                               Coords src, int direction) {
         final Entity entity = game.getEntity(entityId);
-        // check the surrounding hexes
-        if (isValidDisplacement(game, entityId, src, direction)) {
-            // direction already valid?  (probably)
-            return src.translated(direction);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 1) % 6)) {
-            // 1 right?
-            return src.translated((direction + 1) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 5) % 6)) {
-            // 1 left?
-            return src.translated((direction + 5) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 2) % 6)) {
-            // 2 right?
-            return src.translated((direction + 2) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 4) % 6)) {
-            // 2 left?
-            return src.translated((direction + 4) % 6);
-        } else if (isValidDisplacement(game, entityId, src, (direction + 3) % 6)) {
-            // opposite?
-            return src.translated((direction + 3) % 6);
-        } else {
-            // well, tried to accomodate you... too bad.
-            return null;
+        int highestElev = Integer.MIN_VALUE;
+        Coords highest = null;
+        
+        // check the surrounding hexes, nearest to the original direction first
+        int[] offsets = {0, 1, 5, 2, 4, 3};
+        for (int i = 0; i < offsets.length; i++) {
+            Coords dest = src.translated((direction + offsets[i]) % 6);
+            if (isValidDisplacement(game, entityId, src, dest)) {
+                 // assume that if the displacement's valid, hex is !null
+                Hex hex = game.board.getHex(dest);
+                int elevation = entity.elevationOccupied(hex);
+                if (elevation > highestElev) {
+                    highestElev = elevation;
+                    highest = dest;
+                }
+            }
         }
+        return highest;
     }
     
     /**

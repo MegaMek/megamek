@@ -66,14 +66,16 @@ implements Runnable, ConnectionHandler {
     // Track buildings that are affected by an entity's movement.
     private Hashtable           affectedBldgs = new Hashtable();
 
-    // Track Physical Action results, HACK to deal with opposing pushes canceling each other
+    // Track Physical Action results, HACK to deal with opposing pushes 
+    // canceling each other
     private Vector              physicalResults = new Vector();
 
     /**
      * Construct a new GameHost and begin listening for
      * incoming clients.
      * @param   password the <code>String</code> that is set as a password
-     * @param   port the <code>int</code> value that specifies the port that used
+     * @param   port the <code>int</code> value that specifies the port that
+     *          is used
      */
     public Server(String password, int port) {
         this.password = password.length() > 0 ? password : null;
@@ -81,7 +83,7 @@ implements Runnable, ConnectionHandler {
         try {
             serverSocket = new ServerSocket(port);
         } catch(IOException ex) {
-            System.err.println("could not create server socket on port " + port);
+            System.err.println("could not create server socket on port "+port);
         }
 
         motd = createMotd();
@@ -101,7 +103,8 @@ implements Runnable, ConnectionHandler {
             System.out.println( serverSocket.getLocalPort() );
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (int i = 0; i < addresses.length; i++) {
-                System.out.println("s: hosting on address = " + addresses[i].getHostAddress());
+                System.out.println("s: hosting on address = "
+                                   + addresses[i].getHostAddress());
             }
         } catch (UnknownHostException  e) {
             // oh well.
@@ -217,7 +220,7 @@ implements Runnable, ConnectionHandler {
         } catch(IOException ex) { ; }
 
         // kill pending connnections
-        for (Enumeration i = connectionsPending.elements(); i.hasMoreElements();) {
+        for (Enumeration i=connectionsPending.elements();i.hasMoreElements();){
             final Connection conn = (Connection)i.nextElement();
             conn.die();
         }
@@ -302,7 +305,8 @@ implements Runnable, ConnectionHandler {
 
         // this had better be from a pending connection
         if (conn == null) {
-            System.out.println("server: got a client name from a non-pending connection");
+            System.out.println("server: got a client name from a non-pending" +
+                               " connection");
             return;
         }
 
@@ -350,9 +354,12 @@ implements Runnable, ConnectionHandler {
         sendCurrentInfo(connId);
 
         try {
-            InetAddress[] addresses = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+            InetAddress[] addresses = InetAddress.getAllByName(InetAddress
+                                                               .getLocalHost()
+                                                               .getHostName());
             for (int i = 0; i < addresses.length; i++) {
-                sendServerChat(connId, "Machine IP is " + addresses[i].getHostAddress());
+                sendServerChat(connId, "Machine IP is " +
+                               addresses[i].getHostAddress());
             }
         } catch (UnknownHostException  e) {
             // oh well.
@@ -360,7 +367,8 @@ implements Runnable, ConnectionHandler {
 
         // Send the port we're listening on. Only useful for the player
         // on the server machine to check.
-        sendServerChat(connId, "Listening on port "+serverSocket.getLocalPort());
+        sendServerChat(connId, "Listening on port " + serverSocket
+                                                      .getLocalPort());
 
         // Get the player *again*, because they may have disconnected.
         player = getPlayer( connId );
@@ -433,8 +441,8 @@ implements Runnable, ConnectionHandler {
                 game.getPhase() == Game.PHASE_OFFBOARD ||
                 game.getPhase() == Game.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
-                send(connId, createAttackPacket(game.getActionsVector(), false));
-                send(connId, createAttackPacket(game.getChargesVector(), true));
+                send(connId,createAttackPacket(game.getActionsVector(),false));
+                send(connId,createAttackPacket(game.getChargesVector(),true));
             }
             if (game.phaseHasTurns(game.getPhase())) {
                 send(connId, createTurnVectorPacket());
@@ -522,7 +530,8 @@ implements Runnable, ConnectionHandler {
             send(createPlayerUpdatePacket(player.getId()));
         } else {
             game.removePlayer(player.getId());
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE,
+                 new Integer(player.getId())));
         }
 
         // make sure the game advances
@@ -554,7 +563,8 @@ implements Runnable, ConnectionHandler {
     public void checkForObservers() {
         for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
             Player p = (Player)e.nextElement();
-            p.setObserver(game.getEntitiesOwnedBy(p) < 1 && game.getPhase() != Game.PHASE_LOUNGE);
+            p.setObserver(game.getEntitiesOwnedBy(p) < 1 &&
+                          game.getPhase() != Game.PHASE_LOUNGE);
         }
     }
 
@@ -687,7 +697,7 @@ implements Runnable, ConnectionHandler {
      * Returns a pending connection
      */
     private Connection getPendingConnection(int connId) {
-        for (Enumeration i = connectionsPending.elements(); i.hasMoreElements();) {
+        for (Enumeration i=connectionsPending.elements();i.hasMoreElements();){
             final Connection conn = (Connection)i.nextElement();
 
             if (conn.getId() == connId) {
@@ -698,8 +708,8 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Called at the beginning of each game round to reset values on this entity
-     * that are reset every round
+     * Called at the beginning of each game round to reset values on this
+     * entity that are reset every round
      */
     private void resetEntityRound() {
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
@@ -852,7 +862,8 @@ implements Runnable, ConnectionHandler {
                   continue;
 
                 if ( !wroteHeader ) {
-                  roundReport.append("The following units never entered the field of battle:\n");
+                  roundReport.append("The following units never entered the "
+                                     + "field of battle:\n");
                   wroteHeader = true;
                 }
 
@@ -880,14 +891,16 @@ implements Runnable, ConnectionHandler {
         }
         Enumeration devastated = game.getDevastatedEntities();
         if ( devastated.hasMoreElements() ) {
-            roundReport.append("\nThe following utterly destroyed units are not available for salvage:\n");
+            roundReport.append("\nThe following utterly destroyed units are "
+                               + "not available for salvage:\n");
             while ( devastated.hasMoreElements() ) {
                 Entity entity = (Entity) devastated.nextElement();
                 roundReport.append(entity.victoryReport());
                 roundReport.append('\n');
             }
         }
-        roundReport.append("\nDetailed unit status saved to entitystatus.txt\n");
+        roundReport.append("\nDetailed unit status saved to "
+                           + "entitystatus.txt\n");
     }
 
     /**

@@ -56,6 +56,8 @@ public class Settings
     public static boolean   nagForNoAction          = true;
     
     public static boolean   nagForReadme            = true;
+    public static boolean   nagForBotReadme         = true;
+    public static boolean   nagForMapEdReadme       = true;
 
     public static boolean   showMoveStep            = true;
     public static int       moveStepDelay           = 500;
@@ -316,6 +318,14 @@ scan:
                         st.nextToken();
                         nagForReadme = Boolean.valueOf(st.sval).booleanValue();
                     }
+                    else if (key.equals("nagforbotreadme")) {
+                        st.nextToken();
+                        nagForBotReadme = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if (key.equals("nagformapedreadme")) {
+                        st.nextToken();
+                        nagForMapEdReadme = Boolean.valueOf(st.sval).booleanValue();
+                    }
                     else if(key.equals("playername")) {
                         st.nextToken();
                         lastPlayerName = st.sval;
@@ -490,6 +500,8 @@ scan:
             cw.write("nagforpsr " + nagForPSR + "\r\n");
             cw.write("nagfornoaction " + nagForNoAction + "\r\n");
             cw.write("nagforreadme " + nagForReadme + "\r\n");
+            cw.write("nagforbotreadme " + nagForBotReadme + "\r\n");
+            cw.write("nagformapedreadme " + nagForMapEdReadme + "\r\n");
             cw.write("playername " + "\"" + lastPlayerName + "\"" + "\r\n");
             cw.write("server " + "\"" + lastServerPass + "\" " + lastServerPort + "\r\n");
             cw.write("connect " + "\"" + lastConnectAddr + "\" " + lastConnectPort + "\r\n");

@@ -24,6 +24,7 @@ import megamek.client.FiringDisplay;
 import megamek.client.GameEvent;
 import megamek.client.MovementDisplay;
 import megamek.client.PhysicalDisplay;
+import megamek.client.ConfirmDialog;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -31,6 +32,7 @@ import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.MovePath;
 import megamek.common.Packet;
+import megamek.common.Settings;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
@@ -117,11 +119,24 @@ public abstract class BotClient extends Client {
     }
 
     protected void notifyOfBot() {
-        new AlertDialog(
-            frame,
-            "Please read the ai-readme.txt",
-            "The bot does not work with all units or game options.  Please read the ai-readme.txt file before using the bot.")
-            .show();
+        if (true==Settings.nagForBotReadme) {
+            String title = "Please read the ai-readme.txt";
+            String body = 
+                "The bot does not work with all units or game options.\n"+
+                "Please read the ai-readme.txt file before using the bot.\n"+
+                " \nWould you like to read the AI documentation now?\n";
+            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
+            confirm.show();
+
+            if ( !confirm.getShowAgain() ) {
+                Settings.nagForBotReadme = false;
+                Settings.save();
+            };
+
+            if ( confirm.getAnswer() ) {
+                megamek.MegaMek.showHelp(this.frame, "ai-readme.txt").show();
+            };
+        };
         sendChat("Hi, I'm a bot client!");
     }
 

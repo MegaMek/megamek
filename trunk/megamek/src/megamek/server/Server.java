@@ -398,10 +398,10 @@ implements Runnable, ConnectionHandler {
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
                                         new Integer(game.getPhase())));
                 if (doBlind()) {
-                    send(connId, createFilteredEntitiesPacket(player));
+                    send(connId, createFilteredFullEntitiesPacket(player));
                 }
                 else {
-                    send(connId, createEntitiesPacket());
+                    send(connId, createFullEntitiesPacket());
                 }
                 break;
             case Game.PHASE_INITIATIVE :
@@ -415,10 +415,10 @@ implements Runnable, ConnectionHandler {
                 // Send Entites *before* other phase changes.
                 send(connId, createGameSettingsPacket());
                 if (doBlind()) {
-                    send(connId, createFilteredEntitiesPacket(player));
+                    send(connId, createFilteredFullEntitiesPacket(player));
                 }
                 else {
-                    send(connId, createEntitiesPacket());
+                    send(connId, createFullEntitiesPacket());
                 }
                 player.setDone( game.getEntitiesOwnedBy(player) <= 0 );
                 send(connId, createBoardPacket());
@@ -11237,6 +11237,16 @@ implements Runnable, ConnectionHandler {
      */
     private Packet createFilteredEntitiesPacket(Player p) {
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, filterEntities(p, game.getEntitiesVector()));
+    }
+
+    /**
+     * Creates a packet containing all entities, including wrecks, visible to the player in a blind game
+     */
+    private Packet createFilteredFullEntitiesPacket(Player p) {
+        final Object[] data = new Object[2];
+        data[0] = filterEntities(p, game.getEntitiesVector());
+        data[1] = game.getOutOfGameEntitiesVector();
+        return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
     }
 
     /**

@@ -165,7 +165,8 @@
 
   <!-- following cvsrel-* tasks get, build & package the current version from cvs -->
   <target name="cvsrel-get" depends="cvsrel-init">
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek"/>
+    <cvs cvsRoot="${cvsroot}" command="checkout -P -r ${cvstag}" 
+         dest="${cvsdir}" package="megamek"/>
   </target>
 
   <target name="cvsrel-build" depends="cvsrel-init">

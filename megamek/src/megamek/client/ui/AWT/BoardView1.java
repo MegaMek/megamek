@@ -1485,10 +1485,10 @@ public class BoardView1
         }
     }
 
-	public void boardNewAttack(BoardEvent e) {
-		AttackAction aa = (AttackAction)e.getSource();
-		addAttack(aa);
-	}
+    public void boardNewAttack(BoardEvent e) {
+        AttackAction aa = (AttackAction)e.getSource();
+        addAttack(aa);
+    }
     
     /**
      * Adds an attack to the sprite list.
@@ -1498,7 +1498,7 @@ public class BoardView1
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null) {
+        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD) {
             return;
         }
 

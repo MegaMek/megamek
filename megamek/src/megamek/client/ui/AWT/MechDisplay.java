@@ -1554,34 +1554,18 @@ class ExtraPanel
                        .append( "] attached." );
                    narcList.add( buff.toString() );
             }
-            if ( en.isINarcedWith(INarcPod.ECM) &&
-                    !player.isObserver()) {
-                   buff = new StringBuffer( "iNarc ECM Pod from " );
-                   buff.append( player.getName() );
-                   buff.append( " [" )
-                       .append( Player.teamNames[team] )
-                       .append( "] attached." );
-                   narcList.add( buff.toString() );
-            }
-            if ( en.isINarcedWith(INarcPod.HAYWIRE) &&
-                    !player.isObserver()) {
-                   buff = new StringBuffer( "iNarc Haywire Pod from " );
-                   buff.append( player.getName() );
-                   buff.append( " [" )
-                       .append( Player.teamNames[team] )
-                       .append( "] attached." );
-                   narcList.add( buff.toString() );
-           }
-           if ( en.isINarcedWith(INarcPod.NEMESIS) &&
-                    !player.isObserver()) {
-                   buff = new StringBuffer( "iNarc Nemesis Pod from " );
-                   buff.append( player.getName() );
-                   buff.append( " [" )
-                       .append( Player.teamNames[team] )
-                       .append( "] attached." );
-                   narcList.add( buff.toString() );
-           }
-            
+        }
+        if ( en.isINarcedWith(INarcPod.ECM)) {
+               buff = new StringBuffer( "iNarc ECM Pod attached." );
+               narcList.add( buff.toString() );
+        }
+        if ( en.isINarcedWith(INarcPod.HAYWIRE)) {
+               buff = new StringBuffer( "iNarc Haywire Pod attached." );
+               narcList.add( buff.toString() );
+        }
+        if ( en.isINarcedWith(INarcPod.NEMESIS)) {
+               buff = new StringBuffer( "iNarc Nemesis Pod attached." );
+               narcList.add( buff.toString() );
         }
 
         // Show inferno track.

@@ -718,7 +718,10 @@ public abstract class Entity
         if (getOwner() != null) {
             nbuf.append(" (").append(getOwner().getName()).append(")");
         }
-
+        if (Settings.showUnitId) {
+            nbuf.append(" ID:").append(this.getId());
+        }
+        
         this.displayName = nbuf.toString();
     }
 

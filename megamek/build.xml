@@ -2,14 +2,15 @@
 <project name="MegaMek" default="compile">
 
   <!-- Global properties for this build -->
-  <property name="src"     value="${basedir}"/>
-  <property name="build"   value="${basedir}/classes"/>
-  <property name="maindir" value="megamek"/>
-  <property name="doc"     value="docs" />
-  <property name="timestampfile" value="timestamp" />
-  <property name="jarfile" value="MegaMek.jar" />
-  <property name="jarmanifest" value="manifest.txt" /> 
-  <property name="exefile" value="MegaMek.exe" />
+  <property name="src"              value="${basedir}"/>
+  <property name="build"            value="${basedir}/classes"/>
+  <property name="maindir"          value="megamek"/>
+  <property name="doc"              value="docs" />
+  <property name="timestampfile"    value="timestamp" />
+  <property name="jarfile"          value="MegaMek.jar" />
+  <property name="jarmanifest"      value="manifest.txt" /> 
+  <property name="exefile"          value="MegaMek.exe" />
+  <property name="cvsdir"           value="cvsdev" />
 
   <target name="init" description="Initialize system before build">
      <!-- Create the time stamp -->
@@ -58,5 +59,39 @@
   </target>
 
   <target name="all" depends="compile, jar, exe" />
+
+  <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
+  <target name="cvsdev-init">
+    <tstamp/>
+    <mkdir dir="${cvsdir}" />
+    <mkdir dir="${cvsdir}/megamek/classes" />
+  </target>
+
+  <target name="cvsdev-get" depends="cvsdev-init">
+    <cvs cvsRoot=":pserver:anonymous@cvs.megamek.sourceforge.net:/cvsroot/megamek"
+        package="megamek" dest="${cvsdir}"
+    />
+  </target>
+
+  <target name="cvsdev-build" depends="cvsdev-init">
+    <!-- compile -->
+    <javac srcdir="${cvsdir}/megamek" destdir="${cvsdir}/megamek/classes" classpath="${cvsdir}/megamek" target="1.1"/>
+    <!-- build -->
+    <exec executable="C:/Program Files/Microsoft SDK for Java 4.0/Bin/jexegen.exe" >
+      <arg line="/out:${cvsdir}/megamek/MegaMek.exe /base:${cvsdir}/megamek/classes /main:megamek.MegaMek /r *.class" />
+    </exec>
+    <jar jarfile="${cvsdir}/megamek/MegaMek.jar" manifest="${cvsdir}/megamek/manifest.txt" basedir="${cvsdir}/megamek/classes"/>
+    <touch file="${cvsdir}/megamek/${timestampfile}" />
+  </target>
+
+  <target name="cvsdev-package" depends="cvsdev-init">
+    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsdir}/megamek" />
+  </target>
+  
+  <target name="cvsdev-clean">
+    <delete dir="${cvsdir}"/>
+  </target>
+
+  <target name="cvsdev" depends="cvsdev-get, cvsdev-build, cvsdev-package, cvsdev-clean" />
 
 </project>

@@ -7,6 +7,7 @@ v0.29.46 (CVS)
 + Bug 897421: Bot no longer gets stuck when you use Tactical Genius against it.
 + Bug 906536: Empty slots in middle of location no longer confuses mech parser.
 + Bug 797345: MegaMek now reads stealth armor from HMP files.
++ Bug 954921: MegaMek now reads machine gun ammo from HMP files properly.
 
 v0.29.45 (2004-08-16 8:00am)
 + Bug 1001685: all the scroll options are now individually configurable

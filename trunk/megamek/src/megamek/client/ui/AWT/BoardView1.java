@@ -1633,7 +1633,7 @@ public class BoardView1
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
                 // draw movement cost
-                drawMovementCost(step, stepPos, graph, col);
+                drawMovementCost(step, stepPos, graph, col, true);
                 break;
             case MovementData.STEP_GO_PRONE:
                 // draw arrow indicating dropping prone
@@ -1645,8 +1645,8 @@ public class BoardView1
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
-                offsetCostPos = new Point(stepPos.x + 8, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col);
+                offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
             case MovementData.STEP_GET_UP:
                 // draw arrow indicating standing up
@@ -1658,8 +1658,8 @@ public class BoardView1
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
-                offsetCostPos = new Point(stepPos.x + 7, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col);
+                offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col, false);
                 break;
             case MovementData.STEP_TURN_LEFT:
             case MovementData.STEP_TURN_RIGHT:
@@ -1714,7 +1714,7 @@ public class BoardView1
             return step;
         }
 
-        private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col) {
+        private void drawMovementCost(MovementData.Step step, Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append( step.getMpUsed() );
@@ -1738,7 +1738,10 @@ public class BoardView1
             // Convert the buffer to a String and draw it.
             costString = costStringBuf.toString();
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            int costX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+            int costX = stepPos.x + 42;
+            if (shiftFlag) {
+                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
+            }
             graph.setColor(Color.darkGray);
             graph.drawString(costString, costX, stepPos.y + 39);
             graph.setColor(col);

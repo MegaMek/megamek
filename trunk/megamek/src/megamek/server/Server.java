@@ -5822,7 +5822,7 @@ implements Runnable, ConnectionHandler {
         glancingMissileMod = 0;
         glancingCritMod = 0;
       }
-
+      
       // special case minefield delivery, no damage and scatters if misses.
       if (target.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER) {
         Coords coords = target.getPosition();
@@ -6061,13 +6061,39 @@ implements Runnable, ConnectionHandler {
 
         return !bMissed;
       } // End artillery
-
+      int ammoUsage=0;
+      int nDamPerHit = wtype.getDamage();
       if (bMissed) {
-            // Report the miss.
-            if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
+          // Report the miss.
+          // MGs in rapidfire do heat even when they miss.
+          if (weapon.isRapidfire() &&
+              !(target instanceof Infantry &&
+              !(target instanceof BattleArmor)) ){
+              // Check for rapid fire Option. Only MGs can be rapidfire.
+              nDamPerHit = Compute.d6();
+              ammoUsage = 3*nDamPerHit;
+              for (int i=0; i<ammoUsage; i++) {
+                  if (ammo.getShotsLeft() <= 0) {
+                      ae.loadWeapon(weapon);
+                      ammo = weapon.getLinked();
+                  }
+                  ammo.setShotsLeft(ammo.getShotsLeft()-1);
+              }
+              if (ae instanceof Mech) {
+                  // Apply heat
+                  ae.heatBuildup += nDamPerHit;
+              }
+          }
+                 if ( wtype.getAmmoType() == AmmoType.T_SRM_STREAK ) {
                 phaseReport.append( "fails to achieve lock.\n" );
             } else {
-                phaseReport.append("misses.\n");
+                phaseReport.append("misses");
+                if (weapon.isRapidfire() &&
+                    !(target instanceof Infantry &&
+                    !(target instanceof BattleArmor)) ){
+                    phaseReport.append (" using ").append(ammoUsage).append(" shots.");
+                }
+                phaseReport.append(".\n");
             }
 
             // Report any AMS action.
@@ -6206,7 +6232,6 @@ implements Runnable, ConnectionHandler {
 
         // yeech.  handle damage. . different weapons do this in very different ways
         int hits = 1, nCluster = 1, nSalvoBonus = 0;
-        int nDamPerHit = wtype.getDamage();
         boolean bSalvo = false;
         // ecm check is heavy, so only do it once
         boolean bCheckedECM = false;
@@ -6488,7 +6513,6 @@ implements Runnable, ConnectionHandler {
                    !(target instanceof Infantry &&
                      !(target instanceof BattleArmor)) ){
             // Check for rapid fire Option. Only MGs can be rapidfire.
-            int ammoUsage;
             nDamPerHit = Compute.d6();
             ammoUsage = 3*nDamPerHit;
             for (int i=0; i<ammoUsage; i++) {

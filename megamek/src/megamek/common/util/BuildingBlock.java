@@ -131,33 +131,45 @@ public class BuildingBlock {
      */    
     public int findStartIndex(String blockName) {
      
-       String line;
-       int startIndex = -1;
-        
-       //look for the block...
+        String line;
+        int startIndex = -1;
+        StringBuffer buf = new StringBuffer();
+        String key = null;
+
+        // Translate the block name to a key.
+        buf.append( '<' )
+            .append( blockName )
+            .append( '>' );
+        key = buf.toString();
+        buf = null;
+
+        //look for the block...
         for (int lineNum = 0; lineNum < rawData.size(); lineNum++) {
           
             line = rawData.get(lineNum).toString();
             
             //look for "<blockName>"
             try {
-            if (line.length() >=3 && line.substring(1,line.length()-1).equalsIgnoreCase(blockName)) {
+            if ( line.length() >=3 && line.equalsIgnoreCase(key) ) {
                 startIndex = ++lineNum; 
                 break;
             }
             }catch(StringIndexOutOfBoundsException e) {
              
-                System.err.println("Was looking for <"+blockName+"> and caught a");
-                System.err.println("string index out of bounds exception on line: \""+line+"\"");
-                System.err.println("rawData index number: "+lineNum);
+                System.err.print("Was looking for " );
+                System.err.print( key );
+                System.err.println( " and caught a");
+                System.err.print("string index out of bounds exception on line: \"");
+                System.err.print(line);
+                System.err.println("\"");
+                System.err.print("rawData index number: ");
+                System.err.println(lineNum);
                                 
             }
             
             
-        };
+        }
         
-        //if (startIndex == -1) System.err.println("Could not locate <"+blockName+">");
-
         return startIndex;
         
     }
@@ -172,9 +184,19 @@ public class BuildingBlock {
      * @see getAllDataAsVector()
      */    
     public int findEndIndex(String blockName) {
-         String line;
+        String line;
         int endIndex = -1;
-        
+        StringBuffer buf = new StringBuffer();
+        String key = null;
+
+        // Translate the block name to a key.
+        buf.append( '<' )
+            .append( '/' )
+            .append( blockName )
+            .append( '>' );
+        key = buf.toString();
+        buf = null;
+
         //look for the block...
         for (int lineNum = 0; lineNum < rawData.size(); lineNum++) {
           
@@ -182,23 +204,24 @@ public class BuildingBlock {
 
             //look for "</blockName>"
             try {
-            if (line.length() >=3 && line.substring(1,line.length()-1).equalsIgnoreCase("/"+blockName)) {
+            if ( line.length() >=3 && line.equalsIgnoreCase(key) ) {
                 endIndex = lineNum;
                 break;
             }
             } catch(StringIndexOutOfBoundsException e) {
                 
-                System.err.println("Was looking for </"+blockName+"> and caught a");
-                System.err.println("string index out of bounds exception on line: \""+line+"\"");
-                System.err.println("rawData index number: "+lineNum);
-                
+                System.err.print("Was looking for " );
+                System.err.print( key );
+                System.err.println( " and caught a");
+                System.err.print("string index out of bounds exception on line: \"");
+                System.err.print(line);
+                System.err.println("\"");
+                System.err.print("rawData index number: ");
+                System.err.println(lineNum);
             }
             
-        };
-   
-        
-        //if (endIndex == -1) System.err.println("Could not locate </"+blockName+">");
-            
+        }
+
         return endIndex;
     }
     

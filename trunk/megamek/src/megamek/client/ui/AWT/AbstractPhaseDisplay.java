@@ -15,6 +15,7 @@
 package megamek.client;
 
 import java.awt.*;
+import java.awt.event.*;
 
 import megamek.common.*;
 
@@ -68,4 +69,5 @@ public abstract class AbstractPhaseDisplay
     public void gameNewSettings(GameEvent ev) {
     ;
     }
+    
 }

@@ -24,13 +24,16 @@ import megamek.common.*;
 public class DeploymentDisplay 
     extends AbstractPhaseDisplay
     implements BoardListener,  ActionListener,
-    KeyListener, ComponentListener, MouseListener, GameListener
+    KeyListener, GameListener
 {    
     // parent game
     public Client client;
     
     // displays
-    private Label             statusL;
+    private Label             labStatus;
+    private Panel             panStatus;
+    private Button            butDisplay;
+    private Button            butMap;
 
     // buttons
     private Panel             panButtons;
@@ -58,7 +61,7 @@ public class DeploymentDisplay
 
         client.game.board.addBoardListener(this);
 
-        statusL = new Label("Waiting to begin Deployment phase...", Label.CENTER);
+        setupStatusBar();
 
 
         butTurn = new Button("Turn");
@@ -107,7 +110,7 @@ public class DeploymentDisplay
 
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(statusL, gridbag, c);
+        addBag(panStatus, gridbag, c);
 
         c.gridwidth = 1;
         c.weightx = 1.0;    c.weighty = 0.0;
@@ -119,9 +122,6 @@ public class DeploymentDisplay
 
         addKeyListener(this);
 
-        // mech display.
-        client.mechD.addMouseListener(this);
-        client.frame.addComponentListener(this);
     }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
@@ -130,6 +130,40 @@ public class DeploymentDisplay
         comp.addKeyListener(this);
     }
         
+    /**
+     * Sets up the status bar with toggle buttons for the mek display and map.
+     * TODO: remove copy/pastiness with deploy, move, fire & phys panels
+     */
+    private void setupStatusBar() {
+        panStatus = new Panel();
+
+        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        
+        butDisplay = new Button("D");
+        butDisplay.addActionListener(this);
+        
+        butMap = new Button("M");
+        butMap.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+            
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;    c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
+        
+        c.weightx = 0.0;    c.weighty = 0.0;
+        gridbag.setConstraints(butDisplay, c);
+        panStatus.add(butDisplay);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        panStatus.add(butMap);
+    }
+
     /**
      * Selects an entity for deployment
      */
@@ -159,8 +193,7 @@ public class DeploymentDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        moveMechDisplay();
-        client.mechW.setVisible(true);
+        client.setDisplayVisible(true);
         selectEntity(client.getFirstEntityNum());
         butNext.setEnabled(true);
         Player p = client.getLocalPlayer();
@@ -181,7 +214,7 @@ public class DeploymentDisplay
         client.game.board.select(null);
         client.game.board.highlight(null);
         client.game.board.cursor(null);
-        client.mechW.setVisible(false);
+        client.setDisplayVisible(false);
         client.bv.markDeploymentHexesFor(null);
         client.bv.repaint(100);
     }
@@ -210,20 +243,6 @@ public class DeploymentDisplay
      */
     private Entity ce() {
         return client.game.getEntity(cen);
-    }
-
-
-    /**
-     * Moves the mech display window to the proper position.
-     */
-    private void moveMechDisplay() {
-        if (!client.bv.isShowing()) {
-            return;
-        }
-        client.mechW.setLocation(client.bv.getLocationOnScreen().x 
-                                 + client.bv.getSize().width 
-                                 - client.mechD.getSize().width - 20,
-                                 client.bv.getLocationOnScreen().y + 20);
     }
 
     //
@@ -276,9 +295,9 @@ public class DeploymentDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            statusL.setText("It's your turn to deploy.");
+            labStatus.setText("It's your turn to deploy.");
         } else {
-            statusL.setText("It's " + ev.getPlayer().getName() + 
+            labStatus.setText("It's " + ev.getPlayer().getName() + 
                     "'s turn to deploy.");
         }
     }
@@ -293,8 +312,6 @@ public class DeploymentDisplay
             client.game.board.removeBoardListener(this);
             client.bv.removeKeyListener(this);
             client.cb.getComponent().removeKeyListener(this);
-            client.mechD.removeMouseListener(this);
-            client.frame.removeComponentListener(this);
         }
     }
 
@@ -302,6 +319,13 @@ public class DeploymentDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+        if (ev.getSource() == butDisplay) {
+            client.toggleDisplay();
+        }
+        else if (ev.getSource() == butMap) {
+            client.toggleMap();
+        }
+        
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -443,41 +467,4 @@ public class DeploymentDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
-    
-    //
-    // ComponentListener
-    //
-    public void componentHidden(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-    }
-    public void componentMoved(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentResized(ComponentEvent ev) {
-        moveMechDisplay();
-    }
-    public void componentShown(ComponentEvent ev) {
-        client.mechW.setVisible(false);
-        moveMechDisplay();
-    }
-    
-    //
-    // MouseListener
-    //
-    public void mouseEntered(MouseEvent ev) {
-        ;
-    }
-    public void mouseExited(MouseEvent ev) {
-        ;
-    }
-    public void mousePressed(MouseEvent ev) {
-        ;
-    }
-    public void mouseReleased(MouseEvent ev) {
-        ;
-    }
-    public void mouseClicked(MouseEvent ev) {
-        ;
-    }
-
 }

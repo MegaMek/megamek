@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.29.37 (CVS)
++ Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl
 
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin

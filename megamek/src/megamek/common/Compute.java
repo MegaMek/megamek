@@ -1141,12 +1141,12 @@ public class Compute
         if (ae.hasC3() || ae.hasC3i()) {
             for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = (Entity)i.nextElement();
-                if ( ae.onSameC3NetworkAs(fe)) {
-                  final int buddyrange = fe.getPosition().distance(te.getPosition());
-                  if(buddyrange < c3range) {
-                      c3range = buddyrange; 
-                      c3spotter = fe;
-                  }
+                if (ae.onSameC3NetworkAs(fe) && canSee(game, fe, te)) {
+                    final int buddyrange = fe.getPosition().distance(te.getPosition());
+                    if(buddyrange < c3range) {
+                        c3range = buddyrange;
+                        c3spotter = fe;
+                    }
                 }
             }
         }

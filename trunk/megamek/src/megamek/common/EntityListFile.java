@@ -26,13 +26,6 @@ import gd.xml.ParseException;
 public class EntityListFile {
 
     /**
-     * Define the line separator. I am *intentionally* forcing a DOS
-     * line separator... *nix can handle DOS better than vice versa.
-     * TODO: am I hosing Mac users?
-     */
-    private static final String NL = "\r\n";
-
-    /**
      * Produce a string describing this armor value.  Valid output values
      * are any integer from 0 to 100, N/A, or Destroyed.
      *
@@ -101,7 +94,7 @@ public class EntityListFile {
         output.append( "\" isDestroyed=\"" );
         output.append( String.valueOf(isDestroyed) );
         output.append( "\"/>" );
-        output.append( NL );
+        output.append( Settings.NL );
 
         // Return a String.
         return output.toString();
@@ -138,20 +131,20 @@ public class EntityListFile {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc)) );
                     thisLoc.append( "\"/>" );
-                    thisLoc.append( NL );
+                    thisLoc.append( Settings.NL );
                 }
                 if ( entity.getOInternal(loc) != entity.getInternal(loc) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getInternal(loc)) );
                     thisLoc.append( "\" type=\"Internal\"/>" );
-                    thisLoc.append( NL );
+                    thisLoc.append( Settings.NL );
                 }
                 if ( entity.hasRearArmor(loc) && entity.getOArmor(loc, true) !=
                      entity.getArmor(loc, true) ) {
                     thisLoc.append( "         <armor points=\"" );
                     thisLoc.append( formatArmor(entity.getArmor(loc, true)) );
                     thisLoc.append( "\" type=\"Rear\"/>" );
-                    thisLoc.append( NL );
+                    thisLoc.append( Settings.NL );
                 }
             }
 
@@ -172,7 +165,7 @@ public class EntityListFile {
                         thisLoc.append( "         <slot index=\"" );
                         thisLoc.append( String.valueOf(loop+1) );
                         thisLoc.append( "\" type=\"Empty\"/>" );
-                        thisLoc.append( NL );
+                        thisLoc.append( Settings.NL );
                         haveSlot = true;
                     }
 
@@ -217,7 +210,7 @@ public class EntityListFile {
                         thisLoc.append( "\" shots=\"" );
                         thisLoc.append( String.valueOf(mount.getShotsLeft()) );
                         thisLoc.append( "\"/>" );
-                        thisLoc.append( NL );
+                        thisLoc.append( Settings.NL );
                         haveSlot = true;
                     }
 
@@ -258,10 +251,10 @@ public class EntityListFile {
                 if ( blownOff ) {
                     output.append( " has been blown off." );
                 }
-                output.append( NL );
+                output.append( Settings.NL );
                 output.append( thisLoc.toString() );
                 output.append( "      </location>" );
-                output.append( NL );
+                output.append( Settings.NL );
 
                 // Reset the location buffer.
                 thisLoc = new StringBuffer();
@@ -277,7 +270,7 @@ public class EntityListFile {
                 output.append( String.valueOf(loc) );
                 output.append( "\" isDestroyed=\"true\" /> " );
                 output.append( entity.getLocationName(loc) );
-                output.append( NL );
+                output.append( Settings.NL );
 
             } // End location-completely-destroyed
 
@@ -293,13 +286,13 @@ public class EntityListFile {
 
         // If we recorded a slot, remind the player that slots start at 1.
         if ( haveSlot ) {
-            output.insert( 0, NL );
+            output.insert( 0, Settings.NL );
             output.insert
                 ( 0, "      The first slot in a location is at index=\"1\"." );
 
             // Tanks do wierd things with ammo.
             if ( entity instanceof Tank ) {
-                output.insert( 0, NL );
+                output.insert( 0, Settings.NL );
                 output.insert( 0, "      Tanks have special needs, so don't delete any ammo slots." );
             }
         }
@@ -346,11 +339,11 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write( "<?xml version=\"1.0\"?>" );
-        output.write( NL );
-        output.write( NL );
+        output.write( Settings.NL );
+        output.write( Settings.NL );
         output.write( "<unit>" );
-        output.write( NL );
-        output.write( NL );
+        output.write( Settings.NL );
+        output.write( Settings.NL );
 
         // Walk through the list of entities.
         Enumeration items = list.elements();
@@ -363,7 +356,7 @@ public class EntityListFile {
             output.write( "\" model=\"" );
             output.write( entity.getModel() );
             output.write( "\">" );
-            output.write( NL );
+            output.write( Settings.NL );
 
             // Add the crew this entity.
             final Pilot crew = entity.getCrew();
@@ -385,7 +378,7 @@ public class EntityListFile {
                 output.write( String.valueOf(crew.getAdvantageList(" ")) );
             }
             output.write( "\"/>" );
-            output.write( NL );
+            output.write( Settings.NL );
 
             // Add the locations of this entity (if any are needed).
             String loc = getLocString( entity );
@@ -395,14 +388,14 @@ public class EntityListFile {
 
             // Finish writing this entity to the file.
             output.write( "   </entity>" );
-            output.write( NL );
-            output.write( NL );
+            output.write( Settings.NL );
+            output.write( Settings.NL );
 
         } // Handle the next entity
 
         // Finish writing.
         output.write( "</unit>" );
-        output.write( NL );
+        output.write( Settings.NL );
         output.flush();
         output.close();
     }

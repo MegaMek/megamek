@@ -176,6 +176,24 @@ public class InfernoTracker
     }
 
     /**
+     * Determine just the number of turns left for Arrow IV Infernos to burn.
+     *
+     * @return  The <code>int</code> number of turns that this unit or
+     *          hex will suffer the effects of an Inferno IV round (ignore
+     *          any standard inferno rounds).  This number will be
+     *          positive when the <code>isStillBurning()</code> method
+     *          returns <code>true</code>.  It will not be negative.
+     */
+    public int getArrowIVTurnsLeftToBurn() {
+        int result = 0;
+        
+        // Add the number of standard burn turns to Inferno IV turns.
+        result = turnsIVLeftToBurn;
+
+        return result;
+    }
+
+    /**
      * Determine the number of heat points generated in the current turn.
      *
      * @return  the <code>int</code> number of heat points added this turn.

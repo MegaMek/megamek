@@ -41,6 +41,12 @@ public class Coords
     
     public int            x;
     public int            y;
+
+    /**
+     * Allow at most 15 boards (255 hexes) in the 'y' direction.
+     */
+    private static final int SHIFT = 8;
+    private static final int MASK = ( 1 << Coords.SHIFT ) - 1;
     
     /**
      * Constructs a new coordinate pair at (0, 0).
@@ -304,8 +310,19 @@ public class Coords
      * @return  The <code>int</code> hash code for these coords.
      */
     public int hashCode() {
-        // Allow at most 15 boards (255 hexes) in the 'y' direction.
-        return (x << 8) ^ y;
+        return (x << Coords.SHIFT) ^ y;
+    }
+
+    /**
+     * Get the coordinates object for a given hash code.
+     *
+     * @param   hash - the hash code for the desired object.
+     * @return  the <code>Coords</code> that match the hash code.
+     */
+    public static Coords getFromHashCode( int hash ) {
+        int y = ( hash & Coords.MASK );
+        int x = ( hash ^ y ) >>> Coords.SHIFT;
+        return new Coords(x, y);
     }
 
     public String toString() {

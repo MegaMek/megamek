@@ -19,22 +19,20 @@ import java.io.IOException;
 import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
-import megamek.common.options.OptionGroup;
-import megamek.common.options.GameOption;
 
 /**
- * Objects of this class can encode a <code>GameOptions</code> object as XML
+ * Objects of this class can encode a <code>Coords</code> object as XML
  * into an output writer and decode one from a parsed XML node.  It is used
  * when saving games into a version- neutral format.
  *
  * @author      James Damour <suvarov454@users.sourceforge.net>
  */
-public class GameOptionsEncoder {
+public class CoordsEncoder {
 
     /**
-     * Encode a <code>GameOptions</code> object to an output writer.
+     * Encode a <code>Coords</code> object to an output writer.
      *
-     * @param   options - the <code>GameOptions</code> to be encoded.
+     * @param   coords - the <code>Coords</code> to be encoded.
      *          This value must not be <code>null</code>.
      * @param   out - the <code>Writer</code> that will receive the XML.
      *          This value must not be <code>null</code>.
@@ -42,56 +40,43 @@ public class GameOptionsEncoder {
      *          <code>null</code>.
      * @throws  <code>IOException</code> if there's any error on write.
      */
-    public static void encode( GameOptions options, Writer output )
+    public static void encode( Coords coords, Writer out )
         throws IOException
     {
         // First, validate our input.
-        if ( null == options ) {
-            throw new IllegalArgumentException( "The game options is null." );
+        if ( null == coords ) {
+            throw new IllegalArgumentException( "The coords is null." );
         }
-        if ( null == output ) {
+        if ( null == out ) {
             throw new IllegalArgumentException( "The writer is null." );
         }
 
-        // Start the XML stream for this set of game options.
-        output.write( "<options version=\"1.0\">" );
-  
-        // Now the options themselves
-        Enumeration groups = options.groups();
-        while ( groups.hasMoreElements() ) {
-            final OptionGroup group = (OptionGroup) groups.nextElement();
-  
-            Enumeration iter = group.options();
-            while ( iter.hasMoreElements() ) {
-                final GameOption option = (GameOption) iter.nextElement();
-
-                // Encode this option.
-                output.write( "<gameoption><optionname>" );
-                output.write( option.getShortName() );
-                output.write( "</optionname><optionvalue>" );
-                output.write( option.getValue().toString() );
-                output.write( "</optionvalue></gameoption>" );
-            }
-
-        } // Handle the next option group.
-  
-        // Finish writing.
-        output.write( "</options>" );
+        // Encode the coords object to the stream.
+        out.write( "<coords version=\"1.0\" hash=\"" );
+        out.write( coords.hashCode() );
+        out.write( "\" />" );
     }
 
     /**
-     * Decode a <code>GameOptions</code> object from the passed node.
+     * Decode a <code>Coords</code> object from the passed node.
      *
      * @param   node - the <code>ParsedXML</code> node for this object.
      *          This value must not be <code>null</code>.
      * @param   game - the <code>Game</code> the decoded object belongs to.
-     * @return  the <code>GameOptions</code> object based on the node.
+     * @return  the <code>Coords</code> object based on the node.
      * @throws  <code>IllegalArgumentException</code> if the node is
      *          <code>null</code>.
      * @throws  <code>IllegalStateException</code> if the node does not
-     *          contain a valid <code>GameOptions</code>.
+     *          contain a valid <code>Coords</code>.
      */
-    public static GameOptions decode( ParsedXML node, Game game ) {
+    public static Coords decode( ParsedXML node, Game game ) {
+
+        if ( 1 == 0 ) {
+            // Try to pull the hash code from the node.
+            int hash = 0;
+
+            Coords coords = Coords.getFromHashCode( hash );
+        }
         return null;
     }
 

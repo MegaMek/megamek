@@ -21,6 +21,7 @@ v 0.29.27 (CVS)
 + Bug 898218 and 900906: HMVee is packing the bits in very tight.
 + RFE 733070: write "END OF GAME to MegaMek.log when game is reset
 + RFE 567481: have the server reset the game when the last player leaves
++ Bug 901362: any pending PSRs should cleared when a Mek stands from prone
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

@@ -281,9 +281,6 @@ public class Mounted implements Serializable, RoundUpdated {
                 nShots = 6;
             }
         }
-        else if (isRapidFire()) {
-            nShots = 6;
-        }
         return nShots;
     }
 

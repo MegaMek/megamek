@@ -173,7 +173,7 @@ public class BLKMechFile {
             
             
             //load equipment stuff...
-            java.util.Vector [] criticals = new java.util.Vector[8];
+            com.sun.java.util.collections.Vector [] criticals = new com.sun.java.util.collections.Vector[8];
             
             criticals[mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
             criticals[mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
@@ -184,9 +184,9 @@ public class BLKMechFile {
             criticals[mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
             criticals[mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
             
-            //criticals[mech.LOC_LTR] = new java.util.Vector(0);
-            //criticals[mech.LOC_RTR] = new java.util.Vector(0);
-            //criticals[mech.LOC_CTR] = new java.util.Vector(0);
+            //criticals[mech.LOC_LTR] = new com.sun.java.util.collections.Vector(0);
+            //criticals[mech.LOC_RTR] = new com.sun.java.util.collections.Vector(0);
+            //criticals[mech.LOC_CTR] = new com.sun.java.util.collections.Vector(0);
             
                                    
             

@@ -179,7 +179,7 @@ public class PhysicalDisplay
         client.game.board.select(null);
         client.game.board.cursor(null);
 
-        client.mechD.displayMech(client.game, ce());
+        client.mechD.displayMech(ce());
         client.mechD.showPanel("movement");
 
         client.bv.centerOnHex(ce().getPosition());

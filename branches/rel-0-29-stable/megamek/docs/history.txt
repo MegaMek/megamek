@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-7
+v 0.29-stable-7 (2004-02-14 3:00 PM EST)
 + Bug 781250: Fixed MASC bug.
 
 v 0.29-stable-6 (2003-11-09 11:20 AM EST)

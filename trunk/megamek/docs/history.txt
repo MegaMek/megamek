@@ -24,6 +24,10 @@ v0.29.33 (CVS)
 + Start to fix bugs with running under SableVM and Kaffe.
 + Java 1.1 compatibility fixes.
 + Bug 944134: seperated query and new map events
++ Bug 937752: final fix... dfa and charge should now be fully compatible with the pathfinder.
++ Bug 944331: Fixed getNextMoves so that you can immediately change directions.
++ Changed ChatLounge to control bots.
++ Bug 940019: Fixed ConcurrentModificationException (but this will need to be looked at more) 
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

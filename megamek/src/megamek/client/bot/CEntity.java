@@ -175,11 +175,11 @@ public class CEntity {
 
     public boolean canMove() {
         return (
-            entity.isSelectableThisTurn(tb.game) && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
+            entity.isSelectableThisTurn() && !(entity.isProne() && base_psr_odds < .2) && !entity.isImmobile());
     }
 
     public boolean justMoved() {
-        return (!moved && !entity.isSelectableThisTurn(tb.game)) || justMoved;
+        return (!moved && !entity.isSelectableThisTurn()) || justMoved;
     }
 
     public void reset() {

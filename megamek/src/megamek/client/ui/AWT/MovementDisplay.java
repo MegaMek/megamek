@@ -981,7 +981,7 @@ public class MovementDisplay
                     // then enable the "Load" button.
                     if ( ce().getWalkMP() > 0 &&
                          ce().canLoad(other) &&
-                         other.isSelectableThisTurn(client.game) ) {
+                         other.isSelectableThisTurn() ) {
                         setLoadEnabled( true );
                     }
 

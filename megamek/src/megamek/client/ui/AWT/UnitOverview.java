@@ -290,7 +290,7 @@ public class UnitOverview implements Displayable {
     }
     
     private Color getFrameColor(Entity entity) {
-    	if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn(clientgui.getClient().game)) {
+    	if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn()) {
     		return Color.gray;
     	}
     	return Color.black;

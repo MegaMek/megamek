@@ -45,9 +45,9 @@ public class MechWarrior extends Infantry {
         setOriginalRideExternalId(originalRide.getExternalId());
     }
 
-    public boolean isSelectableThisTurn(Game game) {
+    public boolean isSelectableThisTurn() {
         return (pickedUpById == Entity.NONE)
-            && super.isSelectableThisTurn( game );
+            && super.isSelectableThisTurn();
     }
 
     public int getOriginalRideId() {

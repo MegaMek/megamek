@@ -824,9 +824,6 @@ public class BoardView1
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        // TODO: Remove these lines once "targetable" is proven sound.
-        System.out.println("Got an attack against " + t.getDisplayName());
-        System.out.println("at " + t.getPosition());
         if (ae == null || t == null) {
             return;
         }
@@ -1727,6 +1724,7 @@ public class BoardView1
     {
         private java.util.Vector attacks = new java.util.Vector();
         private Polygon attackPoly;
+        private Color attackColor;
         
         private int entityId;
         private int targetType;
@@ -1745,6 +1743,9 @@ public class BoardView1
             final Targetable target = game.getTarget(targetType, targetId);
             final Point a = getHexLocation(ae.getPosition());
             final Point t = getHexLocation(target.getPosition());
+            
+            // color?
+            attackColor = ae.getOwner().getColor();
         
             final double an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             final double lw = 3; // line width
@@ -1808,7 +1809,7 @@ public class BoardView1
             Polygon drawPoly = new Polygon(attackPoly.xpoints, attackPoly.ypoints, attackPoly.npoints);
             drawPoly.translate(x, y);
             
-            g.setColor(game.getEntity(entityId).getOwner().getColor());
+            g.setColor(attackColor);
             g.fillPolygon(drawPoly);
             g.setColor(Color.white);
             g.drawPolygon(drawPoly);

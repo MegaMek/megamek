@@ -2279,6 +2279,9 @@ implements Runnable {
         fellDuringMovement = false;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
+
+        Vector movePath = new Vector();
+
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
             wasProne = entity.isProne();
@@ -3008,6 +3011,8 @@ implements Runnable {
                 }
             }
             
+            movePath.addElement(new Integer(curPos.hashCode() ^ (curFacing << 16)));
+
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             prevStep = step;
@@ -3152,7 +3157,7 @@ implements Runnable {
         // Update the entitiy's position,
         // unless it is off the game map.
         if (!game.isOutOfGame(entity)) {
-            entityUpdate( entity.getId() );
+            entityUpdate( entity.getId(), movePath  );
         }
         
         // if using double blind, update the player on new units he might see
@@ -8357,12 +8362,16 @@ implements Runnable {
      * update everyone
      */
     private void entityUpdate(int nEntityID) {
+    	entityUpdate(nEntityID, new Vector());
+	}
+
+    private void entityUpdate(int nEntityID, Vector movePath) {
         if (doBlind()) {
             Entity eTarget = game.getEntity(nEntityID);
             Vector vPlayers = game.getPlayersVector();
             Vector vCanSee = whoCanSee(eTarget);
             // send an entity update to everyone who can see
-            Packet pack = createEntityPacket(nEntityID);
+            Packet pack = createEntityPacket(nEntityID, movePath);
             for (int x = 0; x < vCanSee.size(); x++) {
                 Player p = (Player)vCanSee.elementAt(x);
                 send(p.getId(), pack);
@@ -8378,7 +8387,7 @@ implements Runnable {
         }
         else {
             // everyone can see
-            send(createEntityPacket(nEntityID));
+            send(createEntityPacket(nEntityID, movePath));
         }
     }
     
@@ -8807,10 +8816,14 @@ implements Runnable {
      * Creates a packet containing a single entity, for update
      */
     private Packet createEntityPacket(int entityId) {
+    	return createEntityPacket(entityId, new Vector());
+    }
+    private Packet createEntityPacket(int entityId, Vector movePath) {
         final Entity entity = game.getEntity(entityId);
-        final Object[] data = new Object[2];
+        final Object[] data = new Object[3];
         data[0] = new Integer(entityId);
         data[1] = entity;
+        data[2] = movePath;
         return new Packet(Packet.COMMAND_ENTITY_UPDATE, data);
     }
     

@@ -23,7 +23,7 @@ import megamek.common.*;
 public class MovementDisplay
     extends StatusBarPhaseDisplay
     implements BoardListener,  ActionListener,
-    KeyListener, GameListener
+    KeyListener, GameListener, BoardViewListener
 {
     private static final int    NUM_BUTTON_LAYOUTS = 3;
 
@@ -262,7 +262,9 @@ public class MovementDisplay
         client.game.board.cursor(null);
         client.mechD.displayEntity(ce());
         client.mechD.showPanel("movement");
-        client.bv.centerOnHex(ce().getPosition());
+        if (!client.bv.isMovingUnits()) {
+	        client.bv.centerOnHex(ce().getPosition());
+	    }
     }
     
     /**
@@ -318,7 +320,9 @@ public class MovementDisplay
         butDone.setEnabled(true);
         butNext.setEnabled(true);
         butMore.setEnabled(true);
-        client.setDisplayVisible(true);
+        if (!client.bv.isMovingUnits()) {
+	        client.setDisplayVisible(true);
+	    }
         selectEntity(client.getFirstEntityNum());
     }
 
@@ -1201,4 +1205,12 @@ public class MovementDisplay
     public void keyTyped(KeyEvent ev) {
         ;
     }
+
+    // board view listener 
+	public void finishedMovingUnits(BoardViewEvent b) {
+		if (client.isMyTurn()) {
+	        client.setDisplayVisible(true);
+			client.bv.centerOnHex(ce().getPosition());
+		}
+	}
 }

@@ -43,6 +43,9 @@ public class Settings
     public static boolean   nagForMASC              = true;
     public static boolean   nagForPSR               = true;
     
+    public static boolean   showMoveStep            = true;
+    public static int       moveStepDelay           = 500;
+    
     public static String    lastPlayerName          = "";
     public static int       lastPlayerColor;
     
@@ -208,6 +211,14 @@ scan:
                             mekHitLocLog = null;
                         }
                     }
+                    else if ( key.equals("showmovestep")) {
+                        st.nextToken();
+                        showMoveStep = Boolean.valueOf(st.sval).booleanValue();
+                    }
+                    else if(key.equals("movestepdelay")) {
+                        st.nextToken();
+                        moveStepDelay = (int)st.nval;
+                    }
                 }
             }
             
@@ -275,6 +286,8 @@ scan:
             cw.write("moveillegal " + writeColor(moveIllegalColor) + "\r\n");
             cw.write("movemasc " + writeColor(moveMASCColor) + "\r\n");
             cw.write("maptileset \"" + mapTileset + "\"\r\n");
+            cw.write("showmovestep " + showMoveStep + "\r\n");
+            cw.write("movestepdelay " + moveStepDelay + "\r\n");
             if ( mekHitLocLog != null ) {
                 mekHitLocLog.flush();
                 mekHitLocLog.close();

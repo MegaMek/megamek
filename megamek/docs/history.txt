@@ -20,6 +20,9 @@ v0.29.60 (CVS)
 + Added "no_premove_vibra" option, if set, vibrabombs that would damage a 'Mech
     that has not yet moved do not damage it.
 + Added pics for Verfolger and Rabid Coyote
++ Bug 1097815: Meks that are charging or DFAing don't get a dodge maneuver.
++ Bug 1098287: offboard units don't get the benefits of C3.
++ Bug 1072137: don't crash if the bot can't find a physical attack.
 
 v0.29.59 (2005-01-02 3:00pm)
 + Bug 762436, 839980: Domino Effect not able to displace off the board

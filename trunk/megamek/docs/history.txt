@@ -78,6 +78,7 @@ v next
 + 613606: locked turrets should no longer cause a crash
 + fix allowing clan heavy and light MG ammo (thx to suvarov454)
 + 614883: option allowing drive/engine hits to not 'immobilize' a vehicle
++ 615400: mechs are not allowed to flip arms when prone
 
 v 0.26.14 (09-14-02, 9:30pm)
 + 609840: immobilized vehicles can't complete their charges

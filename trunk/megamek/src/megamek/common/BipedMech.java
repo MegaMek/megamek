@@ -46,7 +46,7 @@ public class BipedMech extends Mech {
      * Returns true if the entity can flip its arms
      */
     public boolean canFlipArms() {
-        boolean canFlip = true;
+        boolean canFlip = !isProne();
         
         if ( hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ) {
             canFlip = false;

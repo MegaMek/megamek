@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.39
+
 v0.29.38 (2004-06-28 2:15pm)
 + RFE 941437: Show a "*" in the tooltip if the crew has special advantages
 + Window focus grabbing now a Client Option

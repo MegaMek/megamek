@@ -74,6 +74,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v CVS
++ 662333: ams doesn't fire on non-locked streaks
++ 662333: ams can't use more ammo than it has
+
 v 0.27.14 (01-03-03, 9pm)
 + ammo exploding from heat can't explode twice
 + 657606: dead meks can't engage in physical attacks

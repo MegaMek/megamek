@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.57
+v0.29.57 (CVS)
 
 v0.29.56 (2004-12-05 11:00am)
 + Patch 1067681: Set Autoejected MW to dead when killed.

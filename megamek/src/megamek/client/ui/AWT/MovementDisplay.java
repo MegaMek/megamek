@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -628,6 +628,10 @@ public class MovementDisplay
     public void boardHexMoused(BoardEvent b) {
         // ignore buttons other than 1
         if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+            return;
+        }
+        // control pressed means a line of sight check.
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
             return;
         }
         // check for shifty goodness

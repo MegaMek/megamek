@@ -395,3 +395,10 @@ exact   "Zeus ZEU-9S" "zeus_b.gif"
 # BH
 chassis "Black Hawk-KU" "Blackhawk.gif"
 chassis "Nova" "Blackhawk.gif"
+
+# starcaptaintorc
+#too big#chassis "Fafnir" "fafnir.gif"
+#too big#chassis "Hauptmann" "hauptman.gif"
+chassis "Pack Hunter" "packhunter.gif"
+chassis "Schiltron" "schiltron.gif"
+#too big#chassis "Viking" "viking.gif"

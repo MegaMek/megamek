@@ -435,6 +435,12 @@ public class BoardEditor extends Container
     public void boardNewBoard(BoardEvent b) {
         ;
     }
+    public void boardFirstLOSHex(BoardEvent b) {
+        ;
+    }
+    public void boardSecondLOSHex(BoardEvent b, Coords c) {
+        ;
+    }
     
     //
     // ItemListener

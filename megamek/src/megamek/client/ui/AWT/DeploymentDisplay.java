@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -219,12 +219,15 @@ public class DeploymentDisplay
             return;
         }
 
-        
+        // control pressed means a line of sight check.
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+            return;
+        }
+
         // check for shifty goodness
         boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
-        client.game.board.select(b.getCoords());
         Coords moveto = b.getCoords(); 
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
@@ -254,7 +257,8 @@ public class DeploymentDisplay
             client.bv.redrawEntity(ce());
             butDone.setEnabled(true);
         }
-        
+        client.game.board.select( moveto );
+
     }
 
     //

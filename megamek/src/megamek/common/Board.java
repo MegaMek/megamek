@@ -18,7 +18,7 @@ import java.util.*;
 import java.io.*;
 
 public class Board
-implements Serializable {
+    implements Serializable {
     public static final int     BOARD_HEX_CLICK         = 1;
     public static final int     BOARD_HEX_DOUBLECLICK   = 2;
     public static final int     BOARD_HEX_DRAG          = 3;
@@ -30,6 +30,7 @@ implements Serializable {
     public transient Coords     lastCursor;
     public transient Coords     highlighted;
     public transient Coords     selected;
+    public transient Coords     firstLOS;
     
     private Hex[]               data;
     
@@ -416,6 +417,18 @@ implements Serializable {
         highlight(new Coords(x, y));
     }
     
+    public void checkLOS(Coords c) {
+        if(c == null || contains(c)) {
+            if (firstLOS == null) {
+                firstLOS = c;
+                processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_FIRST_LOS_HEX, 0));
+            } else {
+                processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_SECOND_LOS_HEX, 0));
+                firstLOS = null;
+            }
+        }
+    }
+
     /**
      * Determines if this Board contains the Coords,
      * and if so, "cursors" that Coords.
@@ -452,15 +465,19 @@ implements Serializable {
         if(contains(x, y)) {
             Coords c = new Coords(x, y);
             switch(mtype) {
-                case BOARD_HEX_CLICK :
+            case BOARD_HEX_CLICK :
+                if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+                    checkLOS(c);
+                } else {
                     processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_HEX_CLICKED, modifiers));
-                    break;
-                case BOARD_HEX_DOUBLECLICK :
-                    processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
-                    break;
-                case BOARD_HEX_DRAG :
-                    processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_HEX_DRAGGED, modifiers));
-                    break;
+                }
+                break;
+            case BOARD_HEX_DOUBLECLICK :
+                processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                break;
+            case BOARD_HEX_DRAG :
+                processBoardEvent(new BoardEvent(this, c, null, BoardEvent.BOARD_HEX_DRAGGED, modifiers));
+                break;
             }
         }
     }
@@ -505,26 +522,32 @@ implements Serializable {
         for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
             BoardListener l = (BoardListener)e.nextElement();
             switch(be.getType()) {
-                case BoardEvent.BOARD_HEX_CLICKED :
-                case BoardEvent.BOARD_HEX_DOUBLECLICKED :
-                case BoardEvent.BOARD_HEX_DRAGGED :
-                    l.boardHexMoused(be);
-                    break;
-                case BoardEvent.BOARD_HEX_CURSOR :
-                    l.boardHexCursor(be);
-                    break;
-                case BoardEvent.BOARD_HEX_HIGHLIGHTED :
-                    l.boardHexHighlighted(be);
-                    break;
-                case BoardEvent.BOARD_HEX_SELECTED :
-                    l.boardHexSelected(be);
-                    break;
-                case BoardEvent.BOARD_CHANGED_HEX :
-                    l.boardChangedHex(be);
-                    break;
-                case BoardEvent.BOARD_NEW_BOARD :
-                    l.boardNewBoard(be);
-                    break;
+            case BoardEvent.BOARD_HEX_CLICKED :
+            case BoardEvent.BOARD_HEX_DOUBLECLICKED :
+            case BoardEvent.BOARD_HEX_DRAGGED :
+                l.boardHexMoused(be);
+                break;
+            case BoardEvent.BOARD_HEX_CURSOR :
+                l.boardHexCursor(be);
+                break;
+            case BoardEvent.BOARD_HEX_HIGHLIGHTED :
+                l.boardHexHighlighted(be);
+                break;
+            case BoardEvent.BOARD_HEX_SELECTED :
+                l.boardHexSelected(be);
+                break;
+            case BoardEvent.BOARD_CHANGED_HEX :
+                l.boardChangedHex(be);
+                break;
+            case BoardEvent.BOARD_NEW_BOARD :
+                l.boardNewBoard(be);
+                break;
+            case BoardEvent.BOARD_FIRST_LOS_HEX :
+                l.boardFirstLOSHex(be);
+                break;
+            case BoardEvent.BOARD_SECOND_LOS_HEX :
+                l.boardSecondLOSHex(be, firstLOS);
+                break;
             }
         }
     }
@@ -574,30 +597,30 @@ implements Serializable {
         int nLimit = 3;
         int nDir = p.getStartingPos();
         switch (nDir) {
-            case 0 : // Any
-                return true;
-            case 1 : // NW
-                return (c.x < nLimit && c.y < height / 2) || 
-                        (c.y < nLimit && c.x < width / 2);
-            case 2 : // N
-                return c.y < nLimit;
-            case 3 : // NE
-                return (c.x > (width - nLimit) && c.y < height / 2) ||
-                        (c.y < nLimit && c.x > width / 2);
-            case 4 : // E
-                return c.x >= (width - nLimit);
-            case 5 : // SE
-                return (c.x >= (width - nLimit) && c.y > height / 2) ||
-                        (c.y >= (height - nLimit) && c.x > width / 2);
-            case 6 : // S
-                return c.y >= (height - nLimit);
-            case 7 : // SW
-                return (c.x < nLimit && c.y > height / 2) ||
-                        (c.y >= (height - nLimit) && c.x < width / 2);
-            case 8 : // W
-                return c.x < nLimit;
-            default : // ummm. . 
-                return false;
+        case 0 : // Any
+            return true;
+        case 1 : // NW
+            return (c.x < nLimit && c.y < height / 2) || 
+                (c.y < nLimit && c.x < width / 2);
+        case 2 : // N
+            return c.y < nLimit;
+        case 3 : // NE
+            return (c.x > (width - nLimit) && c.y < height / 2) ||
+                (c.y < nLimit && c.x > width / 2);
+        case 4 : // E
+            return c.x >= (width - nLimit);
+        case 5 : // SE
+            return (c.x >= (width - nLimit) && c.y > height / 2) ||
+                (c.y >= (height - nLimit) && c.x > width / 2);
+        case 6 : // S
+            return c.y >= (height - nLimit);
+        case 7 : // SW
+            return (c.x < nLimit && c.y > height / 2) ||
+                (c.y >= (height - nLimit) && c.x < width / 2);
+        case 8 : // W
+            return c.x < nLimit;
+        default : // ummm. . 
+            return false;
         }
         
     }
@@ -842,7 +865,7 @@ implements Serializable {
                 hexBuff.append("\"\r\n");
                 
                 w.write(hexBuff.toString());
-//                w.write("hex \"" + hex.getTerrain().name + "\" " + Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" + hex.getTerrain().picfile + "\" " + hex.getElevation() + "\r\n");
+                //                w.write("hex \"" + hex.getTerrain().name + "\" " + Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" + hex.getTerrain().picfile + "\" " + hex.getElevation() + "\r\n");
             }
             w.write("end\r\n");
             // make sure it's written

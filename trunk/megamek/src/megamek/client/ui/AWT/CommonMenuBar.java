@@ -74,10 +74,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
     private MenuItem viewMiniMap = null;
     private MenuItem viewMekDisplay = null;
+    private MenuItem viewLOSSetting = null;
     private MenuItem viewInitiativeReport = null;
     private MenuItem viewTurnReport = null;
     private MenuItem viewGameOptions = null;
     private MenuItem viewClientSettings = null;
+
+	private int nbrConv = 0;
+	private int nbrCommand = 0;
+	private int nbrVibra = 0;	
 
     private MenuItem deployMinesConventional = null;
     private MenuItem deployMinesCommand = null;
@@ -212,12 +217,16 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 
         viewMekDisplay = new MenuItem( "Mek Display" );
         viewMekDisplay.addActionListener( this );
-        viewMekDisplay.setActionCommand( "viewMekDisplay" );
+        viewMekDisplay.setActionCommand(AbstractPhaseDisplay.VIEW_MEK_DISPLAY);
         menu.add( viewMekDisplay );
         viewMiniMap = new MenuItem( "Mini Map" );
         viewMiniMap.addActionListener( this );
-        viewMiniMap.setActionCommand( "viewMiniMap" );
+        viewMiniMap.setActionCommand(AbstractPhaseDisplay.VIEW_MINI_MAP);
         menu.add( viewMiniMap );
+        viewLOSSetting = new MenuItem( "LOS Setting" );
+        viewLOSSetting.addActionListener( this );
+        viewLOSSetting.setActionCommand(AbstractPhaseDisplay.VIEW_LOS_SETTING);
+        menu.add( viewLOSSetting );
         menu.addSeparator();
         viewTurnReport = new MenuItem( "Turn Report" );
         viewTurnReport.addActionListener( this );
@@ -506,6 +515,20 @@ public class CommonMenuBar extends MenuBar implements ActionListener
             viewMekDisplay.setEnabled( false );
         }
 
+        // We can only view the LOS/Range tool setting and 
+        // the mini map in certain phases.
+        if ( this.phase == Game.PHASE_DEPLOY_MINEFIELDS ||
+             this.phase == Game.PHASE_MOVEMENT ||
+             this.phase == Game.PHASE_FIRING ||
+             this.phase == Game.PHASE_PHYSICAL ||
+             this.phase == Game.PHASE_DEPLOYMENT ) {
+            viewLOSSetting.setEnabled( true );
+            viewMiniMap.setEnabled( true );
+        } else {
+            viewLOSSetting.setEnabled( false );
+            viewMiniMap.setEnabled( false );
+        }
+
         // We can only view the turn report in certain phases.
         if ( this.phase == Game.PHASE_INITIATIVE ||
              this.phase == Game.PHASE_MOVEMENT ||
@@ -532,6 +555,14 @@ public class CommonMenuBar extends MenuBar implements ActionListener
             deployMinesConventional.setEnabled( false );
             deployMinesCommand.setEnabled( false );
             deployMinesVibrabomb.setEnabled( false );
+        } else {
+	        deployMinesConventional.setLabel("Minefield(" + nbrConv + ")");
+	        deployMinesCommand.setLabel("Command(" + nbrCommand + ")");
+	        deployMinesVibrabomb.setLabel("Vibrabomb(" + nbrVibra + ")");
+	
+	        deployMinesConventional.setEnabled(nbrConv > 0);
+	        deployMinesCommand.setEnabled(nbrCommand > 0);
+	        deployMinesVibrabomb.setEnabled(nbrVibra > 0);
         }
 
         // We can only deploy units in the deployment phase.
@@ -684,16 +715,13 @@ public class CommonMenuBar extends MenuBar implements ActionListener
         manageMenu();
     }
 
-	public synchronized void updateDeployMinefields(int conv, 
+	public synchronized void setNbrMinefields(int conv, 
 													int command, 
 													int vibra) {
-        deployMinesConventional.setLabel("Minefield(" + conv + ")");
-        deployMinesCommand.setLabel("Command(" + command + ")");
-        deployMinesVibrabomb.setLabel("Vibrabomb(" + vibra + ")");
-
-        deployMinesConventional.setEnabled(conv > 0);
-        deployMinesCommand.setEnabled(command > 0);
-        deployMinesVibrabomb.setEnabled(vibra > 0);
+		nbrConv = conv;
+		nbrCommand = command;
+		nbrVibra = vibra;
+		manageMenu();
 	}
 
 }

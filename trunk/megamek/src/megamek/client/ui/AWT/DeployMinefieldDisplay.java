@@ -154,9 +154,9 @@ public class DeployMinefieldDisplay
         	butV.setEnabled(true);
         }
 
-		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
-		                                           p.getNbrMFCommand(),
-		                                           p.getNbrMFVibra());
+		client.getMenuBar().setNbrMinefields(p.getNbrMFConventional(),
+		                                     p.getNbrMFCommand(),
+		                                     p.getNbrMFVibra());
     }
 
     /**
@@ -169,9 +169,7 @@ public class DeployMinefieldDisplay
         client.game.board.highlight(null);
         client.game.board.cursor(null);
 
-		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
-		                                           p.getNbrMFCommand(),
-		                                           p.getNbrMFVibra());
+		client.getMenuBar().setNbrMinefields(0, 0, 0);
     }
 
     /**
@@ -275,9 +273,9 @@ public class DeployMinefieldDisplay
         	butV.setEnabled(false);
         }
 
-		client.getMenuBar().updateDeployMinefields(p.getNbrMFConventional(),
-		                                           p.getNbrMFCommand(),
-		                                           p.getNbrMFVibra());
+		client.getMenuBar().setNbrMinefields(p.getNbrMFConventional(),
+		                                     p.getNbrMFCommand(),
+		                                     p.getNbrMFVibra());
     }
 
 

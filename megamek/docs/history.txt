@@ -92,6 +92,8 @@ v 0.28.8-dev
 + 692607: crits transfer from loc with non-hittable crits, like endo steel
 + added zipp32's attack arrow patch
 + Applied latest version of oscarmm's Mech Viewer patch.
++ Typo in Client#loadListFile method.
++ 696097: When removing turns, keep the client's turn lists in synch.
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

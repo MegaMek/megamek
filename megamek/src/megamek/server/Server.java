@@ -1581,6 +1581,7 @@ implements Runnable {
         // Remove the *last* friendly turn (removing the *first* penalizes
         // the opponent too much, and re-calculating moves is too hard).
         game.removeTurnFor(unit);
+        send(createTurnVectorPacket());
 
         // Load the unit.
         loader.load( unit );
@@ -1998,6 +1999,7 @@ implements Runnable {
 
 				    // Dead entities don't take turns.
                                     game.removeTurnFor(target);
+                                    send(createTurnVectorPacket());
 
 				} // End target-still-to-move
 

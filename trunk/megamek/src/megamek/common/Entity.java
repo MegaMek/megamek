@@ -1616,15 +1616,24 @@ public abstract class Entity
 
     public Entity getC3Master() {
       if(C3Master == NONE) return null;
-      if(hasC3S()) { // since we can't seem to get the check working in setC3Master(), I'll just do it here, every time. This sucks.
-          if(C3Master > NONE && game.getEntity(C3Master).C3MasterIs(game.getEntity(C3Master)))
-             C3Master = NONE;
+      if(hasC3S() && C3Master > NONE) { 
+          // since we can't seem to get the check working in setC3Master(), I'll just do it here, every time. This sucks.
+          Entity eMaster = game.getEntity(C3Master);
+          if (eMaster == null || eMaster.C3MasterIs(eMaster)) {
+              C3Master = NONE;
+          }
       }
-      else if(hasC3M()) {
-          if(C3Master > NONE && !game.getEntity(C3Master).C3MasterIs(game.getEntity(C3Master)))
-             C3Master = NONE;
+      else if(hasC3M() && C3Master > NONE) {
+          Entity eMaster = game.getEntity(C3Master);
+          if (eMaster == null || !eMaster.C3MasterIs(eMaster)) {
+              C3Master = NONE;
+          }
       }
-      return game.getEntity(C3Master);
+      if (C3Master == NONE) {
+          return null;
+      } else {
+          return game.getEntity(C3Master);
+      }
     }
 
     public boolean C3MasterIs(Entity e)

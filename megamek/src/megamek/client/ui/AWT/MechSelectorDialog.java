@@ -24,6 +24,7 @@ import java.util.Vector;
 import com.sun.java.util.collections.HashSet;
 import com.sun.java.util.collections.Arrays;
 import megamek.common.*;
+import megamek.common.loaders.*;
 import megamek.client.util.widget.*;
 
 /* 

@@ -244,10 +244,6 @@ public class MechView {
     }
 
     private static final String SPACES = "                                   ";
-    private static String makeLength(String s, int n) {
-        return makeLength(s, n, false);
-    }
-
     private static String makeLength(String s, int n, boolean bRightJustify)
     {
         int l = s.length();

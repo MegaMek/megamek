@@ -1,4 +1,4 @@
- 
+
 INTRODUCTION
 ------------
 MegaMek is a version of BattleTech that you can play with your friends 
@@ -91,7 +91,11 @@ are laid out relative to each other.  The middle column lists the current maps
 and the rightmost column lists the available maps.  To change a current map,
 select it in the middle column, select the map you want in the right column,
 and press the "<<" button between the two columns.  You may also select a map
-by clicking on its number in the map layout grid.
+by clicking on its number in the map layout grid.  When you select a map,
+(other than [SURPRISE] or [RANDOM]) you have the choice or rotating it 180
+degrees (North becomes South, East becomes West, and vice versa) by clicking
+on the "Rotate Board" checkbox; the fact that the map is rotated will be shown
+in the middle column.
 
 [SURPRISE] means that the Server will pick a random map and not tell you what
 it has picked until the game starts.  [RANDOM] means that the Server will pick
@@ -113,10 +117,14 @@ You do not have to move the first selected unit first.
 Left-click on the map to specify a hex to move to.  A path should appear on
 the board, showing your unit's path to the target hex.  The numbers in the
 center represent how many movement points you will have to use to reach each
-hex.  Green indicates walking, yellow running, and  cyan jump movement.  Red
+hex.  Cyan indicates walking, yellow running, and red jump movement.  Dark grey
 sections of the path indicate where you have exceeded your movement capacity,
 or other illegal moves.  You can drag the mouse to see movement options for 
-several different hexes.
+several different hexes.  Please note that you can change the colors used to
+display the movement points by editing MegaMek.cfg; you may specify a color in
+RGB notation (e.g. 255 255 255 for white) or with any of the following text
+values: black, blue, cyan, darkgray, gray, green, lightgray, magenta, orange,
+pink, red, white, or yellow.
 
 Units can also be moved by using "waypoints."  By clicking each hex between 
 the unit's current location and destination, you can delineate the exact path 
@@ -365,5 +373,4 @@ for more details.
 
 BattleTech, Mech, BattleMech and MechWarrior are Registered Trademarks of 
 WizKids, LLC.  Original BattleTech material Copyright by  WizKids, LLC.  
-All Rights Reserved.  Used without permission.
-
+All Rights Reserved.  Used without permission. 

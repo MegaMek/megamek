@@ -9967,6 +9967,9 @@ implements Runnable, ConnectionHandler {
         if (waterDepth > 0) {
             damage = (int)Math.ceil(damage / 2.0);
         }
+        
+        // adjust damage for gravity
+        damage = (int)Math.round(damage * game.getOptions().floatOption("gravity"));
 
         // report falling
         phaseReport.append("    " ).append( entity.getDisplayName() ).append( " falls on its " ).append( side ).append( ", suffering " ).append( damage ).append( " damage.");

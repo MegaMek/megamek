@@ -527,12 +527,19 @@ public class MegaMek
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if ( this.help == null ) {
-            File helpfile = new File( "readme.txt" );
-            this.help = new CommonHelpDialog( this.frame, helpfile );
+            help = showHelp(this.frame, "readme.txt");
         }
 
         // Show the help dialog.
         this.help.show();
+    };
+
+    /**
+     * display the filename in a CommonHelpDialog
+     */
+    static public CommonHelpDialog showHelp(Frame frame, String filename) {
+        File helpfile = new File( filename );
+        return new CommonHelpDialog( frame, helpfile );
     }
 
     /**

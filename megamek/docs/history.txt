@@ -80,7 +80,6 @@ physical attacks:
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
-- making too many consciousness rolls? 
 
 falling:
 - only fall to surface of water
@@ -110,6 +109,7 @@ v next
 + falling damage for mechs doing DFA is saved until they miss the DFA
 + invalid domino effect prevented
 + mechs making DFA attacks don't get the benefit of terrain modifiers
++ fixed bug with making too many consciousness rolls
 
 v 0.23.6 (03-17-02, 8:15pm)
 + center on unit works in new display

@@ -465,16 +465,18 @@ public class XMLStreamParser implements XMLResponder {
 
                     if ( (null != advantages) && (advantages.trim().length() > 0) ) {
                       StringTokenizer st = new StringTokenizer(advantages);
-                      String adv = st.nextToken();
+                      while (st.hasMoreTokens()) {
+                          String adv = st.nextToken();
                       
-                      try {
-                        
-                        crew.getOptions().getOption(adv).setValue(true);
-                      } catch ( Exception e ) {
-                        this.warning.append("Error restoring advantage: ")
-                            .append( adv )
-                            .append( ".\n" );
+                          try {
+                              crew.getOptions().getOption(adv).setValue(true);
+                          } catch ( Exception e ) {
+                              this.warning.append("Error restoring advantage: ")
+                                  .append( adv )
+                                  .append( ".\n" );
+                          }
                       }
+
                     }
                     
                     // Was the crew wounded?

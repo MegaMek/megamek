@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,6 +16,7 @@ package megamek.client;
 
 import java.awt.*;
 import java.awt.event.*;
+import megamek.client.util.AdvancedLabel;
 
 /**
  * A (somewhat primitive) dialog with a message and an okay button that makes
@@ -25,12 +26,47 @@ public class AlertDialog
     extends Dialog implements ActionListener
 {
     private Button butOkay = new Button("Okay");
-    private Label labMessage;
+    private AdvancedLabel labMessage;
     
+    public AlertDialog(Frame parent, String title,
+                       String message, boolean modal) {
+        super(parent, title, modal);
+        
+        labMessage = new AdvancedLabel(message);
+        butOkay.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+            
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1.0;    c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMessage, c);
+        add(labMessage);
+            
+        c.weightx = 1.0;    c.weighty = 1.0;
+        c.fill = GridBagConstraints.VERTICAL;
+        c.ipadx = 20;    c.ipady = 5;
+        gridbag.setConstraints(butOkay, c);
+        add(butOkay);
+        
+        addWindowListener(new WindowAdapter() {
+	    public void windowClosing(WindowEvent e) { setVisible(false); }
+	});
+        
+        pack();
+        setResizable(false);
+        setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
+                    parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
+    }
+
     public AlertDialog(Frame parent, String title, String message) {
         super(parent, title, true);
         
-        labMessage = new Label(message, Label.CENTER);
+        labMessage = new AdvancedLabel(message);
         butOkay.addActionListener(this);
         
         // layout

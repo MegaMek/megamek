@@ -71,6 +71,8 @@ public class BoardView1
     private CursorSprite cursorSprite;
     private CursorSprite highlightSprite;
     private CursorSprite selectedSprite;
+    private CursorSprite firstLOSSprite;
+    private CursorSprite secondLOSSprite;
 
     // sprite for current movement
     private Vector pathSprites = new Vector();
@@ -119,6 +121,8 @@ public class BoardView1
         cursorSprite = new CursorSprite(Color.cyan);
         highlightSprite = new CursorSprite(Color.white);
         selectedSprite = new CursorSprite(Color.blue);
+        firstLOSSprite = new CursorSprite(Color.red);
+        secondLOSSprite = new CursorSprite(Color.red);
     }
 
     public void paint(Graphics g) {
@@ -189,6 +193,8 @@ public class BoardView1
         // draw cursors
         drawSprite(cursorSprite);
         drawSprite(selectedSprite);
+        drawSprite(firstLOSSprite);
+        drawSprite(secondLOSSprite);
 
         // draw deployment indicators
         if (m_plDeployer != null) {
@@ -928,22 +934,75 @@ public class BoardView1
 
 
 
-
-
-
-
-
     public void boardHexMoused(BoardEvent b) {
-        ;
     }
     public void boardHexCursor(BoardEvent b) {
         moveCursor(cursorSprite, b.getCoords());
+        moveCursor(firstLOSSprite, null);
+        moveCursor(secondLOSSprite, null);
     }
     public void boardHexSelected(BoardEvent b) {
         moveCursor(selectedSprite, b.getCoords());
+        moveCursor(firstLOSSprite, null);
+        moveCursor(secondLOSSprite, null);
     }
     public void boardHexHighlighted(BoardEvent b) {
         moveCursor(highlightSprite, b.getCoords());
+        moveCursor(firstLOSSprite, null);
+        moveCursor(secondLOSSprite, null);
+    }
+    public void boardFirstLOSHex(BoardEvent b) {
+        moveCursor(secondLOSSprite, null);
+        moveCursor(firstLOSSprite, b.getCoords());
+    }
+    public void boardSecondLOSHex(BoardEvent b, Coords c1) {
+        Coords c2 = b.getCoords();
+        moveCursor(secondLOSSprite, c2);
+        
+        LosEffects le = Compute.calculateLos(game, c1, c2);
+        StringBuffer message = new StringBuffer();
+        int blocking = le.getHeavyWoods() * 2 +
+            le.getLightWoods() +
+            le.getSmoke() * 2;
+        message.append( "Attacker hex is " )
+            .append( c1.getBoardNum() )
+            .append( ".\n" );
+        message.append( "Target hex is " )
+            .append( c2.getBoardNum() )
+            .append( ".\n" );
+        if (le.isBlocked() || blocking > 2) {
+            message.append( "Line of sight is blocked.\n" );
+            message.append( "Range is " )
+                .append( c1.distance(c2) )
+                .append( " hex(es).\n");
+        } else {
+            message.append( "Line of sight is not blocked.\n" );
+            message.append( "Range is " )
+                .append( c1.distance(c2) )
+                .append( " hex(es).\n");
+            if (le.getHeavyWoods() > 0) {
+                message.append( le.getHeavyWoods() )
+                    .append( " heavy wood hex(es) in line of sight.\n" );
+            }
+            if (le.getLightWoods() > 0) {
+                message.append( le.getLightWoods() )
+                    .append( " light wood hex(es) in line of sight.\n" );
+            }
+            if (le.getSmoke() > 0) {
+                message.append( le.getSmoke() )
+                    .append( " smoke hex(es) in line of sight.\n" );
+            }
+            if (le.isTargetCover()) {
+                message.append("Target has partial cover.\n");
+            }
+            if (le.isAttackerCover()) {
+                message.append("Attacker has partial cover.\n");
+            }
+        }
+        AlertDialog alert = new AlertDialog(frame,
+                                            "Range / Line of Sight",
+                                            message.toString(), false);
+        alert.show();
     }
     public void boardChangedHex(BoardEvent b) {
         if (boardGraph != null) {

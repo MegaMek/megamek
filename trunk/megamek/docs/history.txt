@@ -14,6 +14,7 @@ v0.29.58 (CVS)
     with no armor on their legs
 + Added Mechs for Batchall.de (German Clan Battletech Community).
 + Corrected a spelling mistake in conjunction with extreme G's.
++ Bug 1040858: breaching a leg results only in one PSR, should do more
 
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

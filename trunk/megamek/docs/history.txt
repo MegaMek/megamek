@@ -4,6 +4,7 @@ v 0.29.31 (CVS)
 + Heat prognosticator on weapons tab now takes standing in fire into account.
 + Bug 913240: clear deployment on every phase change.  This needs a cleanup.
 + Patch 915479: incorporated ecthellion's A* pathfinder.  Temporarily disabled.
++ Bug 929255: Class cast exception fixed.
 
 v 0.29.30 (2004-03-29 7:30am)
 + Bug 922776: Salamander BAs can explicitly raise Mek heat (BMRr, page 65).

@@ -637,7 +637,21 @@ public boolean isPassworded() {
     private void prepareVictoryReport() {
         roundReport = new StringBuffer();
         
-        roundReport.append("\nVictory!\n-------------------\n");
+        roundReport.append("\nVictory!\n-------------------\n\n");
+        
+        roundReport.append("Survivors are:\n");
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            roundReport.append(entity.victoryReport());
+            roundReport.append('\n');
+        }
+        
+        roundReport.append("\nGraveyard contains:\n");
+        for (Enumeration i = game.getGraveyardEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            roundReport.append(entity.victoryReport());
+            roundReport.append('\n');
+        }
     }
     
     /**

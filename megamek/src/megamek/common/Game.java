@@ -198,7 +198,13 @@ public class Game
     public void setEntitiesVector(Vector entities) {
         this.entities = entities;
         reindexEntities();
-        
+    }
+    
+    /**
+     * Returns an enumeration of entities in the graveyard
+     */
+    public Enumeration getGraveyardEntities() {
+        return graveyard.elements();
     }
     
     /**

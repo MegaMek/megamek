@@ -35,7 +35,7 @@ v0.29.58 (CVS)
 + Corrected description of MaxTech Missile Hit Penalty rule -- it now states,
   as it should always have, that reducing the roll below 2 reduces the number
   of missiles to 1.
-+ MaxTech Glancing Blows rule. Hits that roll exactly the required to-hit-number
++ RFE 1022884, Patch 1061868: MaxTech Glancing Blows rule. Hits that roll exactly the required to-hit-number
   do less damage.  
   
 v0.29.57 (2004-12-19 11:15am)

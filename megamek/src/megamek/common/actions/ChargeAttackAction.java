@@ -207,7 +207,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // determine hit direction
         toHit.setSideTable(Compute.targetSideTable(src, te.getPosition(), te.getFacing(), te instanceof Tank));

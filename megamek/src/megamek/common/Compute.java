@@ -1597,7 +1597,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // elevation
         if (attackerHeight == targetElevation) {
@@ -1853,7 +1853,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // elevation
         if (attackerElevation < targetHeight) {
@@ -2139,7 +2139,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // elevation
         if (attackerElevation == targetElevation) {
@@ -2378,7 +2378,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // side and elevation shouldn't matter
 
@@ -2586,7 +2586,7 @@ public class Compute
     // target immobile
     toHit.append(getImmobileMod(te));
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         if (te instanceof Tank) {
             toHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -2655,7 +2655,7 @@ public class Compute
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-      public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit) {
+      public static void modifyPhysicalBTHForAdvantages(Entity attacker, Entity target, ToHitData toHit, boolean noClanPhysicals) {
         int movement = attacker.moved;
 
         if ( attacker.getCrew().getOptions().booleanOption("melee_specialist") && attacker instanceof Mech ) {
@@ -2675,7 +2675,9 @@ public class Compute
           toHit.addModifier(-1, "melee specialist");
         }
 
-        if (  (target instanceof Mech) && target.getCrew().getOptions().booleanOption("dodge_maneuver") && target.dodging ) {
+        if (  (target instanceof Mech) && 
+              target.getCrew().getOptions().booleanOption("dodge_maneuver") &&
+              (target.dodging || noClanPhysicals) ) { //auto-dodge if approp.
           toHit.addModifier(2, "target is dodging");
         }
       }
@@ -3628,7 +3630,7 @@ public class Compute
             toHit.addModifier(1, "Hand actuator missing or destroyed");
         }
 
-        modifyPhysicalBTHForAdvantages(ae, te, toHit);
+        modifyPhysicalBTHForAdvantages(ae, te, toHit, game.getOptions().booleanOption("no_clan_physical"));
 
         // If the target has Assault claws, give a 1 modifier.
         // We can stop looking when we find our first match.

@@ -16,25 +16,28 @@ package megamek.common;
 
 public class PilotingRollData extends TargetRoll
 {
-    private boolean forSkid;
     private int entityId;
+    private boolean forSkid = false;
     private boolean m_bCumulative = true;
+    
+    public PilotingRollData(int entityId) {
+        this.entityId = entityId;
+    }
     
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
         this.entityId = entityId;
-	this.forSkid = false;
     }
     
     /**
      * Double-logging style for situations where the mech automatically falls,
-     * but the pilot can still save to avoid damage.
+     * but the pilot can still save to avoid damage.  The game will later strip
+     * out any automatic rolls when it lets the pilot roll to save.
      */
     public PilotingRollData(int entityId, int value, int pilotValue, String desc) {
         super(value, desc);
         addModifier(pilotValue, desc);
         this.entityId = entityId;
-	this.forSkid = false;
     }
 
     /**

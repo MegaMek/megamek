@@ -3348,8 +3348,9 @@ implements Runnable {
             } else {
                 nMod = -1;
             }
-            
-            pilotRolls.addElement(new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced"));
+            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced");
+            psr.setCumulative(false); // about the only time we set this flag
+            pilotRolls.addElement(psr);
         }
         
         // dice have been rolled, thanks
@@ -4975,51 +4976,79 @@ implements Runnable {
     
     /**
      * Resolves all built up piloting skill rolls.
-     * (used at end of weapons, physical phases)
+     * Used at end of weapons, physical phases.
      */
     private void resolvePilotingRolls() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
-            if (!(entity instanceof Mech) || entity.isProne() || entity.isDoomed() || entity.isDestroyed()) {
-                continue;
-            }
-            int rolls = 0;
-            StringBuffer reasons = new StringBuffer();
-            PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
-            for (Enumeration j = pilotRolls.elements(); j.hasMoreElements();) {
-                final PilotingRollData modifier = (PilotingRollData)j.nextElement();
-                if (modifier.getEntityId() == entity.getId()) {
-                    rolls++;
-                    if (reasons.length() > 0) {
-                        reasons.append(", ");
-                    }
-                    reasons.append(modifier.getPlainDesc());
-                    roll.append(modifier);
-                }
-            }
-            // any rolls needed?
-            if (rolls == 0) {
-                continue;
-            }
-            if (roll.getValue() == PilotingRollData.AUTOMATIC_FAIL || roll.getValue() == PilotingRollData.IMPOSSIBLE) {
-                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) and automatically fails (" ).append( roll.getDesc() ).append( ").\n");
-                doEntityFall(entity, roll);
-            } else {
-                phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls ).append( " piloting skill roll(s) (" ).append( reasons.toString() ).append( ").\n");
-                phaseReport.append("The target is " ).append( roll.getValueAsString() ).append( " [" ).append( roll.getDesc() ).append( "].\n");
-                for (int j = 0; j < rolls; j++) {
-                    final int diceRoll = Compute.d6(2);
-                    phaseReport.append("    " ).append( entity.getDisplayName() ).append( " needs " ).append( roll.getValueAsString() ).append( ", rolls " ).append( diceRoll ).append( " : ");
-                    phaseReport.append((diceRoll >= roll.getValue() ? "remains standing" : "falls") ).append( ".\n");
-                    if (diceRoll < roll.getValue()) {
-                        doEntityFall(entity, roll);
-                        // break rolling loop
-                        break;
-                    }
-                }
-            }
+            resolvePilotingRolls((Entity)i.nextElement());
         }
         pilotRolls.removeAllElements();
+    }
+    
+    /**
+     * Resolves and reports all piloting skill rolls for a single mech.
+     */
+    void resolvePilotingRolls(Entity entity) {
+        // non-mechs don't need to
+        if (!(entity instanceof Mech) || entity.isProne() || entity.isDoomed() 
+        || entity.isDestroyed()) {
+            return;
+        }
+        // add all cumulative rolls, count all rolls
+        Vector rolls = new Vector();
+        StringBuffer reasons = new StringBuffer();
+        PilotingRollData base = Compute.getBasePilotingRoll(game, entity.getId());
+        for (Enumeration i = pilotRolls.elements(); i.hasMoreElements();) {
+            final PilotingRollData modifier = (PilotingRollData)i.nextElement();
+            if (modifier.getEntityId() != entity.getId()) {
+                continue;
+            }
+            // found a roll, add it
+            rolls.addElement(modifier);
+            if (reasons.length() > 0) {
+                reasons.append(", ");
+            }
+            reasons.append(modifier.getPlainDesc());
+            // only cumulative rolls get added to the base roll
+            if (modifier.isCumulative()) {
+                base.append(modifier);
+            }
+        }
+        // any rolls needed?
+        if (rolls.size() == 0) {
+            return;
+        }
+        // is our base roll impossible?
+        if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
+            phaseReport.append("\n").append(entity.getDisplayName()).append(" must make ").append(rolls.size()).append(" piloting skill roll(s) and automatically fails (").append(base.getDesc()).append(").\n");
+            doEntityFall(entity, base);
+            return;
+        }
+        // loop thru rolls we do have to make...
+        phaseReport.append("\n" ).append( entity.getDisplayName() ).append( " must make " ).append( rolls.size() ).append( " piloting skill roll(s) (" ).append( reasons.toString() ).append( ").\n");
+        phaseReport.append("The base target is " ).append( base.getValueAsString() ).append( " [" ).append( base.getDesc() ).append( "].\n");
+        for (int i = 0; i < rolls.size(); i++) {
+            PilotingRollData modifier = (PilotingRollData)rolls.elementAt(i);
+            PilotingRollData target = base;
+            phaseReport.append("    Roll #").append(i + 1).append(", (");
+            phaseReport.append(modifier.getPlainDesc());
+            if (!modifier.isCumulative()) {
+                phaseReport.append(", extra modifier ").append(modifier.getValueAsString());
+                target = new PilotingRollData(entity.getId());
+                target.append(base);
+                target.append(modifier);
+            }
+            int diceRoll = Compute.d6(2);
+            phaseReport.append("); needs ").append(target.getValueAsString());
+            phaseReport.append(", rolls ").append(diceRoll).append(" : ");
+            if (diceRoll < target.getValue()) {
+                phaseReport.append(" falls.\n");
+                doEntityFall(entity, base);
+                return;
+            } else {
+                phaseReport.append(" succeeds.\n");
+            }
+        }
     }
     
     /**

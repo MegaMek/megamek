@@ -6,6 +6,7 @@ v0.29.62 (CVS)
         allow players to move Meks through any number of friendly Meks;
         also fixes infantry jumping over river.
 + RFE 1107326: list beginning and ending IS for units in entitystatus.txt.
++ Added stats.pl to *-cvs-* and *-media-* release files.
 
 v0.29.61 (2005-01-17 8:00am)
 + Bug 1099792: Glancing blows with missiles for no damage

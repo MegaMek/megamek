@@ -14,7 +14,6 @@
 
 package megamek.client;
 
-import java.awt.Component;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,12 +22,15 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import megamek.common.*;
-import megamek.common.actions.*;
-import megamek.common.util.Distractable;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.TorsoTwistAction;
 
 public class Client implements Runnable {
     // we need these to communicate with the server
@@ -56,9 +58,6 @@ public class Client implements Runnable {
 
     // I send out game events!
     private Vector gameListeners = new Vector();
-
-    /** Map phase component names to phase component objects. */
-    private Hashtable phaseComponents = new Hashtable();
 
     /**
      * Construct a client which will try to connect.  If the connection
@@ -95,24 +94,6 @@ public class Client implements Runnable {
         }
         connected = false;
 		pump = null;
-
-        // Tell all the displays to remove themselves as listeners.
-        boolean reportHandled = false;
-        Enumeration names = phaseComponents.keys();
-        while (names.hasMoreElements()) {
-            Component component = (Component) phaseComponents.get(names.nextElement());
-            if (component instanceof ReportDisplay) {
-                if (reportHandled) {
-                    continue;
-                } else {
-                    reportHandled = true;
-                }
-            }
-            if (component instanceof Distractable) {
-                ((Distractable) component).removeAllListeners();
-            }
-
-        } // Handle the next component
 
         // shut down threads & sockets
         try {

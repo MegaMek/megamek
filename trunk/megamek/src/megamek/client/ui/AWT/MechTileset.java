@@ -181,7 +181,7 @@ public class MechTileset {
         }
         
         public void loadImage(Component comp) {
-            System.out.println("loading mech image...");
+            //            System.out.println("loading mech image...");
             image = comp.getToolkit().getImage(dir + imageFile);
         }
     }

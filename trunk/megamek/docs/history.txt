@@ -115,6 +115,22 @@ VERSION HISTORY:
 ----------------
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.
++ Task L3 Advantages: Added core code for L3 (MaxTech) pilot advantages. To 
+  enable these you must enable the MaxTech pilot advantages Game Option. This 
+  will make a scrollable box visible in the customize mech dialog. Advantages
+  finished are: Dodge Maneuver, Maneuvering Ace, Melee Specialist and 
+  Pain Resistance
++ Task L3 Engine Explosions: Engine explosions, per MaxTech (BTH12 after 2 or 
+  more engine crits in a round), are done.
++ Task L3 Scenario Improvements: Added ability to define pilot advantages for a
+  scenario. See new Example.mms
++ File Added: data/scenarios/Example.mms to explain all scenario posibilities
++ Task L3 Weight Class Mods: MaxTech 20+ damage per round weight class mods 
+  added. Assaults are -2 to BTH, whereas lights are +1. Mediums and heavies are
+  in between. When turned on, also enables cumulative damage tracking. Roll is
+  now +1 for EVERY 20 damage taken in a round instead of just for the first 20. 
+  It's still only 1 pilot roll for the damage. Therefore, 20-39 damage is +1, 
+  40-59 is +2, etc...
 
 v 0.29.0 (06-25-03, 12am)
 + Data 754926: Added kurt_kajal's bridge images.

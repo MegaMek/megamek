@@ -688,6 +688,9 @@ implements Runnable {
             
             // reset damage this phase
             entity.damageThisPhase = 0;
+            entity.engineHitsThisRound = 0;
+            entity.rolledForEngineExplosion = false;
+            entity.dodging = false;
             
             // reset done to false
             entity.setDone(!entity.isActive());
@@ -904,7 +907,7 @@ implements Runnable {
             int remaining = game.infantryLeft(playerId);
             int moreInfTurns = Math.min(Game.INF_MOVE_MULTI - 1, remaining); 
             for (int i = 0; i < moreInfTurns; i++) {
-		
+    
                 GameTurn newTurn = new GameTurn.OnlyInfantryTurn(playerId);
                 game.insertNextTurn(newTurn);
                 turnsChanged = true;
@@ -2205,13 +2208,13 @@ implements Runnable {
                 PilotingRollData psr = null;
                 if ( entity instanceof Mech ) {
                     psr = new PilotingRollData
-                        (entity.getId(), getMovementPSRModifier(distance),
+                        (entity.getId(), getMovementPSRModifier(entity, distance),
                          "running & turning on pavement");
                     psrPassed = doSkillCheckWhileMoving( entity, lastPos,
                                                          lastPos, psr );
                 } else {
                     psr = new PilotingRollData
-                        (entity.getId(), getMovementPSRModifier(distance),
+                        (entity.getId(), getMovementPSRModifier(entity, distance),
                          "reckless driving on pavement");
                     psrPassed = doSkillCheckWhileMoving( entity, lastPos,
                                                          lastPos, psr, false );
@@ -3498,6 +3501,8 @@ implements Runnable {
                 PushAttackAction paa = (PushAttackAction)ea;
                 entity.setDisplacementAttack(paa);
                 game.addCharge(paa);
+            } else if (ea instanceof DodgeAction) {
+              entity.dodging = true;
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);
@@ -6164,7 +6169,36 @@ implements Runnable {
             entity.getMovementType() == Entity.MovementType.QUAD) {
                 // if this mech has 20+ damage, add another roll to the list.
                 if (entity.damageThisPhase >= 20) {
-                    game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+                    if ( game.getOptions().booleanOption("maxtech_round_damage") ) {
+                      int damMod = (entity.damageThisPhase / 20);
+
+                      game.addPSR(new PilotingRollData(entity.getId(), damMod, entity.damageThisPhase + " damage"));
+
+                      int weightMod = 0;
+                      
+                      switch ( entity.getWeightClass() ) {
+                        case Entity.WEIGHT_LIGHT:
+                          weightMod = 1;
+                          break;
+                          
+                        case Entity.WEIGHT_MEDIUM:
+                          weightMod = 0;
+                          break;
+                          
+                        case Entity.WEIGHT_HEAVY:
+                          weightMod = -1;
+                          break;
+                          
+                        case Entity.WEIGHT_ASSAULT:
+                          weightMod = -2;
+                          break;
+                      }
+                      
+                      if ( weightMod != 0 )
+                        game.addPSR(new PilotingRollData(entity.getId(), weightMod, entity.damageThisPhase + " weight mod"));
+                    } else {              
+                      game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
+                    }
                 }
             }
         }
@@ -6327,6 +6361,10 @@ implements Runnable {
             anyRolls = true;
             for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
                 int roll = Compute.d6(2);
+                
+                if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
+                  roll = Math.min(12, roll + 1);
+  
                 int rollTarget = Compute.getConciousnessNumber( hit );
                 phaseReport.append("\nPilot of " ).append( e.getDisplayName()
                                    ).append( " \"" ).append( e.getCrew().getName()
@@ -6363,6 +6401,10 @@ implements Runnable {
             }
             anyRolls = true;
             int roll = Compute.d6(2);
+
+            if ( e.getCrew().getOptions().booleanOption("pain_resistance") )
+              roll = Math.min(12, roll + 1);
+  
             int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
             roundReport.append("\nPilot of " ).append( e.getDisplayName()
                                ).append( " \"" ).append( e.crew.getName()
@@ -6539,13 +6581,27 @@ implements Runnable {
                         desc += " <<<SECTION DESTROYED>>>,";
                         }
                         if (hit.getLocation() == Mech.LOC_RT || hit.getLocation() == Mech.LOC_LT) {
-                            int numEngineHits = 0;
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-                            if (numEngineHits > 2) {
-                                // third engine hit
-                                phaseReport.append(destroyEntity(te, "engine destruction"));
+                            te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                            
+                            boolean engineExploded = false;
+                            StringBuffer descBuffer = new StringBuffer();
+                            
+                            if ( te.engineHitsThisRound >= 2 ) {
+                              engineExploded = checkEngineExplosion(te, descBuffer);
+                            }
+                            
+                            desc += descBuffer.toString();
+                            
+                            if ( !engineExploded ) {
+                              int numEngineHits = 0;
+                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+                              
+                              if ( numEngineHits > 2  ) {
+                                  // third engine hit
+                                  phaseReport.append(destroyEntity(te, "engine destruction"));
+                              }
                             }
                         }
                     }
@@ -6555,10 +6611,24 @@ implements Runnable {
                 if (te.getInternal(hit) <= 0) {
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
-                        // Entity destroyed.  Ammo explosions are
-                        // neither survivable nor salvagable.
-                        desc += destroyEntity(te, "damage", !ammoExplosion,
-                                              !ammoExplosion);
+                        te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                        
+                        boolean engineExploded = false;
+                        StringBuffer descBuffer = new StringBuffer();
+                        
+                        if ( te.engineHitsThisRound >= 2 ) {
+                          engineExploded = checkEngineExplosion(te, descBuffer);
+                        }
+                        
+                        desc += descBuffer.toString();
+                        
+                        if ( !engineExploded ) {
+                          // Entity destroyed.  Ammo explosions are
+                          // neither survivable nor salvagable.
+                          desc += destroyEntity(te, "damage", !ammoExplosion,
+                                                !ammoExplosion);
+                        }
+                        
                         // nowhere for further damage to go
                         damage = 0;
                     } else if ( nextHit.getLocation() == Entity.LOC_NONE ) {
@@ -6623,6 +6693,91 @@ implements Runnable {
         }
         
         return desc;
+    }
+    
+    /**
+     * Check to see if the entity's engine explodes
+     */
+    
+    private boolean checkEngineExplosion(Entity en, StringBuffer sbDesc) {
+      if ( !game.getOptions().booleanOption("engine_explosions") || en.rolledForEngineExplosion )
+        return false;
+      
+      int explosionBTH = 12;
+      int explosionRoll = Compute.d6(2);
+      
+      boolean didExplode = explosionRoll >= explosionBTH;
+      
+      sbDesc.append("        \n" + en.getDisplayName() + " has taken " + en.engineHitsThisRound + " engine hits this round.\n");
+      sbDesc.append("        Checking for engine explosion on BTH = " + explosionBTH + ", Roll = " + explosionRoll + "\n");
+      en.rolledForEngineExplosion = true;
+      
+      if ( !didExplode ) {
+        sbDesc.append("        Engine safety systems remain in place.\n");
+      } else {
+        sbDesc.append("        ***The safety systems on the engine fail catastrophically resulting in a cascading engine failure!\n");
+        sbDesc.append( destroyEntity(en, "engine explosion", false, false));
+        
+        //Light our hex on fire
+          final Hex curHex = game.board.getHex(en.getPosition());
+          
+          if ( (null != curHex) && !curHex.contains(Terrain.FIRE) && curHex.contains(Terrain.WOODS) ) {
+            curHex.addTerrain(new Terrain(Terrain.FIRE, 1));
+            sbDesc.append("        The hex at " + en.getPosition().x + "," + en.getPosition().y + " ignites!\n");
+            sendChangedHex(en.getPosition());
+          }
+          
+        //Nuke anyone that is in our hex
+          Enumeration entitesWithMe = game.getEntities(en.getPosition());
+          Hashtable entitesHit = new Hashtable();
+          
+          entitesHit.put(en, en);
+          
+          while ( entitesWithMe.hasMoreElements() ) {
+            Entity entity = (Entity)entitesWithMe.nextElement();
+            
+            if ( entity.equals(en) )
+              continue;
+              
+            sbDesc.append(destroyEntity(entity, "engine explosion proximity", false, false));
+            
+            entitesHit.put(entity, entity);
+          }
+          
+        //Now we damage people near us
+          int engineRating = ((Mech)en).engineRating();
+          int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
+          
+          Vector entites = game.getEntitiesVector();
+          
+          for ( int i = 0; i < entites.size(); i++ ) {
+            Entity entity = (Entity)entites.elementAt(i);
+            
+            if ( entitesHit.containsKey(entity) )
+              continue;
+            
+            if ( entity.isDoomed() || entity.isDestroyed() )
+              continue;
+            
+            int range = en.getPosition().distance(entity.getPosition());
+            
+            if ( range > 3 )
+              continue;
+              
+            int damage = damages[range];
+            
+            sbDesc.append("        \n" + entity.getDisplayName() + " is hit for " + damage + " damage!");
+
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
+                sbDesc.append(damageEntity(entity, hit, cluster));
+                damage -= cluster;
+            }
+          }
+      }
+      
+      return didExplode;
     }
     
     /**
@@ -6749,13 +6904,27 @@ implements Runnable {
                                 desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
                                 break;
                             case Mech.SYSTEM_ENGINE :
-                                int numEngineHits = 0;
-                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-                                if (numEngineHits > 2) {
-                                    // third engine hit
-                                    desc += destroyEntity(en, "engine destruction");
+                                en.engineHitsThisRound++;
+                                
+                                boolean engineExploded = false;
+                                StringBuffer descBuffer = new StringBuffer();
+                                
+                                if ( en.engineHitsThisRound >= 2 ) {
+                                  engineExploded = checkEngineExplosion(en, descBuffer);
+                                }
+                                
+                                desc += descBuffer.toString();
+
+                                if ( !engineExploded ) {
+                                  int numEngineHits = 0;
+                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+  
+                                  if ( numEngineHits > 2 ) {
+                                      // third engine hit
+                                      desc += destroyEntity(en, "engine destruction");
+                                  }
                                 }
                                 break;
                             case Mech.SYSTEM_GYRO :
@@ -7044,7 +7213,7 @@ implements Runnable {
         desc.append(damageEntity(en, new HitData(loc), damage, true));
         desc.append("\n");
         if (!en.isDoomed() && !en.isDestroyed()) {
-            desc.append(damageCrew(en, 2));
+            desc.append(damageCrew(en, en.getCrew().getOptions().booleanOption("pain_resistance") ? 1 : 2));
             desc.append("\n");
         }
         
@@ -8186,16 +8355,24 @@ implements Runnable {
      * Calculate the piloting skill roll modifier, based upon the number
      * of hexes moved this phase.
      */
-    private int getMovementPSRModifier( int distance ) {
+    private int getMovementPSRModifier( Entity entity, int distance ) {
+        int mod = -1;
+        
         if ( distance > 10 ) // 11+ hexes
-            return 4;
+            mod = 4;
         else if ( distance > 7 ) // 8-10 hexes
-            return 2;
+            mod = 2;
         else if ( distance > 4 ) // 5-7 hexes
-            return 1;
+            mod = 1;
         else if ( distance > 2 ) // 3-4 hexes
-            return 0;
-        return -1; // 0-2 hexes
+            mod = 0;
+        else // 0-2 hexes
+            mod = -1;
+        
+        if ( entity.getCrew().getOptions().booleanOption("maneuvering_ace") )
+          mod--;
+          
+        return mod; 
     }
 
     /**

@@ -137,6 +137,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM6Ammo());
         EquipmentType.addType(createCLMGAmmo());
         EquipmentType.addType(createCLMGAmmoHalf());
+        EquipmentType.addType(createCLHeavyMGAmmo());
+        EquipmentType.addType(createCLLightMGAmmo());
         EquipmentType.addType(createCLLRM5Ammo());
         EquipmentType.addType(createCLLRM10Ammo());
         EquipmentType.addType(createCLLRM15Ammo());
@@ -861,7 +863,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-    public static AmmoType createCHeavyMGAmmo() {
+    public static AmmoType createCLHeavyMGAmmo() {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "Heavy Machine Gun Ammo";

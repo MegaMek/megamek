@@ -3327,6 +3327,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 1";
         weapon.internalName = "CLPRMLRM1";
         weapon.mtfName = "CLPRMLRM1";
+        weapon.mepName = "CLPRMLRM1";
+        weapon.tdbName = "CLPRMLRM1";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=1;
@@ -3349,6 +3351,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 2";
         weapon.internalName = "CLPRMLRM2";
         weapon.mtfName = "CLPRMLRM2";
+        weapon.mepName = "CLPRMLRM2";
+        weapon.tdbName = "CLPRMLRM2";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=2;
@@ -3371,6 +3375,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 3";
         weapon.internalName = "CLPRMLRM3";
         weapon.mtfName = "CLPRMLRM3";
+        weapon.mepName = "CLPRMLRM3";
+        weapon.tdbName = "CLPRMLRM3";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=3;
@@ -3393,6 +3399,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 4";
         weapon.internalName = "CLPRMLRM4";
         weapon.mtfName = "CLPRMLRM4";
+        weapon.mepName = "CLPRMLRM4";
+        weapon.tdbName = "CLPRMLRM4";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=4;
@@ -3415,6 +3423,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 5";
         weapon.internalName = "CLPRMLRM5";
         weapon.mtfName = "CLPRMLRM5";
+        weapon.mepName = "CLPRMLRM5";
+        weapon.tdbName = "CLPRMLRM5";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=5;
@@ -3437,6 +3447,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 6";
         weapon.internalName = "CLPRMLRM6";
         weapon.mtfName = "CLPRMLRM6";
+        weapon.mepName = "CLPRMLRM6";
+        weapon.tdbName = "CLPRMLRM6";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=6;
@@ -3459,6 +3471,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 7";
         weapon.internalName = "CLPRMLRM7";
         weapon.mtfName = "CLPRMLRM7";
+        weapon.mepName = "CLPRMLRM7";
+        weapon.tdbName = "CLPRMLRM7";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=7;
@@ -3481,6 +3495,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 8";
         weapon.internalName = "CLPRMLRM8";
         weapon.mtfName = "CLPRMLRM8";
+        weapon.mepName = "CLPRMLRM8";
+        weapon.tdbName = "CLPRMLRM8";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=8;
@@ -3503,6 +3519,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 9";
         weapon.internalName = "CLPRMLRM9";
         weapon.mtfName = "CLPRMLRM9";
+        weapon.mepName = "CLPRMLRM9";
+        weapon.tdbName = "CLPRMLRM9";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=9;
@@ -3525,6 +3543,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 10";
         weapon.internalName = "CLPRMLRM10";
         weapon.mtfName = "CLPRMLRM10";
+        weapon.mepName = "CLPRMLRM10";
+        weapon.tdbName = "CLPRMLRM10";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=10;
@@ -3547,6 +3567,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 11";
         weapon.internalName = "CLPRMLRM11";
         weapon.mtfName = "CLPRMLRM11";
+        weapon.mepName = "CLPRMLRM11";
+        weapon.tdbName = "CLPRMLRM11";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=11;
@@ -3569,6 +3591,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 12";
         weapon.internalName = "CLPRMLRM12";
         weapon.mtfName = "CLPRMLRM12";
+        weapon.mepName = "CLPRMLRM12";
+        weapon.tdbName = "CLPRMLRM12";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=12;
@@ -3591,6 +3615,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 13";
         weapon.internalName = "CLPRMLRM13";
         weapon.mtfName = "CLPRMLRM13";
+        weapon.mepName = "CLPRMLRM13";
+        weapon.tdbName = "CLPRMLRM13";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=13;
@@ -3613,6 +3639,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 14";
         weapon.internalName = "CLPRMLRM14";
         weapon.mtfName = "CLPRMLRM14";
+        weapon.mepName = "CLPRMLRM14";
+        weapon.tdbName = "CLPRMLRM14";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=14;
@@ -3635,6 +3663,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 15";
         weapon.internalName = "CLPRMLRM15";
         weapon.mtfName = "CLPRMLRM15";
+        weapon.mepName = "CLPRMLRM15";
+        weapon.tdbName = "CLPRMLRM15";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=15;
@@ -3657,6 +3687,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 16";
         weapon.internalName = "CLPRMLRM16";
         weapon.mtfName = "CLPRMLRM16";
+        weapon.mepName = "CLPRMLRM16";
+        weapon.tdbName = "CLPRMLRM16";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=16;
@@ -3679,6 +3711,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 17";
         weapon.internalName = "CLPRMLRM17";
         weapon.mtfName = "CLPRMLRM17";
+        weapon.mepName = "CLPRMLRM17";
+        weapon.tdbName = "CLPRMLRM17";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=17;
@@ -3701,6 +3735,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 18";
         weapon.internalName = "CLPRMLRM18";
         weapon.mtfName = "CLPRMLRM18";
+        weapon.mepName = "CLPRMLRM18";
+        weapon.tdbName = "CLPRMLRM18";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=18;
@@ -3723,6 +3759,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 19";
         weapon.internalName = "CLPRMLRM19";
         weapon.mtfName = "CLPRMLRM19";
+        weapon.mepName = "CLPRMLRM19";
+        weapon.tdbName = "CLPRMLRM19";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=19;
@@ -3745,6 +3783,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "LRM 20";
         weapon.internalName = "CLPRMLRM20";
         weapon.mtfName = "CLPRMLRM20";
+        weapon.mepName = "CLPRMLRM20";
+        weapon.tdbName = "CLPRMLRM20";
         weapon.heat = 0;
         weapon.damage=DAMAGE_MISSILE;
         weapon.rackSize=20;
@@ -3766,6 +3806,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 1";
         weapon.internalName = "CLPRMSRM1";
         weapon.mtfName = "CLPRMSRM1";
+        weapon.mepName = "CLPRMSRM1";
+        weapon.tdbName = "CLPRMSRM1";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
@@ -3785,6 +3827,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 2";
         weapon.internalName = "CLPRMSRM2";
         weapon.mtfName = "CLPRMSRM2";
+        weapon.mepName = "CLPRMSRM2";
+        weapon.tdbName = "CLPRMSRM2";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3804,6 +3848,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 3";
         weapon.internalName = "CLPRMSRM3";
         weapon.mtfName = "CLPRMSRM3";
+        weapon.mepName = "CLPRMSRM3";
+        weapon.tdbName = "CLPRMSRM3";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
@@ -3823,6 +3869,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 4";
         weapon.internalName = "CLPRMSRM4";
         weapon.mtfName = "CLPRMSRM4";
+        weapon.mepName = "CLPRMSRM4";
+        weapon.tdbName = "CLPRMSRM4";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -3842,6 +3890,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 5";
         weapon.internalName = "CLPRMSRM5";
         weapon.mtfName = "CLPRMSRM5";
+        weapon.mepName = "CLPRMSRM5";
+        weapon.tdbName = "CLPRMSRM5";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -3861,6 +3911,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "SRM 6";
         weapon.internalName = "CLPRMSRM6";
         weapon.mtfName = "CLPRMSRM6";
+        weapon.mepName = "CLPRMSRM6";
+        weapon.tdbName = "CLPRMSRM6";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;
@@ -3880,6 +3932,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 1";
         weapon.internalName = "CLPRMStreakSRM1";
         weapon.mtfName = "CLPRMStreakSRM1";
+        weapon.mepName = "CLPRMStreakSRM1";
+        weapon.tdbName = "CLPRMStreakSRM1";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 1;
@@ -3899,6 +3953,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 2";
         weapon.internalName = "CLPRMStreakSRM2";
         weapon.mtfName = "CLPRMStreakSRM2";
+        weapon.mepName = "CLPRMStreakSRM2";
+        weapon.tdbName = "CLPRMStreakSRM2";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 2;
@@ -3918,6 +3974,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 3";
         weapon.internalName = "CLPRMStreakSRM3";
         weapon.mtfName = "CLPRMStreakSRM3";
+        weapon.mepName = "CLPRMStreakSRM3";
+        weapon.tdbName = "CLPRMStreakSRM3";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 3;
@@ -3937,6 +3995,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 4";
         weapon.internalName = "CLPRMStreakSRM4";
         weapon.mtfName = "CLPRMStreakSRM4";
+        weapon.mepName = "CLPRMStreakSRM4";
+        weapon.tdbName = "CLPRMStreakSRM4";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -3956,6 +4016,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 5";
         weapon.internalName = "CLPRMStreakSRM5";
         weapon.mtfName = "CLPRMStreakSRM5";
+        weapon.mepName = "CLPRMStreakSRM5";
+        weapon.tdbName = "CLPRMStreakSRM5";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -3975,6 +4037,8 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Streak SRM 6";
         weapon.internalName = "CLPRMStreakSRM6";
         weapon.mtfName = "CLPRMStreakSRM6";
+        weapon.mepName = "CLPRMStreakSRM6";
+        weapon.tdbName = "CLPRMStreakSRM6";
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 6;

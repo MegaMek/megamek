@@ -427,7 +427,7 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
       }
     }
-    /*
+    
     double degree = ae.getPosition().degree(te.getPosition());
     if (degree > 180) degree = (degree + 180)%360;
     if (degree == 30 || degree == 90 || degree == 150) {
@@ -440,9 +440,9 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         Coords c2 = in[i+1];
         result.addElement(in[i+2]);
         if (!game.board.contains(c1)) {
-          result.add(c2);
+          result.addElement(c2);
         } else if (!game.board.contains(c2)) {
-          result.add(c1);
+          result.addElement(c1);
         } else {
           final Hex h = game.board.getHex(c1);
           final int hexEl = h.floor();
@@ -465,14 +465,14 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
               if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
               || (i == 1 && hexEl + 2 > attEl)
               || (i == in.length - 3 && hexEl + 2 > targEl)) {
-                w = h.levelOf(Terrain.WOODS);
+                w = (h.levelOf(Terrain.WOODS) == 1)?1:2;
               }
             }
             if (h1.levelOf(Terrain.WOODS) > 0) {
               if ((hexEl1 + 2 > attEl && hexEl1 + 2 > targEl)
               || (i == 1 && hexEl1 + 2 > attEl)
               || (i == in.length - 3 && hexEl1 + 2 > targEl)) {
-                w1 = h1.levelOf(Terrain.WOODS);
+                w1 = (h1.levelOf(Terrain.WOODS)==1)?1:2;
               }
             }
             if (i == in.length -3) {
@@ -507,7 +507,6 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       in = new Coords[result.size()];
       result.copyInto(in);
     }
-     */
    
     for (int i = 0; i < in.length && toHita.getValue() != ToHitData.IMPOSSIBLE; i++) {
       // don't count attacker or target hexes

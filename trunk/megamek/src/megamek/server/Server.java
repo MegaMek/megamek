@@ -5617,13 +5617,13 @@ implements Runnable {
         final Entity ae = game.getEntity(daa.getEntityId());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
         Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
 
         // Which building takes the damage?
-        Building bldg = game.board.getBuildingAt( target.getPosition() );
-
+        Building bldg = game.board.getBuildingAt( daa.getTargetPos() );
+        
         // is the attacker dead?  because that sure messes up the calculations
         if (ae == null) {
             return;
@@ -5639,9 +5639,8 @@ implements Runnable {
         ae.setDisplacementAttack(null);
         
         // should we even bother?
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY &&
-             ( te == null || te.isDestroyed() ||
-               te.isDoomed() || te.crew.isDead() ) ) {
+        if (target == null || (target.getTargetType() == Targetable.TYPE_ENTITY
+             && (te.isDestroyed() || te.isDoomed() || te.crew.isDead()))) {
             phaseReport.append("    Death from above deals no damage as the target has been destroyed.\n");
             if (ae.isProne()) {
                 // attacker prone during weapons phase

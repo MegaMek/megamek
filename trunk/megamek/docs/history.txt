@@ -121,6 +121,7 @@ v 0.28.17 CVS
 + Bug 732001: Infantry weapons should not be IS-only.
 + Bug 732327: Don't allow deployment into prohibited terrain.
 + bug 717273: possible fix for "dead mech makes physical attack"
++ bug 730075: fixed crash during DFA against destroyed target
 
 v 0.28.16 (05-03-03, 4pm)
 + RNG type changable in game options

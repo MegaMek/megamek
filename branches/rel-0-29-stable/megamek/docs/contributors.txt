@@ -48,6 +48,9 @@ Lot of people have contributed to the MegaMek project.
      Martis Truesight
      Taerkar
 
+  Updates to the Ant build file:
+     Robert Schuster <thebohemian@users.sourceforge.net>
+
   Testing, Ideas and Feedback (just a few of many):
      Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
      Jason Kean

@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29-stable-4 (CVS)
 + Bug 802741: "check false" should *not* be added as a modifier.
++ Use the build.xml from thebohemian.
 
 v 0.29-stable-3 (08-27-03, 2:17 pm)
 + Bug 776023: Made "Warhammer IIC" the model for all clan whammys.

@@ -140,8 +140,7 @@ public abstract class Entity
     public boolean              spotting;
     private boolean             clearingMinefield = false;
     private boolean             selected = false;
-    private boolean             gaveKillCredit = false;
-    private Vector              kills = new Vector(); //tracks how many entities this entity has destroyed
+    private int                 killerId = Entity.NONE;
 
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -3564,23 +3563,37 @@ public abstract class Entity
         return getCrew().getOptions().booleanOption("maneuvering_ace");
     }
     
-    public Vector getKills() {
-    	return kills;
+    public Enumeration getKills() {
+        final int killer = this.id;
+        return game.getSelectedOutOfGameEntities
+            ( new EntitySelector() {
+                    private final int killerId = killer;
+                    public boolean accept( Entity entity ) {
+                        if ( killerId == entity.killerId )
+                            return true;
+                        return false;
+                    }
+                } );
     }
     
     public int getKillNumber() {
-    	return kills.size();
+        final int killer = this.id;
+        return game.getSelectedOutOfGameEntityCount
+            ( new EntitySelector() {
+                    private final int killerId = killer;
+                    public boolean accept( Entity entity ) {
+                        if ( killerId == entity.killerId )
+                            return true;
+                        return false;
+                    }
+                } );
     }
     
-    public void addKill(int kill) {
-    	kills.add(new Integer(kill));
-    }
-    
-    public void setGaveKillCredit(boolean credit) {
-    	gaveKillCredit = credit;
+    public void addKill(Entity kill) {
+        kill.killerId = this.id;
     }
     
     public boolean getGaveKillCredit() {
-    	return gaveKillCredit;
+        return this.killerId != Entity.NONE;
     }
 }

@@ -157,11 +157,12 @@ public class Protomech
     {
         return new PilotingRollData( this.getId(),
                                      PilotingRollData.CHECK_FALSE,
-                                     "This mek is a Protomek, it takes no PSRs." );
+                                     "Protomeks never take PSRs." );
     }
 
     /**
-     *A "shaded" critical is a box shaded on the record sheet, implies pilot damage when hit.  Returns whether shaded.
+     *A "shaded" critical is a box shaded on the record sheet,
+     * implies pilot damage when hit.  Returns whether shaded.
      */
     public boolean shaded(int loc, int numHit)
     {

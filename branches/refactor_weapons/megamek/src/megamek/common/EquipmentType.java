@@ -257,8 +257,6 @@ public class EquipmentType {
         addType(new CLMG());
         addType(new CLLMG());
         addType(new CLHMG());
-        //SRMs
-        addType(new ISSRM6());
     }
     
 }

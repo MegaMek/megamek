@@ -4447,7 +4447,7 @@ implements Runnable, ConnectionHandler {
                 if ( Targetable.TYPE_ENTITY != waa.getTargetType() ) {
                     continue;
                 }
-
+/**
                 // Can only use AMS versus missles.
                 if (weapon.getType() instanceof MissileWeapon) {
                     Entity target = game.getEntity(waa.getTargetId());
@@ -4458,6 +4458,7 @@ implements Runnable, ConnectionHandler {
                     }
                     v.addElement(waa);
                 }
+**/
             }
         }
 

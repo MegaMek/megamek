@@ -264,7 +264,11 @@ public class Compute
 
         // an easy check
         if (!game.board.contains(dest)) {
-            return false;
+            if (game.getOptions().booleanOption("push_off_board")) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // can't be displaced into prohibited terrain

@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.29.44 (CVS)
 + Bug 1003021: Could not clear burning woods.
++ Bug 1003688: Bot wasn't ignoring loaded units (patch from weaselflink).
 
 v0.29.43 (2004-08-01 9:15pm)
 + Extra light woods hex in Citytech board.

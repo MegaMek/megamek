@@ -64,6 +64,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private Button butLoadList;
     private Label  lblPlaceholder;
     private Button butSaveList;
+    private Button butDeleteAll;
 
     private Button butLoad;
     private Button butDelete;
@@ -477,6 +478,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         butDelete.addActionListener(this);
         butDelete.setEnabled(false);
             
+        butDeleteAll = new Button("Delete All");
+        butDeleteAll.setActionCommand("delete_all");
+        butDeleteAll.addActionListener(this);
+        butDeleteAll.setEnabled(false);
+
         panEntities = new Panel();
             
         // layout
@@ -519,6 +525,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         c.gridwidth = 1;
         gridbag.setConstraints( butSaveList, c );
         panEntities.add( butSaveList );
+
+        c.gridwidth = 1;
+        gridbag.setConstraints( butDeleteAll, c );
+        panEntities.add( butDeleteAll );
     }
     
     /**
@@ -611,9 +621,17 @@ public class ChatLounge extends AbstractPhaseDisplay
         int listIndex = 0;
         String strTreeSet = "";
         String strTreeView = "";
+        boolean localUnits = false;
         entityCorrespondance = new int[client.game.getNoOfEntities()];
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
+
+            // Remember if the local player has units.
+            if ( !localUnits &&
+                 entity.getOwner().equals(client.getLocalPlayer()) ) {
+                localUnits = true;
+            }
+
             if(entity.hasC3i()) {
                 strTreeSet = "";
                 if(entity.calculateFreeC3Nodes() == 5) strTreeSet = "**";
@@ -680,8 +698,16 @@ public class ChatLounge extends AbstractPhaseDisplay
             
             entityCorrespondance[listIndex++] = entity.getId();
         }
-        boolean unitListEmpty = ( 0 == lisEntities.getItemCount() );
-        butSaveList.setEnabled( !unitListEmpty );
+
+        // Enable the "Save Unit List..." and "Delete All"
+        // buttons if the local player has units.
+        butSaveList.setEnabled( localUnits );
+        butDeleteAll.setEnabled( localUnits );
+
+        // Disable the "must select" buttons.
+        butCustom.setEnabled(false);
+        butMechReadout.setEnabled(false);
+        butDelete.setEnabled(false);
     }
     
     /**
@@ -1109,6 +1135,17 @@ public class ChatLounge extends AbstractPhaseDisplay
             // delete mech
             if (lisEntities.getSelectedIndex() != -1) {
                 client.sendDeleteEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
+            }
+        } else if (ev.getSource() == butDeleteAll) {
+            // Build a Vector of this player's entities.
+            Vector currentUnits = client.game.getPlayerEntities
+                ( client.getLocalPlayer() );
+
+            // Walk through the vector, deleting the entities.
+            Enumeration entities = currentUnits.elements();
+            while ( entities.hasMoreElements() ) {
+                final Entity entity = (Entity) entities.nextElement();
+                client.sendDeleteEntity( entity.getId() );
             }
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
             // board settings

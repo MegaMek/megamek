@@ -144,7 +144,7 @@ Heat (Effects of Heat)
 Buildings 
 
 - Building Types		Yes		None
-- Construction Factor		Partial		Multiple Hex buildings have a single CF
+- Construction Factor		Yes		BMRr, page 50: every hex of a buildings shares a single CF
 - Building Elevations		Partial		Units may only occupy the ground floor of a building
 
 Buildings (Movement Effects)
@@ -154,8 +154,8 @@ Buildings (Movement Effects)
 Buildings (Combat Effects)
 
 - Attacking Buildings		Yes		None
-- Attacking Units inside Bldgs	Partial		Mechs inside buildings cannot attack infantry a zero range.
-- Combat Within Buildings	No		None
+- Attacking Units inside Bldgs	Yes             None
+- Combat Within Buildings	Partial		Needs to be debugged.
 - Collapse			Partial		Buildings will not collapse due to maximum weight being exceeded.
 
 Buildings (Basements)
@@ -192,13 +192,13 @@ Vehicles (Combat)
 Infantry (Movement)
 
 - Movement			Yes		Infantry cannot change floors in a building
-- Infantry Carriers		Yes		Infantry cannot start inside carriers
+- Infantry Carriers		Yes		When Deploying infantry carriers, select "Load" to start Infantry inside.
 - Mechanised Battle Armor	Yes		When Delpoying OmniMechs, select load to start Btt Armor attached to a Mech.
 
 Infantry (Combat)
 
 - Standard Infantry		Yes		None
-- Battle Armor			Yes		BTH Numbers for attacks are occasionally calculated incorrectly.
+- Battle Armor			Yes		None
 
 Clan Battle Armor Variants
 
@@ -312,8 +312,8 @@ Special Case Rules (Underwater Operations)
 
 Equipment
 
-- Active Probe			Partial		
-- Anti-Missile System		Yes		All AMS fire is reported in one line
+- Active Probe			Yes		Hidden units is not implemented.
+- Anti-Missile System		Yes		All AMS fire is reported in one line; AMS target is selected for the player.
 - Anti-Personal Pods		No		None
 - Artemis IV FCS		Yes		None
 - Artillery Weapons		No		None
@@ -328,7 +328,7 @@ Equipment
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
 - Missile Lanchers		Yes		None
-- Missile Munitions		Partial		Semi Guided LRM's not yet implemented.
+- Missile Munitions		Partial		Many ammo types not yet implemented.
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Partial		iNarc not yet implemented.

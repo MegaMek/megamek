@@ -8186,7 +8186,7 @@ implements Runnable, ConnectionHandler {
 
                               if ( numEngineHits > 2  ) {
                                   // third engine hit
-                                  phaseReport.append(destroyEntity(te, "engine destruction"));
+                                  desc.append(destroyEntity(te, "engine destruction"));
                               }
                            }
                         }

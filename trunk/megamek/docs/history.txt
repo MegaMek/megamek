@@ -9,6 +9,8 @@ v0.29.72 (CVS)
 + RFE 994367: show heat generated for each weapon in unit selection dialog.
 + RFE 1018797: Automatic Spotter game option, so any units that did not fire
     can optionally spot automatically.
++ RFE 933288: Allow Backspace to "unfire" the last fired weapon in the Firing
+    Display.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

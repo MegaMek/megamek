@@ -689,7 +689,8 @@ public class MovementDisplay
             return;
         }
         // control pressed means a line of sight check.
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+        // added ALT_MASK by kenn
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
             return;
         }
         // check for shifty goodness

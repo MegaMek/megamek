@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -38,6 +38,13 @@ public class Settings
     public static int       displaySizeWidth        = 235;
     public static int       displaySizeHeight       = 370;
     
+    public static int       rulerPosX             = 0; // added by kenn
+    public static int       rulerPosY             = 0; // added by kenn
+    public static int       rulerSizeWidth        = 350; // added by kenn
+    public static int       rulerSizeHeight       = 240; // added by kenn
+    public static Color     rulerColor1           = Color.cyan; // added by kenn
+    public static Color     rulerColor2           = Color.magenta; // added by kenn
+
     public static boolean   autoEndFiring           = true;
 
     public static boolean   nagForMASC              = true;
@@ -152,6 +159,24 @@ scan:
                         st.nextToken();
                         displaySizeHeight = (int)st.nval;
                     }
+                    // added by kenn
+                    else if(key.equals("rulerpos")) {
+                        st.nextToken();
+                        rulerPosX = (int)st.nval;
+                        st.nextToken();
+                        rulerPosY = (int)st.nval;
+                    }
+                    else if(key.equals("rulersize")) {
+                        st.nextToken();
+                        rulerSizeWidth = (int)st.nval;
+                        st.nextToken();
+                        rulerSizeHeight = (int)st.nval;
+                    }
+                    else if(key.equals("rulercolors")) {
+                        rulerColor1 = loadColor(st, rulerColor1);
+                        rulerColor2 = loadColor(st, rulerColor2);
+                    }
+                    // end kenn
                     else if (key.equals("autoendfiring")) {
                         st.nextToken();
                         autoEndFiring = Boolean.valueOf(st.sval).booleanValue();
@@ -289,6 +314,9 @@ scan:
             cw.write("minimapsize " + minimapSizeWidth + " " + minimapSizeHeight + "\r\n");
             cw.write("displaypos " + displayPosX + " " + displayPosY + "\r\n");
             cw.write("displaysize " + displaySizeWidth + " " + displaySizeHeight + "\r\n");
+            cw.write("rulerpos " + rulerPosX + " " + rulerPosY + "\r\n");  // added by kenn
+            cw.write("rulersize " + rulerSizeWidth + " " + rulerSizeHeight + "\r\n"); // added by kenn
+            cw.write("rulercolors " + writeColor(rulerColor1) + " " + writeColor(rulerColor2) + "\r\n"); // added by kenn
             cw.write("autoendfiring " + autoEndFiring + "\r\n");
             cw.write("nagformasc " + nagForMASC + "\r\n");
             cw.write("nagforpsr " + nagForPSR + "\r\n");

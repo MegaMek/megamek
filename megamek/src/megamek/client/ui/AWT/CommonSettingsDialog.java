@@ -122,14 +122,12 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
             = new Checkbox( "Only scroll using Shift key and MiniMap." );
         this.add( explicitScrollOnly );
 
-        /* restore me when pathfinder is working. *
         panSetting = new Panel();
         maxPathfinderTime
             = new TextField(5);
         panSetting.add( maxPathfinderTime );
-        panSetting.add( new Label("Pathfinder time limit.") );
+        panSetting.add( new Label("Pathfinder time limit (milliseconds).") );
         this.add( panSetting );
-        /* restore me when pathfinder is working. */
 
         // Add the dialog controls.
         Panel buttons = new Panel();
@@ -191,9 +189,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
 
         explicitScrollOnly.setState( Settings.explicitScrollOnly );
 
-        /* restore me when pathfinder is working. *
         maxPathfinderTime.setText( Integer.toString(Settings.maxPathfinderTime ) );
-        /* restore me when pathfinder is working. */
 
         super.show();
     }
@@ -223,9 +219,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         Settings.shiftScrollSensitivity =   Integer.parseInt(shiftScrollSensitivity.getText());
         Settings.explicitScrollOnly= explicitScrollOnly.getState();
 
-        /* restore me when pathfinder is working. *
         Settings.maxPathfinderTime =   Integer.parseInt(maxPathfinderTime.getText());
-        /* restore me when pathfinder is working. */
 
         Settings.save();
         this.setVisible( false );

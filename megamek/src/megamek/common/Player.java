@@ -48,6 +48,10 @@ public final class Player extends TurnOrdered
     private boolean         done = false; // done with phase
     private boolean         ghost = false; // disconnected player
     private boolean         observer = false;
+
+    private boolean         see_entire_board = false; // Player can observe
+                                                      // double blind games
+    
     private int             colorIndex = 0;
 
     // these are game-specific, and maybe should be seperate from the player object
@@ -145,8 +149,27 @@ public final class Player extends TurnOrdered
         return observer;
     }
 
+    public void setSeeAll(boolean see_all)
+    {
+        this.see_entire_board = see_all;
+    }
+
+    // This simply returns the value, without checking the observer flag
+    public boolean getSeeAll()
+    {
+        return see_entire_board;
+    }
+    
+    // If observer is false, see_entire_board does nothing
+    public boolean canSeeAll() {
+        return (observer && see_entire_board);
+    }
+
     public void setObserver(boolean observer) {
         this.observer = observer;
+        // If not an observer, clear the set see all flag 
+        if (!observer)
+            this.setSeeAll(false);
     }
 
     public int getColorIndex() {

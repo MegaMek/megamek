@@ -3833,10 +3833,15 @@ implements Runnable {
             }
             
             // targeting a hex for clearing
-            // is it true that flamers can't clear?
             if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                 nDamage = nDamPerHit * hits;
-                phaseReport.append("hits!\n");
+                phaseReport.append(" Hits!\n");
+                if (ae instanceof Infantry) {
+                    phaseReport.append("    But infantry cannot try to clear hexes!\n");
+                    return;
+                }
+
+
                 phaseReport.append("    Terrain takes " ).append( nDamage ).append( " damage.\n");
                 
                 // any clear attempt can result in accidental ignition
@@ -3846,9 +3851,7 @@ implements Runnable {
                 }
                 
                 int tn = 14 - nDamage;
-                if(!wtype.hasFlag(WeaponType.F_FLAMER)) {
-                    tryClearHex(target.getPosition(), tn);
-                } 
+                tryClearHex(target.getPosition(), tn);
                 
                 return;
             }
@@ -3871,8 +3874,10 @@ implements Runnable {
                 }
             } // End target-may-be-immune
 
-            // Flamers do heat, not damage.
-            else if (entityTarget != null && wtype.hasFlag(WeaponType.F_FLAMER) && game.getOptions().booleanOption("flamer_heat")) {
+            // Flamers do heat instead damage if yadda, yadda, yadda....
+            else if (entityTarget != null && wtype.hasFlag(WeaponType.F_FLAMER) && !wtype.hasFlag(WeaponType.F_INFANTRY) 
+                     && game.getOptions().booleanOption("flamer_heat") && weapon.curMode().equals("Heat") 
+                     && (entityTarget instanceof Mech)) {
                 nDamage = nDamPerHit * hits;
                 phaseReport.append("\n        Target gains ").append(nDamage).append(" more heat during heat phase.");
                 entityTarget.heatBuildup += nDamage;

@@ -134,6 +134,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAC5Ammo());
         EquipmentType.addType(createISAC10Ammo());
         EquipmentType.addType(createISAC20Ammo());
+        EquipmentType.addType(createISVehicleFlamerAmmo());
         EquipmentType.addType(createISMGAmmo());
         EquipmentType.addType(createISMGAmmoHalf());
         EquipmentType.addType(createISLRM5Ammo());
@@ -198,6 +199,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM2Ammo());
         EquipmentType.addType(createCLStreakSRM4Ammo());
         EquipmentType.addType(createCLStreakSRM6Ammo());
+        EquipmentType.addType(createCLVehicleFlamerAmmo());
         EquipmentType.addType(createCLMGAmmo());
         EquipmentType.addType(createCLMGAmmoHalf());
         EquipmentType.addType(createCLHeavyMGAmmo());
@@ -312,6 +314,22 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 5;
         ammo.bv = 20;
+        
+        return ammo;
+    }
+    
+    public static AmmoType createISVehicleFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Vehicle Flamer Ammo";
+        ammo.internalName = "IS Vehicle Flamer Ammo";
+        ammo.mepName = "IS Ammo Vehicle Flamer";
+        ammo.mtfName = "ISVehicleFlamer Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
+        ammo.shots = 20;
+        ammo.bv = 1;
         
         return ammo;
     }
@@ -1208,6 +1226,23 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    public static AmmoType createCLVehicleFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+        
+        ammo.name = "Vehicle Flamer Ammo";
+        ammo.internalName = "Clan Vehicle Flamer Ammo";
+        ammo.mepName = "Clan Ammo Vehicle Flamer";
+        ammo.mtfName = "CLVehicleFlamer Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+        
+        return ammo;
+    }
+    
     public static AmmoType createCLHeavyMGAmmo() {
         AmmoType ammo = new AmmoType();
         
@@ -1317,7 +1352,7 @@ public class AmmoType extends EquipmentType {
         
         return ammo;
     }
-    
+
     public static AmmoType createCLUltra2Ammo() {
         AmmoType ammo = new AmmoType();
         

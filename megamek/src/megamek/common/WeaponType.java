@@ -107,6 +107,7 @@ public class WeaponType extends EquipmentType {
     public static void initializeTypes() {
         // all tech level 1 weapons
         EquipmentType.addType(createFlamer());
+        EquipmentType.addType(createVehicleFlamer());
         EquipmentType.addType(createSmallLaser());
         EquipmentType.addType(createMediumLaser());
         EquipmentType.addType(createLargeLaser());
@@ -171,6 +172,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLERSmallLaser());
         EquipmentType.addType(createCLERMicroLaser());
         EquipmentType.addType(createCLFlamer());
+        EquipmentType.addType(createCLVehicleFlamer());
         EquipmentType.addType(createCLHeavyLargeLaser());
         EquipmentType.addType(createCLHeavyMediumLaser());
         EquipmentType.addType(createCLHeavySmallLaser());
@@ -257,6 +259,33 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
         weapon.bv = 6;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
+    public static WeaponType createVehicleFlamer() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Vehicle Flamer";
+        weapon.internalName = weapon.name;
+        weapon.mepName = "IS Vehicle Flamer";
+        weapon.mtfName = "ISVehicleFlamer";
+        weapon.heat = 3;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_VEHICLE_FLAMER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_FLAMER;
+        weapon.bv = 5;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
 
         return weapon;
     }
@@ -1435,9 +1464,37 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
         weapon.bv = 6;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
 
         return weapon;
     }
+
+    public static WeaponType createCLVehicleFlamer() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Vehicle Flamer";
+        weapon.internalName = "CLVehicleFlamer";
+        weapon.mepName = "Clan Vehicle Flamer";
+        weapon.mtfName = "CLVehicleFlamer";
+        weapon.heat = 3;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_VEHICLE_FLAMER;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.flags |= F_FLAMER;
+        weapon.bv = 5;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
+
+        return weapon;
+    }
+
 
     public static WeaponType createCLHeavyLargeLaser() {
         WeaponType weapon = new WeaponType();
@@ -2521,6 +2578,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
 
         return weapon;
     }
@@ -2609,6 +2668,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER | F_DOUBLE_HITS;
+        String[] modes = { "Damage", "Heat" };
+        weapon.setModes(modes);
 
         return weapon;
     }

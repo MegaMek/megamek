@@ -7446,7 +7446,9 @@ implements Runnable, ConnectionHandler {
                     if ( game.getOptions().booleanOption("maxtech_round_damage") ) {
                       int damMod = (entity.damageThisPhase / 20);
                       int weightMod = 0;
-                      String weightModStr = "";
+                      StringBuffer reportStr = new StringBuffer();
+                      reportStr.append(entity.damageThisPhase)
+                          .append(" damage");
 
                       switch ( entity.getWeightClass() ) {
                         case Entity.WEIGHT_LIGHT:
@@ -7466,10 +7468,12 @@ implements Runnable, ConnectionHandler {
                           break;
                       }
 
-                      if ( weightMod != 0 )
-                        weightModStr = ": " + weightMod + " weight mod";
+                      if ( weightMod != 0 ) {
+                          reportStr.append(": ").append(weightMod)
+                              .append(" weight mod");
+                      }
 
-                      game.addPSR(new PilotingRollData(entity.getId(), damMod + weightMod, entity.damageThisPhase + " damage" + weightModStr));
+                      game.addPSR(new PilotingRollData(entity.getId(), damMod + weightMod, reportStr.toString()));
                     } else {
                       game.addPSR(new PilotingRollData(entity.getId(), 1, "20+ damage"));
                     }

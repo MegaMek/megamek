@@ -98,6 +98,7 @@ v 0.28.8-dev
 + 694893: When calculating stacking violations for unloading, the transport
           may not have reached the destination hex yet.
 + 699057: possible fix for deployment hexes highlighted during the game
++ fixed vehicles going prone
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

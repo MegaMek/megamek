@@ -628,6 +628,12 @@ public class Compute
                 }
             }
 
+            // only standing mechs may go prone
+            if (stepType == MovementData.STEP_GO_PRONE 
+            && (isProne || !(entity instanceof Mech))) {
+                moveType = Entity.MOVE_ILLEGAL;
+            }
+            
             // check if this movement is illegal for reasons other than points
             if ( !isMovementPossible(game, entityId, lastPos, curPos,
                                      moveType, stepType, firstStep)

@@ -3160,7 +3160,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createBAAutoGL() {
         WeaponType weapon = new WeaponType();
 
-        weapon.name = "Auto Gernade Launcher";
+        weapon.name = "Auto Grenade Launcher";
         weapon.internalName = "BAAutoGL";
         weapon.mepName = "BA-Auto GL";
         weapon.mtfName = weapon.internalName;

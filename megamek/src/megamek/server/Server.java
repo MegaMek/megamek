@@ -8728,9 +8728,87 @@ implements Runnable, ConnectionHandler {
     }
     void resolvePilotingRolls( Entity entity, boolean moving,
                                Coords src, Coords dest ) {
-        // Non-mechs, prone mechs, and dead units don't need to.
-        if ( !(entity instanceof Mech) || entity.isProne() ||
-             entity.isDoomed() || entity.isDestroyed() ) {
+        // dead units don't need to.
+        if ( entity.isDoomed() || entity.isDestroyed() ) {
+            return;
+        }
+        // first, do extreme gravity PSR, because non-mechs do these, too
+        PilotingRollData rollTarget = null;
+        for (Enumeration i = game.getExtremeGravityPSRs();i.hasMoreElements();) {
+            final PilotingRollData roll = (PilotingRollData)i.nextElement();
+            if (roll.getEntityId() != entity.getId()) {
+                continue;
+            }
+            // found a roll, use it (there can be only 1 per entity)
+            rollTarget = roll;
+            game.resetExtremeGravityPSRs(entity);
+        }
+        if (rollTarget != null &&
+            rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            // okay, print the info
+            phaseReport.append("\n" ).append( entity.getDisplayName() )
+                .append( " must make a piloting skill check (" )
+                .append( rollTarget.getLastPlainDesc() ).append( ")" ).append( ".\n");
+            // roll
+            final int diceRoll = Compute.d6(2);
+            phaseReport.append("Needs " ).append( rollTarget.getValueAsString()
+            ).append( " [" ).append( rollTarget.getDesc() ).append( "]"
+            ).append( ", rolls " ).append( diceRoll ).append( " : ");
+            if (diceRoll < rollTarget.getValue()) {
+                phaseReport.append("fails.\n");
+                // walking and running, 1 damage per MP used more than we would
+                // have normally
+                if (entity.moved == Entity.MOVE_WALK || entity.moved == Entity.MOVE_RUN) {
+                    if (entity instanceof Mech) {
+                        int j = entity.mpUsed;
+                        int damage = 0;
+                        while (j > entity.getRunMP(false)) {
+                            j--;
+                            damage++;
+                        }
+                        // Wee, direct internal damage
+                        doExtremeGravityDamage(entity, damage);
+                    } else if (entity instanceof Tank) {
+                        // if we got a pavement bonus, take care of it
+                        int k = entity.gotPavementBonus ? 1 : 0;  
+                        if (!entity.gotPavementBonus) {
+                            int j = entity.mpUsed;
+                            int damage = 0;
+                            while (j > entity.getRunMP(false) + k) {
+                                j--;
+                                damage++;
+                            }
+                            doExtremeGravityDamage(entity, damage);
+                        }                      
+                    }
+                }
+                // jumping
+                if (entity.moved == Entity.MOVE_JUMP && entity instanceof Mech) {
+                    // low g, 1 damage for each hex jumped further than
+                    // possible normally
+                    if (game.getOptions().floatOption("gravity") < 1) {
+                        int j = entity.mpUsed;
+                        int damage = 0;
+                        while (j > entity.getOriginalJumpMP()) {
+                            j--;
+                            damage++;
+                        }
+                        // Wee, direct internal damage
+                        doExtremeGravityDamage(entity, damage);
+                    }
+                    // high g, 1 damage for each MP we have less than normally
+                    else if (game.getOptions().floatOption("gravity") > 1) {
+                            int damage = entity.getWalkMP(false) - entity.getWalkMP();
+                            // Wee, direct internal damage
+                            doExtremeGravityDamage(entity, damage);                    
+                    }
+                }                
+            } else {
+                phaseReport.append("succeeds.\n");
+            }
+        }
+        // non mechs and prone mechs can now return
+        if ( !(entity instanceof Mech) || entity.isProne()) {
             return;
         }
         // add all cumulative rolls, count all rolls
@@ -13324,60 +13402,30 @@ implements Runnable, ConnectionHandler {
     }
 
     /**
-     * Do any extreme gravity PSRs the entity gets due to its movement
+     * Add any extreme gravity PSRs the entity gets due to its movement
      *
      * @param entity The <code>Entity</code> to check.
      * @param step   The last <code>MoveStep</code> of this entity
      * @param curPos The current <code>Coords</code> of this entity
      */
     private void checkExtremeGravityMovement(Entity entity, MoveStep step, Coords curPos) {
-        HitData hit;
         PilotingRollData rollTarget;
         if (game.getOptions().floatOption("gravity") != 1) {
             if (entity instanceof Mech) {
                 if ((step.getMovementType() == Entity.MOVE_WALK) || (step.getMovementType() == Entity.MOVE_RUN)) {
                     if (step.getMpUsed() > entity.getRunMP(false)) {
                         // We moved too fast, let's make PSR to see if we get damage
-                        rollTarget = entity.checkMovedTooFast(step);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                                int j=step.getMpUsed();
-                                int damage = 0;
-                                while (j > entity.getRunMP(false)) {
-                                    j--;
-                                    damage++;
-                                }
-                                // Wee, direct internal damage
-                                doExtremeGravityDamage(entity, damage);
-                            }
-                        }
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
                 } else if (step.getMovementType() == Entity.MOVE_JUMP) {
                     if (step.getMpUsed() > (entity.getOriginalJumpMP())) {
                         // We jumped too far, let's make PSR to see if we get damage
-                        rollTarget = entity.checkMovedTooFast(step);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                                int j=step.getMpUsed();
-                                int damage = 0;
-                                while (j > entity.getOriginalJumpMP()) {
-                                    j--;
-                                    damage++;
-                                }
-                                // Wee, direct internal damage
-                                doExtremeGravityDamage(entity, damage);
-                            }
-                        }
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     } else if (game.getOptions().floatOption("gravity") > 1) {
+                        // jumping in high g is bad for your legs
                         rollTarget = entity.getBasePilotingRoll();
                         rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos, curPos, rollTarget, false)) {
-                                int damage = entity.getWalkMP(false) - entity.getWalkMP();
-                                // Wee, direct internal damage
-                                doExtremeGravityDamage(entity, damage);
-                            }
-                        }
+                        game.addExtremeGravityPSR(rollTarget);
                     }
                 }
             } else if (entity instanceof Tank) {
@@ -13387,40 +13435,13 @@ implements Runnable, ConnectionHandler {
                     // more MPs because it was moving along a road.
                     if (step.getMpUsed() > entity.getRunMP(false)
                         && !step.isOnlyPavement()) {
-                        rollTarget = entity.checkMovedTooFast(step);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos,
-                                                         curPos, rollTarget,
-                                                         false)) {
-                                int j=step.getMpUsed();
-                                int damage = 0;
-                                while (j > entity.getRunMP(false)) {
-                                    j--;
-                                    damage++;
-                                }
-                                doExtremeGravityDamage(entity, damage);
-                            }
-                        }
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
                     else if (step.getMpUsed() > entity.getRunMP(false) + 1) {
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         //      tank on a road can move 5/7, **not** 5/8.
-                       
-                        rollTarget = entity.checkMovedTooFast(step);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos,
-                                                         curPos, rollTarget,
-                                                         false)) {
-                                int j=step.getMpUsed();
-                                int damage = 0;
-                                while (j > entity.getRunMP(false) + 1) {
-                                    j--;
-                                    damage++;
-                                }
-                                doExtremeGravityDamage(entity, damage);
-                            }
-                        }
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     } // End tank-has-road-bonus
                 }
             }

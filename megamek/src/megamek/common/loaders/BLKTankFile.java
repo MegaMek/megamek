@@ -107,6 +107,12 @@ public class BLKTankFile extends BLKFile implements MechLoader {
 
 	} // End has-transporters
 
+        if (dataFile.exists("engine_type"))
+            t.setEngineType(dataFile.getDataAsInt("engine_type")[0]);
+        if (dataFile.exists("armor_type"))
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        if (dataFile.exists("internal_type"))
+            t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
             

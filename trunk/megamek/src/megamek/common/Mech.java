@@ -1804,12 +1804,14 @@ public abstract class Mech
             Mounted mEquip = (Mounted) equips.nextElement();
             MiscType mtype = (MiscType) mEquip.getType();
             if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
-                // Return true if the mode is "On", false otherwise.
-                return ( mEquip.curMode().equals( "On" ) ? true : false );
+                if (mEquip.curMode().equals( "On" ) && hasActiveECM()) {
+                    // Return true if the mode is "On" and ECM is working
+                    return true;
+                }
             }
         }
 
-        // No Mek Stealth system.  Return false.
+        // No Mek Stealth or system inactive.  Return false.
         return false;
     }
 

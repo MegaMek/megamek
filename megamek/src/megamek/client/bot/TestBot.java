@@ -85,7 +85,10 @@ public class TestBot extends BotClientWrapper {
         this.heat = w.getHeat();
         this.expected = this.odds*this.value;
         this.primary_expected = this.primary_odds*this.value;
-        final boolean usesAmmo = w.getAmmoType() != AmmoType.T_NA;
+	final boolean isInfantryWeapon = 
+	    ((w.getFlags() & WeaponType.F_INFANTRY) == WeaponType.F_INFANTRY);
+        final boolean usesAmmo = 
+	    (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
@@ -970,7 +973,30 @@ public class TestBot extends BotClientWrapper {
       CEntity enemy = enemies.get(e);
       ToHitData th = Compute.toHitWeapon(game, from, e.getId(), weaponID, v);
       if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
-        double expectedDmg = Compute.getExpectedDamage((WeaponType)mw.getType());
+	  double expectedDmg;
+
+	  // Are we an Infantry platoon?
+	  if ( en instanceof Infantry ) {
+	      // Get the expected damage, given our current 
+	      // manpower level.
+	      Infantry inf = (Infantry) en;
+	      expectedDmg = 
+		  inf.getDamage(inf.getShootingStrength());
+	  } else {
+	      // Get the expected damage of the weapon.
+	      expectedDmg = 
+		  Compute.getExpectedDamage((WeaponType)mw.getType());
+	  }
+
+	  // Infantry in the open suffer double damage.
+	  if ( e instanceof Infantry ) {
+	      Hex e_hex = game.getBoard().getHex( e.getPosition() );
+	      if ( !e_hex.contains(Terrain.WOODS) &&
+		   !e_hex.contains(Terrain.BUILDING) ) {
+		  expectedDmg *= 2;
+	      }
+	  }
+
         a = new AttackOption(enemy, mw, expectedDmg, th);
         if (a.value > max.value) {
           if (best_only) {

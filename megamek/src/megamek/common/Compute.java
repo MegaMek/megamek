@@ -265,6 +265,7 @@ public class Compute
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
         boolean isRunProhibited = false;
+	boolean isInfantry = (entity instanceof Infantry);
 
         // check for jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
@@ -296,7 +297,8 @@ public class Compute
             switch(step.getType()) {
             case MovementData.STEP_TURN_LEFT :
             case MovementData.STEP_TURN_RIGHT :
-                stepMp = (isJumping || hasJustStood) ? 0 : 1;
+		// Infantry can turn for free.
+                stepMp = (isJumping || hasJustStood || isInfantry) ? 0 : 1;
                 curFacing = MovementData.getAdjustedFacing(curFacing, step.getType());
                 break;
             case MovementData.STEP_FORWARDS :
@@ -408,6 +410,7 @@ public class Compute
         boolean danger = false;
         boolean pastDanger = false;
         boolean firstStep = true;
+	boolean isInfantry = (entity instanceof Infantry);
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
@@ -476,6 +479,11 @@ public class Compute
             pastDanger |= danger;
             
             firstStep = false;
+
+	    // Infantry can always move one hex in *any* direction.
+	    if ( isInfantry && step.getMpUsed() == 0 ) {
+		firstStep = true;
+	    }
         }
     }
     
@@ -544,6 +552,7 @@ public class Compute
         final int moveType = entity.getMovementType();
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
+	final boolean isInfantry = (entity instanceof Infantry);
         
         // arguments valid?
         if (entity == null) {
@@ -594,8 +603,11 @@ public class Compute
             int delta_e = Math.abs(nSrcEl - nDestEl);
             
             // ground vehicles are charged double            
-            if (nMove == Entity.MovementType.TRACKED || nMove == Entity.MovementType.WHEELED ||
-                    nMove == Entity.MovementType.HOVER) {
+	    // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
+            if ( !isInfantry &&
+		 (nMove == Entity.MovementType.TRACKED ||
+		  nMove == Entity.MovementType.WHEELED ||
+		  nMove == Entity.MovementType.HOVER) ) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -945,7 +957,12 @@ public class Compute
         final Mounted weapon = ae.getEquipment(weaponId);
         final WeaponType wtype = (WeaponType)weapon.getType();
         Coords[] in = intervening(ae.getPosition(), te.getPosition());
-        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA;
+	// 2002-09-16 Infantry weapons have unlimited ammo.
+	boolean isAttackerInfantry = (ae instanceof Infantry);
+	// 2002-09-17 Infantry can only use infantry weapons
+	boolean isWeaponInfantry = isAttackerInfantry;
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+	    !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         
@@ -1138,6 +1155,17 @@ public class Compute
         } else if (range > wtype.getShortRange()) {
             // medium range, add +2
             toHit.addModifier(2, "medium range");
+	} else if ( isAttackerInfantry && 0 == range ) {
+	    // Infantry can attack in the same hex with a base of 2.
+	    // Except for flamers and SRMs, which have a base of 3.
+	    if ( (wtype.getFlags() & WeaponType.F_FLAMER) ==
+		 WeaponType.F_FLAMER ) {
+		toHit.addModifier(-1, "infantry flamer assault");
+	    } else if ( wtype.getAmmoType() == AmmoType.T_SRM ) {
+		toHit.addModifier(-1, "infantry SRM assault");
+	    } else {
+		toHit.addModifier(-2, "infantry assault");
+	    }
         } else {
             // also check for minimum range
             if (range <= wtype.getMinimumRange()) {
@@ -1147,7 +1175,10 @@ public class Compute
         }
         
         // attacker movement
+	// 2002-09-17 : Infantry aren't affected by their own movement.
+	if ( !isAttackerInfantry ) {
         toHit.append(getAttackerMovementModifier(game, attackerId));
+	}
         
         // target movement
         toHit.append(getTargetMovementModifier(game, targetId));
@@ -1346,7 +1377,13 @@ public class Compute
         }        
         
         // factor in target side
+	if ( isAttackerInfantry && 0 == range ) {
+	    // Infantry attacks from the same hex
+	    // are resolved against the front.
+	    toHit.setSideTable( ToHitData.SIDE_FRONT );
+	} else {
         toHit.setSideTable(targetSideTable(ae, te));
+	}
         
         // okay!
         return toHit;
@@ -1374,6 +1411,11 @@ public class Compute
         final int armArc = (arm == PunchAttackAction.RIGHT)
                            ? Compute.ARC_RIGHTARM : Compute.ARC_LEFTARM;
         ToHitData toHit;
+
+	// Infantry CAN'T punch!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't punch");
+	}
 
         // arguments legal?
         if (arm != PunchAttackAction.RIGHT && arm != PunchAttackAction.LEFT) {
@@ -1482,7 +1524,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae, te));
+        toHit.setSideTable(targetSideTable(ae,te));
 
         // done!
         return toHit;
@@ -1525,6 +1567,12 @@ public class Compute
         final int targetHeight = te.absHeight();
         final int targetElevation = te.elevation();
         int[] kickLegs = new int[2];
+
+	// Infantry CAN'T kick!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't kick");
+	}
+
         if ( ae.entityIsQuad() ) {
           kickLegs[0] = Mech.LOC_RARM;
           kickLegs[1] = Mech.LOC_LARM;
@@ -1637,7 +1685,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae, te));
+        toHit.setSideTable(targetSideTable(ae,te));
 
         // done!
         return toHit;
@@ -1695,6 +1743,11 @@ public class Compute
         if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
+
+	// Infantry CAN'T club!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't club");
+	}
 
         //Quads can't club
         if ( ae.entityIsQuad() ) {
@@ -1832,7 +1885,7 @@ public class Compute
         }
         
         // factor in target side
-        toHit.setSideTable(targetSideTable(ae, te));
+        toHit.setSideTable(targetSideTable(ae,te));
 
         // done!
         return toHit;
@@ -1864,6 +1917,11 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+	// Infantry CAN'T push!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't push");
+	}
+
         //Quads can't push
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
@@ -1997,6 +2055,11 @@ public class Compute
         Coords chargeSrc = ae.getPosition();
         MovementData.Step chargeStep = null;
 
+	// Infantry CAN'T charge!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
+	}
+
         // let's just check this
         if (!md.contains(MovementData.STEP_CHARGE)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found in movment path");
@@ -2067,6 +2130,11 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+	// Infantry CAN'T charge!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't charge");
+	}
+
         // check range
         if (src.distance(te.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
@@ -2181,6 +2249,11 @@ public class Compute
         Coords chargeSrc = ae.getPosition();
         MovementData.Step chargeStep = null;
         
+        // Infantry CAN'T dfa!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't D.F.A.");
+	}
+
         // let's just check this
         if (!md.contains(MovementData.STEP_DFA)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "D.F.A. action not found in movment path");
@@ -2238,6 +2311,11 @@ public class Compute
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
         
+	// Infantry CAN'T dfa!!!
+	if ( ae instanceof Infantry ) {
+	    return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry can't dfa");
+	}
+
         // check range
         if (src.distance(te.getPosition()) > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");

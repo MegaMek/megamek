@@ -69,7 +69,11 @@ public class TilesetManager {
                 System.out.println("Unable to load image for entity: " + entity.getName());
             }            
         }
+	// Not every entity has a secondary facing.
+	if ( entity.canChangeSecondaryFacing() ) {
         return entityImage.getFacing(entity.getSecondaryFacing());
+    }
+	return entityImage.getFacing(entity.getFacing());
     }
     
     /**

@@ -92,6 +92,9 @@ public class Server
         // display server start text
         System.out.println("s: starting a new server...");
         System.out.println("s: address = " + serverSocket.getInetAddress().getHostAddress() + " port = " + serverSocket.getLocalPort());
+        try {
+            System.out.println("s: address = " + InetAddress.getByName("127.0.0.1").getHostAddress());
+        } catch(UnknownHostException ex) {}
         System.out.println("s: password = " + this.password);
 
         connector = new Thread(this);
@@ -158,6 +161,11 @@ public class Server
     public void die() {
         // kill thread accepting new connections
         connector = null;
+        
+        // close socket
+        try {
+            serverSocket.close();
+        } catch(IOException ex) { ; }
         
         // kill pending connnections
         for (Enumeration i = connectionsPending.elements(); i.hasMoreElements();) {

@@ -99,9 +99,8 @@ public class Client extends Panel
 
                 // save settings
                 Settings.save();
-
-                // okay, exit program
-                System.exit(0);
+                
+                die();
             }
 	});
         
@@ -166,13 +165,30 @@ public class Client extends Panel
     }
     
     /**
+     * Shuts down threads and sockets
+     */
+    public void die() {
+        connected = false;
+        pump = null;
+        
+        // shut down threads & sockets
+        try {
+            socket.close();
+            in.close();
+            out.close();
+        } catch (IOException ex) { ; }
+    }
+    
+    /**
      * The client has become disconnected from the server
      */
     protected void disconnected() {
-        connected = false;
-        pump = null;
         AlertDialog alert = new AlertDialog(frame, "Disconnected!", "You have become disconnected from the server.");
         alert.show();
+        
+        die();
+        
+        //TODO: close window programmatically instead.
         System.exit(0);
     }
     
@@ -668,6 +684,10 @@ public class Client extends Panel
         Packet c;
         while(pump == currentThread) {
             c = readPacket();
+            if (c == null) {
+                System.out.println("client: got null packet");
+                continue;
+            }
             // obey command
             switch(c.getCommand()) {
             case Packet.COMMAND_SERVER_GREETING :

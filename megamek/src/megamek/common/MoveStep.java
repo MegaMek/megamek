@@ -746,10 +746,11 @@ public class MoveStep implements Serializable {
                 || stepType == MovePath.STEP_TURN_LEFT
                 || stepType == MovePath.STEP_TURN_RIGHT)) {
 
-            // Vehicles moving along pavement get "road bonus" of 1 MP.
-            // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.
             if (getMpUsed() <= entity.getWalkMP()) {
                 movementType = Entity.MOVE_WALK;
+
+            // Vehicles moving along pavement get "road bonus" of 1 MP.
+            // ASSUMPTION : bonus MP is to walk, which may me 2 MP to run.                
             } else if (entity instanceof Tank && isOnlyPavement() && getMpUsed() == entity.getWalkMP() + 1) {
                 movementType = Entity.MOVE_WALK;
             } else if (getMpUsed() <= entity.getRunMPwithoutMASC() && !isRunProhibited()) {
@@ -767,6 +768,11 @@ public class MoveStep implements Serializable {
                 movementType = Entity.MOVE_RUN;
             }
         }
+        
+    	// Mechs with busted Gyro may make only one facing change
+    	if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
+    		&& !isFirstStep() )
+    		movementType = Entity.MOVE_ILLEGAL;			
 
         // mechs with 1 MP are allowed to get up, except if they've used that 1MP up already
         if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP() && entity.mpUsed<1) {

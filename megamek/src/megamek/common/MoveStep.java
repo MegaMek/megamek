@@ -158,6 +158,10 @@ public class MoveStep implements Serializable {
     public int getType() {
         return type;
     }
+    
+    public MovePath getParent() {
+    	return parent;
+    }
 
     /**
      * Set the target of the current step.

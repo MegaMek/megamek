@@ -38,11 +38,29 @@ PLAYING THE GAME
 
 Pre-game Lobby:
 
-Here you can chat, specify what mechs you wish to use, select map setting,
+Here you can chat, specify what mechs you wish to use, select map settings,
 declare starting positions, and change your player's color.  When everybody
 has at least one mech, you may all hit "ready" to start the game.  Most
 changes to the game parameters will cancel your ready status, so you should
 wait for everybody to finish choosing their mechs and positions.
+
+You can enter the map selector by pressing the "Edit/View" button under the
+map sizes.  You can change the dimensions of the map boards (in hexes) or the
+dimensions of the whole map (in boards.)  All maps are loaded off the server.
+All the map boards that MegaMek comes with are 16x17.  Whenever you change
+either of these values, you will need to hit the "Update Size Settings" button
+to have the rest of the dialog reflect the new values.
+
+Below the map size inputs is a not-to-scale representation of how the boards
+are laid out relative to each other.  The middle column lists the current maps
+and the rightmost column lists the available maps.  To change a current map,
+select it in the middle column, select the map you want in the right column,
+and press the "<<" button between the two columns.  You may also select a map
+by clicking on its number in the map layout grid.
+
+[SURPRISE] means that the Server will pick a random map and not tell you what
+it has picked until the game starts.  [RANDOM] means that the Server will pick
+a map as soon as you hit "Okay".
 
 
 Initiative Report:

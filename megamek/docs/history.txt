@@ -75,6 +75,7 @@ v CVS
 + Movement path colors now more colorblind friendly.--LDE
 + fix crash with C3i units
 + small or ER small lasers, also SRM-2s can't start fires; MGs can
++ 639398: bot is moving again
 
 v 0.27.8 (11-22-02, 11:41pm)
 + applied HentaiZonga's patch for C3, RAC unjamming and targetting hexes

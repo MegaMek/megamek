@@ -51,6 +51,7 @@ public class Game implements Serializable
     public static final int PHASE_VICTORY           = 15;
     public static final int PHASE_DEPLOY_MINEFIELDS = 16;
     public static final int PHASE_STARTING_SCENARIO = 17;
+    public static final int PHASE_SET_ARTYAUTOHITHEXES = 18;
     /**
      * The number of Infantry units/Protomechs that have to move for every
      * Mek or Vehicle, if the "inf_move_multi" or the "protos_move_multi"
@@ -439,6 +440,7 @@ public class Game implements Serializable
      */
     public boolean phaseHasTurns(int phase) {
         switch (phase) {
+            case PHASE_SET_ARTYAUTOHITHEXES :
             case PHASE_DEPLOY_MINEFIELDS :
             case PHASE_DEPLOYMENT :
             case PHASE_MOVEMENT :
@@ -964,12 +966,22 @@ public class Game implements Serializable
         resetCharges();
         resetPSRs();
         removeMinefields();
+        removeArtyAutoHitHexes();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
         victoryTeam = Player.TEAM_NONE;
     }
 
+    private void removeArtyAutoHitHexes() {
+        Enumeration iter = getPlayers();
+        while (iter.hasMoreElements()) {
+            Player player = (Player) iter.nextElement();
+            player.removeArtyAutoHitHexes();
+        }
+    }
+    
+    
     private void removeMinefields() {
         minefields.clear();
         vibrabombs.removeAllElements();

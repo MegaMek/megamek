@@ -1202,6 +1202,24 @@ implements Runnable, ConnectionHandler {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
+            case Game.PHASE_SET_ARTYAUTOHITHEXES :
+                checkForObservers();
+                resetActivePlayersDone();
+                setIneligible(phase);
+
+                Enumeration i = game.getPlayers();
+                Vector turn = new Vector();
+                while (i.hasMoreElements()) {
+                    Player p = (Player) i.nextElement();
+                    GameTurn gt = new GameTurn(p.getId());
+                    turn.addElement(gt);
+                }
+                game.setTurnVector(turn);
+                game.resetTurnIndex();
+
+                // send turns to all players
+                send(createTurnVectorPacket());
+                break;
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
             case Game.PHASE_DEPLOYMENT :
@@ -1261,6 +1279,7 @@ implements Runnable, ConnectionHandler {
      */
     private boolean isPhasePlayable(int phase) {
         switch (phase) {
+            case Game.PHASE_SET_ARTYAUTOHITHEXES : 
             case Game.PHASE_DEPLOY_MINEFIELDS :
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
@@ -1295,6 +1314,7 @@ implements Runnable, ConnectionHandler {
                 // transmit the board to everybody
                 send(createBoardPacket());
                 break;
+            case Game.PHASE_SET_ARTYAUTOHITHEXES :
             case Game.PHASE_DEPLOY_MINEFIELDS :
             case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
@@ -1316,19 +1336,24 @@ implements Runnable, ConnectionHandler {
                 changePhase(Game.PHASE_EXCHANGE);
                 break;
             case Game.PHASE_EXCHANGE :
+                changePhase(Game.PHASE_SET_ARTYAUTOHITHEXES);
+                break;
             case Game.PHASE_STARTING_SCENARIO :
+                changePhase(Game.PHASE_SET_ARTYAUTOHITHEXES);
+                break;
+            case Game.PHASE_SET_ARTYAUTOHITHEXES :
                 Enumeration e = game.getPlayers();
                 boolean mines = false;
                 while (e.hasMoreElements()) {
                     Player p = (Player) e.nextElement();
                     if (p.hasMinefields()) {
-                        mines = true;
+                         mines = true;
                     }
                 }
                 if (mines) {
                     changePhase(Game.PHASE_DEPLOY_MINEFIELDS);
                 } else {
-                       changePhase(Game.PHASE_INITIATIVE);
+                    changePhase(Game.PHASE_INITIATIVE);
                 }
                 break;
             case Game.PHASE_DEPLOY_MINEFIELDS :
@@ -1470,7 +1495,7 @@ implements Runnable, ConnectionHandler {
         }
         else if ( null == game.getFirstEntity()
                   && null != player
-                  && game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS ) {
+                  && ((game.getPhase() != Game.PHASE_DEPLOY_MINEFIELDS) && (game.getPhase() != Game.PHASE_SET_ARTYAUTOHITHEXES))) {
             sendTurnErrorSkipMessage( player );
         }
     }
@@ -4480,6 +4505,21 @@ implements Runnable, ConnectionHandler {
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
+    }
+    
+    private void receiveArtyAutoHitHexes(Packet packet, int connId) {
+        Vector artyAutoHitHexes = (Vector) packet.getObject(0);
+        
+        Integer playerId = (Integer)artyAutoHitHexes.get(0);
+        artyAutoHitHexes.removeElementAt(0);
+        
+        // is this the right phase?
+        if (game.getPhase() != Game.PHASE_SET_ARTYAUTOHITHEXES) {
+            System.err.println("error: server got set artyautohithexespacket in wrong phase");
+            return;
+        }
+        game.getPlayer(playerId.intValue()).setArtyAutoHitHexes(artyAutoHitHexes);
+        endCurrentTurn(null);
     }
 
     private void receiveDeployMinefields(Packet packet, int connId) {
@@ -11582,6 +11622,8 @@ implements Runnable, ConnectionHandler {
             case Packet.COMMAND_UNLOAD_STRANDED :
                 receiveUnloadStranded(packet, connId);
                 break;
+            case Packet.COMMAND_SET_ARTYAUTOHITHEXES :
+                receiveArtyAutoHitHexes(packet, connId);
         }
     }
 

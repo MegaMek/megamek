@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.29.40 (CVS)
 + Bug 985884: Possible fix for this NPE bug.
 + Bug 953501: Attempted fix for the "memory leak".
++ RFE 988158: Add more armor info to entitystatus.txt.
 
 v0.29.39 (2004-07-04 8:30pm)
 + Bug 982019: Fix for Hauptmann HA1-OA and Templar Grayson and Tancred pics.

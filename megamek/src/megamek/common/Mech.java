@@ -1093,10 +1093,21 @@ public abstract class Mech
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
+            float weaponHeat = wtype.getHeat();
+            
+            // double heat for ultras
+            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                weaponHeat *= 2;
+            }
+            // half heat for streaks
+            if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {
+                weaponHeat *= 0.5;
+            }
+            
             if (mounted.isRearMounted()) {
-                maxumumHeatRear += wtype.getHeat();
+                maxumumHeatRear += weaponHeat;
             } else {
-                maxumumHeatFront += wtype.getHeat();
+                maxumumHeatFront += weaponHeat;
             }
         }
         int maximumHeat = Math.max(maxumumHeatFront, maxumumHeatRear);

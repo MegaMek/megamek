@@ -87,6 +87,7 @@ VERSION HISTORY:
 ----------------
 v next
 + properly disable flee button
++ 540326: mech elevation while mid-DFA calculated correctly
 
 v 0.25.6 (05-23-02, 8:30pm)
 + 554568: fixed false secondary target modifier on first shot

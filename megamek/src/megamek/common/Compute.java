@@ -557,7 +557,7 @@ public class Compute
         // can't jump over too-high terrain
         if (entityMoveType == Entity.MOVE_JUMP
             && destHex.getElevation() 
-               > (entity.elevation(game.board) +
+               > (entity.elevation() +
                   entity.getJumpMP())) {
             return false;
         }
@@ -845,11 +845,8 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
-        int attHeight = (ae.isProne() ? 0 : 1) + (ae.isMakingDfa() ? 0 : 1);
-        int targHeight = (te.isProne() ? 0 : 1) + (te.isMakingDfa() ? 0 : 1);
-        
-        int attEl = ae.elevation(game.board) + attHeight;
-        int targEl = te.elevation(game.board) + targHeight;
+        int attEl = ae.elevation() + ae.height();
+        int targEl = te.elevation() + te.height();
         
         //TODO: mech making DFA could be higher if DFA target hex is higher
         
@@ -887,12 +884,12 @@ public class Compute
             }
             
             // check for partial cover
-            if (te.getPosition().distance(in[i]) <= 1 && hexEl == targEl && attEl <= targEl && targHeight > 0) {
+            if (te.getPosition().distance(in[i]) <= 1 && hexEl == targEl && attEl <= targEl && te.height() > 0) {
                 pc = true;
             }
             
             // check for attacker partial cover
-            if (ae.getPosition().distance(in[i]) <= 1 && hexEl == attEl && attEl >= targEl && attHeight > 0) {
+            if (ae.getPosition().distance(in[i]) <= 1 && hexEl == attEl && attEl >= targEl && ae.height() > 0) {
                 apc = true;
             }
         }
@@ -951,8 +948,8 @@ public class Compute
         
         // target in water?
         Hex targHex = game.board.getHex(te.getPosition());
-        if (attHex.contains(Terrain.WATER)) {
-            if (targHex.surface() == targEl) {
+        if (targHex.contains(Terrain.WATER)) {
+            if (targHex.surface() == targEl && te.height() > 0) {
                 pc = true;
             } else if (targHex.surface() > targEl) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater");
@@ -1151,8 +1148,8 @@ public class Compute
                                        int targetId, int arm) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation(game.board);
-        final int targetElevation = te.elevation(game.board);
+        final int attackerElevation = ae.elevation();
+        final int targetElevation = te.elevation();
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
@@ -1312,8 +1309,8 @@ public class Compute
                                        int targetId, int leg) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation(game.board);
-        final int targetElevation = te.elevation(game.board);
+        final int attackerElevation = ae.elevation();
+        final int targetElevation = te.elevation();
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
           kickLegs[0] = Mech.LOC_RARM;
@@ -1483,8 +1480,8 @@ public class Compute
     public static ToHitData toHitClub(Game game, int attackerId, int targetId, Mounted club) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation(game.board);
-        final int targetElevation = te.elevation(game.board);
+        final int attackerElevation = ae.elevation();
+        final int targetElevation = te.elevation();
         //HACK: this makes certain assumptions about the names of valid clubs
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         ToHitData toHit;
@@ -1659,8 +1656,8 @@ public class Compute
     public static ToHitData toHitPush(Game game, int attackerId, int targetId) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation(game.board);
-        final int targetElevation = te.elevation(game.board);
+        final int attackerElevation = ae.elevation();
+        final int targetElevation = te.elevation();
         ToHitData toHit = null;
 
         // arguments legal?
@@ -1838,8 +1835,8 @@ public class Compute
     public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation(game.board);
-        final int targetElevation = te.elevation(game.board);
+        final int attackerElevation = ae.elevation();
+        final int targetElevation = te.elevation();
         ToHitData toHit = null;
         
         // arguments legal?

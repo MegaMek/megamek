@@ -185,6 +185,29 @@ public abstract class Mech
         return jump;
     }
     
+
+    /**
+     * Returns the elevation of this entity.  Mechs do funny stuff in the 
+     * middle of a DFA.
+     */
+    public int elevation() {
+        int cElev = super.elevation();
+        if (!isMakingDfa()) {
+            return cElev;
+        }
+        // otherwise, we are one elevation above our hex or the target's hex,
+        // whichever is higher
+        int tElev = game.board.getHex(displacementAttack.getTargetPos()).floor();
+        return Math.max(cElev, tElev) + 1;
+    }
+    
+    /**
+     * Return the height of this mech above the terrain.
+     */
+    public int height() {
+        return isProne() ? 0 : 1;
+    }
+    
     /**
      * Returns the about of heat that the entity can sink each 
      * turn.
@@ -211,9 +234,9 @@ public abstract class Mech
         int sinksUnderwater = 0;
         final Hex curHex = game.board.getHex(getPosition());
         // are we even in water?  is it depth 1+
-        if (curHex.levelOf(Terrain.WATER) > 0) {
+        if (curHex.levelOf(Terrain.WATER) >= 0) {
             return capacity;
-        } else if (curHex.getElevation() == -1) {
+        } else if (curHex.levelOf(Terrain.WATER) == 1) {
           if ( isProne() ) {
             sinksUnderwater = getHeatCapacity();
           } else {
@@ -224,7 +247,7 @@ public abstract class Mech
                 }
             }
           }
-        } else if (curHex.getElevation() <= -2) {
+        } else if (curHex.levelOf(Terrain.WATER) <= 2) {
             sinksUnderwater = getHeatCapacity();
         }
         

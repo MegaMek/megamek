@@ -1482,10 +1482,8 @@ public class Compute
             losMods = losModifiers(los);
         } else {
             los = calculateLos(game, spotter.getId(), target);
-            // do not count partial cover in indirect fire
-            // (except water, which is done separately later)
+            // do not count attacker partial cover in indirect fire
             los.setAttackerCover(false);
-            los.setTargetCover(false);
             losMods = losModifiers(los);
         }
 

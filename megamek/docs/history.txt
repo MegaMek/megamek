@@ -120,6 +120,7 @@ v 0.29.5-dev (CVS)
 + Data 775715: Added carpe_mortis' image.
 + Data 775886, 775888, 775891: Added rancherion's images.
 + RFE 775704, Data 775984: Added starcaptaintorc's images.
++ Bug 776084: target partial cover now counts in indirect fire
 
 v 0.29.4 (07-20-03, 7pm)
 + Added all new files from xylaan (no net change).

@@ -15,6 +15,7 @@ v0.29.43 (CVS)
     corresponding option (this also disabled Arrow-Key and Shift-Key scrolling),
     and see that you can scroll by holding the right mouse button and moving the
     Mouse.
++ Bug 998164: Mechs with destroyed gyro can no longer turn more than one hexside
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

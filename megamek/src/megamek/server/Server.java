@@ -2805,17 +2805,24 @@ implements Runnable, ConnectionHandler {
                                          true);
             }
             
-            // check to see if we've moved OUT of fire and we are a mech
-            if (!lastPos.equals(curPos)
-            && step.getMovementType() != Entity.MOVE_JUMP
-            && game.board.getHex(lastPos).contains(Terrain.FIRE)) {
-                if (entity instanceof Mech) {
+            // check to see if we are a mech and we've moved OUT of fire            
+            if (entity instanceof Mech) {
+                if ( !lastPos.equals(curPos)
+                    && game.board.getHex(lastPos).contains(Terrain.FIRE)
+                    && ( step.getMovementType() != Entity.MOVE_JUMP
+                         // Bug #828741 -- jumping bypasses fire, but not on the first step
+                         //   getMpUsed -- total MP used to this step
+                         //   getMp -- MP used in this step
+                         //   the difference will always be 0 on the "first step" of a jump,
+                         //   and >0 on a step in the midst of a jump
+                         || ( 0 == step.getMpUsed() - step.getMp() ) ) )
+                {
                     entity.heatBuildup+=2;
                     phaseReport.append("\n" ).append( entity.getDisplayName()
                     ).append( " passes through a fire.  It will generate 2 more heat this round.\n");
                 }
-            }   
-            
+            }
+
             // check to see if we've moved INTO fire and we are not a mech
             if (!lastPos.equals(curPos)
             && step.getMovementType() != Entity.MOVE_JUMP

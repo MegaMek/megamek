@@ -2906,7 +2906,7 @@ public class WeaponType extends EquipmentType {
         weapon.mepName = "BA-Compact Narc";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
-        weapon.rackSize = 1;
+        weapon.rackSize = 4;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 2;

@@ -1976,7 +1976,7 @@ public class AmmoType extends EquipmentType {
         ammo.mepName = ammo.internalName;
         ammo.mtfName = "BACompactNarc Ammo";
         ammo.damagePerShot = 2; // only used for ammo crits
-        ammo.rackSize = 1;
+        ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_NARC;
         ammo.shots = 2;
         ammo.hittable = false;

@@ -46,6 +46,7 @@ public class GameOptions extends Options implements Serializable {
         addOption(base, new GameOption("rng_type", "RNG Type", "Note: any type other than 0 or 1 is completely unofficial.\n\nValid types:\n0 - SunRandom: Sun regular RNG\n1 - CryptoRandom: Java crypto-strength RNG\n2 - Pool36Random: Pool of 36 values, randomly shuffled\n\nDefaults to 1.", 1));
         addOption(base, new GameOption("team_initiative", "Teams roll initiative", "When checked, teams roll initiative as one group.  This team initative is used to order the units according to the normal method.  Player order on a team is determined by their own initiative.\n\nChecked by default", true)); 
         addOption(base, new GameOption("is_eq_limits", "Ammo & Equipment Limits", "If checked, Inner Sphere units will be limited to ammo & equipment available at their build year.  Turning this option off will not remove invalid equipment.\n\nChecked by default", true)); 
+        addOption(base, new GameOption("paranoid_autosave", "Paranoid Autosave", "If checked, the game will auto-save every phase.\n\nUnchecked by default", false)); 
         
         OptionGroup level2 = new OptionGroup("Optional Rules (Level 2)");
         addGroup(level2);

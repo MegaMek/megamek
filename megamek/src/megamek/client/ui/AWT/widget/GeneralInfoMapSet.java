@@ -165,7 +165,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         	mpR0.setString("");
         }
         mpR1.setString(Integer.toString(en.getWalkMP()));
-        mpR2.setString(Integer.toString(en.getRunMP()));
+        mpR2.setString(en.getRunMPasString());
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
 
         curMoveR.setString(en.getMovementString(en.moved) + (en.moved == en.MOVE_NONE ? "" : " " + en.delta_distance));

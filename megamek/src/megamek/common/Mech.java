@@ -437,6 +437,18 @@ public abstract class Mech
     public int getRunMPwithoutMASC() {
         return super.getRunMP();
     }
+
+    /**
+     * Returns this entity's running/flank mp as a string.
+     */
+    public String getRunMPasString() {
+        if (hasArmedMASC()) {
+            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+        } else {
+            return Integer.toString(getRunMP());
+        }
+
+    }
     
     /**
      * This mech's jumping MP modified for missing jump jets

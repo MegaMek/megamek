@@ -113,6 +113,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.29.9-dev
++ Fixed bug 781250 and cleaned up MASC code a bit
+
 v 0.29.8 (08-24-03, 8pm)
 + Bug 786735: Vibrabombs now works correctly.
 + Added minefield option under Game Options.

@@ -4067,13 +4067,11 @@ implements Runnable {
                             
                     // check ECM interference
                     if (!bCheckedECM) {
-
                         // Attacking Meks using stealth suffer ECM effects.
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
-                        } else {
-                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         }
+                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         bCheckedECM = true;
                     }
                     if (!bECMAffected && !bMekStealthActive) {
@@ -4085,9 +4083,8 @@ implements Runnable {
                         // Attacking Meks using stealth suffer ECM effects.
                         if ( ae instanceof Mech ) {
                             bMekStealthActive = ae.isStealthActive();
-                        } else {
-                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         }
+                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
                         bCheckedECM = true;
                     }
                     if (!bECMAffected && !bMekStealthActive) {

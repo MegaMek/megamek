@@ -14,6 +14,7 @@
 
 package megamek.test.client;
 
+import megamek.common.Settings;
 import megamek.client.util.ImageFileFactory;
 import megamek.common.util.DirectoryItems;
 import java.io.File;
@@ -33,7 +34,9 @@ public class ListCamoFiles {
     public static void main( String[] args ) {
 
         try {
-            File camoLib = new File("data/camo");
+            Settings settings = Settings.getInstance();
+            String rootDir = settings.get( "datadirectory", "data" );
+            File camoLib = new File( rootDir + "/camo");
             DirectoryItems images = new DirectoryItems
                 ( camoLib, "", ImageFileFactory.getInstance() );
             Enumeration categories = images.getCategoryNames();

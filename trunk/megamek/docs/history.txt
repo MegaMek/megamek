@@ -79,6 +79,7 @@ v CVS (10-20-02, 10pm)
 + 621346: mechs that "stomp" infantry in same hex have +3 to-hit mod
 + 621350: immobilized hovercraft sink in water
 + Ammo dumping implemented
++ HeavyGaussRifles added
 
 v 0.27.3 (10-18-02, 4pm)
 + Abstracted equipment mode system

@@ -78,9 +78,9 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_JUMP_JET)) {
-            if (entity.getWeight() >= 55.0) {
+            if (entity.getWeight() <= 55.0) {
                 return 0.5f;
-            } else if (entity.getWeight() >= 85.0) {
+            } else if (entity.getWeight() <= 85.0) {
                 return 1.0f;
             } else {
                 return 2.0f;

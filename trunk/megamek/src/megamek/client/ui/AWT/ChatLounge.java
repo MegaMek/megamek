@@ -759,8 +759,12 @@ public class ChatLounge extends AbstractPhaseDisplay
     }
     
     public void changeCamo(String camo) {
-        client.getLocalPlayer().setCamoFileName(camo);
-        client.sendPlayerInfo();
+    	String curCamo = client.getLocalPlayer().getCamoFileName();
+        if ((camo == null && curCamo != null)
+            || (camo != null && !camo.equals(curCamo))) {
+			client.getLocalPlayer().setCamoFileName(camo);
+			client.sendPlayerInfo();
+    	}
     }
 
     /**
@@ -851,9 +855,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         refreshEntities();
     }
     
-    //
-    // ItemListener
-    //
+    /*
+     * NOTE: On linux, this gets called even when programatically updating the
+     * list box selected item.  Do not let this go into an infinite loop.  Do not
+     * update the selected item (even indirectly, by sending player info) if 
+     * it is already selected.
+     */
     public void itemStateChanged(ItemEvent ev) {
         if (ev.getSource() == choColor) {
             changeColor(choColor.getSelectedIndex());

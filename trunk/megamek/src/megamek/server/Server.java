@@ -27,6 +27,8 @@ import megamek.common.actions.*;
 public class Server
     implements Runnable
 {
+    public final static String  LEGAL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.";
+    
     // server setup
     private String              name;
     private ServerSocket        serverSocket;
@@ -117,8 +119,8 @@ public class Server
     }
         
     /**
-     * Recieves a client name, sent from a pending connection as a signal to
-     * connect.
+     * Recieves a client name, sent from a pending connection, and connects
+     * that connection.
      */
     private void receiveClientName(Packet packet, int connId) {
         final Connection conn = getPendingConnection(connId);
@@ -165,7 +167,8 @@ public class Server
             send(connId, createSettingsPacket());
             break;
         default :
-            send(createBoardPacket());
+            getPlayer(connId).setReady(game.getEntitiesOwnedBy(getPlayer(connId)) <= 0);
+            send(connId, createBoardPacket());
             break;
         }
         send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(game.phase)));
@@ -177,22 +180,33 @@ public class Server
      * Validates the player info.
      */
     public void validatePlayerInfo(int playerId) {
-        //TODO: remove unsavory characters from the name
+        final Player player = getPlayer(playerId);
+        
+        // replace characters we don't like with "X"
+        StringBuffer nameBuff = new StringBuffer(player.getName());
+        for (int i = 0; i < nameBuff.length(); i++) {
+            int chr = nameBuff.charAt(i);
+            if (LEGAL_CHARS.indexOf(chr) == -1) {
+                nameBuff.setCharAt(i, 'X');
+            }
+        }
+        player.setName(nameBuff.toString());
+        
         //TODO: check for duplicate or reserved names
 
         // make sure colorIndex is unique
         boolean[] colorUsed = new boolean[Player.colorNames.length];
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player)i.nextElement();
-            if (player.getId() != playerId) {
-                colorUsed[player.getColorIndex()] = true;
+            final Player otherPlayer = (Player)i.nextElement();
+            if (otherPlayer.getId() != playerId) {
+                colorUsed[otherPlayer.getColorIndex()] = true;
             }
         }
-        if (colorUsed[getPlayer(playerId).getColorIndex()]) {
+        if (colorUsed[player.getColorIndex()]) {
             // find a replacement color;
             for (int i = 0; i < colorUsed.length; i++) {
                 if (!colorUsed[i]) {
-                    getPlayer(playerId).setColorIndex(i);
+                    player.setColorIndex(i);
                 }
             }
         }
@@ -454,7 +468,6 @@ public class Server
     private void resetPlayerReady() {
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-
             player.setReady(false);
         }
     }

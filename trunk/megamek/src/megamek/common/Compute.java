@@ -367,7 +367,7 @@ public class Compute
             }
             
             // amnesty for the first step
-            if (firstStep && moveType == Entity.MOVE_ILLEGAL && step.getType() == MovementData.STEP_FORWARDS) {
+            if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && step.getType() == MovementData.STEP_FORWARDS) {
                 moveType = Entity.MOVE_RUN;
             }
             

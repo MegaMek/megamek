@@ -715,14 +715,19 @@ public class BoardView1
         moveCursor(highlightSprite, b.getCoords());
     }
     public void boardChangedHex(BoardEvent b) {
-        ;
-    }
-    public void boardNewVis(BoardEvent b) {
-        ;
+        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+        drawHex(b.getCoords());
     }
     public void boardNewBoard(BoardEvent b) {
         boardSize = new Dimension(game.board.width * 63 + 21, 
                                   game.board.height * 72 + 36);
+        backGraph = null;
+        backImage = null;
+        backSize = null;
+        boardImage = null;
+        boardGraph = null;
+        imagesLoading = false;
+        imagesLoaded = false;
     }
     
     public void boardNewEntities(BoardEvent e) {
@@ -957,7 +962,7 @@ public class BoardView1
         mousePos = me.getPoint();
         isTipPossible = false;
         isScrolling = true;
-        if (view != null) {
+        if (backSize != null) {
             doScroll();
         }
         game.board.mouseAction(getCoordsAt(me.getPoint()), Board.BOARD_HEX_DRAG, me.getModifiers()); 

@@ -95,6 +95,9 @@ v next
 + torso twisting doesn't rotate leg firing arcs (thx Niels Naumann)
 + leg weapons blocked by terrain that gives attacker partial cover
 + fixed another bug with transfer damage
++ players can join the game at any time, to watch
++ 534820: mechs with 0 MP don't get the minimum 1 step movement rule applied
++ board editor working with new boardview
 
 v 0.24.3 (03-24-02, 9:30pm) 
 + 532083: transfer damage no longer counts double towards damage this phase

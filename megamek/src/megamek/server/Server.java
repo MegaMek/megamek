@@ -3175,6 +3175,11 @@ implements Runnable {
         // hmmm... somebody there... problems.
         if (fallElevation >= 2) {
             // accidental death from above
+            // TODO : code me!!!
+            System.err.println( "MegaMek should perform an accidental DFA for "
+                                + entity.getShortName() +
+                                " to land on " + violation.getShortName()
+                                + " but it doesn't.  We're working on it." );
         } else {
             // damage as normal
             doEntityFall(entity, dest, fallElevation, roll);

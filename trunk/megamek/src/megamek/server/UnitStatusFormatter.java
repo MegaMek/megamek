@@ -1,6 +1,6 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * UnitStatusFormatter.java - Copyright (C) 2002 Joshua Yockey
+ * MegaMek - Copyright (C) 2000,2001,2002 Ben Mazur (bmazur@sev.org)
+ * UnitStatusFormatter.java - Copyright (C) 2002,2004 Joshua Yockey
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -31,7 +31,8 @@ public abstract class UnitStatusFormatter
         sb.append(formatHeader(e));
         sb.append("-------------------------------------------------------------\n");
         sb.append(formatArmor(e));
-        if (e instanceof Mech) {
+        if ( e instanceof Mech ||
+             e instanceof Protomech ) {
             sb.append("-------------------------------------------------------------\n");
             sb.append(formatCrits(e));
         }
@@ -89,7 +90,10 @@ public abstract class UnitStatusFormatter
                         sb.append("*");
                     }
                     if (e instanceof Mech) {
-                        sb.append(((Mech)e).systemNames[cs.getIndex()]);
+                        sb.append( Mech.systemNames[cs.getIndex()] );
+                    }
+                    else if ( e instanceof Protomech ) {
+                        sb.append( Protomech.systemNames[cs.getIndex()] );
                     }
                 }
                 else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
@@ -116,6 +120,8 @@ public abstract class UnitStatusFormatter
             return formatArmorBattleArmor((BattleArmor)e);
         } else if (e instanceof Infantry) {
             return formatArmorInfantry((Infantry)e);
+        } else if (e instanceof Protomech) {
+            return formatArmorProtomech((Protomech)e);
         }
         return "";
     }
@@ -236,13 +242,74 @@ public abstract class UnitStatusFormatter
         return sb.toString();
     }
     
+    private static String formatArmorProtomech(Protomech m)
+    {
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("         FRONT                INTERNAL\n");
+
+        // head & main gun
+        sb.append("        ");
+        if ( m.hasMainGun() ) {
+            sb.append(renderArmor(m.getArmor(Protomech.LOC_MAINGUN),1));
+        } else {
+            sb.append(" ");
+        }
+        sb.append(" (")
+            .append(renderArmor(m.getArmor(Protomech.LOC_HEAD),1))
+            .append(")                  ");
+        if ( m.hasMainGun() ) {
+            sb.append(renderArmor(m.getInternal(Protomech.LOC_MAINGUN),1));
+        } else {
+            sb.append(" ");
+        }
+        sb.append(" (");
+        sb.append(renderArmor(m.getInternal(Protomech.LOC_HEAD),1))
+            .append(")\n");
+        if ( m.hasMainGun() ) {
+            sb.append("         \\/ \\                   \\/ \\\n");
+        } else {
+            sb.append("          / \\                    / \\\n");
+        }
+        // arms & torso
+        sb.append("      (")
+            .append(renderArmor(m.getArmor(Protomech.LOC_LARM),1));
+        sb.append(" /") 
+            .append(renderArmor(m.getArmor(Protomech.LOC_TORSO)))
+            .append(" \\")
+            .append(renderArmor(m.getArmor(Protomech.LOC_RARM)));
+        sb.append(")            (");
+        sb.append(renderArmor(m.getInternal(Protomech.LOC_LARM),1))
+            .append(" /")
+            .append(renderArmor(m.getInternal(Protomech.LOC_TORSO)))
+            .append(" \\");
+        sb.append(renderArmor(m.getInternal(Protomech.LOC_RARM)))
+            .append(")\n");
+        // legs
+        sb.append("         | | |                  | | |\n");
+        sb.append("        ( ")
+            .append(renderArmor(m.getArmor(Protomech.LOC_LEG)));
+        sb.append("  )                ( ");
+        sb.append(renderArmor(m.getInternal(Protomech.LOC_LEG)))
+            .append("  )\n");
+        sb.append("\n");
+        return sb.toString();
+    }
+
     private static String renderArmor(int nArmor)
     {
+        return renderArmor(nArmor, 2);
+    }
+    private static String renderArmor(int nArmor, int spaces)
+    {
         if (nArmor <= 0) {
-            return "xx";
+            if ( 1 == spaces ) {
+                return "x";
+            } else {
+                return "xx";
+            }
         }
         else {
-            return makeLength(String.valueOf(nArmor), 2, true);
+            return makeLength(String.valueOf(nArmor), spaces, true);
         }
     }
     

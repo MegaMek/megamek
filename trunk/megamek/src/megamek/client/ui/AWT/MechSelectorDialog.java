@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002 Josh Yockey
+ * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -155,6 +155,7 @@ public class MechSelectorDialog
         m_chUnitType.addItem("Mek");
         m_chUnitType.addItem("Tank");
         m_chUnitType.addItem("Infantry");
+        m_chUnitType.addItem("ProtoMek");
         m_chUnitType.addItem("All");
     }
     

@@ -1440,7 +1440,7 @@ public class BoardView1
     }
 
     
-    private boolean doMoveUnits(long idleTime) {
+    private synchronized boolean doMoveUnits(long idleTime) {
     	boolean movingSomething = false;
 
 		if (movingUnits.size() > 0) {

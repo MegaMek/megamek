@@ -27,7 +27,7 @@ import java.awt.MediaTracker;
 import java.io.*;
 
 import megamek.common.*;
-import megamek.client.util.StringUtil;
+import megamek.common.util.StringUtil;
 
 /**
  * Matches each hex with an appropriate image.

@@ -20,9 +20,7 @@ import megamek.client.util.widget.PMUtil;
 
 public class UnitOverview implements Displayable {
 
-    public static final int		ICON_NAME_MAX_LENGTH = 52;
-
-	private static final int	UNKNOWN_UNITS_PER_PAGE = -1;
+    private static final int	UNKNOWN_UNITS_PER_PAGE = -1;
 
     private static final Font   FONT = new Font("SansSerif", Font.PLAIN, 10);
     private static final int    DIST_TOP = 5;

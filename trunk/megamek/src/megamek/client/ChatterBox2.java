@@ -15,7 +15,7 @@
 package megamek.client;
 
 import megamek.client.util.widget.PMUtil;
-import megamek.client.util.StringUtil;
+import megamek.common.util.StringUtil;
 
 import java.awt.*;
 import java.awt.event.*;

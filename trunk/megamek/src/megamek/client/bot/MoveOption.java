@@ -226,7 +226,7 @@ public class MoveOption extends MovePath implements Cloneable {
         if (last == null || last.getMovementType() == Entity.MOVE_ILLEGAL) {
             return false;
         }
-        if (last.getType() != STEP_FORWARDS || isInfantry()) {
+        if (last.getType() != STEP_FORWARDS || isInfantry() || isProtomech() || (game.getOptions().booleanOption("no_clan_physical") && isClan())) {
             return false;
         }
         Enumeration e = game.getEntities(last.getPosition());

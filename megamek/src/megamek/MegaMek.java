@@ -155,9 +155,9 @@ public class MegaMek implements ActionListener {
         connectB.setActionCommand("fileGameConnect");
         connectB.addActionListener(this);
 
-        //botB = new Button("Connect as a Bot...");
-        //botB.setActionCommand("fileGameConnectBot");
-        //botB.addActionListener(this);
+        botB = new Button("Connect as a Bot...");
+        botB.setActionCommand("fileGameConnectBot");
+        botB.addActionListener(this);
 
         editB = new Button("Map Editor");
         editB.setActionCommand("fileBoardNew");
@@ -219,8 +219,8 @@ public class MegaMek implements ActionListener {
         c.gridy++;
         addBag(connectB, gridbag, c);
         c.gridy++;
-        //addBag(botB, gridbag, c);
-        //c.gridy++;
+        addBag(botB, gridbag, c);
+        c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(quitB, gridbag, c);
@@ -538,7 +538,9 @@ public class MegaMek implements ActionListener {
         // initialize game
         client = new TestBot(cd.name, cd.serverAddr, cd.port);
         client.addGameListener(new BotGUI((BotClient)client));
-        try {
+		ClientGUI gui = new ClientGUI(client);
+		gui.initialize();
+		try {
             client.connect();
         } catch (Exception e) {
             StringBuffer error = new StringBuffer();
@@ -644,51 +646,12 @@ public class MegaMek implements ActionListener {
         frame.setVisible(true);
     }
 
-    private static void testDice() {
-        // test RNG
-        long rolls = 1000000;
-        int sides = 14;
-        long[] hits = new long[sides];
-
-        System.out.println("testing dice, " + rolls + " rolls...");
-
-        long start = System.currentTimeMillis();
-        for (long i = 0; i < rolls; i++) {
-            hits[megamek.common.Compute.d6(2)]++;
-        }
-        long end = System.currentTimeMillis();
-
-        System.out.println("done testing dice in " + (end - start) + " ms.");
-        for (int i = 0; i < sides; i++) {
-            System.out.println(
-                "hits on " + i + " : " + hits[i] + "; probability = " + ((double) hits[i] / (double) rolls));
-        }
-
-        int[][] pairs = new int[7][7];
-        System.out.println("testing streaks, " + rolls + " rolls...");
-
-        int nLastLastRoll = 0, nRoll = 0;
-        for (long i = 0; i < rolls; i++) {
-            nRoll = megamek.common.Compute.d6();
-            pairs[nLastLastRoll][nRoll]++;
-            nLastLastRoll = nRoll;
-        }
-        for (int x = 0; x < pairs.length; x++) {
-            for (int y = 0; y < pairs[x].length; y++) {
-                System.out.println(x + "," + y + ": " + pairs[x][y]);
-            }
-        }
-        // odd, but necessary
-        System.out.flush();
-
-    }
-
     public static void main(String[] args) {
 
         String logFileName = "MegaMek.log";
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-testdice")) {
-                testDice();
+                TestDice.testDice();
                 return;
             } else if (args[i].equals("-dedicated")) {
                 // Next argument may be the savegame file's name.

@@ -299,13 +299,19 @@ public class TestBot extends BotClientWrapper {
     int initiative = 0;
     EntityState min = null;
 
-    //I'm not quite sure where to put this, but we need to make sure that if
-    //an entity falls, and gets another turn, that it takes it -- Ben
+    // if we're ordered to move a specific entity, assume that's because it
+    // fell and reset it so that we recalculate its movement
     if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
         GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn)game.getTurn();
         Entity mustMove = game.getEntity(turn.getEntityNum());
-        this.enemies.get(mustMove).refresh();
-        this.enemies.get(mustMove).moved = false;
+        CEntity centity = this.enemies.get(mustMove);
+        // do some resetting
+        centity.refresh = true;
+        centity.moved = false;
+        centity.refresh();
+        // clear old moves
+        this.old_moves = null;
+        System.out.println("reset entity " + mustMove.getId());
     }
     //first check and make sure that someone else has moved so that we don't replan
     Object[] enemy_array = this.getEnemyEntities().toArray();
@@ -314,16 +320,17 @@ public class TestBot extends BotClientWrapper {
         initiative++;
       }
     }
-    
+    // if nobody's moved and we have a valid move waiting, use that
     if (initiative == enemies_moved && old_moves != null) {
       min = this.old_moves.getResult();
-      if (min == null) return;
-      if (!min.isMoveLegal() || (min.isPhysical && min.PhysicalTarget.isPhysicalTarget)) {
+      if (min == null || !min.isMoveLegal() || (min.isPhysical && min.PhysicalTarget.isPhysicalTarget)) {
         this.old_moves = null;
         this.calculateMoveTurn();
+        System.out.println("recalculating moves since the old move was invalid");
         return;
       }
     } else {
+      // otherwise calculate some moves
       enemies_moved = initiative;
       Vector possible = new Vector();
       Iterator i = this.getEntitiesOwned().iterator();

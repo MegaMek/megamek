@@ -181,6 +181,12 @@ public class MechFileParser {
                         break;
                     }
                 }
+
+                if (m.getLinked() == null) {
+                    // This mech has stealth armor but no ECM.  Probably
+                    //  an improperly created custom.
+                    throw new EntityLoadingException("Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
+                }
             } // End link-Stealth
 
         } // Check the next piece of equipment.

@@ -22,6 +22,7 @@ v0.29.72 (CVS)
 + Added Adder, Bane, Battle Cobra, Black Lanner, Blood Asp, Cougar, Crimson Langour,
      Executioner, Hellbringer, Ice Ferret, Kit Fox, Mad Dog, Mist Lynx, Nova H,
      Stormcrow, Timberwolf, Viper variant pics.
++ Bug 1023852: duplicate entries in gamelog.txt when playing against bot.
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

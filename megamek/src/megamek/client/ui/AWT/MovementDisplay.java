@@ -456,6 +456,16 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private void moveTo(MovePath md) {
+        if (md.length() == 0 && Settings.nagForNoAction) {
+            //Hmm....no movement steps, comfirm this action
+            String title = "Remain stationary?";
+            String body = "This unit has not moved.\n\n" +
+                "Are you really done?\n";
+            if (!client.doYesNoDialog(title, body)) {
+                return;
+            }
+        }
+
         if ( md != null ) {
             if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
                 Mech m = (Mech)ce();

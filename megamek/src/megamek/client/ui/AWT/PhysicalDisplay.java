@@ -296,6 +296,16 @@ public class PhysicalDisplay
      * Called when the current entity is done with physical attacks.
      */
     private void ready() {
+        if (attacks.isEmpty() && Settings.nagForNoAction) {
+            // comfirm this action
+            String title = "Don't physical attack?";
+            String body = "This unit has not used any physical attacks.\n\n" +
+                "Are you really done?\n";
+            if (!client.doYesNoDialog(title, body)) {
+                return;
+            }
+        }
+
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();

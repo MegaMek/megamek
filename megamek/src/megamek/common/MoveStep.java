@@ -87,7 +87,7 @@ public class MoveStep implements Serializable {
         this.targetId = target.getTargetId();
         this.targetType = target.getTargetType();
     }
-    
+
     void setParent(MovePath path) {
         parent = path;
     }
@@ -220,11 +220,6 @@ public class MoveStep implements Serializable {
                     setOnlyPavement(false);
                 }
 
-                // 2002-10-28 Suvarov454 : Discard impossible locations.
-                if (!game.getBoard().contains(getPosition())) {
-                    movementType = Entity.MOVE_ILLEGAL;
-                    return;
-                }
                 setMp(
                     Compute.getMovementCostFor(
                         game,
@@ -379,7 +374,7 @@ public class MoveStep implements Serializable {
 
         this.distance = prev.getDistance();
         this.mpUsed = prev.mpUsed;
-		this.totalHeat = prev.totalHeat;
+        this.totalHeat = prev.totalHeat;
         this.isPavementStep = prev.isPavementStep;
         this.onlyPavement = prev.onlyPavement;
         this.thisStepBackwards = prev.thisStepBackwards;
@@ -426,6 +421,9 @@ public class MoveStep implements Serializable {
 	 */
     public void moveInDir(int dir) {
         position = position.translated(dir);
+		if (!parent.game.getBoard().contains(position)) {
+		    throw new RuntimeException("Coordinate off the board.");
+		}
     }
 
     /**
@@ -812,7 +810,7 @@ public class MoveStep implements Serializable {
             || isUnloaded) {
             movementType = Entity.MOVE_ILLEGAL;
         }
-        
+
         if (prev != null && !prev.isLegal()) {
             movementType = Entity.MOVE_ILLEGAL;
         }
@@ -866,7 +864,7 @@ public class MoveStep implements Serializable {
     public int getTotalHeat() {
         return totalHeat;
     }
-    
+
     public int getHeat() {
         return heat;
     }

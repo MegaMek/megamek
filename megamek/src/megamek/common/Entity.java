@@ -1137,25 +1137,27 @@ public abstract class Entity
      * Returns a string representing the armor in the location
      */
     public String getArmorString(int loc, boolean rear) {
-        if (getArmor(loc, rear) == ARMOR_NA) {
-            return "N/A";
-        } else if (getArmor(loc, rear) == ARMOR_DESTROYED) {
-            return "***";
-        } else {
-            return Integer.toString(getArmor(loc, rear));
-        }
+        return armorStringFor(getArmor(loc, rear));
     }
     
     /**
      * Returns a string representing the internal structure in the location
      */
     public String getInternalString(int loc) {
-        if (getInternal(loc) == ARMOR_NA) {
+        return armorStringFor(getInternal(loc));
+    }
+    
+    /**
+     * Parses the game's internal armor representation into a human-readable 
+     * string.
+     */
+    public static String armorStringFor(int value) {
+        if (value == ARMOR_NA) {
             return "N/A";
-        } else if (getInternal(loc) == ARMOR_DESTROYED) {
+        } else if (value == ARMOR_DOOMED || value == ARMOR_DESTROYED) {
             return "***";
         } else {
-            return Integer.toString(getInternal(loc));
+            return Integer.toString(value);
         }
     }
     

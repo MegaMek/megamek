@@ -846,12 +846,11 @@ public abstract class Entity
     
     
     public int getWalkMP( boolean gravity ) {
-        float j = walkMP;
+        int mp = this.walkMP;
         if (game != null && gravity) {
-            j = walkMP / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
+            mp = applyGravityEffectsOnMP(mp);
         }
-        return Math.max((int)j - (int)(heat / 5), 0);
+        return Math.max(mp - (int)(heat / 5), 0);
     }
 
     /**
@@ -912,12 +911,7 @@ public abstract class Entity
      * water.)
      */
     public int getJumpMPWithTerrain() {
-        float j;
-        if (game != null) {
-            j = jumpMP / game.getOptions().floatOption("gravity");
-            j = ((Math.round(j) - j) == 0.5) ? (Math.round(j - 0.1)) : Math.round(j);
-            return (int)j;
-        } else return jumpMP;
+        return getJumpMP();
     }
 
     /**
@@ -3541,12 +3535,13 @@ public abstract class Entity
     }
     
     protected int applyGravityEffectsOnMP (int MP) {
+        int result = MP;
         if (game != null) {
-            float modMP = MP / game.getOptions().floatOption("gravity");
-            modMP = ((Math.round (modMP) - modMP) < (0.5+0.000001)) ? (Math.round(modMP - 0.000001 * 2.0)) : Math.round(modMP);
-            return Math.max ((int)modMP, 0);
+            float fMP = MP / game.getOptions().floatOption("gravity");
+            fMP = (Math.abs((Math.round(fMP) - fMP)) == 0.5) ? (float)Math.floor(fMP) : Math.round(fMP); //the rule requires rounding down on .5
+            result = (int)fMP;
         }
-        return MP;
+        return result;
      }
 
     /** Whether this type of unit can perform charges */

@@ -29,11 +29,13 @@ implements Serializable
     /** IDs of possible spotters, won't know until it lands. */
     private Vector spotterIds;
     private final int playerId;
+    private Coords firingCoords; //Coords of firing entity, needed for resolving attack direction.
     public ArtilleryAttackAction(WeaponResult wr, Game game,
-                                 int playerId, Vector spotterIds) {
+                                 int playerId, Vector spotterIds,Coords coords) {
         this.wr = wr;
         this.playerId = playerId;
         this.spotterIds = spotterIds;
+        this.firingCoords= coords;
         int distance = Compute.effectiveDistance
             (game, wr.waa.getEntity(game), wr.waa.getTarget(game));
         // Two boards is one turn of flight time, except on the same sheet.
@@ -53,5 +55,11 @@ implements Serializable
     }
     public void setSpotterIds(Vector spotterIds) {
         this.spotterIds=spotterIds;
+    }
+    public void setCoords(Coords coords) {
+        this.firingCoords=coords;
+    }
+    public Coords getCoords() {
+        return this.firingCoords;
     }
 }

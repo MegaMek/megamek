@@ -86,6 +86,11 @@ public class EntityListFile {
                 output.append( String.valueOf
                                 (mount.getShotsLeft()) );
             }
+            if ( mount.getType() instanceof WeaponType &&
+                 ((WeaponType)mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                output.append( "\" munition=\"" );
+                output.append( mount.getLinked().getType().getInternalName() );
+            }
         }
         if ( isHit ) {
             output.append( "\" isHit=\"" );
@@ -211,6 +216,17 @@ public class EntityListFile {
                         thisLoc.append( String.valueOf(mount.getShotsLeft()) );
                         thisLoc.append( "\"/>" );
                         thisLoc.append( Settings.NL );
+                        haveSlot = true;
+                    }
+
+                    // Record the munition type of oneshot launchers
+                    else if ( !isDestroyed && mount != null &&
+                              mount.getType() instanceof WeaponType &&
+                              ((WeaponType)mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                        thisLoc.append( formatSlot( String.valueOf(loop+1),
+                                                    mount,
+                                                    slot.isHit(),
+                                                    slot.isDestroyed() ) );
                         haveSlot = true;
                     }
 

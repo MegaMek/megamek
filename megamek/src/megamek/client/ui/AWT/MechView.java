@@ -178,6 +178,8 @@ public class MechView {
         Vector vWeapons = mech.getWeaponList();
         for (int j = 0; j < vWeapons.size(); j++)       {
             Mounted mounted = (Mounted) vWeapons.elementAt(j);
+            WeaponType wtype = (WeaponType)mounted.getType();
+
             sWeapons.append( mounted.getDesc() )
                 .append( "  [" )
                 .append( mech.getLocationAbbr(mounted.getLocation()) )
@@ -190,6 +192,11 @@ public class MechView {
                 mounted.getType().getInternalName().substring(0,2).equals("CL")) {
                 sWeapons.append(" (Clan)");
             }
+            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                sWeapons.append(" <")
+                    .append(mounted.getLinked().getDesc())
+                    .append(">");
+            }
             sWeapons.append("\n");
         }
         return sWeapons.toString();
@@ -200,10 +207,12 @@ public class MechView {
         StringBuffer sAmmo = new StringBuffer();
         while (eAmmo.hasMoreElements()) {
             Mounted mounted = (Mounted)eAmmo.nextElement();
-            sAmmo.append( mounted.getDesc() )
-                .append( "  [" )
-                .append( mech.getLocationAbbr(mounted.getLocation()) )
-                .append( "]\n" );
+            if (mounted.getLocation() != Entity.LOC_NONE) {
+                sAmmo.append( mounted.getDesc() )
+                    .append( "  [" )
+                    .append( mech.getLocationAbbr(mounted.getLocation()) )
+                    .append( "]\n" );
+            }
         }
         return sAmmo.toString();
     }

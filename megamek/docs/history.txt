@@ -5,6 +5,7 @@ v0.29.48 (CVS)
 + Bug 1001924: Freeze when displacement does not work correctly, thanks weaselflink
 + Accidental fall from above now working.
 + Data 1019241: Fixed Wasp antennas.
++ Added the rest of the one-shot weapons.
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

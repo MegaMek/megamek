@@ -409,8 +409,16 @@ extends Dialog implements ActionListener, DialogOptionListener {
                     m_choice.select(x);
                 }
             }
+            int loc;
             setLayout(new BorderLayout());
-            String sDesc = "(" + entity.getLocationAbbr(m.getLocation()) + ")";
+            if (m.getLocation() == Entity.LOC_NONE) {
+                // oneshot weapons don't have a location of their own
+                Mounted linkedBy = m.getLinkedBy();
+                loc = linkedBy.getLocation();
+            } else {
+                loc = m.getLocation();
+            }
+            String sDesc = "(" + entity.getLocationAbbr(loc) + ")";
             add(new Label(sDesc), BorderLayout.WEST);
             add(m_choice, BorderLayout.CENTER);
         }

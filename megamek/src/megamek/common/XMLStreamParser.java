@@ -144,6 +144,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  IS_REAR = "isRear";
     public static final String  SHOTS   = "shots";
     public static final String  IS_HIT  = "isHit";
+    public static final String  MUNITION= "munition";
 
     /**
      * Special values recognized by this parser.
@@ -711,6 +712,7 @@ public class XMLStreamParser implements XMLResponder {
                 String shots = (String) attr.get( SHOTS );
                 String hit = (String) attr.get( IS_HIT );
                 String destroyed = (String) attr.get( IS_DESTROYED );
+                String munition = (String) attr.get( MUNITION );
 
                 // Did we find required attributes?
                 if ( index == null || index.length() == 0 ) {
@@ -972,6 +974,23 @@ public class XMLStreamParser implements XMLResponder {
                                 .append( ", but Entity has " )
                                 .append( mounted.getType().getInternalName() )
                                 .append( "there .\n" );
+                        }
+
+                        // Check for munition attribute.
+                        if (munition != null) {
+                            // Retrieve munition by name.
+                            EquipmentType munType = EquipmentType.get( munition );
+
+                            // Make sure munition is  a type of ammo.
+                            if ( munType instanceof AmmoType ) {
+                                // Change to the saved munition type.
+                                mounted.getLinked().changeAmmoType((AmmoType) munType);
+                            } else {
+                                // Bad XML equipment.
+                                this.warning.append( "XML file expects " )
+                                    .append( " ammo for munition argument of ")
+                                    .append( " slot tag.\n" );
+                            }
                         }
 
                     } // End have-equipment

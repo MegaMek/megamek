@@ -19,7 +19,7 @@ v0.29.72 (CVS)
 + Bug 1119505: can't customize long tom units when lobby_ammo_dump is on.
 + Patch 1173557, Bug 1173548: Client#die causes NPE when Settings.keepServerlog
      != true
-+ Added Adder, Battle Cobra, Black Lanner, Blood Asp, Cougar, Crimson Langour,
++ Added Adder, Bane, Battle Cobra, Black Lanner, Blood Asp, Cougar, Crimson Langour,
      Executioner, Hellbringer, Ice Ferret, Kit Fox, Mad Dog, Mist Lynx, Nova H,
      Stormcrow, Timberwolf, Viper variant pics.
 

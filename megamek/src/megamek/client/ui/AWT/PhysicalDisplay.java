@@ -161,7 +161,7 @@ public class PhysicalDisplay
     private void setupStatusBar() {
         panStatus = new Panel();
 
-        labStatus = new Label("Waiting to begin Movement phase...", Label.CENTER);
+        labStatus = new Label("Waiting to begin Physical Attack phase...", Label.CENTER);
         
         butDisplay = new Button("D");
         butDisplay.addActionListener(this);

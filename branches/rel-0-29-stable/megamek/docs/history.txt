@@ -121,6 +121,8 @@ v 0.29-stable-2 (CVS)
 + Data 764066: Added BH-21's updated images.
 + Data 769828: Swapped Perseus' & Yeoman's images.
 + Bug 764704: Inferno SRM-2's can still target woods for ignition.
++ Bug 773000: Tank hit locations
++ Bug 773001: Tank locations on armor diagram
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

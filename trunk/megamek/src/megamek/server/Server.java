@@ -1073,10 +1073,29 @@ implements Runnable {
     }
     
     /**
-     * Skips the current turn.  This only makes sen
+     * Skips the current turn.  This only makes sense in phases that have turns.
+     * Operates by finding an entity to move and then doing nothing with it.
      */
     public void skipCurrentTurn() {
-        endCurrentTurn(null);
+        // find an entity to skip...
+        Entity toSkip = game.getFirstEntity();
+        
+        switch (game.getPhase()) {
+            case Game.PHASE_DEPLOYMENT :
+                sendServerChat("Turns cannot be skipped in the deployment phase.");
+                break;
+            case Game.PHASE_MOVEMENT :
+                processMovement(toSkip, new MovementData());
+                endCurrentTurn(toSkip);
+                break;
+            case Game.PHASE_FIRING :
+            case Game.PHASE_PHYSICAL :
+                processAttack(toSkip, new Vector(0));
+                endCurrentTurn(toSkip);
+                break;
+            default :
+                
+        }
     }
     
     /**

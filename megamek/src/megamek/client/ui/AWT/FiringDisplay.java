@@ -649,6 +649,10 @@ public class FiringDisplay
     }
     
     private void updateFlipArms(boolean armsFlipped) {
+        if (armsFlipped == ce().getArmsFlipped()) {
+            return;
+        }
+        
       twisting = false;
 
       torsoTwist(null);

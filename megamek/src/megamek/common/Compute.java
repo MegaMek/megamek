@@ -839,6 +839,12 @@ public class Compute
                 }
             }
 
+            // Swamp adds to movement cost and force a "get stuck" check.
+            /* TODO: uncomment me in v0.29.1
+            if ( destHex.contains(Terrain.SWAMP) ) {
+                mp += 1;
+            }
+            */
         } // End not-along-road
         
         // account for elevation?

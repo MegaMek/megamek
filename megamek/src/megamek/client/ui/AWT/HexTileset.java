@@ -99,8 +99,10 @@ public class HexTileset {
         double match = -1;
 
         // match a base image to the hex
-        for (Iterator i = bases.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry)i.next();
+        Iterator iter = bases.iterator();
+
+        while ( iter.hasNext() ) {
+            HexEntry entry = (HexEntry) iter.next();
             double thisMatch = baseMatch(hex, entry.getHex());
             // stop if perfect match
             if (thisMatch == 1.0) {
@@ -193,6 +195,8 @@ public class HexTileset {
      * Match the two hexes using the "super" formula.  All matches must be
      * exact, however the match only depends on the original hex matching
      * all the elements of the comparision, not vice versa.
+     *
+     * EXCEPTION: a themed original matches any unthemed comparason.
      */
     private double superMatch(Hex org, Hex com) {
         // check elevation
@@ -213,9 +217,10 @@ public class HexTileset {
                 return 0;
             }
         }
-        // check theme
-        if (com.getTheme() != org.getTheme() && !com.getTheme().equals(org.getTheme())) {
-            return 0;
+        // A themed original matches any unthemed comparason.
+        if ( com.getTheme() != null &&
+             !com.getTheme().equalsIgnoreCase(org.getTheme()) ) {
+            return 0.0;
         } 
         
         return 1.0;
@@ -270,7 +275,9 @@ public class HexTileset {
         }
         
         // check theme
-        if (com.getTheme() == org.getTheme() || (com.getTheme() != null && com.getTheme().equalsIgnoreCase(org.getTheme()))) {
+        if ( com.getTheme() == org.getTheme() || 
+             ( com.getTheme() != null &&
+               com.getTheme().equalsIgnoreCase(org.getTheme()) ) ) {
             theme = 1.0;
         } else {
             // also don't throw a match entirely out because the theme is off

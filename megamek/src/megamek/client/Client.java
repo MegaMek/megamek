@@ -133,7 +133,7 @@ public class Client extends Panel
                 
         game = new Game();
         
-        popup = new PopupMenu("board popup");
+        popup = new PopupMenu("Board Popup...");
 
         bv = new BoardView1(game, frame);
 //        bc = new BoardComponent(bv);
@@ -925,6 +925,9 @@ public class Client extends Panel
     }
     
     public void mousePressed(java.awt.event.MouseEvent mouseEvent) {
+        if (mouseEvent.isPopupTrigger()) {
+            showBoardPopup(mouseEvent.getPoint());
+        }
     }
     
     public void mouseReleased(java.awt.event.MouseEvent mouseEvent) {

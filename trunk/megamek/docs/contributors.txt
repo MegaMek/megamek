@@ -15,6 +15,7 @@ Lot of people have contributed to the MegaMek project.
      Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>
      Cord Awtry <kipsta@bs-interactive.com>
      Joseph Tyx <spikezom@yahoo.com>
+     Robert Hinkle <Rasia@planettribes.com>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

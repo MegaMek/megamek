@@ -36,6 +36,7 @@ public class Mounted implements Serializable{
     private transient boolean missing = false;
     
     private int shotsLeft; // for ammo
+    private int firingMode; //Fire Mode - for detecting what mode a weapon is firing in
     
     private int location;
     private boolean rearMounted;
@@ -53,6 +54,7 @@ public class Mounted implements Serializable{
         this.entity = entity;
         this.type = type;
         this.typeName = type.getInternalName();
+        this.firingMode = 1;  // Fire Mode - Set the default Fire Mode for all mounted things to 1, Prolly should change this to only if it is a weapon        
         
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType)type).getShots();
@@ -141,6 +143,15 @@ public class Mounted implements Serializable{
     
     public void setShotsLeft(int shotsLeft) {
         this.shotsLeft = shotsLeft;
+    }
+    
+   // Fire Mode - Reports current Fire mode, and sets the current Fire Mode respectively - Rasia
+    public int getFiringMode() {
+	return firingMode;
+    }
+
+    public void setFiringMode(int firingMode) {
+	this.firingMode = firingMode;
     }
     
     public int getLocation() {

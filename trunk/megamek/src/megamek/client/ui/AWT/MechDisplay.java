@@ -611,7 +611,10 @@ class WeaponPanel
                 }
                 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
-            }
+		// Fire Mode - Add the Firing Mode identifier at the end of the weapon list for uACs- Rasia
+		if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+			wn += mounted.getFiringMode() == 1 ? " Single" : " Double";
+		}            }
             weaponList.add(wn);
         }
     }

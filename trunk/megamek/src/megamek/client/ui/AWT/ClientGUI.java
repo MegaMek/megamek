@@ -507,13 +507,6 @@ public class ClientGUI
             frame.dispose();
         } catch (Throwable error) {
             error.printStackTrace();
-            System.err.println("Attempting to close the InputContext in java.client.Client#die()...");
-            try {
-                curPanel.getInputContext().endComposition();
-            } catch (Throwable thr) {
-                thr.printStackTrace();
-                frame.dispose();
-            }
         }
         client.die();
     }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -882,16 +882,16 @@ public class HmpFile
         }
         final long value = critical.longValue();
 
-        String name = (String) criticals.get(critical);
-        if (name == null) {
+        String critName = (String) criticals.get(critical);
+        if (critName == null) {
             Hashtable techCriticals = (Hashtable) criticals.get(techType);
             if (techCriticals != null) {
-                name = (String) techCriticals.get(critical);
+                critName = (String) techCriticals.get(critical);
             }
         }
 
         // Report unexpected parsing failures.
-        if ( name == null &&
+        if ( critName == null &&
              value != 0  &&     // 0x00 Empty
              value != 7  &&     // 0x07 Lower Leg Actuator (on a quad)
              value != 8  &&     // 0x08 Foot Actuator (on a quad)
@@ -904,10 +904,10 @@ public class HmpFile
             System.out.println( ")" );
         }
 
-        if ( name == null && value == 0)
+        if ( critName == null && value == 0)
             return "-Empty-";
 
-        return name;
+        return critName;
     }
 
   public static void main(String[] args)

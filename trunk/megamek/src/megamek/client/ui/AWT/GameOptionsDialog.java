@@ -159,7 +159,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     public void doSave() {
-      Vector options = new Vector();
+      Vector output = new Vector();
       
       for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
         DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
@@ -167,10 +167,10 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         GameOption option = comp.getOption().deepCopy();
         option.setValue(comp.getValue());
         
-        options.addElement(option);
+        output.addElement(option);
       }
       
-      GameOptions.saveOptions(options);
+      GameOptions.saveOptions(output);
       
       savedAlert.show();
     }

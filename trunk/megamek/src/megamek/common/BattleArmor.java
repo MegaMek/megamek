@@ -584,13 +584,13 @@ public class BattleArmor
             }
 
             // As of 2003-01-03, only ammo burdens the jump
-            Enumeration enum = this.getAmmo();
+            Enumeration iter = this.getAmmo();
             Mounted mounted = null;
             EquipmentType type = null;
 
             // Loop through the squad's equipment.
-            while ( enum.hasMoreElements() ) {
-                mounted = (Mounted) enum.nextElement();
+            while ( iter.hasMoreElements() ) {
+                mounted = (Mounted) iter.nextElement();
                 type = mounted.getType();
 
                 // Un-jettisoned ammo packs burden squads.

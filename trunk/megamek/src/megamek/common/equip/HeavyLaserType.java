@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -20,10 +20,10 @@ import megamek.common.*;
 
 public class HeavyLaserType extends LaserType {
 
-    // All heavy lasers are clan weaons.
-    public static final int SMALL = 31;
-    public static final int MED   = 32;
-    public static final int LARGE = 33;
+//     // All heavy lasers are clan weaons.
+//     public static final int SMALL = 31;
+//     public static final int MED   = 32;
+//     public static final int LARGE = 33;
 
     public HeavyLaserType (int size) {
 	super(TechConstants.T_CLAN_LEVEL_2, size);

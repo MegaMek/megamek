@@ -161,9 +161,9 @@ class MovementPanel extends PicMap{
         gi = new GeneralInfoMapSet(this);
         addElement(gi.getContentGroup());
         Vector v = gi.getBackgroundDrawers();
-        Enumeration enum = v.elements();
-        while(enum.hasMoreElements()){
-          addBgDrawer( (BackGroundDrawer) enum.nextElement());
+        Enumeration iter = v.elements();
+        while(iter.hasMoreElements()){
+          addBgDrawer( (BackGroundDrawer) iter.nextElement());
         }
         onResize();
     }
@@ -286,9 +286,9 @@ class ArmorPanel  extends PicMap
         ams.setEntity(en);
         this.addElement(ams.getContentGroup());
         Vector v = ams.getBackgroundDrawers();
-        Enumeration enum = v.elements();
-        while (enum.hasMoreElements()) {
-            addBgDrawer((BackGroundDrawer) enum.nextElement());
+        Enumeration iter = v.elements();
+        while (iter.hasMoreElements()) {
+            addBgDrawer((BackGroundDrawer) iter.nextElement());
         }
         onResize();
         update();

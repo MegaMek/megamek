@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -20,12 +20,11 @@ import megamek.common.*;
 
 public class PulseLaserType extends LaserType {
 
-    public static final int MICRO = 20;
-    public static final int SMALL = 21;
-    public static final int MED   = 22;
-    public static final int LARGE = 23;
-    
-    protected int size;
+//     public static final int MICRO = 20;
+//     public static final int SMALL = 21;
+//     public static final int MED   = 22;
+//     public static final int LARGE = 23;
+
     public PulseLaserType (int tech, int size) {
 	super(tech,size);
 	this.techType = tech;

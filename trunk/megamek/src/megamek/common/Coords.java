@@ -260,9 +260,9 @@ public class Coords
      * @return  the <code>Coords</code> that match the hash code.
      */
     public static Coords getFromHashCode( int hash ) {
-        int y = ( hash & Coords.MASK );
-        int x = ( hash ^ y ) >>> Coords.SHIFT;
-        return new Coords(x, y);
+        int hashy = ( hash & Coords.MASK );
+        int hashx = ( hash ^ hashy ) >>> Coords.SHIFT;
+        return new Coords (hashx, hashy);
     }
 
     public String toString() {

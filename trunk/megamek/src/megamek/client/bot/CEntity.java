@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ */
 package megamek.client.bot;
 
 import java.util.Enumeration;
@@ -239,25 +252,27 @@ public class CEntity {
             double ed = CEntity.getExpectedDamage(weapon);
             double odds = 0;
             int gunnery = entity.getCrew().getGunnery();
-            for (int range = 1; range <= lr && range <= MAX_RANGE; range++) {
-                if (range <= min) {
-                    if (range < 7)
-                        this.minRangeMods[range] += 1 + min - range;
-                    odds = Compute.oddsAbove(gunnery + 1 + min - range) / 100.0;
-                } else if (range <= sr) {
+            for (int curRange = 1; curRange <= lr && curRange <= MAX_RANGE;
+                 curRange++) {
+                if (curRange <= min) {
+                    if (curRange < 7)
+                        this.minRangeMods[curRange] += 1 + min - curRange;
+                    odds = Compute.oddsAbove(gunnery + 1 + min - curRange)
+                        / 100.0;
+                } else if (curRange <= sr) {
                     odds = Compute.oddsAbove(gunnery) / 100.0;
-                } else if (range <= mr) {
+                } else if (curRange <= mr) {
                     odds = Compute.oddsAbove(gunnery + 2) / 100.0;
-                } else if (range <= lr) {
+                } else if (curRange <= lr) {
                     odds = Compute.oddsAbove(gunnery + 4) / 100.0;
                 }
                 //weapons unaffected by heat don't get penalized
                 this.addDamage(
                     arc,
                     entity.isSecondaryArcWeapon(entity.getEquipmentNum(m)),
-                    range,
+                    curRange,
                     ed * odds * ((weapon.getHeat() > 0) ? heat_mod : 1));
-                this.long_range = Math.max(this.long_range, range);
+                this.long_range = Math.max(this.long_range, curRange);
             }
         }
         for (int r = 1; r < this.minRangeMods.length; r++) {

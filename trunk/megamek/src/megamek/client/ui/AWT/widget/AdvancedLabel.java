@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -33,8 +33,8 @@ public class AdvancedLabel extends Component {
 
     private boolean sized = false;
 
-    final private int leftMargin = 2;
-    final private int rightMargin = 2;
+    private static final int leftMargin = 2;
+    private static final int rightMargin = 2;
 
     public AdvancedLabel(String text) {
         colorArray = null;

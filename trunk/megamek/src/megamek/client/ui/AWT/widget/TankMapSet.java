@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -34,7 +34,7 @@ public class TankMapSet implements DisplayMapSet{
     private Vector  bgDrawers = new Vector();
     private PMAreasGroup content = new PMAreasGroup();
   
-  private final int INT_STR_OFFSET = 6;
+  private static final int INT_STR_OFFSET = 6;
   //Polygons for all areas
   private Polygon frontArmor = new Polygon( new int[]{0,19,109,128,105,92,37,23},
                                               new int[]{55,27,27,55,68,49,49,68}, 8);

@@ -128,8 +128,8 @@ public class Client implements Runnable {
         return game.getPlayers();
     }
 
-    public Entity getEntity(int enum) {
-        return game.getEntity(enum);
+    public Entity getEntity(int id) {
+        return game.getEntity(id);
     }
 
     /**
@@ -243,6 +243,7 @@ public class Client implements Runnable {
             case Game.PHASE_INITIATIVE :
                 game.resetActions();
                 game.resetCharges();
+                break;
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_OFFBOARD_REPORT :
             case Game.PHASE_FIRING_REPORT :
@@ -384,10 +385,10 @@ public class Client implements Runnable {
     /**
      * Send movement data for the given entity to the server.
      */
-    public void moveEntity(int enum, MovePath md) {
+    public void moveEntity(int id, MovePath md) {
         Object[] data = new Object[2];
 
-        data[0] = new Integer(enum);
+        data[0] = new Integer(id);
         data[1] = md;
 
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
@@ -396,29 +397,29 @@ public class Client implements Runnable {
     /**
      * Maintain backwards compatability.
      *
-     * @param   enum - the <code>int</code> ID of the deployed entity
+     * @param   id - the <code>int</code> ID of the deployed entity
      * @param   c - the <code>Coords</code> where the entity should be deployed
      * @param   nFacing - the <code>int</code> direction the entity should face
      */
-    public void deploy(int enum, Coords c, int nFacing) {
-        this.deploy(enum, c, nFacing, new Vector());
+    public void deploy(int id, Coords c, int nFacing) {
+        this.deploy(id, c, nFacing, new Vector());
     }
 
     /**
      * Deploy an entity at the given coordinates, with the given facing,
      * and starting with the given units already loaded.
      *
-     * @param   enum - the <code>int</code> ID of the deployed entity
+     * @param   id - the <code>int</code> ID of the deployed entity
      * @param   c - the <code>Coords</code> where the entity should be deployed
      * @param   nFacing - the <code>int</code> direction the entity should face
      * @param   loadedUnits - a <code>List</code> of units that start the game
      *          being transported byt the deployed entity.
      */
-    public void deploy(int enum, Coords c, int nFacing, Vector loadedUnits) {
+    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits) {
         int packetCount = 4 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
-        data[index++] = new Integer(enum);
+        data[index++] = new Integer(id);
         data[index++] = c;
         data[index++] = new Integer(nFacing);
         data[index++] = new Integer(loadedUnits.size());
@@ -523,8 +524,8 @@ public class Client implements Runnable {
     /**
      * Sends a "delete entity" packet
      */
-    public void sendDeleteEntity(int enum) {
-        send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(enum)));
+    public void sendDeleteEntity(int id) {
+        send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
     }
 
     /**

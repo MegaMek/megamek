@@ -934,18 +934,18 @@ public class HmvFile
     }
     final long value = equipment.longValue();
 
-    String name = (String) EQUIPMENT.get(equipment);
-    if (name == null)
+    String equipName = (String) EQUIPMENT.get(equipment);
+    if (equipName == null)
     {
       Hashtable techEquipment = (Hashtable) EQUIPMENT.get(techType);
       if (techEquipment != null)
       {
-        name = (String) techEquipment.get(equipment);
+        equipName = (String) techEquipment.get(equipment);
       }
     }
 
     // Report unexpected parsing failures.
-    if (name == null &&
+    if (equipName == null &&
         value != 0  &&     // 0x00 Empty
         value != 7  &&     // 0x07 Lower Leg Actuator (on a quad)
         value != 8  &&     // 0x08 Foot Actuator (on a quad)
@@ -959,7 +959,7 @@ public class HmvFile
       System.out.println( ")" );
     }
 
-    return name;
+    return equipName;
   }
 
   private EquipmentType getEquipmentType(long equipment, HMVTechType techType)
@@ -988,18 +988,18 @@ public class HmvFile
     }
     final long value = ammo.longValue();
 
-    String name = (String) AMMO.get(equipment);
-    if (name == null)
+    String ammoName = (String) AMMO.get(equipment);
+    if (ammoName == null)
     {
       Hashtable techAmmo = (Hashtable) AMMO.get(techType);
       if (techAmmo != null)
       {
-        name = (String) techAmmo.get(ammo);
+        ammoName = (String) techAmmo.get(ammo);
       }
     }
 
     // Report unexpected parsing failures.
-    if (name == null &&
+    if (ammoName == null &&
         value != 0)
     {
       System.out.print("unknown critical: 0x");
@@ -1010,7 +1010,7 @@ public class HmvFile
       System.out.println( ")" );
     }
 
-    return name;
+    return ammoName;
   }
 
   private AmmoType getAmmoType(long ammo, HMVTechType techType)

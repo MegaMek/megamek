@@ -95,9 +95,9 @@ public class BufferedPanel extends Panel implements ComponentListener {
         // Clear the panel as needed 
         clearGraphics(offG);
         //Draw background
-        Enumeration enum = bgDrawers.elements();
-        while(enum.hasMoreElements()){
-            BackGroundDrawer bgd = (BackGroundDrawer) enum.nextElement();
+        Enumeration iter = bgDrawers.elements();
+        while(iter.hasMoreElements()){
+            BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
             bgd.drawInto(offG, getSize().width, getSize().height);
         }
         // Let the parent panel repaint the components inside.

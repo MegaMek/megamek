@@ -389,7 +389,7 @@ public class Compute
             }
             
             // amnesty for the first step
-            if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && step.getType() == MovementData.STEP_FORWARDS) {
+            if (firstStep && moveType == Entity.MOVE_ILLEGAL && entity.getWalkMP() > 0 && !entity.isProne() && step.getType() == MovementData.STEP_FORWARDS) {
                 moveType = Entity.MOVE_RUN;
             }
             
@@ -1172,11 +1172,8 @@ public class Compute
         }  
         
         // check if attacker has fired arm-mounted weapons
-        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isUsedThisTurn() && mounted.getLocation() == armLoc) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
-            }
+        if (ae.weaponFiredFrom(armLoc)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
         
         // check range

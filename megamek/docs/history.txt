@@ -26,12 +26,14 @@ RULES/DISPLAY STUFF TO DO, OR AT LEAST TO CONSIDER:
 ---------------------------------------------------
 general:
 - double reports when firing phase happens and physical phase is skipped
+- in the lobby, perhaps the mech name could be hidden and only show the BV
 
 board display:
 ? display something in exchange phase
 ? show dead mechs as rubble?
 ? some way to resize chat to be bigger or smaller
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
+- zooming
 
 mech display:
 - many fields in movement panel are useless
@@ -89,8 +91,13 @@ v next
 + .mtf reader now handles removed arm actuators properly
 + .mtf reader now reads MG ammo properly
 + added .blk reader from Nathan Rowden <njrkrynn@attbi.com>
-  see his editor at http://tntbn.cjb.net/
+  see his editor at http://mekmaker.darktech.org/
 + fixed a BV issue with half tons of MG ammo
++ mechs should no longer be able to punch from arms that have fired weapons
++ prone mechs should not be able to take one step forward
++ heat sink and jump jet criticals display properly
++ .mtf reader reads AC/2s properly
++ weapons on sections that are destroyed are again counted as destroyed
 
 v 0.25.7 (04-08-02, 9pm)
 + hitting esc or next unit after a torso twist now cancels the torso twist

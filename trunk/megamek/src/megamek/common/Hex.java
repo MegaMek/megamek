@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -14,98 +14,239 @@
 
 package megamek.common;
 
-import java.awt.*;
+import com.sun.java.util.collections.*;
 import java.io.*;
+import java.awt.Image;
+import java.util.StringTokenizer;
 
 /**
- * Hex represents a single hex on the board.  Right now, it just
- * has two parameters: terrain and elevation.  Eventually, it will have
+ * Hex represents a single hex on the board. 
+ *
+ * @author Ben
  */
 public class Hex 
-  implements Serializable
+  implements Serializable, Cloneable
 {
-    private Terrain      terrain;
-    private int          elevation;
-    private int          depth;
+    private int elevation;
+    private Terrain[] terrains;
+    private String theme;
     
-    /**
-     * Constructs a hex at depth 0
-     */
-    public Hex(Terrain terrain, int elevation) {
-        this(terrain, elevation, 0);
+    private transient Image base = null;
+    private transient List supers = null;
+    
+    /** Constructs clear, plain hex at level 0. */
+    public Hex() {
+        this(0);
     }
     
-    /**
-     * Constructs a hex with all parameters
-     */
-    public Hex(Terrain terrain, int elevation, int depth) {
-        this.terrain = terrain;
+    /** Constructs clean, plain hex at specified elevation. */
+    public Hex(int elevation) {
+        this(elevation, new Terrain[Terrain.SIZE], null);
+    }
+    
+    /** Constructs hex with all parameters. */
+    public Hex(int elevation, Terrain[] terrains, String theme) {
         this.elevation = elevation;
-        this.depth = depth;
+        this.terrains = terrains;
+        if (theme == null || theme.length() > 0) {
+            this.theme = theme;
+        } else {
+            this.theme = null;
+        }
     }
     
-    /**
-     * Constructs a new hex, using the parameters of another
-     * hex.
-     * 
-     * @param hex            the hex to use.
-     */
-    public Hex(Hex hex) {
-        this(hex.terrain, hex.elevation, hex.depth);
+    /** Contructs hex with string terrain info */
+    public Hex(int elevation, String terrain, String theme) {
+        this(elevation, new Terrain[Terrain.SIZE], theme);
+        for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
+            addTerrain(new Terrain(st.nextToken()));
+        }
     }
-  
-    public int getTerrainType() {
-        return terrain.type;
-    }
-  
-    public Terrain getTerrain() {
-        return terrain;
-    }
-  
-    public void setTerrain(Terrain terrain) {
-        this.terrain = terrain;
-    }
-  
+    
     public int getElevation() {
         return elevation;
     }
-  
+    
     public void setElevation(int elevation) {
         this.elevation = elevation;
+        invalidateCache();
     }
-
-    public int getDepth() {
-        return depth;
+    
+    private void invalidateCache() {
+        this.base = null;
+        this.supers = null;
+        //depth = Terrain.LEVEL_NONE;
     }
-  
-    public void setDepth(int depth) {
-        this.depth = depth;
+    
+    public String getTheme() {
+        return theme;
     }
-
-    /**
-     * Checks whether the images has been initialized; if
-     * so, returns it; if not, uses the component's toolkit
-     * to load the image.
-     * 
-     * @return the image for the hex.
-     * 
-     * @param comp            the component where the picture
-     *                        will be displayed.
-     */
-    public Image getImage(Component comp) {
-        return terrain.getImage(comp);
+    
+    public Image getBase() {
+        return base;
+    }
+    
+    public void setBase(Image base) {
+        this.base = base;
+    }
+    
+    public void setSupers(List supers) {
+        this.supers = supers;
+    }
+    
+    public List getSupers() {
+        return supers;
     }
     
     /**
-     * Check through the TERRAIN_NAMES for a match to the
-     * specified string.
-     * 
-     * @return the terrain variable if found; -1 if not;
-     * 
-     * @param s                the string.
+     * Clears the "exits" flag for all terrains in the hex where it is not
+     * manually specified.
      */
-    public static int parse(String s) {
-        return Terrain.parse(s);
+    public void clearExits() {
+        for (int i = 0; i < Terrain.SIZE; i++) {
+            Terrain terr = getTerrain(i);
+            if (terr != null && !terr.hasExitsSpecified()) {
+                terr.setExits(0);
+            }
+        }
+        invalidateCache();
+    }
+    
+    /**
+     * Sets the "exits" flag appropriately, assuming the specified hex
+     * lies in the specified direction on the board.  Does not reset connects
+     * in other directions.
+     */
+    public void setExits(Hex other, int direction) {
+        for (int i = 0; i < Terrain.SIZE; i++) {
+            Terrain cTerr = getTerrain(i);
+            Terrain oTerr;
+            
+            if (cTerr == null || cTerr.hasExitsSpecified()) {
+                continue;
+            }
+            
+            if (other != null) {
+                oTerr = other.getTerrain(i);
+            } else {
+                oTerr = null;
+            }
+            
+            cTerr.setExit(direction, cTerr.exitsTo(oTerr));
+        }
+        invalidateCache();
+    }
+    
+    /**
+     * Returns the highest level that features in this hex extend to.  Above
+     * this level is assumed to be air.
+     */
+    public int ceiling() {
+        // TODO: implement
+        
+        return elevation;
+    }
+    
+    /**
+     * Returns the surface level of the hex.  Equal to getElevation().
+     */
+    public int surface() {
+        return elevation;
+    }
+    
+    /**
+     * Returns the lowest level that features in this hex extend to.  Below
+     * this level is assumed to be bedrock.
+     */
+    public int floor() {
+        return elevation - depth();
+    }
+    
+    /**
+     * Returns a level indicating how far features in this hex extend below the
+     * surface elevation.
+     */
+    public int depth() {
+        int depth = 0;
+        Terrain water = getTerrain(Terrain.WATER);
+        Terrain basement = getTerrain(Terrain.BLDG_BASEMENT);
+        if (water != null) {
+            depth += water.getLevel();
+        }
+        if (basement != null) {
+            depth += basement.getLevel();
+        }
+        return depth;
+    }
+    
+    /**
+     * @return true if the specified terrain is represented in the hex at any
+     *  level.
+     */
+    public boolean contains(int type) {
+        return getTerrain(type) != null;
+    }
+    
+    public boolean contains(int type, int level) {
+        Terrain terrain = getTerrain(type);
+        if (terrain != null) {
+            return terrain.getLevel() == level;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
+     *  terrain is not present in the hex
+     */
+    public int levelOf(int type) {
+        Terrain terrain = getTerrain(type);
+        if (terrain != null) {
+            return terrain.getLevel();
+        } else {
+            return Terrain.LEVEL_NONE;
+        }
+    }
+    
+    public Terrain getTerrain(int type) {
+        return terrains[type];
+    }
+    
+    public void addTerrain(Terrain terrain) {
+        terrains[terrain.getType()] = terrain;
+        invalidateCache();
+    }
+    
+    public void removeTerrain(int type) {
+        terrains[type] = null;
+        invalidateCache();
+    }
+    
+    /**
+     * Returns the number of terrain attributes present
+     */
+    public int terrainsPresent() {
+        int present = 0;
+        for (int i = 0; i < terrains.length; i++) {
+            if (terrains[i] != null) {
+                present++;
+            }
+        }
+        return present;
+    }
+    
+    /**
+     * Returns a pretty deep clone
+     */
+    public Object clone() {
+        Terrain[] tcopy = new Terrain[terrains.length];
+        for (int i = 0; i < terrains.length; i++) {
+            if (terrains[i] != null) {
+                tcopy[i] = new Terrain(terrains[i]);
+            }
+        }
+        return new Hex(elevation, tcopy, theme);
     }
     
     /**
@@ -119,8 +260,7 @@ public class Hex
             return false;
         }
         Hex other = (Hex)object;
-        return other.getTerrain().equals(this.terrain) 
-               && other.getElevation() == elevation;
+        return false;
     }
 }
 

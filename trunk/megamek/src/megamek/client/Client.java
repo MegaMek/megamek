@@ -570,7 +570,6 @@ public class Client extends Panel
     protected void receiveBoard(Packet c) {
         Board newBoard = (Board)c.getObject(0);
         game.board.newData(newBoard.width, newBoard.height, newBoard.data);
-        game.board.terrains = newBoard.terrains;
     }
     
     /**

@@ -309,7 +309,7 @@ public class Compute
                 stepMp = getMovementCostFor(game, entityId, lastPos, curPos,
                                             overallMoveType);
                 // check for water
-                if (game.board.getHex(curPos).getTerrainType() == Terrain.WATER) {
+                if (game.board.getHex(curPos).levelOf(Terrain.WATER) > 0) {
                     isRunProhibited = true;
                 }
                 hasJustStood = false;
@@ -467,37 +467,28 @@ public class Compute
             return 1;
         }
         
-        int mp = 0;
+        int mp = 1;
         
         // account for terrain
-        switch(destHex.getTerrainType()) {
-        default:
-            mp = 1;
-            break;
-        case Terrain.ROUGH :
-        case Terrain.RUBBLE :
-        case Terrain.FOREST_LITE :
-            mp = 2;
-            break;
-        case Terrain.FOREST_HVY :
-            mp = 3;
-            break;
-        case Terrain.WATER :
-            switch(destHex.getElevation()) {
-            case 0 :
-                mp = 1;
-                break;
-            case -1 :
-                mp = 2;
-                break;
-            default:
-                mp = 4;
-            }
-            break;
+        if (destHex.levelOf(Terrain.ROUGH) > 0) {
+            mp++;
+        }
+        if (destHex.levelOf(Terrain.RUBBLE) > 0) {
+            mp++;
+        }
+        if (destHex.levelOf(Terrain.WOODS) == 1) {
+            mp++;
+        } else if (destHex.levelOf(Terrain.WOODS) > 1) {
+            mp += 2;
+        }
+        if (destHex.levelOf(Terrain.WATER) == 1) {
+            mp++;
+        } else if (destHex.levelOf(Terrain.WATER) > 1) {
+            mp += 3;
         }
         // account for elevation?
-        if (srcHex.getElevation() != destHex.getElevation()) {
-            int delta_e = Math.abs(srcHex.getElevation() - destHex.getElevation());
+        if (srcHex.floor() != destHex.floor()) {
+            int delta_e = Math.abs(srcHex.floor() - destHex.floor());
             mp += delta_e;
         }
         
@@ -536,24 +527,23 @@ public class Compute
         }
         // check elevation difference > 2
         if (entityMoveType != Entity.MOVE_JUMP 
-            && Math.abs(srcHex.getElevation() - destHex.getElevation()) > 2) {
+            && Math.abs(srcHex.floor() - destHex.getElevation()) > 2) {
             return false;
         }
         // units moving backwards may not change elevation levels (I think this rule's dumb)
         if (stepType == MovementData.STEP_BACKWARDS
-            && srcHex.getElevation() != destHex.getElevation()) {
+            && srcHex.floor() != destHex.floor()) {
             return false;
         }
         // can't run into water
         if (entityMoveType == Entity.MOVE_RUN 
-            && destHex.getTerrainType() == Terrain.WATER
-            && destHex.getElevation() < 0) {
+            && destHex.levelOf(Terrain.WATER) > 0) {
             return false;
         }
         // can't jump out of water
         if (entityMoveType == Entity.MOVE_JUMP 
             && entity.getPosition().equals(src)
-            && srcHex.getTerrainType() == Terrain.WATER) {
+            && srcHex.levelOf(Terrain.WATER) > 0) {
             return false;
         }
         // can't move into a hex with an enemy unit, unless charging or jumping
@@ -567,7 +557,7 @@ public class Compute
         // can't jump over too-high terrain
         if (entityMoveType == Entity.MOVE_JUMP
             && destHex.getElevation() 
-               > (game.board.getHex(entity.getPosition()).getElevation() +
+               > (entity.elevation(game.board) +
                   entity.getJumpMP())) {
             return false;
         }
@@ -600,14 +590,13 @@ public class Compute
         
         // check for rubble
         if (movementType != Entity.MOVE_JUMP
-            && (destHex.getTerrainType() == Terrain.RUBBLE)) {
+            && destHex.levelOf(Terrain.RUBBLE) > 0) {
             return true;
         }
         
         // check for water
         if (movementType != Entity.MOVE_JUMP
-            && destHex.getTerrainType() == Terrain.WATER
-            && destHex.getElevation() < 0) {
+            && destHex.levelOf(Terrain.WATER) > 0) {
             return true;
         }
         
@@ -647,7 +636,7 @@ public class Compute
         // can't go up 2+ levels
         for (int i = 0; i < intervening.length; i++) {
             final Hex hex = game.board.getHex(intervening[i]);
-            if (hex.getElevation() - srcHex.getElevation() > 1) {
+            if (hex.floor() - srcHex.floor() > 1) {
                 return false;
             }
         }
@@ -742,9 +731,9 @@ public class Compute
         
         if (firstHex == null || secondHex == null) {
             // leave it, will be handled
-        } else if (firstHex.getElevation() > secondHex.getElevation()) {
+        } else if (firstHex.floor() > secondHex.floor()) {
             // leave it
-        } else if (firstHex.getElevation() > secondHex.getElevation()) {
+        } else if (firstHex.floor() > secondHex.floor()) {
             // switch
             Coords temp = first;
             first = second;
@@ -856,16 +845,13 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
         
-        int attHeight = ae.isProne() ? 0 : 1;
-        int targHeight = te.isProne() ? 0 : 1;
+        int attHeight = (ae.isProne() ? 0 : 1) + (ae.isMakingDfa() ? 0 : 1);
+        int targHeight = (te.isProne() ? 0 : 1) + (te.isMakingDfa() ? 0 : 1);
         
-        int attEl = ae.getElevation(game.board) + attHeight;
-        int targEl = te.getElevation(game.board) + targHeight;
+        int attEl = ae.elevation(game.board) + attHeight;
+        int targEl = te.elevation(game.board) + targHeight;
         
-        // count elevation funny for DFA
-        if (ae.isMakingDfa()) {
-            attEl = Math.max(attEl, targEl) + 1;
-        }
+        //TODO: mech making DFA could be higher if DFA target hex is higher
         
         int ilw = 0;  // intervening light woods
         int ihw = 0;  // intervening heavy woods
@@ -881,7 +867,7 @@ public class Compute
             }
             
             final Hex h = game.board.getHex(in[i]);
-            final int hexEl = h.getElevation();
+            final int hexEl = h.floor();
             
             // check for block by terrain
             if ((hexEl > attEl && hexEl > targEl) 
@@ -891,13 +877,12 @@ public class Compute
             }
             
             // determine number of woods hexes in the way
-            if (h.getTerrainType() == Terrain.FOREST_LITE 
-                    || h.getTerrainType() == Terrain.FOREST_HVY) {
+            if (h.levelOf(Terrain.WOODS) > 0) {
                 if ((hexEl + 2 > attEl && hexEl + 2 > targEl) 
                         || (hexEl + 2 > attEl && ae.getPosition().distance(in[i]) <= 1) 
                         || (hexEl + 2 > targEl && te.getPosition().distance(in[i]) <= 1)) {
-                    ilw += (h.getTerrainType() == Terrain.FOREST_LITE ? 1 : 0);
-                    ihw += (h.getTerrainType() == Terrain.FOREST_HVY ? 1 : 0);
+                    ilw += (h.levelOf(Terrain.WOODS) == 1 ? 1 : 0);
+                    ihw += (h.levelOf(Terrain.WOODS) > 1 ? 1 : 0);
                 }
             }
             
@@ -956,32 +941,23 @@ public class Compute
         toHit.append(getAttackerTerrainModifier(game, attackerId));
         
         // attacker in water?
-        Hex attackerHex = game.board.getHex(ae.getPosition());
-        if (attackerHex.getTerrainType() == Terrain.WATER) {
-            if (attackerHex.getElevation() == -1 && ae.isProne()) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker prone in depth 1 water");
-            } else if (attackerHex.getElevation() < -1) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
-            }
+        Hex attHex = game.board.getHex(ae.getPosition());
+        if (attHex.contains(Terrain.WATER) && attHex.surface() > attEl) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker underwater");
         }
         
         // target terrain
         toHit.append(getTargetTerrainModifier(game, targetId));
         
         // target in water?
-        Hex targetHex = game.board.getHex(te.getPosition());
-        if (targetHex.getTerrainType() == Terrain.WATER) {
-            if (targetHex.getElevation() == -1) {
-                if (te.isProne()) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Target prone in depth 1 water");
-                } else {
-                    pc = true;
-                }
-            } else if (targetHex.getElevation() < -1) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target in depth 2+ water");
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (attHex.contains(Terrain.WATER)) {
+            if (targHex.surface() == targEl) {
+                pc = true;
+            } else if (targHex.surface() > targEl) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target underwater");
             }
         }
-
 
         // intervening terrain
         if (ilw > 0) {
@@ -1175,8 +1151,8 @@ public class Compute
                                        int targetId, int arm) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
-        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        final int attackerElevation = ae.elevation(game.board);
+        final int targetElevation = te.elevation(game.board);
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         final int armArc = (arm == PunchAttackAction.RIGHT)
@@ -1336,8 +1312,8 @@ public class Compute
                                        int targetId, int leg) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
-        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        final int attackerElevation = ae.elevation(game.board);
+        final int targetElevation = te.elevation(game.board);
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
           kickLegs[0] = Mech.LOC_RARM;
@@ -1507,8 +1483,8 @@ public class Compute
     public static ToHitData toHitClub(Game game, int attackerId, int targetId, Mounted club) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
-        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        final int attackerElevation = ae.elevation(game.board);
+        final int targetElevation = te.elevation(game.board);
         //HACK: this makes certain assumptions about the names of valid clubs
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         ToHitData toHit;
@@ -1683,8 +1659,8 @@ public class Compute
     public static ToHitData toHitPush(Game game, int attackerId, int targetId) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(ae.getPosition()).getElevation();
-        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        final int attackerElevation = ae.elevation(game.board);
+        final int targetElevation = te.elevation(game.board);
         ToHitData toHit = null;
 
         // arguments legal?
@@ -1862,8 +1838,8 @@ public class Compute
     public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = game.board.getHex(src).getElevation();;
-        final int targetElevation = game.board.getHex(te.getPosition()).getElevation();
+        final int attackerElevation = ae.elevation(game.board);
+        final int targetElevation = te.elevation(game.board);
         ToHitData toHit = null;
         
         // arguments legal?
@@ -2156,7 +2132,7 @@ public class Compute
         final Hex hex = game.board.getHex(game.getEntity(entityId).getPosition());
         ToHitData toHit = new ToHitData();
 
-        if (hex.getTerrainType() == Terrain.WATER) {
+        if (hex.levelOf(Terrain.WATER) > 0) {
             toHit.addModifier(1, "attacker in water");
         }
         
@@ -2176,21 +2152,17 @@ public class Compute
         }
         
         ToHitData toHit = new ToHitData();
-
-        switch (hex.getTerrainType()) {
-        case Terrain.WATER :
+        
+        if (hex.levelOf(Terrain.WATER) > 0) {
             toHit.addModifier(-1, "target in water");
-            break;
-        case Terrain.FOREST_LITE :
-            toHit.addModifier(1, "target in light woods");
-            break;
-        case Terrain.FOREST_HVY :
-            toHit.addModifier(2, "target in heavy woods");
-            break;
-        default:
-            // no modifier
-            break;
         }
+
+        if (hex.levelOf(Terrain.WOODS) == 1) {
+            toHit.addModifier(1, "target in light woods");
+        } else if (hex.levelOf(Terrain.WOODS) > 1) {
+            toHit.addModifier(2, "target in heavy woods");
+        }
+
         
         return toHit;
     }
@@ -2443,7 +2415,7 @@ public class Compute
           
         // need woods for now
         //TODO: building rubble, possibly missing limbs
-        if (hex.getTerrainType() != Terrain.FOREST_HVY && hex.getTerrainType() != Terrain.FOREST_LITE) {
+        if (hex.levelOf(Terrain.WOODS) < 1) {
             return false;
         }
         

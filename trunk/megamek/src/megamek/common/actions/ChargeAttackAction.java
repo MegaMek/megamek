@@ -29,22 +29,12 @@ import megamek.common.*;
  *
  * @author  Ben Mazur
  */
-public class ChargeAttackAction extends AbstractAttackAction {
+public class ChargeAttackAction extends DisplacementAttackAction {
     
     private Coords targetPos;
 
     /** Creates new ChargeAttackAction */
     public ChargeAttackAction(int entityId, int targetId, Coords targetPos) {
-        super(entityId, targetId);
-        this.targetPos = targetPos;
+        super(entityId, targetId, targetPos);
     }
-    
-    public Coords getTargetPos() {
-        return targetPos;
-    }
-    
-    public void setTargetPos(Coords targetPos) {
-        this.targetPos = targetPos;
-    }
-
 }

@@ -34,6 +34,9 @@ public class BoardView1
     private static final int        TIP_DELAY = 1000;
     private static final int        TRANSPARENT = 0xFFFF00FF;
     private static final Dimension  HEX_SIZE = new Dimension(84, 72);
+    
+    private static final Font       FONT_HEXNUM = new Font("SansSerif", Font.PLAIN, 10);
+    private static final Font       FONT_ELEV = new Font("SansSerif", Font.PLAIN, 9);
 
     private Game game;
     private Frame frame;
@@ -223,7 +226,7 @@ public class BoardView1
     /**
      * Draws a sprite, if it is in the current view
      */
-    private void drawSprite(Sprite sprite) {
+    private final void drawSprite(Sprite sprite) {
         if (view.intersects(sprite.getBounds())) {
             final int drawX = sprite.getBounds().x - view.x;
             final int drawY = sprite.getBounds().y - view.y;
@@ -328,6 +331,22 @@ public class BoardView1
     }
     
     /**
+     * Redraws a hex and all the hexes immediately around it.  Used when the
+     * hex is on the screen, as opposed to when it is scrolling onto the screen,
+     * so it resets the clipping rectangle before drawing.
+     */
+    private void redrawAround(Coords c) {
+        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+        drawHex(c);
+        drawHex(c.translated(0));
+        drawHex(c.translated(1));
+        drawHex(c.translated(2));
+        drawHex(c.translated(3));
+        drawHex(c.translated(4));
+        drawHex(c.translated(5));
+    }
+    
+    /**
      * Draws a hex onto the board buffer.  This assumes that boardRect is
      * current, and does not check if the hex is visible.
      */
@@ -344,40 +363,57 @@ public class BoardView1
         int drawY = hexLoc.y - boardRect.y;
         
         // draw picture
-        boardGraph.drawImage(hex.getImage(this), drawX, drawY, this);
-        
-//        // draw fire
-//        boardGraph.drawImage(fire, drawX, drawY, this);
+        boardGraph.drawImage(tileManager.baseFor(hex), drawX, drawY, this);
+        if (tileManager.supersFor(hex) != null) {
+            for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();) {
+                boardGraph.drawImage((Image)i.next(), drawX, drawY, this);
+            }
+        }
         
         // draw text stuff
         boardGraph.setColor(Settings.mapTextColor);
-        boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        boardGraph.setFont(FONT_HEXNUM);
         boardGraph.drawString(c.getBoardNum(), drawX + 30, drawY + 12);
         if (hex.getElevation() != 0) {
-            boardGraph.setFont(new Font("SansSerif", Font.PLAIN, 9));
+            boardGraph.setFont(FONT_ELEV);
             boardGraph.drawString("LEVEL " + hex.getElevation(), drawX + 24, drawY + 70);
+        }
+        if (hex.depth() != 0) {
+            boardGraph.setFont(FONT_ELEV);
+            boardGraph.drawString("DEPTH " + hex.depth(), drawX + 24, drawY + 70);
         }
         // draw elevation borders
         boardGraph.setColor(Color.black);
-        Hex tHex;
-        if ((tHex = game.board.getHex(c.translated(0))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 0)) {
             boardGraph.drawLine(drawX + 21, drawY, drawX + 62, drawY);
         }
-        if ((tHex = game.board.getHex(c.translated(1))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 1)) {
             boardGraph.drawLine(drawX + 62, drawY, drawX + 83, drawY + 35);
         }
-        if ((tHex = game.board.getHex(c.translated(2))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 2)) {
             boardGraph.drawLine(drawX + 83, drawY + 36, drawX + 62, drawY + 71);
         }
-        if ((tHex = game.board.getHex(c.translated(3))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 3)) {
             boardGraph.drawLine(drawX + 62, drawY + 71, drawX + 21, drawY + 71);
         }
-        if ((tHex = game.board.getHex(c.translated(4))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 4)) {
             boardGraph.drawLine(drawX + 21, drawY + 71, drawX, drawY + 36);
         }
-        if ((tHex = game.board.getHex(c.translated(5))) != null && tHex.getElevation() != hex.getElevation()) {
+        if (drawElevationLine(c, 5)) {
             boardGraph.drawLine(drawX, drawY + 35, drawX + 21, drawY);
         }
+    }
+    
+    /**
+     * Returns true if an elevation line should be drawn between the starting
+     * hex and the hex in the direction specified.  Results should be
+     * transitive, that is, if a line is drawn in one direction, it should be
+     * drawn in the opposite direction as well.
+     */
+    private final boolean drawElevationLine(Coords src, int direction) {
+        final Hex srcHex = game.board.getHex(src);
+        final Hex destHex = game.board.getHexInDir(src, direction);
+        return destHex != null && srcHex.floor() != destHex.floor();
     }
     
     /**
@@ -455,8 +491,8 @@ public class BoardView1
         Hex mhex = game.board.getHex(mcoords);
         String[] strings = new String[1];
         strings[0] = "Hex " + mcoords.getBoardNum() 
-                    + "; level " + mhex.getElevation()
-                    + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
+                    + "; level " + mhex.getElevation();
+//                    + "; " + Terrain.TERRAIN_NAMES[mhex.getTerrainType()];
         return strings;
     }
     
@@ -624,38 +660,16 @@ public class BoardView1
         attackSprites.removeAllElements();
     }
     
-    
-    
-    
-    /**
-     * Returns the image from the cache
-     */
-    public Image getEntityImage(Entity en) {
-        return tileManager.imageFor(en);
-        
-        /*
-        final int type = getEntityImageIndex(en);
-        final int facing = en.getSecondaryFacing();
-        final int cindex = en.getOwner().getColorIndex();
-        
-        // check cache in image
-        if (tintCache[type][facing][cindex] == null) {
-            tintCache[type][facing][cindex] = 
-                    createImage(new FilteredImageSource(
-                            imageCache[type][facing].getSource(),
-                            new TintFilter(en.getOwner().getColorRGB())));
-            // um and actually, load it, please.
-            try {
-                tracker.addImage(tintCache[type][facing][cindex], 3);
-                tracker.waitForID(3);
-            } catch (InterruptedException ex) {
-                System.err.println("boardview.getEntityImage: interrupted waiting for tinted image to load");
-            }
-        }
-        
-        return tintCache[type][facing][cindex];
-         */
+    public Image baseFor(Hex hex) {
+        return tileManager.baseFor(hex);
     }
+    
+    public com.sun.java.util.collections.List supersFor(Hex hex) {
+        return tileManager.supersFor(hex);
+    }
+    
+    
+    
     
     
 
@@ -675,7 +689,7 @@ public class BoardView1
     }
     public void boardChangedHex(BoardEvent b) {
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
-        drawHex(b.getCoords());
+        redrawAround(b.getCoords());
     }
     public void boardNewBoard(BoardEvent b) {
         boardSize = new Dimension(game.board.width * 63 + 21, 
@@ -1115,7 +1129,7 @@ public class BoardView1
             graph.fillRect(0, 0, bounds.width, bounds.height);
             
             // draw entity image
-            graph.drawImage(getEntityImage(entity), 0, 0, this);
+            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
             
             // draw box with model
             Color col;
@@ -1228,7 +1242,7 @@ public class BoardView1
             return entityRect.contains(point.x + view.x - offset.x, point.y + view.y - offset.y);
         }
         
-        public String[] getTooltip() {
+        private String[] getTooltip() {
             String[] tipStrings = new String[3];
             tipStrings[0] = entity.getName() + " (" + entity.getOwner().getName() + "); "
             + entity.getCrew().getGunnery() + "/" + entity.getCrew().getPiloting() + " pilot";
@@ -1442,7 +1456,7 @@ public class BoardView1
             weaponDescs.addElement(wtype.getName() + "; needs " + roll);
         }
         
-        public String[] getTooltip() {
+        private String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc + " on " + targetDesc;

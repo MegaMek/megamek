@@ -36,6 +36,7 @@ v 0.29.27 (CVS)
 + Fixed a typo in the apidoc target in build.xml
 + Protomechs shouldn't suffer lvl 3 engine explosions.
 + Bug 877038: Indirect fire spotter movement is described as such
++ Tabs on Mech Display window made more sensitive to mouse clicking.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

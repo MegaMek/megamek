@@ -68,4 +68,8 @@ public class ServerLog {
             writer = null;
         }
     }
+    
+    public void close() throws java.io.IOException {
+        writer.close();
+    };
 }

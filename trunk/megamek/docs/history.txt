@@ -86,6 +86,8 @@ VERSION HISTORY:
 v 0.28.7 (CVS)
 + Roads exit into Pavement hexes.
 + Updates to cityruins.txt; are the road exits still right?
++ echo version, java info to console log on startup
++ log might finally contain correct ip address
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

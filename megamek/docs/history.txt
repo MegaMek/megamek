@@ -132,6 +132,7 @@ v 0.29.8-dev
 + Bug 793574: TDB uses the "Missile" spelling, not "Missle".
 + Bug 783641: Unloaded infantry are deployed.
 + Removed opportunity for unconscious units to move or attack
++ Restored old woods images (I love them so)
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

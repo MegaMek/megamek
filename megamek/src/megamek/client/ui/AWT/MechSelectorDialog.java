@@ -31,7 +31,8 @@ import megamek.common.*;
  */
 
 public class MechSelectorDialog 
-    extends Dialog implements ActionListener, ItemListener, KeyListener, Runnable
+    extends Dialog implements ActionListener, ItemListener, KeyListener, 
+    Runnable, WindowListener
 {
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
@@ -111,6 +112,7 @@ public class MechSelectorDialog
         setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
                     m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
         populateChoices();
+        addWindowListener(this);
     }
 
     public void run() {
@@ -300,4 +302,22 @@ public class MechSelectorDialog
     public void keyTyped(java.awt.event.KeyEvent ke) {
     }
         
+    //
+    // WindowListener
+    //
+    public void windowActivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+        this.setVisible(false);
+    }    
+    public void windowDeactivated(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowDeiconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowIconified(java.awt.event.WindowEvent windowEvent) {
+    }    
+    public void windowOpened(java.awt.event.WindowEvent windowEvent) {
+    }
 }

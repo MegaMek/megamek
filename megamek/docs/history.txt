@@ -105,6 +105,8 @@ v next
 + 543456: modal dialogs now not resizable
 + mech images are automatically rotated
 + custom mech images can be specified in data/mex/mechset.txt
++ 544496: dfa & charging to-hit uses piloting skill differential (not gunnery)
++ 545118: tree clubs work again
 
 v 0.25.1 (04-12-02, 3:30pm)
 + weapon critical hits should actually disable the weapon

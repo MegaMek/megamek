@@ -584,7 +584,7 @@ implements Runnable {
             if (entity.isDestroyed() || entity.getCrew().isDead()) {
                 int condition = Game.UNIT_SALVAGEABLE;
                 if ( !entity.isSalvage() ) {
-                    condition = Game.UNIT_DEVESTATED;
+                    condition = Game.UNIT_DEVASTATED;
                 }
                 game.removeEntity(entity.getId(), condition);
                 send( createRemoveEntityPacket(entity.getId(), condition) );
@@ -666,11 +666,11 @@ implements Runnable {
                 roundReport.append('\n');
             }
         }
-        Enumeration devestated = game.getDevestatedEntities();
-        if ( devestated.hasMoreElements() ) {
+        Enumeration devastated = game.getDevastatedEntities();
+        if ( devastated.hasMoreElements() ) {
             roundReport.append("\nThe following utterly destroyed units are not available for salvage:\n");
-            while ( devestated.hasMoreElements() ) {
-                Entity entity = (Entity) devestated.nextElement();
+            while ( devastated.hasMoreElements() ) {
+                Entity entity = (Entity) devastated.nextElement();
                 roundReport.append(entity.victoryReport());
                 roundReport.append('\n');
             }
@@ -715,13 +715,13 @@ implements Runnable {
                 }
             }
 
-            // Record the player's devestated units.
-            Enumeration devestated = game.getDevestatedEntities();
-            if ( devestated.hasMoreElements() ) {
+            // Record the player's devastated units.
+            Enumeration devastated = game.getDevastatedEntities();
+            if ( devastated.hasMoreElements() ) {
                 sb.append("=============================================================\n");
                 sb.append("The following utterly destroyed units are not available for salvage:\n");
-                while ( devestated.hasMoreElements() ) {
-                    Entity e = (Entity) devestated.nextElement();
+                while ( devastated.hasMoreElements() ) {
+                    Entity e = (Entity) devastated.nextElement();
                     if (e.getOwner() == p) {
                         sb.append( e.getShortName() )
                             .append( ", Pilot: " )
@@ -5564,7 +5564,7 @@ implements Runnable {
         int condition = Game.UNIT_SALVAGEABLE;
         if ( !canSalvage ) {
             entity.setSalvage( canSalvage );
-            condition = Game.UNIT_DEVESTATED;
+            condition = Game.UNIT_DEVASTATED;
         }
 
         // Ignore entities that are already destroyed.
@@ -6528,7 +6528,7 @@ implements Runnable {
      * @param   condition - the <code>int</code> condition the unit was in.
      *          This value must be one of <code>Game.UNIT_IN_RETREAT</code>,
      *          <code>Game.UNIT_SALVAGEABLE</code>, or
-     *          <code>Game.UNIT_DEVESTATED</code> or an
+     *          <code>Game.UNIT_DEVASTATED</code> or an
      *          <code>IllegalArgumentException</code> will be thrown.
      * @return  A <code>Packet</code> to be sent to clients.
      */
@@ -6536,7 +6536,7 @@ implements Runnable {
         if ( condition != Game.UNIT_NEVER_JOINED &&
              condition != Game.UNIT_IN_RETREAT &&
              condition != Game.UNIT_SALVAGEABLE &&
-             condition != Game.UNIT_DEVESTATED ) {
+             condition != Game.UNIT_DEVASTATED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
                                                 condition );
         }

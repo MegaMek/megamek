@@ -20,8 +20,6 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 
-import com.sun.java.util.collections.HashMap;
-
 import megamek.common.*;
 import megamek.common.actions.*;
 
@@ -31,11 +29,6 @@ public class Client extends Panel
     // a frame, to show stuff in
     public Frame                frame;
     
-    private boolean             standalone;
-    
-//    // another frame for the report
-//    public Frame                reportFrame;
-        
     // we need these to communicate with the server
     private String              name;
     Socket                      socket;
@@ -44,10 +37,10 @@ public class Client extends Panel
 
     // some info about us and the server
     private boolean             connected = false;
-    public int                  local_pn;
+    public int                  local_pn = -1;
         
-    // the actual game (imagine that)
-    public Game                 game;
+    // the game state object
+    public Game                 game = new Game();
         
     // here's some game phase stuff
     private MapSettings         mapSettings;
@@ -59,9 +52,9 @@ public class Client extends Panel
     public BoardComponent       bc;
     public Dialog               mechW;
     public MechDisplay          mechD;
-    public Dialog   minimapW;
-    public MiniMap    minimap;
-    public PopupMenu            popup;
+    public Dialog               minimapW;
+    public MiniMap              minimap;
+    public PopupMenu            popup = new PopupMenu("Board Popup...");
         
     protected Component         curPanel;
     
@@ -76,7 +69,7 @@ public class Client extends Panel
     private Thread              pump;
         
     // I send out game events!
-    private Vector              gameListeners;
+    private Vector              gameListeners = new Vector();
 
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -84,109 +77,119 @@ public class Client extends Panel
     private FileDialog dlgLoadList = null;
     private FileDialog dlgSaveList = null;
 
+	/**
+     * Construct a client which will try to connect.  If the connection
+     * fails, it will alert the player, free resources and hide the frame.
+     * 
+     * @param name the player name for this client
+     * @param host the hostname
+     * @param port the host port
+     */
+    public Client(String name, String host, int port) {
+    	// construct new client
+    	this(name);
+    	
+    	// try to connect
+		if(!connect(host, port)) {
+			String error = "Error: could not connect to server at " +
+				host + ":" + port + ".";
+			new AlertDialog(frame, "Host a Game", error).show();
+			frame.setVisible(false);
+			die();
+		}
+		
+		// wait for full connection
+		retrieveServerInfo();
+    }
+    
     /**
-     * Construct a non-standalone client.  This client will try to dispose of
-     * itself as much as possible when it's done playing, but will not call
+     * Construct a client which will display itself in a new frame.  It will
+     * not try to connect to a server yet.  When the frame closes, this client
+     * will clean up after itself as much as possible, but will not call
      * System.exit().
-     *
-     * This is mostly for use in MCWizards's game finder.
      */
     public Client(String playername) {
-        this(new Frame("MegaMek Client"), playername);
+    	super(new BorderLayout());
+        this.name = playername;
 
-        Settings.load();
-        
-        if(Settings.windowSizeHeight != 0) {
+		Settings.load();
+		
+		initializeFrame();
+		initializeDialogs();
+		changePhase(Game.PHASE_UNKNOWN);
+        layoutFrame();
+                
+		frame.setVisible(true);
+    }
+    
+    /**
+     * Initializes a number of things about this frame.
+     */
+    private void initializeFrame() {
+        this.frame = new Frame("MegaMek Client");
+        if (Settings.windowSizeHeight != 0) {
             frame.setLocation(Settings.windowPosX, Settings.windowPosY);
             frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
         } else {
             frame.setSize(800, 600);
         }
-        
+
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         
-        frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false);
-                // feed last window position to settings
-                Settings.windowPosX = frame.getLocation().x;
-                Settings.windowPosY = frame.getLocation().y;
-                Settings.windowSizeWidth = frame.getSize().width;
-                Settings.windowSizeHeight = frame.getSize().height;
+		frame.setIconImage(frame.getToolkit().getImage("data/images/megamek-icon.gif"));
 
-                // save settings
-                Settings.save();
-                
+		// when frame closes, save settings and clean up.
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                frame.setVisible(false);
+                saveSettings();
                 die();
             }
-  });
-        
-        standalone = false;
-        
-        frame.setVisible(true);
+        });
     }
     
     /**
-     * Construct a standalone client by giving it a frame to take over.  This
-     * client will call System.exit(0) when it's done.
+     * Lays out the frame by setting this Client object to take up the full
+     * frame display area.
      */
-    public Client(Frame frame, String playername) {
-        this.frame = frame;
-        this.name = playername;
+    private void layoutFrame() {
+		frame.setTitle(this.name + " - MegaMek");
+		frame.setLayout(new BorderLayout());
+		frame.add(this, BorderLayout.CENTER);
+		frame.validate();
+    }
+    
+    /**
+     * Initializes dialogs and some displays for this client.
+     */
+    private void initializeDialogs() {
+		UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+		unitLoadingDialog.show();
 
-        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        unitLoadingDialog.show();
-
-        gameListeners = new Vector();
-                
-        local_pn = -1;
-                
-        game = new Game();
+		bv = new BoardView1(game, frame);
+		bv.addMouseListener(this);
+		bv.add(popup);
         
-        popup = new PopupMenu("Board Popup...");
-
-        bv = new BoardView1(game, frame);
-//        bc = new BoardComponent(bv);
-        bv.addMouseListener(this);
-        bv.add(popup);
+		cb = new ChatterBox(this);
+		mechW = new Dialog(frame, "Mech Display", false);
+		mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
+		mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
+		mechW.setResizable(true);
+		mechW.addWindowListener(this);
+		mechD = new MechDisplay(this);
+		mechW.add(mechD);
+		// minimap
+		minimapW = new Dialog(frame, "MiniMap", false);
+		minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+		minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+		minimap = new MiniMap(minimapW, this, bv);
+		minimapW.addWindowListener(this);
+		minimapW.add(minimap);
         
-        cb = new ChatterBox(this);
-        mechW = new Dialog(frame, "Mech Display", false);
-        mechW.setLocation(Settings.displayPosX, Settings.displayPosY);
-        mechW.setSize(Settings.displaySizeWidth, Settings.displaySizeHeight);
-        mechW.setResizable(true);
-        mechW.addWindowListener(this);
-        mechD = new MechDisplay(this);
-        mechW.add(mechD);
-        // minimap
-        minimapW = new Dialog(frame, "MiniMap", false);
-        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-        minimap = new MiniMap(minimapW, this, bv);
-        minimapW.addWindowListener(this);
-        minimapW.add(minimap);
-        
-        mechSelectorDialog = new MechSelectorDialog(this,unitLoadingDialog);
+        mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         mechSelectorDialogThread = new Thread(mechSelectorDialog);
         mechSelectorDialogThread.start();
-
-        changePhase(Game.PHASE_UNKNOWN);
-                
-        // layout
-        setLayout(new BorderLayout());
-        frame.setTitle(playername + " - MegaMek");
-        
-        frame.removeAll();
-        frame.setLayout(new BorderLayout());
-        frame.add(this, BorderLayout.CENTER);
-        frame.validate();
-        
-        standalone = true;
-        
-//        // report frame
-//        reportFrame = new Frame("MegaMek Reports");
-//        reportFrame.setSize(420, 600);
-//        //reportFrame.setVisible(true);
     }
     
     /**
@@ -208,6 +211,38 @@ public class Client extends Panel
     }
     
     /**
+     * Saves the current settings to the cfg file.
+     */
+    public void saveSettings() {
+    	// save frame location
+        Settings.windowPosX = frame.getLocation().x;
+        Settings.windowPosY = frame.getLocation().y;
+        Settings.windowSizeWidth = frame.getSize().width;
+        Settings.windowSizeHeight = frame.getSize().height;
+
+        // also minimap
+        if (minimapW != null
+            && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
+            Settings.minimapPosX = minimapW.getLocation().x;
+            Settings.minimapPosY = minimapW.getLocation().y;
+            Settings.minimapSizeWidth = minimapW.getSize().width;
+            Settings.minimapSizeHeight = minimapW.getSize().height;
+        }
+
+        // also mech display
+        if (mechW != null
+            && (mechW.getSize().width * mechW.getSize().height) > 0) {
+            Settings.displayPosX = mechW.getLocation().x;
+            Settings.displayPosY = mechW.getLocation().y;
+            Settings.displaySizeWidth = mechW.getSize().width;
+            Settings.displaySizeHeight = mechW.getSize().height;
+        }
+
+        // save settings to disk
+        Settings.save();
+    }
+    
+    /**
      * Shuts down threads and sockets
      */
     public void die() {
@@ -219,14 +254,12 @@ public class Client extends Panel
             socket.close();
             in.close();
             out.close();
-        } catch (java.lang.Exception ex) { ; }
-        
-        if (standalone) {
-            System.exit(0);
-        } else {
-            frame.setVisible(false);
-            frame.dispose();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        
+        frame.setVisible(false);
+        frame.dispose();
     }
     
     /**
@@ -337,13 +370,6 @@ public class Client extends Panel
         }
       return startingPositionDialog;
     }
-    
-//    public ButtonMenuDialog getButtonMenuDialog() {
-//        if (buttonMenuDialog == null) {
-//            buttonMenuDialog = new ButtonMenuDialog(frame);
-//        }
-//        return buttonMenuDialog;
-//    }
     
     /**
      * Changes the game phase, and the displays that go
@@ -989,16 +1015,17 @@ public class Client extends Panel
             Packet packet = (Packet)in.readObject();
 //            System.out.println("c: received command #" + packet.getCommand() + " with " + packet.getData().length + " data");
             return packet;
+        } catch (SocketException ex) {
+        	// assume client is shutting down
+            System.err.println("client: Socket error (client closed?)");
+            return null;
         } catch (IOException ex) {
             System.err.println("client: IO error reading command:");
-            System.err.println(ex);
-            System.err.println(ex.getMessage());
             disconnected();
             return null;
         } catch (ClassNotFoundException ex) {
             System.err.println("client: class not found error reading command:");
-            System.err.println(ex);
-            System.err.println(ex.getMessage());
+			ex.printStackTrace();
             disconnected();
             return null;
         }
@@ -1386,4 +1413,11 @@ public class Client extends Panel
         }        
     }
     
+    /**
+     * @return the frame this client is displayed in
+     */
+    public Frame getFrame() {
+        return frame;
+    }
+
 }

@@ -15,10 +15,7 @@
 package megamek.client.bot;
 
 import megamek.client.*;
-import java.awt.*;
-import java.net.*;
 import java.util.*;
-import java.io.*;
 
 import megamek.common.*;
 import megamek.common.actions.*;
@@ -85,15 +82,6 @@ import megamek.common.actions.*;
      
 public class BotClient extends Client
 {
-    /**
-     * Constructor
-     */
-    public BotClient(Frame frame, String playername) 
-    {
-        super(frame, playername);
-    
-    }
-    
     public BotClient(String playerName)
     {
         super(playerName);

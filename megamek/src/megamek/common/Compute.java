@@ -14,10 +14,17 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import megamek.common.actions.*;
-import megamek.client.*;
+import megamek.common.actions.BrushOffAttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.ProtomechPhysicalAttackAction;
+import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.ThrashAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 
 /**
  * The compute class is designed to provide static methods for mechs
@@ -417,13 +424,13 @@ public class Compute
     }
 
 	public static ToHitData getImmobileMod(Targetable target) {
-		return getImmobileMod(target, Mech.LOC_NONE, FiringDisplay.AIM_MODE_NONE);
+		return getImmobileMod(target, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
 	}
 
 	public static ToHitData getImmobileMod(Targetable target, int aimingAt, int aimingMode) {
 		if (target.isImmobile()) {
 			if ((aimingAt == Mech.LOC_HEAD) &&
-				(aimingMode == FiringDisplay.AIM_MODE_IMMOBILE)) {
+				(aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
 				return new ToHitData(3, "aiming at head");
 			} else {
 				return new ToHitData(-4, "target immobile");

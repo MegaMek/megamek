@@ -129,7 +129,13 @@ public class ChatLounge
         butOptions.addActionListener(this);
 
         butDone = new Button("I'm Done");
-        Font font = new Font("sanserif", Font.BOLD, 12);
+        Font font = null;
+        try {
+            font = new Font("sanserif", Font.BOLD, 12);
+        }
+        catch (Exception exp) {
+            exp.printStackTrace();
+        }
         if (null == font) {
             System.err.println("Couldn't find the new font for the 'Done' button.");
         } else {
@@ -211,7 +217,7 @@ public class ChatLounge
                 if (c instanceof BotClient) {
                     butRemoveBot.setEnabled(true);
                 } 
-				choTeam.select(c.getLocalPlayer().getTeam());
+                choTeam.select(c.getLocalPlayer().getTeam());
             }
         });
         

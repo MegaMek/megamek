@@ -198,6 +198,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRL15());
         EquipmentType.addType(createISRL20());
         EquipmentType.addType(createISArrowIVSystem());
+        EquipmentType.addType(createISLongTom());
+        EquipmentType.addType(createISSniper());
+        EquipmentType.addType(createISThumper());
 
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -243,6 +246,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
         EquipmentType.addType(createCLArrowIVSystem());
+        EquipmentType.addType(createCLLongTom());
+        EquipmentType.addType(createCLSniper());
+        EquipmentType.addType(createCLThumper());
+
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );
         EquipmentType.addType(createCLPROLRM2() );
@@ -3916,6 +3923,132 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 12f;
         weapon.criticals = 12;
         weapon.bv = 171;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createISLongTom() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Long Tom";
+        weapon.setInternalName("ISLongTom");
+        weapon.addLookupName("ISLongTomArtillery");
+        weapon.addLookupName("IS Long Tom");
+        weapon.heat = 20;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LONG_TOM;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 20;
+        weapon.tonnage = 30f;
+        weapon.criticals = 30;
+        weapon.bv = 171;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createCLLongTom() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Long Tom";
+        weapon.setInternalName("CLLongTom");
+        weapon.addLookupName("CLLongTomArtillery");
+        weapon.addLookupName("Clan Long Tom");
+        weapon.heat = 20;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_LONG_TOM;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;  //
+        weapon.mediumRange = 2;
+        weapon.longRange = 20;
+        weapon.tonnage = 30f;
+        weapon.criticals = 30;
+        weapon.bv = 171;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createISSniper() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Sniper";
+        weapon.setInternalName("ISSniper");
+        weapon.addLookupName("ISSniperArtillery");
+        weapon.addLookupName("IS Sniper");
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_SNIPER;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 12;
+        weapon.tonnage = 20f;
+        weapon.criticals = 20;
+        weapon.bv = 86;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createCLSniper() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Sniper";
+        weapon.setInternalName("CLSniper");
+        weapon.addLookupName("CLSniperArtillery");
+        weapon.addLookupName("Clan Sniper");
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 10;
+        weapon.ammoType = AmmoType.T_SNIPER;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;  //
+        weapon.mediumRange = 2;
+        weapon.longRange = 12;
+        weapon.tonnage = 20f;
+        weapon.criticals = 20;
+        weapon.bv = 86;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createISThumper() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Thumper";
+        weapon.setInternalName("ISThumper");
+        weapon.addLookupName("ISThumperArtillery");
+        weapon.addLookupName("IS Thumper");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_THUMPER;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 14;
+        weapon.tonnage = 15f;
+        weapon.criticals = 15;
+        weapon.bv = 40;
+        weapon.flags |= F_ARTILLERY;
+        return weapon;
+    }
+
+    public static WeaponType createCLThumper() {
+        WeaponType weapon = new WeaponType();
+        weapon.name = "Thumper";
+        weapon.setInternalName("CLThumper");
+        weapon.addLookupName("CLThumperArtillery");
+        weapon.addLookupName("Clan Thumper");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_ARTILLERY;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_THUMPER;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;  //
+        weapon.mediumRange = 2;
+        weapon.longRange = 14;
+        weapon.tonnage = 15f;
+        weapon.criticals = 15;
+        weapon.bv = 40;
         weapon.flags |= F_ARTILLERY;
         return weapon;
     }

@@ -1,4 +1,4 @@
-The Great MegaMek Feature list. 2nd June 2004.  MegaMek Version 29.36. Best viewed in 1024x768.
+The Great MegaMek Feature list. 3nd June 2004.  MegaMek Version 29.36. Best viewed in 1024x768.
 
 Table format is Game Component - Implemented - Notes.
 
@@ -317,7 +317,7 @@ Equipment
 - Anti-Missile System		Yes		AMS target is selected for the player.
 - Anti-Personal Pods		Yes		None
 - Artemis IV FCS		Yes		None
-- Artillery Weapons		Partial		Need Sniper, Thumper, Longtom, and non-standard ammo.
+- Artillery Weapons		Partial		Need smoke and other non-standard ammo.
 - Autocannon Munitions		Partial		Incendiary Ammo not implemented.
 - C3 Computers			Yes    		All bug reports on C3 need to be re-confirmed
 - Cargo Space			No		None

@@ -137,6 +137,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  PILOTING= "piloting";
     public static final String  HITS    = "hits";
     public static final String  ADVS    = "advantages";
+    public static final String  AUTOEJECT = "autoeject";
     public static final String  INDEX   = "index";
     public static final String  IS_DESTROYED    = "isDestroyed";
     public static final String  POINTS  = "points";
@@ -419,6 +420,7 @@ public class XMLStreamParser implements XMLResponder {
                 String piloting = (String) attr.get( PILOTING );
                 String hits = (String) attr.get( HITS );
                 String advantages = (String) attr.get( ADVS );
+                String autoeject = (String) attr.get ( AUTOEJECT );
                 
                 // Did we find required attributes?
                 if ( gunnery == null || gunnery.length() == 0 ) {
@@ -512,6 +514,14 @@ public class XMLStreamParser implements XMLResponder {
 
                     // Set the crew for this entity.
                     this.entity.setCrew( crew );
+
+                    if (autoeject != null) {
+                        if (autoeject.equals("true")) {
+                            ((Mech)this.entity).setAutoEject(true);
+                        } else {
+                            ((Mech)this.entity).setAutoEject(false);
+                        }
+                    }
 
                 } // End have-required-fields
             } // End ready-for-pilot

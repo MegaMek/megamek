@@ -1,12 +1,9 @@
   
 CODE IDEAS:
 -----------
-- new map format to support all sorts of wacky terrain 
-- don't have the image file name set with the terrain
-
 could almost be combined:
 - boardlisteners listen to boardview, not board
-- seperate client and gui, allowing for other guis
+-- seperate client and gui, allowing for other guis/gui-less bots, etc.
 
 - clean up report generation in Server.java
 
@@ -32,7 +29,7 @@ board display:
 ? show dead mechs as rubble?
 ? some way to resize chat to be bigger or smaller
 - nice to be able to see other mech's stats while waiting (or firing, or whatever)
-- zooming
+- zooming and/or scrollbars
 
 mech display:
 - extra heat capacity due to underwater heat sinks doesn't show up
@@ -61,12 +58,10 @@ weapon attacks:
 - eliminate leg weapons & kicks in level 1 water under level 1 rules
 
 physical attacks:
-- dfa should violate stacking
+- dfa should violate stacking, charging should not
 - opposing pushes should counter each other
 
 displacement issues:
-- hide under the desk
-- cry
 - domino effect: mechs with movement available can roll to step out of the way
 
 pilots:
@@ -92,6 +87,10 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ actually applied level 2 patch to Server.java
++ added quad lateral shifts
+
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified
 + removed river terrain type

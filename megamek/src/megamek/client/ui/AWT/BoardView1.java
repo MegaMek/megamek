@@ -1318,6 +1318,8 @@ public class BoardView1
             case MovementData.STEP_BACKWARDS :
             case MovementData.STEP_CHARGE :
             case MovementData.STEP_DFA :
+            case MovementData.STEP_LATERAL_LEFT :
+            case MovementData.STEP_LATERAL_RIGHT :
                 // draw arrows showing them entering the next
                 myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, 
                                      movePoly.npoints);

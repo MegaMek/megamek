@@ -53,6 +53,7 @@ public class GameOptions extends Options implements Serializable {
 		addOption(level2, new GameOption("fire", "Fire and smoke", "If checked, fires may be set accidentally or intentionally.\n\nChecked by default.", true));
 		addOption(level2, new GameOption("indirect_fire", "Indirect fire", "If checked, LRMs may be fire indirectly, and players may choose to spot for indirect fire instead of attacking.\n\nChecked by default.", true));
 		addOption(level2, new GameOption("minefields", "Minefields", "If checked, minefields can be used.\n\nChecked by default.", true));
+        addOption(level2, new GameOption("temperature", "Temperature", "The temperature the game takes place at, for use with the Extreme Temperatures rule.\n\nDefaults to 25 degrees Celsius, thus having no effect.", 25));
 
         OptionGroup level3 = new OptionGroup("Optional Rules (Level 3)");
         addGroup(level3);

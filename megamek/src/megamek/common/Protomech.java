@@ -185,6 +185,7 @@ public class Protomech
     public int getWalkMP() {
      	int wmp=getOriginalWalkMP();
      	int legCrits=this.getCritsHit(LOC_LEG);
+        int i;
      	switch(legCrits)
      	{
      		case 0:
@@ -199,7 +200,10 @@ public class Protomech
      		wmp=0;
      		break;
      	}
-     	return wmp;
+        if (game != null) {
+            i = game.getTemperatureDifference();
+            return Math.max(wmp - i, 0);
+        } else return wmp;
      }
 
      /**

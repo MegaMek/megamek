@@ -1221,6 +1221,7 @@ implements Runnable, ConnectionHandler {
                 phaseReport.append("\n\nEnd Phase\n------------------------\n");
                 checkForSuffocation();
                 resolveFire();
+                resolveExtremeTempInfantryDeath();
                 resolveAmmoDumps();
                 resolveCrewDamage();
                 resolveCrewWakeUp();
@@ -7461,7 +7462,21 @@ implements Runnable, ConnectionHandler {
                 entity.heatBuildup += 10;
                 roundReport.append("Added 10 heat from Stealth Armor...\n");
             }
-
+            
+            // If a Mek is in extreme Temperatures, add or substract one
+            // heat per 10 degrees (or fraction of 10 degrees) above or
+            // below 50 or -30 degrees Celsius
+            if ( entity instanceof Mech && game.getTemperatureDifference() != 0) {
+                if (game.getOptions().intOption("temperature") > 50) {
+                    entity.heatBuildup += game.getTemperatureDifference();
+                    roundReport.append("Added "+ game.getTemperatureDifference() +" heat due to extreme temperatures...\n");
+                }
+                else {
+                    entity.heatBuildup -= game.getTemperatureDifference();
+                    roundReport.append("Substracted "+ game.getTemperatureDifference() +" heat due to extreme temperatures...\n");
+                }
+            }
+            
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex.levelOf(Terrain.FIRE) == 2) {
@@ -7615,7 +7630,30 @@ implements Runnable, ConnectionHandler {
                         .append( destroyEntity(entity, "crew death", true) );
                 }
             }
-
+        }
+    }
+    
+    // check to see if unarmored infantry is outside in extreme temperatures
+    // (crude fix because infantry shouldn't be able to be deployed
+    // outside of vehicles or buildings, but we can't do that because
+    // we don't know wether the map has buildings or not or wether the
+    // player has an apc    
+    private void resolveExtremeTempInfantryDeath() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            if ( null == entity.getPosition() ) {
+                continue;
+            }
+            Hex entityHex = game.getBoard().getHex(entity.getPosition());
+            if (entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+               if (game.getTemperatureDifference() > 0) {
+                  if (!(entityHex.contains(Terrain.BUILDING))) {
+                       phaseReport.append(entity.getDisplayName() )
+                           .append( " is in extreme temperatures and dies.\n" );
+                       phaseReport.append(destroyEntity(entity, "heat/cold", false, false));                     
+                  }
+               }
+            }
         }
     }
 

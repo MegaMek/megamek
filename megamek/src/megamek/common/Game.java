@@ -388,6 +388,27 @@ public class Game implements Serializable
     }
 
     /**
+     * Returns how much higher than 50 or lower than -30
+     * degrees, divided by ten, rounded up, the temperature is 
+     */
+    
+    public int getTemperatureDifference() {
+        int i = 0;
+        if (getOptions().intOption("temperature") >= -30 && getOptions().intOption("temperature") <= 50 )
+            return i;
+        else if (getOptions().intOption("temperature") < -30) {
+            do {
+                i++;
+            } while (getOptions().intOption("temperature") + i * 10 < -30);
+            return i;
+        }
+        else do {
+            i++;
+        } while (getOptions().intOption("temperature") - i * 10 > 50);
+        return i;
+    }
+    
+    /**
      * Get a vector of entity objects that are "acceptable" to attack with this entity
      */
     public Vector getValidTargets(Entity entity) {

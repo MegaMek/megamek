@@ -253,6 +253,20 @@ public class BattleArmor
     }
 
     /**
+    * Returns this entity's walking mp, factored
+    * for heat and extreme temperatures.
+    */
+    public int getWalkMP() {
+        int i;
+        if (game != null) {
+            i = game.getTemperatureDifference();
+            return Math.max(walkMP - i, 0);    
+        }
+        else return walkMP;
+    }
+
+    
+    /**
      * Returns this entity's current jumping MP, not effected by terrain.
      * Certain types of equipment prevent a squad from jumping.
      */

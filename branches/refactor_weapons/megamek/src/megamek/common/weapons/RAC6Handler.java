@@ -71,16 +71,15 @@ public class RAC6Handler extends UltraWeaponHandler {
 		setDone();       
 		checkAmmo();
 		int total =ae.getTotalAmmoOfType(ammo.getType());
-		howManyShots=1;
 		if(total>=6) {
 			howManyShots=6;
-		}
-		if(total>=4) {
+		} else if(total>=4) {
 			howManyShots=4;
-		}
-		if(total>=2) {
-			howManyShots=2;			
-		}
+		} else if(total>=2) {
+            howManyShots=2;         
+        } else {
+            howManyShots=1;
+        }
 		shotsNeedFiring=howManyShots;
 		if(ammo.getShotsLeft()==0) {
 			ae.loadWeapon(weapon);

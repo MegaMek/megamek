@@ -85,11 +85,8 @@ public class QuadMech extends Mech
           wmp -= actuatorHits;
         }
       
-      //For sanity sake...
-        wmp = Math.max(0, wmp);
-        
       // and we still need to factor in heat!
-        wmp = Math.max(wmp - (int)(heat / 5), 0);
+        wmp -= (int)(heat / 5);
       
         
         // TSM negates some heat
@@ -101,6 +98,9 @@ public class QuadMech extends Mech
                 wmp += 1;
             }
         }
+        
+      //For sanity sake...
+        wmp = Math.max(0, wmp);
         
         return wmp;
     }

@@ -597,7 +597,7 @@ public class Protomech
             }
         }
 
-    	if(mounted.isWeapon()) {
+    	if(mounted.getType() instanceof WeaponType) {
             switch(loc) {
             	case LOC_HEAD:
             	case LOC_LEG:
@@ -717,7 +717,7 @@ public class Protomech
             if (mounted.isDestroyed())
                 continue;
 
-            if ((mounted.isWeapon() && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            if ((mounted.getType() instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);

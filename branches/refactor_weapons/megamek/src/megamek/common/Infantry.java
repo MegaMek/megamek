@@ -516,7 +516,7 @@ public class Infantry
             // Do nothing.
         }
         // Handle infantry weapons.
-        else if ( (mounted.isWeapon()) &&
+        else if ( (mounted.getType() instanceof WeaponType) &&
                   equip.hasFlag(WeaponType.F_INFANTRY) ) {
 
             // Infantry can only mount one kind of infantry weapon.

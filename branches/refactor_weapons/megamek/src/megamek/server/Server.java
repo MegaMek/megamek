@@ -4984,7 +4984,7 @@ implements Runnable, ConnectionHandler {
 
                 Mounted counter = (Mounted)vCounters.elementAt(x);
                 Mounted mAmmo = counter.getLinked();
-                if (!(counter.isWeapon())
+                if (!(counter.getType() instanceof WeaponType)
                 || ((WeaponType)counter.getType()).getAmmoType() != AmmoType.T_AMS
                 || !counter.isReady() || counter.isMissing()) {
                     continue;
@@ -9153,7 +9153,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // special-case.  RACs only explode when jammed
-        if (mounted.isWeapon() &&
+        if (mounted.getType() instanceof WeaponType &&
                 ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY) {
             if (!mounted.isJammed()) {
                 return "";
@@ -10218,7 +10218,7 @@ implements Runnable, ConnectionHandler {
             System.err.println( weaponId );
             return;
         }
-        if ( !(mWeap.isWeapon()) ) {
+        if ( !(mWeap.getType() instanceof WeaponType) ) {
             System.err.print
                 ( "Server.receiveEntityAmmoChange: item # " );
             System.err.print( weaponId );

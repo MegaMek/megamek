@@ -1481,7 +1481,7 @@ public abstract class Mech
                 continue;
 
             //TODO: antipersonal pods
-            if ((mounted.isWeapon() && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            if ((mounted.getType() instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
             || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
             || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(this);
@@ -1525,12 +1525,12 @@ public abstract class Mech
             float tonnage = etype.getTonnage(this);
             
             // gauss rifles only count as one ton for this
-            if (mounted.isWeapon() && etype.getName().indexOf("Gauss") != -1) {
+            if (mounted.getType() instanceof WeaponType && etype.getName().indexOf("Gauss") != -1) {
                 tonnage = 1.0f;
             }
              
             // RACs don't really count
-            if (mounted.isWeapon() && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (mounted.getType() instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
                 tonnage = 0.0f;
             }
            

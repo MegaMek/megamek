@@ -549,7 +549,7 @@ public class FiringDisplay
         
         // validate
         if (ce() == null || target == null || mounted == null 
-        || !(mounted.isWeapon())) {
+        || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
         }
 

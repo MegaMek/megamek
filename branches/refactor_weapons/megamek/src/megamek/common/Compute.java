@@ -989,7 +989,7 @@ public class Compute
      *
      * @return the modifiers
      */
-    private static ToHitData getRangeMods(Game game, Entity ae, int weaponId, Targetable target) {
+    public static ToHitData getRangeMods(Game game, Entity ae, int weaponId, Targetable target) {
         Mounted weapon = ae.getEquipment(weaponId);
         WeaponType wtype = (WeaponType)weapon.getType();
         int[] weaponRanges = wtype.getRanges();
@@ -1213,7 +1213,7 @@ public class Compute
      * Gets the modifiers, if any, that the mech receives from being prone.
      * @return any applicable modifiers due to being prone
      */
-    private static ToHitData getProneMods(Game game, Entity attacker, int weaponId) {
+    public static ToHitData getProneMods(Game game, Entity attacker, int weaponId) {
     if (!attacker.isProne()) {
       return null; // no modifier
     }
@@ -1317,7 +1317,7 @@ public class Compute
      * Adds any damage modifiers from arm critical hits or sensor damage.
    * @return Any applicable damage modifiers
    */
-  private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon)
+  public static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon)
   {
       ToHitData mods = new ToHitData();
 
@@ -1397,7 +1397,7 @@ public class Compute
      * @return The secondary target modifier.
      * @author Ben
      */
-    private static ToHitData getSecondaryTargetMod(Game game, Entity attacker, Targetable target) {
+    public static ToHitData getSecondaryTargetMod(Game game, Entity attacker, Targetable target) {
     boolean curInFrontArc = isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
     int primaryTarget = Entity.NONE;

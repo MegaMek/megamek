@@ -1313,7 +1313,7 @@ public abstract class Entity
         equipmentList.addElement(mounted);
 
         // add it to the proper sub-list
-        if (mounted.isWeapon()) {
+        if (mounted.getType() instanceof WeaponType) {
             weaponList.addElement(mounted);
             if(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
@@ -1504,7 +1504,7 @@ public abstract class Entity
                 continue;
             }
             Mounted mounted = getEquipment(slot.getIndex());
-            if (mounted.isWeapon() && mounted.isUsedThisRound()) {
+            if (mounted.getType() instanceof WeaponType && mounted.isUsedThisRound()) {
                 return true;
             }
         }

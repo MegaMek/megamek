@@ -871,6 +871,12 @@ public class Compute
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
                 Targetable pte = game.getTarget(prevAttack.getTargetType(), prevAttack.getTargetId());
+                // in double blind play, we might not have the target in our 
+                // local copy of the game. In that case, the sprite won't
+                // have the correct to-hit number, but at least we don't crash
+                if ( pte == null ) {
+                    continue;
+                }
                 // When targeting a stealthed Mech, you can _only_ target it, not anything else (BMRr, pg. 147)
                 if (pte instanceof Entity && ((Entity)pte).isStealthActive() && pte != target ) {
                     return new ToHitData(ToHitData.IMPOSSIBLE, "When targeting a stealthed Mech, can not attack secondary targets");

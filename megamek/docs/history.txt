@@ -8,6 +8,7 @@ v0.29.60 (CVS)
     Hunchback IIC, Hellbringer, Grizzly, Mantis, Koto, Longshot, Matador,
     Stone Rhino, Pillager, Spartan, Grand Titan, Legacy
 + Don't show oberserves in the "NARCed by" window
++ Bug 1061872: crash from firgingarrows in 3way doubleblind
 
 v0.29.59 (2005-01-02 3:00pm)
 + Bug 762436, 839980: Domino Effect not able to displace off the board

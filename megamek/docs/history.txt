@@ -20,6 +20,7 @@ v0.29.65 (CVS)
 + Don't report captured MechWarriors that died as captured in end of game
     report.
 + Bug 1115608: Skidding into swamp or rubble, PSR missing.
++ Bug 1110692: underwater physical damage should be half, round up.
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

@@ -43,9 +43,15 @@ public class ProtomechPhysicalAttackAction
      * Damage a Protomech does with its Combo-physicalattack.
      */
     public static int getDamageFor(Entity entity) {
-    	if (entity.getWeight() >= 2 && entity.getWeight() < 6) {
-    		return 1;
-    	} else return 2;
+        int toReturn;
+        if (entity.getWeight() >= 2 && entity.getWeight() < 6) {
+            toReturn = 1;
+        } else toReturn = 2;
+        // underwater damage is half, round up (see bug 1110692)
+        if (entity.getLocationStatus(Protomech.LOC_TORSO) == Entity.LOC_WET) {
+            toReturn = (int)Math.ceil(toReturn * 0.5f);
+        }
+        return toReturn;
     }
     
     public ToHitData toHit(Game game) {

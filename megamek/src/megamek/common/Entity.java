@@ -2574,6 +2574,28 @@ public abstract class Entity
     }
 
     /**
+     * Get an <code>Enumeration</code> of <code>INarcPod</code>s
+     * that are attached to this entity.
+     *
+     * @return  an <code>Enumeration</code> of <code>INarcPod</code>s.
+     */
+    public Enumeration getINarcPodsAttached() {
+        return iNarcPods.elements();
+    }
+
+    /**
+     * Remove an <code>INarcPod</code> from this entity.
+     *
+     * @param   pod the <code>INarcPod</code> to be removed.
+     * @return  <code>true</code> if the pod was removed,
+     *          <code>false</code> if the pod was not attached
+     *          to this entity.
+     */
+    public boolean removeINarcPod (INarcPod pod) {
+        return iNarcPods.removeElement( pod );
+    }
+
+    /**
      * Calculates the battle value of this entity
      */
     public abstract int calculateBattleValue();

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -43,8 +43,9 @@ public class WeaponType extends EquipmentType {
     public static final int     F_DOUBLE_HITS   = 0x2000; // two shots hit per one rolled
     public static final int     F_MISSILE_HITS  = 0x4000; // use missile rules or # of hits
 
-    private int     heat;
-    private int     damage;
+    protected RangeType range;
+    protected int   heat;
+    protected int   damage;
     private int     rackSize; // or AC size, or whatever
     private int     ammoType;
 
@@ -53,7 +54,7 @@ public class WeaponType extends EquipmentType {
     private int     mediumRange;
     private int     longRange;
 
-    private WeaponType() {
+    protected WeaponType() {
         ;
     }
 

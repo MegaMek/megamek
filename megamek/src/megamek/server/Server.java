@@ -2092,7 +2092,6 @@ implements Runnable {
         // iterate through steps
         firstStep = true;
         fellDuringMovement = false;
-        MovementData.Step prevStep = null;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
             wasProne = entity.isProne();
@@ -2168,9 +2167,13 @@ implements Runnable {
             final Hex curHex = game.board.getHex(curPos);
 
             // Check for skid.
+            // TODO: add check for elevation of pavement, road,
+            //       or bridge matches entity elevation.
             if ( moveType != Entity.MOVE_JUMP
                  && prevHex != null
-                 && prevStep.isOnPavement()
+                 && ( prevHex.contains(Terrain.PAVEMENT) ||
+                      prevHex.contains(Terrain.ROAD) ||
+                      prevHex.contains(Terrain.BRIDGE) )
                  && overallMoveType == Entity.MOVE_RUN
                  && prevFacing != curFacing
                  && !lastPos.equals(curPos)
@@ -2794,10 +2797,9 @@ implements Runnable {
                 break;
             }
             
-            // update lastPos, prevStep, prevFacing & prevHex
+            // update lastPos, prevFacing & prevHex
             lastPos = new Coords(curPos);
-            prevStep = step;
-            if (!curHex.equals(prevHex)) {
+            if (prevHex != null && !curHex.equals(prevHex)) {
                 prevFacing = curFacing;
             }
             prevHex = curHex;

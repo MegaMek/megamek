@@ -77,6 +77,8 @@ v next
 + 613612: units continue to take damage the same phase after they are destroyed
 + fixed a stacking bug
 + AMS implemented.  It can't be turned off yet
++ infantry have variable damage, not always missile damage
++ AMS only fires on attacks in arc
 
 v 0.27.1 (10-04-02, 2:30pm)
 + implemented autosaving every turn and loading from saved games

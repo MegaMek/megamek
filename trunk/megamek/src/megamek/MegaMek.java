@@ -89,6 +89,8 @@ public class MegaMek implements ActionListener {
             windowSize.height += 25;
             frame.setSize(windowSize);
         }
+        //init the cache
+        MechSummaryCache.getInstance();
 
         // Show the window.
         frame.setVisible(true);
@@ -413,9 +415,6 @@ public class MegaMek implements ActionListener {
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
-        if (server != null) {
-            server.die();
-        }
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
 

@@ -726,7 +726,8 @@ public class MoveStep implements Serializable {
 
         // check for valid jump mp
         if (parent.isJumping() && getMpUsed() <= entity.getJumpMPWithTerrain() && !isProne()
-            && !(entity instanceof Protomech && entity.getInternal(Protomech.LOC_LEG) == Protomech.ARMOR_DESTROYED)) {
+            && !(entity instanceof Protomech && entity.getInternal(Protomech.LOC_LEG) == Protomech.ARMOR_DESTROYED)
+            && !entity.isStuck()) {
             movementType = Entity.MOVE_JUMP;
         }
         
@@ -735,12 +736,14 @@ public class MoveStep implements Serializable {
             && entity instanceof Protomech
             && entity.getInternal(Protomech.LOC_LEG) == Protomech.ARMOR_DESTROYED
             && (stepType == MovePath.STEP_TURN_LEFT 
-                || stepType == MovePath.STEP_TURN_RIGHT)) {
+                || stepType == MovePath.STEP_TURN_RIGHT)
+            && !entity.isStuck()) {
             movementType = Entity.MOVE_WALK;
         }            
 
         // check for valid walk/run mp
         if (!parent.isJumping()
+            && !entity.isStuck()
             && (!isProne()
                 || parent.contains(MovePath.STEP_GET_UP)
                 || stepType == MovePath.STEP_TURN_LEFT
@@ -776,7 +779,8 @@ public class MoveStep implements Serializable {
         }
 
         // mechs with 1 MP are allowed to get up, except if they've used that 1MP up already
-        if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP() && entity.mpUsed<1) {
+        if (MovePath.STEP_GET_UP==stepType && 1==entity.getRunMP()
+            && entity.mpUsed < 1 && !entity.isStuck()) {
             movementType = Entity.MOVE_RUN;
         }
 
@@ -785,6 +789,7 @@ public class MoveStep implements Serializable {
             && movementType == Entity.MOVE_ILLEGAL
             && entity.getWalkMP() > 0
             && !entity.isProne()
+            && !entity.isStuck()
             && stepType == MovePath.STEP_FORWARDS) {
             movementType = Entity.MOVE_RUN;
         }
@@ -826,7 +831,7 @@ public class MoveStep implements Serializable {
         }
 
         // only standing mechs may go prone
-        if (stepType == MovePath.STEP_GO_PRONE && (isProne() || !(entity instanceof Mech))) {
+        if (stepType == MovePath.STEP_GO_PRONE && (isProne() || !(entity instanceof Mech) || entity.isStuck())) {
             movementType = Entity.MOVE_ILLEGAL;
         }
 
@@ -923,20 +928,18 @@ public class MoveStep implements Serializable {
                 mp += 2;
             }
 
-            // non-hovers check for water depth
+            // non-hovers check for water depth and are affected by swamp
             if (moveType != Entity.MovementType.HOVER) {
                 if (destHex.levelOf(Terrain.WATER) == 1) {
                     mp++;
                 } else if (destHex.levelOf(Terrain.WATER) > 1) {
                     mp += 3;
                 }
+                if (destHex.contains(Terrain.SWAMP)) {
+                    mp++;
+                }
             }
 
-            // Swamp adds to movement cost and force a "get stuck" check.
-            /*
-			 * TODO: uncomment me in v0.29.1 if (
-			 * destHex.contains(Terrain.SWAMP) ) { mp += 1; }
-			 */
         } // End not-along-road
 
         // account for elevation?

@@ -71,6 +71,11 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v next
++ 609840: immobilixed vehicles can't complete their charges
++ 609356: vehicles do not make piloting skill rolls to avoid falling
++ 609201: fixed crash when a charging vehicle is destroyed by weapons fire
+
 v 0.26.13 (09-13-02, 11pm)
 + 607207: getting up and failing now correctly uses movement points
 + 607207: no get-up retries should a mech become disabled during an attempt

@@ -2114,7 +2114,8 @@ public boolean isPassworded() {
         
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
             EntityAction action = (EntityAction)i.nextElement();
-            if (game.getEntity(action.getEntityId()).isActive()) {
+            Entity entity = game.getEntity(action.getEntityId());
+            if (entity != null && entity.isActive()) {
                 toKeep.addElement(action);
             }
         }
@@ -2377,6 +2378,12 @@ public boolean isPassworded() {
         // attacker fell down?
         if (ae.isProne()) {
             phaseReport.append("    Charge cancelled as the attacker has fallen.\n");
+            return;
+        }
+
+        // attacker immobile?
+        if (ae.isImmobile()) {
+            phaseReport.append("    Charge cancelled as the attacker has been immobilized.\n");
             return;
         }
 
@@ -2718,7 +2725,7 @@ public boolean isPassworded() {
     private void resolvePilotingRolls() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
-            if (entity.isProne() || entity.isDoomed() || entity.isDestroyed()) {
+            if (!(entity instanceof Mech) || entity.isProne() || entity.isDoomed() || entity.isDestroyed()) {
                 continue;
             }
             int rolls = 0;

@@ -892,6 +892,7 @@ implements Runnable {
                 break;
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
+                addMovementHeat();
                 resolveCrewDamage();
 		resolvePilotingRolls(); // Skids cause damage in movement phase
 		resolveCrewDamage(); // again, I guess
@@ -1537,11 +1538,15 @@ implements Runnable {
                 break;
             }
 
+            // set most step parameters
+            moveType = step.getMovementType();
+            distance = step.getDistance();
+            mpUsed = step.getMpUsed();
+            
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                mpUsed = step.getMpUsed();
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(caa);
                 pendingCharges.addElement(caa);
@@ -1552,19 +1557,15 @@ implements Runnable {
             if (step.getType() == MovementData.STEP_DFA) {
                 //FIXME: find the acutal target, not just the likely target
                 Entity target = game.getFirstEntity(step.getPosition());
-                mpUsed = step.getMpUsed();
                 DfaAttackAction daa = new DfaAttackAction(entity.getId(), target.getId(), target.getPosition());
                 entity.setDisplacementAttack(daa);
                 pendingCharges.addElement(daa);
                 break;
             }
 
-            // step...
-            moveType = step.getMovementType();
+            // set last step parameters
             curPos = step.getPosition();
             curFacing = step.getFacing();
-            distance = step.getDistance();
-            mpUsed = step.getMpUsed();
 
             final Hex curHex = game.board.getHex(curPos);
 
@@ -1955,15 +1956,6 @@ implements Runnable {
             }
         }
         
-        // build up heat from movement
-        if (moveType == Entity.MOVE_WALK) {
-            entity.heatBuildup += 1;
-        } else if (moveType == Entity.MOVE_RUN) {
-            entity.heatBuildup += 2;
-        } else if (moveType == Entity.MOVE_JUMP) {
-            entity.heatBuildup += Math.max(3, distance);
-        }
-        
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
             entity.applyDamage();
@@ -2009,6 +2001,23 @@ implements Runnable {
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
             send(entity.getOwner().getId(), createFilteredEntitiesPacket(entity.getOwner()));
+        }
+    }
+    
+    /**
+     * Add heat from the movement phase
+     */
+    public void addMovementHeat() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            // build up heat from movement
+            if (entity.moved == Entity.MOVE_WALK) {
+                entity.heatBuildup += 1;
+            } else if (entity.moved == Entity.MOVE_RUN) {
+                entity.heatBuildup += 2;
+            } else if (entity.moved == Entity.MOVE_JUMP) {
+                entity.heatBuildup += Math.max(3, entity.delta_distance);
+            }
         }
     }
     
@@ -3562,6 +3571,11 @@ implements Runnable {
             Entity entity = (Entity)i.nextElement();
             Hex entityHex = game.getBoard().getHex(entity.getPosition());
             
+            // heat doesn't matter for non-mechs
+            if (!(entity instanceof Mech)) {
+                entity.heatBuildup = 0;
+                continue;
+            }
             // should we even bother?
             if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDead()) {
                 continue;

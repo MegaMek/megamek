@@ -79,6 +79,9 @@ v CVS
 + 662333: ams can't use more ammo than it has
 + added a bunch of new level 2 i.s. mech pics, thanks to Cyric
 + fixed (mysterious) crash on loading in OSX
++ charge damage correct again
++ heat phase only displays mechs
++ 664819: multiple get-up tries should not add to heat multiple times
 
 v 0.27.14 (01-03-03, 9pm)
 + ammo exploding from heat can't explode twice

@@ -2530,36 +2530,14 @@ implements Runnable, ConnectionHandler {
         }
 
         if (md.contains(MovePath.STEP_EJECT)) {
-            phaseReport.append("\n" ).append( entity.getDisplayName()).append( " ejects.\n");
+            phaseReport.append("\n" );
+            if (entity instanceof Mech) {
+                phaseReport.append( entity.getDisplayName()).append( " ejects.\n");
+            } else if (entity instanceof Tank) {
+                phaseReport.append( entity.getDisplayName()).append( " is abandoned by its crew.\n");
+            }
             ejectEntity(entity, false);
 
-            /* this was done in destroyEntity() --^
-            // Is the unit carrying passengers?
-            final Vector passengers = entity.getLoadedUnits();
-            if ( !passengers.isEmpty() ) {
-                final Enumeration iter = passengers.elements();
-                while ( iter.hasMoreElements() ) {
-                    final Entity passenger = (Entity) iter.nextElement();
-                    // Unit should unload.
-                    // TODO : unloading into stacking violation is not
-                    //        explicitly prohibited in the BMRr.
-                    this.unloadUnit( entity, passenger,
-                                     entity.getPosition(),
-                                     entity.getFacing() );
-                }
-            }
-
-            // Is the unit being swarmed?
-            final int swarmerId = entity.getSwarmAttackerId();
-            if ( Entity.NONE != swarmerId ) {
-                final Entity swarmer = game.getEntity( swarmerId );
-                swarmer.setSwarmTargetId( Entity.NONE );
-                entity.setSwarmAttackerId( Entity.NONE );
-                phaseReport.append( swarmer.getDisplayName() );
-                phaseReport.append( " ends its swarm attack.\n" );
-                this.entityUpdate( swarmerId );
-            }
-            */
             return;
         }
 

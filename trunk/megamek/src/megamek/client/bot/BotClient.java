@@ -18,10 +18,13 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.GameEvent;
-import megamek.common.*;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.GameTurn;
+import megamek.common.Minefield;
+import megamek.common.MovePath;
 
 import com.sun.java.util.collections.ArrayList;
 
@@ -209,23 +212,6 @@ public abstract class BotClient extends Client {
                 return new Coords(1, game.board.height - 2);
             case 8 :
                 return new Coords(1, game.board.height / 2);
-        }
-    }
-
-    protected void receiveAttack(Packet c) {
-        Object o = c.getObject(0);
-        if (o instanceof TorsoTwistAction) {
-            TorsoTwistAction tta = (TorsoTwistAction) o;
-            if (game.getEntity(tta.getEntityId()) != null) {
-                game.getEntity(tta.getEntityId()).setSecondaryFacing(tta.getFacing());
-            }
-        } else if (o instanceof FlipArmsAction) {
-            FlipArmsAction faa = (FlipArmsAction) o;
-            if (game.getEntity(faa.getEntityId()) != null) {
-                game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
-            }
-        } else if (o instanceof AttackAction) {
-            //
         }
     }
 

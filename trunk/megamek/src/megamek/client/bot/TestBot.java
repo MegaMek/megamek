@@ -169,19 +169,7 @@ public class TestBot extends BotClient {
         if (min.isPhysical) {
             centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
         }
-        System.out.println(
-            min.getEntity().getShortName()
-                + " "
-                + min.getEntity().getId()
-                + " "
-                + min.getFinalCoords()
-                + " "
-                + min.toString()
-                + "\n Utility: "
-                + min.getUtility()
-                + " \n"
-                + min.tv
-                + "\n");
+        System.out.println(min);
         min.getCEntity().current = min;
         min.getCEntity().last = min;
         this.my_mechs_moved++;
@@ -204,8 +192,7 @@ public class TestBot extends BotClient {
             move_array = new Object[] { self.current };
         }
         for (int i = 0; i < move_array.length; i++) {
-            MoveOption option = null;
-            option = (MoveOption) move_array[i];
+            MoveOption option = (MoveOption) move_array[i];
             option.setState();
             for (int e = 0; e < enemies.size(); e++) { // for each enemy
                 Entity en = (Entity) enemies.get(e);
@@ -412,17 +399,17 @@ public class TestBot extends BotClient {
                 int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                 if (range > self.long_range) {
                     temp_adjustment += (!(range < enemy.long_range) ? .5 : 1)
-                        * (1 + self.RangeDamages[self.Range])
+                        * (1 + self.RangeDamages[self.range])
                         * (Math.max(range - self.long_range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0));
                 }
-                if ((self.Range == CEntity.RANGE_SHORT && (current_range > 5 || range > 9))
+                if ((self.range == CEntity.RANGE_SHORT && (current_range > 5 || range > 9))
                     || (self.RangeDamages[CEntity.RANGE_SHORT] < 4 && current_range > 10)) {
-                    temp_adjustment += ((enemy.Range > CEntity.RANGE_SHORT) ? .5 : 1)
+                    temp_adjustment += ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
                         * (Math.max(1 + self.RangeDamages[CEntity.RANGE_SHORT], 5))
                         * Math.max(range - .5 * Math.max(self.jumpMP, .8 * self.runMP), 0);
-                } else if (self.Range == CEntity.RANGE_MEDIUM) {
+                } else if (self.range == CEntity.RANGE_MEDIUM) {
                     temp_adjustment += ((current_range < 6 || current_range > 12) ? 1 : .25)
-                        * ((enemy.Range > CEntity.RANGE_SHORT) ? .5 : 1)
+                        * ((enemy.range > CEntity.RANGE_SHORT) ? .5 : 1)
                         * (1 + self.RangeDamages[CEntity.RANGE_MEDIUM])
                         * Math.abs(range - .5 * Math.max(self.jumpMP, .8 * self.runMP));
                 } else if (option.damage < .25 * self.RangeDamages[CEntity.RANGE_LONG]) {
@@ -468,7 +455,7 @@ public class TestBot extends BotClient {
                 adjustment += self.bv / mod;
             }
             //add them in now, then re-add them later
-            if (self.Range > CEntity.RANGE_SHORT) {
+            if (self.range > CEntity.RANGE_SHORT) {
                 int ele_dif =
                     game.board.getHex(option.getFinalCoords()).getElevation()
                         - game.board.getHex(self.current.getFinalCoords()).getElevation();
@@ -477,7 +464,7 @@ public class TestBot extends BotClient {
             }
 
             //close the range if nothing else and healthy
-            if (option.damage < .25 * self.RangeDamages[self.Range] && adjustment < self.RangeDamages[self.Range]) {
+            if (option.damage < .25 * self.RangeDamages[self.range] && adjustment < self.RangeDamages[self.range]) {
                 for (int e = 0; e < enemy_array.size(); e++) {
                     Entity en = (Entity) enemy_array.elementAt(e);
                     CEntity enemy = centities.get(en);
@@ -489,9 +476,9 @@ public class TestBot extends BotClient {
                 }
             }
 
-            if (option.damage < .25 * (1 + self.RangeDamages[self.Range])) {
+            if (option.damage < .25 * (1 + self.RangeDamages[self.range])) {
                 option.self_threat += 2 * adjustment;
-            } else if (option.damage < .5 * (1 + self.RangeDamages[self.Range])) {
+            } else if (option.damage < .5 * (1 + self.RangeDamages[self.range])) {
                 option.self_threat += adjustment;
             }
             option.tv.add(option.self_threat + " Initial Damage Adjustment " + "\n");

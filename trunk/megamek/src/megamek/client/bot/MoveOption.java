@@ -3,6 +3,7 @@ package megamek.client.bot;
 import java.util.Vector;
 import java.util.Enumeration;
 
+import megamek.common.*;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
@@ -73,12 +74,12 @@ public class MoveOption extends MovePath implements Cloneable {
             return e0.getDistUtility() < e1.getDistUtility() ? -1 : 1;
         }
     }
-    
+
     public static class DamageInfo {
-		double threat;
-		double damage;
-		double max_threat;
-		double min_damage;
+        double threat;
+        double damage;
+        double max_threat;
+        double min_damage;
     }
 
     public static final DistanceComparator DISTANCE_COMPARATOR = new DistanceComparator();
@@ -98,14 +99,20 @@ public class MoveOption extends MovePath implements Cloneable {
 
     double damage = 0;
     double threat = 0;
-    
+
     private transient CEntity centity;
     transient ArrayList tv = new ArrayList();
-	transient HashMap damageInfos = new HashMap();
-    
+    transient HashMap damageInfos = new HashMap();
+    private Coords pos;
+    private int facing;
+    private boolean prone;
+
     public MoveOption(Game game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
+        this.pos = centity.entity.getPosition();
+        this.facing = centity.entity.getFacing();
+        this.prone = centity.entity.isProne();
     }
 
     public MoveOption(MoveOption base) {
@@ -120,31 +127,34 @@ public class MoveOption extends MovePath implements Cloneable {
         this.doomed = base.doomed;
         this.isPhysical = base.isPhysical;
         this.self_damage = base.self_damage;
+        this.pos = base.pos;
+        this.facing = base.facing;
+        this.prone = base.prone;
     }
-    
+
     public Object clone() {
         return new MoveOption(this);
     }
-    
+
     public double getThreat(CEntity e) {
         return getDamageInfo(e, true).threat;
     }
-    
-	public void setThreat(CEntity e, double value) {
-	    getDamageInfo(e, true).threat = value;
-	}
-	
-	public double getMinDamage(CEntity e) {
-		return getDamageInfo(e, true).min_damage;
-	}
 
-	public double getDamage(CEntity e) {
-		return getDamageInfo(e, true).damage;
-	}
-	
-	public void setDamage(CEntity e, double value) {
-		getDamageInfo(e, true).damage = value;
-	}
+    public void setThreat(CEntity e, double value) {
+        getDamageInfo(e, true).threat = value;
+    }
+
+    public double getMinDamage(CEntity e) {
+        return getDamageInfo(e, true).min_damage;
+    }
+
+    public double getDamage(CEntity e) {
+        return getDamageInfo(e, true).damage;
+    }
+
+    public void setDamage(CEntity e, double value) {
+        getDamageInfo(e, true).damage = value;
+    }
 
     CEntity getCEntity() {
         return centity;
@@ -195,14 +205,10 @@ public class MoveOption extends MovePath implements Cloneable {
         }
         return heat + move; // illegal?
     }
-    
-    public MovePath createMovePath(MovePath path) {
-        return new MoveOption((MoveOption)path);
-    }
-    
+
     public boolean changeToPhysical() {
         MoveStep last = getLastStep();
-        if (last == null && last.getMovementType() == Entity.MOVE_ILLEGAL) {
+        if (last == null || last.getMovementType() == Entity.MOVE_ILLEGAL) {
             return false;
         }
         if (last.getType() != STEP_FORWARDS || isInfantry()) {
@@ -227,22 +233,31 @@ public class MoveOption extends MovePath implements Cloneable {
         return false;
     }
 
+    //it would be nice to have a stand still move...
     public void setState() {
         this.entity = this.centity.entity;
-        this.entity.setPosition(getFinalCoords());
-        this.entity.setFacing(getFinalFacing());
-        this.entity.setSecondaryFacing(getFinalFacing());
+        if (this.steps.size() == 0) {
+            this.entity.setPosition(pos);
+            this.entity.setFacing(facing);
+            this.entity.setSecondaryFacing(facing);
+            this.entity.delta_distance = 0;
+            this.entity.setProne(prone);
+        } else {
+            this.entity.setPosition(getFinalCoords());
+            this.entity.setFacing(getFinalFacing());
+            this.entity.setSecondaryFacing(getFinalFacing());
+            this.entity.setProne(getFinalProne());
+            this.entity.delta_distance = getHexesMoved();
+        }
         this.entity.moved = getLastStepMovementType();
-        this.entity.setProne(getFinalProne());
-        this.entity.delta_distance = getHexesMoved();
     }
 
     /**
-	 * TODO: replace with more common logic
-	 * 
-	 * approximates the attack and defensive modifies assumes that set state
-	 * has been called
-	 */
+     * TODO: replace with more common logic
+     * 
+     * approximates the attack and defensive modifies assumes that set state
+     * has been called
+     */
     public int[] getModifiers(final Entity te) {
         //set them at the appropriate positions
         final Entity ae = this.entity;
@@ -341,8 +356,8 @@ public class MoveOption extends MovePath implements Cloneable {
     }
 
     /**
-	 * TODO: the result of this calculation should be cached...
-	 */
+     * TODO: the result of this calculation should be cached...
+     */
     public double getUtility() {
         //self threat and self damage are considered transient
         double temp_threat =
@@ -370,10 +385,10 @@ public class MoveOption extends MovePath implements Cloneable {
     }
 
     /**
-	 * get maximum damage in this current state from enemy accounting for torso
-	 * twisting and slightly for heat -- the ce passed in is supposed to be the
-	 * enemy mech
-	 */
+     * get maximum damage in this current state from enemy accounting for torso
+     * twisting and slightly for heat -- the ce passed in is supposed to be the
+     * enemy mech
+     */
     public double getMaxModifiedDamage(MoveOption enemy, int modifier, int apc) {
         double max = 0;
         int distance = getFinalCoords().distance(enemy.getFinalCoords());
@@ -388,7 +403,7 @@ public class MoveOption extends MovePath implements Cloneable {
                 mod = .9;
             }
         }
-        int enemy_firing_arcs[] = {0, MovePath.STEP_TURN_LEFT, MovePath.STEP_TURN_RIGHT};
+        int enemy_firing_arcs[] = { 0, MovePath.STEP_TURN_LEFT, MovePath.STEP_TURN_RIGHT };
         for (int i = 0; i < enemy_firing_arcs.length; i++) {
             enemy_firing_arcs[i] =
                 CEntity.getThreatHitArc(
@@ -425,9 +440,9 @@ public class MoveOption extends MovePath implements Cloneable {
         }
         return max;
     }
-    
+
     public DamageInfo getDamageInfo(CEntity cen, boolean create) {
-        DamageInfo result = (DamageInfo)damageInfos.get(cen);
+        DamageInfo result = (DamageInfo) damageInfos.get(cen);
         if (create && result == null) {
             result = new DamageInfo();
             damageInfos.put(cen, result);
@@ -439,11 +454,34 @@ public class MoveOption extends MovePath implements Cloneable {
         return getMpUsed() + movement_threat * 100 / centity.bv;
     }
 
+    /**
+     * There could still be a problem here, but now it's the
+     * callers problem
+     */
     int getPhysicalTargetId() {
-        Targetable target = getLastStep().getTarget(game);
+        MoveStep step = getLastStep();
+        if (step == null) {
+            return -1;
+        }
+        Targetable target = step.getTarget(game);
         if (target == null) {
             return -1;
         }
         return target.getTargetId();
+    }
+
+    public String toString() {
+        return getEntity().getShortName()
+            + " "
+            + getEntity().getId()
+            + " "
+            + getFinalCoords()
+            + " "
+            + super.toString()
+            + "\n Utility: "
+            + getUtility()
+            + " \n"
+            + tv
+            + "\n";
     }
 }

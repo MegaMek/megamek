@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -45,9 +46,14 @@ public class GameTurn implements Serializable {
     public void setPlayerNum(int playerId) {
         this.playerId = playerId;
     }
-    
+
     /**
-     * Returns true if the specified entity is a valid one to use for this turn.
+     * Determine if the specified entity is a valid one to use for this turn.
+     *
+     * @param   entity the <code>Entity</code> that may take this turn.
+     * @param   game the <code>Game</code> this turn belongs to.
+     * @return  <code>true</code> if the specified entity can take this turn.
+     *          <code>false</code> if the entity is not valid for this turn.
      */
     public boolean isValidEntity(Entity entity, Game game) {
         return entity != null
@@ -62,7 +68,7 @@ public class GameTurn implements Serializable {
                         game.getOptions().booleanOption("protos_move_later")))
                   && game.checkForValidNonInfantryAndOrProtomechs(playerId));
     }
-    
+
     /**
      * Returns true if the player and entity are both valid.
      */

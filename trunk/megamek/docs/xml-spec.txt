@@ -1,7 +1,18 @@
-This file describes the elements in an entity XML file.  In addition to the
+This file describes the elements in a MegaMek XML file.  In addition to the
 attributes defined below, an element can have any amount of CDATA text.  This
 text will have no effect on the game, but it may be helpful for humans reading
 the file.  Unless otherwise stated, any well-formed string is a valid value.
+
+Please note, this document does *not* describe the XML files produces by The
+Drawing Board.
+
+<packet> - A top-level element that identifies a transmission between a
+        client and the server.  Contains zero or one <packetData> elements.
+     The following attributes are defined for this element:
+        type - required - identifies the type of packet.  The meanings of
+                the various packet types, and the expected contents of the
+                data are documented in [insert URL here].  Valid values are
+                any positive integer.
 
 <unit> - A top-level element that identifies a unit of entitys.  Contains
         zero or more <entity> elements.  The entities in the units must be
@@ -18,6 +29,163 @@ the file.  Unless otherwise stated, any well-formed string is a valid value.
      The following attributes are defined for this element:
         type - required - identifies the type of entity being described.
                 Valid values are: Mech, Tank, BattleArmor, or Infantry.
+
+<packetData> - The "payload" for the packet.  Contains one or more other
+        elements.  The exact details on the number and types of elements
+        are included in the packet documentation. 
+     The following attributes are defined for this element:
+        isGzipped - default: false - identifies if the contents of the element
+                (the sub-elements and the CDATA) have been compressed with
+                the ZLIB algorithm.  If so, then the CDATA of this element
+                is *not* text meant for a human, but is instead the Base64
+                encoding of the compressed data.
+
+<board> - A rectangular, hex-based battlefield, specifying the terrain
+        (including fire and smoke), buildings, and burning Inferno rounds. 
+        Contains one <boardData> element, zero or one <buildings> elements,
+        and zero or one <infernos> elements.  The hex field of every board is
+        rotated so that, if you consider the top of the board to be North, the
+        every hex has an edge in the North and South directions and a vertex
+        in the East and West directions.
+     The following attributes are defined for this element:
+        version - required - identifies the version number of the <board>
+                element definition used to encode this element.  It is
+                anticipated that this value will be used by decoders to
+                support forward XML version compatibility.
+
+<boardData> - Information about the current board.  Contains zero or more
+        <hex> elements; the exact number of <hex> elements should be the
+        product of the values of the width and height attributes of this
+        element.  The <hex> elements are presented by columns (i.e. hex
+        0101 is followed by hex 0102, and *not* hex 0201).
+     The following attributes are defined for this element:
+        width - required - the width of the board in hexes.  Any integer
+                between 0 and 8388607 is valid.  Expected values are between
+                16 and 240 (i.e. 1-to-15 standard map sheets).  Please note,
+                the "width" dimension is the one that runs parallel to the
+                North and South faces of the hexes.
+        height - required - the height of the board in hexes.  Any integer
+                between 0 and 255 (i.e. 0-to-15 standard map sheets).  Please
+                note, the "height" dimension is the one that runs perpendicular
+                to the North and South faces of the hexes.
+        roadsAutoExit - default: true - identifies if the roads on the map
+                are assumed to exit onto adjacent pavement hexes.  Any boolean
+                value is valid.  
+
+<hex> - A single hex on a battlefield, specifying the terrain (including fire
+        and smoke).  Contains one <terrains> element.
+     The following attributes are defined for this element:
+        version - required - identifies the version number of the <hex>
+                element definition used to encode this element.  It is
+                anticipated that this value will be used by decoders to
+                support forward XML version compatibility.
+
+<terrains> - The information for all terrain features in a hex.  Contains
+        zero or more <terrain> elements.
+     The following attributes are defined for this element:
+        count - required - identifies the number of <terrain> elements in
+                the hex.  Any non-negative integer is valid.
+        elevation - required - identifies the base elevation of the hex.  Any
+                integer is valid.
+        theme - optional - identifies the theme of the graphics for the hex. 
+                Any string is valid.  Not all values for theme produce
+                meaningful results.
+
+<terrain> - The information for a single terrain feature in a hex.
+     The following attributes are defined for this element:
+        type - required - identifies the type of this terrain feature.  Valid
+                values are any positive integer.  The meanings of the various
+                terrain types are documented in [insert URL here].
+        level - required - the level of the terrain feature.  Valid
+                values are any non-negative integer.  The meanings of
+                the various levels are documented with the terrain types.
+        exits - required - the level of the terrain feature.  Any integer
+                between 0 and 63 is valid.  Certain terrain features like
+                roads and buildings have special rules when one travels 
+                from one hex to another along (or inside) the terrain feature.
+                This attribute specifies when a terrain feature in one hex is
+                connected to the same terrain feature in an adjacent hex. 
+                Each edge of a hex is assigned a numeric value: the North edge
+                is 1, the Northeast edge is 2, the Southeast edge is 4, the
+                South edge is 8, the Southwest edge is 16, and the Northwest
+                edge is 32.  The value of this attribute is the sum of the
+                values for every edge that the terrain feature in this hex
+                crosses.  For example, if a road runs from hex 0101 through
+                0102 into 0103, the exits for the roads of the three hexes
+                would be 8, 9, and 1 (respectively).  If the road ran from
+                0101 to 0201 to 0102, the exits would be 4, 48, and 2.
+        exitsSpecified - required - whether the exits have been calulated or
+                were specified explicitly.  Any boolean value is valid.
+
+<buildings> - Information about the buildings present on the battlefield.
+        Contains one or more <building> elements.
+
+<building> - Information about a single (possibly multi-hex) building on the
+        battlefield.  Contains one <buildingData> element.  Please note, the
+        <terrain> elements of the board for the building specify the *starting*
+        values for the building, but the <building> element specifies the
+        *current* values for the building.  Please note that the height of
+        the building and the depth of the building's basement are documented
+        in the <terrain> elements, and not in the <building> element.
+     The following attributes are defined for this element:
+        version - required - identifies the version number of the <building>
+                element definition used to encode this element.  It is
+                anticipated that this value will be used by decoders to
+                support forward XML version compatibility.
+
+<buildingData> - The details of this particular building.  Contains one or
+        more <coords> elements that represent the location of the hex(es) that
+        this building occupies.
+     The following attributes are defined for this element:
+        id - required - a unique identifier for the building.  Valid values
+                are any non-negative integer.
+        type - required - identifies the construction type of this building. 
+                Valid values are 1, 2, 3, and 4.  A value of 1 indicates a
+                light building, 2 is for medium buildings, 3 is for heavy
+                construction, and 4 is for hardened buildings.
+        currentCF - required - the remaining number of construction factors
+                (i.e. damage points) that the building can sustain.  Valid
+                values are any non-negative integer.  A building will collapse
+                at the end of the phase that it's currentCF falls to zero.
+                The currentCF also represents the cumulative number of tons
+                of Tanks and Meks that a building can support on a single
+                floor in a single hex; if the cumulative tonnage exceeds the
+                currentCF, the building will collapse immediately.
+        phaseCF - required - the number of construction factors (i.e. damage
+                points) that the building had at the beginning of the phase. 
+                Valid values are any positive integer.  The damage that a
+                building inflicts during a collapse and upon units moving
+                through its walls is based upon the phaseCF, not the currentCF.
+        name - required - the name of the building, as it will appear on the
+                map and in reports.
+        isBurning - default: false - identifies when at least one hex of the
+                building is on fire.  Any boolean value is valid.
+
+<infernos> - Information about the Inferno rounds burning on the battlefield.
+        Contains one or more <inferno> elements.  Each <inferno> element
+        will contain a <coords> element that represents the location of the
+        hex containing these inferno rounds.
+
+<inferno> - The information about the Inferno rounds burning at a set of
+        coordinates or on an entity.  Contains one <standard> element, zero
+        or one <coords> element, and zero or one <arrowiv> element.
+
+<standard> - The burn time of standard Inferno rounds remaining.
+     The following attributes are defined for this element:
+        turns - required - the width of the board in hexes.  Any non-negative
+               integer is valid.
+
+<arrowiv> - The burn time of Arrow IV Inferno rounds remaining.
+     The following attributes are defined for this element:
+        turns - required - the width of the board in hexes.  Any non-negative
+               integer is valid.
+
+<coords> - Identifies a set of coordinates in an abstract metric where (0, 0)
+        is the upper-lefthand-corner, X increases to the right of the origin,
+        and Y increases below the origin.  
+     The following attributes are defined for this element:
+        hash - required - the hash value that represents these coordinates. 
+               Any non-negative integer is valid.  The value = X * 256 + Y.
 
 <entity> - A playable item in the game.  Contains zero or one <pilot>
         elements, zero or more <location> elements, and zero or one <fluff>

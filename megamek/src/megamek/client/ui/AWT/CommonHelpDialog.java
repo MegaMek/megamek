@@ -73,7 +73,7 @@ public class CommonHelpDialog extends Dialog
                     if ( firstLine ) {
                         firstLine = false;
                     } else {
-                        buff.append( "\n" );
+                        buff.append( " \n" ); // the space is to force a line-feed on empty lines
                     }
                     buff.append( line );
                     line = input.readLine();

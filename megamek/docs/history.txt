@@ -61,11 +61,9 @@ movement:
 - jump into level 1 water should need roll (bdee)
 
 weapon attacks:
-- multiple targets modifier
 ? "pick up club" action
 - "intervening" routine needs to be able to handle both sides of hex line
 ? option to step thru roll by roll
-- transfer of damage from rear limb should go to rear torso (bob dee)
 
 physical attacks:
 - clubbing
@@ -73,7 +71,6 @@ physical attacks:
 ? show the to-hit numbers, somehow
 - opposing pushes should counter each other
 - if a leg is kicked off, that leg should still be able to kick (theBlind)
-- no roll needed for landing with dfa (bdee)
 
 pilots:
 - successive consciousness checks should be made from low rolls to high
@@ -98,15 +95,19 @@ v 0.25
 VERSION HISTORY:
 ----------------
 v next
++ 532083: transfer damage no longer counts double towards damage this phase
++ prone mechs can make facing changes at the normal cost
+
+v 0.24.2 (03-20-02, 10pm)
 + .mep files load weapons with no space between "(R)" and the weapon name now
-+ fixed bug in DFA causing target to be displaced from wrong coordinates
++ 532302: DFA causing target to be displaced from wrong coordinates
 + new distance formula by John Uckele (buggy?)
-+ mechs making DFA no longer make landing PSRs during movement
-+ secondary target modifiers applied
-+ can't fire weapons from both arms while prone
++ 532077: mechs making DFA no longer make landing PSRs during movement (thx bdee)
++ 532079: secondary target modifiers applied
++ 531688: now can't fire weapons from both arms while prone
 - significantly changed how rear locations and weapons work:
 + weapons can now be rear-mounted anywhere legal (head, legs)
-+ rear limb hits transfer to rear torso locations
++ 532068: rear limb hits now transfer to rear torso locations (thx bdee)
 
 v 0.24.1 (03-17-02, 11pm)
 + changed RNG routine to avoid very unlikely chance of rounding errors (:-P)

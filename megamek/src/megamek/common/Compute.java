@@ -350,14 +350,13 @@ public class Compute
             }
             
             // check for valid walk/run mp
-            if ((overallMoveType == Entity.MOVE_WALK
-                 || overallMoveType == Entity.MOVE_RUN)
-                && (!entity.isProne() ||
-                    md.contains(MovementData.STEP_GET_UP))) {
+            if ((overallMoveType == Entity.MOVE_WALK || overallMoveType == Entity.MOVE_RUN)
+                && (!entity.isProne() || md.contains(MovementData.STEP_GET_UP)
+                    || step.getType() == MovementData.STEP_TURN_LEFT 
+                    || step.getType() == MovementData.STEP_TURN_RIGHT)) {
                 if (step.getMpUsed() <= entity.getWalkMP()) {
                     moveType = Entity.MOVE_WALK;
-                } else if (step.getMpUsed() <= entity.getRunMP()
-                           && !isRunProhibited) {
+                } else if (step.getMpUsed() <= entity.getRunMP() && !isRunProhibited) {
                     moveType = Entity.MOVE_RUN;
                 }
             }

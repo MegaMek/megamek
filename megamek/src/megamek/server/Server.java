@@ -972,6 +972,7 @@ public class Server
         int moveType = Entity.MOVE_NONE;
         int overallMoveType = Entity.MOVE_NONE;
         boolean firstStep;
+        boolean wasProne;
 
         Compute.compile(game, entity.getId(), md);
 
@@ -989,6 +990,7 @@ public class Server
         firstStep = true;
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MovementData.Step step = (MovementData.Step)i.nextElement();
+            wasProne = entity.isProne();
 
             // stop for illegal movement
             if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
@@ -1012,7 +1014,7 @@ public class Server
             }
 
             // did the entity just fall?
-            if (entity.isProne()) {
+            if (!wasProne && entity.isProne()) {
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
                 break;
@@ -1070,7 +1072,7 @@ public class Server
             }
 
             // did the entity just fall?
-            if (entity.isProne()) {
+            if (!wasProne && entity.isProne()) {
                 curFacing = entity.getFacing();
                 curPos = entity.getPosition();
                 break;
@@ -2169,19 +2171,21 @@ public class Server
         while (damage > 0 && !te.isDestroyed() && !te.isDoomed()) {
             // let's resolve some damage!
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
-            te.damageThisPhase += damage;
 
             // is there armor in the location hit?
             if (te.getArmor(hit) > 0) {
                 if (te.getArmor(hit) > damage) {
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
+                    te.damageThisPhase += damage;
                     damage = 0;
                     desc += " " + te.getArmor(hit) + " Armor remaining";
                 } else {
                     // damage goes on to internal
-                    damage -= te.getArmor(hit);
+                    int absorbed = te.getArmor(hit);
                     te.setArmor(Entity.ARMOR_DESTROYED, hit);
+                    te.damageThisPhase += absorbed;
+                    damage -= absorbed;
                     desc += " Armor destroyed,";
                 }
             }
@@ -2195,12 +2199,15 @@ public class Server
                     if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
+                        te.damageThisPhase += damage;
                         damage = 0;
                         desc += " " + te.getInternal(hit) + " Internal Structure remaining";
                     } else {
                         // damage transfers, maybe
-                        damage -= te.getInternal(hit);
+                        int absorbed = te.getInternal(hit);
                         te.setInternal(Entity.ARMOR_DESTROYED, hit);
+                        te.damageThisPhase += absorbed;
+                        damage -= te.getInternal(hit);
                         desc += " <<<SECTION DESTROYED>>>,";
                     }
                 }

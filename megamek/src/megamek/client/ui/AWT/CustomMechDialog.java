@@ -253,7 +253,7 @@ extends Dialog implements ActionListener {
             }
             
             // change entity
-            entity.crew = new Pilot(name, gunnery, piloting);
+            entity.setCrew(new Pilot(name, gunnery, piloting));
             if(entity.hasC3() && choC3.getSelectedIndex() > -1) {
                 entity.setC3Master(client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]));
                 //new AlertDialog(client.frame, "Setting C3", "Set C3 Master to " + entity.getC3Master().getDisplayName()).show();

@@ -31,6 +31,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     // these indices match those in Terrain.java, and are therefore sensitive to any changes there
 
     private final static Color[] m_terrainColors = new Color[Terrain.SIZE];
+    private final static Color HEAVY_WOODS = new Color(160,200,100);
 
     private Image        m_mapImage;
     private BoardView1   m_bview;
@@ -360,6 +361,10 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
                 }
                 terrColor = m_terrainColors[j];
                 terrain = j;
+                // make heavy woods darker
+                if (j == Terrain.WOODS && x.getTerrain(j).getLevel() > 1) {
+                    terrColor = HEAVY_WOODS;
+                }
                 break;
             }
         }

@@ -290,7 +290,7 @@ public class FiringDisplay
       private void cacheVisibleTargets() {
         clearVisibleTargets();
         
-        Vector vec = client.game.getEnemyEntities( ce().getOwner() );
+        Vector vec = client.game.getEnemyEntities( ce() );
         Coords myPos = ce().getPosition();
         boolean flipLocs = false;
         
@@ -299,13 +299,15 @@ public class FiringDisplay
         visibleTargets = new Entity[vec.size()];
         vec.copyInto(visibleTargets);
         
-        if ( vec.size() == 0 )
-          return;
-        
-        butNextTarg.setEnabled(true);
+        butNextTarg.setEnabled(visibleTargets.length > 0);
         
         for ( int i = 0; i < visibleTargets.length - 1; i++ ) {
           Entity entI = (Entity)visibleTargets[i];
+          
+          if (entI == ce()) {
+              continue;
+          }
+          
           int rangeToI = myPos.distance(entI.getPosition());
           
           for ( int j = i + 1; j < visibleTargets.length; j++ ) {

@@ -98,6 +98,9 @@ v next
 + added some new fields for use in 3050+ weapons
 + 543593: intiative rewritten to fix lockups
 + added Cord Awtry's patch for status bars on mechs
++ added game options dialog in lobby and a few options to change
++ changed next target button to use Entity.isEnemyOf
++ fixed descriptions for base physical attack to-hit
 
 v 0.25.2
 + 543237: heat modifier to fire now applies at the correct levels

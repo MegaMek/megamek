@@ -130,9 +130,6 @@ implements Serializable {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
             GZIPOutputStream zos = new GZIPOutputStream(baos);
-//            ZipOutputStream zos = new ZipOutputStream(baos);
-//            ZipEntry zipEntry = new ZipEntry("data zip");
-//            zos.putNextEntry(zipEntry);
             
             ObjectOutputStream oos = new ObjectOutputStream(zos);
             oos.writeObject(data);
@@ -172,8 +169,6 @@ implements Serializable {
             ByteArrayInputStream bais = new ByteArrayInputStream((byte[])data[0]);
 
             GZIPInputStream zis = new GZIPInputStream(bais);
-//            ZipInputStream zis = new ZipInputStream(bais);
-//            zis.getNextEntry();
 
             ObjectInputStream ois = new ObjectInputStream(zis);
             data = (Object[])ois.readObject();

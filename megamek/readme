@@ -2,8 +2,9 @@ INTRODUCTION
 ------------
 MegaMek is a version of BattleTech that you can play with your friends 
 over the internet.  It it written in Java.  All of the level 1 (3025) 
-equipment and nearly all of the level 1 rules are functioning. When these 
-are done, work will begin on the level 2 rules and equipment. 
+equipment and nearly all of the level 1 rules are functioning. In addition,
+many of the level 2 rules and equipment are finished, and even a few
+level 3 rules are available in the options.
 
 If you would like information about how to play the game, see the "PLAYING
 THE GAME" section, below.  If you're having trouble getting MegaMek started, 
@@ -35,16 +36,17 @@ If none of the above options work for you, see the "INSTALLING OR UPDATING
 YOUR JAVA RUNTIME" section, below.
 
 If you have a VM, but it does not support .jar files, then use your favorite
-extraction program to decompress the "MegaMek.jar" and "TinyXML.jar" files
-into a new "classes" folder (create the "classes" folder in your main
-"megamek" folder).  Then decompress the "collections.jar" file into
-the main megamek folder.  Once these steps have been done (you only need to
-do the above steps once), you will need to set the classpath to the classes
-folder and the current folder and run "MegaMek.class".  For example, using
-Sun Java, run:
+extraction program to decompress "MegaMek.jar", "collections.jar",
+"TinyXML.jar", and "Ostermiller.jar" into a new "classes" folder (create
+the "classes" folder in your main "megamek" folder).  Once these steps
+have been done (you only need to do the above steps once), you will
+need to set the classpath to the classes folder and the current folder
+and run "MegaMek.class".  For example, using Sun Java, run:
 
 java -cp .;classes megamek/MegaMek
 
+Note that in some cases, the semicolon may need to be escaped:
+java -cp .\;classes megamek/MegaMek
 
 
 INSTALLING OR UPDATING YOUR JAVA RUNTIME

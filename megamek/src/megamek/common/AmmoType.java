@@ -93,6 +93,7 @@ public class AmmoType extends EquipmentType {
     public static final int     M_FASCAM            = 1 << 24;
     public static final int     M_FASCAM_INFERNO    = 1 << 25;
     public static final int     M_FASCAM_VIBRABOMB  = 1 << 26;
+    public static final int     M_SMOKE             = 1 << 27;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision",
@@ -225,6 +226,7 @@ public class AmmoType extends EquipmentType {
         Vector lrmAmmos = new Vector(24);
         Vector acAmmos  = new Vector(4);
         Vector arrowAmmos = new Vector(2);
+        Vector artyAmmos = new Vector(6);
         Vector munitions = new Vector();
 
         Enumeration baseTypes = null;
@@ -298,6 +300,15 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
+        base = createISLongTomAmmo();
+        artyAmmos.addElement( base );
+        EquipmentType.addType( base );
+        base = createISSniperAmmo();
+        artyAmmos.addElement( base );
+        EquipmentType.addType( base );
+        base = createISThumperAmmo();
+        artyAmmos.addElement( base );
+        EquipmentType.addType( base );
         base = createISArrowIVAmmo();
         arrowAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -343,6 +354,15 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
+        base = createCLLongTomAmmo();
+        artyAmmos.addElement( base );
+        EquipmentType.addType( base );
+        base = createCLSniperAmmo();
+        artyAmmos.addElement( base );
+        base = createCLThumperAmmo();
+        EquipmentType.addType( base );
+        artyAmmos.addElement( base );
+        EquipmentType.addType( base );
         base = createCLArrowIVAmmo();
         arrowAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -524,6 +544,24 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         baseTypes = arrowAmmos.elements();
+        while ( baseTypes.hasMoreElements() ) {
+            base = (AmmoType) baseTypes.nextElement();
+            mutators = munitions.elements();
+            while ( mutators.hasMoreElements() ) {
+                mutator =  (MunitionMutator) mutators.nextElement();
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
+        }
+
+        // Create the munition types for Artillery launchers.
+        munitions.removeAllElements();
+// TODO : implement me!!!
+//         munitions.addElement( new MunitionMutator( "Smoke",
+//                                                    1, M_SMOKE ) );
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        baseTypes = artyAmmos.elements();
         while ( baseTypes.hasMoreElements() ) {
             base = (AmmoType) baseTypes.nextElement();
             mutators = munitions.elements();
@@ -2640,6 +2678,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+
     public static AmmoType createISArrowIVAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -2676,6 +2715,113 @@ public class AmmoType extends EquipmentType {
         return ammo;
       }
 
+    public static AmmoType createISLongTomAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Long Tom Ammo";
+        ammo.setInternalName("ISLongTomAmmo");
+        ammo.addLookupName("ISLongTom Ammo");
+        ammo.addLookupName("IS Ammo Long Tom");
+        ammo.addLookupName("IS Long Tom Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LONG_TOM;
+        ammo.shots = 5;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLLongTomAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Long Tom Ammo";
+        ammo.setInternalName("CLLongTomAmmo");
+        ammo.addLookupName("CLLongTom Ammo");
+        ammo.addLookupName("Clan Ammo Long Tom");
+        ammo.addLookupName("Clan Long Tom Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LONG_TOM;
+        ammo.shots = 5;
+        ammo.bv = 11;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+      }
+
+    public static AmmoType createISSniperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Sniper Ammo";
+        ammo.setInternalName("ISSniperAmmo");
+        ammo.addLookupName("ISSniper Ammo");
+        ammo.addLookupName("IS Ammo Sniper");
+        ammo.addLookupName("IS Sniper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_SNIPER;
+        ammo.shots = 10;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLSniperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Sniper Ammo";
+        ammo.setInternalName("CLSniperAmmo");
+        ammo.addLookupName("CLSniper Ammo");
+        ammo.addLookupName("Clan Ammo Sniper");
+        ammo.addLookupName("Clan Sniper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_SNIPER;
+        ammo.shots = 10;
+        ammo.bv = 5;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+      }
+
+    public static AmmoType createISThumperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Thumper Ammo";
+        ammo.setInternalName("ISThumperAmmo");
+        ammo.addLookupName("ISThumper Ammo");
+        ammo.addLookupName("IS Ammo Thumper");
+        ammo.addLookupName("IS Thumper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_THUMPER;
+        ammo.shots = 20;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_IS_LEVEL_2;
+
+        return ammo;
+    }
+
+    public static AmmoType createCLThumperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Thumper Ammo";
+        ammo.setInternalName("CLThumperAmmo");
+        ammo.addLookupName("CLThumper Ammo");
+        ammo.addLookupName("Clan Ammo Thumper");
+        ammo.addLookupName("Clan Thumper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_THUMPER;
+        ammo.shots = 20;
+        ammo.bv = 3;
+        ammo.techType = TechConstants.T_CLAN_LEVEL_2;
+
+        return ammo;
+      }
 
     public String toString() {
         return "Ammo: " + name;
@@ -2863,6 +3009,16 @@ public class AmmoType extends EquipmentType {
                 nameBuf.insert( 0, " -" );
                 munition.addToEnd(base, nameBuf.toString());
                 break;
+            case AmmoType.T_LONG_TOM:
+            case AmmoType.T_SNIPER:
+            case AmmoType.T_THUMPER:
+                // Add the munition name to the beginning of the display name.
+                nameBuf = new StringBuffer( this.name );
+                nameBuf.append( " " );
+                nameBuf.append( base.name );
+                munition.name = nameBuf.toString();
+                munition.setInternalName( munition.name );
+                munition.addToEnd( base, munition.name );
             default:
                 throw new IllegalArgumentException
                     ( "Don't know how to create munitions for " +

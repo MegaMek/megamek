@@ -7,6 +7,7 @@ v0.29.64 (CVS)
 + Data 1108229: Added images for Arctic Wolf, Goshawk/Vapor Eagle, 
         Mad Cat MK II, Maelstorm, O-Bakemono, Stooping Hawk, and Crossbow.
 + Bug 1112073: Don't count Rocket Launchers in calculating Max Heat.
++ Bug 1009227, Patch 1115911: bot hangs in Physical Phase.
 
 v0.29.63 (2005-01-30 2:00pm)
 + Bug 1107959: ejected pilot moves same turn

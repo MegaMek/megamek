@@ -466,6 +466,10 @@ public class Client extends Panel
     		bv.removeBoardViewListener((BoardViewListener) curPanel);
     	}
     	
+        if ( curPanel instanceof ActionListener ) {
+            menuBar.removeActionListener( (ActionListener) curPanel );
+        }
+
         this.game.setPhase(phase);
         
         bv.hideTooltip();    //so it does not cover up anything important during a report "phase"
@@ -541,10 +545,9 @@ public class Client extends Panel
     }
     
     private void switchPanel(Component panel) {
-        if ( curPanel instanceof ActionListener )
-            menuBar.removeActionListener( (ActionListener) curPanel );
-        if ( panel instanceof ActionListener )
+        if ( panel instanceof ActionListener ) {
             menuBar.addActionListener( (ActionListener) panel );
+        }
         // TODO: reuse existing panels.
         curPanel = panel;
         this.add(curPanel);

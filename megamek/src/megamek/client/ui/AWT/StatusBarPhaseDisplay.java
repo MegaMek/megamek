@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener
 {
+	
   // displays
     private Label labStatus;
     protected Panel panStatus;
@@ -38,13 +39,16 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       
       butDisplay = new Button("D");
       butDisplay.addActionListener(this);
+      butDisplay.setActionCommand(VIEW_MEK_DISPLAY);
       
       butMap = new Button("M");
       butMap.addActionListener(this);
+      butMap.setActionCommand(VIEW_MINI_MAP);
       
       butLOS = new Button("L");
       butLOS.addActionListener(this);
-      
+      butLOS.setActionCommand(VIEW_LOS_SETTING);
+
       // layout
       GridBagLayout gridbag = new GridBagLayout();
       GridBagConstraints c = new GridBagConstraints();
@@ -59,7 +63,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
       c.weightx = 0.0;    c.weighty = 0.0;
       gridbag.setConstraints(butDisplay, c);
       panStatus.add(butDisplay);
-      
+
 	  panStatus.add(butMap);
 
       c.gridwidth = GridBagConstraints.REMAINDER;
@@ -77,13 +81,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
       boolean handled = false;
 
-      if (ev.getSource() == butDisplay) {
+      if (ev.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
         client.toggleDisplay();
         handled = true;
-      } else if (ev.getSource() == butMap) {
+      } else if (ev.getActionCommand().equals(VIEW_MINI_MAP)) {
         client.toggleMap();
         handled = true;
-      } else if (ev.getSource() == butLOS) {
+      } else if (ev.getActionCommand().equals(VIEW_LOS_SETTING)) {
         client.showLOSSettingDialog();
         handled = true;
       }

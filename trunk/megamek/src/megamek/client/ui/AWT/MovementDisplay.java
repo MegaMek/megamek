@@ -247,24 +247,14 @@ public class MovementDisplay
      * Selects an entity, by number, for movement.
      */
     public void selectEntity(int en) {
-        // clear any previously considered moves
-        if (en != cen) {
-            clearAllMoves();
-        }
-        
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
             System.err.println("MovementDisplay: tried to select non-existant entity: " + en);
             return;
         }
-        // okay.
+        // okay...
         this.cen = en;
-
-        md = new MovePath();
-        cmd = new MovePath();
-        gear = Compute.GEAR_LAND;
-        loadedUnits = ce().getLoadedUnits();
-        
+        clearAllMoves();
         updateButtons();
         
         client.game.board.highlight(ce().getPosition());

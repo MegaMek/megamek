@@ -4,6 +4,8 @@ v0.29.37 (CVS)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl
 + some more bugfixing in high/low gravity rules
 + Bug 966960: Specialty Ammo with Mixed Tech works now
++ Bug 968198: BLK files have different ammo names from MTF files.
++ Bug 911899: TEMPORARY solution - treat smoke artillery ammo as normal ammo.
 
 v0.29.36 (2004-06-06, 10:30pm)
 + Bug 957390: a bot miscue from the last checkin

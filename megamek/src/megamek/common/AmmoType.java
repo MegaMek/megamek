@@ -555,9 +555,8 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Artillery launchers.
         munitions.removeAllElements();
-// TODO : implement me!!!
-//         munitions.addElement( new MunitionMutator( "Smoke",
-//                                                    1, M_SMOKE ) );
+        munitions.addElement( new MunitionMutator( "Smoke",
+                                                   1, M_SMOKE ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2721,6 +2720,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Long Tom Ammo";
         ammo.setInternalName("ISLongTomAmmo");
         ammo.addLookupName("ISLongTom Ammo");
+        ammo.addLookupName("ISLongTomArtillery Ammo");
         ammo.addLookupName("IS Ammo Long Tom");
         ammo.addLookupName("IS Long Tom Ammo");
         ammo.damagePerShot=1;
@@ -2739,6 +2739,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Long Tom Ammo";
         ammo.setInternalName("CLLongTomAmmo");
         ammo.addLookupName("CLLongTom Ammo");
+        ammo.addLookupName("CLLongTomArtillery Ammo");
         ammo.addLookupName("Clan Ammo Long Tom");
         ammo.addLookupName("Clan Long Tom Ammo");
         ammo.damagePerShot=1;
@@ -2757,6 +2758,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Sniper Ammo";
         ammo.setInternalName("ISSniperAmmo");
         ammo.addLookupName("ISSniper Ammo");
+        ammo.addLookupName("ISSniperArtillery Ammo");
         ammo.addLookupName("IS Ammo Sniper");
         ammo.addLookupName("IS Sniper Ammo");
         ammo.damagePerShot=1;
@@ -2775,6 +2777,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Sniper Ammo";
         ammo.setInternalName("CLSniperAmmo");
         ammo.addLookupName("CLSniper Ammo");
+        ammo.addLookupName("CLSniperArtillery Ammo");
         ammo.addLookupName("Clan Ammo Sniper");
         ammo.addLookupName("Clan Sniper Ammo");
         ammo.damagePerShot=1;
@@ -2793,6 +2796,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Thumper Ammo";
         ammo.setInternalName("ISThumperAmmo");
         ammo.addLookupName("ISThumper Ammo");
+        ammo.addLookupName("ISThumperArtillery Ammo");
         ammo.addLookupName("IS Ammo Thumper");
         ammo.addLookupName("IS Thumper Ammo");
         ammo.damagePerShot=1;
@@ -2811,6 +2815,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Thumper Ammo";
         ammo.setInternalName("CLThumperAmmo");
         ammo.addLookupName("CLThumper Ammo");
+        ammo.addLookupName("CLThumperArtillery Ammo");
         ammo.addLookupName("Clan Ammo Thumper");
         ammo.addLookupName("Clan Thumper Ammo");
         ammo.damagePerShot=1;
@@ -3019,6 +3024,10 @@ public class AmmoType extends EquipmentType {
                 munition.name = nameBuf.toString();
                 munition.setInternalName( munition.name );
                 munition.addToEnd( base, munition.name );
+
+                // The munition name appears in the middle of the other names.
+                munition.addBeforeString(base, "Ammo", this.name + " ");
+                break;
             default:
                 throw new IllegalArgumentException
                     ( "Don't know how to create munitions for " +

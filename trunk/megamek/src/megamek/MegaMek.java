@@ -259,19 +259,23 @@ public class MegaMek
         server = new Server(hd.serverPass, hd.port);
         server.setGame(g);
 
-        // initialize game
-        client = new Client(frame, hd.name);
-        
-        // verify connection
-        if(!client.connect("localhost", hd.port)) {
-            server = null;
-            client = null;
-            new AlertDialog(frame, "Host a Game", "Error: could not connect to local server.").show();
-            return;
+        if (sd.localName != "") {
+            // initialize game
+            client = new Client(frame, hd.name);
+            
+            // verify connection
+            if(!client.connect("localhost", hd.port)) {
+                server = null;
+                client = null;
+                new AlertDialog(frame, "Host a Game", "Error: could not connect to local server.").show();
+                return;
+            }
+            
+            // wait for full connection
+            client.retrieveServerInfo();
         }
         
-        // wait for full connection
-        client.retrieveServerInfo();
+       
         
         // setup any bots
         for (int x = 0; x < pa.length; x++) {

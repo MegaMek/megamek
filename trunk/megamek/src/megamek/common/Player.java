@@ -61,6 +61,9 @@ public final class Player extends TurnOrdered
     private int num_mf_conv  = 0;
     private int num_mf_cmd   = 0;
     private int num_mf_vibra = 0;
+    
+    // hexes that are automatically hit by artillery
+    private Vector artyAutoHitHexes;
 
     /**
      * The "no camo" category.
@@ -95,59 +98,63 @@ public final class Player extends TurnOrdered
     }
     
     public void removeMinefield(Minefield mf) {
-    	visibleMinefields.removeElement(mf);
-	}
+        visibleMinefields.removeElement(mf);
+    }
     
     public void removeMinefields() {
-    	visibleMinefields.removeAllElements();
-	}
+        visibleMinefields.removeAllElements();
+    }
+    
+    public void removeArtyAutoHitHexes() {
+        artyAutoHitHexes.removeAllElements();
+    }
     
     public boolean containsMinefield(Minefield mf) {
-    	return visibleMinefields.contains(mf);
+        return visibleMinefields.contains(mf);
     }
     
 	public boolean hasMinefields() {
-    	return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
+        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
     }
     
     public void setNbrMFConventional(int nbrMF) {
-    	num_mf_conv = nbrMF;
+        num_mf_conv = nbrMF;
     }
     
     public void setNbrMFCommand(int nbrMF) {
-    	num_mf_cmd = nbrMF;
+        num_mf_cmd = nbrMF;
     }
     
     public void setNbrMFVibra(int nbrMF) {
-    	num_mf_vibra = nbrMF;
+        num_mf_vibra = nbrMF;
     }
     
     public int getNbrMFConventional() {
-    	return num_mf_conv;
+        return num_mf_conv;
     }
     
     public int getNbrMFCommand() {
-    	return num_mf_cmd;
+        return num_mf_cmd;
     }
     
     public int getNbrMFVibra() {
-    	return num_mf_vibra;
+        return num_mf_vibra;
     }
     
     public void setCamoCategory(String name) {
-      this.camoCategory = name;
+        this.camoCategory = name;
     }
     
     public String getCamoCategory() {
-      return camoCategory;
+        return camoCategory;
     }
     
     public void setCamoFileName(String name) {
-      this.camoFileName = name;
+        this.camoFileName = name;
     }
     
     public String getCamoFileName() {
-      return camoFileName;
+        return camoFileName;
     }
 
     public Player(int id, String name) {
@@ -273,5 +280,13 @@ public final class Player extends TurnOrdered
     
     public boolean admitsDefeat() {
     	return admitsDefeat;
+    }
+    
+    public void setArtyAutoHitHexes(Vector artyAutoHitHexes) {
+        this.artyAutoHitHexes = artyAutoHitHexes;
+    }
+    
+    public Vector getArtyAutoHitHexes() {
+        return artyAutoHitHexes;
     }
 }

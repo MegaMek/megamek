@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -91,8 +91,7 @@ public class Client extends Panel
     	
     	// try to connect
 		if(!connect(host, port)) {
-			String error = "Error: could not connect to server at " +
-				host + ":" + port + ".";
+			String error = "Error: could not connect to server at " +				host + ":" + port + ".";
 			new AlertDialog(frame, "Host a Game", error).show();
 			frame.setVisible(false);
 			die();
@@ -1346,15 +1345,6 @@ public class Client extends Panel
             try {
                 // Read the units from the file.
                 Vector loadedUnits = EntityListFile.loadFrom( unitPath, unitFile );
-
-                // Clear the player's current units.
-                Vector currentUnits =
-                    game.getPlayerEntities( getLocalPlayer() );
-                for ( Enumeration iter = currentUnits.elements();
-                      iter.hasMoreElements(); ) {
-                    final Entity entity = (Entity) iter.nextElement();
-                    sendDeleteEntity( entity.getId() );
-                }
 
                 // Add the units from the file.
                 for ( Enumeration iter = loadedUnits.elements();

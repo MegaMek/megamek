@@ -63,6 +63,11 @@ public abstract class Mech
     public static final int        LOC_RLEG             = 6;
     public static final int        LOC_LLEG             = 7;
     
+    /**
+     * The internal name for Mek Stealth systems.
+     */
+    public static final String STEALTH = "Mek Stealth";
+
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
@@ -168,9 +173,29 @@ public abstract class Mech
     }
     
     /**
-     * Override entity.newRound()
+     * Override Entity#newRound() method.
      */
     public void newRound() {
+
+        // Walk through the Mech's miscellaneous equipment before
+        // we apply our parent class' newRound() functionality
+        // because Mek Stealth is set by the Entity#newRound() method.
+        for (Enumeration e = getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted) e.nextElement();
+            MiscType mtype = (MiscType) m.getType();
+
+            // Turn off MASC at start of each round.
+            if (mtype.hasFlag(MiscType.F_MASC)) {
+                m.setMode("Off");
+            }
+            // Stealth can not be turned on if it's ECM is destroyed.
+            else if ( Mech.STEALTH.equals(mtype.getInternalName()) &&
+                      m.getLinked().isDestroyed() ) {
+                m.setMode("Off");
+            }
+
+        } // Check the next piece of equipment.
+
         super.newRound();
 
         nMASCLevel = Math.max(0, nMASCLevel - 1);        
@@ -188,17 +213,9 @@ public abstract class Mech
                 m.setShotsLeft(0);
             }
         }
-        
-        // turn off MASC
-        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
-            Mounted m = (Mounted)e.nextElement();
-            if (m.getType().hasFlag(MiscType.F_MASC)) {
-                m.setMode("Off");
-            }
-        }                
-    }
-    
-    
+
+    } // End public void newRound()
+
     /**
      * Returns true if the location in question is a torso location
      */
@@ -1321,4 +1338,73 @@ public abstract class Mech
     public int getMaxElevationChange() {
         return 2;
     }
+
+    /**
+     * Determine if this unit has an active stealth system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return  <code>true</code> if this unit has a stealth system that
+     *          is currently active, <code>false</code> if there is no
+     *          stealth system or if it is inactive.
+     */
+    public boolean isStealthActive() {
+        // Try to find a Mek Stealth system.
+        for ( Enumeration equips = getMisc(); equips.hasMoreElements(); ) {
+            Mounted mEquip = (Mounted) equips.nextElement();
+            MiscType mtype = (MiscType) mEquip.getType();
+            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
+                // Return true if the mode is "On", false otherwise.
+                return ( mEquip.curMode().equals( "On" ) ? true : false );
+            }
+        }
+
+        // No Mek Stealth system.  Return false.
+        return false;
+    }
+
+    /**
+     * Determine the stealth modifier for firing at this unit from the
+     * given range.  If the value supplied for <code>range</code> is not
+     * one of the <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @param   range - a <code>char</code> value that must match one
+     *          of the <code>Entity</code> class range constants.
+     * @return  a <code>TargetRoll</code> value that contains the stealth
+     *          modifier for the given range.
+     */
+    public TargetRoll getStealthModifier( char range ) {
+        TargetRoll result = null;
+
+        // Stealth must be active.
+        if ( !isStealthActive() ) {
+            result = new TargetRoll( 0, "stealth not active"  );
+        }
+
+        // Determine the modifier based upon the range.
+        else {
+            switch ( range ) {
+            case Entity.RANGE_SHORT:
+                result = new TargetRoll( 0, "stealth" );
+                break;
+            case Entity.RANGE_MEDIUM:
+                result = new TargetRoll( 1, "stealth" );
+                break;
+            case Entity.RANGE_LONG:
+                result = new TargetRoll( 2, "stealth" );
+                break;
+            default:
+                throw new IllegalArgumentException
+                    ( "Unknown range constant: " + range );
+            }
+        }
+
+        // Return the result.
+        return result;
+
+    } // End public TargetRoll getStealthModifier( char )
+
 }

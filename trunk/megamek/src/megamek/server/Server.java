@@ -2982,7 +2982,9 @@ implements Runnable {
         int nDamPerHit = wtype.getDamage();
         boolean bSalvo = false;
         // ecm check is heavy, so only do it once
-        boolean bCheckedECM = false, bECMAffected = false;
+        boolean bCheckedECM = false;
+        boolean bECMAffected = false;
+        boolean bMekStealthActive = false;
         String sSalvoType = " shot(s) ";
 
         // Mek swarms attach the attacker to the target.
@@ -3032,34 +3034,51 @@ implements Runnable {
                 nDamPerHit = atype.getDamagePerShot();
             }
             
-            if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
+            if ( wtype.getAmmoType() == AmmoType.T_LRM ||
+                 wtype.getAmmoType() == AmmoType.T_MRM || 
+                 wtype.getAmmoType() == AmmoType.T_ATM ) {
                 nCluster = 5;
             }
 
             // calculate # of missiles hitting
-            if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_SRM) {
+            if ( wtype.getAmmoType() == AmmoType.T_LRM ||
+                 wtype.getAmmoType() == AmmoType.T_SRM || 
+                 wtype.getAmmoType() == AmmoType.T_ATM ) {
                 
                 // check for artemis, else check for narc
                 Mounted mLinker = weapon.getLinkedBy();
-                if (mLinker != null && mLinker.getType() instanceof MiscType && 
-                        !mLinker.isDestroyed() && !mLinker.isMissing() &&
-                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if ( wtype.getAmmoType() == AmmoType.T_ATM ||
+                     ( mLinker != null &&
+                       mLinker.getType() instanceof MiscType && 
+                       !mLinker.isDestroyed() && !mLinker.isMissing() &&
+                       mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
                             
                     // check ECM interference
                     if (!bCheckedECM) {
-                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+
+                        // Attacking Meks using stealth suffer ECM effects.
+                        if ( ae instanceof Mech ) {
+                            bMekStealthActive = ae.isStealthActive();
+                        } else {
+                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                        }
                         bCheckedECM = true;
                     }
-                    if (!bECMAffected) {
+                    if (!bECMAffected && !bMekStealthActive) {
                         nSalvoBonus += 2;
                     }
                 } else if (te.isNarcedBy(ae.getOwner().getTeam())) {
                     // check ECM interference
                     if (!bCheckedECM) {
-                        bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                        // Attacking Meks using stealth suffer ECM effects.
+                        if ( ae instanceof Mech ) {
+                            bMekStealthActive = ae.isStealthActive();
+                        } else {
+                            bECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), te.getPosition());
+                        }
                         bCheckedECM = true;
                     }
-                    if (!bECMAffected) {
+                    if (!bECMAffected && !bMekStealthActive) {
                         nSalvoBonus += 2;
                     }
                 }
@@ -3145,6 +3164,9 @@ implements Runnable {
             if (bECMAffected) {
                 phaseReport.append(" (ECM prevents bonus)");
             }
+            else if (bMekStealthActive) {
+                phaseReport.append(" (active Stealth prevents bonus)");
+            }
             if (nSalvoBonus > 0) {
                 phaseReport.append(" (w/ +").append(nSalvoBonus).append(" bonus)");
             }
@@ -3154,6 +3176,14 @@ implements Runnable {
                 phaseReport.append("\n\tAMS shoots down " + wr.amsShotDown + " missile(s).");
                 hits -= wr.amsShotDown;
             }
+        }
+
+        // convert the ATM missile damages to LRM type 5 point cluster damage
+        // done here after AMS has been performed
+        if (wtype.getAmmoType() == AmmoType.T_ATM)
+        {
+            hits = nDamPerHit * hits;
+            nDamPerHit = 1;
         }
 
         // for each cluster of hits, do a chunk of damage
@@ -3899,10 +3929,16 @@ implements Runnable {
                 entity.heatBuildup += 5 * entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
             }
 
+            // If a Mek had an active Stealth suite, add 10 heat.
+            if ( entity instanceof Mech && entity.isStealthActive() ) {
+                entity.heatBuildup += 10;
+                roundReport.append("Added 10 heat from Stealth Armor...\n");
+            }
+
             // add +5 Heat if the hex you're in is on fire and was on fire for the full round
             if (entityHex.levelOf(Terrain.FIRE) == 2) {
                 entity.heatBuildup += 5;
-                roundReport.append("\nAdded heat from a fire....\n");
+                roundReport.append("Added 5 heat from a fire...\n");
             }
             
             // add the heat we've built up so far.
@@ -4608,6 +4644,19 @@ implements Runnable {
                         boolean hitBefore = mounted.isHit();
                         desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
                         mounted.setHit(true);
+
+                        // If the item is the ECM suite of a Mek Stealth system
+                        // then it's destruction turns off the stealth.
+                        if ( !hitBefore && eqType instanceof MiscType &&
+                             eqType.hasFlag(MiscType.F_ECM) &&
+                             mounted.getLinkedBy() != null ) {
+                            Mounted stealth = mounted.getLinkedBy();
+                            desc += "\n       " + stealth.getType().getName() +
+                               " will stop functioning at end of turn.";
+                            stealth.setMode( "Off" );
+                        }
+
+                        // Handle equipment explosions.
                         if (eqType.isExplosive() && !hitBefore) {
                             desc += explodeEquipment(en, loc, slot);
                         }

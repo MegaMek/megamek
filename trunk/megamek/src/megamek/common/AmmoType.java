@@ -49,7 +49,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_BA_MICRO_BOMB     = 26;
     public static final int     T_LRM_TORPEDO_COMBO = 27;
     public static final int     T_MINE              = 28;
-    
+    public static final int     T_ATM               = 29; // Clan ATM missile systems
+
     // ammo flags
     public static final int     F_CLUSTER           = 0x0001; // for lbx
     public static final int     F_FLARE             = 0x0002;
@@ -62,7 +63,9 @@ public class AmmoType extends EquipmentType {
     public static final int     F_INFERNO           = 0x0100;
     public static final int     F_EXPLOSIVE         = 0x0200; // for narc
     public static final int     F_MG                = 0x0400; // all mg's
-    
+    public static final int     F_ATM_ER            = 0x1000; // ATM Extended Range Ammo
+    public static final int     F_ATM_HE            = 0x2000; // ATM High Explosive Ammo
+
     private int damagePerShot;
     private int rackSize;
     private int ammoType;
@@ -163,6 +166,18 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLSRM6Ammo());
         EquipmentType.addType(createCLAMSAmmo());
         EquipmentType.addType(createCLNarcAmmo());
+        EquipmentType.addType(createCLATM3Ammo());
+        EquipmentType.addType(createCLATM3ERAmmo());
+        EquipmentType.addType(createCLATM3HEAmmo());
+        EquipmentType.addType(createCLATM6Ammo());
+        EquipmentType.addType(createCLATM6ERAmmo());
+        EquipmentType.addType(createCLATM6HEAmmo());
+        EquipmentType.addType(createCLATM9Ammo());
+        EquipmentType.addType(createCLATM9ERAmmo());
+        EquipmentType.addType(createCLATM9HEAmmo());
+        EquipmentType.addType(createCLATM12Ammo());
+        EquipmentType.addType(createCLATM12ERAmmo());
+        EquipmentType.addType(createCLATM12HEAmmo());
 
         // Start of BattleArmor ammo
         EquipmentType.addType( createBASRM2Ammo() );
@@ -1292,7 +1307,207 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NARC;
         ammo.shots = 6;
         ammo.bv = 0;
-        
+
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM3Ammo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 3 Ammo";
+        ammo.internalName = "Clan Ammo ATM-3";
+        ammo.mepName = "Clan Ammo ATM-3";
+        ammo.mtfName = "CLATM3 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.shots = 20;
+        ammo.bv = 14;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM3ERAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 3 ER Ammo";
+        ammo.internalName = "Clan Ammo ATM-3 ER";
+        ammo.mepName = "Clan Ammo ATM-3 ER";
+        ammo.mtfName = "CLATM3 ER Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_ER;
+        ammo.shots = 20;
+        ammo.bv = 14;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM3HEAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 3 HE Ammo";
+        ammo.internalName = "Clan Ammo ATM-3 HE";
+        ammo.mepName = "Clan Ammo ATM-3 HE";
+        ammo.mtfName = "CLATM3 HE Ammo";
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_HE;
+        ammo.shots = 20;
+        ammo.bv = 14;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM6Ammo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 6 Ammo";
+        ammo.internalName = "Clan Ammo ATM-6";
+        ammo.mepName = "Clan Ammo ATM-6";
+        ammo.mtfName = "CLATM6 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.shots = 10;
+        ammo.bv = 26;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM6ERAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 6 ER Ammo";
+        ammo.internalName = "Clan Ammo ATM-6 ER";
+        ammo.mepName = "Clan Ammo ATM-6 ER";
+        ammo.mtfName = "CLATM6 ER Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_ER;
+        ammo.shots = 10;
+        ammo.bv = 26;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM6HEAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 6 HE Ammo";
+        ammo.internalName = "Clan Ammo ATM-6 HE";
+        ammo.mepName = "Clan Ammo ATM-6 HE";
+        ammo.mtfName = "CLATM6 HE Ammo";
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_HE;
+        ammo.shots = 10;
+        ammo.bv = 26;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM9Ammo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 9 Ammo";
+        ammo.internalName = "Clan Ammo ATM-9";
+        ammo.mepName = "Clan Ammo ATM-9";
+        ammo.mtfName = "CLATM9 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.shots = 7;
+        ammo.bv = 36;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM9ERAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 9 ER Ammo";
+        ammo.internalName = "Clan Ammo ATM-9 ER";
+        ammo.mepName = "Clan Ammo ATM-9 ER";
+        ammo.mtfName = "CLATM9 ER Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_ER;
+        ammo.shots = 7;
+        ammo.bv = 36;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM9HEAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 9 HE Ammo";
+        ammo.internalName = "Clan Ammo ATM-9 HE";
+        ammo.mepName = "Clan Ammo ATM-9 HE";
+        ammo.mtfName = "CLATM9 HE Ammo";
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_HE;
+        ammo.shots = 7;
+        ammo.bv = 36;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM12Ammo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 12 Ammo";
+        ammo.internalName = "Clan Ammo ATM-12";
+        ammo.mepName = "Clan Ammo ATM-12";
+        ammo.mtfName = "CLATM12 Ammo";
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.shots = 5;
+        ammo.bv = 52;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM12ERAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 12 ER Ammo";
+        ammo.internalName = "Clan Ammo ATM-12 ER";
+        ammo.mepName = "Clan Ammo ATM-12 ER";
+        ammo.mtfName = "CLATM12 ER Ammo";
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_ER;
+        ammo.shots = 5;
+        ammo.bv = 52;
+         
+        return ammo;
+    }
+ 
+    public static AmmoType createCLATM12HEAmmo() {
+        AmmoType ammo = new AmmoType();
+         
+        ammo.name = "ATM 12 HE Ammo";
+        ammo.internalName = "Clan Ammo ATM-12 HE";
+        ammo.mepName = "Clan Ammo ATM-12 HE";
+        ammo.mtfName = "CLATM12 HE Ammo";
+        ammo.damagePerShot = 3;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_ATM;
+        ammo.flags |= F_ATM_HE;
+        ammo.shots = 5;
+        ammo.bv = 52;
+
         return ammo;
     }
 

@@ -23,7 +23,7 @@ public class WeaponType extends EquipmentType {
     public static final int     DAMAGE_VARIABLE = -3;
     public static final int     DAMAGE_SPECIAL = -4;
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
-    
+
     // weapon flags (note: many weapons can be identified by their ammo type)
     public static final int     F_DIRECT_FIRE   = 0x0001; // marks any weapon affected by a targetting computer
     public static final int     F_FLAMER        = 0x0002;
@@ -31,7 +31,7 @@ public class WeaponType extends EquipmentType {
     public static final int     F_PPC           = 0x0008; //              "
     public static final int     F_AUTO_TARGET   = 0x0010; // for weapons that target automatically (AMS)
     public static final int     F_NO_FIRES      = 0x0020; // cannot start fires
-    
+
     // Need to distinguish infantry weapons from their bigger,
     // vehicle- and mech-mounted cousins.
     public static final int	F_INFANTRY	= 0x0800; // small calibre weapon, no ammo, damage based on # men shooting
@@ -46,20 +46,20 @@ public class WeaponType extends EquipmentType {
     private int     damage;
     private int     rackSize; // or AC size, or whatever
     private int     ammoType;
-    
+
     private int     minimumRange;
     private int     shortRange;
     private int     mediumRange;
     private int     longRange;
-    
+
     private WeaponType() {
         ;
     }
-    
+
     public int getHeat() {
         return heat;
     }
-    
+
     public int getFireTN() {
         if (hasFlag(F_NO_FIRES)) {
             return TargetRoll.IMPOSSIBLE;
@@ -71,35 +71,35 @@ public class WeaponType extends EquipmentType {
             return 9;
         }
     }
- 
+
     public int getDamage() {
         return damage;
     }
-    
+
     public int getRackSize() {
         return rackSize;
     }
-    
+
     public int getAmmoType() {
         return ammoType;
     }
-    
+
     public int getMinimumRange() {
         return minimumRange;
     }
-    
+
     public int getShortRange() {
         return shortRange;
     }
-    
+
     public int getMediumRange() {
         return mediumRange;
     }
-    
+
     public int getLongRange() {
         return longRange;
     }
-    
+
     /**
      * Add all the types of weapons we can create to the list
      */
@@ -122,7 +122,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSRM2());
         EquipmentType.addType(createSRM4());
         EquipmentType.addType(createSRM6());
-        
+
         // Start of Infantry weapons (Level1)
         EquipmentType.addType(createInfRifle());
         EquipmentType.addType(createInfMG());
@@ -130,7 +130,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createInfLRM());
         EquipmentType.addType(createInfLaser());
         EquipmentType.addType(createInfFlamer());
-        
+
         // Start of Inner Sphere Level2 weapons
         EquipmentType.addType(createISERPPC());
         EquipmentType.addType(createISERLargeLaser());
@@ -161,7 +161,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMRM40());
         EquipmentType.addType(createISAMS());
         EquipmentType.addType(createISNarc());
-        
+
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
         EquipmentType.addType(createCLERLargeLaser());
@@ -198,6 +198,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLStreakSRM2());
         EquipmentType.addType(createCLStreakSRM4());
         EquipmentType.addType(createCLStreakSRM6());
+        EquipmentType.addType(createCLATM3());
+        EquipmentType.addType(createCLATM6());
+        EquipmentType.addType(createCLATM9());
+        EquipmentType.addType(createCLATM12());
         EquipmentType.addType(createCLAMS());
         EquipmentType.addType(createCLNarc());
 
@@ -230,10 +234,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createSlothSmallLaser() );
         EquipmentType.addType( createBAMineLauncher() );
     }
-    
+
     public static WeaponType createFlamer() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Flamer";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Flamer";
@@ -249,13 +253,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
         weapon.bv = 6;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createLargeLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Large Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Large Laser";
@@ -271,13 +275,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 124;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createMediumLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Medium Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Medium Laser";
@@ -293,13 +297,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 46;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Small Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Small Laser";
@@ -315,13 +319,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 9;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createPPC() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Particle Cannon";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS PPC";
@@ -337,13 +341,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
         weapon.bv = 176;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Machine Gun";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Machine Gun";
@@ -359,13 +363,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Auto Cannon/2";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Auto Cannon/2";
@@ -382,13 +386,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 37;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Auto Cannon/5";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Auto Cannon/5";
@@ -405,13 +409,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 70;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createAC10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Auto Cannon/10";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Auto Cannon/10";
@@ -428,13 +432,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 124;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createAC20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Auto Cannon/20";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Auto Cannon/20";
@@ -451,13 +455,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 178;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createLRM5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 5";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS LRM-5";
@@ -473,13 +477,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 45;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createLRM10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 10";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS LRM-10";
@@ -495,13 +499,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 2;
         weapon.bv = 90;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createLRM15() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 15";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS LRM-15";
@@ -517,13 +521,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 136;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createLRM20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 20";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS LRM-20";
@@ -539,13 +543,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 181;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createSRM2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 2";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS SRM-2";
@@ -562,13 +566,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
         weapon.bv = 21;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createSRM4() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 4";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS SRM-4";
@@ -584,13 +588,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 39;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createSRM6() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 6";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS SRM-6";
@@ -606,16 +610,16 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 59;
-        
+
         return weapon;
     }
-    
-    
+
+
     //Start of Inner Sphere Level2 weapons
-    
+
     public static WeaponType createISERPPC() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER PPC";
         weapon.internalName = "ISERPPC";
         weapon.mepName = "IS ER PPC";
@@ -631,13 +635,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
         weapon.bv = 229;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISERLargeLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Large Laser";
         weapon.internalName = "ISERLargeLaser";
         weapon.mepName = "IS ER Large Laser";
@@ -653,13 +657,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 163;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISERMediumLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Medium Laser";
         weapon.internalName = "ISERMediumLaser";
         weapon.mepName = "N/A";
@@ -675,13 +679,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 62;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISERSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Small Laser";
         weapon.internalName = "ISERSmallLaser";
         weapon.mepName = "N/A";
@@ -697,13 +701,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 17;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLargePulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Large Pulse Laser";
         weapon.internalName = "ISLargePulseLaser";
         weapon.mepName = "IS Pulse Large Laser";
@@ -720,13 +724,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 119;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Medium Pulse Laser";
         weapon.internalName = "ISMediumPulseLaser";
         weapon.mepName = "IS Pulse Med Laser";
@@ -743,13 +747,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 48;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Small Pulse Laser";
         weapon.internalName = "ISSmallPulseLaser";
         weapon.mepName = "IS Pulse Small Laser";
@@ -766,13 +770,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 12;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLBXAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 2-X AC";
         weapon.internalName = "ISLBXAC2";
         weapon.mepName = "IS LB 2-X AC";
@@ -789,13 +793,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 42;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLBXAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 5-X AC";
         weapon.internalName = "ISLBXAC5";
         weapon.mepName = "IS LB 5-X AC";
@@ -812,13 +816,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 83;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLBXAC10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 10-X AC";
         weapon.internalName = "ISLBXAC10";
         weapon.mepName = "IS LB 10-X AC";
@@ -835,13 +839,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 148;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLBXAC20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 20-X AC";
         weapon.internalName = "ISLBXAC20";
         weapon.mepName = "IS LB 20-X AC";
@@ -858,13 +862,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 11;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 237;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISGaussRifle() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Gauss Rifle";
         weapon.internalName = "ISGaussRifle";
         weapon.mepName = "IS Gauss Rifle";
@@ -881,13 +885,13 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 321;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISLightGaussRifle() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Light Gauss Rifle";
         weapon.internalName = "ISLightGaussRifle";
         weapon.mepName = "N/A";
@@ -904,13 +908,13 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 159;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISHeavyGaussRifle() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Heavy Gauss Rifle";
         weapon.internalName = "ISHeavyGaussRifle";
         weapon.mepName = weapon.internalName;
@@ -927,13 +931,13 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 346;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISUltraAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/2";
         weapon.internalName = "ISUltraAC2";
         weapon.mepName = "IS Ultra AC/2";
@@ -952,13 +956,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 56;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISUltraAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/5";
         weapon.internalName = "ISUltraAC5";
         weapon.mepName = "IS Ultra AC/5";
@@ -977,13 +981,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 113;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISUltraAC10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/10";
         weapon.internalName = "ISUltraAC10";
         weapon.mepName = "IS Ultra AC/10";
@@ -1002,13 +1006,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 253;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISUltraAC20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/20";
         weapon.internalName = "ISUltraAC20";
         weapon.mepName = "IS Ultra AC/20";
@@ -1027,13 +1031,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 282;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISRAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Rotary AC/2";
         weapon.internalName = "ISRotaryAC2";
         weapon.mepName = weapon.internalName;
@@ -1055,13 +1059,13 @@ public class WeaponType extends EquipmentType {
 
         // explosive when jammed
         weapon.explosive = true;
-                
+
         return weapon;
     }
-    
+
     public static WeaponType createISRAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Rotary AC/5";
         weapon.internalName = "ISRotaryAC5";
         weapon.mepName = weapon.internalName;
@@ -1083,13 +1087,13 @@ public class WeaponType extends EquipmentType {
 
         // explosive when jammed
         weapon.explosive = true;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISStreakSRM2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 2";
         weapon.internalName = "ISStreakSRM2";
         weapon.mepName = "IS Streak SRM-2";
@@ -1106,13 +1110,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
         weapon.bv = 30;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISStreakSRM4() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 4";
         weapon.internalName = "ISStreakSRM4";
         weapon.mepName = "IS Streak SRM-4";
@@ -1128,13 +1132,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.0f;
         weapon.criticals = 1;
         weapon.bv = 59;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISStreakSRM6() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 6";
         weapon.internalName = "ISStreakSRM6";
         weapon.mepName = "IS Streak SRM-6";
@@ -1150,14 +1154,14 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 4.5f;
         weapon.criticals = 2;
         weapon.bv = 89;
-        
+
         return weapon;
     }
-    
-    
+
+
     public static WeaponType createISMRM10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "MRM 10";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-10"; // NA in MEP
@@ -1174,14 +1178,14 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 56;
-        
+
         return weapon;
     }
-    
-    
+
+
     public static WeaponType createISMRM20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "MRM 20";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-20"; // NA in MEP
@@ -1198,15 +1202,15 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 7.0f;
         weapon.criticals = 3;
         weapon.bv = 112;
-        
+
         return weapon;
     }
-    
-    
-    
+
+
+
     public static WeaponType createISMRM30() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "MRM 30";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-30"; // NA in MEP
@@ -1223,15 +1227,15 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 5;
         weapon.bv = 168;
-        
+
         return weapon;
     }
-    
-    
-    
+
+
+
     public static WeaponType createISMRM40() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "MRM 40";
         weapon.internalName = weapon.name;
         weapon.mepName = "MRM-40"; // NA in MEP
@@ -1248,19 +1252,19 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 12.0f;
         weapon.criticals = 7;
         weapon.bv = 224;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISAMS() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "AMS";
         weapon.internalName = "ISAntiMissileSystem";
         weapon.mepName = "IS Anti-Missile System";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 1;
-        weapon.rackSize = 2; 
+        weapon.rackSize = 2;
         weapon.damage = 1;  // # of d6 of missiles affected
         weapon.ammoType = AmmoType.T_AMS;
         weapon.tonnage = 0.5f;
@@ -1270,19 +1274,19 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createISNarc() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Narc";
         weapon.internalName = "ISNarcBeacon";
         weapon.mepName = "IS Narc Beacon";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
-        weapon.rackSize = 1; 
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;
         weapon.shortRange = 3;
@@ -1292,16 +1296,16 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES;
-        
+
         return weapon;
     }
-    
-    
+
+
     // Start of Clan Level2 weapons
-    
+
     public static WeaponType createCLERPPC() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER PPC";
         weapon.internalName = "CLERPPC";
         weapon.mepName = "Clan ER PPC";
@@ -1317,13 +1321,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE;
         weapon.bv = 412;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLERLargeLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Large Laser";
         weapon.internalName = "CLERLargeLaser";
         weapon.mepName = "Clan ER Large Laser";
@@ -1339,13 +1343,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 249;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLERMediumLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Medium Laser";
         weapon.internalName = "CLERMediumLaser";
         weapon.mepName = "Clan ER Medium Laser";
@@ -1361,13 +1365,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 108;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLERSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Small Laser";
         weapon.internalName = "CLERSmallLaser";
         weapon.mepName = "Clan ER Small Laser";
@@ -1383,13 +1387,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 31;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLERMicroLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Micro Laser";
         weapon.internalName = "CLERMicroLaser";
         weapon.mepName = "N/A";
@@ -1405,13 +1409,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 7;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLFlamer() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Flamer";
         weapon.internalName = "CLFlamer";
         weapon.mepName = "Clan Flamer";
@@ -1427,13 +1431,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_FLAMER;
         weapon.bv = 6;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLHeavyLargeLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Heavy Large Laser";
         weapon.internalName = "CLHeavyLargeLaser";
         weapon.mepName = "N/A";
@@ -1450,13 +1454,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 243;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLHeavyMediumLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Heavy Medium Laser";
         weapon.internalName = "CLHeavyMediumLaser";
         weapon.mepName = "N/A";
@@ -1473,13 +1477,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 76;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLHeavySmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Heavy Small Laser";
         weapon.internalName = "CLHeavySmallLaser";
         weapon.mepName = "N/A";
@@ -1496,13 +1500,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 15;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Machine Gun";
         weapon.internalName = "CLMG";
         weapon.mepName = "Clan Machine Gun";
@@ -1518,13 +1522,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLightMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Light Machine Gun";
         weapon.internalName = "CLLightMG";
         weapon.mepName = "N/A";
@@ -1540,13 +1544,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 5;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLHeavyMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Heavy Machine Gun";
         weapon.internalName = "CLHeavyMG";
         weapon.mepName = "N/A";
@@ -1562,13 +1566,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 6;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLRM5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 5";
         weapon.internalName = "CLLRM5";
         weapon.mepName = "Clan LRM-5";
@@ -1584,13 +1588,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 55;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLRM10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 10";
         weapon.internalName = "CLLRM10";
         weapon.mepName = "Clan LRM-10";
@@ -1606,13 +1610,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.5f;
         weapon.criticals = 1;
         weapon.bv = 109;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLRM15() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 15";
         weapon.internalName = "CLLRM15";
         weapon.mepName = "Clan LRM-15";
@@ -1628,13 +1632,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.5f;
         weapon.criticals = 2;
         weapon.bv = 164;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLRM20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LRM 20";
         weapon.internalName = "CLLRM20";
         weapon.mepName = "Clan LRM-20";
@@ -1650,13 +1654,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 5.0f;
         weapon.criticals = 4;
         weapon.bv = 220;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLSRM2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 2";
         weapon.internalName = "CLSRM2";
         weapon.mepName = "Clan SRM-2";
@@ -1673,13 +1677,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
         weapon.bv = 21;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLSRM4() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 4";
         weapon.internalName = "CLSRM4";
         weapon.mepName = "Clan SRM-4";
@@ -1695,13 +1699,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.0f;
         weapon.criticals = 1;
         weapon.bv = 39;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLSRM6() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "SRM 6";
         weapon.internalName = "CLSRM6";
         weapon.mepName = "Clan SRM-6";
@@ -1717,13 +1721,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
         weapon.bv = 59;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLargePulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Large Pulse Laser";
         weapon.internalName = "CLLargePulseLaser";
         weapon.mepName = "Clan Pulse Large Laser";
@@ -1740,13 +1744,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 265;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Medium Pulse Laser";
         weapon.internalName = "CLMediumPulseLaser";
         weapon.mepName = "Clan Pulse Med Laser";
@@ -1763,13 +1767,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 111;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Small Pulse Laser";
         weapon.internalName = "CLSmallPulseLaser";
         weapon.mepName = "Clan Pulse Small Laser";
@@ -1786,13 +1790,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE;
         weapon.bv = 24;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLMicroPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Micro Pulse Laser";
         weapon.internalName = "CLMicroPulseLaser";
         weapon.mepName = "N/A";
@@ -1809,13 +1813,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 12;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLBXAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 2-X AC";
         weapon.internalName = "CLLBXAC2";
         weapon.mepName = "Clan LB 2-X AC";
@@ -1832,13 +1836,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 47;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLBXAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 5-X AC";
         weapon.internalName = "CLLBXAC5";
         weapon.mepName = "Clan LB 5-X AC";
@@ -1855,13 +1859,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 93;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLBXAC10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 10-X AC";
         weapon.internalName = "CLLBXAC10";
         weapon.mepName = "Clan LB 10-X AC";
@@ -1878,13 +1882,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 148;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLLBXAC20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "LB 20-X AC";
         weapon.internalName = "CLLBXAC20";
         weapon.mepName = "Clan LB 20-X AC";
@@ -1901,13 +1905,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 9;
         weapon.flags |= F_DIRECT_FIRE;
         weapon.bv = 237;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLGaussRifle() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Gauss Rifle";
         weapon.internalName = "CLGaussRifle";
         weapon.mepName = "Clan Gauss Rifle";
@@ -1924,13 +1928,13 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES;
         weapon.explosive = true;
         weapon.bv = 321;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLUltraAC2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/2";
         weapon.internalName = "CLUltraAC2";
         weapon.mepName = "Clan Ultra AC/2";
@@ -1949,13 +1953,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 62;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLUltraAC5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/5";
         weapon.internalName = "CLUltraAC5";
         weapon.mepName = "Clan Ultra AC/5";
@@ -1974,13 +1978,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 123;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLUltraAC10() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/10";
         weapon.internalName = "CLUltraAC10";
         weapon.mepName = "Clan Ultra AC/10";
@@ -1999,13 +2003,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 211;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLUltraAC20() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Ultra AC/20";
         weapon.internalName = "CLUltraAC20";
         weapon.mepName = "Clan Ultra AC/20";
@@ -2024,13 +2028,13 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 337;
         String[] modes = { "Single", "Ultra" };
         weapon.setModes(modes);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLStreakSRM2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 2";
         weapon.internalName = "CLStreakSRM2";
         weapon.mepName = "Clan Streak SRM-2";
@@ -2047,13 +2051,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_NO_FIRES;
         weapon.bv = 40;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLStreakSRM4() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 4";
         weapon.internalName = "CLStreakSRM4";
         weapon.mepName = "Clan Streak SRM-4";
@@ -2069,13 +2073,13 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 1;
         weapon.bv = 79;
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLStreakSRM6() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Streak SRM 6";
         weapon.internalName = "CLStreakSRM6";
         weapon.mepName = "Clan Streak SRM-6";
@@ -2091,13 +2095,101 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.bv = 119;
-        
+
         return weapon;
     }
-    
+
+    public static WeaponType createCLATM3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ATM 3";
+        weapon.internalName = "CLATM3";
+        weapon.mepName = "Clan ATM-3";
+        weapon.mtfName = "CLATM3";
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_ATM;
+        weapon.minimumRange = 4;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 2;
+        weapon.bv = 53;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLATM6() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ATM 6";
+        weapon.internalName = "CLATM6";
+        weapon.mepName = "Clan ATM-6";
+        weapon.mtfName = "CLATM6";
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 6;
+        weapon.ammoType = AmmoType.T_ATM;
+        weapon.minimumRange = 4;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.tonnage = 3.5f;
+        weapon.criticals = 3;
+        weapon.bv = 105;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLATM9() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ATM 9";
+        weapon.internalName = "CLATM9";
+        weapon.mepName = "Clan ATM-9";
+        weapon.mtfName = "CLATM9";
+        weapon.heat = 6;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 9;
+        weapon.ammoType = AmmoType.T_ATM;
+        weapon.minimumRange = 4;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.tonnage = 5.0f;
+        weapon.criticals = 4;
+        weapon.bv = 147;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLATM12() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "ATM 12";
+        weapon.internalName = "CLATM12";
+        weapon.mepName = "Clan ATM-12";
+        weapon.mtfName = "CLATM12";
+        weapon.heat = 8;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 12;
+        weapon.ammoType = AmmoType.T_ATM;
+        weapon.minimumRange = 4;
+        weapon.shortRange = 5;
+        weapon.mediumRange = 10;
+        weapon.longRange = 15;
+        weapon.tonnage = 7.0f;
+        weapon.criticals = 5;
+        weapon.bv = 212;
+
+        return weapon;
+    }
+
     public static WeaponType createInfRifle() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry Rifle";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry Rifle";
@@ -2113,13 +2205,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
 
     public static WeaponType createInfMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry MG";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry MG";
@@ -2135,13 +2227,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
 
     public static WeaponType createInfSRM() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry SRM";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry SRM";
@@ -2157,13 +2249,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
 
     public static WeaponType createInfLRM() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry LRM";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry LRM";
@@ -2179,13 +2271,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
 
     public static WeaponType createInfLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry Laser";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry Laser";
@@ -2201,13 +2293,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
 
     public static WeaponType createInfFlamer() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Infantry Flamer";
         weapon.internalName = weapon.name;
         weapon.mepName = "IS Infantry Flamer";
@@ -2223,13 +2315,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY;
         weapon.bv = 4; // ???
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLAMS() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "AMS";
         weapon.internalName = "CLAntiMissileSystem";
         weapon.mepName = "Clan Anti-Missile Sys";
@@ -2245,19 +2337,19 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "On", "Off" };
         weapon.setModes(modes);
         weapon.setInstantModeSwitch(false);
-        
+
         return weapon;
     }
-    
+
     public static WeaponType createCLNarc() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Narc";
         weapon.internalName = "CLNarcBeacon";
         weapon.mepName = "Clan Narc Beacon";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
-        weapon.rackSize = 1; 
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_NARC;
         weapon.minimumRange = 0;
         weapon.shortRange = 4;
@@ -2267,14 +2359,14 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 30;
         weapon.flags |= F_NO_FIRES;
-        
+
         return weapon;
     }
 
     // Anti-Mek attacks
     public static WeaponType createLegAttack() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Leg Attack";
         weapon.internalName = "LegAttack";
         weapon.mepName = weapon.internalName;
@@ -2290,13 +2382,13 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
-        
+
         return weapon;
     }
 
     public static WeaponType createSwarmMek() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Swarm Mek";
         weapon.internalName = "SwarmMek";
         weapon.mepName = weapon.internalName;
@@ -2312,14 +2404,14 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES;
-        
+
         return weapon;
     }
 
     // Start BattleArmor weapons
     public static WeaponType createBAMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Machine Gun";
         weapon.internalName = "BAMachineGun";
         weapon.mepName = "BA-Machine Gun";
@@ -2336,12 +2428,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
-        
+
         return weapon;
     }
     public static WeaponType createBAFlamer() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Flamer";
         weapon.internalName = "BAFlamer";
         weapon.mepName = "BA-Flamer";
@@ -2358,12 +2450,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER;
-        
+
         return weapon;
     }
     public static WeaponType createBASmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Small Laser";
         weapon.internalName = "BASmallLaser";
         weapon.mepName = "BA-Small Laser";
@@ -2380,12 +2472,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_NO_FIRES;
-        
+
         return weapon;
     }
     public static WeaponType createBACLERSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Small Laser";
         weapon.internalName = "BACLERSmallLaser";
         weapon.mepName = "BA-Clan ER Small Laser";
@@ -2402,12 +2494,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createCLAdvancedSRM2() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Advanced SRM 2";
         weapon.internalName = "CLAdvancedSRM2";
         weapon.mepName = "Clan Advanced SRM-2";
@@ -2424,12 +2516,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBATwinFlamers() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Twin Flamers";
         weapon.internalName = "BATwinFlamers";
         weapon.mepName = "BA-Twin Flamers";
@@ -2446,12 +2538,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_FLAMER | F_DOUBLE_HITS;
-        
+
         return weapon;
     }
     public static WeaponType createBAInfernoSRM() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Inferno SRM";
         weapon.internalName = "BAInfernoSRM";
         weapon.mepName = "BA-Inferno SRM";
@@ -2468,12 +2560,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_BATTLEARMOR;
-        
+
         return weapon;
     }
     public static WeaponType createBACLMicroPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Micro Pulse Laser";
         weapon.internalName = "BACLMicroPulseLaser";
         weapon.mepName = "BA-Clan Micro Pulse Laser";
@@ -2491,12 +2583,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBAMicroBomb() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Micro Bomb";
         weapon.internalName = "BAMicroBomb";
         weapon.mepName = "BA-Micro Bomb";
@@ -2513,12 +2605,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_BATTLEARMOR | F_NO_FIRES;
-        
+
         return weapon;
     }
     public static WeaponType createBACLERMicroLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Micro Laser";
         weapon.internalName = "BACLERMicroLaser";
         weapon.mepName = "BA-Clan ER Micro Laser";
@@ -2535,12 +2627,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createCLTorpedoLRM5() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Torpedo/LRM 5";
         weapon.internalName = "CLTorpedoLRM5";
         weapon.mepName = "Clan Torpedo/LRM-5";
@@ -2556,12 +2648,12 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBAISMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Medium Pulse Laser";
         weapon.internalName = "BAISMediumPulseLaser";
         weapon.mepName = "BA-IS Medium Pulse Laser";
@@ -2579,12 +2671,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createFenrirSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Twin Small Pulse Lasers";
         weapon.internalName = "FenrirSmallPulseLaser";
         weapon.mepName = "Fenrir Small Pulse Laser";
@@ -2602,12 +2694,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createFenrirSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Triple Small Lasers";
         weapon.internalName = "FenrirSmallLaser";
         weapon.mepName = "Fenrir Small Laser";
@@ -2624,12 +2716,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createFenrirMG() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Triple Machine Guns";
         weapon.internalName = "FenrirMachineGun";
         weapon.mepName = "Fenrir Machine Gun";
@@ -2646,12 +2738,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_MISSILE_HITS | F_DIRECT_FIRE;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createFenrirSRM4() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Fenrir SRM 4";
         weapon.internalName = "FenrirSRM4";
         weapon.mepName = "Fenrir SRM-4";
@@ -2668,12 +2760,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_DOUBLE_HITS;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBAAutoGL() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Auto Gernade Launcher";
         weapon.internalName = "BAAutoGL";
         weapon.mepName = "BA-Auto GL";
@@ -2690,12 +2782,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
-        
+
         return weapon;
     }
     public static WeaponType createBAMagshotGR() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Magshot Gauss Rifle";
         weapon.internalName = "BAMagshotGR";
         weapon.mepName = "BA-Magshot GR";
@@ -2712,12 +2804,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR;
-        
+
         return weapon;
     }
     public static WeaponType createBAISMediumLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Medium Laser";
         weapon.internalName = "BAISMediumLaser";
         weapon.mepName = "BA-IS Medium Laser";
@@ -2734,12 +2826,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBAISERSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "ER Small Laser";
         weapon.internalName = "BAISERSmallLaser";
         weapon.mepName = "BA-IS ER Small Laser";
@@ -2756,12 +2848,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBACompactNARC() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Compact Narc";
         weapon.internalName = "BACompactNARC";
         weapon.mepName = "BA-Compact NARC";
@@ -2777,12 +2869,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_NO_FIRES | F_BATTLEARMOR;
-        
+
         return weapon;
     }
     public static WeaponType createSlothSmallLaser() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Twin Small Lasers";
         weapon.internalName = "SlothSmallLaser";
         weapon.mepName = "Sloth Small Laser";
@@ -2799,12 +2891,12 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_MISSILE_HITS | F_DIRECT_FIRE | F_NO_FIRES;
         weapon.bv = 0;
-        
+
         return weapon;
     }
     public static WeaponType createBAMineLauncher() {
         WeaponType weapon = new WeaponType();
-        
+
         weapon.name = "Mine Launcher";
         weapon.internalName = "BAMineLauncher";
         weapon.mepName = "BA-Mine Launcher";
@@ -2823,7 +2915,7 @@ public class WeaponType extends EquipmentType {
         String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
         weapon.setModes(modes);
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_SOLO_ATTACK;
-        
+
         return weapon;
     }
 

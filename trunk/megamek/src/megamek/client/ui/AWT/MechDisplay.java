@@ -782,7 +782,49 @@ class WeaponPanel
         } else {
             wLongR.setText("" + wtype.getLongRange());
         }
-        
+
+        // override the display for the various ATM ammos
+        if(AmmoType.T_ATM == wtype.getAmmoType())
+        {
+            /* begin killme block
+            // get the linked ammo
+            for (Enumeration j = entity.getAmmo(); j.hasMoreElements();)
+            {
+                Mounted mountedAmmo = (Mounted)j.nextElement();
+                AmmoType atype = (AmmoType)mountedAmmo.getType();
+                if (mountedAmmo.isDestroyed() || mountedAmmo.getShotsLeft() <= 0 || mountedAmmo.isDumping())
+                {
+                    continue;
+                }
+                if (atype.getAmmoType() == wtype.getAmmoType() && atype.getRackSize() == wtype.getRackSize())
+                {
+                    if (mounted.getLinked() == mountedAmmo)
+                    {
+                    end killme block */
+            AmmoType atype = (AmmoType) mounted.getLinked().getType();
+            System.err.println( "The ammo is " + atype.getInternalName() );//killme
+                        if(atype.hasFlag(AmmoType.F_ATM_ER))
+                        {
+                            wMinR.setText("4");
+                            wShortR.setText("1 - 9");
+                            wMedR.setText("10 - 18");
+                            wLongR.setText("19 - 27");
+                        }
+                        else if(atype.hasFlag(AmmoType.F_ATM_HE))
+                        {
+                            wMinR.setText("---");
+                            wShortR.setText("1 - 3");
+                            wMedR.setText("4 - 6");
+                            wLongR.setText("7 - 9");
+                        }
+                        /* begin killme block 
+                    }
+                }
+            }
+            end killme block */
+
+        } // End weapon-is-ATM
+
         // update ammo selector
         boolean bOwner = (client.getLocalPlayer() == entity.getOwner());
         m_chAmmo.removeAll();

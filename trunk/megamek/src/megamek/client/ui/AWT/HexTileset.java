@@ -282,6 +282,10 @@ public class HexTileset {
         public Image getImage() {
             return image;
         }
+
+       public String getImageFileName() {
+           return "data/hexes/" + imageFile;
+       }
         
         public Image getImage(Component comp) {
             if (image == null) {

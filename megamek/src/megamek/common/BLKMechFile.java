@@ -29,7 +29,7 @@ import java.io.*;
 
 import megamek.common.util.*;
 
-public class BLKMechFile {
+public class BLKMechFile implements MechLoader {
 
     //armor locatioms
     public static final int HD = 0;
@@ -74,7 +74,7 @@ public class BLKMechFile {
         
     }
 
-    public Mech getMech() {
+    public Mech getMech() throws EntityLoadingException {
     
       int chassisType = 0;
       if (!dataFile.exists("chassis_type")) {
@@ -92,16 +92,16 @@ public class BLKMechFile {
 
       //Do I even write the year for these??
         
-        if (!dataFile.exists("name")) return null;
+        if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find block.");
             mech.setName(dataFile.getDataAsString("Name")[0]);
         
-        if (!dataFile.exists("model")) return null;
+        if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find block.");
             mech.setModel(dataFile.getDataAsString("Model")[0]);
         
-        if (!dataFile.exists("year")) return null;
+        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find block.");
             mech.setYear(dataFile.getDataAsInt("year")[0]);
             
-        if (!dataFile.exists("type")) return null;
+        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find block.");
             
             if (dataFile.getDataAsString("type")[0].equals("IS")) {
                 if (mech.getYear() == 3025) {
@@ -113,27 +113,27 @@ public class BLKMechFile {
                 mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
             }
         
-        if (!dataFile.exists("tonnage")) return null;
+        if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find block.");
             mech.weight = dataFile.getDataAsFloat("tonnage")[0];
             
-        if (!dataFile.exists("walkingMP")) return null;
+        if (!dataFile.exists("walkingMP")) throw new EntityLoadingException("Could not find block.");
             mech.setOriginalWalkMP(dataFile.getDataAsInt("walkingMP")[0]);
             
-        if (!dataFile.exists("jumpingMP")) return null;
+        if (!dataFile.exists("jumpingMP")) throw new EntityLoadingException("Could not find block.");
             mech.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
             
         //I keep internal(integral) heat sinks seperate...
-        if (!dataFile.exists("heatsinks")) return null;
+        if (!dataFile.exists("heatsinks")) throw new EntityLoadingException("Could not find block.");
             mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
         
-            if (!dataFile.exists("armor") ) return null;
+            if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find block.");
             
             int [] armor = new int[11]; //only 11 locations...
             
             if (dataFile.getDataAsInt("armor").length < 11) {
              
                 System.err.println("BLKMechFile->Read armor array doesn't match my armor array...");
-                return null;
+                throw new EntityLoadingException("Could not find block.");
                 
             }
             armor = dataFile.getDataAsInt("Armor");
@@ -227,16 +227,17 @@ public class BLKMechFile {
                 critName = critName.substring(4);
             }
             
-                //changed...
             EquipmentType etype = EquipmentType.getByMepName(critName);
-            if (etype != null) {
-                mech.addEquipment(etype, loc, rearMounted);
-            } else {
+            if (etype == null) {
+                // try w/ prefix
                 etype = EquipmentType.getByMepName(prefix + critName);
-                if (etype != null) {
+            }
+            if (etype != null) {
+                try {
                     mech.addEquipment(etype, loc, rearMounted);
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
                 }
-//                System.out.println("mepfile: could not find equipment " + critName);
             }
             
             }//end of specific location

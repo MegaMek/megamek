@@ -1663,7 +1663,11 @@ public class Server
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
-                entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
+                try {
+                    entity.addEquipment(EquipmentType.getByInternalName("Tree Club"), Mech.LOC_NONE);
+                } catch (LocationFullException ex) {
+                    // unlikely...
+                }
                 phaseReport.append("\n" + entity.getDisplayName() + " uproots a tree for use as a club.\n");
             } else {
                 // hmm, error

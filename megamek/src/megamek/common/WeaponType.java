@@ -840,7 +840,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISUltraAC2() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/2";
+        weapon.name = "Ultra AC/2";
         weapon.internalName = "ISUltraAC2";
         weapon.mepName = "IS Ultra AC/2";
         weapon.mtfName = "ISUltraAC2";
@@ -863,7 +863,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISUltraAC5() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/5";
+        weapon.name = "Ultra AC/5";
         weapon.internalName = "ISUltraAC5";
         weapon.mepName = "IS Ultra AC/5";
         weapon.mtfName = "ISUltraAC5";
@@ -886,7 +886,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISUltraAC10() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/10";
+        weapon.name = "Ultra AC/10";
         weapon.internalName = "ISUltraAC10";
         weapon.mepName = "IS Ultra AC/10";
         weapon.mtfName = "ISUltraAC10";
@@ -909,7 +909,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createISUltraAC20() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/20";
+        weapon.name = "Ultra AC/20";
         weapon.internalName = "ISUltraAC20";
         weapon.mepName = "IS Ultra AC/20";
         weapon.mtfName = "ISUltraAC20";
@@ -1099,7 +1099,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLERPPC() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "ER Particle Projector Cannon";
+        weapon.name = "ER PPC";
         weapon.internalName = "CLERPPC";
         weapon.mepName = "Clan ER PPC";
         weapon.mtfName = "CLERPPC";
@@ -1726,7 +1726,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLUltraAC2() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/2";
+        weapon.name = "Ultra AC/2";
         weapon.internalName = "CLUltraAC2";
         weapon.mepName = "Clan Ultra AC/2";
         weapon.mtfName = "CLUltraAC2";
@@ -1749,7 +1749,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLUltraAC5() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/5";
+        weapon.name = "Ultra AC/5";
         weapon.internalName = "CLUltraAC5";
         weapon.mepName = "Clan Ultra AC/5";
         weapon.mtfName = "CLUltraAC5";;
@@ -1772,7 +1772,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLUltraAC10() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/10";
+        weapon.name = "Ultra AC/10";
         weapon.internalName = "CLUltraAC10";
         weapon.mepName = "Clan Ultra AC/10";
         weapon.mtfName = "CLUltraAC10";
@@ -1795,7 +1795,7 @@ public class WeaponType extends EquipmentType {
     public static WeaponType createCLUltraAC20() {
         WeaponType weapon = new WeaponType();
         
-        weapon.name = "Ultra Auto Cannon/20";
+        weapon.name = "Ultra AC/20";
         weapon.internalName = "CLUltraAC20";
         weapon.mepName = "Clan Ultra AC/20";
         weapon.mtfName = "CLUltraAC20";

@@ -27,7 +27,9 @@ import java.io.*;
  * @author  Ben
  * @version
  */
-public class MtfFile {
+public class MtfFile implements MechLoader {
+    
+    String version;
     
     String name;
     String model;
@@ -64,12 +66,16 @@ public class MtfFile {
     
     String[][] critData;
     
+    boolean ioerror = false;
+    
     
     /** Creates new MtfFile */
     public MtfFile(File file) {
         try {
             BufferedReader r = new BufferedReader(new FileReader(file));
             
+            version = r.readLine();
+
             name = r.readLine();
             model = r.readLine();
             
@@ -133,8 +139,9 @@ public class MtfFile {
             
             r.close();
         } catch (IOException ex) {
-            //arg!
-            System.err.println("MtfFile: error reading file");
+            ioerror = true;
+        } catch (StringIndexOutOfBoundsException ex) {
+            // oh well, it'll be caught during parsing
         }
     }
     
@@ -147,68 +154,94 @@ public class MtfFile {
         }
     }
     
-    public Mech getMech() {
-        if ( null != chassisConfig )
-          chassisConfig = chassisConfig.substring(7).trim();
-         
-        Mech mech;
-        
-        if ( "Quad".equals(chassisConfig) )
-          mech = new QuadMech();
-        else
-          mech = new BipedMech();
-        
-        mech.setName(name);
-        mech.setModel(model);
-        mech.setYear(Integer.parseInt(this.techYear.substring(4).trim()));
-        //mech.setOmni("OmniMech".equals(this.chassisType.trim()));
-        
-        //TODO: this ought to be a better test
-        if ("Inner Sphere".equals(this.techBase.substring(9).trim())) {
-            if (mech.getYear() == 3025) {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+    public Mech getMech() throws EntityLoadingException {
+        if (ioerror) {
+            throw new EntityLoadingException("I/O error occured during file read");
+        }
+        try {
+            Mech mech;
+            
+            if (chassisConfig.indexOf("Quad") != -1) {
+                mech = new QuadMech();
             } else {
-                mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                mech = new BipedMech();
             }
-        } else {
-            mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-        }
-        
-        mech.weight = (float)Integer.parseInt(tonnage.substring(5));
-        
-        mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
-        mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
-        
-        boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
-        mech.addEngineSinks(Integer.parseInt(heatSinks.substring(11, 14).trim()), dblSinks);
-        
-        mech.autoSetInternal();
-        
-        mech.initializeArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM);
-        mech.initializeArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM);
-        mech.initializeArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT);
-        mech.initializeArmor(Integer.parseInt(rtArmor.substring(9)), Mech.LOC_RT);
-        mech.initializeArmor(Integer.parseInt(ctArmor.substring(9)), Mech.LOC_CT);
-        mech.initializeArmor(Integer.parseInt(headArmor.substring(9)), Mech.LOC_HEAD);
-        mech.initializeArmor(Integer.parseInt(llegArmor.substring(9)), Mech.LOC_LLEG);
-        mech.initializeArmor(Integer.parseInt(rlegArmor.substring(9)), Mech.LOC_RLEG);
-        mech.initializeRearArmor(Integer.parseInt(ltrArmor.substring(10)), Mech.LOC_LT);
-        mech.initializeRearArmor(Integer.parseInt(rtrArmor.substring(10)), Mech.LOC_RT);
-        mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
-        
-        // oog, crits.
-        for (int i = 0; i < mech.locations(); i++) {
-            parseCrits(mech, i);
-        }
 
-        if (mech.isClan()) {
-            mech.addClanCase();
+            if (!version.trim().equalsIgnoreCase("Version:1.0")) {
+                throw new EntityLoadingException("Wrong MTF file version.");
+            }
+
+            // aarg!  those stupid sub-names in parenthesis screw everything up
+            // we may do something different in the future, but for now, I'm
+            // going to strip them out
+            int pindex = name.indexOf("(");
+            if (pindex == -1) {
+                mech.setName(name.trim());
+            } else {
+                mech.setName(name.substring(0, pindex - 1).trim());
+            }
+            mech.setModel(model.trim());
+            mech.setYear(Integer.parseInt(this.techYear.substring(4).trim()));
+            if (chassisConfig.indexOf("Omni") != -1) {
+                mech.setOmni(true);
+            }
+
+            //TODO: this ought to be a better test
+            boolean innerSphere = "Inner Sphere".equals(this.techBase.substring(9).trim());
+            switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                case 1 :
+                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                    break;
+                case 2 :
+                    mech.setTechLevel(innerSphere ? TechConstants.T_IS_LEVEL_2
+                                                  : TechConstants.T_CLAN_LEVEL_2);
+                    break;
+                default :
+                    throw new EntityLoadingException("Unsupported tech level");
+            }
+
+            mech.weight = (float)Integer.parseInt(tonnage.substring(5));
+
+            mech.setOriginalWalkMP(Integer.parseInt(walkMP.substring(8)));
+            mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
+
+            boolean dblSinks = heatSinks.substring(14).equalsIgnoreCase("Double");
+            mech.addEngineSinks(Integer.parseInt(heatSinks.substring(11, 14).trim()), dblSinks);
+
+            mech.autoSetInternal();
+
+            mech.initializeArmor(Integer.parseInt(larmArmor.substring(9)), Mech.LOC_LARM);
+            mech.initializeArmor(Integer.parseInt(rarmArmor.substring(9)), Mech.LOC_RARM);
+            mech.initializeArmor(Integer.parseInt(ltArmor.substring(9)), Mech.LOC_LT);
+            mech.initializeArmor(Integer.parseInt(rtArmor.substring(9)), Mech.LOC_RT);
+            mech.initializeArmor(Integer.parseInt(ctArmor.substring(9)), Mech.LOC_CT);
+            mech.initializeArmor(Integer.parseInt(headArmor.substring(9)), Mech.LOC_HEAD);
+            mech.initializeArmor(Integer.parseInt(llegArmor.substring(9)), Mech.LOC_LLEG);
+            mech.initializeArmor(Integer.parseInt(rlegArmor.substring(9)), Mech.LOC_RLEG);
+            mech.initializeRearArmor(Integer.parseInt(ltrArmor.substring(10)), Mech.LOC_LT);
+            mech.initializeRearArmor(Integer.parseInt(rtrArmor.substring(10)), Mech.LOC_RT);
+            mech.initializeRearArmor(Integer.parseInt(ctrArmor.substring(10)), Mech.LOC_CT);
+
+            // oog, crits.
+            for (int i = 0; i < mech.locations(); i++) {
+                parseCrits(mech, i);
+            }
+
+            if (mech.isClan()) {
+                mech.addClanCase();
+            }
+
+            return mech;
+        } catch (NumberFormatException ex) {
+            throw new EntityLoadingException("NumberFormatException parsing file");
+        } catch (NullPointerException ex) {
+            throw new EntityLoadingException("NullPointerException parsing file");
+        } catch (StringIndexOutOfBoundsException ex) {
+            throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
         }
-        
-        return mech;
     }
     
-    private void parseCrits(Mech mech, int loc) {
+    private void parseCrits(Mech mech, int loc) throws EntityLoadingException {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
             if (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM) {
@@ -232,19 +265,24 @@ public class MtfFile {
             String critName = critData[loc][i];
             boolean rearMounted = false;
             
-			if (critName.equalsIgnoreCase("Fusion Engine")) {
-				mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
-			}
+            if (critName.equalsIgnoreCase("Fusion Engine")) {
+                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
+            }
             if (critName.endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();
             }
+            if (critName.endsWith("(Split)")) {
+                throw new EntityLoadingException("Split weapons not supported (yet)");
+            }
             
             EquipmentType etype = EquipmentType.getByMtfName(critName);
             if (etype != null) {
-                mech.addEquipment(etype, loc, rearMounted);
-            } else {
-//                System.out.println("mtffile: could not find equipment " + critName);
+                try {
+                    mech.addEquipment(etype, loc, rearMounted);
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
+                }
             }
         }
     }

@@ -214,6 +214,7 @@ public class WeaponType extends EquipmentType {
 
         // Start BattleArmor weapons
         EquipmentType.addType( createBAMG() );
+        EquipmentType.addType( createBASingleMG() );
         EquipmentType.addType( createBAFlamer() );
         EquipmentType.addType( createBASmallLaser() );
         EquipmentType.addType( createBACLERSmallLaser() );
@@ -225,9 +226,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType( createBACLERMicroLaser() );
         EquipmentType.addType( createCLTorpedoLRM5() );
         EquipmentType.addType( createBAISMediumPulseLaser() );
-        EquipmentType.addType( createFenrirSmallPulseLaser() );
-        EquipmentType.addType( createFenrirSmallLaser() );
-        EquipmentType.addType( createFenrirMG() );
+        EquipmentType.addType( createTwinSmallPulseLaser() );
+        EquipmentType.addType( createTripleSmallLaser() );
+        EquipmentType.addType( createTripleMG() );
         EquipmentType.addType( createFenrirSRM4() );
         EquipmentType.addType( createBAAutoGL() );
         EquipmentType.addType( createBAMagshotGR() );
@@ -2478,6 +2479,29 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
+    public static WeaponType createBASingleMG() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.name = "Machine Gun";
+        weapon.internalName = "BASingleMachineGun";
+        weapon.mepName = "BA-Single Machine Gun";
+        weapon.mtfName = weapon.internalName;
+        weapon.heat = 0;
+        weapon.damage = 2;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_BA_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE;
+
+        return weapon;
+    }
     public static WeaponType createBAFlamer() {
         WeaponType weapon = new WeaponType();
 
@@ -2721,12 +2745,12 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createFenrirSmallPulseLaser() {
+    public static WeaponType createTwinSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Twin Small Pulse Lasers";
-        weapon.internalName = "FenrirSmallPulseLaser";
-        weapon.mepName = "Fenrir Small Pulse Laser";
+        weapon.internalName = "TwinSmallPulseLaser";
+        weapon.mepName = "Twin Small Pulse Lasers";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
@@ -2744,12 +2768,12 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createFenrirSmallLaser() {
+    public static WeaponType createTripleSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Triple Small Lasers";
-        weapon.internalName = "FenrirSmallLaser";
-        weapon.mepName = "Fenrir Small Laser";
+        weapon.internalName = "TripleSmallLaser";
+        weapon.mepName = "Triple Small Lasers";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
@@ -2766,12 +2790,12 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createFenrirMG() {
+    public static WeaponType createTripleMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Triple Machine Guns";
-        weapon.internalName = "FenrirMachineGun";
-        weapon.mepName = "Fenrir Machine Gun";
+        weapon.internalName = "TripleMachineGun";
+        weapon.mepName = "Triple Machine Guns";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
@@ -2945,7 +2969,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Mine Launcher";
-        weapon.internalName = "BAMineLauncher";
+        weapon.internalName = BattleArmor.MINE_LAUNCHER;
         weapon.mepName = "BA-Mine Launcher";
         weapon.mtfName = weapon.internalName;
         weapon.heat = 0;

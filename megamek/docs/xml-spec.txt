@@ -34,6 +34,8 @@ Drawing Board.
         elements.  The exact details on the number and types of elements
         are included in the packet documentation. 
      The following attributes are defined for this element:
+        count - required - identifies the number of data elements in
+                the packet.  Any non-negative integer is valid.
         isGzipped - default: false - identifies if the contents of the element
                 (the sub-elements and the CDATA) have been compressed with
                 the ZLIB algorithm.  If so, then the CDATA of this element

@@ -62,9 +62,9 @@ public class BoardEncoder {
 
         // Write the hex array to the stream.
         out.write( "<boardData width=\"" );
-        out.write( board.width );
+        out.write( Integer.toString(board.width) );
         out.write( "\" height=\"" );
-        out.write( board.height );
+        out.write( Integer.toString(board.height) );
         out.write( "\" roadsAutoExit=\"" );
         out.write( board.getRoadsAutoExit() ? "true" : "false" );
         out.write( "\" >" );
@@ -98,7 +98,7 @@ public class BoardEncoder {
                 // This value may be zero.
                 if ( turns > 0 ) {
                     out.write( "<arrowiv turns=\"" );
-                    out.write( turns );
+                    out.write( Integer.toString(turns) );
                     out.write( "\" />" );
                 }
                 // -(Arrow IV turns - All Turns) = Standard Turns.
@@ -106,7 +106,7 @@ public class BoardEncoder {
                 turns = -turns;
                 if ( turns > 0 ) {
                     out.write( "<standard turns=\"" );
-                    out.write( turns );
+                    out.write( Integer.toString(turns) );
                     out.write( "\" />" );
                 }
                 out.write( "</inferno>" );

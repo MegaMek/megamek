@@ -88,7 +88,8 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
-v next
+v 0.26.4 (06-28-02, 4pm)
++ minor bot tweaks
 + 574145: gauss rifle explosion makes all critical slots count as "hit"
 + 573409: torso jump jets should work in depth 1 water
 + redid gauss explosions--all slots not destroyed, but no double explosions

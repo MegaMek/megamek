@@ -9654,7 +9654,7 @@ implements Runnable, ConnectionHandler {
         // vehicle handle crits in their own 'special' way
         if (en instanceof Tank) {
             Tank tank = (Tank)en;
-            for (int x = 0; x < hits && !tank.isDoomed(); x++) {
+            for (int x = 0; x < hits; x++) {
                 slot = new CriticalSlot( CriticalSlot.TYPE_SYSTEM,
                                          Compute.d6(1) );
                 desc.append( applyCriticalHit(en, Entity.NONE, slot, true) );

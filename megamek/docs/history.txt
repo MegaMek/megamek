@@ -101,6 +101,10 @@ v 0.28.10-dev
 + prefer attacker partial cover slightly in split LOS situations
 + 704999: actuator hits on other leg count with one hip hit
 + 702760: going prone in water can wash off inferno gel
++ 706738: If there are many choices, display them in a ScrollPane.
++ Hetzer should have a 4/6 move, not a 5/8.
++ 706682: Stop processing movement in the server after removing the entity.
++ 700148: Using cluster ammo prevents the use of a targeting computer.
 
 v 0.28.9 (03-15-03, 5pm)
 + Added XML parsing to MegaMek.

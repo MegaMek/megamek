@@ -1903,6 +1903,9 @@ implements Runnable {
                                     .append( entity.getDisplayName() )
                                     .append( " has skidded off the field. ***\n");
 
+                                // The entity's movement is completed.
+                                return;
+
 			    } else {
 				// Nope.  Update the report.
 				phaseReport.append( "   Can't skid off the field.\n" );
@@ -2134,6 +2137,9 @@ implements Runnable {
 			entity.setDestroyed(true);
 			game.moveToGraveyard(entity.getId());
 			send(createRemoveEntityPacket(entity.getId()));
+
+                        // The entity's movement is completed.
+                        return;
 		    }
 
 		    // Let the player know the ordeal is over.

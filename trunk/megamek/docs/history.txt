@@ -10,6 +10,7 @@ v0.29.38 (CVS)
 + Use StringBuffer.append() instead of a bunch of String + operators.
 + RFE 941437: Oopsie -- mis-placed the "(n used)" line on the mechW
 + Bug 975512: extreme gravity PSR when using minimum movement rule
++ Data 917302: new Vedette, Goblin, Scorpion, and Skulker images
 
 v0.29.37 (2004-06-14 8:15am)
 + Patch 946202: Optional Rule: Woods Burn Down, thanks AlbinoSqrl

@@ -5635,7 +5635,7 @@ implements Runnable, ConnectionHandler {
           }
       } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM) {
-          if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
+          if (usesAmmo && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
               isNemesisConfusable = true;
           }
       }
@@ -6434,12 +6434,12 @@ implements Runnable, ConnectionHandler {
             }
 
             // Advanced SRM's only hit with even numbers of missles.
-            if ( null != atype &&
+            if ( usesAmmo &&
                  atype.getAmmoType() == AmmoType.T_SRM_ADVANCED ) {
                 hits = 2 * (int) Math.floor( (1.0 + (float) hits) / 2.0);
             }
 
-        } else if (atype != null && atype.getMunitionType() == AmmoType.M_CLUSTER) {
+        } else if (usesAmmo && atype.getMunitionType() == AmmoType.M_CLUSTER) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = wtype.getRackSize();
@@ -6591,7 +6591,7 @@ implements Runnable, ConnectionHandler {
         }
 
         // Mech and Vehicle MGs do *DICE* of damage to PBI.
-        else if (atype != null && atype.hasFlag(AmmoType.F_MG) &&
+        else if (usesAmmo && atype.hasFlag(AmmoType.F_MG) &&
                   !isWeaponInfantry && (target instanceof Infantry) &&
                   !(target instanceof BattleArmor) ) {
 
@@ -6985,7 +6985,7 @@ implements Runnable, ConnectionHandler {
                         phaseReport.append
                             ( damageEntity(entityTarget, hit, nDamage, false, 2) );
                     } else {
-                        if ((atype != null) && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
+                        if (usesAmmo && (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
                             hit.makeArmorPiercing(atype);
                         if (glancing) {
                             hit.makeGlancingBlow();

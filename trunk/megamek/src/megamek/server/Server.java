@@ -8327,6 +8327,16 @@ implements Runnable, ConnectionHandler {
                                       Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
+                        
+                        // Infantry have only one section.
+                        if ( isPlatoon ) {
+                            desc.append( " <<<PLATOON KILLED>>>," );
+                        } else if ( isBattleArmor ) {
+                            desc.append( " <<<TROOPER KILLED>>>," );
+                        } else {
+                            desc.append( " <<<SECTION DESTROYED>>>," );
+                        }     
+                        
                         // If a sidetorso got destroyed, and the corresponding arm
                         // is not yet destroyed, add it as a club to that hex (p.35 BMRr)
                         
@@ -8335,57 +8345,46 @@ implements Runnable, ConnectionHandler {
                                  hit.getLocation() == Mech.LOC_LT)) {
                                 if (hit.getLocation() == Mech.LOC_RT &&
                                     te.getInternal(Mech.LOC_RARM) > 0) {
+                                    desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
+                                    .append( te.getLocationName(Mech.LOC_RARM) )
+                                    .append( " blown off." );
                                     Hex h = game.board.getHex(te.getPosition());
-                                    if (!h.contains( Terrain.ARMS)) {
-                                        h.addTerrain(new Terrain(Terrain.ARMS, 1));
-                                    }
-                                    else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                    sendChangedHex(te.getPosition());
-                                }
-                                if (hit.getLocation() == Mech.LOC_LT &&
-                                        te.getInternal(Mech.LOC_LARM) > 0) {
-                                        Hex h = game.board.getHex(te.getPosition());
+                                    if (te instanceof BipedMech) {
                                         if (!h.contains( Terrain.ARMS)) {
                                             h.addTerrain(new Terrain(Terrain.ARMS, 1));
                                         }
                                         else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                        sendChangedHex(te.getPosition());
-                                    }
+                                    } else if (!h.contains( Terrain.LEGS)) {
+                                               h.addTerrain(new Terrain(Terrain.LEGS, 1));
+                                           } else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
+                                    sendChangedHex(te.getPosition());
+                                }
+                                if (hit.getLocation() == Mech.LOC_LT &&
+                                    te.getInternal(Mech.LOC_LARM) > 0) {
+                                    desc.append( " <<<LIMB BLOWN OFF>>>\n        " )
+                                    .append( te.getLocationName(Mech.LOC_LARM) )
+                                    .append( " blown off." );
+                                    Hex h = game.board.getHex(te.getPosition());
+                                    if (te instanceof BipedMech) {
+                                        if (!h.contains( Terrain.ARMS)) {
+                                            h.addTerrain(new Terrain(Terrain.ARMS, 1));
+                                        }
+                                        else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
+                                    } else if (!h.contains( Terrain.LEGS)) {
+                                               h.addTerrain(new Terrain(Terrain.LEGS, 1));
+                                           } else h.addTerrain(new Terrain(Terrain.LEGS, h.levelOf(Terrain.LEGS)+1));
+                                    sendChangedHex(te.getPosition());
+                                }
                         }
-
+                    
                         // Destroy the location.
                         destroyLocation(te, hit.getLocation());
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
-                        // Infantry have only one section.
-                        if ( isPlatoon ) {
-                            desc.append( " <<<PLATOON KILLED>>>," );
-                        } else if ( isBattleArmor ) {
-                            desc.append( " <<<TROOPER KILLED>>>," );
-                        } else {
-                            desc.append( " <<<SECTION DESTROYED>>>," );
-                        }
+
                         if (te instanceof Mech &&
                             (hit.getLocation() == Mech.LOC_RT ||
                              hit.getLocation() == Mech.LOC_LT)) {
-                            if (hit.getLocation() == Mech.LOC_RT &&
-                                te.getInternal(Mech.LOC_RARM) > 0) {
-                                Hex h = game.board.getHex(te.getPosition());
-                                if (!h.contains( Terrain.ARMS)) {
-                                    h.addTerrain(new Terrain(Terrain.ARMS, 1));
-                                }
-                                else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                sendChangedHex(te.getPosition());
-                            }
-                            if (hit.getLocation() == Mech.LOC_LT &&
-                                    te.getInternal(Mech.LOC_LARM) > 0) {
-                                    Hex h = game.board.getHex(te.getPosition());
-                                    if (!h.contains( Terrain.ARMS)) {
-                                        h.addTerrain(new Terrain(Terrain.ARMS, 1));
-                                    }
-                                    else h.addTerrain(new Terrain(Terrain.ARMS, h.levelOf(Terrain.ARMS)+1));
-                                    sendChangedHex(te.getPosition());
-                                }
                             te.engineHitsThisRound +=
                                 te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
                                                     Mech.SYSTEM_ENGINE,

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.29.67 (CVS)
+v0.29.67 (2005-02-27 9:40am)
 + Added an interface, so external programs can be notified when the client is closed
 + Bug 1145584: Black Python image filename misspelled.
 + Bug 1145891: Bot doesn't know that protomechs can't charge, or that clan 

@@ -8,6 +8,7 @@ v 0.29.23 (CVS)
 + Changed mechset.txt to accommodate lower-case "guillotine.gif".
 + Bug 878087: Left clicking no longer targets friendly units.
 + Added calculateBattleValue(boolean assumeLinkedC3) to Entity so MMNet can calc C3 easier.
++ Bug 874179: Moving through hexes with friendly units no longer a problem
 
 v 0.29.22 (2004-01-17 2:25pm)
 + In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.

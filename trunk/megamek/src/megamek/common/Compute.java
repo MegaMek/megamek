@@ -1737,6 +1737,11 @@ public class Compute
         if ( range > 1 ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
+        else if ( te instanceof Infantry && 1 == range ) {
+            // As per Randall in the post, http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=626894&page=1&view=collapsed&sb=5&o=0&fpart=
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                                 "Can only stomp Infantry in same hex");
+        }
 
         // check elevation
         if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
@@ -1749,9 +1754,9 @@ public class Compute
         }
 
         // check facing
-  // Don't check arc for stomping infantry or tanks.
+        // Don't check arc for stomping infantry or tanks.
         if (0 != range &&
-      !isInArc(ae.getPosition(), ae.getFacing(),
+            !isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
         }
@@ -1786,18 +1791,20 @@ public class Compute
         }
 
         //Set the base BTH
-          int base = 3;
+        int base = 3;
 
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
+        // Level 3 rule: the BTH is PSR - 2 
+        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
             base = ae.getCrew().getPiloting() - 2;
-          }
+        }
 
-          toHit = new ToHitData(base, "base");
+        // Start the To-Hit
+        toHit = new ToHitData(base, "base");
 
-  // BMR(r), page 33. +3 modifier for kicking infantry.
-  if ( te instanceof Infantry ) {
-      toHit.addModifier( 3, "Stomping Infantry" );
-  }
+        // BMR(r), page 33. +3 modifier for kicking infantry.
+        if ( te instanceof Infantry ) {
+            toHit.addModifier( 3, "Stomping Infantry" );
+        }
 
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if ( te instanceof BattleArmor ) {

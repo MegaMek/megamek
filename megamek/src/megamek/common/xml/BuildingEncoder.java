@@ -17,8 +17,10 @@ package megamek.common.xml;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Vector;
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
+import megamek.common.util.StringUtil;
 
 /**
  * Objects of this class can encode a <code>Building</code> object as XML
@@ -100,7 +102,172 @@ public class BuildingEncoder {
      *          contain a valid <code>Building</code>.
      */
     public static Building decode( ParsedXML node, Game game ) {
-        return null;
+        String attrStr = null;
+        int attrVal = 0;
+        Building retVal = null;
+        Vector coordVec = new Vector();
+        Enumeration subnodes = null;
+        ParsedXML subnode = null;
+        Coords coords = null;
+        int type = -1;
+        int id = -1;
+        String name = null;
+        boolean isBurning = false;
+
+        // Walk the building node's children.
+        Enumeration children = node.elements();
+        while ( children.hasMoreElements() ) {
+            ParsedXML child = (ParsedXML) children.nextElement();
+            String childName = child.getName();
+
+            // Handle null child names.
+            if ( null == childName ) {
+
+                // No-op.
+            }
+
+            // Did we find the buildingData node?
+            else if ( childName.equals( "buildingData" ) ) {
+
+                // There should be only one buildingData node.
+                if ( null != retVal ) {
+                    throw new IllegalStateException
+                        ( "More than one 'buildingData' node in a building node." );
+                }
+
+                // Read the coords of the building.
+                subnodes = child.elements();
+                while ( subnodes.hasMoreElements() ) {
+                    subnode = (ParsedXML) subnodes.nextElement();
+
+                    // Have we found the coords subnode?
+                    if ( subnode.getName().equals("coords") ) {
+                        coords = CoordsEncoder.decode( subnode, game );
+                        if ( null != coords ) {
+                            coordVec.addElement( coords );
+                        }
+                    }
+
+                } // Check the next subnode
+
+                // We *did* find at least one coords for the building, right?
+                if ( 0 >= coordVec.size() ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the coords for the building." );
+                }
+
+                // Get the building type.
+                attrStr = child.getAttribute( "type" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the buildingData for a building node." );
+                }
+
+                // Try to pull the type from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException exp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                type = attrVal;
+
+                // Do we have a valid value?
+                if ( type < 0 || type > Building.HARDENED ) {
+                    throw new IllegalStateException
+                        ( "Illegal value for type: " + attrStr );
+                }
+
+                // Get the building id.
+                attrStr = child.getAttribute( "id" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the buildingData for a building node." );
+                }
+
+                // Try to pull the id from the attribute string
+                try {
+                    attrVal = Integer.parseInt( attrStr );
+                }
+                catch ( NumberFormatException nfexp ) {
+                    throw new IllegalStateException
+                        ( "Couldn't get an integer from " + attrStr );
+                }
+                id = attrVal;
+
+                // Do we have a valid value?
+                if ( 0 >= id ) {
+                    throw new IllegalStateException
+                        ( "Illegal value for id: " + attrStr );
+                }
+
+                // Get the building name.
+                attrStr = child.getAttribute( "name" );
+                if ( null == attrStr ) {
+                    throw new IllegalStateException
+                        ( "Couldn't decode the buildingData for a building node." );
+                }
+                name = attrStr;
+
+                // Try to create the building.
+                try {
+                    retVal = new Building( type, id, name, coordVec );
+                } catch ( IllegalArgumentException iaexp ) {
+                    throw new IllegalStateException( iaexp.getMessage() );
+                }
+
+                // Do we have a 'currentCF' attribute?
+                attrStr = child.getAttribute( "currentCF" );
+                if ( null != attrStr ) {
+
+                    // Try to pull the currentCF from the attribute string
+                    try {
+                        attrVal = Integer.parseInt( attrStr );
+                    }
+                    catch ( NumberFormatException nfexp ) {
+                        throw new IllegalStateException
+                            ( "Couldn't get an integer from " + attrStr );
+                    }
+
+                    // Do we have a valid value?
+                    if ( 0 > attrVal ) {
+                        throw new IllegalStateException
+                            ( "Illegal value for currentCF: " + attrStr );
+                    }
+                    retVal.setCurrentCF( attrVal );
+                }
+
+                // Do we have a 'phaseCF' attribute?
+                attrStr = child.getAttribute( "phaseCF" );
+                if ( null != attrStr ) {
+
+                    // Try to pull the phaseCF from the attribute string
+                    try {
+                        attrVal = Integer.parseInt( attrStr );
+                    }
+                    catch ( NumberFormatException nfexp ) {
+                        throw new IllegalStateException
+                            ( "Couldn't get an integer from " + attrStr );
+                    }
+
+                    // Do we have a valid value?
+                    if ( 0 >= attrVal ) {
+                        throw new IllegalStateException
+                            ( "Illegal value for phaseCF: " + attrStr );
+                    }
+                    retVal.setPhaseCF( attrVal );
+                }
+
+                // Set the building's 'isBurning' flag.
+                retVal.setBurning( StringUtil.parseBoolean
+                                   ( child.getAttribute("isBurning") ) );
+
+            } // End found-"buildingData"-child
+
+        } // Look at the next child.
+
+        return retVal;
     }
 
 }

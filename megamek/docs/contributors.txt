@@ -3,7 +3,7 @@ Lot of people have contributed to the MegaMek project.
   Original author and present maintainer:
      Ben Mazur <bmazur@sev.org>
 
-  Bot Code:
+  Current Bot Code:
      Michael Hanson <hanson@cs.stanford.edu>
 
   More Code:
@@ -14,13 +14,14 @@ Lot of people have contributed to the MegaMek project.
      Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>
      Cord Awtry <kipsta@bs-interactive.com>
 
-  Mech Data Maintainer
-     Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
+  Map Conversion:
+     Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
 
   Testing, Ideas and Feedback (just a few of many):
+     Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
      Jason Kean
      Jess Freeman
      Jeff Kean

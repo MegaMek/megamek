@@ -531,7 +531,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             FileDialog fd = new FileDialog(client.frame, 
                                            "Select a .mep file...",
                                            FileDialog.LOAD);
-            fd.setDirectory("data" + File.separator + "mep");
+            fd.setDirectory("data" + File.separator + "blk");
             fd.show();
             if (fd.getFile() == null) {
                 return;

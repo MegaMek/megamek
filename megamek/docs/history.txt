@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.29 (CVS)
 + Bug 802115: Failed MASC now marks mech as "done".
++ Bug 915164: Cust. Mech button disabled for other players mechs in blind drop.
 
 v 0.29.28 (2004-03-14 3:30pm)
 + Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.

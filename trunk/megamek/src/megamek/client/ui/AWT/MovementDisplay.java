@@ -541,7 +541,7 @@ public class MovementDisplay
                            Compute.getChargeDamageTakenBy(ce(),target) +
                            " (in 5pt clusters)" ) ) {
                         // if they answer yes, charge the target.
-                        md.getStep(md.length()).setTarget(target);
+                        md.getStep(md.length()-1).setTarget(target);
                         moveTo(md);
                     } else {
                         // else clear movement
@@ -585,7 +585,7 @@ public class MovementDisplay
                            Compute.getDfaDamageTakenBy(ce()) +
                            " (in 5pt clusters) (using Kick table)" ) ) {
                         // if they answer yes, DFA the target
-                        md.getStep(md.length()).setTarget(target);
+                        md.getStep(md.length()-1).setTarget(target);
                         moveTo(md);
                     } else {
                         // else clear movement

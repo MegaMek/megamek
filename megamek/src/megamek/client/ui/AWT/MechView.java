@@ -76,8 +76,10 @@ public class MechView {
             .append( mech.getWalkMP() )
             .append( "/" )
             .append( mech.getRunMPasString() );
-        sBasic.append( "/" )
-            .append( mech.getJumpMP() );
+        if (mech.getJumpMP() > 0) {
+            sBasic.append( "/" )
+                .append( mech.getJumpMP() );
+        }
         if (isVehicle) {
             sBasic.append(" (")
                 .append(entity.getMovementTypeAsString())

@@ -46,4 +46,33 @@ public class LosEffects {
         this.targetCover |= other.targetCover;
         this.attackerCover |= other.attackerCover;
     }
+    
+    /** Getter for property targetCover.
+     * @return Value of property targetCover.
+     */
+    public boolean isTargetCover() {
+        return targetCover;
+    }
+    
+    /** Setter for property targetCover.
+     * @param targetCover New value of property targetCover.
+     */
+    public void setTargetCover(boolean targetCover) {
+        this.targetCover = targetCover;
+    }
+    
+    /** Getter for property attackerCover.
+     * @return Value of property attackerCover.
+     */
+    public boolean isAttackerCover() {
+        return attackerCover;
+    }
+    
+    /** Setter for property attackerCover.
+     * @param attackerCover New value of property attackerCover.
+     */
+    public void setAttackerCover(boolean attackerCover) {
+        this.attackerCover = attackerCover;
+    }
+    
 }

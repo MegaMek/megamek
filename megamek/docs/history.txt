@@ -10,6 +10,7 @@ v0.29.59 (CVS)
 + Bug 1091239: Vehicle Targeting Computer cannot be set to Aimed Shots
 + Unconcious and shutdown units should not be able to pick up ejected pilots
 + Bug 1090577: Do not pick up pilots that died in the end phase
++ Bug 1092677: Explosion damage avoided by CASE still counts for PSRs.
 
 v0.29.58 (2004-12-26 9:00pm)
 + Added some missing level 2 mixed-tech equipment to the HMP parser.

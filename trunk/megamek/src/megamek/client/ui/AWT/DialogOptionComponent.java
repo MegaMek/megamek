@@ -172,12 +172,7 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     }
     
     public void itemStateChanged(java.awt.event.ItemEvent itemEvent) {
-        //        if (option.getType() == GameOption.BOOLEAN) {
-            parent.optionClicked(this, option, checkbox.getState());
-            //        }
-            //        if (option.getType() == GameOption.CHOICE) {
-            //            option.setValue(choice.getSelectedItem());
-            //        }
+        parent.optionClicked(this, option, checkbox.getState());
     }
     
 }

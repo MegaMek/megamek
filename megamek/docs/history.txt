@@ -97,6 +97,9 @@ v 0.28.7 (CVS)
 + unit list file save & load now includes & obeys a file path
 + fixed divide by zero in Coords.radian()
 + fixed bot feeding negative values to randomInt
++ Applied Michael Newcomb's HmpFile patch (after fixing several bugs).
++ 691583: Mimetic armor has a +0 movement modifier when it moves 3 hexes.
++ 693011: need to replace "chassis" matches with "exact" for vehicles.
 
 v 0.28.6 (02-22-02, 12:00 am)
 + Allow tanks and infantry in the preview pane.

@@ -632,10 +632,22 @@ public class BattleArmor
             result = new TargetRoll( 0, "stealth not active"  );
         }
 
-        // Mimetic camo works on the amount this unit moved.
+        // Mimetic armor modifier is based upon and replaces the movement
+        // bonus as listed below (BMRr, pg. 71):
+        //      0 hexes moved   +3 movement modifier
+        //      1 hex moved     +2 movement modifier
+        //      2 hexes moved   +1 movement modifier
+        //      3 hexes moved   +0 movement modifier
+        // N.B. Rather than mucking with Compute#getTargetMovementModifier,
+        // I decided to apply a -1 modifier here... the total works out.
         else if ( isMimetic ) {
-            result = new TargetRoll( 3 - this.delta_distance,
-                                     "mimetic armor" );
+            if ( 3 == this.delta_distance ) {
+            result = new TargetRoll( -1,
+                                     "mimetic armor cancels movement bonus" );
+            } else {
+                result = new TargetRoll( 3 - this.delta_distance,
+                                         "mimetic armor" );
+            }
         }
         
         // Stealthy units alreay have their to-hit mods defined.

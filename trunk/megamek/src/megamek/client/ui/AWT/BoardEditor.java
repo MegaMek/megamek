@@ -107,7 +107,23 @@ public class BoardEditor extends Container
 
         frame.show();
 
-        new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
+        if (true==Settings.nagForMapEdReadme) {
+            String title = "Please read the editor-readme.txt";
+            String body = 
+                "Instructions for using the editor may be found in editor-readme.txt.\n"+
+                " \nWould you like to read the Map Editor documentation now?\n";
+            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
+            confirm.show();
+
+            if ( !confirm.getShowAgain() ) {
+                Settings.nagForMapEdReadme = false;
+                Settings.save();
+            };
+
+            if ( confirm.getAnswer() ) {
+                megamek.MegaMek.showHelp(this.frame, "editor-readme.txt").show();
+            };
+        };
     }
     
     /**

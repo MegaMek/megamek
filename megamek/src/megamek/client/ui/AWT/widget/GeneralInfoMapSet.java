@@ -139,7 +139,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         content.addArea(pilotR);
 
         int vSpace = 230;
-        advantagesR = new PMSimpleLabel[6];
+        advantagesR = new PMSimpleLabel[24];
         for (int i=0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, pilotL.getSize().width + 10, vSpace);
             content.addArea(advantagesR[i]);

@@ -7819,6 +7819,7 @@ implements Runnable, ConnectionHandler {
             }
             Hex entityHex = game.getBoard().getHex(entity.getPosition());
             if (entity instanceof Infantry &&
+                    !(entity instanceof BattleArmor) &&
                     game.getTemperatureDifference() > 0 &&
                     !(entityHex.contains(Terrain.BUILDING))) {
                 phaseReport.append(entity.getDisplayName() )

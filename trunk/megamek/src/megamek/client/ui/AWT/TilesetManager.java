@@ -238,9 +238,9 @@ public class TilesetManager {
         private Image[] facings = new Image[6];
         private Component comp;
         
-        public static final int IMG_WIDTH = 84;        
-        public static final int IMG_HEIGHT = 72;
-        public static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+        private final int IMG_WIDTH = 84;        
+        private final int IMG_HEIGHT = 72;
+        private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
         
         public EntityImage(Image base, int tint, String camo, Component comp) {
             this.base = base;

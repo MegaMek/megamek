@@ -29,14 +29,14 @@ public class StringUtil {
     	
     	while (newIndex != -1) {
     		String sub = s.substring(oldIndex, newIndex);
-    		v.add(sub);
+    		v.addElement(sub);
     		oldIndex = newIndex + 1;
     		newIndex = s.indexOf(divider, oldIndex);
     	}
     	
     	if (oldIndex != s.length()) {
     		String sub = s.substring(oldIndex);
-    		v.add(sub);    		
+    		v.addElement(sub);    		
     	}
 
     	return v;

@@ -77,19 +77,21 @@ public final class Player extends TurnOrdered
     }
     
     public void addMinefield(Minefield mf) {
-    	visibleMinefields.add(mf);
+    	visibleMinefields.addElement(mf);
     }
     
     public void addMinefields(Vector minefields) {
-    	visibleMinefields.addAll(minefields);
+    	for (int i = 0; i < minefields.size(); i++) {
+	    	visibleMinefields.addElement(minefields.elementAt(i));
+    	}
     }
     
     public void removeMinefield(Minefield mf) {
-    	visibleMinefields.remove(mf);
+    	visibleMinefields.removeElement(mf);
 	}
     
     public void removeMinefields() {
-    	visibleMinefields.clear();
+    	visibleMinefields.removeAllElements();
 	}
     
     public boolean containsMinefield(Minefield mf) {

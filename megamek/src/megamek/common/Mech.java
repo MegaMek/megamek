@@ -526,7 +526,7 @@ public abstract class Mech
             }
         }
         
-        return jump;
+        return applyGravityEffectsOnMP(jump);
     }
     
     /**

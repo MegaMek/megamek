@@ -18,7 +18,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 
-import megamek.client.util.AdvancedLabel;
 import megamek.client.Client;
 import megamek.common.Player;
 
@@ -61,7 +60,7 @@ public class PlayerListDialog
      * Refreshes the player list component with information
      * from the game object.
      */
-    public void refreshPlayerList() {
+    public static void refreshPlayerList(List playerList, Client client) {
         playerList.removeAll();
         for(Enumeration e = client.getPlayers(); e.hasMoreElements();) {
             final Player player = (Player)e.nextElement();
@@ -75,5 +74,9 @@ public class PlayerListDialog
             }
             playerList.add(playerDisplay.toString());
         }
+    }
+    
+    public void refreshPlayerList() {
+        refreshPlayerList(playerList, client);
     }
 }

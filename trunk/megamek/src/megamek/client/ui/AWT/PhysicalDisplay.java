@@ -433,9 +433,9 @@ public class PhysicalDisplay
      * Sweep off the target with the arms that the player selects.
      */
     private void brush() {
-        ToHitData toHitLeft = Compute.toHitBrushOff
+        ToHitData toHitLeft = BrushOffAttackAction.toHitBrushOff
             ( client.game, cen, target, BrushOffAttackAction.LEFT );
-        ToHitData toHitRight = Compute.toHitBrushOff
+        ToHitData toHitRight = BrushOffAttackAction.toHitBrushOff
             ( client.game, cen, target, BrushOffAttackAction.RIGHT );
         boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
         boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
@@ -475,7 +475,7 @@ public class PhysicalDisplay
         // If we can hit with the left arm, get
         // the damage and construct the string.
         if ( canHitLeft ) {
-            damageLeft = Compute.getBrushOffDamageFor
+            damageLeft = BrushOffAttackAction.getBrushOffDamageFor
                 ( ce(), BrushOffAttackAction.LEFT );
             left = new StringBuffer( "Left Arm to-hit: " );
             left.append( toHitLeft.getValueAsString() )
@@ -488,7 +488,7 @@ public class PhysicalDisplay
         // If we can hit with the right arm, get
         // the damage and construct the string.
         if ( canHitRight ) {
-            damageRight = Compute.getBrushOffDamageFor
+            damageRight = BrushOffAttackAction.getBrushOffDamageFor
                 ( ce(), BrushOffAttackAction.RIGHT );
             right = new StringBuffer( "Right Arm to-hit: " );
             right.append( toHitRight.getValueAsString() )
@@ -656,9 +656,9 @@ public class PhysicalDisplay
             }
 
             // Brush off swarming infantry?
-            ToHitData brushRight = Compute.toHitBrushOff
+            ToHitData brushRight = BrushOffAttackAction.toHitBrushOff
                 ( client.game, cen, target, BrushOffAttackAction.RIGHT );
-            ToHitData brushLeft = Compute.toHitBrushOff
+            ToHitData brushLeft = BrushOffAttackAction.toHitBrushOff
                 ( client.game, cen, target, BrushOffAttackAction.LEFT );
             boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
                                 brushLeft.getValue() != ToHitData.IMPOSSIBLE);

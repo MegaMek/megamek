@@ -19,7 +19,6 @@ import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 import megamek.client.util.AdvancedLabel;
-import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.MiscType;
@@ -113,7 +112,7 @@ public class TriggerAPPodDialog
                 panPods.add( pod );
 
                 // Can the entity fire the pod?
-                if ( Compute.canFire( entity, mount ) ) {
+                if (mount.canFire()) {
                     // Yup.  Add a traker for this pod.
                     TriggerPodTracker tracker = new TriggerPodTracker
                         ( pod, entity.getEquipmentNum( mount ) );

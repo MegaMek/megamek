@@ -4619,6 +4619,13 @@ implements Runnable, ConnectionHandler {
                 } // End check-for-available-ap-pod
             }
 
+            // The equipment type of a club needs to be restored.
+            if (ea instanceof ClubAttackAction) {
+                ClubAttackAction caa = (ClubAttackAction) ea;
+                Mounted club = caa.getClub();
+                club.restore();
+            }
+
             if (ea instanceof PushAttackAction) {
                 // push attacks go the end of the displacement attacks
                 PushAttackAction paa = (PushAttackAction)ea;

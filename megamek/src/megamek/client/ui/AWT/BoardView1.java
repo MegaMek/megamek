@@ -1549,6 +1549,8 @@ public class BoardView1
             } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                 attackSprites.addElement(new AttackSprite(aa));
             }
+        } else {
+            attackSprites.addElement(new AttackSprite(aa));
         }
     }
 

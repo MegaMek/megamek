@@ -1899,6 +1899,9 @@ public boolean isPassworded() {
             attacks.addElement(i.nextElement());
         }
         pendingCharges.removeAllElements();
+        
+        // remove any duplicate attack declarations
+        cleanupPhysicalAttacks();
 
         // loop thru received attack actions
         for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
@@ -1939,6 +1942,40 @@ public boolean isPassworded() {
                 // hmm, error.
             }
         }
+    }
+    
+    /**
+     * Cleans up the attack declarations for the physical phase by removing
+     * all attacks past the first for any one mech
+     */
+    private void cleanupPhysicalAttacks() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = (Entity)i.nextElement();
+            removeDuplicateAttacks(entity.getId());
+        }
+    }
+    
+    /**
+     * Removes any actions in the attack queue beyond the first by the 
+     * specified entity.
+     */
+    private void removeDuplicateAttacks(int entityId) {
+        boolean attacked = false;
+        Vector toKeep = new Vector(attacks.size());
+        
+        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+            EntityAction action = (EntityAction)i.nextElement();
+            if (action.getEntityId() != entityId) {
+                toKeep.addElement(action);
+            } else if (!attacked) {
+                toKeep.addElement(action);
+                attacked = true;
+            } else {
+                System.err.println("server: removing duplicate phys attack for id#" + entityId);
+            }
+        }
+        
+        attacks = toKeep;
     }
 
     /**

@@ -219,7 +219,7 @@ extends Dialog implements ActionListener {
             MunitionChoicePanel mcp = new MunitionChoicePanel(m, vTypes);
             gbl.setConstraints(mcp, gbc);
             panMunitions.add(mcp);
-            m_vMunitions.add(mcp);
+            m_vMunitions.addElement(mcp);
         }
     }
     

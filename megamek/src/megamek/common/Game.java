@@ -346,7 +346,38 @@ public class Game implements Serializable
             graveyard.addElement(entity);
         }
     }
-    
+     
+    /**
+     * See if the <code>Entity</code> with the given ID is in the graveyard.
+     *
+     * @param	id - the ID of the <code>Entity</code> to be checked.
+     * @return  <code>true</code> if the <code>Entity</code> is in the
+     *		graveyard, <code>false</code> otherwise.
+     */
+    public boolean isInGraveyard( int id ) {
+        final Entity entity = getEntity(id);
+        if (entity == null) {
+	    // Unknown entity ID
+	    return false;
+	}
+	return isInGraveyard( entity );
+    }
+
+    /**
+     * See if the <code>Entity</code> is in the graveyard.
+     *
+     * @param	entity - the <code>Entity</code> to be checked.
+     * @return  <code>true</code> if the <code>Entity</code> is in the
+     *		graveyard, <code>false</code> otherwise.
+     */
+    public boolean isInGraveyard( Entity entity ) {
+        if (entity == null) {
+	    // No nulls in the graveyard
+	    return false;
+	}
+	return graveyard.contains( entity );
+    }
+
     /**
      * Returns the first selectable entity that belongs to the player,
      * or null if none do.

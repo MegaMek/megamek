@@ -18,6 +18,7 @@ package megamek.common;
 import com.sun.java.util.collections.HashMap;
 import com.sun.java.util.collections.Map;
 import com.sun.java.util.collections.Collections;
+import com.sun.java.util.collections.Iterator;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -114,7 +115,7 @@ public class Game implements Serializable
     private boolean mechInFirstHex = true;
     private boolean mechInSecondHex = true;
 
-  private Map minefields = Collections.synchronizedMap(new HashMap());
+    private Map minefields = Collections.synchronizedMap(new HashMap());
     private Vector vibrabombs = new Vector();
     /**
      * Constructor
@@ -164,6 +165,26 @@ public class Game implements Serializable
     return mfs.size();
   }
     
+    /**
+     * Get the coordinates of all mined hexes in the game.
+     *
+     * @return  an <code>Enumeration</code> of the <code>Coords</code>
+     *          containing minefilds.  This will not be <code>null</code>.
+     */
+    public Enumeration getMinedCoords() {
+        // Create an anonymous inner class to wrap the minefiled's
+        // key set's iterator in an Enumeration.
+        return new Enumeration() {
+                private Iterator iter = 
+                    Game.this.minefields.keySet().iterator();
+                public boolean hasMoreElements() {
+                    return iter.hasNext();
+                }
+                public Object nextElement() {
+                    return iter.next();
+                }
+            };
+    }
     public void addMinefield(Minefield mf) {
       Vector mfs = (Vector) minefields.get(mf.getCoords());
       if (mfs == null) {

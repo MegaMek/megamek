@@ -120,7 +120,7 @@ Weapon Attacks (Destroying a Unit)
 Physical Attacks
 
 - Punch Attacks			Yes		None
-- Club Attacks			Yes		Blown off limbs may not be used as clubs.
+- Club Attacks			Yes		None
 - Hatchets and Swords		Yes		None
 - Push Attacks			Yes		None
 - Kick Attacks			Yes		None
@@ -276,9 +276,9 @@ Special Case Rules (Hidden Units)
 
 Special Case Rules (Hostile Environments)
 
-- Extreme Tempretures		No		None
+- Extreme Temperatures		Yes		Infantry can deploy in extreme temperatures, but dies at end of turn if not sheltered
 - Ice				Partial		Skiding on Ice has been implement.
-- High /Low Gravity		No		None
+- High /Low Gravity		Yes		None
 - Swamp				Partial		Swamp Hex tileset implemented.
 - Vacuum			No		None
 
@@ -299,7 +299,7 @@ Special Case Rules (Scavenging and Repairs)
 - Technicians			No		None
 - Diagnosis			No		None
 - Replacement Parts		No		None
-- Scavenging			No		This is partially implemented in Megamek.Net
+- Scavenging			No		This is partially implemented in MegaMekNET
 - Repairs and Replacements	No		None
 - Customising and Retrofits	No		None
 

@@ -791,7 +791,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.internalName = "Clan LB 2-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 2-X (CL)";
-        ammo.mtfName = "CLLBXAC2 Ammo";
+        // this isn't a true mtf code
+        ammo.mtfName = "CLLBXAC2 CL Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
@@ -809,7 +810,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.internalName = "Clan LB 5-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 5-X (CL)";
-        ammo.mtfName = "CLLBXAC5 Ammo";
+        // this isn't a true mtf code
+        ammo.mtfName = "CLLBXAC5 CL Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
@@ -827,7 +829,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.internalName = "Clan LB 10-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 10-X (CL)";
-        ammo.mtfName = "CLLBXAC10 Ammo";
+        // this isn't a true mtf code
+        ammo.mtfName = "CLLBXAC10 CL Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 10;
@@ -845,7 +848,8 @@ public class AmmoType extends EquipmentType {
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.internalName = "Clan LB 20-X Cluster Ammo";
         ammo.mepName = "Clan Ammo 20-X (CL)";
-        ammo.mtfName = "CLLBXAC20 Ammo";
+        // this isn't a true mtf code
+        ammo.mtfName = "CLLBXAC20 CL Ammo";
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;

@@ -31,6 +31,7 @@
   <!-- and add pathelements to all javac & java tasks! --> 
   <property name="lib.collections" value="collections.jar"/>
   <property name="lib.tinyxml" value="TinyXML.jar"/>
+  <property name="lib.ostermiller" value="Ostermiller.jar"/>
 
   <!-- Name of the target jarfile and the class containing the main-Method -->
   <property name="jarfile" value="MegaMek.jar"/>
@@ -40,7 +41,7 @@
   <property name="dataclasspath" value="."/>
   
   <!-- This is the classpath of the jar -->  
-  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml}"/>
+  <property name="jarclasspath" value="${dataclasspath} ${lib.collections} ${lib.tinyxml} ${lib.ostermiller}"/>
   
   <!-- initializes system before build -->
   <target name="init">
@@ -57,6 +58,7 @@
             <pathelement location="${basedir}"/>
             <pathelement location="${lib.collections}"/>
             <pathelement location="${lib.tinyxml}"/>
+            <pathelement location="${lib.ostermiller}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -70,6 +72,7 @@
             <pathelement location="${basedir}"/>
             <pathelement location="${lib.collections}"/>
             <pathelement location="${lib.tinyxml}"/>
+            <pathelement location="${lib.ostermiller}"/>
          </classpath>
     </javac>
     <touch file="${timestampfile}"/>
@@ -95,6 +98,7 @@
            <pathelement path="${builddir}"/>
            <pathelement location="${lib.collections}"/>
            <pathelement location="${lib.tinyxml}"/>
+           <pathelement location="${lib.ostermiller}"/>
 	    </classpath>
      </java>
   </target>
@@ -139,6 +143,7 @@
     <!-- downloading precompiled libraries that are needed for a successful build -->
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.collections}"/>
     <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.tinyxml}"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${lib.ostermiller}"/>
     
     <antcall target="cvsdev-build"/>
     
@@ -176,6 +181,7 @@
            <pathelement location="${cvsmaindir}"/>
            <pathelement location="${cvsmaindir}/${lib.collections}"/>
            <pathelement location="${cvsmaindir}/${lib.tinyxml}"/> 
+           <pathelement location="${cvsmaindir}/${lib.ostermiller}"/> 
         </classpath>
     </javac>
     

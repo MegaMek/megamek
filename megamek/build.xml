@@ -12,6 +12,7 @@
   <property name="jarmanifest" value="manifest.txt"/> 
   <property name="cvsdir" value="cvsdev"/>
   <property name="libraries" value="collections.jar;TinyXML.jar"/>
+  <property name="TinyXMLsrc" value="TinyXML-src.zip" />
 
   <target description="Initialize system before build" name="init">
      <!-- Create the time stamp -->
@@ -86,6 +87,7 @@
 
   <target depends="cvsdev-init" name="cvsdev-package">
     <delete dir="${cvsdir}/megamek/classes"/>
+    <delete file="${TinyXMLsrc}"/>
     <zip basedir="${cvsdir}/megamek" zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip"/>
   </target>
   

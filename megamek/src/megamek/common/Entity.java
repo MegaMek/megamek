@@ -2896,13 +2896,26 @@ public abstract class Entity
      * destroyed.
      *
      * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is utterly destroyed.
+     *          has salvageable components; if this value is <code>false</code>
+     *          the unit is utterly destroyed.
+     * @see     #isRepairable()
      */
     public boolean isSalvage() {
         return this.salvageable;
     }
-    
+
+    /**
+     * Determine if the unit can be repaired, or only harvested for spares.
+     *
+     * @return  A <code>boolean</code> that is <code>true</code> if the unit
+     *          can be repaired (given enough time and parts); if this value
+     *          is <code>false</code>, the unit is only a source of spares.
+     * @see     #isSalvage()
+     */
+    public boolean isRepairable() {
+        return isSalvage();
+    }
+
     /** Getter for property removalCondition.
      * @return Value of property removalCondition.
      */

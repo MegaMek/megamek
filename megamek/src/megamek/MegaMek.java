@@ -76,10 +76,13 @@ public class MegaMek
             screenSize.width / 2 - frame.getSize().width / 2,
             screenSize.height / 2 - frame.getSize().height / 2);
 
-        // Apparently, the MSJDK doesn't handle the menu bar very well (hack).
-        Dimension windowSize = frame.getSize();
-        windowSize.height += 25;
-        frame.setSize( windowSize );
+        // Apparently, the MSJDK doesn't handle the menu bar very well,
+        //  so we'll try this hack.
+        if (System.getProperty("java.vendor").indexOf("Microsoft") != -1) {
+            Dimension windowSize = frame.getSize();
+            windowSize.height += 25;
+            frame.setSize( windowSize );
+        }
 
         // Show the window.
         frame.setVisible(true);

@@ -11,6 +11,7 @@ v 0.29.27 (CVS)
 + Better width calculation for Game Options dialog.
 + Infantry move last, deploy last, and move multi game options now
         include Protomechs as well.
++ Made above fix for bug 760628 Java 1.1 compatible.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

@@ -143,9 +143,9 @@ public class MegaMek implements ActionListener {
         connectB.setActionCommand("fileGameConnect");
         connectB.addActionListener(this);
 
-        botB = new Button("Connect as a Bot...");
-        botB.setActionCommand("fileGameConnectBot");
-        botB.addActionListener(this);
+        //botB = new Button("Connect as a Bot...");
+        //botB.setActionCommand("fileGameConnectBot");
+        //botB.addActionListener(this);
 
         editB = new Button("Map Editor");
         editB.setActionCommand("fileBoardNew");
@@ -207,8 +207,8 @@ public class MegaMek implements ActionListener {
         c.gridy++;
         addBag(connectB, gridbag, c);
         c.gridy++;
-        addBag(botB, gridbag, c);
-        c.gridy++;
+        //addBag(botB, gridbag, c);
+        //c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(quitB, gridbag, c);
@@ -444,12 +444,12 @@ public class MegaMek implements ActionListener {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port);
+				c.addGameListener(new BotGUI(c));
                 try {
                     c.connect();
                 } catch (Exception e) {
                     ;
                 }
-                c.addGameListener(new BotGUI(this, c));
                 c.retrieveServerInfo(); 
             }
         }
@@ -525,7 +525,7 @@ public class MegaMek implements ActionListener {
 
         // initialize game
         client = new TestBot(cd.name, cd.serverAddr, cd.port);
-        client.addGameListener(new BotGUI(this, (BotClient)client));
+        client.addGameListener(new BotGUI((BotClient)client));
         try {
             client.connect();
         } catch (Exception e) {
@@ -561,15 +561,10 @@ public class MegaMek implements ActionListener {
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
-    private void showHelp() {
-        showHelp("readme.txt");
-    }
-    
-    public void showHelp(String fileName) {
+    public void showHelp() {
         if (this.help == null) {
-            help = showHelp(this.frame, fileName);
+            help = showHelp(this.frame, "readme.txt");
         }
-        this.help.setFile(new File(fileName));
         // Show the help dialog.
         this.help.show();
     }

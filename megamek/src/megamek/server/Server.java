@@ -1397,13 +1397,11 @@ implements Runnable, ConnectionHandler {
                 changePhase(Game.PHASE_END);
                 break;
             case Game.PHASE_TARGETING :
-                System.out.println("Targeting phase");
                 enqueueIndirectArtilleryAttacks();
                 changePhase(Game.PHASE_MOVEMENT);
                 break;
             case Game.PHASE_OFFBOARD :
                 roundReport.append("\nOffboard Attack Phase\n-----------------\n");
-                System.out.println("Offboard phase");
                 resolveIndirectArtilleryAttacks();
                 if (phaseReport.length() > 0) {
                     roundReport.append(phaseReport.toString());
@@ -1414,7 +1412,6 @@ implements Runnable, ConnectionHandler {
                 }
                 break;
             case Game.PHASE_OFFBOARD_REPORT:
-                System.out.println("Offboard Report");
                 changePhase(Game.PHASE_FIRING);
                 break;
             case Game.PHASE_END :
@@ -4829,11 +4826,9 @@ implements Runnable, ConnectionHandler {
         final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
             wtype.getAmmoType() != AmmoType.T_BA_MG &&
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !wtype.hasFlag(WeaponType.F_INFANTRY) && !wtype.hasFlag(WeaponType.F_ONESHOT);
+            !wtype.hasFlag(WeaponType.F_INFANTRY) &&
+            !wtype.hasFlag(WeaponType.F_ONESHOT);
         final boolean isOneShot = wtype.hasFlag(WeaponType.F_ONESHOT);
-
-
-
 
         Mounted ammo = null;
         if (usesAmmo) {
@@ -11392,36 +11387,35 @@ implements Runnable, ConnectionHandler {
     }
     private void resolveIndirectArtilleryAttacks()  {
         Vector results = new Vector(game.getArtillerySize());
+        Vector attacks = new Vector(game.getArtillerySize());
 
         // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
             ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
             aaa.turnsTilHit--;
+            // TODO: should this be "<="???
             if (aaa.turnsTilHit < 0) {
                 WeaponAttackAction waa = aaa.getWAA();
+                // TODO: move pre-treat to Targeting phase.
+                //       Resolve attack including any in-flight DRMs.
                 results.addElement(preTreatWeaponAttack(waa));
-
+                attacks.addElement( aaa );
             }
         }
 
-            // loop through weapon results and resolve
-            int cen = Entity.NONE;
-            for (Enumeration i = results.elements();i.hasMoreElements();) {
-                WeaponResult wr = (WeaponResult) i.nextElement();
-                resolveWeaponAttack(wr, cen);
-                cen = wr.waa.getEntityId();
-            }
-
-        Vector gameArtilleryAttacks=game.getArtilleryVector();  //Not exactly great practice, messing with the vector thru this.   I care?
-        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-            ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.nextElement();
-
-                if(aaa.turnsTilHit<0) {
-                    gameArtilleryAttacks.remove(aaa);
-                }
-
+        // loop through weapon results and resolve
+        int lastEntityId = Entity.NONE;
+        for (Enumeration i = results.elements();i.hasMoreElements();) {
+            WeaponResult wr = (WeaponResult) i.nextElement();
+            resolveWeaponAttack(wr, lastEntityId);
+            lastEntityId = wr.waa.getEntityId();
         }
 
+        // Clear out all resolved attacks.
+        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+            game.removeArtilleryAttack
+                ( (ArtilleryAttackAction) i.nextElement() );
+        }
 
         // and clear the attacks Vector
         game.resetActions();
@@ -11436,10 +11430,12 @@ implements Runnable, ConnectionHandler {
             Entity entity = game.getEntity(ea.getEntityId());
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
+                // TODO: Pre-treat this attack (i.e. heat and ammo use).
+                //       Also record any entity-state DRMs.
                 aaa = new ArtilleryAttackAction(waa, game);
                 game.addArtilleryAttack(aaa);
             }
         }
         game.resetActions();
     }
-    }
+}

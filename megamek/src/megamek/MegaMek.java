@@ -424,6 +424,7 @@ public class MegaMek
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName());
+                c.initializeListeners();
                 c.connect("localhost", hd.port);
                 c.retrieveServerInfo();
             }
@@ -489,8 +490,9 @@ public class MegaMek
 
         // initialize game
         client = new TestBot(cd.name);
+        client.initializeListeners();
 
-  		// verify connection
+        // verify connection
         if(!client.connect(cd.serverAddr, cd.port)) {
             server = null;
             client = null;

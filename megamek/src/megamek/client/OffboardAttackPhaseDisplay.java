@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -80,9 +80,6 @@ public class OffboardAttackPhaseDisplay
      */
     public OffboardAttackPhaseDisplay(Client client) {
         this.client = client;
-        client.addGameListener(this);
-
-        client.game.board.addBoardListener(this);
 
         shiftheld = false;
 
@@ -106,19 +103,13 @@ public class OffboardAttackPhaseDisplay
         butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
 
-
-
-
         butFlipArms = new Button("Flip Arms");
         butFlipArms.addActionListener(this);
         butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
 
-
         butSpace = new Button(".");
         butSpace.setEnabled(false);
-
-
 
         butDone = new Button("Done");
         butDone.addActionListener(this);
@@ -156,15 +147,28 @@ public class OffboardAttackPhaseDisplay
         c.weightx = 1.0;    c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
+    }
 
-        client.bv.addKeyListener( this );
+    /**
+     * Have the panel register itself as a listener wherever it's needed.
+     * <p/>
+     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html
+     * it is a major bad no-no to perform these registrations before the
+     * constructor finishes, so this function has to be called after the
+     * panel is created.  Please note, this restriction only applies to
+     * listeners for objects that aren't on the panel itself.
+     */
+    public void initializeListeners() {
+
+        this.client.addGameListener(this);
+        this.client.game.board.addBoardListener(this);
+
+        this.client.bv.addKeyListener( this );
         addKeyListener(this);
 
         // mech display.
-        client.mechD.wPan.weaponList.addItemListener(this);
-        client.mechD.wPan.weaponList.addKeyListener(this);
-
-
+        this.client.mechD.wPan.weaponList.addItemListener(this);
+        this.client.mechD.wPan.weaponList.addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {

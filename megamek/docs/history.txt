@@ -30,6 +30,8 @@ v0.29.32 (CVS)
 + Bug 932393: Once the pilot is dead, stop showing "PILOT DEAD" messages.
 + Patch 933200: Allow scenario authors to specify specific damage.
 + Changed build.xml to leave classes/ behind to stop annoying CVS errors.
++ Reordered phase numbers.
++ Minor refactoring of artillery code.
 
 v 0.29.31 (2004-04-11 9:00pm)
 + Heat prognosticator on weapons tab now takes standing in fire into account.

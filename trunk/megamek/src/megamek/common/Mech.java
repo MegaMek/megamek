@@ -1470,7 +1470,7 @@ public abstract class Mech
         */
 
         // adjust for target movement modifier
-        int runMP = getRunMP();
+        int runMP = getRunMPwithoutMASC();
         // factor in masc or tsm
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();
@@ -1580,7 +1580,7 @@ public abstract class Mech
         }
         
         // adjust further for speed factor
-        double speedFactor = getRunMP() + getJumpMP() - 5;
+        double speedFactor = getRunMPwithoutMASC() + getJumpMP() - 5;
         // +1 for MASC or TSM
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             MiscType mtype = (MiscType)((Mounted)i.nextElement()).getType();

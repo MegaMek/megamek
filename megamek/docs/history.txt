@@ -90,11 +90,13 @@ VERSION HISTORY:
 v next
 + actually applied level 2 patch to Server.java
 + added quad lateral shifts
++ 564632: fixed typo allowing leg weapons to be fired while prone
++ 565004: now enforcing jump along shortest path rule
 
 v 0.26.1 (06-07-02, 5pm)
 + added stainedglass's minimap and mech selector patches, slightly modified
 + removed river terrain type
-+ DFA against destroyed target now has similar results to successful DFA
++ 562804: DFA against destroyed target now has similar results to successful DFA
 + try to prevent annoying ConcurrentModificationExceptions during drawing
 + can't push/charge/dfa a mech already involved in one of these attacks
 + type letters to search thru list in MechSelector

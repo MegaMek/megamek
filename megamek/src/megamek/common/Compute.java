@@ -358,11 +358,16 @@ public class Compute
             md.getStep(0).setDanger(true);
         }
         
-        // second pass: set moveType, illegal, trouble flags
+        // set moveType, illegal, trouble flags
         compileIllegal(game, entityId, md, overallMoveType, isRunProhibited);
-        
-        // third pass (sigh) : avoid stacking violations
+
+        // avoid stacking violations
         compileStackingViolations(game, entityId, md);
+        
+        // check for illegal jumps
+        if (isJumping) {
+            compileJumpCheck(game, entityId, md);
+        }
         
         md.setCompiled(true);
     }
@@ -474,6 +479,33 @@ public class Compute
                 step.setMovementType(Entity.MOVE_ILLEGAL);
             } else {
                 lastMoveLegal = true;
+            }
+        }
+    }
+    
+    /**
+     * Checks to make sure that the jump as a whole is legal, and marks
+     * all steps as illegal if it is not.
+     *
+     * An illegal jump either does not go anywhere, or takes a longer path
+     * than is necessary to the destination.
+     *
+     * This function assumes that at least the position and mpUsed for each
+     * step have been properly calculated and that the movement it is given
+     * is jumping movement.
+     */
+    private static void compileJumpCheck(Game game, int entityId, MovementData md) {
+        final Entity entity = game.getEntity(entityId);
+        Coords start = entity.getPosition();
+        Coords land = md.getStep(md.length() - 1).getPosition();
+        int distance = start.distance(land);
+        int mp = md.getStep(md.length() - 1).getMpUsed();
+        
+        if (distance < 1 || mp > distance) {
+            // whole movement illegal
+            for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+                MovementData.Step step = (MovementData.Step)i.nextElement();
+                step.setMovementType(Entity.MOVE_ILLEGAL);
             }
         }
     }

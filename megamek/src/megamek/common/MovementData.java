@@ -367,6 +367,17 @@ public class MovementData
             this.type = type;
         }
         
+        public Step(Step other) {
+            this.type = other.type;
+            this.position = new Coords(other.position);
+            this.facing = other.facing;
+            this.mpUsed = other.mpUsed;
+            this.distance = other.distance;
+            this.movementType = other.movementType;
+            this.danger = other.danger;
+            this.pastDanger = other.pastDanger;
+        }
+        
         public String toString() {
             switch (type) {
             case MovementData.STEP_BACKWARDS:return "B";	
@@ -378,6 +389,8 @@ public class MovementData
             case MovementData.STEP_START_JUMP:return "StrJump";	
             case MovementData.STEP_TURN_LEFT:return "L";	
             case MovementData.STEP_TURN_RIGHT:return "R";	
+            case MovementData.STEP_LATERAL_LEFT:return "ShL";	
+            case MovementData.STEP_LATERAL_RIGHT:return "ShR";	
             }
             return"";
         }
@@ -450,6 +463,10 @@ public class MovementData
             int movementType = 0;
             boolean danger = false;
             boolean pastDanger = false;
+        }
+        
+        public Object clone() {
+            return new Step(this);
         }
         
         /**

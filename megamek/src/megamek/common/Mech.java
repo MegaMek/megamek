@@ -712,7 +712,7 @@ public abstract class Mech
         
         // check criticals for space
         if(getEmptyCriticals(loc) < mounted.getType().getCriticals(this)) {
-            System.err.println("mech: tried to add equipment to full location");
+            System.err.println("mech: tried to add equipment (" + mounted.getName() + ") to full location (" + getLocationAbbr(loc) + ") on "  + getDisplayName());
             return;
         }
         

@@ -2877,6 +2877,14 @@ implements Runnable, ConnectionHandler {
                                      !target.isDestroyed() ) {
                                     stopTheSkid = true;
                                 }
+                                
+                                // if we don't do this here,
+                                // we can have a mech without a leg
+                                // standing on the field and moving
+                                // as if it still had his leg after
+                                // getting skid-charged.
+                                resolvePilotingRolls(target);
+                                target.applyDamage();
                             }
 
                             // Resolve "move-through" damage on infantry.
@@ -3885,12 +3893,17 @@ implements Runnable, ConnectionHandler {
                 HitData hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
                 phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
                 resolvePilotingRolls(entity, true, lastPos, curPos);
+                // we need to apply Damage now, in case the entity lost a leg,
+                // otherwise it won't get a leg missing mod if it hasn't yet
+                // moved and lost a leg, see bug 1071434 for an example
+                entity.applyDamage();                
             }
         }
     }
 
     /**
      * Removes the minefield from the game.
+     * @param mf The <code>Minefield</code> to remove
      */ 
     private void removeMinefield(Minefield mf) {
         if (game.containsVibrabomb(mf)) {
@@ -3907,8 +3920,8 @@ implements Runnable, ConnectionHandler {
 
     /** 
      * Removes the minfield from a player.
-     * @param player
-     * @param mf
+     * @param player The <code>Player</code> who's minefiled should be removed
+     * @param mf The <code>Minefield</code> to be removed
      */
     private void removeMinefield(Player player, Minefield mf) {
         if (player.containsMinefield(mf)) {
@@ -3919,7 +3932,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Reveals a minefield for all players. 
-     * @param mf
+     * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Minefield mf) {
         Enumeration players = game.getPlayers();
@@ -3931,9 +3944,8 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Reveals a minefield for a player.
-     * @param player
-     * @param mf
-     * 
+     * @param player The <code>Player</code> who's minefiled should be revealed
+     * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Player player, Minefield mf) {
         if (!player.containsMinefield(mf)) {
@@ -3944,6 +3956,7 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Explodes a vibrabomb.
+     * @param mf The <code>Minefield</code> to explode
      */ 
     private void explodeVibrabomb(Minefield mf) {
         Enumeration targets = game.getEntities(mf.getCoords());
@@ -3956,6 +3969,10 @@ implements Runnable, ConnectionHandler {
             phaseReport.append(damageEntity(entity, hit, mf.getDamage())).append("\n");
 
             resolvePilotingRolls(entity, true, entity.getPosition(), entity.getPosition());
+            // we need to apply Damage now, in case the entity lost a leg,
+            // otherwise it won't get a leg missing mod if it hasn't yet
+            // moved and lost a leg, see bug 1071434 for an example
+            entity.applyDamage();
             send(createEntityPacket(entity.getId()));
         }
 
@@ -3966,6 +3983,11 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    /**
+     * drowns any units swarming the entity
+     * @param entity The <code>Entity</code> that is being swarmed
+     * @param pos The <code>Coords</code> the entity is at
+     */
     private void drownSwarmer(Entity entity, Coords pos) {
         // Any swarming infantry will be destroyed.
         final int swarmerId = entity.getSwarmAttackerId();
@@ -3986,6 +4008,9 @@ implements Runnable, ConnectionHandler {
     /**
      * Checks to see if we may have just washed off infernos.  Call after
      * a step which may have done this.
+     * 
+     * @param entity The <code>Entity</code> that is being checked
+     * @param coords The <code>Coords</code> the entity is at
      */
     void checkForWashedInfernos(Entity entity, Coords coords) {
         Hex hex = game.board.getHex(coords);
@@ -4002,6 +4027,9 @@ implements Runnable, ConnectionHandler {
 
     /**
      * Washes off an inferno from a mech and adds it to the (water) hex.
+     * 
+     * @param entity The <code>Entity</code> that is taking a bath
+     * @param coords The <code>Coords</code> the entity is at
      */
     void washInferno(Entity entity, Coords coords) {
         game.board.addInfernoTo( coords, InfernoTracker.STANDARD_ROUND, 1 );
@@ -4037,6 +4065,16 @@ implements Runnable, ConnectionHandler {
         }
     }
 
+    /**
+     * Set the locationsexposure of an entity
+     * 
+     * @param entity The <code>Entity</code> who's exposure is being set
+     * @param hex The <code>Hex</code> the entity is in 
+     * @param isPavementStep a <code>boolean</code> value wether 
+     *                       the entity is moving on a road
+     * @param isJump a <code>boolean</code> value wether the entity is jumping
+     */
+    
     public void doSetLocationsExposure(Entity entity, Hex hex, boolean isPavementStep, boolean isJump) {
         if ( hex.levelOf(Terrain.WATER) > 0
             && entity.getMovementType() != Entity.MovementType.HOVER

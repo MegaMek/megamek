@@ -100,6 +100,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Heat Sink";
         misc.internalName = misc.name;
         misc.mepName = misc.name;
+        misc.mtfName = misc.name;
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.bv = 0;
@@ -113,6 +114,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Jump Jet";
         misc.internalName = misc.name;
         misc.mepName = misc.name;
+        misc.mtfName = misc.name;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.bv = 0;
@@ -126,6 +128,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Tree Club";
         misc.internalName = misc.name;
         misc.mepName = "N/A";
+        misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.bv = 0;
@@ -139,6 +142,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Girder Club";
         misc.internalName = misc.name;
         misc.mepName = "N/A";
+        misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.bv = 0;
@@ -152,6 +156,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Limb Club";
         misc.internalName = misc.name;
         misc.mepName = "N/A";
+        misc.mtfName = misc.mepName;
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.bv = 0;
@@ -165,6 +170,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Hatchet";
         misc.internalName = misc.name;
         misc.mepName = misc.name;
+        misc.mtfName = misc.name;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.bv = BV_VARIABLE;

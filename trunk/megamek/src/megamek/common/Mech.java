@@ -715,6 +715,34 @@ public class Mech
     }
     
     /**
+     * Set the internal structure to the appropriate value for the mech's
+     * weight class
+     */
+    public void autoSetInternal() {
+        // stupid irregular table... grr.
+        switch ((int)weight) {
+            //                     H, CT,TSO,ARM,LEG
+            case 20  : setInternal(3,  6,  5,  3,  4); break;
+            case 25  : setInternal(3,  8,  6,  4,  6); break;
+            case 30  : setInternal(3, 10,  7,  5,  7); break;
+            case 35  : setInternal(3, 11,  8,  6,  8); break;
+            case 40  : setInternal(3, 12, 10,  6, 10); break;
+            case 45  : setInternal(3, 14, 11,  7, 11); break;
+            case 50  : setInternal(3, 16, 12,  8, 12); break;
+            case 55  : setInternal(3, 18, 13,  9, 13); break;
+            case 60  : setInternal(3, 20, 14, 10, 14); break;
+            case 65  : setInternal(3, 21, 15, 10, 15); break;
+            case 70  : setInternal(3, 22, 15, 11, 15); break;
+            case 75  : setInternal(3, 23, 16, 12, 16); break;
+            case 80  : setInternal(3, 25, 17, 13, 17); break;
+            case 85  : setInternal(3, 27, 18, 14, 18); break;
+            case 90  : setInternal(3, 29, 19, 15, 19); break;
+            case 95  : setInternal(3, 30, 20, 16, 20); break;
+            case 100 : setInternal(3, 31, 21, 17, 21); break;
+        }
+    }
+    
+    /**
      * Returns the number of total critical slots in a location
      */
     public int getNumberOfCriticals(int loc) {

@@ -1811,8 +1811,8 @@ public class Compute
         toHit.append(getTargetTerrainModifier(game, targetId));
         
         // piloting skill differential
-        if (ae.getCrew().getGunnery() != te.getCrew().getGunnery()) {
-            toHit.addModifier(ae.getCrew().getGunnery() - te.getCrew().getGunnery(), "piloting skill differential");
+        if (ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
+            toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
         }
 
         // target immobile
@@ -1935,8 +1935,8 @@ public class Compute
         toHit.append(getTargetMovementModifier(game, targetId));
         
         // piloting skill differential
-        if (ae.getCrew().getGunnery() != te.getCrew().getGunnery()) {
-            toHit.addModifier(ae.getCrew().getGunnery() - te.getCrew().getGunnery(), "piloting skill differential");
+        if (ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
+            toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
         }
 
         // target immobile

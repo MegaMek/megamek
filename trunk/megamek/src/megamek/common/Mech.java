@@ -765,7 +765,11 @@ public class Mech
      * Returns the number of total critical slots in a location
      */
     public int getNumberOfCriticals(int loc) {
-        return noOfSlots[loc];
+        if (loc < 0 || loc >= noOfSlots.length) {
+            return 0;
+        } else {
+            return noOfSlots[loc];
+        }
     }
     
     /**

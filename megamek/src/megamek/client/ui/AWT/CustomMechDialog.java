@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Hashtable;
 import megamek.common.options.OptionGroup;
 import megamek.common.options.GameOption;
 
@@ -446,6 +447,20 @@ extends Dialog implements ActionListener, DialogOptionListener {
     
     private void addOption(GameOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
+
+        if (option.getShortName().equals("weapon_specialist")) {
+            optionComp.addValue("None");
+            Hashtable uniqueWeapons = new Hashtable(entity.getWeaponList().size());
+            for (int i = 0; i < entity.getWeaponList().size(); i++) {
+                Mounted m = (Mounted)entity.getWeaponList().elementAt(i);
+                uniqueWeapons.put(m.getName(),new Boolean(true));
+            }
+            String enumValue;
+            for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements(); ) {
+                optionComp.addValue((String)e.nextElement());
+            }
+            optionComp.setSelected(option.stringValue());
+        }
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);

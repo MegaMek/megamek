@@ -61,4 +61,8 @@ public abstract class Options implements Serializable {
     public float floatOption(String name) {
         return getOption(name).floatValue();
     }
+
+    public String stringOption(String name) {
+        return getOption(name).stringValue();
+    }
 }

@@ -464,12 +464,14 @@ public class XMLStreamParser implements XMLResponder {
                     crew = new Pilot( pilotName, gunVal, pilotVal );
 
                     if ( (null != advantages) && (advantages.trim().length() > 0) ) {
-                      StringTokenizer st = new StringTokenizer(advantages);
+                      StringTokenizer st = new StringTokenizer(advantages, "::");
                       while (st.hasMoreTokens()) {
                           String adv = st.nextToken();
-                      
+                          String advName = Pilot.parseAdvantageName(adv);
+                          Object value = Pilot.parseAdvantageValue(adv);
+                          
                           try {
-                              crew.getOptions().getOption(adv).setValue(true);
+                              crew.getOptions().getOption(advName).setValue(value);
                           } catch ( Exception e ) {
                               this.warning.append("Error restoring advantage: ")
                                   .append( adv )

@@ -703,6 +703,11 @@ public class Compute
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
         }
 
+        // Is the pilot a weapon specialist?
+        if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
+            toHit.addModifier( -2, "weapon specialist" );
+        }
+
         // determine some more variables
         int aElev = ae.getElevation();
         int tElev = target.getElevation();

@@ -13,7 +13,7 @@
   <property name="apidocdir" value="apidocs"/>
   <property name="docdir" value="docs"/>
   <property name="cvsdir" value="cvsrel"/>
-  <property name="cvstag" value="rel-0-29-stable-4" />
+  <property name="cvstag" value="rel-0-29-stable-5" />
 
   <!-- same as maindir but under cvs -->
   <property name="cvsmaindir" value="${cvsdir}/${maindir}"/>
@@ -22,7 +22,7 @@
   <property name="cvsbuilddir" value="${cvsmaindir}/${builddir}"/>
   
   <!-- cvsroot used for cvs authentification --> 
-  <property name="cvsroot" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/megamek" />
+  <property name="cvsroot" value=":pserver:anonymous@cvs-pserver.sourceforge.net:80/cvsroot/megamek" />
 
   
   <property name="timestampfile" value="timestamp"/>
@@ -165,7 +165,7 @@
 
   <!-- following cvsrel-* tasks get, build & package the current version from cvs -->
   <target name="cvsrel-get" depends="cvsrel-init">
-    <cvs command="export" cvsRoot="${cvsroot}" dest="${cvsdir}" tag="${cvstag}" package="megamek"/>
+    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek"/>
   </target>
 
   <target name="cvsrel-build" depends="cvsrel-init">
@@ -200,7 +200,7 @@
     <!-- keep in mind that directory references for 'excludes' are -->
     <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
     <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${maindir}/, ${builddir}/, com/"/>
+    <zip zipfile="${basedir}/megamek-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/, com/"/>
   </target>
   
   <target name="cvsrel-clean">

@@ -113,7 +113,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-5 (10-18-03, 2:15 am)
+v 0.29-stable-5 (10-19-03, 2:15 am)
 + Bug 825739: Attempt to squash InputContext exception in Client#die().
 + Bug 824473: Retain building damage from saved games and restarts.
 + Bugs 798306, 822293, 825064: Restore Entity & Owner in Entity#setGame.

@@ -725,9 +725,19 @@ public class MoveStep implements Serializable {
         }
 
         // check for valid jump mp
-        if (parent.isJumping() && getMpUsed() <= entity.getJumpMPWithTerrain() && !isProne()) {
+        if (parent.isJumping() && getMpUsed() <= entity.getJumpMPWithTerrain() && !isProne()
+            && !(entity instanceof Protomech && entity.getInternal(Protomech.LOC_LEG) == Protomech.ARMOR_DESTROYED)) {
             movementType = Entity.MOVE_JUMP;
         }
+        
+        // legged Protos may make one facing change
+        if (isFirstStep()
+            && entity instanceof Protomech
+            && entity.getInternal(Protomech.LOC_LEG) == Protomech.ARMOR_DESTROYED
+            && (stepType == MovePath.STEP_TURN_LEFT 
+                || stepType == MovePath.STEP_TURN_RIGHT)) {
+            movementType = Entity.MOVE_WALK;
+        }            
 
         // check for valid walk/run mp
         if (!parent.isJumping()
@@ -771,6 +781,7 @@ public class MoveStep implements Serializable {
             && stepType == MovePath.STEP_FORWARDS) {
             movementType = Entity.MOVE_RUN;
         }
+        
 
         // Is the entity unloading passeners?
         if (stepType == MovePath.STEP_UNLOAD) {

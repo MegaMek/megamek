@@ -181,13 +181,14 @@ public class Protomech
         return false;
     }
 
-    public int getWalkMP() {
+    public int getWalkMP(boolean gravity) {
      	int wmp=getOriginalWalkMP();
      	int legCrits=this.getCritsHit(LOC_LEG);
         int i;
         int j;
         // Gravity, Protos can't get faster
-        j = applyGravityEffectsOnMP(wmp);
+        if (gravity) j = applyGravityEffectsOnMP(wmp);
+        else j = wmp;
         if (j < wmp) wmp = j;
         switch(legCrits)
      	{
@@ -282,8 +283,8 @@ public class Protomech
      		jump=jump/2;
      		break;
      	}
-        if (applyGravityEffectsOnMP(jump) > jump) return jump;
-        else return applyGravityEffectsOnMP(jump);
+        if (applyGravityEffectsOnMP(jump) > jump) return Math.max(0,jump);
+        else return Math.max(0, applyGravityEffectsOnMP(jump));
     }
 
     /**

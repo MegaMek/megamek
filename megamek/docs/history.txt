@@ -12,6 +12,8 @@ v0.29.67 (CVS)
 + RFE 1151428: improved RAC jam report text.
 + RFE 1022888, Patch 1023187: MaxTech Machine Gun rapid fire mode.
 + Bug 1115637: Multi-select in board selection dialog works sanely
++ New picture for Goblin Medium Tank (Kurita).
++ more Night Combat stuff, still not complete.
 
 v0.29.66 (2005-02-21 7:45am)
 + Data 1100263: HMPRead Mixed Tech RAC Codes

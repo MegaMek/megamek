@@ -227,6 +227,37 @@ public class MovementData
         }
         return facing;
     }
+
+	/**
+	 * Returns the number of MPs used in the path
+	 */
+	public int getMpUsed() {
+		int mpUsed = 0;
+
+		for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
+			final Step step = (Step)i.nextElement();
+			mpUsed =+ step.getMpUsed();
+		};
+
+		return mpUsed;
+	};
+	/**
+	 * Returns the number of hexes moved the path (does not count turns, etc)
+	 */
+	public int getHexesMoved() {
+		int hexes = 0;
+
+		for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
+			final Step step = (Step)i.nextElement();
+			if ( (step.getType() == STEP_FORWARDS) 
+				|| (step.getType() == STEP_BACKWARDS)
+				|| (step.getType() == STEP_CHARGE) ) {
+				hexes++;
+			};
+		};
+
+		return hexes;
+	};
     
     /**
      * A single step in the entity's movment.

@@ -1455,7 +1455,7 @@ public class Compute
         if (ae == null || te == null) {
             throw new IllegalArgumentException("Attacker or target id not valid");
         }
-        
+
         if (bothArms) {
             // check if both arms are present
             if (ae.isLocationDestroyed(Mech.LOC_RARM)
@@ -1696,30 +1696,48 @@ public class Compute
         return toHit;
     }
     
-    /**
-     * Checks if a charge can hit the target, including movement
-     */
-    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
+	/**
+	* Checks if a charge can hit the target, including movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md) {
+		// the attacker must have at least walked...
+		int movement=Entity.MOVE_WALK;
+		// ...if they moved more than their walk MPs, they must've Run
+		if (md.getMpUsed() > game.getEntity(attackerId).walkMP) {
+			movement=Entity.MOVE_RUN;
+		};
+		// ...and if they have a jump step, they must've jumped!
+		if (md.contains(MovementData.STEP_START_JUMP)) {
+			movement=Entity.MOVE_JUMP;
+		};
+
+		return toHitCharge(game, attackerId, targetId, md, movement);
+	};
+
+	/**
+	* Checks if a charge can hit the target, taking account of movement
+	*/
+	public static ToHitData toHitCharge(Game game, int attackerId, int targetId, MovementData md, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         Coords chargeSrc = ae.getPosition();
         MovementData.Step chargeStep = null;
-        
+
         // let's just check this
         if (!md.contains(MovementData.STEP_CHARGE)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Charge action not found in movment path");
         }
-        
+
         // no jumping
         if (md.contains(MovementData.STEP_START_JUMP)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "No jumping allowed while charging");
         }
-        
+
         // no backwards
         if (md.contains(MovementData.STEP_BACKWARDS)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
-        
+
         // determine last valid step
         compile(game, attackerId, md);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
@@ -1734,29 +1752,32 @@ public class Compute
                 }
             }
         }
-        
+
         // need to reach target
         if (chargeStep == null || !te.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
-        
+
         // target must have moved already
         if (te.ready) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
-        
-        return toHitCharge(game, attackerId, targetId, chargeSrc);
+
+	return toHitCharge(game, attackerId, targetId, chargeSrc, movement);
     }
-    
-    public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
-        final Entity entity = game.getEntity(caa.getEntityId());
-        return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition());
-    }
-    
+
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src) {
+    public static ToHitData toHitCharge(Game game, ChargeAttackAction caa) {
+        final Entity entity = game.getEntity(caa.getEntityId());
+        return toHitCharge(game, caa.getEntityId(), caa.getTargetId(), entity.getPosition(),entity.moved);
+    }
+
+    /**
+     * To-hit number for a charge, assuming that movement has been handled
+     */
+    public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         final int attackerElevation = game.board.getHex(src).getElevation();;
@@ -1797,7 +1818,7 @@ public class Compute
         toHit = new ToHitData(5, "5 (base)");
         
         // attacker movement
-        toHit.append(getAttackerMovementModifier(game, attackerId));
+        toHit.append(getAttackerMovementModifier(game, attackerId, movement));
         
         // target movement
         toHit.append(getTargetMovementModifier(game, targetId));
@@ -1817,7 +1838,7 @@ public class Compute
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
         }
-        
+
         // determine hit direction
         toHit.setSideTable(targetSideTable(src, te.getPosition(),
                                             te.getFacing()));
@@ -1825,18 +1846,24 @@ public class Compute
         // done!
         return toHit;
     }
-        
-    /**
-     * Damage that a mech does with a successful charge.  Assumes that 
-     * delta_distance is correct.
-     */
-    public static int getChargeDamageFor(Entity entity) {
-        return (int)Math.ceil((entity.getWeight() / 10.0) * (entity.delta_distance - 1));
-    }
+
+	/**
+	* Damage that a mech does with a successful charge.  Assumes that 
+	* delta_distance is correct.
+	*/
+	public static int getChargeDamageFor(Entity entity) {
+		return getChargeDamageFor(entity, entity.delta_distance);
+	};
+
+	/**
+	* Damage that a mech does with a successful charge, given it will move a certain way
+	*/
+	public static int getChargeDamageFor(Entity entity, int hexesMoved) {
+		return (int)Math.ceil((entity.getWeight() / 10.0) * (hexesMoved - 1));
+	};
     
     /**
-     * Damage that a mech does with a successful charge.  Assumes that 
-     * delta_distance is correct.
+     * Damage that a mech suffers after a successful charge.
      */
     public static int getChargeDamageTakenBy(Entity entity, Entity target) {
         return (int)Math.ceil(target.getWeight() / 10.0);
@@ -1886,7 +1913,7 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
         
-        return toHitDfa(game, attackerId, targetId, chargeSrc);
+	return toHitDfa(game, attackerId, targetId, chargeSrc);
     }
     
     public static ToHitData toHitDfa(Game game, DfaAttackAction daa) {
@@ -1927,7 +1954,7 @@ public class Compute
         toHit = new ToHitData(5, "5 (base)");
         
         // attacker movement
-        toHit.append(getAttackerMovementModifier(game, attackerId));
+        toHit.append(getAttackerMovementModifier(game, attackerId, Entity.MOVE_JUMP));
         
         // target movement
         toHit.append(getTargetMovementModifier(game, targetId));
@@ -1960,16 +1987,14 @@ public class Compute
     }
         
     /**
-     * Damage that a mech does with a successful charge.  Assumes that 
-     * delta_distance is correct.
+     * Damage that a mech does with a successful DFA.
      */
     public static int getDfaDamageFor(Entity entity) {
         return (int)Math.ceil((entity.getWeight() / 10.0) * 3.0);
     }
     
     /**
-     * Damage that a mech does with a successful charge.  Assumes that 
-     * delta_distance is correct.
+     * Damage done to a mech after a successful DFA.
      */
     public static int getDfaDamageTakenBy(Entity entity) {
         return (int)Math.ceil(entity.getWeight() / 5.0);
@@ -1980,14 +2005,21 @@ public class Compute
      * Modifier to attacks due to attacker movement
      */
     public static ToHitData getAttackerMovementModifier(Game game, int entityId) {
+        return getAttackerMovementModifier(game, entityId, game.getEntity(entityId).moved);
+    }
+    
+    /**
+     * Modifier to attacks due to attacker movement
+     */
+    public static ToHitData getAttackerMovementModifier(Game game, int entityId, int movement) {
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
         
-        if (entity.moved == Entity.MOVE_WALK) {
+        if (movement == Entity.MOVE_WALK) {
             toHit.addModifier(1, "attacker walked");
-        } else if (entity.moved == Entity.MOVE_RUN) {
+        } else if (movement == Entity.MOVE_RUN) {
             toHit.addModifier(2, "attacker ran");
-        } else if (entity.moved == Entity.MOVE_JUMP) {
+        } else if (movement == Entity.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
         }
         

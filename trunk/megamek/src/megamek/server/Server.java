@@ -2361,6 +2361,7 @@ implements Runnable, ConnectionHandler {
                 entity.heatBuildup += 1;
                 entity.setProne(false);
                 wasProne = false;
+                game.resetPSRs(entity);
                 doSkillCheckInPlace(entity, rollTarget);
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
@@ -7273,9 +7274,9 @@ implements Runnable, ConnectionHandler {
     }
     void resolvePilotingRolls( Entity entity, boolean moving,
                                Coords src, Coords dest ) {
-        // non-mechs don't need to
-        if (!(entity instanceof Mech) || entity.isProne() || entity.isDoomed()
-        || entity.isDestroyed()) {
+        // Non-mechs, prone mechs, and dead units don't need to.
+        if ( !(entity instanceof Mech) || entity.isProne() ||
+             entity.isDoomed() || entity.isDestroyed() ) {
             return;
         }
         // add all cumulative rolls, count all rolls

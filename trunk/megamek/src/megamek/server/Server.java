@@ -217,15 +217,15 @@ implements Runnable {
             final Connection conn = (Connection)i.nextElement();
             conn.die();
         }
-        connectionsPending = null;
+        connectionsPending.removeAllElements();
         
         // kill active connnections
         for (Enumeration i = connections.elements(); i.hasMoreElements();) {
             final Connection conn = (Connection)i.nextElement();
             conn.die();
         }
-        connections = null;
-        connectionIds = null;
+        connections.removeAllElements();
+        connectionIds.clear();
     }
     
     /**
@@ -3029,21 +3029,21 @@ implements Runnable {
             && !isPavementStep) {
             if (entity instanceof Mech && !entity.isProne() && hex.levelOf(Terrain.WATER) == 1) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, entity.LOC_NORMAL);  //this will need to adjust for VACUUM, and add a breachCheck
+                    entity.setLocationStatus(loop, Entity.LOC_NORMAL);  //this will need to adjust for VACUUM, and add a breachCheck
                 }
-                entity.setLocationStatus(Mech.LOC_RLEG, entity.LOC_WET);
-                entity.setLocationStatus(Mech.LOC_LLEG, entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, Entity.LOC_WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, Entity.LOC_WET);
                 desc += breachCheck(entity, Mech.LOC_RLEG, 0); 
                 desc += breachCheck(entity, Mech.LOC_LLEG, 0); 
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, entity.LOC_WET);
+                    entity.setLocationStatus(loop, Entity.LOC_WET);
                     desc += breachCheck(entity, loop, 0); 
                 }
             }
         }else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                entity.setLocationStatus(loop, entity.LOC_NORMAL); //this will need to adjust for VACUUM, and add a breachCheck
+                entity.setLocationStatus(loop, Entity.LOC_NORMAL); //this will need to adjust for VACUUM, and add a breachCheck
             } 
         }
         phaseReport.append(desc);
@@ -7427,7 +7427,7 @@ implements Runnable {
         entity.setSecondaryFacing(entity.getFacing());
         if (game.board.getHex(fallPos).levelOf(Terrain.WATER) > 0) {
             for (int loop=0; loop< entity.locations();loop++){
-                entity.setLocationStatus(loop, entity.LOC_WET);
+                entity.setLocationStatus(loop, Entity.LOC_WET);
             }
         } 
 

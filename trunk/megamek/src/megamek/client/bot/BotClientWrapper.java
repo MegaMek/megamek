@@ -7,11 +7,6 @@
 package megamek.client.bot;
 
 
-import java.awt.Frame;
-import com.sun.java.util.collections.*;
-import java.io.*;
-
-import megamek.*;
 import megamek.common.*;
 import megamek.client.*;
 import megamek.common.actions.*;
@@ -23,12 +18,6 @@ import megamek.common.actions.*;
 public abstract class BotClientWrapper extends BotClient {
   
   public int winner = 0;
-  
-  /** Creates a new instance of TestBot */
-  public BotClientWrapper(Frame frame, String name) {
-    super(frame, name);
-  }
-  
   
   /** Create a new instance that won't call System.exit() on death */
   public BotClientWrapper(String name) {

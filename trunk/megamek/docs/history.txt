@@ -118,6 +118,7 @@ v 0.29 release candidate 2 (CVS)
 + Bug 755006, Data 755442: Desertmountain boards should have rough, not rubble.
 + Data 754488: Applied graphics submitted by McWizard.
 + Bug 756028: Java library problem, used work around.
++ Feature 736136: Locations on tanks and mechs that have zero armor (or zero internal) are now dark grey instead of red.
 
 v 0.29 release candidate 1 (06-16-03, 11pm)
 + Bug 748959: fixed bug with moved units not updating

@@ -489,7 +489,7 @@ public class ChatterBox2
 			overTheTop = false;
 		}
 
-		dY = (int) (p.y - lastScrollPoint.getY());
+		dY = (int) (p.y - lastScrollPoint.y);
     	lastScrollPoint = p;
 
 		scrollBarDragPos += dY;

@@ -127,7 +127,7 @@ public abstract class MMRandom {
         }
 
         public int randomInt(int maxValue) {
-            return random.nextInt(maxValue);
+            return (int)(random.nextDouble() * (double)maxValue);
         }
     }
     

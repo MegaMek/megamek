@@ -93,9 +93,6 @@ implements Runnable {
         // display server start text
         System.out.println("s: starting a new server...");
         System.out.println("s: address = " + serverSocket.getInetAddress().getHostAddress() + " port = " + serverSocket.getLocalPort());
-        try {
-            System.out.println("s: address = " + InetAddress.getByName("127.0.0.1").getHostAddress());
-        } catch(UnknownHostException ex) {}
         System.out.println("s: password = " + this.password);
         
         connector = new Thread(this);
@@ -106,6 +103,7 @@ implements Runnable {
         registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
+        registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
     }
@@ -413,7 +411,7 @@ implements Runnable {
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase())) {
             if (game.getTurn().getPlayerNum() == player.getId()) {
-                endCurrentTurn(null);
+                sendGhostSkipMessage();
             }
         } else {
             checkReady();
@@ -1037,7 +1035,7 @@ implements Runnable {
     /**
      * Tries to change to the next turn.  If there are no more turns, ends the
      * current phase.  If the player whose turn it is next is not connected,
-     * we skip that player.
+     * we allow the other players to skip that player.
      */
     private void changeToNextTurn() {
         // if there aren't any more turns, end the phase
@@ -1046,11 +1044,11 @@ implements Runnable {
             return;
         }
         GameTurn nextTurn = nextTurn();
-        if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
-            changeToNextTurn();
-            return;
-        }
         changeTurn(nextTurn);
+        
+        if (getPlayer(nextTurn.getPlayerNum()).isGhost()) {
+            sendGhostSkipMessage();
+        }
     }
     
     /**
@@ -1063,6 +1061,29 @@ implements Runnable {
             player.setDone(false);
         }
         send(new Packet(Packet.COMMAND_TURN, turn));
+    }
+    
+    /**
+     * Sends out a notification message indicating that a ghost player may
+     * be skipped.
+     */
+    private void sendGhostSkipMessage() {
+        Player ghost = getPlayer(game.getTurn().getPlayerNum());
+        sendServerChat("Player '" + ghost.getName() + "' is disconnected.  You may skip his/her current turn with the /skip command.");
+    }
+    
+    /**
+     * Skips the current turn.  This only makes sen
+     */
+    public void skipCurrentTurn() {
+        endCurrentTurn(null);
+    }
+    
+    /**
+     * Returns true if the current turn may be skipped.
+     */
+    public boolean isTurnSkippable() {
+        return getPlayer(game.getTurn().getPlayerNum()).isGhost();
     }
     
     /**

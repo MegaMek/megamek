@@ -61,7 +61,7 @@ public class SelectArtyAutoHitHexDisplay
 
         p = client.getLocalPlayer();
         
-        artyAutoHitHexes.add(0, new Integer(p.getId()));
+        artyAutoHitHexes.insertElementAt(new Integer(p.getId()), 0);
         
         butA = new Button("Artillery Autohit Hexes");
         butA.addActionListener(this);

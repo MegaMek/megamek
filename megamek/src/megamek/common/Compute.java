@@ -5924,4 +5924,183 @@ public class Compute
     	return coords;
     }
 
+    // added by kenn
+    /**
+     * Returns a LosEffects object representing the LOS effects of interveing
+     * terrain between the attacker and target.
+     *
+     * Checks to see if the attacker and target are at an angle where the LOS
+     * line will pass between two hexes.  If so, calls losDivided, otherwise
+     * calls losStraight.
+     */
+    public static LosEffects calculateLosTheoretical(Game game, Coords attCoord, Coords targCoord, int attEl, int targEl) {
+        // good time to ensure hex cache
+        IdealHex.ensureCacheSize(game.board.width + 1, game.board.height + 1);
+
+        double degree = attCoord.degree(targCoord);
+        if (degree % 60 == 30) {
+            return losDividedTheoretical(game, attCoord, targCoord, attEl, targEl);
+        } else {
+            return losStraightTheoretical(game, attCoord, targCoord, attEl, targEl);
+        }
+    }
+
+    /**
+     * Returns LosEffects for a line that never passes exactly between two
+     * hexes.  Since intervening() returns all the coordinates, we just
+     * add the effects of all those hexes.
+     */
+    public static LosEffects losStraightTheoretical(Game game, Coords attCoord, Coords targCoord, int attHeight, int targHeight) {
+        Coords[] in = intervening(attCoord, targCoord);
+        LosEffects los = new LosEffects();
+
+        for (int i = 0; i < in.length; i++) {
+            los.add( losForCoordsTheoretical(game, attCoord, targCoord, attHeight, targHeight, in[i]) );
+        }
+        return los;
+    }
+
+    /**
+     * Returns LosEffects for a line that passes between two hexes at least
+     * once.  The rules say that this situation is resolved in favor of the
+     * defender.
+     *
+     * The intervening() function returns both hexes in these circumstances,
+     * and, when they are in line order, it's not hard to figure out which hexes
+     * are split and which are not.
+     *
+     * The line always looks like:
+     *       ___     ___
+     *   ___/ 1 \___/...\___
+     *  / 0 \___/ 3 \___/etc\
+     *  \___/ 2 \___/...\___/
+     *      \___/   \___/
+     *
+     * We go thru and figure out the modifiers for the non-split hexes first.
+     * Then we go to each of the two split hexes and determine which gives us
+     * the bigger modifier.  We use the bigger modifier.
+     *
+     * This is not perfect as it takes partial cover as soon as it can, when
+     * perhaps later might be better.
+     * Also, it doesn't account for the fact that attacker partial cover blocks
+     * leg weapons, as we want to return the same sequence regardless of
+     * what weapon is attacking.
+     */
+    public static LosEffects losDividedTheoretical(Game game, Coords attCoord, Coords targCoord, int attHeight, int targHeight) {
+        Coords[] in = intervening(attCoord, targCoord);
+        LosEffects los = new LosEffects();
+
+        int attEl = attHeight + game.board.getHex(attCoord).getElevation();
+        int targEl = targHeight + game.board.getHex(targCoord).getElevation();
+        final boolean isElevDiff =
+            ( attEl != targEl );
+
+        // add non-divided line segments
+        for (int i = 3; i < in.length - 2; i += 3) {
+            los.add( losForCoordsTheoretical(game, attCoord, targCoord, attHeight, targHeight, in[i]) );
+        }
+
+        // if blocked already, return that
+        if (losModifiers(los).getValue() == ToHitData.IMPOSSIBLE) {
+            return los;
+        }
+
+        // go through divided line segments
+        for (int i = 1; i < in.length - 2; i += 3) {
+            // get effects of each side
+            LosEffects left = losForCoordsTheoretical( game, attCoord, targCoord, attHeight, targHeight, in[i]);
+            LosEffects right = losForCoordsTheoretical( game, attCoord, targCoord, attHeight, targHeight, in[i+1]);
+
+            // Include all previous LOS effects.
+            left.add(los);
+            right.add(los);
+
+            // which is better?
+            int lVal = losModifiers(left).getValue();
+            int rVal = losModifiers(right).getValue();
+            if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
+                los = left;
+            } else {
+                los = right;
+            }
+        }
+
+        return los;
+    }
+
+    /**
+     * Returns a LosEffects object representing the LOS effects of anything at
+     * the specified coordinate.
+     */
+    private static LosEffects losForCoordsTheoretical(Game game, Coords attCoord, Coords targCoord,
+                                                      int attHeight, int targHeight, Coords coords) {
+        LosEffects los = new LosEffects();
+        // ignore hexes not on board
+        if (!game.board.contains(coords)) {
+            return los;
+        }
+
+        // ignore hexes the attacker or target are in
+        if ( coords.equals(attCoord) ||
+             coords.equals(targCoord) ) {
+            return los;
+        }
+
+        int attEl = attHeight + game.board.getHex(attCoord).getElevation();
+        int targEl = targHeight + game.board.getHex(targCoord).getElevation();
+
+        Hex hex = game.board.getHex(coords);
+        int hexEl = hex.surface();
+
+        // Handle building elevation.
+        // Attacks thru a building are not blocked by that building.
+        // ASSUMPTION: bridges don't block LOS.
+        int bldgEl = 0;
+        if ( null == los.getThruBldg() &&
+             hex.contains( Terrain.BLDG_ELEV ) ) {
+            bldgEl = hex.levelOf( Terrain.BLDG_ELEV );
+        }
+
+        // TODO: Identify when LOS travels *above* a building's hex.
+        //       Alternatively, force all building hexes to be same height.
+
+        // check for block by terrain
+        if ((hexEl + bldgEl > attEl && hexEl + bldgEl > targEl)
+            || (hexEl + bldgEl > attEl && attCoord.distance(coords) == 1)
+            || (hexEl + bldgEl > targEl && targCoord.distance(coords) == 1)) {
+            los.blocked = true;
+        }
+
+        // check for woods or smoke
+        if ((hexEl + 2 > attEl && hexEl + 2 > targEl)
+        || (hexEl + 2 > attEl && attCoord.distance(coords) == 1)
+        || (hexEl + 2 > targEl && targCoord.distance(coords) == 1)) {
+            // smoke overrides any woods in the hex
+            if (hex.contains(Terrain.SMOKE)) {
+                los.smoke++;
+            } else if (hex.levelOf(Terrain.WOODS) == 1) {
+                los.lightWoods++;
+            } else if (hex.levelOf(Terrain.WOODS) > 1) {
+                los.heavyWoods++;
+            }
+        }
+
+        // check for target partial cover
+        if ( targCoord.distance(coords) == 1 &&
+             hexEl == targEl &&
+             attEl <= targEl && targHeight > 0) {
+            los.targetCover = true;
+        }
+
+        // check for attacker partial cover
+        if (attCoord.distance(coords) == 1 &&
+            hexEl == attEl &&
+            attEl >= targEl && attHeight > 0) {
+            los.attackerCover = true;
+        }
+
+        return los;
+    }
+    // end kenn
+
 } // End public class Compute

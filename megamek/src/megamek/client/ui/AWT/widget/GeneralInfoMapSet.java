@@ -203,12 +203,12 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         
         heatR.setString(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
         
-        if (en instanceof Infantry){
-        	heatL.setVisible(false);
-        	heatR.setVisible(false);
-        } else {
+        if (en instanceof Mech){
         	heatL.setVisible(true);
         	heatR.setVisible(true);
+        } else {
+        	heatL.setVisible(false);
+        	heatR.setVisible(false);
         }
     
     

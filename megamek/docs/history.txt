@@ -22,6 +22,7 @@ v0.29.43 (CVS)
 + Bug 999784: never de-reference a null GameTurn.
 + Bug 1000869: Unloading of stranded units sometimes crashing client.
 + Bug 1001067: Unconscious units no longer have LOS to other units.
++ Don't show heat on general tab for vehicles or protos.
 
 v0.29.42 (2004-07-25 10:45pm)
 + RFE 948700: "A players Infantry/Protomechs move after that players other

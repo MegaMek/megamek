@@ -829,6 +829,28 @@ public class FiringDisplay
             refreshAll();
         }
     }
+    /**
+     * Torso twist to the left or right
+     * @param target An <code>int</code> specifying wether we're twisting left or right,
+     *               0 if we're twisting to the left, 1 if to the right.
+     */
+    
+    private void torsoTwist(int target) {
+        int direction = ce().getSecondaryFacing();
+        if (target == 0) {
+            clearAttacks();
+            attacks.addElement(new TorsoTwistAction(cen, direction));
+            direction =  ce().clipSecondaryFacing((direction+5)%6);
+            ce().setSecondaryFacing(direction);
+            refreshAll();
+        } else if (target == 1) {
+            clearAttacks();
+            attacks.addElement(new TorsoTwistAction(cen, direction));
+            direction =  ce().clipSecondaryFacing((direction+7)%6);
+            ce().setSecondaryFacing(direction);
+            refreshAll();
+        }        
+    }
     
     /**
      * Returns the current entity.
@@ -1070,6 +1092,14 @@ public class FiringDisplay
                 updateFlipArms(false);
                 torsoTwist(client.game.board.lastCursor);
             }
+        }
+        if (ev.getKeyCode() == KeyEvent.VK_LEFT && shiftheld) {
+            updateFlipArms(false);
+            torsoTwist(0);
+        }
+        if (ev.getKeyCode() == KeyEvent.VK_RIGHT && shiftheld) {
+            updateFlipArms(false);
+            torsoTwist(1);
         }
 /*        if (ev.getKeyCode() == KeyEvent.VK_M) {
             changeMode(); 

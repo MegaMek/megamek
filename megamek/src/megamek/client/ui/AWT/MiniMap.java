@@ -44,13 +44,13 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private int          heightBufer;
     private final int    unitSize = 6;//variable which define size of triangle for unit representation
     private Vector       roadHexIndexes = new Vector();
-    private int          zoom = 1;
-    private int[]        hexSide = {3,6,8,10,12};
-    private int[]        hexSideByCos30 = {3,5,7,9,10};
-    private int[]        hexSideBySin30 = {2,3,4,5,6};
-    private int[]        halfRoadWidthByCos30 = {0,1,2,2,3};
-    private int[]        halfRoadWidthBySin30 = {0,1,1,1,2};
-    private int[]        halfRoadWidth        = {0,1,2,3,3};
+    private int          zoom = 0;
+    private int[]        hexSide = {3,5,6,8,10,12};
+    private int[]        hexSideByCos30 = {3,4,5,7,9,10};
+    private int[]        hexSideBySin30 = {2,2,3,4,5,6};
+    private int[]        halfRoadWidthByCos30 = {0,0,1,2,2,3};
+    private int[]        halfRoadWidthBySin30 = {0,0,1,1,1,2};
+    private int[]        halfRoadWidth        = {0,0,1,2,3,3};
 
 
     /**

@@ -21,6 +21,7 @@ import java.util.Vector;
 import java.io.*;
 
 import megamek.common.*;
+import megamek.common.actions.*;
 
 /**
  * Displays the info for a mech.  This is also a sort
@@ -190,7 +191,7 @@ scan:
     }
 
     // draw everything
-    private synchronized void drawMap() {
+    public synchronized void drawMap() {
         if (m_mapImage == null) {
             return;
         }
@@ -215,9 +216,9 @@ scan:
             
             if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
             if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
-            
+
             if (! roadHexIndexes.isEmpty()) paintRoads(g);
-            
+
             for (int j = 0; j < m_game.board.width; j++) {
                 for (int k = 0; k < m_game.board.height; k++) {
                   Hex h = m_game.board.getHex(j, k);
@@ -225,16 +226,29 @@ scan:
                 }
             }
 
+            // draw declared fire
+            if (Game.PHASE_FIRING==m_game.getPhase() || Game.PHASE_PHYSICAL==m_game.getPhase()) {
+                for (Enumeration enum = m_game.getActions(); enum.hasMoreElements(); ) {
+                    Object action = enum.nextElement();
+                    if (action instanceof AttackAction) {
+                            paintAttack(g,(AttackAction) action);
+                    };
+                };
+            };
+
             for (Enumeration enum = m_game.getEntities(); enum.hasMoreElements(); ) {
                 Entity e = (Entity)enum.nextElement();
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
-            }
+            }            
         }
         drawBtn(g);
         repaint();
     }
-    //Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
+
+    /** 
+    * Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
+    */
     private void drawBtn(Graphics g){
         int [] xPoints = new int[3];
         int [] yPoints = new int[3];
@@ -386,6 +400,75 @@ scan:
             g.setColor(oldColor);
         }
     }
+
+    /**
+    * Draw a line to represent an attack
+    */
+    private void paintAttack(Graphics g, AttackAction attack) {
+        Entity source = m_game.getEntity(attack.getEntityId());
+        Entity target = m_game.getEntity(attack.getTargetId());
+
+        Color oldColor = g.getColor();
+
+        int[] xPoints = new int[4];
+        int[] yPoints = new int[4];
+        
+        xPoints[0] = source.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
+        yPoints[0] = (2*source.getPosition().y + 1 + source.getPosition().x%2)* hexSideByCos30[zoom] + topMargin +2;
+        xPoints[1] = target.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int)1.5*hexSide[zoom] -2;
+        yPoints[1] = (2*target.getPosition().y + 1 + target.getPosition().x%2)* hexSideByCos30[zoom] + topMargin +2;
+        xPoints[2] = xPoints[1]+2;
+        xPoints[3] = xPoints[0]+2;
+        if ((source.getPosition().x > target.getPosition().x
+            && source.getPosition().y < target.getPosition().y)
+            || (source.getPosition().x < target.getPosition().x
+            && source.getPosition().y > target.getPosition().y)) {
+            yPoints[3] = yPoints[0]+2;
+            yPoints[2] = yPoints[1]+2;
+        } else {
+            yPoints[3] = yPoints[0]-2;
+            yPoints[2] = yPoints[1]-2;
+        };
+        g.setColor(source.getOwner().getColor());
+        g.fillPolygon(xPoints,yPoints,4);
+        g.setColor(Color.black);
+        g.drawPolygon(xPoints,yPoints,4);
+
+
+        // if this is mutual fire, draw a half-and-half line
+        for (Enumeration enum = m_game.getActions(); enum.hasMoreElements(); ) {
+            Object action = enum.nextElement();
+            if (action instanceof AttackAction) {
+                AttackAction otherAttack = (AttackAction) action;
+                if (attack.getEntityId() == otherAttack.getTargetId()
+                    && otherAttack.getEntityId() == attack.getTargetId() ) {
+                        g.setColor(target.getOwner().getColor());
+                        xPoints[0] = xPoints[3];
+                        yPoints[0] = yPoints[3];
+                        xPoints[1] = xPoints[2];
+                        yPoints[1] = yPoints[2];
+                        xPoints[2] = xPoints[1]+2;
+                        xPoints[3] = xPoints[0]+2;
+                        if ((source.getPosition().x > target.getPosition().x
+                            && source.getPosition().y < target.getPosition().y)
+                            || (source.getPosition().x < target.getPosition().x
+                            && source.getPosition().y > target.getPosition().y)) {
+                            yPoints[3] = yPoints[0]+2;
+                            yPoints[2] = yPoints[1]+2;
+                        } else {
+                            yPoints[3] = yPoints[0]-2;
+                            yPoints[2] = yPoints[1]-2;
+                        };
+                        g.fillPolygon(xPoints,yPoints,4);
+                        g.setColor(Color.black);
+                        g.drawPolygon(xPoints,yPoints,4);
+                        break;
+                };
+            };
+        };
+
+        g.setColor(oldColor);
+    };
 
     private void paintUnit (Graphics g, Entity entity, boolean border) {
         int baseX = entity.getPosition().x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];

@@ -137,7 +137,7 @@ public class CommonSettingsDialog extends Dialog implements ActionListener {
         tempPanel.add( rightDragScroll );
         
         ctlScroll
-            = new Checkbox( "By holding down CTL and dragging." );
+            = new Checkbox( "By holding down CTRL and dragging." );
             tempPanel.add( ctlScroll );
 
         clickEdgeScroll

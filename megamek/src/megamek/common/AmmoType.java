@@ -127,10 +127,11 @@ public class AmmoType extends EquipmentType {
     protected RangeType range;
     protected int tech;
 
+        //override removed, most != all.  Not sure what the intent is...--LDE 2003-09-02
     // Most ammo is explosive
-    public boolean isExplosive() {
-	return true;
-    }
+//    public boolean isExplosive() {
+//	return true;
+//    }
 
     public int getHeat() {
 	return heat;

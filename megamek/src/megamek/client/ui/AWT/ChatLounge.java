@@ -320,7 +320,7 @@ public class ChatLounge
 
         labMinefield = new Label("Minefields");
 
-        lisMinefield = new List(4);
+        lisMinefield = new List(2);
 
         labConventional = new Label("Conventional:", Label.RIGHT);
         labCommandDetonated = new Label("Command-detonated:", Label.RIGHT);
@@ -501,11 +501,11 @@ public class ChatLounge
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
 
+        c.weighty = 1.0;
         gridbag.setConstraints(panUnits, c);
         panMain.add(panUnits);
 
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(panTop, c);
         panMain.add(panTop);
 

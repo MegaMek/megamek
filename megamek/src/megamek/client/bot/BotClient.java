@@ -116,7 +116,7 @@ public class BotClient extends Client
             case Game.PHASE_MOVEMENT_REPORT :
             case Game.PHASE_FIRING_REPORT :
             case Game.PHASE_END :
-                sendReady(true);
+                sendDone(true);
                 break;
         }
     }
@@ -183,7 +183,6 @@ public class BotClient extends Client
         }
         
         deploy(entNum, cDeploy, nDir);
-        sendReady(true);        
      }
         
      private Coords getCoordsAround(Coords c)
@@ -307,8 +306,6 @@ public class BotClient extends Client
                 Vector v = new Vector();
                 v.addElement(bestAttack.toAction(game, entNum));
                 sendAttackData(entNum, v);
-                sendEntityReady(entNum);
-                sendReady(true);                
                 return;    
             }
             entNum = game.getNextEntityNum(getLocalPlayer(), entNum);
@@ -496,7 +493,6 @@ public class BotClient extends Client
          sendChat("Move " + game.getEntity(theEnt).getShortName() + ": " + opt.moves);
          
          moveEntity(theEnt, opt.moves);
-         sendReady(true);
      }
      
 
@@ -768,8 +764,6 @@ public class BotClient extends Client
             }
         }
         sendAttackData(entNum, attacks);
-        sendEntityReady(entNum);
-        sendReady(true);
     }
 
     protected void sortFiringOptions(FiringOption[] fo)

@@ -358,7 +358,7 @@ public class Client extends Panel
             switchPanel(new ChatLounge(this));
             break;
         case Game.PHASE_EXCHANGE :
-            sendReady(true);
+            sendDone(true);
             break;
         case Game.PHASE_DEPLOYMENT :
             switchPanel(new DeploymentDisplay(this));
@@ -649,18 +649,10 @@ public class Client extends Panel
     }
     
     /**
-     * Sends a "player ready" message to the server.
+     * Sends a "player done" message to the server.
      */
-    public void sendReady(boolean ready) {
-        send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(ready)));
-    }
-    
-    /**
-     * Sends an "entity ready" message to the server.
-     */
-    public void sendEntityReady(int enum) {
-        game.getEntity(enum).ready = false;
-        send(new Packet(Packet.COMMAND_ENTITY_READY, new Integer(enum)));
+    public void sendDone(boolean done) {
+        send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
     }
     
     /**
@@ -888,8 +880,8 @@ public class Client extends Panel
                 receivePlayerInfo(c);
                 break;
             case Packet.COMMAND_PLAYER_READY :
-                getPlayer(c.getIntValue(0)).setReady(c.getBooleanValue(1));
-                processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
+                getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+            processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, getPlayer(c.getIntValue(0)), ""));
                 break;
             case Packet.COMMAND_PLAYER_ADD :
                 receivePlayerInfo(c);

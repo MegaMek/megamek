@@ -139,7 +139,7 @@ public class DeploymentDisplay
         if (client.game.getEntity(en) == null) {
             System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en);
             System.err.println("DeploymentDisplay: sending ready signal...");
-            client.sendReady(true);
+            deploy();
             return;
         }
 
@@ -204,9 +204,7 @@ public class DeploymentDisplay
      */
     private void deploy() {
         disableButtons();
-        client.deploy( cen, ce().getPosition(), ce().getFacing(),
-                       ce().getLoadedUnits() );
-        client.sendReady(true);
+        client.deploy(cen, ce().getPosition(), ce().getFacing(), ce().getLoadedUnits());
     }
 
     /**

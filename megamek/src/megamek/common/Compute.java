@@ -2856,7 +2856,7 @@ public class Compute
         }
 
         // target must have moved already
-        if (te.ready) {
+        if (!te.isDone()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
 
@@ -3072,7 +3072,7 @@ public class Compute
         }
         
         // target must have moved already
-        if (te.ready) {
+        if (!te.isDone()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be done with movement");
         }
         

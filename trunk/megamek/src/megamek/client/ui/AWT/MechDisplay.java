@@ -643,7 +643,8 @@ class WeaponPanel extends BufferedPanel
                 }
 
                 EquipmentType typeUsed = mounted.getLinked() == null ? null : mounted.getLinked().getType();
-                int totalShotsLeft = entity.getTotalAmmoOfType(typeUsed);
+
+                int totalShotsLeft = entity.getTotalMunitionsOfType(typeUsed);
 
                 wn += " (" + shotsLeft + "/" + totalShotsLeft + ")";
             }
@@ -864,6 +865,7 @@ class WeaponPanel extends BufferedPanel
             Mounted mWeap = (Mounted)weapons.elementAt(n);
             Mounted mAmmo = (Mounted)vAmmo.elementAt(m_chAmmo.getSelectedIndex());
             entity.loadWeapon(mWeap, mAmmo);
+
             // Update the range display to account for the weapon's loaded ammo.
             AmmoType atype = (AmmoType) mAmmo.getType();
             updateRangeDisplayForAmmo( atype );

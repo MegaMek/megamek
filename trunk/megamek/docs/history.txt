@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v 0.29.28 (CVS)
++ Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.
 
 v 0.29.27 (2004-03-07 9:35pm)
 + Bug 897585: Initiative phase bug fixed.

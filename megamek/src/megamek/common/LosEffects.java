@@ -462,6 +462,16 @@ public class LosEffects {
         //       Alternatively, force all building hexes to be same height.
     
         // check for block by terrain
+        
+        //check for LOS according to diagramming rule from MaxTech, page 22
+        if (game.getOptions().booleanOption("maxtech_LOS1")) {
+        	if (hexEl + bldgEl > (ai.targetAbsHeight * ai.attackPos.distance(coords) +
+        			              ai.attackAbsHeight * ai.targetPos.distance(coords)) /
+								  (ai.targetPos.distance(coords) +
+								   ai.attackPos.distance(coords))) {
+        		los.blocked = true;        
+        	}
+        }
         if ((hexEl + bldgEl > ai.attackAbsHeight && hexEl + bldgEl > ai.targetAbsHeight)
         || (hexEl + bldgEl > ai.attackAbsHeight && ai.attackPos.distance(coords) == 1)
         || (hexEl + bldgEl > ai.targetAbsHeight && ai.targetPos.distance(coords) == 1)) {

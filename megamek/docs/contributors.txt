@@ -37,6 +37,7 @@ Lot of people have contributed to the MegaMek project.
      Robin D. Toll <neko128@users.sourceforge.net>
      Ecthellion <ecthellion@users.sourceforge.net>
      Jaxom Renard <jaxom_renard@users.sourceforge.net>
+     Brent Dill <hentaizonga@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

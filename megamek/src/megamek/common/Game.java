@@ -491,14 +491,6 @@ public class Game implements Serializable
         return entityIds.containsKey(new Integer(entityId));
     }
   
-    /**
-     * Remove an entity from the master list.  If we can't find that entity,
-     * (probably due to double-blind) ignore it.
-     * Method kept for backwards compatability.
-     */
-    public void removeEntity(int id) {
-        this.removeEntity( id, Entity.REMOVE_UNKNOWN );
-    }
 
     /**
      * Remove an entity from the master list.  If we can't find that entity,
@@ -516,7 +508,10 @@ public class Game implements Serializable
         
         toRemove.setRemovalCondition(condition);
         
-        vOutOfGame.addElement(toRemove);
+        // do not keep never-joined entities
+        if (condition != Entity.REMOVE_NEVER_JOINED) {
+            vOutOfGame.addElement(toRemove);
+        }
     }
     
     /**

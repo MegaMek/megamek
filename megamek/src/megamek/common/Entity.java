@@ -2388,7 +2388,8 @@ public abstract class Entity
         PilotingRollData roll;
         
         // Pilot dead?
-        if ( getCrew().isDead() || getCrew().isDoomed() ) {
+        if ( getCrew().isDead() || getCrew().isDoomed()
+             || getCrew().getHits() >= 6 ) {
             return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
         }
         // pilot awake?

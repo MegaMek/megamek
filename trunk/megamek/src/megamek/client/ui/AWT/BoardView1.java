@@ -1515,9 +1515,9 @@ public class BoardView1
                         && aa.getTargetType() != Targetable.TYPE_HEX_FASCAM
                         && aa.getTargetType() != Targetable.TYPE_HEX_INFERNO_IV
                         && aa.getTargetType() != Targetable.TYPE_HEX_VIBRABOMB_IV) {
-                        attackSprites.addElement(new AttackSprite(aa));
+                        sprite.addWeapon(waa);
                     } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
-                        attackSprites.addElement(new AttackSprite(aa));
+                        sprite.addWeapon(waa);
                     }
                 }
                 if (aa instanceof KickAttackAction) {

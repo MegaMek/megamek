@@ -118,8 +118,16 @@ public class Client implements Runnable {
         }
         
         for (int i = 0; i < closeClientListeners.size(); i++){
-        	((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
+            ((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
         }
+
+        try {
+            serverlog.close();
+        } catch (IOException e) {
+            System.err.print("Exception closing logfile: ");
+            e.printStackTrace();
+        };
+
         System.out.println("client: died");
         
     }

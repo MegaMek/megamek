@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -378,11 +378,18 @@ public class Tank
     public int getDependentLocation(int loc) {
         return LOC_NONE;
     }
-   
+
+    /**
+     * Calculates the battle value of this mech
+     */
+    public int calculateBattleValue() {
+        return calculateBattleValue(false);
+    }
+
     /**
      * Calculates the battle value of this tank
      */
-    public int calculateBattleValue() {
+    public int calculateBattleValue(boolean assumeLinkedC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
         
@@ -391,6 +398,19 @@ public class Tank
         
         // total internal structure        
         dbv += getTotalInternal() / 2;
+        
+        // add defensive equipment
+        double dEquipmentBV = 0;
+        for (Enumeration i = equipmentList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            EquipmentType etype = mounted.getType();
+            if ((etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AMS)
+            || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
+            || etype.hasFlag(MiscType.F_ECM)) {
+                dEquipmentBV += etype.getBV(this);
+            }
+        }
+        dbv += dEquipmentBV;
         
         double typeModifier;
         switch (getMovementType()) {
@@ -423,13 +443,35 @@ public class Tank
         // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
+        boolean hasTargComp = hasTargComp();
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
+            double dBV = wtype.getBV(this);
+
+            // don't count AMS, it's defensive
+            if (wtype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+            
+            // artemis bumps up the value
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && 
+                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                }
+            } 
+            
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.2;
+            }
+            
             if (mounted.getLocation() == LOC_REAR) {
-                weaponsBVRear += wtype.getBV(this);
+                weaponsBVRear += dBV;
             } else {
-                weaponsBVFront += wtype.getBV(this);
+                weaponsBVFront += dBV;
             }
         }
         if (weaponsBVFront > weaponsBVRear) {
@@ -445,6 +487,12 @@ public class Tank
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();
+            
+            // don't count AMS, it's defensive
+            if (atype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;
@@ -457,11 +505,22 @@ public class Tank
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         
         obv = weaponBV * speedFactor;
+
+        // we get extra bv from c3 networks. a valid network requires at least 2 members
+        // some hackery and magic numbers here.  could be better
+        // also, each 'has' loops through all equipment.  inefficient to do it 3 times
+        double xbv = 0.0;
+        if ((hasC3M() && calculateFreeC3Nodes() < 3) ||
+            (hasC3S() && C3Master > NONE) ||
+            (hasC3i() && calculateFreeC3Nodes() < 5) ||
+            assumeLinkedC3) {
+                xbv = (double)(Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear)));
+        }
         
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        return (int)Math.round((dbv + obv) * pilotFactor);
+        return (int)Math.round((dbv + obv + xbv) * pilotFactor);
     }
     
     public PilotingRollData addEntityBonuses(PilotingRollData prd)

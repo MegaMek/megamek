@@ -117,11 +117,11 @@ public class ThrashAttackAction extends AbstractAttackAction {
 			}
 		}
 
-		// Mech must have at least one arm or leg.
-		if (ae.isLocationDestroyed(Mech.LOC_RARM)
-			&& ae.isLocationDestroyed(Mech.LOC_LARM)
-			&& ae.isLocationDestroyed(Mech.LOC_RLEG)
-			&& ae.isLocationDestroyed(Mech.LOC_LLEG)) {
+		// Mech must have at least one working arm or leg.
+		if (ae.isLocationBad(Mech.LOC_RARM)
+			&& ae.isLocationBad(Mech.LOC_LARM)
+			&& ae.isLocationBad(Mech.LOC_RLEG)
+			&& ae.isLocationBad(Mech.LOC_LLEG)) {
 			return new ToHitData(ToHitData.IMPOSSIBLE, "Mech has no arms or legs to thrash");
 		}
 

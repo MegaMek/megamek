@@ -1196,10 +1196,10 @@ public abstract class Entity
       }
 
     /**
-    * Is this location destroyed?
+    * Is this location destroyed or breached?
     */
-    public boolean isLocationDestroyed(int loc) {
-        return getInternal(loc) == ARMOR_DESTROYED;
+    public boolean isLocationBad(int loc) {
+        return getInternal(loc) == ARMOR_DESTROYED || exposure[loc] == LOC_BREACHED;
     }
 
     //returns exposure or breached flag for location
@@ -1619,7 +1619,7 @@ public abstract class Entity
             CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index
-                && !ccs.isDestroyed()) {
+                && !ccs.isDestroyed() && !ccs.isBreached()) {
                 operational++;
             }
 
@@ -1631,7 +1631,7 @@ public abstract class Entity
     /**
      * The number of critical slots that are destroyed in the component.
      */
-    public int getDestroyedCriticals(int type, int index, int loc) {
+    public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
 
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
@@ -1647,6 +1647,7 @@ public abstract class Entity
 
         return hits;
     }
+    
 
     /**
      * Number of slots doomed, missing or destroyed
@@ -1717,10 +1718,10 @@ public abstract class Entity
 
         for ( int i = 0; i < locations(); i++ ) {
           if ( locationIsLeg(i) ) {
-            if ( (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0) ||
-                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, i) > 0) ||
-                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, i) > 0) ||
-                  (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, i) > 0) ) {
+            if ( (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, i) > 0) ||
+                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, i) > 0) ||
+                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, i) > 0) ||
+                  (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, i) > 0) ) {
               hasCrit = true;
               break;
             }
@@ -2498,16 +2499,16 @@ public abstract class Entity
             return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconcious");
         }
         // gyro operational?
-        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) {
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
         // both legs present?
         if ( this instanceof BipedMech ) {
-          if ( ((BipedMech)this).countDestroyedLegs() == 2 )
+          if ( ((BipedMech)this).countBadLegs() == 2 )
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
         } else if ( this instanceof QuadMech ) {
-          if ( ((QuadMech)this).countDestroyedLegs() >= 3 )
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)this).countDestroyedLegs() + " legs destroyed");
+          if ( ((QuadMech)this).countBadLegs() >= 3 )
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)this).countBadLegs() + " legs destroyed");
         }
         // entity shut down?
         if (isShutDown()) {
@@ -2541,7 +2542,7 @@ public abstract class Entity
             return roll;
         }
 
-        if (!needsRollToStand() && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
+        if (!needsRollToStand() && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,"\n" + getDisplayName() + " does not need to make a piloting skill check to stand up because it has all four of its legs.");
             return roll;
         }
@@ -2562,7 +2563,7 @@ public abstract class Entity
 
         if (overallMoveType == Entity.MOVE_RUN
             && !isProne()
-            && (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
+            && (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.SYSTEM_GYRO,
                                              Mech.LOC_CT) > 0
                 || hasHipCrit())
@@ -2584,7 +2585,7 @@ public abstract class Entity
     public PilotingRollData checkLandingWithDamage() {
         PilotingRollData roll = getBasePilotingRoll();
 
-        if (getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                                   Mech.LOC_CT) > 0
             || hasLegActuatorCrit()) {
             // append the reason modifier

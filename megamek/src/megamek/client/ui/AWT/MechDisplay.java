@@ -733,8 +733,14 @@ class WeaponPanel
     private String formatAmmo(Mounted m)
     {
         StringBuffer sb = new StringBuffer(64);
+        int ammoIndex = m.getDesc().indexOf("Ammo");
         sb.append("[").append(entity.getLocationAbbr(m.getLocation())).append("] ");
-        sb.append(m.getDesc().replaceFirst("Ammo", ""));
+        if (ammoIndex == -1) {
+            sb.append(m.getDesc());
+        } else {
+            sb.append(m.getDesc().substring(0, ammoIndex));
+            sb.append(m.getDesc().substring(ammoIndex + 4));
+        }
         return sb.toString();
     }            
         

@@ -114,37 +114,44 @@ public class FiringDisplay
         
         butFire = new Button("Fire");
         butFire.addActionListener(this);
+        butFire.addKeyListener(this);
         butFire.setActionCommand(FIRE_FIRE);
         butFire.setEnabled(false);
         
         butSkip = new Button("Skip");
         butSkip.addActionListener(this);
+        butSkip.addKeyListener(this);
         butSkip.setActionCommand(FIRE_SKIP);
         butSkip.setEnabled(false);
         
         butTwist = new Button("Twist");
         butTwist.addActionListener(this);
+        butTwist.addKeyListener(this);
         butTwist.setActionCommand(FIRE_TWIST);
         butTwist.setEnabled(false);
         
 
         butFindClub = new Button("Find Club");
         butFindClub.addActionListener(this);
+        butFindClub.addKeyListener(this);
         butFindClub.setActionCommand(FIRE_FIND_CLUB);
         butFindClub.setEnabled(false);
         
         butNextTarg = new Button("Next Target");
         butNextTarg.addActionListener(this);
+        butNextTarg.addKeyListener(this);
         butNextTarg.setActionCommand(FIRE_NEXT_TARG);
         butNextTarg.setEnabled(false);
         
         butFlipArms = new Button("Flip Arms");
         butFlipArms.addActionListener(this);
+        butFlipArms.addKeyListener(this);
         butFlipArms.setActionCommand(FIRE_FLIP_ARMS);
         butFlipArms.setEnabled(false);
         
         butSpot = new Button("Spot");
         butSpot.addActionListener(this);
+        butSpot.addKeyListener(this);
         butSpot.setActionCommand(FIRE_SPOT);
         butSpot.setEnabled(false);
         
@@ -154,20 +161,24 @@ public class FiringDisplay
         // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
         butFireMode = new Button("Mode");
         butFireMode.addActionListener(this);
+        butFireMode.addKeyListener(this);
         butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
 
         butDone = new Button("Done");
         butDone.addActionListener(this);
+        butDone.addKeyListener(this);
         butDone.setEnabled(false);
         
         butNext = new Button(" Next Unit ");
         butNext.addActionListener(this);
+        butNext.addKeyListener(this);
         butNext.setActionCommand(FIRE_NEXT);
         butNext.setEnabled(false);
         
         butMore = new Button("More...");
         butMore.addActionListener(this);
+        butMore.addKeyListener(this);
         butMore.setActionCommand(FIRE_MORE);
         butMore.setEnabled(false);
         
@@ -205,7 +216,7 @@ public class FiringDisplay
         // mech display.
         clientgui.mechD.wPan.weaponList.addItemListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
-        
+
         ash = new AimedShotHandler();
     
     }

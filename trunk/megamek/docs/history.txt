@@ -9,6 +9,7 @@ v0.29.65 (CVS)
 + Haubrek battle armor should be called Hauberk battle armor
 + Bug 1101518: if a tank dies to a crit, additional crits are not resolved.
 + Bug 1060000: Pilot losing consciousness should live through the ejection
++ Bug 1100983: Grand Titan and Black Watch pictures not working.
 
 v0.29.64 (2005-02-06 9:30am)
 + RFE 1112483: CTL+R shortcut added to Turn Report menu command

@@ -1350,7 +1350,8 @@ public class Compute
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = isInBuilding( game, te );
         boolean isIndirect = wtype.getAmmoType() == AmmoType.T_LRM
-            && weapon.curMode().equals("Indirect");
+            && weapon.curMode().equals("Indirect")
+            && game.getOptions().booleanOption("indirect_fire");
         
         ToHitData toHit = null;
         

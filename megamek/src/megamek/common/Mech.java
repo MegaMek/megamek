@@ -121,6 +121,52 @@ public abstract class Mech
         setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
 
+    public static int getInnerLocation(int location)
+    {
+        switch(location) {
+            case Mech.LOC_RT :
+            case Mech.LOC_LT :
+                return Mech.LOC_CT;
+            case Mech.LOC_LLEG :
+            case Mech.LOC_LARM :
+                return Mech.LOC_LT;
+            case Mech.LOC_RLEG :
+            case Mech.LOC_RARM :
+                return Mech.LOC_RT;
+            default:
+                return location;
+        }
+    }
+    
+    public static int mostRestrictiveLoc(int location1, int location2)
+    {
+        if (location1 == location2) {
+            return location1;
+        }
+        else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
+            return location1;
+        }
+        else {
+            return location2;
+        }
+    }
+    
+    public static int restrictScore(int location)
+    {
+        switch(location) {
+            case Mech.LOC_RARM :
+            case Mech.LOC_LARM :
+                return 0;
+            case Mech.LOC_RT :
+            case Mech.LOC_LT :
+                return 1;
+            case Mech.LOC_CT :
+                return 2;
+            default :
+                return 3;
+        }
+    }
+
     public int getMASCTarget() {
         return MASC_FAILURE[nMASCLevel] + 1;
     }

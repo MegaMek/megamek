@@ -90,7 +90,11 @@ public class BipedMech extends Mech {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if(hipHits > 0) {
-                wmp = (hipHits == 1) ? (int)Math.ceil((double)wmp / 2.0) : 0;
+               if (game.getOptions().booleanOption("maxtech_leg_damage")) {
+                 wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
+               } else {
+                 wmp = (hipHits == 1) ? (int) Math.ceil( (double) wmp / 2.0) : 0;
+               }
             }
             wmp -= actuatorHits;
         }

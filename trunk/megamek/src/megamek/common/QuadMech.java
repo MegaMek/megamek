@@ -78,9 +78,15 @@ public class QuadMech extends Mech
         } 
         
         if ( wmp > 0 ) {
-          for ( int i = 0; i < hipHits; i++ ) {
-            wmp = (int)Math.ceil((double)wmp / 2.0);
-          }
+            if (hipHits>0) {
+                if (game.getOptions().booleanOption("maxtech_leg_damage")) {
+                   wmp = wmp - (2 * hipHits);
+                } else {
+                    for (int i = 0; i < hipHits; i++) {
+                        wmp = (int) Math.ceil( (double) wmp / 2.0);
+                    }
+                }
+            }
 
           wmp -= actuatorHits;
         }

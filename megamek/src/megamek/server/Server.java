@@ -9035,10 +9035,17 @@ implements Runnable, ConnectionHandler {
                         // Rest of the damage is wasted.
                         damage = 0;
                     } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
-                        // remaining damage prevented
+                        // Remaining damage prevented...
                         desc.append( " remaining " )
                             .append( damage )
                             .append( " damage prevented by CASE." );
+
+                        // ... but page 21 of the Ask The Precentor Martial FAQ
+                        // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
+                        // says that the damage counts for making PSRs.
+                        te.damageThisPhase += damage;
+
+                        // The target takes no more damage from the explosion.
                         damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers

@@ -61,6 +61,24 @@ has at least one mech, you may all hit "ready" to start the game.  Most
 changes to the game parameters will cancel your ready status, so you should
 wait for everybody to finish choosing their mechs and positions.
 
+Mechs can be loaded from any of three formats.  Files with the extension ".mep"
+are using the format from Mech Engineer Pro, an older program not made by the
+makers of MegaMek.  You can find this program on many Battletech web sites.
+
+Files with the ".mtf" extension are created by HMPRead, a seperate program,
+available on the MegaMek website, that converts data files from the popular
+Heavy Metal Pro mech designer.  MegaMek cannot read ".hmp" files directly.
+Heavy Metal Pro is not associated with MegaMek, so please do not email its 
+authors about MegaMek.
+
+Mech files with the extension ".blk" are created by MekMaker, a Java mech design
+program specifically created to work with MegaMek.  It's homepage is at:
+
+http://mekmaker.darktech.org
+
+MekMaker is the offical mech design program, and the only one of the three 
+programs listed above officially associated with MegaMek.
+
 You can enter the map selector by pressing the "Edit/View" button under the
 map sizes.  You can change the dimensions of the map boards (in hexes) or the
 dimensions of the whole map (in boards.)  All maps are loaded off the server.
@@ -291,7 +309,7 @@ the contact page on the MegaMek website, or send email to bmazur@sev.org
 
 COPYRIGHT & LICENSE INFORMATION
 -------------------------------
-MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+MegaMek - Copyright (C) 2002 Ben Mazur (bmazur@sev.org)
   
 This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the Free 
@@ -302,4 +320,8 @@ This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
 for more details.
+
+BattleTech, Mech, BattleMech and MechWarrior are Registered Trademarks of 
+WizKids, LLC.  Original BattleTech material Copyright by  WizKids, LLC.  
+All Rights Reserved.  Used without permission.
 

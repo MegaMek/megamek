@@ -1,4 +1,3 @@
-
 INTRODUCTION
 ------------
 MegaMek is a version of BattleTech that you can play with your friends 
@@ -8,7 +7,68 @@ are done, work will begin on the level 2 rules and equipment.
 
 If you would like information about how to play the game, see the "PLAYING
 THE GAME" section, below.  If you're having trouble getting MegaMek started, 
-see "RUNNING MEGAMEK," further below.
+see the next section, "RUNNING MEGAMEK".
+
+
+
+RUNNING MEGAMEK
+---------------
+Java programs run in their own enviroment, called a Virtual Machine or VM
+for short.  These Java VMs are available on most systems from a variety of 
+sources.  Most modern systems have one installed by default.
+
+Windows users: To start MegaMek, run the MegaMek.bat file.  Beware of a known
+bug: running using the MegaMek.bat file prevents infantry from being loaded
+into a transport vehicle or Mek.
+
+Other graphical OSes: Many other graphical OSes, such as MacOS and OSX, will
+allow you to double-click the .jar file to run it.  If this does not work,
+try running MegaMek from the command line
+
+Running MegaMek from the command line: To do this using Sun Java, or most 
+other implementaions, navigate to the directory containing the .jar file and 
+run:
+
+java -jar MegaMek.jar
+
+If none of the above options work for you, see the "INSTALLING OR UPDATING
+YOUR JAVA RUNTIME" section, below.
+
+If you have a VM, but it does not support .jar files, then use your favorite
+extraction program to decompress the MegaMek.jar and TinyXML.jar files into
+a new "classes" folder (create the folder if you don't already have it in
+your main megamek folder).  Then decompress the collections.jar file into
+the main megamek folder.  Once these steps have been done (you only need to
+do the above steps once), you will need to set the classpath to the classes
+folder and the com folder and run MegaMek.class.  For example, using
+Sun Java, run:
+
+java -cp com;classes megamek/MegaMek
+
+
+
+INSTALLING OR UPDATING YOUR JAVA RUNTIME
+----------------------------------------
+If your system did not come with a Java VM, or you need to update your Java
+VM, here are some links.
+
+Sun Java (Linux, Solaris, Windows):
+http://java.sun.com/j2se/1.4/download.html
+
+Microsoft VM (Windows):
+Microsoft no longer makes their VM available for seperate download.
+Installing Windows XP SP1 should do the trick.  If you don't have Windows
+XP, and still want to use the MS VM, then please ask for help on the
+MegaMek.com website (some people still have the old MS VM install file
+laying around).
+
+Mac OSX 10.1 and above:
+Java updates are included in OS updates for 10.1 and above.  There is no
+external way to update your Java VM.
+
+Earlier Mac OS versions:
+http://developer.apple.com/java/download.html
+
 
 
 CONNECTING
@@ -291,54 +351,6 @@ discrepancies, please contact the author (see "CONTACT" below.)
     
 - Some more that I've forgotten...
 
-
-
-RUNNING MEGAMEK
----------------
-Java programs run in their own enviroment, called a Virtual Machine or VM
-for short.  These Java VMs are available on most systems from a variety of 
-sources.  Most modern systems have one installed by default.
-
-Windows users: To start MegaMek, run the MegaMek.exe file.  Beware of a known
-bug: running using the MegaMek.exe file prevents infantry from being loaded
-into a transport vehicle or Mek.
-
-Other graphical OSes: Many other graphical OSes, such as MacOS and OSX, will
-allow you to double-click the .jar file to run it.  If this does not work,
-try running MegaMek from the command line
-
-Running MegaMek from the command line: To do this using Sun Java, or most 
-other implementaions, navigate to the directory containing the .jar file and 
-run:
-
-java -jar MegaMek.jar
-
-If your Java VM does not support .jar files, the compiled Java .class files
-are also included in the "classes" directory.  You will need to set the 
-classpath to this folder and run MegaMek.class.  To do this using Sun Java,
-run:
-
-java -cp classes megamek/MegaMek
-
-
-
-INSTALLING OR UPDATING YOUR JAVA RUNTIME
-----------------------------------------
-If your system did not come with a Java VM, or you need to update your Java
-VM, here are some links.
-
-Windows (Microsoft VM):
-http://www.microsoft.com/java/vm/dl_vm40.htm
-
-Sun Java (Linux, Solaris, Windows):
-http://java.sun.com/j2se/1.4/download.html
-
-Mac OSX 10.1 and above:
-Java updates are included in OS updates for 10.1 and above.  There is no
-external way to update your Java VM.
-
-Earlier Mac OS versions:
-http://developer.apple.com/java/download.html
 
 
 

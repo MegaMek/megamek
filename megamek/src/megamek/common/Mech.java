@@ -821,7 +821,13 @@ public class Mech
         dbv += getWeight();
         
         // subtract for explosive ammo
-        dbv -= (ammoList.size() * 20);
+        for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
+            Mounted mounted = (Mounted)i.nextElement();
+            AmmoType atype = (AmmoType)mounted.getType();
+            
+            dbv -= (int)(20.0 * atype.getTonnage(this));
+        }
+        
         
         // total up maximum heat generated
         int maxumumHeatFront = 0;
@@ -859,8 +865,8 @@ public class Mech
         double weaponBV = 0;
         
         // figure out base weapon bv
-        int weaponsBVFront = 0;
-        int weaponsBVRear = 0;
+        double weaponsBVFront = 0;
+        double weaponsBVRear = 0;
         for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             WeaponType wtype = (WeaponType)mounted.getType();
@@ -879,7 +885,7 @@ public class Mech
         }
         
         // add ammo bv
-        int ammoBV = 0;
+        double ammoBV = 0;
         for (Enumeration i = ammoList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
             AmmoType atype = (AmmoType)mounted.getType();

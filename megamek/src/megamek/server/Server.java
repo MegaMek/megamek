@@ -3363,8 +3363,10 @@ implements Runnable {
                     // Update the violating entity's postion on the client.
                     entityUpdate( violation.getId() );
                 } else {
-                    // ack!  automatic death!
-                    phaseReport.append(destroyEntity(violation, "impossible displacement", false));
+                    // ack!  automatic death!  Tanks
+                    // suffer an ammo/power plant hit.
+                    // TODO : a Mech suffers a Head Blown Off crit.
+                    phaseReport.append(destroyEntity(violation, "impossible displacement", (violation instanceof Mech), (violation instanceof Mech)));
                 }
             } else {
                 phaseReport.append(", misses.\n");
@@ -3375,8 +3377,10 @@ implements Runnable {
                     // Update the entity's postion on the client.
                     entityUpdate( entity.getId() );
                 } else {
-                    // ack!  automatic death!
-                    phaseReport.append(destroyEntity(entity, "impossible displacement", false));
+                    // ack!  automatic death!  Tanks
+                    // suffer an ammo/power plant hit.
+                    // TODO : a Mech suffers a Head Blown Off crit.
+                    phaseReport.append(destroyEntity(entity, "impossible displacement", (entity instanceof Mech), (entity instanceof Mech)));
                 }
             }
             return;
@@ -5833,8 +5837,10 @@ implements Runnable {
                 // move target to preferred hex
                 doEntityDisplacement(te, dest, targetDest, null);
             } else {
-                // attacker destroyed
-                phaseReport.append(destroyEntity(ae, "impossible displacement", false));
+                // attacker destroyed  Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                phaseReport.append(destroyEntity(ae, "impossible displacement", (ae instanceof Mech), (ae instanceof Mech)));
             }
             return;
         }
@@ -5900,8 +5906,10 @@ implements Runnable {
             if (targetDest != null) {
                 doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2, "hit by death from above"));
             } else {
-                // ack!  automatic death!
-                phaseReport.append(destroyEntity(te, "impossible displacement", false));
+                // ack!  automatic death!  Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                phaseReport.append(destroyEntity(te, "impossible displacement", (te instanceof Mech), (te instanceof Mech)));
             }
         }
         // HACK: to avoid automatic falls, displace from dest to dest
@@ -6137,7 +6145,7 @@ implements Runnable {
             phaseReport.append("avoids successfully!\n");
         } else {
             phaseReport.append("fails to avoid horrible instant flaming death.\n");
-            phaseReport.append(destroyEntity(entity, "fire"));
+            phaseReport.append(destroyEntity(entity, "fire", false, false));
         }
     }
     
@@ -6693,14 +6701,17 @@ implements Runnable {
                     case 4 :
                         desc += "\n            <<<CRITICAL HIT>>> Crew killed";
                         desc += destroyEntity(en, "crew death", true);
+                        en.getCrew().setDoomed(true);
                         break;
                     case 5 :
                         desc += "\n            <<<CRITICAL HIT>>> Fuel tank hit.  BOOM!";
-                        desc += destroyEntity(en, "fuel tank explosion", false);
+                        desc += destroyEntity(en, "fuel tank explosion", false, false);
+                        en.getCrew().setDoomed(true);
                        break;
                     case 6 :
                         desc += "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!";
-                        desc += destroyEntity(en, "power plant destruction", false);
+                        desc += destroyEntity(en, "power plant destruction", false, false);
+                        en.getCrew().setDoomed(true);
                         break;
                 }
             }

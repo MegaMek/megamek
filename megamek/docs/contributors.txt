@@ -31,6 +31,9 @@ Lot of people have contributed to the MegaMek project.
      David Taylor <dtaylor@swiftdsl.com.au>
      Björn Olsson <nalleolsson@users.sourceforge.net>
 
+  XML Parser:
+     Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
+
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
      Pierre Savard <xsurrealx@users.sourceforge.net>

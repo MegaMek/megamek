@@ -1765,4 +1765,20 @@ public abstract class Mech
 
     } // End public TargetRoll getStealthModifier( char )
 
+    /**
+     * Determine if the unit can be repaired, or only harvested for spares.
+     *
+     * @return  A <code>boolean</code> that is <code>true</code> if the unit
+     *          can be repaired (given enough time and parts); if this value
+     *          is <code>false</code>, the unit is only a source of spares.
+     * @see     Entity#isSalvage()
+     */
+    public boolean isRepairable() {
+        // A Mech is repairable if it is salvageable,
+        // and its CT internals are not gone.
+        int loc_is = this.getInternal( Mech.LOC_CT );
+        return this.isSalvage() &&
+            (loc_is != ARMOR_DOOMED) && (loc_is != ARMOR_DESTROYED);
+    }
+
 }

@@ -396,36 +396,38 @@ public class MovementDisplay
      * Sends a data packet indicating the chosen movement.
      */
     private void moveTo(MovementData md) {
-        if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
-            Mech m = (Mech)ce();
-            ConfirmDialog nag = new ConfirmDialog(client.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    Settings.nagForMASC = false;
+        if ( md != null ) {
+            if (md.hasActiveMASC() && Settings.nagForMASC) { //pop up are you sure dialog
+                Mech m = (Mech)ce();
+                ConfirmDialog nag = new ConfirmDialog(client.frame,"Are you sure?", "The movement you have selected will require a roll of " + m.getMASCTarget() + " or higher\nto avoid MASC failure.  Do you wish to proceed?", true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        Settings.nagForMASC = false;
+                    }
+                } else {
+                    return;
                 }
-            } else {
-                return;
             }
-        }
 
-        String check = doPSRCheck(md);
-        if (check.length() > 0 && Settings.nagForPSR) {
-            ConfirmDialog nag = 
-                new ConfirmDialog(client.frame,
-                                  "Are you sure?", 
-                                  "You must make the following piloting\n" +
-                                  "skill check(s) for your movement:\n" +
-                                  check, true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    Settings.nagForPSR = false;
+            String check = doPSRCheck(md);
+            if (check.length() > 0 && Settings.nagForPSR) {
+                ConfirmDialog nag = 
+                    new ConfirmDialog(client.frame,
+                                      "Are you sure?", 
+                                      "You must make the following piloting\n" +
+                                      "skill check(s) for your movement:\n" +
+                                      check, true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        Settings.nagForPSR = false;
+                    }
+                } else {
+                    return;
                 }
-            } else {
-                return;
             }
         }
 

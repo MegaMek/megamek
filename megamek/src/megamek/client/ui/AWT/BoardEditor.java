@@ -91,6 +91,8 @@ public class BoardEditor extends Container
         
         addKeyListener(this);
         
+        bv.setLoadAllHexes(true);
+        
         canHex = new HexCanvas();
         labElev = new Label("Elev:", Label.RIGHT);
         texElev = new TextField("0", 1);

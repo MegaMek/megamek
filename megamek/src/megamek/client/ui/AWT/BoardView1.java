@@ -87,6 +87,8 @@ public class BoardView1
     private long lastIdle;
 
     private TilesetManager tileManager = new TilesetManager(this);
+    
+    private boolean loadAllHexes = false;
 
     // polygons for a few things
     private Polygon              hexPoly;
@@ -139,7 +141,11 @@ public class BoardView1
             if (!tileManager.isStarted()) {
                 g.drawString("loading images...", 20, 50);
                 System.out.println("boardview1: load all images called");
-                tileManager.loadAllImages(game);
+                tileManager.loadNeededImages(game);
+                if (loadAllHexes) {
+                    System.out.println("boardview1: loading all hex images");
+                    tileManager.loadAllHexes();
+                }
                 return;
             }
             return;
@@ -2101,4 +2107,12 @@ public class BoardView1
     public boolean isTileImagesLoaded() {
         return this.tileManager.isLoaded();
     }
+    
+    /** Setter for property loadAllHexes.
+     * @param loadAllHexes New value of property loadAllHexes.
+     */
+    public void setLoadAllHexes(boolean loadAllHexes) {
+        this.loadAllHexes = loadAllHexes;
+    }
+    
 }

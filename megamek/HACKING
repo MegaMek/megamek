@@ -15,9 +15,9 @@ release to release, each installation must have its own copy of the files.
 Someday, I intend to address every single issue listed above; for now, however,
 one must simply accept the limitations and move on.
 
-MegaMek can be run on any Java v1.1 runtime.  We've kept compatable with this
+MegaMek can be run on any Java v1.1 runtime.  We've kept compatible with this
 old version of the runtime in order to support players who want to use the
-MicroSoft JRE on their machines.  There *have* been a number of features added
+Microsoft JRE on their machines.  There *have* been a number of features added
 to MegaMek that are available if a more recent version of Java is installed.
 That means that MegaMek can not be *compiled* by a v1.1 JDK.  Still, I haven't
 found a "modern" Java compiler that won't build MegaMek.  Please report any

@@ -945,8 +945,8 @@ public class BoardView1
      */
     private abstract class Sprite implements ImageObserver
     {
-        private Rectangle bounds;
-        private Image image;
+        protected Rectangle bounds;
+        protected Image image;
         
         public abstract void draw();
         

@@ -69,7 +69,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v (next)
+v 0.27.11 (12-13-02, 8:10pm)
 + killing a C3 network master no longer crashes the client
 + 649950: doFlamingDeath isn't checked in the end/heat phase
 + C3 factored in BV

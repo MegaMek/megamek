@@ -12707,7 +12707,7 @@ implements Runnable, ConnectionHandler {
                         cluster = 5;
                     }
                     while ( remaining > 0 ) {
-                        int next = Math.max( cluster, remaining );
+                        int next = Math.min( cluster, remaining );
                         // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
                         // pg. 18, Randall Bills says that all damage from a
                         // collapsing building is applied to the front.

@@ -61,7 +61,7 @@ public class MegaMek
      * Display the main menu.
      */
     public void showMainMenu() {
-        Button hostB, connectB, botB, editB, scenB;
+        Button hostB, connectB, botB, editB, scenB, loadB;
         Label labVersion = new Label();
             
         frame.removeAll();
@@ -75,6 +75,10 @@ public class MegaMek
         scenB = new Button("Host a Scenario...");
         scenB.setActionCommand("game_scen");
         scenB.addActionListener(this);
+        
+        loadB = new Button("Load a Saved Game...");
+        loadB.setActionCommand("game_load");
+        loadB.addActionListener(this);
         
         connectB = new Button("Connect to a Game...");
         connectB.setActionCommand("game_connect");
@@ -103,6 +107,7 @@ public class MegaMek
         addBag(scenB, gridbag, c);
         addBag(connectB, gridbag, c);
         addBag(botB, gridbag, c);
+        addBag(loadB, gridbag, c);
         addBag(editB, gridbag, c);
 
         frame.validate();
@@ -169,6 +174,36 @@ public class MegaMek
             return;
         }
         // wait for full connection
+        client.retrieveServerInfo();
+    }
+    
+    public void loadGame() {
+        FileDialog fd = new FileDialog(frame, 
+                "Select saved game...",
+                FileDialog.LOAD);
+        fd.show();
+        if (fd.getFile() == null) {
+            return;
+        }
+        
+        HostDialog hd = new HostDialog(frame);
+        hd.show();
+        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+            return;
+        }
+        server = new Server(hd.serverPass, hd.port);
+        if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
+            new AlertDialog(frame, "Load a Game", "Error: unable to load game file.").show();
+            server = null;
+            return;
+        }
+        client = new Client(frame, hd.name);
+        if (!client.connect("localhost", hd.port)) {
+            server = null;
+            client = null;
+            new AlertDialog(frame, "Load a Game", "Error: could not connect to local server.").show();
+            return;
+        }
         client.retrieveServerInfo();
     }
     
@@ -360,6 +395,9 @@ public class MegaMek
         }
         if(ev.getActionCommand().equalsIgnoreCase("game_botconnect")) {
             connectBot();
+        }
+        if(ev.getActionCommand().equalsIgnoreCase("game_load")) {
+            loadGame();
         }
     }
     

@@ -107,4 +107,11 @@ public abstract class BotClientWrapper extends BotClient {
             //bv.addAttack((AttackAction)o);
         }
     }
+    
+  public void retrieveServerInfo()
+  {
+        super.retrieveServerInfo();
+        initialize();
+  }
+    
 }

@@ -130,14 +130,7 @@ public final class Player
     }
     
     public boolean isEnemyOf(Player other) {
-        boolean friendlyFire;
-        if (game == null) {
-            System.err.println("player: can't find game when I want it!!");
-            friendlyFire = false;
-        } else {
-            friendlyFire = game.getOptions().booleanOption("friendly_fire");
-        }
-        return friendlyFire || (id != other.getId() && (team == TEAM_NONE || team != other.getTeam()));
+        return (id != other.getId() && (team == TEAM_NONE || team != other.getTeam()));
     }
     
     /**

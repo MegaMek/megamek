@@ -27,7 +27,7 @@ import megamek.server.*;
 public class MegaMek
     implements WindowListener, ActionListener
 {
-    public static String    VERSION = "0.28.7";
+    public static String    VERSION = "0.28.8-dev";
     public static long      TIMESTAMP = new File("timestamp").lastModified();
     
     public Frame            frame;
@@ -435,6 +435,8 @@ public class MegaMek
             }
         } // End log-to-file
 
+        // kick off a RNG check as quick as possible, since init can take a while
+        megamek.common.Compute.d6();
         Settings.load();
         Frame frame = new Frame("MegaMek");
         MegaMek mm = new MegaMek(frame);

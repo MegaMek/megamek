@@ -3460,16 +3460,14 @@ public class Compute
         // determine hit direction
         toHit.setSideTable(targetSideTable(src, te.getPosition(),
                                             te.getFacing(), te instanceof Tank));
-                                            
-        // elevation
-        if (attackerHeight == targetHeight || te.isProne()) {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
-        } else if (attackerHeight < targetHeight) {
+                   
+        // all charges resolved against full-body table, except vehicles.
+        if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
         } else {
-            toHit.setHitTable(ToHitData.HIT_PUNCH);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
-
+        
         // done!
         return toHit;
     }

@@ -99,6 +99,7 @@ public class Game implements Serializable
     private Vector actions = new Vector();
     private Vector pendingCharges = new Vector();
     private Vector pilotRolls = new Vector();
+    private Vector extremeGravityRolls = new Vector();
     private Vector initiativeRerollRequests = new Vector();
 
 
@@ -1675,6 +1676,16 @@ public class Game implements Serializable
     public Enumeration getPSRs() {
         return pilotRolls.elements();
     }
+    
+    /** Adds a pending extreme Gravity PSR to the list for this phase. */
+    public void addExtremeGravityPSR(PilotingRollData psr) {
+        extremeGravityRolls.addElement(psr);
+    }
+    
+    /** Returns an Enumeration of pending extreme GravityPSRs. */
+    public Enumeration getExtremeGravityPSRs() {
+        return extremeGravityRolls.elements();
+    }
 
     /** Resets the PSR list for a given entity. */
     public void resetPSRs(Entity entity) {
@@ -1693,6 +1704,31 @@ public class Game implements Serializable
         // now, clear them out
         for (i=rollsToRemove.size()-1; i > -1; i--) {
             pilotRolls.removeElementAt( ((Integer)rollsToRemove.elementAt(i)).intValue() );
+        };
+    }
+
+    /** Resets the extreme Gravity PSR list. */
+    public void resetExtremeGravityPSRs() {
+        extremeGravityRolls.removeAllElements();
+    }
+    
+    /** Resets the extreme Gravity PSR list for a given entity. */
+    public void resetExtremeGravityPSRs(Entity entity) {
+        PilotingRollData roll;
+        Vector rollsToRemove = new Vector();
+        int i=0;
+
+        // first, find all the rolls belonging to the target entity
+        for (i=0; i < extremeGravityRolls.size(); i++) {
+            roll = (PilotingRollData)extremeGravityRolls.elementAt(i);
+            if ( roll.getEntityId()==entity.getId() ) {
+               rollsToRemove.addElement(new Integer(i));
+            };
+        };
+
+        // now, clear them out
+        for (i=rollsToRemove.size()-1; i > -1; i--) {
+            extremeGravityRolls.removeElementAt( ((Integer)rollsToRemove.elementAt(i)).intValue() );
         };
     }
 

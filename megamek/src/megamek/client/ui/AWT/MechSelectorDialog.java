@@ -203,6 +203,12 @@
     	}
     }
     
+    public void show() {
+        setLocation(m_client.frame.getLocation().x + m_client.frame.getSize().width/2 - getSize().width/2,
+                    m_client.frame.getLocation().y + m_client.frame.getSize().height/2 - getSize().height/2);
+        super.show();
+    }
+    
     private String formatMech(MechSummary ms)
     {
     	return makeLength(ms.getRef(), 10) + " " + 

@@ -118,8 +118,6 @@ public class BipedMech extends Mech {
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
     public int getRunMP() {
-        int destroyedLegs = countDestroyedLegs();
-        
         if ( countDestroyedLegs() == 0 ) {
             return super.getRunMP();
         } else {
@@ -159,8 +157,7 @@ public class BipedMech extends Mech {
      */
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         int[] locsToCheck = new int[2];
-        int destroyedLegs = 0;
-        
+
         locsToCheck[0] = Mech.LOC_RLEG;
         locsToCheck[1] = Mech.LOC_LLEG;
         

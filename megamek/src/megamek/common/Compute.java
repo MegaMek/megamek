@@ -55,9 +55,7 @@ public class Compute
         Thread makeRNG = new Thread( new Runnable() {
                 public void run() {
                     try {
-                        Date start = new Date();
                         StrongRNG newRNG = new StrongRNG();
-                        Date end = new Date();
                         Compute.strongRNG = newRNG;
                         Compute.d6(); // Initialize the RNG.
                         System.out.println( "Using a cryptographic RNG." );System.out.flush();//killme
@@ -332,16 +330,13 @@ public class Compute
         Coords curPos = new Coords(entity.getPosition());
         int mpUsed = entity.mpUsed;
         int distance = entity.delta_distance;
-        boolean isProne = entity.isProne();
         boolean hasJustStood = false;
-        boolean firstStep = true;
         boolean lastWasBackwards = false;
         boolean thisStepBackwards = false;
         int overallMoveType = Entity.MOVE_WALK;
         boolean isJumping = false;
         boolean isRunProhibited = false;
         boolean isInfantry = (entity instanceof Infantry);
-        MovementData.Step prevStep = null;
         boolean onlyPavement = false;   // Entire move on pavement or road
         boolean isPavementStep = false; // This step on pavement or road
 
@@ -780,7 +775,6 @@ public class Compute
                                              Entity entering,
                                              Coords coords,
                                              Entity transport ) {
-        boolean isInfantry = entering instanceof Infantry;
         boolean isMech = entering instanceof Mech;
         Entity firstEntity = transport;
 
@@ -1266,7 +1260,6 @@ public class Compute
     public static Coords getValidDisplacement(Game game, int entityId, 
                                               Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
-        final Entity entity = game.getEntity(entityId);
         int[] offsets = {0, 1, 5, 2, 4, 3};
         for (int i = 0; i < offsets.length; i++) {
             Coords dest = src.translated((direction + offsets[i]) % 6);
@@ -1434,8 +1427,6 @@ public class Compute
         final boolean targetInBuilding = isInBuilding( game, te );
         
         ToHitData toHit = null;
-        boolean pc = false; // partial cover
-        boolean apc = false; // attacker partial cover
         
         // can't target yourself
         if (ae.equals(te)) {
@@ -4811,13 +4802,10 @@ public class Compute
     public static ToHitData toHitThrash( Game game, int attackerId,
                                          Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
-            targetId = target.getTargetId();
         }
-        ToHitData toHit;
 
         // arguments legal?
         if (ae == null || target == null) {
@@ -5099,7 +5087,6 @@ public class Compute
         final Hex destHex = game.board.getHex(dest);
         final int src2destDir = src.direction1(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
-        Terrain terr = null;
         boolean result = false;
 
         // We may be moving in the same hex.

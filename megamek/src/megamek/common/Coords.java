@@ -152,7 +152,6 @@ public class Coords
      * @param d the destination coordinate.
      */
     public int direction1(Coords d) {
-        int deltaX, deltaY;
         if (x < d.x) {
             if (y < d.y || (y == d.y && !isXOdd())) {
                 return 2;

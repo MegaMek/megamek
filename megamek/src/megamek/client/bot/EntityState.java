@@ -574,7 +574,6 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
         mod = .9;
       }
     }
-    int self_hit_arc = Compute.getThreatHitArc(this.curPos, this.curFacing, enemy.curPos);
     int enemy_firing_arcs[] = new int[3];
     for (int i = 0; i < 3; i++) {
       enemy_firing_arcs[i] = Compute.getThreatHitArc(enemy.curPos, Compute.getAdjustedFacing(enemy.curFacing, i), this.curPos);

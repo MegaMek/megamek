@@ -90,7 +90,6 @@ public class TestBot extends BotClientWrapper {
         final boolean usesAmmo = 
 	    (!isInfantryWeapon && w.getAmmoType() != AmmoType.T_NA);
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-        final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
           this.value = 0; //should have already been caught...
         } else if (usesAmmo) {
@@ -277,7 +276,6 @@ public class TestBot extends BotClientWrapper {
   
   protected Vector getEnemyEntities() {
     Vector result = new Vector();
-    Entity entity = null;
     Entity mine = null;
     Iterator i = this.getEntitiesOwned().iterator();
     if (i.hasNext()) {
@@ -329,8 +327,6 @@ public class TestBot extends BotClientWrapper {
       enemies_moved = initiative;
       Vector possible = new Vector();
       Iterator i = this.getEntitiesOwned().iterator();
-      int selectable = 0;
-      EntityState[] best = null;
       boolean short_circuit = false;
       
       while(i.hasNext()) {    
@@ -599,7 +595,6 @@ public class TestBot extends BotClientWrapper {
     if (friend_move_array.length > 1) {
       move_array = pass.values().toArray();
       pass.clear();
-      double[] combo = new double[enemy_array.length];
       for (int j = 0; j < move_array.length; j++) {
         EntityState option = (EntityState)move_array[j];
         for (int e = 0; e < enemy_array.length; e++) { // for each enemy
@@ -926,7 +921,6 @@ public class TestBot extends BotClientWrapper {
         option.setState();
         //if (this.enemies_moved > 0) {
           GAAttack temp = this.bestAttack(option);
-          double[] damages = null;
           if (temp != null) {
             //will increase the utility of states that all for overheat cooling, etc.
             option.damage = (option.damage + temp.getFittestChromosomesFitness())/2;
@@ -1090,7 +1084,6 @@ public class TestBot extends BotClientWrapper {
   }
   
   public GAAttack bestAttack(EntityState es) {
-    int entNum = es.entity.getId();
     Entity en = es.entity;
     int attacks[] = new int[3];
     Vector front = new Vector();
@@ -1126,8 +1119,6 @@ public class TestBot extends BotClientWrapper {
     arcs.add(left);
     arcs.add(right);
     double max = 0;
-    int[] results = null;
-    int arc = 0;
     for (int i = 0; i < arcs.size(); i++) {
       Vector v = (Vector)arcs.elementAt(i);
       if (v.size() > 0) {
@@ -1138,8 +1129,6 @@ public class TestBot extends BotClientWrapper {
           threadTest.join();
           if (test.getFittestChromosomesFitness() > max) {
             max = test.getFittestChromosomesFitness();
-            results = test.getResultChromosome();
-            arc = i;
             result = test;
           }
         } catch (GAException gae) {
@@ -1154,7 +1143,6 @@ public class TestBot extends BotClientWrapper {
   
   /* could use best of best strategy instead of expensive ga */
   public double attackUtility(EntityState es, CEntity target) {
-    int entNum = es.entity.getId();
     Entity en = es.entity;
     int attacks[] = new int[3];
     Vector front = new Vector();
@@ -1190,8 +1178,6 @@ public class TestBot extends BotClientWrapper {
     arcs.add(left);
     arcs.add(right);
     double max = 0;
-    int[] results = null;
-    int arc = 0;
     for (int i = 0; i < arcs.size(); i++) {
       Vector v = (Vector)arcs.elementAt(i);
       if (v.size() > 0) {
@@ -1204,8 +1190,6 @@ public class TestBot extends BotClientWrapper {
             max = Math.max(max, test.getDamageUtility(target));
           } else if (test.getFittestChromosomesFitness() > max) {
             max = test.getFittestChromosomesFitness();
-            results = test.getResultChromosome();
-            arc = i;
           }
         } catch (GAException gae) {
           System.out.println(gae.getMessage());

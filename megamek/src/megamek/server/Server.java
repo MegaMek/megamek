@@ -685,8 +685,13 @@ implements Runnable {
         
         roundReport.append("Winner is: ");
         if (game.getVictoryTeam() == Player.TEAM_NONE) {
-            roundReport.append(getPlayer(game.getVictoryPlayerId()).getName());
-            roundReport.append("\n\n");
+            if ( game.getVictoryPlayerId() == Player.PLAYER_NONE ) {
+                roundReport.append( "the Chicaco Cubs!!!\n\n" );
+            } else {
+                roundReport.append
+                    ( getPlayer(game.getVictoryPlayerId()).getName() );
+                roundReport.append("\n\n");
+            }
         } else {
             roundReport.append("TEAM #").append(game.getVictoryTeam());
             roundReport.append("\n\n");
@@ -1201,7 +1206,12 @@ implements Runnable {
         }
         
         // check if there's one player alive
-        if (playersAlive <= 1) {
+        if (playersAlive < 1) {
+            game.setVictoryPlayerId( Player.PLAYER_NONE );
+            game.setVictoryTeam( Player.TEAM_NONE );
+            return true;
+        }
+        else if ( playersAlive == 1 ) {
             if (lastPlayer.getTeam() == Player.TEAM_NONE) {
                 // individual victory
                 game.setVictoryPlayerId(lastPlayer.getId());
@@ -1454,7 +1464,7 @@ implements Runnable {
                     } else {
                         turn = new GameTurn(order[i]);
                     }
-                    turns.addElement(new GameTurn(order[i]));
+                    turns.addElement(turn);
                     turnIndex++;
                     noe[order[i]]--;
                 }
@@ -3003,11 +3013,9 @@ implements Runnable {
                                              boolean isFallRoll ) {
 	boolean result = true;
         
-        final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
-        final Hex srcHex = game.board.getHex(src);
-        final Hex destHex = game.board.getHex(dest);
+        final PilotingRollData roll =
+            Compute.getBasePilotingRoll(game, entity.getId());
         boolean fallsInPlace;
-        int fallElevation;
         
         // append the reason modifier
         roll.append(reason);
@@ -3430,7 +3438,7 @@ implements Runnable {
                 FlipArmsAction faa = (FlipArmsAction)o;
                 game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
             } else if (o instanceof FindClubAction) {
-                FindClubAction fca = (FindClubAction)o;
+                // FindClubAction fca = (FindClubAction)o; // not read
                 entity.setFindingClub(true);
                 try {
                     // Get the entity's current hex.
@@ -3772,7 +3780,6 @@ implements Runnable {
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         Infantry platoon = null;
-        BattleArmor troopers = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
         boolean bInferno = (usesAmmo && atype.getMunitionType() == AmmoType.M_INFERNO);
@@ -5337,7 +5344,6 @@ implements Runnable {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity)target;
         }
-        final boolean targetInBuilding = Compute.isInBuilding( game, te );
 
         // Which building takes the damage?
         Building bldg = game.board.getBuildingAt( target.getPosition() );
@@ -5602,7 +5608,6 @@ implements Runnable {
         
         // do we hit?
         if (roll < toHit.getValue()) {
-            Coords src = ae.getPosition();
             Coords dest = te.getPosition();
             Coords targetDest = Compute.getPreferredDisplacement(game, te.getId(), dest, direction);
             phaseReport.append("misses.\n");
@@ -5667,7 +5672,6 @@ implements Runnable {
         }
 
         // Target entities are pushed away or destroyed.
-        Coords src = ae.getPosition();
         Coords dest = te.getPosition();
         Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
         if (game.getOptions().booleanOption("push_off_board") && !game.board.contains(dest.translated(direction))) {
@@ -6684,9 +6688,7 @@ implements Runnable {
             if ( iter.hasMoreElements() ) {
                 Entity other = null;
                 Coords curPos = entity.getPosition();
-                Coords nextPos = null;
                 Hex entityHex = game.getBoard().getHex( curPos );
-                Hex nextHex = null;
                 int curFacing = entity.getFacing();
                 while ( iter.hasMoreElements() ) {
                     other = (Entity) iter.nextElement();
@@ -7255,7 +7257,6 @@ implements Runnable {
      */
     private Vector whoCanSee(Entity entity) {
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
-        Vector vPlayers = game.getPlayersVector();
         Vector vEntities = game.getEntitiesVector();
         
         Vector vCanSee = new Vector();

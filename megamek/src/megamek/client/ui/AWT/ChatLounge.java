@@ -89,9 +89,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         client.addGameListener(this);
         client.game.board.addBoardListener(this);
-                
-        ChatterBox cb = client.cb;
-                
+
         butOptions = new Button("Game Options...");
         butOptions.addActionListener(this);
         

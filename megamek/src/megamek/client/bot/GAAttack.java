@@ -68,16 +68,13 @@ public class GAAttack extends GA {
     double[] result = new double[this.target_array.length];
     ChromVector chromVector = (ChromVector)this.chromosomes[iChromIndex];
     int heat_total = 0;
-    Iterator i = attack.iterator();
     if (chromVector.genes[chromosomeDim - 1] >= this.target_array.length) {
       chromVector.genes[chromosomeDim - 1] = ((Integer)this.valid_target_indexes.elementAt(0)).intValue();
     }
     Entity target = (Entity)this.target_array[chromVector.genes[chromosomeDim - 1]];
-    boolean fired = false;
     for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
       TestBot.AttackOption a = (TestBot.AttackOption)(((Vector)(attack.elementAt(iGene))).elementAt(chromVector.genes[iGene]));
       if (a.target != null) { //if not the no fire option
-        fired = true;
         targets.put(a.target);
         double mod = 1;
         if (a.target.entity.getId() == target.getId()) {
@@ -126,13 +123,10 @@ public class GAAttack extends GA {
       System.out.println(this.target_array.length);
       target = (Entity)this.target_array[((Integer)this.valid_target_indexes.get(0)).intValue()]; 
     }
-    boolean hasPrimary = false;
-    boolean fired = false;
     for (int iGene=0; iGene < chromosomeDim - 1; iGene++) {
       final int[] genes = chromVector.genes;
       TestBot.AttackOption a = (TestBot.AttackOption)(((Vector)(attack.elementAt(iGene))).elementAt(genes[iGene]));
       if (a.target != null) { //if not the no fire option
-        fired = true;
         targets.put(a.target);
         double mod = 1;
         if (a.ammoLeft != -1) {
@@ -149,7 +143,6 @@ public class GAAttack extends GA {
           }
         }
         if (a.target.entity.getId() == target.getId()) {
-          hasPrimary = true;
           a.target.possible_damage[a.toHit.getSideTable()] += mod*a.primary_expected;
         } else {
           a.target.possible_damage[a.toHit.getSideTable()] += mod*a.expected;

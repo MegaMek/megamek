@@ -109,8 +109,6 @@ public class QuadMech extends Mech
    * Returns this mech's running/flank mp modified for leg loss & stuff.
    */
     public int getRunMP() {
-      int destroyedLegs = countDestroyedLegs();
-      
       if ( countDestroyedLegs() <= 1 ) {
         return super.getRunMP();
       } else {

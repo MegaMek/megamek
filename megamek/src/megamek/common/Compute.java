@@ -2142,10 +2142,10 @@ public class Compute
                                             te.getFacing()));
                                             
         // elevation
-        if (attackerHeight < targetHeight) {
-            toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (attackerHeight == targetHeight) {
+        if (attackerHeight == targetHeight || te.isProne()) {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
+        } else if (attackerHeight < targetHeight) {
+            toHit.setHitTable(ToHitData.HIT_KICK);
         } else {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }

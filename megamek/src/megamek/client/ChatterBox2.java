@@ -25,9 +25,9 @@ import java.util.Enumeration;
 
 // A graphical chatterbox within the boardview.
 public class ChatterBox2 
-	implements GameListener, KeyListener {
+	implements GameListener, KeyListener, Displayable {
 
-    private static final Font   FONT_CHAT = new Font("SansSerif", Font.PLAIN, 10);
+    private static final Font   FONT_CHAT = new Font("SansSerif", Font.BOLD, 12);
     private static final Color	COLOR_TEXT_BACK = Color.black;
     private static final Color	COLOR_TEXT_FRONT = Color.white;
     private static final Color	COLOR_BACKGROUND;
@@ -84,8 +84,6 @@ public class ChatterBox2
 
     private Client				client;
     
-    private Component			comp;
-
     private Image				upbutton;
     private Image				downbutton;
     private Image				maxbutton;
@@ -93,13 +91,12 @@ public class ChatterBox2
 
 	private FontMetrics			fm;
 
-	public ChatterBox2(Client client, Component comp) {
+	public ChatterBox2(Client client) {
 		this.client = client;
-		this.comp = comp;
 		
-		fm = comp.getFontMetrics(FONT_CHAT);
+		fm = client.bv.getFontMetrics(FONT_CHAT);
 
-		Toolkit toolkit = comp.getToolkit();
+		Toolkit toolkit = client.bv.getToolkit();
         upbutton = toolkit.getImage("data/widgets/upbutton.gif");
         PMUtil.setImage(upbutton, client);
         downbutton = toolkit.getImage("data/widgets/downbutton.gif");
@@ -110,8 +107,12 @@ public class ChatterBox2
         PMUtil.setImage(maxbutton, client);
 	}
 	
-	public boolean isScrolling() {
-		return scrolling;
+	public boolean isReleased() {
+		if (scrolling) {
+			stopScrolling();
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean isSliding() {
@@ -204,14 +205,26 @@ public class ChatterBox2
 		return false;
 	}
 	
-	public void stopScrolling() {
+	private void stopScrolling() {
 		scrollBarDragPos = 0;
 		lastScrollPoint = null;
 		scrolling = false;
 		computeScrollBarOffset();
-		comp.repaint();
+		client.bv.repaint();
 		increasedChatScroll = false;
 		decreasedChatScroll = false;
+	}
+
+	public boolean isDragged(Point p, Dimension size) {
+		if (scrolling) {
+    		scroll(p, size);
+    		return true;
+		}
+		return false;
+	}
+	
+	public boolean isBeingDragged() {
+		return scrolling;
 	}
 
 	public boolean isMouseOver(Point p, Dimension size) {
@@ -248,12 +261,20 @@ public class ChatterBox2
 
 		if (message != null) {
 			clearMessageBox();
-			comp.repaint();
+			client.bv.repaint();
 		}
+
 
 		int x = p.x;
 		int y = p.y;
 		int yOffset = ((int) size.height) - HEIGHT - DIST_BOTTOM + slideOffset;
+
+		if (x < DIST_SIDE ||
+			x > DIST_SIDE + WIDTH ||
+			y < yOffset ||
+			y > yOffset + HEIGHT) {
+			return false;
+		}
 		// Hide button
 		if (x > 9 &&
 			x < 25 &&
@@ -273,7 +294,7 @@ public class ChatterBox2
 			y > (yOffset + 2) &&
 			y < (yOffset + 18)) {
 			scrollUp();
-			comp.repaint();
+			client.bv.repaint();
 			return true;
 		}
 		// Above scrollbar
@@ -282,7 +303,7 @@ public class ChatterBox2
 			y > (yOffset + 15) &&
 			y < (yOffset + 18 + scrollBarOffset - 1)) {
 			pageUp();
-			comp.repaint();
+			client.bv.repaint();
 			return true;
 		}
 		// Scroll bar
@@ -300,7 +321,7 @@ public class ChatterBox2
 			y > (yOffset + 18 + scrollBarOffset + scrollBarHeight) &&
 			y < (yOffset + 18 + SCROLLBAR_OUTER_HEIGHT)) {
 			pageDown();
-			comp.repaint();
+			client.bv.repaint();
 			return true;
 		}
 		// Scroll down
@@ -309,7 +330,7 @@ public class ChatterBox2
 			y > (((int) size.height) - 25) &&
 			y < (((int) size.height) - 11)) {
 			scrollDown();
-			comp.repaint();
+			client.bv.repaint();
 			return true;
 		}
 		// Message box
@@ -319,14 +340,14 @@ public class ChatterBox2
 			y < (((int) size.height) - 11)) {
 			message = "";
 			visibleMessage = "";
-			comp.repaint();
+			client.bv.repaint();
 			return true;
 		}
     	return false;
 	}
 	
 	// Draws the chatter box.
-	public void drawChatterBox(Graphics graph, Dimension size) {
+	public void draw(Graphics graph, Dimension size) {
 		graph.setColor(COLOR_BACKGROUND);
 		graph.setFont(FONT_CHAT);
 
@@ -337,16 +358,16 @@ public class ChatterBox2
 		
 		// Min/max button
 		if (slideOffset == 130) {
-			graph.drawImage(maxbutton, 10, yOffset + 3, comp);
+			graph.drawImage(maxbutton, 10, yOffset + 3, client.bv);
 		} else {
-			graph.drawImage(minbutton, 10, yOffset + 3, comp);
+			graph.drawImage(minbutton, 10, yOffset + 3, client.bv);
 		}
 		
 		// Title
 		printLine(graph, "Incoming messages...", 29, yOffset + 15);
 
 		// Scroll up button
-		graph.drawImage(upbutton, 284, yOffset + 3, comp);
+		graph.drawImage(upbutton, 284, yOffset + 3, client.bv);
 
 		// Scroll bar outer
 		graph.drawRect(284, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
@@ -355,12 +376,12 @@ public class ChatterBox2
 		graph.drawRect(286, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
 
 		// Scroll down button
-		graph.drawImage(downbutton, 284, yOffset + 150 - 20, comp);
+		graph.drawImage(downbutton, 284, yOffset + 150 - 20, client.bv);
 
 		// Message box
-		graph.drawRect(10, yOffset + 150 - 21, 250, 15);
+		graph.drawRect(10, yOffset + 150 - 21, 250, 17);
 		if (message != null) {
-			printLine(graph, visibleMessage + "_", 12, yOffset + 150 - 9);
+			printLine(graph, visibleMessage + "_", 13, yOffset + 150 - 7);
 		}
 		
 		// Text rows
@@ -443,7 +464,7 @@ public class ChatterBox2
     }
 
 	// Scrolling...
-	public void scroll(Point p, Dimension size) {
+	private void scroll(Point p, Dimension size) {
 		setIdleTime(0, false);
 		int yOffset = ((int) size.height) - HEIGHT - DIST_BOTTOM;
 		int dY;
@@ -547,8 +568,8 @@ public class ChatterBox2
 	// Update the chat one a message is received.
 	public void gamePlayerChat(GameEvent ev) {
 		addChatMessage(ev.getMessage());
-		if (comp.getGraphics() != null) {
-			comp.repaint();
+		if (client.bv.getGraphics() != null) {
+			client.bv.repaint();
 		}
 	}
 	public void gamePlayerStatusChange(GameEvent ev) {

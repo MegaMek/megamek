@@ -62,6 +62,7 @@ public class Client extends Panel
     public Dialog               minimapW;
     public MiniMap              minimap;
     public PopupMenu            popup = new PopupMenu("Board Popup...");
+    private UnitOverview 		uo;
         
     protected Component         curPanel;
     
@@ -273,10 +274,13 @@ public class Client extends Panel
 
         bv = new BoardView1(game, frame);
 
-		ChatterBox2 cb2 = new ChatterBox2(this, bv);
-		bv.setChatBox(cb2);
+		ChatterBox2 cb2 = new ChatterBox2(this);
+		bv.addDisplayable(cb2);
         addGameListener(cb2);
         bv.addKeyListener(cb2);
+        
+        uo = new UnitOverview(this);
+		bv.addDisplayable(uo);
 
         bv.addMouseListener(this);
         bv.add(popup);
@@ -516,8 +520,7 @@ public class Client extends Panel
      */
     protected void changePhase(int phase) {
 
-    	if (game.getPhase() == Game.PHASE_MOVEMENT ||  
-    		game.getPhase() == Game.PHASE_FIRING ) {
+    	if ( curPanel instanceof BoardViewListener ) {
     		bv.removeBoardViewListener((BoardViewListener) curPanel);
     	}
     	
@@ -554,6 +557,7 @@ public class Client extends Panel
             break;
         case Game.PHASE_DEPLOYMENT :
             switchPanel(new DeploymentDisplay(this));
+            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
@@ -576,6 +580,7 @@ public class Client extends Panel
             game.resetActions();
             bv.refreshAttacks();
             switchPanel(new PhysicalDisplay(this));
+            bv.addBoardViewListener((BoardViewListener) curPanel);
             if (Settings.minimapEnabled && !minimapW.isVisible()) {
                 setMapVisible(true);
             }
@@ -645,6 +650,11 @@ public class Client extends Panel
         mechW.setVisible(visible);
     }
     
+	public void toggleUnitOverview() {
+		uo.setVisible(!uo.isVisible());
+		bv.repaint();
+	}
+
     /** Toggles the minimap window
          Also, toggles the minimap enabled setting
      */

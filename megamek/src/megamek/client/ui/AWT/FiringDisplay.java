@@ -257,7 +257,11 @@ public class FiringDisplay
         }
 
         if (client.game.getEntity(en) != null) {
-            this.cen = en;
+	        if (ce() != null) {
+	        	ce().setSelected(false);
+	        }
+	        this.cen = en;
+	        ce().setSelected(true);
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
@@ -969,6 +973,24 @@ public class FiringDisplay
 			client.bv.centerOnHex(ce().getPosition());
 		}
 	}
+    public void selectUnit(BoardViewEvent b) {
+    	Entity e = client.game.getEntity(b.getEntityId());
+    	if (client.isMyTurn()) {
+    		if (!e.isSelectableThisTurn(client.game)) {
+            	client.setDisplayVisible(true);
+            	client.mechD.displayEntity(e);
+            	client.bv.centerOnHex(e.getPosition());
+            } else {
+	            selectEntity(e.getId());
+    		}
+    	} else {
+        	client.setDisplayVisible(true);
+        	client.mechD.displayEntity(e);
+    		if (e.isDeployed()) {
+            	client.bv.centerOnHex(e.getPosition());
+    		}
+    	}
+    }
 
   private class AimedShotHandler implements ActionListener, ItemListener {  
     private int aimingAt = Mech.LOC_NONE;

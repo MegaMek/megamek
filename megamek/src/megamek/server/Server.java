@@ -2693,10 +2693,19 @@ implements Runnable {
             
             // calculate # of missiles hitting
             if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_SRM) {
-                // check for narc (and eventually artemis)
+                // check for narc
                 if (te.isNarcedBy(ae.getOwner().getTeam())) {
                     nSalvoBonus += 2;
                 }
+                
+                // check for artemis
+                Mounted mLinker = weapon.getLinkedBy();
+                if (mLinker != null && mLinker.getType() instanceof MiscType && 
+                        !mLinker.isDestroyed() && !mLinker.isMissing() &&
+                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    nSalvoBonus += 2;
+                }
+                 
             }
             
             if (wtype.getAmmoType() == AmmoType.T_SRM_STREAK) {

@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.*;
+import java.util.Enumeration;
 import java.util.zip.*;
 import megamek.common.util.BuildingBlock;
 
@@ -88,5 +89,54 @@ public class MechFileParser {
         }
         
         m_entity = loader.getEntity();
+        
+        postLoadInit(m_entity);
     }
+    
+    /**
+     * File-format agnostic location to do post-load initialization on a unit
+     */
+    private void postLoadInit(Entity ent) throws EntityLoadingException {
+        // Artemis
+        for (Enumeration e = ent.getMisc(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
+                
+                // link up to a weapon in the same location
+                for (Enumeration e2 = ent.getWeapons(); e2.hasMoreElements(); ) {
+                    Mounted mWeapon = (Mounted)e2.nextElement();
+                    WeaponType wtype = (WeaponType)mWeapon.getType();
+                    
+                    // only srm and lrm are valid for artemis
+                    if (wtype.getAmmoType() != AmmoType.T_LRM && wtype.getAmmoType() != AmmoType.T_SRM) {
+                        continue;
+                    }
+                    
+                    // already linked?
+                    if (mWeapon.getLinkedBy() != null) {
+                        continue;
+                    }
+                    
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                    // also, mechs have a special location rule
+                    else if (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD &&
+                                mWeapon.getLocation() == Mech.LOC_CT) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                }
+                
+                if (m.getLinked() == null) {
+                    // huh.  this shouldn't happen
+                    throw new EntityLoadingException("Unable to match Artemis to launcher");
+                }
+            }
+        }
+    }
+            
+        
 }

@@ -622,7 +622,7 @@ public class Compute
                 // Can't unload units into prohibited terrain
                 // or into stacking violation.
                 Entity other = step.getTarget( game );
-                if ( null != stackingViolation(game, other.getId(), curPos)
+                if ( null != stackingViolation(game, other, curPos, entity)
                      || other.isHexProhibited(game.board.getHex(curPos)) ) {
                     moveType = Entity.MOVE_ILLEGAL;
                 }
@@ -744,9 +744,20 @@ public class Compute
      */
     public static Entity stackingViolation(Game game, int enteringId, Coords coords) {
         Entity entering = game.getEntity(enteringId);
+        return stackingViolation( game, entering, coords, null );
+    }
+
+    /**
+     * When compiling an unloading step, both the transporter and the unloaded
+     * unit probably occupy some other position on the board.
+     */
+    private static Entity stackingViolation( Game game,
+                                             Entity entering,
+                                             Coords coords,
+                                             Entity transport ) {
 	boolean isInfantry = entering instanceof Infantry;
 	boolean isMech = entering instanceof Mech;
-        Entity firstEntity = null;
+        Entity firstEntity = transport;
 
 	// Walk through the entities in the given hex.
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
@@ -754,6 +765,11 @@ public class Compute
             
             // Don't compare the entering entity to itself.
             if (inHex.equals(entering)) {
+                continue;
+            }
+
+            // Ignore the transport of the entering entity.
+            if ( inHex.equals(transport) ) {
                 continue;
             }
             
@@ -784,7 +800,7 @@ public class Compute
         // okay, all clear
         return null;
     }
-    
+
     /**
      * Checks to make sure that the jump as a whole is legal, and marks
      * all steps as illegal if it is not.

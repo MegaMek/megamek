@@ -2114,9 +2114,10 @@ public boolean isPassworded() {
         // we hit...
         int direction = ae.getFacing();
 
+        Coords src = te.getPosition();
+        Coords dest = src.translated(direction);    
+        
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-            Coords src = te.getPosition();
-            Coords dest = src.translated(direction);
             phaseReport.append("succeeds: target is pushed into hex "
                                + dest.getBoardNum()
                                + "\n");
@@ -2127,8 +2128,14 @@ public boolean isPassworded() {
                 ae.setPosition(src);
             }
         } else {
+          if (game.board.getHex(dest) == null) {
+            game.moveToGraveyard(te.getId());
+            send(createRemoveEntityPacket(te.getId()));
+            phaseReport.append("succeeds: target has been forced from the field.\n");
+          } else {
             phaseReport.append("succeeds, but target can't be moved.\n");
             pilotRolls.addElement(new PilotingRollData(te.getId(), 0, "was pushed"));
+          }
         }
 
 

@@ -3572,8 +3572,8 @@ public abstract class Entity
     	return kills.size();
     }
     
-    public void addKill(Entity kill) {
-    	kills.add(kill);
+    public void addKill(int kill) {
+    	kills.add(new Integer(kill));
     }
     
     public void setGaveKillCredit(boolean credit) {

@@ -12,9 +12,19 @@
  *  for more details.
  */
 
-package megamek.common;
+package megamek.common.loaders;
 
 import java.io.*;
+
+import megamek.common.BipedMech;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mech;
+import megamek.common.QuadMech;
+import megamek.common.TechConstants;
+import megamek.common.loaders.*;
 
 public class MepFile implements MechLoader {
     String version;
@@ -153,7 +163,7 @@ public class MepFile implements MechLoader {
                 mech.setModel(this.name.substring(5).trim());
             }
             
-            mech.weight = (float)Integer.decode(this.tonnage.trim()).intValue();
+            mech.setWeight((float)Integer.decode(this.tonnage.trim()).intValue());
             mech.setYear(Integer.parseInt(this.techYear.trim()));
             mech.setOmni("OmniMech".equals(this.chassisType.trim()));
             

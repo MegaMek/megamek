@@ -13,36 +13,30 @@
  */
 
 /*
- * EntityLoadingException.java
+ * MechFileLoader.java
  *
- * Created on June 21, 2002, 11:05 AM
+ * Created on June 21, 2002, 11:03 AM
  */
 
-package megamek.common;
+package megamek.common.loaders;
+
+import megamek.common.Entity;
 
 /**
- * This exception is thrown if a mech or other cannot be properly loaded from 
- * a file due to IO errors, file format errors, or whatever.
+ * Classes implementing this interface are expected to be able to return a
+ * mech with the getMech method or throw an EntityLoadingException.  
+ * Implementing classes will probably be constructed with a file, or file 
+ * location as an argument.
  *
  * @author  Ben
  * @version 
  */
-public class EntityLoadingException extends java.lang.Exception {
-
+public interface MechLoader {
+    
     /**
-     * Creates new <code>EntityLoadingException</code> without detail message.
+     * Return a valid mech, matching the file to the best of MegaMek's current
+     * capabilities, or throw an exception with a helpful message.
      */
-    public EntityLoadingException() {
-    }
-
-
-    /**
-     * Constructs an <code>EntityLoadingException</code> with the specified detail message.
-     * @param msg the detail message.
-     */
-    public EntityLoadingException(String msg) {
-        super(msg);
-    }
+    public Entity getEntity() throws EntityLoadingException;
 }
-
 

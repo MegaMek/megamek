@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.common;
+package megamek.common.loaders;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -21,6 +21,19 @@ import java.io.IOException;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
+import megamek.common.BipedMech;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.LocationFullException;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.QuadMech;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
+import megamek.common.Entity.MovementType;
+import megamek.common.loaders.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object.  This class
@@ -327,7 +340,7 @@ public class HmpFile
         TechConstants.T_IS_LEVEL_2;
       mech.setTechLevel(techLevel);
 
-      mech.weight = tonnage;
+      mech.setWeight(tonnage);
 
       mech.setOriginalWalkMP(walkMP);
       mech.setOriginalJumpMP(jumpMP);
@@ -373,7 +386,7 @@ public class HmpFile
   private void removeArmActuators(Mech mech, long[] criticals, int location)
   {
       // Quad have leg and foot actuators, not arm and hand actuators.
-      if ( mech.movementType == Entity.MovementType.QUAD ) {
+      if ( mech.getMovementType() == Entity.MovementType.QUAD ) {
           if (!isLowerLegActuator(criticals[2])) {
               mech.setCritical(location, 2, null);
           }
@@ -493,11 +506,6 @@ public class HmpFile
         }
      }
     }
-  }
-
-  private boolean isEmpty(long critical)
-  {
-    return critical == 0x00;
   }
 
   private boolean isLowerArmActuator(long critical)

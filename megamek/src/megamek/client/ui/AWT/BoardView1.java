@@ -1986,8 +1986,16 @@ public class BoardView1
                 graph.drawPolygon(facingPolys[secFacing]);
             }
 
+            // Determine if the entity is a tank with a locked turret.
+            boolean turretLocked = false;
+            if ( entity instanceof Tank &&
+                 !( (Tank) entity ).hasNoTurret() &&
+                 !entity.canChangeSecondaryFacing() ) {
+                turretLocked = true;
+            }
+
             // draw condition strings
-            if (entity.isImmobile() && !entity.isProne()) {
+            if ( entity.isImmobile() && !entity.isProne() && !turretLocked ) {
                 // draw "IMMOBILE"
                 graph.setColor(Color.darkGray);
                 graph.drawString("IMMOBILE", 18, 39);
@@ -1999,6 +2007,12 @@ public class BoardView1
                 graph.drawString("PRONE", 26, 39);
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 38);
+            } else if ( !entity.isImmobile() && turretLocked ) {
+                // draw "LOCKED"
+                graph.setColor(Color.darkGray);
+                graph.drawString("LOCKED", 22, 39);
+                graph.setColor(Color.yellow);
+                graph.drawString("LOCKED", 21, 38);
             } else if (entity.isImmobile() && entity.isProne()) {
                 // draw "IMMOBILE" and "PRONE"
                 graph.setColor(Color.darkGray);
@@ -2008,6 +2022,15 @@ public class BoardView1
                 graph.drawString("IMMOBILE", 17, 34);
                 graph.setColor(Color.yellow);
                 graph.drawString("PRONE", 25, 47);
+            } else if ( entity.isImmobile() && turretLocked ) {
+                // draw "IMMOBILE" and "LOCKED"
+                graph.setColor(Color.darkGray);
+                graph.drawString("IMMOBILE", 18, 35);
+                graph.drawString("LOCKED", 22, 48);
+                graph.setColor(Color.red);
+                graph.drawString("IMMOBILE", 17, 34);
+                graph.setColor(Color.yellow);
+                graph.drawString("LOCKED", 21, 47);
             }
 
             // If this unit is being swarmed or is swarming another, say so.

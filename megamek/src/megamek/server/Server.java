@@ -7498,7 +7498,7 @@ implements Runnable {
                         en.getCrew().setDoomed(true);
                         break;
                     case 5 :
-                        desc += "\n            <<<CRITICAL HIT>>> Fuel tank hit.  BOOM!";
+                        desc += "\n            <<<CRITICAL HIT>>> Fuel Tank / Engine Shielding Hit (Vehicle Explodes)";
                         desc += destroyEntity(en, "fuel tank explosion", false, false);
                         en.getCrew().setDoomed(true);
                        break;

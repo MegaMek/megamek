@@ -65,6 +65,8 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private int          heightDisplayMode = SHOW_NO_HEIGHT;
     Coords               firstLOS;
     Coords               secondLOS;
+
+    private Client       m_client;
   
     /**
      * Creates and lays out a new mech display.
@@ -87,6 +89,9 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         c.addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);
         addKeyListener(c.menuBar);
+
+        // this may come in useful later...
+        m_client=c;
     }
 
     public synchronized void update(Graphics g) {
@@ -242,22 +247,22 @@ scan:
 
         if ( !m_dialog.isVisible() )
           return;
-        
+
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
         g.setColor(BACKGROUND);
         g.fillRect(0,0,getSize().width,getSize().height);
         g.setColor(oldColor);
-        if (!minimized){
+        if (!minimized) {
             roadHexIndexes.removeAllElements();
             for (int j = 0; j < m_game.board.width; j++) {
                 for (int k = 0; k < m_game.board.height; k++) {
-                  Hex h = m_game.board.getHex(j, k);
+                    Hex h = m_game.board.getHex(j, k);
                     g.setColor(terrainColor(h, j, k));
                     paintCoord(g, j, k, true);
                 }
-            }
-            
+            }          
+
             if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
             if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
 
@@ -265,10 +270,25 @@ scan:
 
             for (int j = 0; j < m_game.board.width; j++) {
                 for (int k = 0; k < m_game.board.height; k++) {
-                  Hex h = m_game.board.getHex(j, k);
-                    paintHeight(g, h, j , k);
+                    if (SHOW_NO_HEIGHT!=heightDisplayMode) {
+                        Hex h = m_game.board.getHex(j, k);
+                        paintHeight(g, h, j , k);
+                    };
                 }
             }
+
+            // draw Drop Zone
+            for (int j = 0; j < m_game.board.width; j++) {
+                for (int k = 0; k < m_game.board.height; k++) {
+                    if (null!=m_client && null!=m_game) {   // sanity check!
+                        if (Game.PHASE_DEPLOYMENT==m_game.getPhase()
+                            && m_game.getTurn().getPlayerNum()==m_client.getLocalPlayer().getId()
+                            && m_game.board.isLegalDeployment(new Coords(j,k), m_client.getLocalPlayer())) {
+                            paintSingleCoordBorder(g,j,k,Color.yellow);
+                        };
+                    };
+                }
+            }          
 
             // draw declared fire
             if (Game.PHASE_FIRING==m_game.getPhase() || Game.PHASE_PHYSICAL==m_game.getPhase()) {
@@ -286,7 +306,9 @@ scan:
                 paintUnit(g, e, true);
             }            
         }
+
         drawBtn(g);
+
         repaint();
     }
 

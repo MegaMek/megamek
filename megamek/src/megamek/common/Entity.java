@@ -2700,11 +2700,14 @@ public abstract class Entity
         // Pilot dead?
         if ( getCrew().isDead() || getCrew().isDoomed()
              || getCrew().getHits() >= 6 ) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot dead");
+            //Following line switched from impossible to automatic failure
+            //-- bug fix for dead units taking PSRs
+            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Pilot dead");
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            //Following line switched from impossible to automatic failure -- bug fix for unconscious pilots taking PSRs
+            //Following line switched from impossible to automatic failure
+            // -- bug fix for unconscious pilots taking PSRs
             return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Pilot unconscious");
         }
         // gyro operational?

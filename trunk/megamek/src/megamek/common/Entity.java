@@ -74,8 +74,10 @@ public abstract class Entity
     public int                  delta_distance = 0;
     public int                  moved = MOVE_NONE;
 
-    protected int[]             armor;
-    protected int[]             internal;
+    private int[]               armor;
+    private int[]               internal;
+    private int[]               orig_armor;
+    private int[]               orig_internal;
     public int                  damageThisPhase;
 
     protected Vector               equipmentList = new Vector();
@@ -94,6 +96,8 @@ public abstract class Entity
     public Entity() {
         this.armor = new int[locations()];
         this.internal = new int[locations()];
+        this.orig_armor = new int[locations()];
+        this.orig_internal = new int[locations()];
 
         this.crits = new CriticalSlot[locations()][];
         for (int i = 0; i < locations(); i++) {
@@ -483,6 +487,29 @@ public abstract class Entity
     }
 
     /**
+     * Returns the original amount of armor in the location specified,
+     * or ARMOR_NA, or ARMOR_DESTROYED.  Only works on front locations.
+     */
+    public int getOArmor(int loc) {
+        return getOArmor(loc, false);
+    }
+
+    /**
+     * Returns the original amount of armor in the location hit.
+     */
+    public int getOArmor(HitData hit) {
+        return getOArmor(hit.getLocation(), hit.isRear());
+    }
+
+    /**
+     * Returns the original amount of armor in the location specified,
+     * or ARMOR_NA, or ARMOR_DESTROYED.
+     */
+    public int getOArmor(int loc, boolean rear) {
+        return orig_armor[loc];
+    }
+
+    /**
      * Sets the amount of armor in the location specified.
      */
     public void setArmor(int val, HitData hit) {
@@ -504,6 +531,15 @@ public abstract class Entity
     }
 
     /**
+     * Initializes the armor on the unit. Sets the original and starting point
+     * of the armor to the same number.
+     */
+      public void initializeArmor(int val, int loc) {
+        orig_armor[loc] = val;
+        setArmor(val, loc);
+      }
+      
+    /**
     * Returns the total amount of armor on the entity.
     */
     public int getTotalArmor() {
@@ -520,6 +556,29 @@ public abstract class Entity
     }
     
     /**
+    * Returns the total amount of armor on the entity.
+    */
+    public int getTotalOArmor() {
+        int totalArmor = 0;
+        for (int i = 0; i < locations(); i++) {
+            if (getOArmor(i) > 0) {
+                totalArmor += getOArmor(i);
+            }
+            if (hasRearArmor(i) && getOArmor(i, true) > 0) {
+                totalArmor += getOArmor(i, true);
+            }
+        }
+        return totalArmor;
+    }
+    
+    /**
+     * Returns the percent of the armor remaining
+     */
+      public double getArmorRemainingPercent() {
+        return ((double)getTotalArmor() / (double)getTotalOArmor());
+      }
+      
+    /**
      * Returns the amount of internal structure in the location hit.
      */
     public int getInternal(HitData hit) {
@@ -532,6 +591,21 @@ public abstract class Entity
      */
     public int getInternal(int loc) {
         return internal[loc];
+    }
+    
+    /**
+     * Returns the original amount of internal structure in the location hit.
+     */
+    public int getOInternal(HitData hit) {
+        return getOInternal(hit.getLocation());
+    }
+
+    /**
+     * Returns the original amount of internal structure in the 
+     * location specified, or ARMOR_NA, or ARMOR_DESTROYED.
+     */
+    public int getOInternal(int loc) {
+        return orig_internal[loc];
     }
     
     /**
@@ -548,6 +622,15 @@ public abstract class Entity
         internal[loc] = val;
     }
     
+    /**
+     * Initializes the internal structure on the unit. Sets the original and starting point
+     * of the internal structure to the same number.
+     */
+      public void initializeInternal(int val, int loc) {
+        orig_internal[loc] = val;
+        setInternal(val, loc);
+      }
+      
     /**
      * Set the internal structure to the appropriate value for the mech's
      * weight class
@@ -567,6 +650,26 @@ public abstract class Entity
         return totalInternal;
     }
     
+    /**
+     * Returns the total original amount of internal structure on the entity.
+     */
+    public int getTotalOInternal() {
+        int totalInternal = 0;
+        for (int i = 0; i < locations(); i++) {
+            if (getOInternal(i) > 0) {
+                totalInternal += getOInternal(i);
+            }
+        }
+        return totalInternal;
+    }
+    
+    /**
+     * Returns the percent of the armor remaining
+     */
+      public double getInternalRemainingPercent() {
+        return ((double)getTotalInternal() / (double)getTotalOInternal());
+      }
+      
     /**
     * Is this location destroyed?
     */

@@ -122,21 +122,21 @@ public class BLKMechFile {
             }
             armor = dataFile.getDataAsInt("Armor");
             
-            mech.setArmor(armor[this.HD],mech.LOC_HEAD) ;
+            mech.initializeArmor(armor[this.HD],mech.LOC_HEAD) ;
             
-            mech.setArmor( armor[this.LA], mech.LOC_LARM );
-            mech.setArmor(armor[this.RA], mech.LOC_RARM );
-            mech.setArmor(armor[this.LL], mech.LOC_LLEG );
-            mech.setArmor(armor[this.RL], mech.LOC_RLEG );
+            mech.initializeArmor( armor[this.LA], mech.LOC_LARM );
+            mech.initializeArmor(armor[this.RA], mech.LOC_RARM );
+            mech.initializeArmor(armor[this.LL], mech.LOC_LLEG );
+            mech.initializeArmor(armor[this.RL], mech.LOC_RLEG );
             
-            mech.setArmor(armor[this.CF],mech.LOC_CT );
-            mech.setArmor( armor[this.LF],mech.LOC_LT);
-            mech.setArmor(armor[this.RF],mech.LOC_RT );
+            mech.initializeArmor(armor[this.CF],mech.LOC_CT );
+            mech.initializeArmor( armor[this.LF],mech.LOC_LT);
+            mech.initializeArmor(armor[this.RF],mech.LOC_RT );
             
             //changed...
-            mech.setArmor( armor[this.CB],mech.LOC_CT, true);
-            mech.setArmor(armor[this.LB],mech.LOC_LT, true);
-            mech.setArmor(armor[this.RB],mech.LOC_RT, true);
+            mech.initializeRearArmor( armor[this.CB],mech.LOC_CT);
+            mech.initializeRearArmor(armor[this.LB],mech.LOC_LT);
+            mech.initializeRearArmor(armor[this.RB],mech.LOC_RT);
             
             
             if (!dataFile.exists("internal armor") ) {

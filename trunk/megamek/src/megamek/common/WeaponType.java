@@ -514,6 +514,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY;
         weapon.bv = 176;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }

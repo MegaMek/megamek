@@ -104,6 +104,9 @@ public class Connection {
         receiver = null;
         sender = null;
         try {
+            synchronized (this) {
+                notifyAll();
+            }
             socket.close();
             in.close();
             out.close();

@@ -110,6 +110,16 @@ public class TestBot extends BotClientWrapper {
   /** Creates a new instance of TestBot */
   public TestBot(Frame frame, String name) {
     super(frame, name);
+    setup();
+  }
+  
+  public TestBot(String name) {
+    super(name);
+    setup();
+  }
+  
+  private void setup()
+  {
     try {
       BotProperties.load(new FileInputStream("bot.properties"));
     } catch (Exception e) {
@@ -1544,7 +1554,7 @@ public class TestBot extends BotClientWrapper {
               } else if (command.equalsIgnoreCase("attack")) {
                 int x = Integer.parseInt(st.nextToken().trim());
                 int y = Integer.parseInt(st.nextToken().trim());
-                Entity en = game.getEntity(new Coords(x - 1, y - 1));
+                Entity en = game.getFirstEntity(new Coords(x - 1, y - 1));
                 if (en != null) {
                   if (en.isEnemyOf((Entity)this.getEntitiesOwned().elementAt(0))) {
                     CEntity cen = this.enemies.get(en);

@@ -28,6 +28,13 @@ public abstract class BotClientWrapper extends BotClient {
   public BotClientWrapper(Frame frame, String name) {
     super(frame, name);
   }
+  
+  
+  /** Create a new instance that won't call System.exit() on death */
+  public BotClientWrapper(String name) {
+    super(name);
+  }
+  
   /** Will need to pick up events here later
    */
   protected void changePhase(int phase) {

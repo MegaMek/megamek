@@ -89,6 +89,10 @@ public class AmmoType extends EquipmentType {
     public static final int     M_HAYWIRE           = 1 << 20;
     public static final int     M_NEMESIS           = 1 << 21;
     public static final int     M_NARC_EX           = 1 << 22;
+    public static final int     M_HOMING            = 1 << 23;
+    public static final int     M_FASCAM            = 1 << 24;
+    public static final int     M_FASCAM_INFERNO    = 1 << 25;
+    public static final int     M_FASCAM_VIBRABOMB  = 1 << 26;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Precision",
@@ -113,6 +117,21 @@ public class AmmoType extends EquipmentType {
         criticals = 1;
         tonnage = 1.0f;
         explosive = true;
+    }
+
+    /**
+     * When comparing <code>AmmoType</code>s, just look at the ammoType.
+     *
+     * @param   other the <code>Object</code> to compare to this one.
+     * @return  <code>true</code> if the other is an <code>AmmoType</code>
+     *          object of the same <code>ammoType</code> as this object.
+     *          N.B. different munition types are still equal.
+     */
+    public boolean equals( Object other ) {
+        if ( !(other instanceof AmmoType) ) {
+            return false;
+        }
+        return this.getAmmoType() == ( (AmmoType) other ).getAmmoType();
     }
 
     public int getAmmoType() {
@@ -205,6 +224,7 @@ public class AmmoType extends EquipmentType {
         Vector srmAmmos = new Vector(9);
         Vector lrmAmmos = new Vector(24);
         Vector acAmmos  = new Vector(4);
+        Vector arrowAmmos = new Vector(2);
         Vector munitions = new Vector();
 
         Enumeration baseTypes = null;
@@ -278,7 +298,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISAMSAmmo());
         EquipmentType.addType(createISNarcAmmo());
         EquipmentType.addType(createISNarcExplosiveAmmo());
-        EquipmentType.addType(createISArrowIVAmmo());
+        base = createISArrowIVAmmo();
+        arrowAmmos.addElement( base );
+        EquipmentType.addType( base );
 
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
@@ -321,7 +343,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLATM12Ammo());
         EquipmentType.addType(createCLATM12ERAmmo());
         EquipmentType.addType(createCLATM12HEAmmo());
-        EquipmentType.addType(createCLArrowIVAmmo());
+        base = createCLArrowIVAmmo();
+        arrowAmmos.addElement( base );
+        EquipmentType.addType( base );
         base = createCLSRM1Ammo();
         srmAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -485,6 +509,30 @@ public class AmmoType extends EquipmentType {
             }
         }
 
+        // Create the munition types for Arrow IV launchers.
+        munitions.removeAllElements();
+        munitions.addElement( new MunitionMutator( "Homing",
+                                                   1, M_HOMING ) );
+        munitions.addElement( new MunitionMutator( "FASCAM",
+                                                   1, M_FASCAM ) );
+// TODO : implement me!!!
+//         munitions.addElement( new MunitionMutator( "Inferno-IV",
+//                                                    1, M_FASCAM_INFERNO ) );
+//         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+//                                                    1, M_FASCAM_VIBRABOMB ) );
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        baseTypes = arrowAmmos.elements();
+        while ( baseTypes.hasMoreElements() ) {
+            base = (AmmoType) baseTypes.nextElement();
+            mutators = munitions.elements();
+            while ( mutators.hasMoreElements() ) {
+                mutator =  (MunitionMutator) mutators.nextElement();
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
+        }
+
         // cache types that share a launcher for loadout purposes
         for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
             EquipmentType et = (EquipmentType)e.nextElement();
@@ -496,6 +544,7 @@ public class AmmoType extends EquipmentType {
             if (m_vaMunitions[nType] == null) {
                 m_vaMunitions[nType] = new Vector();
             }
+
             m_vaMunitions[nType].addElement(at);
         }
     }
@@ -3527,6 +3576,42 @@ public class AmmoType extends EquipmentType {
                 nameBuf.insert( index, ' ' );
                 nameBuf.insert( index, this.name );
                 munition.mtfName = nameBuf.toString();
+                nameBuf = null;
+
+                break;
+            case AmmoType.T_ARROW_IV:
+                // The munition name appears in the middle of all names.
+                nameBuf = new StringBuffer( base.name );
+                index = base.internalName.lastIndexOf( "Ammo" );
+                nameBuf.insert( index, ' ' );
+                nameBuf.insert( index, this.name );
+                // Do special processing for munition names ending in "IV".
+                if ( this.name.endsWith("IV") ) {
+                    index = base.internalName.indexOf( "IV" );
+                    nameBuf.deleteCharAt( index );
+                    nameBuf.deleteCharAt( index );
+                    nameBuf.deleteCharAt( index );
+                }
+                munition.name = nameBuf.toString();
+                nameBuf = new StringBuffer( base.internalName );
+                index = base.internalName.lastIndexOf( "Ammo" );
+                nameBuf.insert( index, this.name );
+                munition.internalName = nameBuf.toString();
+                nameBuf = new StringBuffer( base.mepName );
+                index = base.mepName.lastIndexOf( "Ammo" );
+                nameBuf.insert( index, ' ' );
+                nameBuf.insert( index, this.name );
+                munition.mepName = nameBuf.toString();
+                nameBuf = new StringBuffer( base.mtfName );
+                index = base.mtfName.lastIndexOf( "Ammo" );
+                nameBuf.insert( index, ' ' );
+                nameBuf.insert( index, this.name );
+                munition.mtfName = nameBuf.toString();
+                nameBuf = new StringBuffer( base.tdbName );
+                index = base.internalName.lastIndexOf( "Ammo" );
+                nameBuf.insert( index, ' ' );
+                nameBuf.insert( index, this.name );
+                munition.tdbName = nameBuf.toString();
                 nameBuf = null;
 
                 break;

@@ -321,25 +321,6 @@ public class BoardView1
         // update boardRect
         boardRect = new Rectangle(view);
         
-        /*
-        // clear the edges, if necessary
-        if (view.x < 21) {
-            Rectangle clear = new Rectangle(0, unLeft.y, 21, unRight.height);
-            clear = unLeft.intersection(clear);
-            boardGraph.clearRect(clear.x, clear.y, clear.width, clear.height);
-            System.out.println("moveboardimage: clearing " + clear);
-        }
-        if (boardRect.y < 36) {
-            boardGraph.clearRect(0, 0, boardRect.width, 36 - boardRect.y);
-        }
-        if (boardRect.x > (boardSize.width - boardRect.width - 21)) {
-            boardGraph.clearRect(boardRect.width - 21, 0, boardRect.width, boardRect.height);
-        }
-        if (boardRect.y > (boardSize.height - boardRect.height - 36)) {
-            boardGraph.clearRect(0,  boardRect.height - 36, boardRect.width, boardRect.height);
-        }
-        */
-
         // paint needed areas
         if (unLeft.width > 0) {
             drawHexes(unLeft);
@@ -611,6 +592,7 @@ public class BoardView1
         
         clearMovementData();
         
+        md.clearAllFlags();
         Compute.compile(game, entity.getId(), md);
         
         for (Enumeration i = md.getSteps(); i.hasMoreElements();) {

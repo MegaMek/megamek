@@ -405,6 +405,19 @@ public class Mech
     }
 
     /**
+     * Returns true if this weapon fires into the secondary facing arc.  If
+     * false, assume it fires into the primary.
+     */
+    public boolean isSecondaryArcWeapon(int weaponId) {
+        // leg-mounted weapons fire into the primary arc, always
+        if (getWeapon(weaponId).getLocation() == LOC_RLEG || getWeapon(weaponId).getLocation() == LOC_LLEG) {
+            return false;
+        }
+        // other weapons into the secondary
+        return true;
+    }
+    
+    /**
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
@@ -838,4 +851,5 @@ public class Mech
     
     return (int)Math.round((dbv + obv) * pilotFactor);
   }
+  
 }

@@ -620,6 +620,13 @@ public abstract class Entity
      * number, fires into.
      */
     public abstract int getWeaponArc(int wn);
+    
+    /**
+     * Returns true if this weapon fires into the secondary facing arc.  If
+     * false, assume it fires into the primary.
+     */
+    public abstract boolean isSecondaryArcWeapon(int weaponId);
+    
 
 
     /**

@@ -128,6 +128,16 @@ public class MovementData
     }
     
     /**
+     * Clear all flags in all steps
+     */
+    public void clearAllFlags() {
+        for (final Enumeration i = getSteps(); i.hasMoreElements();) {
+            final Step step = (Step)i.nextElement();
+            step.clearAllFlags();
+        }
+    }
+    
+    /**
      * Returns the final coordinates if a mech were to perform all the steps
      * in these data.
      */
@@ -288,6 +298,16 @@ public class MovementData
         
         public void setPastDanger(boolean pastDanger) {
             this.pastDanger = pastDanger;
+        }
+        
+        public void clearAllFlags() {
+            Coords position = null;
+            int facing = 0;
+            int mpUsed = 0;
+            int distance = 0;
+            int movementType = 0;
+            boolean danger = false;
+            boolean pastDanger = false;
         }
         
         /**

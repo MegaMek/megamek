@@ -1060,9 +1060,9 @@ public class Server
 
             // check piloting skill for getting up
             if (step.getType() == MovementData.STEP_GET_UP) {
+                entity.heatBuildup += 1;
                 entity.setProne(false);
                 doSkillCheckInPlace(entity, new PilotingRollData(entity.getId(), 0, "getting up"));
-                entity.heatBuildup += 1;
             } else if (firstStep) {
                 // running with destroyed hip or gyro needs a check
                 if (overallMoveType == Entity.MOVE_RUN

@@ -3109,6 +3109,12 @@ implements Runnable {
                 int nMP = te.getOriginalWalkMP();
                 if (nMP <= 1) {
                     ((Tank)te).immobilize();
+		    // Does the hovercraft sink?
+		    te_hex = game.board.getHex( te.getPosition() );
+		    if ( te.getMovementType() == Entity.MovementType.HOVER &&
+			 te_hex.levelOf(Terrain.WATER) > 0 ) {
+			desc += destroyEntity(te, "a watery grave");
+		    }
                 }
                 else {
                     te.setOriginalWalkMP(nMP - 1);
@@ -3117,6 +3123,12 @@ implements Runnable {
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc += "\n            Movement system destroyed!";
                 ((Tank)te).immobilize();
+		// Does the hovercraft sink?
+		te_hex = game.board.getHex( te.getPosition() );
+		if ( te.getMovementType() == Entity.MovementType.HOVER &&
+		     te_hex.levelOf(Terrain.WATER) > 0 ) {
+		    desc += destroyEntity(te, "a watery grave");
+		}
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
                 desc += "\n            Turret locked!";
@@ -3207,7 +3219,13 @@ implements Runnable {
                         break;
                     case 3 :
                         desc += "\n            <<<CRITICAL HIT>>> Engine destroyed.  Immobile.";
-                        tank.setOriginalWalkMP(0);
+                        tank.immobilize();
+			// Does the hovercraft sink?
+			Hex te_hex = game.board.getHex( en.getPosition() );
+			if ( en.getMovementType() == Entity.MovementType.HOVER &&
+			     te_hex.levelOf(Terrain.WATER) > 0 ) {
+			    desc += destroyEntity(en, "a watery grave");
+			}
                         break;
                     case 4 :
                         desc += "\n            <<<CRITICAL HIT>>> Crew killed";

@@ -1596,7 +1596,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-s    public static AmmoType createISFlechette5Ammo() {
+    public static AmmoType createISFlechette5Ammo() {
         AmmoType ammo = new AmmoType();
         
         ammo.name = "Flechette AC/5 Ammo";

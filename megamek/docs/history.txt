@@ -16,6 +16,8 @@ v 0.29.27 (CVS)
 + Bug 895352: Entitystatus.txt more complete now.
 + Bug 899802: don't send skip messages after the last turn.
 + Bug 900185: any move that leaves the board shouldn't be considered
++ Bug 900512: swap ID and type in ThrashAttackAction and AbstractAttackAction
++ Bug 898576: HmvFile had the wrong values for rocket launchers.
 
 v 0.29.26 (2004-02-14 2:15pm)
 + Updated "BMRr Feature List.txt" to show recent progress.

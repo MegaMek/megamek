@@ -513,9 +513,9 @@ public class HmvFile
     isEquipment.put(new Long(0x121), "ISRotaryAC2");
     isEquipment.put(new Long(0x122), "ISRotaryAC5");
     isEquipment.put(new Long(0x123), "ISHeavyGaussRifle");
-    isEquipment.put(new Long(0x129), "ISRocketLauncher10");
-    isEquipment.put(new Long(0x12A), "ISRocketLauncher15");
-    isEquipment.put(new Long(0x12B), "ISRocketLauncher20");
+    isEquipment.put(new Long(0x12B), "ISRocketLauncher10");
+    isEquipment.put(new Long(0x12C), "ISRocketLauncher15");
+    isEquipment.put(new Long(0x12D), "ISRocketLauncher20");
     isEquipment.put(new Long(0x01f0), "ISLRM5 Ammo");
     isEquipment.put(new Long(0x01f1), "ISLRM10 Ammo");
     isEquipment.put(new Long(0x01f2), "ISLRM15 Ammo");

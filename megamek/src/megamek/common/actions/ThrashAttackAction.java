@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -37,7 +37,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
     }
     
     public ThrashAttackAction(int entityId, Targetable target) {
-        super(entityId, target.getTargetId(), target.getTargetType());
+        super(entityId, target.getTargetType(), target.getTargetId());
     }
 
     /**
@@ -51,32 +51,35 @@ public class ThrashAttackAction extends AbstractAttackAction {
 	 * @return the <code>ToHitData</code> containing the target roll.
 	 */
     public ToHitData toHit(Game game) {
-		final Entity ae = game.getEntity(getEntityId());
-		Entity te = null;
-		final Targetable target = game.getTarget(getTargetId(), getTargetType());
-		if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-			te = (Entity) target;
-		}
+        final Entity ae = getEntity( game );
+        Entity te = null;
+        final Targetable target = getTarget( game );
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity) target;
+        }
 
-		// arguments legal?
-		if (ae == null || target == null) {
-			throw new IllegalArgumentException("Attacker or target not valid");
-		}
+        // arguments legal?
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
 
-		// Non-mechs can't thrash.
-		if (!(ae instanceof Mech)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Only mechs can thrash at infantry");
-		}
+        // Non-mechs can't thrash.
+        if ( !(ae instanceof Mech) ) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Only mechs can thrash at infantry" );
+        }
 
-		// Mech must be prone.
-		if (!ae.isProne()) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Only prone mechs can thrash at infantry");
-		}
+        // Mech must be prone.
+        if (!ae.isProne()) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Only prone mechs can thrash at infantry" );
+        }
 
-		// Can't thrash against non-infantry
-		if (te == null && !(te instanceof Infantry)) {
-			return new ToHitData(ToHitData.IMPOSSIBLE, "Can only thrash at infantry");
-		}
+        // Can't thrash against non-infantry
+        if (te == null && !(te instanceof Infantry)) {
+            return new ToHitData( ToHitData.IMPOSSIBLE,
+                                  "Can only thrash at infantry" );
+        }
 
 		// Can't thrash against swarming infantry.
 		else if (te != null && Entity.NONE != te.getSwarmTargetId()) {

@@ -77,6 +77,7 @@ v (next)
 + Suvarov454's infantry patch applied
 + switched attack line drawing from keeping a buffered image to on-the-fly
 + added capability to send a single changed hex from server to client
++ fixed a crash under windows JVM with infantry
 
 v 0.27.0 (09-27-02, 3:00pm)
 + 574898: bots don't instantly logout with double-blind

@@ -1251,6 +1251,7 @@ public class MovementDisplay
             client.bv.drawMovementData(ce(), cmd);
         }
     }
+    
     public void keyReleased(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_SHIFT && shiftheld) {
             shiftheld = false;

@@ -25,7 +25,7 @@ import megamek.common.*;
  * with various menu items enabled or disabled, based upon the frame
  * that owns the menu bar, and the current state of the program.
  */
-public class CommonMenuBar extends MenuBar implements ActionListener
+public class CommonMenuBar extends MenuBar implements ActionListener, KeyListener
 {
     /**
      * The <code>Game</code> current selected.
@@ -126,6 +126,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     private MenuItem physicalBrushOff   = null;
     private MenuItem physicalDodge      = null;
     private MenuItem physicalThrash     = null;
+    
+    private Client client;
 
     /**
      * A <code>Vector</code> containing the <code>ActionListener</code>s
@@ -136,6 +138,11 @@ public class CommonMenuBar extends MenuBar implements ActionListener
     /**
      * Create a MegaMek menu bar.
      */
+    public CommonMenuBar(Client parent) {
+        this();
+        client=parent;
+    };
+    
     public CommonMenuBar() {
         Menu menu = null;
         Menu submenu = null;
@@ -754,4 +761,32 @@ public class CommonMenuBar extends MenuBar implements ActionListener
 	public synchronized void setFireSpotEnabled(boolean enabled) {
     	fireSpot.setEnabled(enabled);
 	}
+    
+    //
+    // KeyListener
+    //
+    public void keyPressed(KeyEvent ev) {
+        // handle pseudo--menu-shortcuts
+        if (ev.isControlDown()) {
+            // for every menu accelerator...
+            for (Enumeration shortcuts = shortcuts(); shortcuts.hasMoreElements() ;) {
+                MenuShortcut shortcut = (MenuShortcut) shortcuts.nextElement();
+                
+                // is this keyPress the same as a menu accelerator?
+                if ((shortcut.getKey() == ev.getKeyCode()) && (shortcut.usesShiftModifier() == ev.isShiftDown()) ) {
+                    // fire off the menu action event if the menu is active
+                    if (getShortcutMenuItem(shortcut).isEnabled()) {
+                        actionPerformed( new ActionEvent(this,1,getShortcutMenuItem(shortcut).getActionCommand()) );
+                    };
+                };
+            };
+        }
+    }
+    public void keyReleased(KeyEvent ev) {
+        ;
+    }
+    public void keyTyped(KeyEvent ev) {
+        ;
+    }
+
 }

@@ -38,9 +38,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     
     private Client client;
     private GameOptions options;
-    
+
+    private boolean editable = true;
+
     private Vector optionComps = new Vector();
     
+    private AlertDialog savedAlert = null;
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
     
@@ -54,12 +57,15 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     private Button butSave = new Button("Save");
     private Button butOkay = new Button("Okay");
     private Button butCancel = new Button("Cancel");
-    
-    /** Creates new GameOptionsDialog */
-    public GameOptionsDialog(Client client) {
-        super(client.frame, "View/Edit Game Options...", true);
-        this.client = client;
-        this.options = client.game.getOptions();
+
+    /**
+     * Initialize this dialog.
+     *
+     * @param   frame - the <code>Frame</code> parent of this dialog.
+     * @param   options - the <code>GameOptions</code> to be displayed.
+     */
+    private void init( Frame frame, GameOptions options ) {
+        this.options = options;
         
         scrOptions.add(panOptions);
         
@@ -92,16 +98,44 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         add(panButtons);
         
         addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { setVisible(false); }
-  });
+                public void windowClosing(WindowEvent e) { setVisible(false); }
+            });
         
         pack();
         setSize(getSize().width, Math.max(getSize().height, 400));
         setResizable(false);
-        setLocation(client.frame.getLocation().x + client.frame.getSize().width/2 - getSize().width/2,
-                    client.frame.getLocation().y + client.frame.getSize().height/2 - getSize().height/2);
+        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
+                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+
+        savedAlert = new AlertDialog(frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.");
+
     }
-    
+
+    /**
+     * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
+     *
+     * @param   client - the <code>Client</code> parent of this dialog.
+     */
+    public GameOptionsDialog(Client client) {
+        super(client.frame, "View/Edit Game Options...", true);
+        this.client = client;
+        this.init( client.frame, client.game.getOptions() );
+    }
+
+    /**
+     * Creates new <code>GameOptionsDialog</code> for a given 
+     * <code>Frame</code>, with given set of options.
+     *
+     * @param   frame - the <code>Frame</code> parent of this dialog.
+     * @param   options - the <code>GameOptions</code> to be displayed.
+     */
+    public GameOptionsDialog( Frame frame, GameOptions options ) {
+        super(frame, "View/Edit Game Options...", true);
+        this.client = null;
+        this.init( frame, options );
+        butOkay.setEnabled( false );
+    }
+
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
@@ -118,7 +152,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         
-        if (changed.size() > 0) {
+        if (client != null && changed.size() > 0) {
             client.sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -137,7 +171,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
       
       GameOptions.saveOptions(options);
       
-      new AlertDialog(client.frame, "Options saved", "Default games options saved. Next time you host a game these options will be automatically loaded and set.").show();
+      savedAlert.show();
     }
     
     private void refreshOptions() {
@@ -180,6 +214,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
+        optionComp.setEditable( editable );
         
         optionComps.addElement(optionComp);
     }
@@ -238,4 +273,39 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         
         this.setVisible(false);
     }
+
+    /**
+     * Update the dialog so that it is editable or view-only.
+     *
+     * @param   editable - <code>true</code> if the contents of the dialog
+     *          are editable, <code>false</code> if they are view-only.
+     */
+    public void setEditable( boolean editable ) {
+
+        // Set enabled state of all of the option components in the dialog.
+        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+            DialogOptionComponent comp = 
+                (DialogOptionComponent) i.nextElement();
+            comp.setEditable( editable );
+        }
+
+        // If the panel is editable, the player can commit and save.
+        texPass.setEnabled( editable );
+        butOkay.setEnabled( editable && client != null );
+        butSave.setEnabled( editable );
+
+        // Update our data element.
+        this.editable = editable;
+    }
+
+    /**
+     * Determine whether the dialog is editable or view-only.
+     *
+     * @return  <code>true</code> if the contents of the dialog are
+     *          editable, <code>false</code> if they are view-only.
+     */
+    public boolean isEditable() {
+        return this.editable;
+    }
+        
 }

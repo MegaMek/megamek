@@ -99,7 +99,26 @@ public class DialogOptionComponent extends Panel implements MouseListener
     public GameOption getOption() {
       return option;
     }
-    
+
+    /**
+     * Update the option component so that it is editable or view-only.
+     *
+     * @param   editable - <code>true</code> if the contents of the component
+     *          are editable, <code>false</code> if they are view-only.
+     */
+    public void setEditable( boolean editable ) {
+
+        // Update the correct control.
+        switch(option.getType()) {
+        case GameOption.BOOLEAN :
+            checkbox.setEnabled( editable );
+            break;
+        default :
+            textField.setEnabled( editable );
+            break;
+        }
+    }
+
     /**
      * Returns a new option, representing the option in it's changed state.
      */

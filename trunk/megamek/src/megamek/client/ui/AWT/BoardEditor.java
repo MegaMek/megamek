@@ -30,7 +30,10 @@ public class BoardEditor extends Container
     private Game        game = new Game();
     private Board               board = game.getBoard();
     private BoardView1          bv = new BoardView1(game, frame);
-    
+    private CommonMenuBar       menuBar = new CommonMenuBar();
+    private CommonAboutDialog   about  = null;
+    private CommonHelpDialog    help   = null;
+
     private Hex                 curHex = new Hex();
 
     private String              curpath, curfile;
@@ -82,176 +85,184 @@ public class BoardEditor extends Container
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
-      Settings.load();
-      
-    this.addKeyListener(bv);
-    this.addKeyListener(this);
-    bv.addKeyListener(this);
+        Settings.load();
+
+        this.addKeyListener(bv);
+        this.addKeyListener(this);
+        bv.addKeyListener(this);
         board.addBoardListener(this);
-        
+
         bv.setUseLOSTool(false);
-        
-    setupEditorPanel();
-    setupFrame();
-    
-    frame.show();
-    
-    new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
+
+        setupEditorPanel();
+        setupFrame();
+
+        frame.show();
+
+        new AlertDialog(frame, "Please read the editor-readme.txt", "Instructions for using the editor may be found in editor-readme.txt.").show();
     }
     
     /**
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
-    frame.setTitle("MegaMek Board Editor : Unnamed");
-      frame.setLayout(new BorderLayout());
-      frame.add(bv, BorderLayout.CENTER);
-      frame.add(this, BorderLayout.EAST);
+        frame.setTitle("MegaMek Board Editor : Unnamed");
+        frame.setLayout(new BorderLayout());
+        frame.add(bv, BorderLayout.CENTER);
+        frame.add(this, BorderLayout.EAST);
+
+        menuBar.addActionListener( this );
+        frame.setMenuBar( menuBar );
       
-    frame.setBackground(SystemColor.menu);
-    frame.setForeground(SystemColor.menuText);
+        frame.setBackground(SystemColor.menu);
+        frame.setForeground(SystemColor.menuText);
     
-      // maybe we should have our own settings, instead of using the client's
-    if (Settings.windowSizeHeight != 0) {
-      frame.setLocation(Settings.windowPosX, Settings.windowPosY);
-      frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
-    } else {
-      frame.setSize(800, 600);
+        // maybe we should have our own settings, instead of using the client's
+        if (Settings.windowSizeHeight != 0) {
+            frame.setLocation(Settings.windowPosX, Settings.windowPosY);
+            frame.setSize(Settings.windowSizeWidth, Settings.windowSizeHeight);
+        } else {
+            frame.setSize(800, 600);
+        }
+
+        // when frame is closing, just hide it
+        frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    frame.setVisible(false);
+                    setMapVisible(false);
+                }
+            });
     }
-    
-    // when frame is closing, just hide it
-    frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        frame.setVisible(false);
-        setMapVisible(false);
-      }
-    });
-    }
-    
+
     /**
      * Sets up the editor panel, which goes on the right of the map and has
      * controls for editing the current square.
      */
     private void setupEditorPanel() {
-    canHex = new HexCanvas();
-    labElev = new Label("Elev:", Label.RIGHT);
-    texElev = new TextField("0", 1);
-    texElev.addActionListener(this);
-    texElev.addTextListener(this);
-    butElevUp = new Button("U");
-    butElevUp.addActionListener(this);
-    butElevDown = new Button("D");
-    butElevDown.addActionListener(this);
+        canHex = new HexCanvas();
+        labElev = new Label("Elev:", Label.RIGHT);
+        texElev = new TextField("0", 1);
+        texElev.addActionListener(this);
+        texElev.addTextListener(this);
+        butElevUp = new Button("U");
+        butElevUp.addActionListener(this);
+        butElevDown = new Button("D");
+        butElevDown.addActionListener(this);
     
-    labTerrain = new Label("Terrain:", Label.LEFT);
-    lisTerrain = new java.awt.List(6);
-    lisTerrain.addItemListener(this);
-    refreshTerrainList();
+        labTerrain = new Label("Terrain:", Label.LEFT);
+        lisTerrain = new java.awt.List(6);
+        lisTerrain.addItemListener(this);
+        refreshTerrainList();
         
-    butDelTerrain = new Button("Remove Terrain");
-    butDelTerrain.addActionListener(this);
+        butDelTerrain = new Button("Remove Terrain");
+        butDelTerrain.addActionListener(this);
         
-    choTerrainType = new Choice();
-    for (int i = 1; i < Terrain.SIZE; i++) {
-      choTerrainType.add(Terrain.getName(i));
+        choTerrainType = new Choice();
+        for (int i = 1; i < Terrain.SIZE; i++) {
+            choTerrainType.add(Terrain.getName(i));
+        }
+        
+        texTerrainLevel = new TextField("0", 1);
+        
+        butAddTerrain = new Button("Add/Set Terrain");
+        butAddTerrain.addActionListener(this);
+        
+        butMiniMap = new Button("Toggle MiniMap");
+        butMiniMap.setActionCommand( "viewMiniMap" );
+        butMiniMap.addActionListener(this);
+        
+        panTerrainType = new Panel(new BorderLayout());
+        panTerrainType.add(choTerrainType, BorderLayout.WEST);
+        panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
+        
+        cheTerrExitSpecified = new Checkbox("Set Exits : ");
+        butTerrExits = new Button("A");
+        texTerrExits = new TextField("0", 1);
+        butTerrExits.addActionListener(this);
+    
+        panTerrExits = new Panel(new FlowLayout());
+        panTerrExits.add(cheTerrExitSpecified);
+        panTerrExits.add(butTerrExits);
+        panTerrExits.add(texTerrExits);
+
+        panRoads = new Panel(new FlowLayout());
+        cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
+        cheRoadsAutoExit.addItemListener( this );
+        panRoads.add(cheRoadsAutoExit);
+
+        labTheme = new Label("Theme:", Label.LEFT);
+        texTheme = new TextField("", 15);
+        texTheme.addTextListener(this);
+
+        labBoard = new Label("Board:", Label.LEFT);
+        butBoardNew = new Button("New...");
+        butBoardNew.setActionCommand( "fileBoardNew" );
+        butBoardNew.addActionListener(this);
+
+        butBoardLoad = new Button("Load...");
+        butBoardLoad.setActionCommand( "fileBoardOpen" );
+        butBoardLoad.addActionListener(this);
+
+        butBoardSave = new Button("Save");
+        butBoardSave.setActionCommand( "fileBoardSave" );
+        butBoardSave.addActionListener(this);
+
+        butBoardSaveAs = new Button("Save As...");
+        butBoardSaveAs.setActionCommand( "fileBoardSaveAs" );
+        butBoardSaveAs.addActionListener(this);
+        
+        panButtons = new Panel(new GridLayout(2, 2, 2, 2));
+        panButtons.add(butBoardNew);
+        panButtons.add(butBoardLoad);
+        panButtons.add(butBoardSave);
+        panButtons.add(butBoardSaveAs);
+        
+        blankL = new Label("", Label.CENTER);
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;    c.weighty = 0.0;
+        c.insets = new Insets(4, 4, 1, 1);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER; 
+        addBag(canHex, gridbag, c);
+        c.gridwidth = 1; 
+        addBag(labElev, gridbag, c);
+        addBag(butElevUp, gridbag, c);
+        addBag(butElevDown, gridbag, c);
+        c.gridwidth = GridBagConstraints.REMAINDER; 
+        addBag(texElev, gridbag, c);
+        
+        addBag(labTerrain, gridbag, c);
+        addBag(lisTerrain, gridbag, c);
+        addBag(butDelTerrain, gridbag, c);
+        addBag(panTerrainType, gridbag, c);
+        addBag(panTerrExits, gridbag, c);
+        addBag(panRoads, gridbag, c);
+        addBag(labTheme, gridbag, c);
+        addBag(texTheme, gridbag, c);
+        addBag(butAddTerrain, gridbag, c);
+        addBag(butMiniMap, gridbag, c);
+    
+        c.weightx = 1.0;    c.weighty = 1.0;
+        addBag(blankL, gridbag, c);
+        
+        c.weightx = 1.0;    c.weighty = 0.0;
+        addBag(labBoard, gridbag, c);
+        addBag(panButtons, gridbag, c);
+
+        minimapW = new Dialog(frame, "MiniMap", false);
+        minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
+        minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
+        minimap = new MiniMap(minimapW, game, bv);
+        minimapW.addWindowListener(this);
+        minimapW.add(minimap);
+
+        setMapVisible(true);
     }
-        
-    texTerrainLevel = new TextField("0", 1);
-        
-    butAddTerrain = new Button("Add/Set Terrain");
-    butAddTerrain.addActionListener(this);
-        
-    butMiniMap = new Button("Toggle MiniMap");
-    butMiniMap.addActionListener(this);
-        
-    panTerrainType = new Panel(new BorderLayout());
-    panTerrainType.add(choTerrainType, BorderLayout.WEST);
-    panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
-        
-    cheTerrExitSpecified = new Checkbox("Set Exits : ");
-    butTerrExits = new Button("A");
-    texTerrExits = new TextField("0", 1);
-    butTerrExits.addActionListener(this);
-    
-    panTerrExits = new Panel(new FlowLayout());
-    panTerrExits.add(cheTerrExitSpecified);
-    panTerrExits.add(butTerrExits);
-    panTerrExits.add(texTerrExits);
-
-    panRoads = new Panel(new FlowLayout());
-    cheRoadsAutoExit = new Checkbox("Exit Roads to Pavement");
-    cheRoadsAutoExit.addItemListener( this );
-    panRoads.add(cheRoadsAutoExit);
-
-    labTheme = new Label("Theme:", Label.LEFT);
-    texTheme = new TextField("", 15);
-    texTheme.addTextListener(this);
-
-    labBoard = new Label("Board:", Label.LEFT);
-    butBoardNew = new Button("New...");
-    butBoardNew.addActionListener(this);
-
-    butBoardLoad = new Button("Load...");
-    butBoardLoad.addActionListener(this);
-
-    butBoardSave = new Button("Save");
-    butBoardSave.addActionListener(this);
-
-    butBoardSaveAs = new Button("Save As...");
-    butBoardSaveAs.addActionListener(this);
-        
-    panButtons = new Panel(new GridLayout(2, 2, 2, 2));
-    panButtons.add(butBoardNew);
-    panButtons.add(butBoardLoad);
-    panButtons.add(butBoardSave);
-    panButtons.add(butBoardSaveAs);
-        
-    blankL = new Label("", Label.CENTER);
-        
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    setLayout(gridbag);
-        
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 0.0;    c.weighty = 0.0;
-    c.insets = new Insets(4, 4, 1, 1);
-        
-    c.gridwidth = GridBagConstraints.REMAINDER; 
-    addBag(canHex, gridbag, c);
-    c.gridwidth = 1; 
-    addBag(labElev, gridbag, c);
-    addBag(butElevUp, gridbag, c);
-    addBag(butElevDown, gridbag, c);
-    c.gridwidth = GridBagConstraints.REMAINDER; 
-    addBag(texElev, gridbag, c);
-        
-    addBag(labTerrain, gridbag, c);
-    addBag(lisTerrain, gridbag, c);
-    addBag(butDelTerrain, gridbag, c);
-    addBag(panTerrainType, gridbag, c);
-    addBag(panTerrExits, gridbag, c);
-    addBag(panRoads, gridbag, c);
-    addBag(labTheme, gridbag, c);
-    addBag(texTheme, gridbag, c);
-    addBag(butAddTerrain, gridbag, c);
-    addBag(butMiniMap, gridbag, c);
-    
-    c.weightx = 1.0;    c.weighty = 1.0;
-    addBag(blankL, gridbag, c);
-        
-    c.weightx = 1.0;    c.weighty = 0.0;
-    addBag(labBoard, gridbag, c);
-    addBag(panButtons, gridbag, c);
-
-    minimapW = new Dialog(frame, "MiniMap", false);
-    minimapW.setLocation(Settings.minimapPosX, Settings.minimapPosY);
-    minimapW.setSize(Settings.minimapSizeWidth, Settings.minimapSizeHeight);
-    minimap = new MiniMap(minimapW, game, bv);
-    minimapW.addWindowListener(this);
-    minimapW.add(minimap);
-
-    setMapVisible(true);
-  }
     
     private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
@@ -362,6 +373,7 @@ public class BoardEditor extends Container
             curpath = null;
             curfile = null;
             frame.setTitle("MegaMek Board Editor : Unnamed");
+            menuBar.setBoard( true );
         }
     }
     
@@ -384,6 +396,7 @@ public class BoardEditor extends Container
             board.load(is);
             // okay, done!
             is.close();
+            menuBar.setBoard( true );
         } catch(IOException ex) {
             System.err.println("error opening file to save!");
             System.err.println(ex);
@@ -557,18 +570,45 @@ public class BoardEditor extends Container
     public void keyTyped(KeyEvent ke) {
         ;
     }
-    
+
+    /**
+     * Called when the user selects the "Help->About" menu item.
+     */
+    private void showAbout() {
+        // Do we need to create the "about" dialog?
+        if ( this.about == null ) {
+            this.about = new CommonAboutDialog( this.frame );
+        }
+
+        // Show the about dialog.
+        this.about.show();
+    }
+
+    /**
+     * Called when the user selects the "Help->Contents" menu item.
+     */
+    private void showHelp() {
+        // Do we need to create the "help" dialog?
+        if ( this.help == null ) {
+            File helpfile = new File( "editor-readme.txt" );
+            this.help = new CommonHelpDialog( this.frame, helpfile );
+        }
+
+        // Show the help dialog.
+        this.help.show();
+    }
+
     //
     // ActionListener
     //
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == butBoardNew) {
+        if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) {
             boardNew();
-        } else if (ae.getSource() == butBoardLoad) {
-            boardLoad();
-        } else if (ae.getSource() == butBoardSave) {
-            boardSave();
-        } else if (ae.getSource() == butBoardSaveAs) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) {
+            boardLoad();                                            
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSave")) {
+            boardSave();                                            
+        } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAs")) {
             boardSaveAs();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
             Terrain toRemove = new Terrain(lisTerrain.getSelectedItem());
@@ -592,8 +632,12 @@ public class BoardEditor extends Container
             ed.show();
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
-        } else if (ae.getSource() == butMiniMap) {
+        } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) {
             toggleMap();
+        } else if (ae.getActionCommand().equalsIgnoreCase("helpAbout")) {
+            showAbout();
+        } else if (ae.getActionCommand().equalsIgnoreCase("helpContents")) {
+            showHelp();
         }
     }
 

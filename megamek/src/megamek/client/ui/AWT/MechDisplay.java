@@ -1105,17 +1105,31 @@ class SystemPanel
             }
             
             boolean bDumping;
+            boolean bConfirmed = false;
             
             if (m.isPendingDump()) {
                 bDumping = false;
-                client.cb.systemMessage(m.getName() + " WON'T be dumped next turn.");
+                String title = "Cancel Dumping Ammo?";
+                String body = "Do you want to cancel dumping " + m.getName() + "?";
+                bConfirmed = client.doYesNoDialog(title, body);
             }
             else {
                 bDumping = true;
-                client.cb.systemMessage(m.getName() + " will be dumped next turn.");
+                String title = "Dump Ammo?";
+                String body = "Do you want to dump " + m.getName() + "?\n\n"
+                    + "Ammo dumping will start at the beginning of the next game turn.\n"
+                    + "You will not be able to use the ammo while it is being dumped,\n"
+                    + "but it can still be critically hit or explode from heat buildup.\n"
+                    + "It will also explode as the result of any rear torso hit that\n"
+                    + "turn.  Additionally, you will not be able to run or jump while\n"
+                    + "you are dumping ammo.";
+                bConfirmed = client.doYesNoDialog(title, body);
             }
-            m.setPendingDump(bDumping);
-            client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+            
+            if (bConfirmed) {
+                m.setPendingDump(bDumping);
+                client.sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+            }
         }
     }
     

@@ -1328,9 +1328,15 @@ public abstract class Entity
      * turn
      */
     public boolean weaponFiredFrom(int loc) {
-        for (Enumeration i = weaponList.elements(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.getLocation() == loc && mounted.isUsedThisRound()) {
+        // check critical slots for used weapons
+        for (int i = 0; i < this.getNumberOfCriticals(loc); i++) {
+            CriticalSlot slot = getCritical(loc, i);
+            // ignore empty & system slots
+            if (slot == null || slot.getType() != CriticalSlot.TYPE_EQUIPMENT) {
+                continue;
+            }
+            Mounted mounted = getEquipment(slot.getIndex());
+            if (mounted.getType() instanceof WeaponType && mounted.isUsedThisRound()) {
                 return true;
             }
         }

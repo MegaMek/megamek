@@ -774,8 +774,8 @@ public class AmmoType extends EquipmentType {
         ammo.internalName = "ISAMS Ammo";
         ammo.mepName = ammo.internalName;  // ?
         ammo.mtfName = ammo.internalName;
-        ammo.damagePerShot = 2; // only used for ammo crits
-        ammo.rackSize = 1;
+        ammo.damagePerShot = 1; // only used for ammo crits
+        ammo.rackSize = 2; // only used for ammo crits
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 12;
         ammo.bv = 11;
@@ -1269,8 +1269,8 @@ public class AmmoType extends EquipmentType {
         ammo.internalName = "CLNarc Pods";
         ammo.mepName = ammo.internalName; // ?
         ammo.mtfName = ammo.internalName;
-        ammo.damagePerShot = 1; // only used for ammo crits
-        ammo.rackSize = 2; // only used for ammo crits
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
         ammo.shots = 6;
         ammo.bv = 0;

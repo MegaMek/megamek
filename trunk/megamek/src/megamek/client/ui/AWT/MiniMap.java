@@ -41,6 +41,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     private final int    minHexSide = 3;
     private int          hexSideByCos30;
     private int          hexSideBySin30;
+    private int          minMargin = 3;
     private int          topMargin;
     private int          leftMargin;
     private int          heightBufer;
@@ -95,14 +96,14 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         double heightFactor = (2*m_game.board.height+1)*cos30;
         double widthFactor = (1.5 * m_game.board.width + 0.5);
         m_dialog.show();
-        hexSide = (int) ( Math.min((getSize().height - 14)/(heightFactor + 2), getSize().width/(widthFactor + 2)));
+        hexSide = (int) ( Math.min((getSize().height - 14 - minMargin*2)/heightFactor, (getSize().width - minMargin*2)/widthFactor));
         hexSide = Math.max(hexSide, minHexSide);
         hexSideByCos30 = (int) Math.round(hexSide* cos30);
         hexSideBySin30 = (int) Math.round(hexSide/2);
         halfRoadWidth =  (int) (hexSide/4);
         halfRoadWidthByCos30 = (int) (hexSide*cos30/4);
         halfRoadWidthBySin30 = (int) (hexSide/8);
-        if ((halfRoadWidthByCos30 == 0) ||(halfRoadWidthByCos30 == 0)){
+        if ((halfRoadWidthByCos30 == 0) ||(halfRoadWidthBySin30 == 0)){
             halfRoadWidth = 0;
             halfRoadWidthByCos30 = 0;
             halfRoadWidthBySin30 = 0;

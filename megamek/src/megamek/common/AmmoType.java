@@ -828,6 +828,60 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+    public static AmmoType createISLongTomAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Long Tom Ammo";
+        ammo.setInternalName("ISLongTomAmmo");
+        ammo.addLookupName("ISLongTom Ammo");
+        ammo.addLookupName("ISLongTomArtillery Ammo");
+        ammo.addLookupName("IS Ammo Long Tom");
+        ammo.addLookupName("IS Long Tom Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LONG_TOM;
+        ammo.shots = 5;
+        ammo.bv = 11;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISSniperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Sniper Ammo";
+        ammo.setInternalName("ISSniperAmmo");
+        ammo.addLookupName("ISSniper Ammo");
+        ammo.addLookupName("ISSniperArtillery Ammo");
+        ammo.addLookupName("IS Ammo Sniper");
+        ammo.addLookupName("IS Sniper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_SNIPER;
+        ammo.shots = 10;
+        ammo.bv = 5;
+
+        return ammo;
+    }
+    
+    public static AmmoType createISThumperAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Thumper Ammo";
+        ammo.setInternalName("ISThumperAmmo");
+        ammo.addLookupName("ISThumper Ammo");
+        ammo.addLookupName("ISThumperArtillery Ammo");
+        ammo.addLookupName("IS Ammo Thumper");
+        ammo.addLookupName("IS Thumper Ammo");
+        ammo.damagePerShot=1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_THUMPER;
+        ammo.shots = 20;
+        ammo.bv = 3;
+
+        return ammo;
+    }
 
     // Start of Level2 Ammo
 
@@ -2847,25 +2901,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
       }
 
-    public static AmmoType createISLongTomAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Long Tom Ammo";
-        ammo.setInternalName("ISLongTomAmmo");
-        ammo.addLookupName("ISLongTom Ammo");
-        ammo.addLookupName("ISLongTomArtillery Ammo");
-        ammo.addLookupName("IS Ammo Long Tom");
-        ammo.addLookupName("IS Long Tom Ammo");
-        ammo.damagePerShot=1;
-        ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LONG_TOM;
-        ammo.shots = 5;
-        ammo.bv = 11;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-
-        return ammo;
-    }
-
     public static AmmoType createCLLongTomAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -2885,25 +2920,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
       }
 
-    public static AmmoType createISSniperAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Sniper Ammo";
-        ammo.setInternalName("ISSniperAmmo");
-        ammo.addLookupName("ISSniper Ammo");
-        ammo.addLookupName("ISSniperArtillery Ammo");
-        ammo.addLookupName("IS Ammo Sniper");
-        ammo.addLookupName("IS Sniper Ammo");
-        ammo.damagePerShot=1;
-        ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_SNIPER;
-        ammo.shots = 10;
-        ammo.bv = 5;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-
-        return ammo;
-    }
-
     public static AmmoType createCLSniperAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -2922,25 +2938,6 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
       }
-
-    public static AmmoType createISThumperAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Thumper Ammo";
-        ammo.setInternalName("ISThumperAmmo");
-        ammo.addLookupName("ISThumper Ammo");
-        ammo.addLookupName("ISThumperArtillery Ammo");
-        ammo.addLookupName("IS Ammo Thumper");
-        ammo.addLookupName("IS Thumper Ammo");
-        ammo.damagePerShot=1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_THUMPER;
-        ammo.shots = 20;
-        ammo.bv = 3;
-        ammo.techType = TechConstants.T_IS_LEVEL_2;
-
-        return ammo;
-    }
 
     public static AmmoType createCLThumperAmmo() {
         AmmoType ammo = new AmmoType();

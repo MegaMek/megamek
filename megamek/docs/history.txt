@@ -16,6 +16,7 @@ v0.29.72 (CVS)
     movement phase.
 + Bug 1116020: made customize unit dialog scrollable, for mechs with lots of
     ammo.
++ Bug 1119505: can't customize long tom units when lobby_ammo_dump is on
 
 v0.29.71 (2005-03-27 9:30am)
 + RFE 1167547: Differentiating between club/hatchet attacks.

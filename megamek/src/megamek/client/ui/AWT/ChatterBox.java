@@ -14,11 +14,15 @@
 
 package megamek.client;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-
-import megamek.common.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Component;
+import java.awt.List;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * ChatterBox keeps track of a player list and a (chat) message
@@ -71,27 +75,7 @@ implements GameListener, KeyListener {
             chatArea.setCaretPosition(last);
         }
     }
-    
-    /**
-     * Refreshes the player list component with information
-     * from the game object.
-     */
-    public void refreshPlayerList() {
-        playerList.removeAll();
-        for(Enumeration e = client.getPlayers(); e.hasMoreElements();) {
-            final Player player = (Player)e.nextElement();
-            StringBuffer playerDisplay = new StringBuffer(player.getName());
-            if (player.isGhost()) {
-                playerDisplay.append(" [ghost]");
-            } else if (player.isObserver()) {
-                playerDisplay.append(" [observer]");
-            } else if (player.isDone()) {
-                playerDisplay.append(" (done)");
-            }
-            playerList.add(playerDisplay.toString());
-        }
-    }
-    
+        
     /**
      * Returns the "box" component with all teh stuff
      */
@@ -124,19 +108,19 @@ implements GameListener, KeyListener {
     //
     public void gamePlayerChat(GameEvent ev) {
         chatArea.append("\n" + ev.getMessage());
-        refreshPlayerList();
+        PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gamePlayerStatusChange(GameEvent ev) {
-        refreshPlayerList();
+		PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameTurnChange(GameEvent ev) {
-        refreshPlayerList();
+		PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gamePhaseChange(GameEvent ev) {
-        refreshPlayerList();
+		PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameNewEntities(GameEvent ev) {
-        refreshPlayerList();
+		PlayerListDialog.refreshPlayerList(playerList, client);
     }
     public void gameNewSettings(GameEvent ev) {
         ;

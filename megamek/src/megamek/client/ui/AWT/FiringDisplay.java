@@ -305,7 +305,7 @@ public class FiringDisplay
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
-            setFindClubEnabled(Compute.canMechFindClub(client.game, en));
+            setFindClubEnabled(FindClubAction.canMechFindClub(client.game, en));
             setSpotEnabled(ce().canSpot()
               && client.game.getOptions().booleanOption("indirect_fire"));
             setFlipArmsEnabled(ce().canFlipArms());

@@ -360,7 +360,7 @@ public class MovementDisplay
         updateRACButton();
         updateLoadButtons();
 
-        setFleeEnabled(Compute.canEntityFlee(client.game, cen));
+        setFleeEnabled(ce().canFlee());
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) {
           setEjectEnabled ( (!isInfantry) && ce().isActive());
         } else {

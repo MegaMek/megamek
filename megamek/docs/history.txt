@@ -74,6 +74,7 @@ v CVS
 + 648138 fixed C3 showing up on mechs that shouldn't have it 
 + 646609 intentional fires set at correct level
 + added movement display colors to config file
++ bot deploys itself
 
 v 0.27.9 (12-01-02, 12:19pm)
 + 642892: charging units don't move into the target's hex until resolution

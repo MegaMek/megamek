@@ -34,4 +34,15 @@ public class BotFactory {
     }
   }
   
+    public static Client getBot(int type, String name) {
+        switch (type) {
+            case TEST :
+                return new TestBot(name);
+            case HUMAN :
+                return new Client(name);
+            default :
+                return new BotClient(name);
+        }
+    }
+  
 }

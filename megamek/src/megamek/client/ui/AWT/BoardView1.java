@@ -209,7 +209,9 @@ public class BoardView1
      * Repaint the bounds of a sprite, offset by view
      */
     private void repaintBounds(Rectangle bounds) {
-        repaint(bounds.x - view.x, bounds.y - view.y, bounds.width, bounds.height);
+        if (view != null) {
+            repaint(bounds.x - view.x, bounds.y - view.y, bounds.width, bounds.height);
+        }
     }
     
     /**
@@ -266,18 +268,23 @@ public class BoardView1
                             boardRect.x - view.x, boardRect.y - view.y);
         
         // what's left to paint?
+        int midX = Math.max(view.x, boardRect.x);
+        int midWidth = view.width - Math.abs(view.x - boardRect.x);
         Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x, view.height); 
         Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height); 
-        Rectangle unTop = new Rectangle(view.x, view.y, view.width, boardRect.y - view.y); 
-        Rectangle unBottom = new Rectangle(view.x, boardRect.y + boardRect.height, view.width, view.y - boardRect.y); 
+        Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y - view.y); 
+        Rectangle unBottom = new Rectangle(midX, boardRect.y + boardRect.height, midWidth, view.y - boardRect.y); 
         
         // update boardRect
         boardRect = new Rectangle(view);
         
         /*
 		// clear the edges, if necessary
-		if (boardRect.x < 21) {
-			boardGraph.clearRect(0, 0, 21 - boardRect.x, boardRect.height);
+		if (view.x < 21) {
+            Rectangle clear = new Rectangle(0, unLeft.y, 21, unRight.height);
+            clear = unLeft.intersection(clear);
+			boardGraph.clearRect(clear.x, clear.y, clear.width, clear.height);
+            System.out.println("moveboardimage: clearing " + clear);
 		}
 		if (boardRect.y < 36) {
 			boardGraph.clearRect(0, 0, boardRect.width, 36 - boardRect.y);
@@ -301,7 +308,6 @@ public class BoardView1
         } else if (unBottom.height > 0) {
             drawHexes(unBottom);
         }
-        
     }
     
     /**

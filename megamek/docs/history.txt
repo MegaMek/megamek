@@ -101,9 +101,10 @@ VERSION HISTORY:
 ----------------
 v next
 + fast-drawin' cursors
-+ image filters for tint, transparency
++ image filters for tint, transparency (slower?)
 + movement now showing
-+ new scrolling caching system
++ new scrolling cache system
++ (not display related) buggy LOS back to normal levels of buggyness
 
 v 0.23.1 (03-04-02, 4:48pm)
 + new board display stuff

@@ -201,7 +201,7 @@ public class Client extends Panel
             socket.close();
             in.close();
             out.close();
-        } catch (IOException ex) { ; }
+        } catch (java.lang.Exception ex) { ; }
         
         if (standalone) {
             System.exit(0);

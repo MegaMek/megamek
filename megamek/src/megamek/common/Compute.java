@@ -1523,10 +1523,10 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
         }
 
-  // non-mechs can't punch
-  if (!(ae instanceof Mech)) {
-      return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
-  }
+        // non-mechs can't punch
+        if (!(ae instanceof Mech)) {
+        	return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
+        }
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {

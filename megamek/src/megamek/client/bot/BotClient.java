@@ -398,7 +398,7 @@ public class BotClient extends Client
      {
         Vector v = new Vector();
         MoveOption opt = new MoveOption();
-        calculateRunWalkMoveOptions(entity, v, opt, 0);
+        calculateRunWalkMoveOptions(entity, v, opt, game.getEntity(entity).mpUsed);
         
         return v;
      }

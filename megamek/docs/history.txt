@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.45 (CVS)
+
 v0.29.44 (2004-08-08 9:30pm)
 + Bug 1003021: Could not clear burning woods.
 + Bug 1003688: Bot wasn't ignoring loaded units (patch from weaselflink).

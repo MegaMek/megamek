@@ -2131,7 +2131,7 @@ public class BoardView1
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!(entity instanceof Mech)) {
+            if (!(entity instanceof Mech || entity instanceof Protomech)) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;

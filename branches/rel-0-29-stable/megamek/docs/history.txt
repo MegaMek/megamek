@@ -113,9 +113,10 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.29-stable-6 (cvs)
+v 0.29-stable-6 (2003-11-09 11:20 AM EST)
 + Bug 834457: MicroSoft JRE can't use PNG files.  Sad, really.
 + Bug 837237, Patch 838203: you can define "rear of leg/arm" hit locations!
++ Bug 834858: Don't replace out-of-game Vector with a null.
 
 v 0.29-stable-5 (10-28-03, 7:00 pm)
 + Bug 825739: Attempt to squash InputContext exception in Client#die().

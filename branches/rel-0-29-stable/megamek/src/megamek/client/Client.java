@@ -829,8 +829,10 @@ public class Client extends Panel
 
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
-        game.setOutOfGameEntitiesVector(newOutOfGame);
-        
+        if ( null != newOutOfGame ) {
+            game.setOutOfGameEntitiesVector(newOutOfGame);
+        }
+
         processGameEvent(new GameEvent(this, GameEvent.GAME_NEW_ENTITIES, null, null));
         //XXX Hack alert!
         bv.boardNewEntities(new BoardEvent(game.board, null, null, 0, 0)); //XXX

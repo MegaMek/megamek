@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.29.41 (CVS)
+
 v0.29.40 (2004-07-11 6:15pm)
 + Bug 985884: Possible fix for this NPE bug.
 + Bug 953501: Attempted fix for the "memory leak".

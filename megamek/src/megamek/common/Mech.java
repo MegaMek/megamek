@@ -188,6 +188,14 @@ public abstract class Mech
                 m.setShotsLeft(0);
             }
         }
+        
+        // turn off MASC
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_MASC)) {
+                m.setMode("Off");
+            }
+        }                
     }
     
     

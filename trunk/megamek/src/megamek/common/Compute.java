@@ -479,7 +479,6 @@ public class Compute
         boolean isInfantry = (entity instanceof Infantry);
         boolean isTurning = false;
         boolean isUnloaded = false;
-        boolean prevStepOnPavement = false;
         boolean isProne = entity.isProne();
         
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
@@ -602,8 +601,7 @@ public class Compute
             danger = step.isDanger();
             danger |= isPilotingSkillNeeded( game, entityId, lastPos, 
                                              curPos, moveType,
-                                             isTurning, overallMoveType,
-                                             prevStepOnPavement );
+                                             isTurning, overallMoveType );
 
             // getting up is also danger
             if (stepType == MovementData.STEP_GET_UP) {
@@ -641,9 +639,6 @@ public class Compute
                 firstStep = true;
             }
 
-            // Record if the step just taken was along pavement or a road.
-            prevStepOnPavement = step.isOnPavement();
-            
             // update prone state
             if (stepType == MovementData.STEP_GO_PRONE) {
                 isProne = true;
@@ -1082,8 +1077,7 @@ public class Compute
                                                 Coords src, Coords dest,
                                                 int movementType,
 						boolean isTurning,
-						int overallMoveType,
-                                                boolean prevStepIsOnPavement) {
+						int overallMoveType) {
         final Entity entity = game.getEntity(entityId);
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);
@@ -1120,7 +1114,11 @@ public class Compute
 
         // Check for skid.  Please note, the skid will be rolled on the
         // current step, but starts from the previous step's location.
-        if ( prevStepIsOnPavement
+        // TODO: add check for elevation of pavement, road,
+        //       or bridge matches entity elevation.
+        if ( ( srcHex.contains(Terrain.PAVEMENT) ||
+               srcHex.contains(Terrain.ROAD) ||
+               srcHex.contains(Terrain.BRIDGE) ) 
              && overallMoveType == Entity.MOVE_RUN
              && isTurning
              && !isInfantry ) {

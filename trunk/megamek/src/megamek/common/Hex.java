@@ -234,7 +234,7 @@ public class Hex
             }
         }
         return present;
-    }
+    }    
     
     /**
      * Returns a pretty deep clone

@@ -711,6 +711,7 @@ implements Runnable {
                     endCurrentPhase();
                 }
                 break;
+            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
@@ -766,11 +767,12 @@ implements Runnable {
                 game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
                 mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
                 // deploy all entities
-                Coords center = new Coords(game.board.width / 2, game.board.height / 2);
+                /*Coords center = new Coords(game.board.width / 2, game.board.height / 2);
                 for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     Entity entity = (Entity)i.nextElement();
                     deploy(entity, getStartingCoords(entity.getOwner().getStartingPos()), center, 10);
                 }
+                */
                 break;
             case Game.PHASE_INITIATIVE :
                 // remove the last traces of last round
@@ -786,6 +788,7 @@ implements Runnable {
                 writeInitiativeReport();
                 send(createReportPacket());
                 break;
+            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
@@ -828,6 +831,7 @@ implements Runnable {
      */
     private boolean isPhasePlayable(int phase) {
         switch (phase) {
+            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
@@ -847,6 +851,7 @@ implements Runnable {
                 // transmit the board to everybody
                 send(createBoardPacket());
                 break;
+            case Game.PHASE_DEPLOYMENT :
             case Game.PHASE_MOVEMENT :
             case Game.PHASE_FIRING :
             case Game.PHASE_PHYSICAL :
@@ -868,8 +873,17 @@ implements Runnable {
             case Game.PHASE_EXCHANGE :
                 changePhase(Game.PHASE_INITIATIVE);
                 break;
+            case Game.PHASE_DEPLOYMENT :
+                game.setHasDeployed(true);
+                changePhase(Game.PHASE_INITIATIVE);
+                break;
             case Game.PHASE_INITIATIVE :
-                changePhase(Game.PHASE_MOVEMENT);
+                if (game.hasDeployed()) {
+                    changePhase(Game.PHASE_MOVEMENT);
+                }
+                else {
+                    changePhase(Game.PHASE_DEPLOYMENT);
+                }
                 break;
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
@@ -1251,8 +1265,13 @@ implements Runnable {
      */
     private void writeInitiativeReport() {
         // write to report
-        roundReport.append("\nInitiative Phase for Round #" + roundCounter
-        + "\n------------------------------\n");
+        if (game.hasDeployed()) {
+            roundReport.append("\nInitiative Phase for Round #").append(roundCounter);
+        }
+        else {
+            roundReport.append("\nInitiative Phase for Deployment");
+        }
+        roundReport.append("\n------------------------------\n");
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             roundReport.append(player.getName() + " rolls a ");
@@ -1889,6 +1908,26 @@ implements Runnable {
                 }
             }
             return;
+        }
+    }
+    
+    private void receiveDeployment(Packet pkt) {
+        if (game.phase != game.PHASE_DEPLOYMENT) {
+            return;
+        }
+        
+        Entity e = game.getEntity(pkt.getIntValue(0));
+        Coords c = (Coords)pkt.getObject(1);
+        int nFacing = pkt.getIntValue(2);
+        if (game.board.isLegalDeployment(c, e.getOwner())) {
+            e.setPosition(c);
+            e.setFacing(nFacing);
+            e.setSecondaryFacing(nFacing);
+            e.ready = false;
+            entityUpdate(e.getId());
+        }
+        else {
+            System.err.println("Received invalid deployment for " + e.getName());
         }
     }
     
@@ -4346,6 +4385,9 @@ implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_MOVE :
                 doEntityMovement(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_DEPLOY :
+                receiveDeployment(packet);
                 break;
             case Packet.COMMAND_ENTITY_ATTACK :
                 receiveAttack(packet);

@@ -333,6 +333,10 @@ public abstract class Mech
      * Returns this mech's jumping MP, modified for missing & underwater jets.
      */
     public int getJumpMPWithTerrain() {
+        if (getPosition() == null) {
+            return getJumpMP();
+        }
+        
         int waterLevel = game.board.getHex(getPosition()).levelOf(Terrain.WATER);
         if (waterLevel <= 0) {
             return getJumpMP();
@@ -470,6 +474,10 @@ public abstract class Mech
      * Gets the number of heat sinks that are underwater.
      */
     private int sinksUnderwater() {
+        if (getPosition() == null) {
+            return 0;
+        }
+        
         Hex curHex = game.board.getHex(getPosition());
         // are we even in water?  is it depth 1+
         if (curHex.levelOf(Terrain.WATER) <= 0) {

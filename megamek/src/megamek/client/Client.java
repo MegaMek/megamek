@@ -146,7 +146,7 @@ public class Client extends Panel
      * System.exit().
      */
     public Client(String playername) {
-    	super(new BorderLayout());
+        super(new BorderLayout());
         this.name = playername;
 
         Settings.load();
@@ -330,7 +330,12 @@ public class Client extends Panel
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         unitLoadingDialog.show();
 
-        bv = new BoardView1(game, frame);
+        try {
+            bv = new BoardView1(game, frame);
+        } catch (IOException e) {
+            doAlertDialog("Fatal Error", "Could not initialise:\n"+e);
+            die();
+        };
 
 /*		ChatterBox2 cb2 = new ChatterBox2(this);
 		bv.addDisplayable(cb2);

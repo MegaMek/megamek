@@ -117,39 +117,35 @@ public class MechTileset {
         throw new IndexOutOfBoundsException("can't find an image for that mech");
     }
     
-    public void loadFromFile(String filename) {
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(dir + filename));
-            // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
-            st.eolIsSignificant(true);
-            st.commentChar('#');
-            st.quoteChar('"');
-            st.wordChars('_', '_');
-            while(st.nextToken() != StreamTokenizer.TT_EOF) {
-                String name = null;
-                String imageName = null;
-                if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
-                    st.nextToken();
-                    name = st.sval;
-                    st.nextToken();
-                    imageName = st.sval;
-                    // add to list
-                    chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
-                } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
-                    st.nextToken();
-                    name = st.sval;
-                    st.nextToken();
-                    imageName = st.sval;
-                    // add to list
-                    exact.put(name.toUpperCase(), new MechEntry(name, imageName));
-                }
+    public void loadFromFile(String filename) throws IOException {
+        // make inpustream for board
+        Reader r = new BufferedReader(new FileReader(dir + filename));
+        // read board, looking for "size"
+        StreamTokenizer st = new StreamTokenizer(r);
+        st.eolIsSignificant(true);
+        st.commentChar('#');
+        st.quoteChar('"');
+        st.wordChars('_', '_');
+        while(st.nextToken() != StreamTokenizer.TT_EOF) {
+            String name = null;
+            String imageName = null;
+            if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("chassis")) {
+                st.nextToken();
+                name = st.sval;
+                st.nextToken();
+                imageName = st.sval;
+                // add to list
+                chassis.put(name.toUpperCase(), new MechEntry(name, imageName));
+            } else if(st.ttype == StreamTokenizer.TT_WORD && st.sval.equalsIgnoreCase("exact")) {
+                st.nextToken();
+                name = st.sval;
+                st.nextToken();
+                imageName = st.sval;
+                // add to list
+                exact.put(name.toUpperCase(), new MechEntry(name, imageName));
             }
-            r.close();
-        } catch (IOException ex) {
-            ;
         }
+        r.close();
         
         default_light = (MechEntry)exact.get(LIGHT_STRING.toUpperCase());
         default_medium = (MechEntry)exact.get(MEDIUM_STRING.toUpperCase());

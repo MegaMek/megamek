@@ -575,7 +575,7 @@ implements Runnable, ConnectionHandler {
 
         // Write end of game to stdout so controlling scripts can rotate logs.
         SimpleDateFormat format = new SimpleDateFormat
-            ( "yyyy-MM-dd HH:mm:ss Z" );
+            ( "yyyy-MM-dd HH:mm:ss z" );
         System.out.print( format.format(new Date()) );
         System.out.println( " END OF GAME" );
 

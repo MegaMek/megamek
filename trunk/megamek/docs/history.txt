@@ -91,7 +91,6 @@ infantry:
 buildings:
 - Test all of my assumptions.
 - Where do I put the attacker when it charges or DFAs a building?!?
--- Burning buildings lose 2 CF per heat phase (skip first round???).
 - Combat inside a multi-hex building is wierd:
 -- Targets get +3 cover bonus.
 -- Each level difference is an additional +1 hex to range.
@@ -131,6 +130,9 @@ v 0.28.15-dev
 + RFE 658785: config file now has a setting to not auto-confirm weapons fire 
 + 725772: possible fix for NPE in C3Sprite#drawOnto
 + Added support for mechs created with The Drawing Board.
++ 586306: Added FASA maps.
++ 724966: Added corrected maps.
++ 726265: Added Dirk Wilhelm's "Blind Drop" patch.
 
 v 0.28.14 (04-19-03, 4:45pm)
 + Eliminated unused local variables thanks to (forgot to write down name).

@@ -1036,8 +1036,8 @@ implements Runnable {
                 roundReport.append("\nMovement Phase\n-------------------\n");
                 addMovementHeat();
                 resolveCrewDamage();
-		resolvePilotingRolls(); // Skids cause damage in movement phase
-		resolveCrewDamage(); // again, I guess
+                resolvePilotingRolls(); // Skids cause damage in movement phase
+                resolveCrewDamage(); // again, I guess
                 checkForFlamingDeath();
                 applyBuildingDamage();
                 // check phase report
@@ -1397,36 +1397,36 @@ implements Runnable {
         // count how many entities each player controls, and how many turns we have to assign
         int MAX_PLAYERS = 255; //XXX HACK HACK HACK!
         int[] noe = new int[MAX_PLAYERS];
-	int playerId = 0;
+        int playerId = 0;
         int noOfTurns = 0;
-	int[] noi = new int[MAX_PLAYERS]; // The number of Infantry for player.
-	int noOfInfTurns = 0;
-	boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
-	boolean infLast = game.getOptions().booleanOption("inf_move_last");
+        int[] noi = new int[MAX_PLAYERS]; // The number of Infantry for player.
+        int noOfInfTurns = 0;
+        boolean infMulti = game.getOptions().booleanOption("inf_move_multi");
+        boolean infLast = game.getOptions().booleanOption("inf_move_last");
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
             if (entity.isSelectable()) {
-		playerId = entity.getOwner().getId();
+                playerId = entity.getOwner().getId();
 
-		// Special handling for infantry for certain game options.
-		if ( entity instanceof Infantry ) {
-		    noi[playerId]++;
+                // Special handling for infantry for certain game options.
+                if ( entity instanceof Infantry ) {
+                    noi[playerId]++;
 
-		    // If multiple Infantry move per Mek and Vehicle and this
-		    // is NOT the start of a new block of infantry for the
-		    // player do NOT add a turn.
-		    if ( infMulti &&
-			 1 != (noi[playerId] % Game.INF_MOVE_MULTI) ) {
-			continue;
-		    }
+                    // If multiple Infantry move per Mek and Vehicle and this
+                    // is NOT the start of a new block of infantry for the
+                    // player do NOT add a turn.
+                    if ( infMulti &&
+                         1 != (noi[playerId] % Game.INF_MOVE_MULTI) ) {
+                        continue;
+                    }
 
-		    // If Infantry move after Meks and Vehicles, we'll
-		    // delay calculating the infantry turns.
-		    else if ( infLast ) {
-			noOfInfTurns++;
-			continue;
-		    }
-		}
+                    // If Infantry move after Meks and Vehicles, we'll
+                    // delay calculating the infantry turns.
+                    else if ( infLast ) {
+                        noOfInfTurns++;
+                        continue;
+                    }
+                }
                 noe[playerId]++;
                 noOfTurns++;
             }
@@ -1436,8 +1436,8 @@ implements Runnable {
         Vector turns = new Vector(noOfTurns + noOfInfTurns);
         int turnIndex = 0;
 
-	// Handle all "mainline entities".  I.E. Meks, Vehicles, and
-	// (unless overrided by the "inf_move_last" option) Infantry.
+        // Handle all "mainline entities".  I.E. Meks, Vehicles, and
+        // (unless overrided by the "inf_move_last" option) Infantry.
         while (turnIndex < noOfTurns) {
             // get lowest number of entities, minimum 1.
             int hnoe = 1;
@@ -1475,7 +1475,7 @@ implements Runnable {
             }
         } // Handle the next "mainline entity"
 
-	// Now handle all Infantry (the "inf_move_last" option must be on).
+        // Now handle all Infantry (the "inf_move_last" option must be on).
         while (turnIndex < turns.size()) {
             // get lowest number of entities, minimum 1.
             int hnoi = 1;
@@ -1957,7 +1957,7 @@ implements Runnable {
      * Steps thru an entity movement packet, executing it.
      */
     private void processMovement(Entity entity, MovementData md) {
-	// check for fleeing
+        // check for fleeing
         if (md.contains(MovementData.STEP_FLEE)) {
             // Unit has fled the battlefield.
             phaseReport.append("\n" ).append( entity.getDisplayName()
@@ -2036,9 +2036,9 @@ implements Runnable {
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;
-	int prevFacing = curFacing;
-	Hex prevHex = null;
-	final boolean isInfantry = (entity instanceof Infantry);
+        int prevFacing = curFacing;
+        Hex prevHex = null;
+        final boolean isInfantry = (entity instanceof Infantry);
         AttackAction charge = null;
         
         // Compile the move
@@ -2498,15 +2498,15 @@ implements Runnable {
                     // Let the player know the ordeal is over.
                     phaseReport.append( "      Skid ends.\n" );
 
-		    // set entity parameters
-		    curFacing = entity.getFacing();
-		    curPos = entity.getPosition();
-		    entity.setSecondaryFacing( curFacing );
-		    mpUsed = entity.getRunMP(); // skid consumes all movement
-		    entity.moved = moveType;
-		    fellDuringMovement = true;
-		    distance = entity.delta_distance;
-		    break;
+                    // set entity parameters
+                    curFacing = entity.getFacing();
+                    curPos = entity.getPosition();
+                    entity.setSecondaryFacing( curFacing );
+                    mpUsed = entity.getRunMP(); // skid consumes all movement
+                    entity.moved = moveType;
+                    fellDuringMovement = true;
+                    distance = entity.delta_distance;
+                    break;
 
                 } // End failed-skid-psr
 
@@ -2528,7 +2528,7 @@ implements Runnable {
                     phaseReport.append("\n" ).append( entity.getDisplayName()
                     ).append( " passes through a fire.  It will generate 2 more heat this round.\n");
                 }
-            }	
+            }   
             
             // check to see if we've moved INTO fire and we are not a mech
             if (!lastPos.equals(curPos)
@@ -2537,7 +2537,7 @@ implements Runnable {
                 if (!(entity instanceof Mech)) {
                     doFlamingDeath(entity);
                 }
-            }	
+            }   
 
             // check if we've moved into water
             if (!lastPos.equals(curPos)
@@ -3013,7 +3013,7 @@ implements Runnable {
         // Non mechs should never get here.
         if ( !(entity instanceof Mech) ) {
             return true;
-	}
+        }
 
         return doSkillCheckWhileMoving( entity, src, dest, reason, true );
     }
@@ -3036,7 +3036,7 @@ implements Runnable {
                                              Coords dest,
                                              PilotingRollData reason,
                                              boolean isFallRoll ) {
-	boolean result = true;
+        boolean result = true;
         
         final PilotingRollData roll =
             Compute.getBasePilotingRoll(game, entity.getId());
@@ -3081,21 +3081,21 @@ implements Runnable {
             .append( " : " );
         if (diceRoll < roll.getValue()) {
             // Does failing the PSR result in a fall.
-	    if ( isFallRoll ) {
-		phaseReport.append("falls.\n");
-		doEntityFallsInto( entity,
+            if ( isFallRoll ) {
+                phaseReport.append("falls.\n");
+                doEntityFallsInto( entity,
                                    (fallsInPlace ? dest : src),
                                    (fallsInPlace ? src : dest),
                                    roll );
-	    } else {
-		phaseReport.append("fails.\n");
-		entity.setPosition( fallsInPlace ? src : dest );
-	    }
-	    result = false;
+            } else {
+                phaseReport.append("fails.\n");
+                entity.setPosition( fallsInPlace ? src : dest );
+            }
+            result = false;
         } else {
             phaseReport.append("succeeds.\n");
         }
-	return result;
+        return result;
     }
     
     /**
@@ -3139,8 +3139,8 @@ implements Runnable {
             doEntityFall(entity, dest, fallElevation, roll);
             // target gets displaced
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
-	    // Update the violating entity's postion on the client.
-	    entityUpdate( violation.getId() );
+            // Update the violating entity's postion on the client.
+            entityUpdate( violation.getId() );
         }
     }
     
@@ -3181,8 +3181,8 @@ implements Runnable {
                     game.addPSR(roll);
                 }
 
-		// Update the entity's postion on the client.
-		entityUpdate( entity.getId() );
+                // Update the entity's postion on the client.
+                entityUpdate( entity.getId() );
                 return;
             } else {
                 // cliff: fall off it, deal damage, prone immediately
@@ -3212,8 +3212,8 @@ implements Runnable {
                 game.addPSR(roll);
             }
             doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
-	    // Update the violating entity's postion on the client.
-	    entityUpdate( violation.getId() );
+            // Update the violating entity's postion on the client.
+            entityUpdate( violation.getId() );
             return;
         } else {
             // accidental fall from above: havoc!
@@ -3255,8 +3255,8 @@ implements Runnable {
                 Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                 if (targetDest != null) {
                     doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation.getId(), 2, "fallen on"));
-		    // Update the violating entity's postion on the client.
-		    entityUpdate( violation.getId() );
+                    // Update the violating entity's postion on the client.
+                    entityUpdate( violation.getId() );
                 } else {
                     // ack!  automatic death!
                     phaseReport.append(destroyEntity(violation, "impossible displacement", false));
@@ -3267,8 +3267,8 @@ implements Runnable {
                 Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
                 if (targetDest != null) {
                     doEntityDisplacement(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"));
-		    // Update the entity's postion on the client.
-		    entityUpdate( entity.getId() );
+                    // Update the entity's postion on the client.
+                    entityUpdate( entity.getId() );
                 } else {
                     // ack!  automatic death!
                     phaseReport.append(destroyEntity(entity, "impossible displacement", false));
@@ -3737,17 +3737,22 @@ implements Runnable {
         return wr;
     }
     
-    private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {        
-    
+    private boolean tryIgniteHex(Coords c, boolean bInferno, int nTargetRoll) {
+
+        Hex hex = game.board.getHex(c);                                 
         boolean bAnyTerrain = false;
+
+        // Ignore bad coordinates.
+        if ( hex == null ) {
+            return false;
+        }
+
         // inferno always ignites
         if (bInferno) {
             game.board.addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
             nTargetRoll = 0;
             bAnyTerrain = true;
         }
-        
-        Hex hex = game.board.getHex(c);                                 
 
         // The hex may already be on fire.
         if ( hex.contains( Terrain.FIRE ) ) {
@@ -5498,11 +5503,11 @@ implements Runnable {
             // TODO: Does the attacker enter the building?
             // TODO: What if the building collapses?
         }
-	else {
-	    // Resolve the damage.
-	    resolveChargeDamage( ae, te, toHit, direction );
-	}
-	return;
+        else {
+            // Resolve the damage.
+            resolveChargeDamage( ae, te, toHit, direction );
+        }
+        return;
     }
 
     /**
@@ -5513,7 +5518,7 @@ implements Runnable {
         // we hit...
         int damage = Compute.getChargeDamageFor(ae);
         int damageTaken = Compute.getChargeDamageTakenBy(ae, te);
-	PilotingRollData chargePSR = null;
+        PilotingRollData chargePSR = null;
 
         // Is the target inside a building?
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
@@ -5528,10 +5533,10 @@ implements Runnable {
             bldgAbsorbs = (int) Math.ceil( bldg.getPhaseCF() / 10.0 );
         }
 
-	// If we're upright, we may fall down.
-	if ( !ae.isProne() ) {
-	    chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
-	}
+        // If we're upright, we may fall down.
+        if ( !ae.isProne() ) {
+            chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
+        }
         
         phaseReport.append("hits.");
         phaseReport.append("\n  Defender takes " ).append( damage ).append( " damage" ).append( toHit.getTableDesc() ).append( ".");
@@ -5581,7 +5586,7 @@ implements Runnable {
             } else {
                 // they stil have to roll
                 game.addPSR(new PilotingRollData(te.getId(), 2, "was charged"));
-		game.addPSR(chargePSR);
+                game.addPSR(chargePSR);
             }
         }
         
@@ -6143,7 +6148,7 @@ implements Runnable {
         boolean anyRolls = false;
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
-	    final int totalHits = e.getCrew().getHits();
+            final int totalHits = e.getCrew().getHits();
             final int rollsNeeded = e.getCrew().getRollsNeeded();
             e.crew.setRollsNeeded(0);
             
@@ -6153,12 +6158,12 @@ implements Runnable {
             anyRolls = true;
             for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
                 int roll = Compute.d6(2);
-		int rollTarget = Compute.getConciousnessNumber( hit );
+                int rollTarget = Compute.getConciousnessNumber( hit );
                 phaseReport.append("\nPilot of " ).append( e.getDisplayName()
-				   ).append( " \"" ).append( e.getCrew().getName()
-				   ).append( "\" needs a " ).append( rollTarget
-				   ).append( " to stay concious.  Rolls " ).append( roll
-				   ).append( " : ");
+                                   ).append( " \"" ).append( e.getCrew().getName()
+                                   ).append( "\" needs a " ).append( rollTarget
+                                   ).append( " to stay concious.  Rolls " ).append( roll
+                                   ).append( " : ");
                 if (roll >= rollTarget) {
                     phaseReport.append("successful!");
                 } else {
@@ -6189,13 +6194,13 @@ implements Runnable {
             }
             anyRolls = true;
             int roll = Compute.d6(2);
-	    int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
+            int rollTarget = Compute.getConciousnessNumber( e.crew.getHits() );
             roundReport.append("\nPilot of " ).append( e.getDisplayName()
-			       ).append( " \"" ).append( e.crew.getName()
-			       ).append( "\" needs a " ).append( rollTarget
-			       ).append( " to regain conciousness.  Rolls " ).append( roll
-			       ).append( " : ");
-	    if (roll >= rollTarget) {
+                               ).append( " \"" ).append( e.crew.getName()
+                               ).append( "\" needs a " ).append( rollTarget
+                               ).append( " to regain conciousness.  Rolls " ).append( roll
+                               ).append( " : ");
+            if (roll >= rollTarget) {
                 roundReport.append("successful!");
                 e.crew.setUnconcious(false);
             } else {
@@ -6224,9 +6229,9 @@ implements Runnable {
      */
     private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
         String desc = new String();
- 	boolean isBattleArmor = (te instanceof BattleArmor);
- 	boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
- 	Hex te_hex = null;
+        boolean isBattleArmor = (te instanceof BattleArmor);
+        boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
+        Hex te_hex = null;
         
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
         //int loc = hit.getLocation();
@@ -6247,7 +6252,7 @@ implements Runnable {
             }
         }
 
- 	// Allocate the damage
+        // Allocate the damage
         while (damage > 0) {
             // let's resolve some damage!
             desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
@@ -6333,35 +6338,35 @@ implements Runnable {
             if (damage > 0) {
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-		    // Triggers a critical hit on Vehicles and Mechs.
- 		    if ( !isPlatoon && !isBattleArmor ) {
+                    // Triggers a critical hit on Vehicles and Mechs.
+                    if ( !isPlatoon && !isBattleArmor ) {
                     crits++;
- 		    }
+                    }
                     if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
                         te.damageThisPhase += damage;
                         damage = 0;
- 			// Infantry platoons have men not "Internals".
- 			if ( isPlatoon ) {
- 			    desc += " " + te.getInternal(hit) + " men alive.";
- 			} else {
+                        // Infantry platoons have men not "Internals".
+                        if ( isPlatoon ) {
+                            desc += " " + te.getInternal(hit) + " men alive.";
+                        } else {
                         desc += " " + te.getInternal(hit) + " Internal Structure remaining";
- 			}
+                        }
                     } else {
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
                         destroyLocation(te, hit.getLocation());
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
- 			// Infantry have only one section.
- 			if ( isPlatoon ) {
- 			    desc += " <<<PLATOON KILLED>>>,";
- 			} else if ( isBattleArmor ) {
- 			    desc += " <<<TROOPER KILLED>>>,";
- 			} else {
+                        // Infantry have only one section.
+                        if ( isPlatoon ) {
+                            desc += " <<<PLATOON KILLED>>>,";
+                        } else if ( isBattleArmor ) {
+                            desc += " <<<TROOPER KILLED>>>,";
+                        } else {
                         desc += " <<<SECTION DESTROYED>>>,";
- 			}
+                        }
                         if (hit.getLocation() == Mech.LOC_RT || hit.getLocation() == Mech.LOC_LT) {
                             int numEngineHits = 0;
                             numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
@@ -6374,7 +6379,7 @@ implements Runnable {
                         }
                     }
                 }
-                
+
                 // is the internal structure gone?  what are the transfer potentials?
                 if (te.getInternal(hit) <= 0) {
                     nextHit = te.getTransferLocation(hit);
@@ -6399,19 +6404,19 @@ implements Runnable {
                     }
                 }
             }
-            
+
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 desc += "\n            Movement system damaged!";
                 int nMP = te.getOriginalWalkMP();
                 if (nMP <= 1) {
                     ((Tank)te).immobilize();
-		    // Does the hovercraft sink?
-		    te_hex = game.board.getHex( te.getPosition() );
-		    if ( te.getMovementType() == Entity.MovementType.HOVER &&
-			 te_hex.levelOf(Terrain.WATER) > 0 ) {
-			desc += destroyEntity(te, "a watery grave", false);
-		    }
+                    // Does the hovercraft sink?
+                    te_hex = game.board.getHex( te.getPosition() );
+                    if ( te.getMovementType() == Entity.MovementType.HOVER &&
+                         te_hex.levelOf(Terrain.WATER) > 0 ) {
+                        desc += destroyEntity(te, "a watery grave", false);
+                    }
                 }
                 else {
                     te.setOriginalWalkMP(nMP - 1);
@@ -6420,12 +6425,12 @@ implements Runnable {
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
                 desc += "\n            Movement system destroyed!";
                 ((Tank)te).immobilize();
-		// Does the hovercraft sink?
-		te_hex = game.board.getHex( te.getPosition() );
-		if ( te.getMovementType() == Entity.MovementType.HOVER &&
-		     te_hex.levelOf(Terrain.WATER) > 0 ) {
-		    desc += destroyEntity(te, "a watery grave", false);
-		}
+                // Does the hovercraft sink?
+                te_hex = game.board.getHex( te.getPosition() );
+                if ( te.getMovementType() == Entity.MovementType.HOVER &&
+                     te_hex.levelOf(Terrain.WATER) > 0 ) {
+                    desc += destroyEntity(te, "a watery grave", false);
+                }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
                 desc += "\n            Turret locked!";
@@ -6519,12 +6524,12 @@ implements Runnable {
                     case 3 :
                         desc += "\n            <<<CRITICAL HIT>>> Engine destroyed.  Immobile.";
                         tank.immobilize();
-			// Does the hovercraft sink?
-			Hex te_hex = game.board.getHex( en.getPosition() );
-			if ( en.getMovementType() == Entity.MovementType.HOVER &&
-			     te_hex.levelOf(Terrain.WATER) > 0 ) {
-			    desc += destroyEntity(en, "a watery grave", false);
-			}
+                        // Does the hovercraft sink?
+                        Hex te_hex = game.board.getHex( en.getPosition() );
+                        if ( en.getMovementType() == Entity.MovementType.HOVER &&
+                             te_hex.levelOf(Terrain.WATER) > 0 ) {
+                            desc += destroyEntity(en, "a watery grave", false);
+                        }
                         break;
                     case 4 :
                         desc += "\n            <<<CRITICAL HIT>>> Crew killed";
@@ -6999,10 +7004,10 @@ implements Runnable {
             }
         }
          
-	// Only Mechs can fall prone.
-	if ( entity instanceof Mech ) {
-	    entity.setProne(true);
-	}
+        // Only Mechs can fall prone.
+        if ( entity instanceof Mech ) {
+            entity.setProne(true);
+        }
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
@@ -7051,8 +7056,7 @@ implements Runnable {
     private void doEntityFall(Entity entity, PilotingRollData roll) {
         doEntityFall(entity, entity.getPosition(), 0, roll);
     }
-    
-	
+
     /** Make fires spread, smoke spread, and make sure that all fires
      * started this turn are marked as "burning" for next turn.
      * 
@@ -7220,14 +7224,15 @@ implements Runnable {
      */
     public boolean ignite(Hex hex, int roll, boolean bAnyTerrain) {
 
+        // The hex might be null due to spreadFire translation
+        // goes outside of the board limit.
+        if ( !game.getOptions().booleanOption("fire") || null == hex ) {
+            return false;
+        }
+
         // The hex may already be on fire.
         if ( hex.contains( Terrain.FIRE ) ) {
             return true;
-        }
-
-        if (!game.getOptions().booleanOption("fire") || null == hex 
-                || hex.contains(Terrain.FIRE)) {
-            return false;
         }
 
         if ( !bAnyTerrain &&
@@ -7538,10 +7543,10 @@ implements Runnable {
         }
         
         int changed = 0;
-	boolean infLastValue =
-	    game.getOptions().getOption("inf_move_last").booleanValue();
-	boolean infMultiValue =
-	    game.getOptions().getOption("inf_move_multi").booleanValue();
+        boolean infLastValue =
+            game.getOptions().getOption("inf_move_last").booleanValue();
+        boolean infMultiValue =
+            game.getOptions().getOption("inf_move_multi").booleanValue();
         
         for (Enumeration i = ((Vector)packet.getObject(1)).elements(); i.hasMoreElements();) {
             GameOption option = (GameOption)i.nextElement();
@@ -7553,26 +7558,26 @@ implements Runnable {
             
             sendServerChat("Player " + getPlayer(connId).getName() + " changed option \"" + originalOption.getFullName() + "\" to " + option.stringValue() + ".");
 
-	    // Record mutually-exclusive infantry move options.
+            // Record mutually-exclusive infantry move options.
             if ( option.getShortName().equals("inf_move_last") ) {
-		infLastValue = option.booleanValue();
-	    }
-	    else if ( option.getShortName().equals("inf_move_multi") ) {
-		infMultiValue = option.booleanValue();
-	    }
+                infLastValue = option.booleanValue();
+            }
+            else if ( option.getShortName().equals("inf_move_multi") ) {
+                infMultiValue = option.booleanValue();
+            }
 
             originalOption.setValue(option.getValue());
             changed++;
         }
 
-	// Infantry move options can't BOTH be on!!!
-	if ( infLastValue && (infLastValue == infMultiValue) ) {
-	    sendServerChat("Player " + getPlayer(connId).getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
-	    sendServerChat("Clearing *BOTH* options.");
-	    game.getOptions().getOption("inf_move_last").setValue(false);
-	    game.getOptions().getOption("inf_move_multi").setValue(false);
-	    changed += 2;
-	}
+        // Infantry move options can't BOTH be on!!!
+        if ( infLastValue && (infLastValue == infMultiValue) ) {
+            sendServerChat("Player " + getPlayer(connId).getName() + " tried to set BOTH \"" + game.getOptions().getOption("inf_move_last").getFullName() + "\" and \""  + game.getOptions().getOption("inf_move_multi").getFullName() + "\" to true.");
+            sendServerChat("Clearing *BOTH* options.");
+            game.getOptions().getOption("inf_move_last").setValue(false);
+            game.getOptions().getOption("inf_move_multi").setValue(false);
+            changed += 2;
+        }
 
         return changed > 0;
     }
@@ -7894,15 +7899,15 @@ implements Runnable {
      * of hexes moved this phase.
      */
     private int getMovementPSRModifier( int distance ) {
-	if ( distance > 10 ) // 11+ hexes
-	    return 4;
-	else if ( distance > 7 ) // 8-10 hexes
-	    return 2;
-	else if ( distance > 4 ) // 5-7 hexes
-	    return 1;
-	else if ( distance > 2 ) // 3-4 hexes
-	    return 0;
-	return -1; // 0-2 hexes
+        if ( distance > 10 ) // 11+ hexes
+            return 4;
+        else if ( distance > 7 ) // 8-10 hexes
+            return 2;
+        else if ( distance > 4 ) // 5-7 hexes
+            return 1;
+        else if ( distance > 2 ) // 3-4 hexes
+            return 0;
+        return -1; // 0-2 hexes
     }
 
     /**

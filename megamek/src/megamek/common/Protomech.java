@@ -32,22 +32,23 @@ public class Protomech
 
     public static final String[] LOCATION_ABBRS = {"HD", "T", "RA", "LA", "L", "MG"};
 	//weapon bools
-    public boolean bHasMainGun;
-    public boolean bHasRArmGun;
-    public boolean bHasLArmGun;
-    public boolean bHasTorsoAGun;
-    public boolean bHasTorsoBGun;
+    private boolean bHasMainGun;
+    private boolean bHasRArmGun;
+    private boolean bHasLArmGun;
+    private boolean bHasTorsoAGun;
+    private boolean bHasTorsoBGun;
     //weapon indices
-    public int MainGunNum;
-    public int RArmGunNum;
-    public int LArmGunNum;
-    public int TorsoAGunNum;
-    public int TorsoBGunNum;
+    private int MainGunNum;
+    private int RArmGunNum;
+    private int LArmGunNum;
+    private int TorsoAGunNum;
+    private int TorsoBGunNum;
     // locations
 
     //Pilot damage caused so far by crits to this location. 
     // Needed for location destruction pilot damage.
-    public int PilotDamageTaken[] = {0, 0, 0, 0, 0, 0};
+    private int PilotDamageTaken[] = {0, 0, 0, 0, 0, 0};
+
     /**
      * The battle value of this unit.  This value should
      * be set when the unit's file is read.
@@ -117,6 +118,27 @@ public class Protomech
      */
     public int getPilotDamageTaken(int loc) {
         return PilotDamageTaken[loc];
+    }
+
+    /**
+     * Get the weapon in the given torso location (if any).
+     *
+     * @param   isTorsoA - a <code>boolean</code> that is <code>true</code>
+     *          if the weapon in "Torso A" is needed; <code>false</code> if
+     *          the weapon in "Torso B" is needed.
+     * @return  the <code>Mounted</code> weapon at the needed location.
+     *          This value will be <code>null</code> if no weapon is in
+     *          the indicated location.
+     */
+    public Mounted getTorsoWeapon( boolean isTorsoA ) {
+        Mounted weapon = null;
+        if ( isTorsoA && bHasTorsoAGun ) {
+            weapon = getEquipment( TorsoAGunNum );
+        }
+        else if ( !isTorsoA && bHasTorsoBGun ) {
+            weapon = getEquipment( TorsoBGunNum );
+        }
+        return weapon;
     }
 
     /**

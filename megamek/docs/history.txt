@@ -134,6 +134,7 @@ v 0.29.2 (06-??-03, ??)
   piloting skill rolls.
 + Bug 763169: Dropping prone now has chance to dislodge swarmers.
 + Bug 756126 (possible): Only needed hex images loaded during board load
++ Found and fixed bug in L3 weight mod damage rolls. Was forcing 2 pilot rolls.
 
 v 0.29.1 (06-27-03, 11am)
 + Bug 760509: apply case-insensitive comparisons to default images, too.

@@ -7388,9 +7388,10 @@ implements Runnable, ConnectionHandler {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = (Entity)i.nextElement();
 
-            // only unconscious pilots of mechs can roll to wake up
-            if (!e.isTargetable() || !e.crew.isUnconcious() ||
-            e.crew.isKoThisRound() || !(e instanceof Mech)) {
+            // only unconscious pilots of mechs and proto's can roll to wake up
+            if ( !e.isTargetable() || !e.crew.isUnconcious() ||
+                 e.crew.isKoThisRound() || 
+                !(e instanceof Mech || e instanceof Protomech)) {
                 continue;
             }
             anyRolls = true;

@@ -32,7 +32,7 @@ Lot of people have contributed to the MegaMek project.
      Björn Olsson <nalleolsson@users.sourceforge.net>
      Florian Stock <flolo@users.sourceforge.net>
      Patrick Johnmeyer <pineconius@users.sourceforge.net>
-     Alexander Schoelling <schoelling@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
      Sebastian Brocks <beerockxs@users.sourceforge.net>
      Robin D. Toll <neko128@users.sourceforge.net>
      Ecthellion <ecthellion@users.sourceforge.net>

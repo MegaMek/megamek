@@ -264,6 +264,14 @@ public abstract class Entity
                 setOwner( game.getPlayer(ownerId) );
             }
         }
+
+        // Also set game for each entity "loaded" in this entity.
+        Vector v = this.getLoadedUnits();
+        Enumeration iter = v.elements();
+        while (iter.hasMoreElements())
+        {
+           ((Entity)iter.nextElement()).setGame(game);
+        }
     }
     
     /**

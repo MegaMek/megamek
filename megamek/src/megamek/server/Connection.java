@@ -112,7 +112,13 @@ public class Connection {
             in.close();
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.print( "Error closing connection #" );
+            System.err.print( getId() );
+            System.err.print( ": " );
+            System.err.println( e.getMessage() );
+            // We don't need a full stack trace... we're
+            // just closing the connection anyway.
+            //e.printStackTrace();
         } catch (NullPointerException ex) {
         	; // never initialized, poor thing
         }

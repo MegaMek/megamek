@@ -175,6 +175,7 @@ public class MechSelectorDialog
         m_chWeightClass.addItem("Heavy");
         m_chWeightClass.addItem("Assault");
         m_chWeightClass.addItem("All");
+        m_chWeightClass.select(0);
 
         m_chType.addItem("IS level 1");
         m_chType.addItem("IS level 2");
@@ -188,12 +189,14 @@ public class MechSelectorDialog
         //  under the limit.  Stupid AWT Choice class!
         //        m_chType.addItem("Mixed All");
         m_chType.addItem("All");
+        m_chType.select(0);
 
         m_chUnitType.addItem("Mek");
         m_chUnitType.addItem("Tank");
         m_chUnitType.addItem("Infantry");
         m_chUnitType.addItem("ProtoMek");
         m_chUnitType.addItem("All");
+        m_chUnitType.select(0);
     }
     
     
@@ -202,6 +205,7 @@ public class MechSelectorDialog
         Vector vMechs = new Vector();
         String sClass = m_chWeightClass.getSelectedItem();
         int nWeight = 0;
+
         if (sClass.equals("Light")) {
             nWeight = Entity.WEIGHT_LIGHT;
         }
@@ -321,11 +325,13 @@ public class MechSelectorDialog
     public void itemStateChanged(ItemEvent ie)
     {
         if (ie.getSource() == m_chSort) {
-			clearMechPreview();
+            clearMechPreview();
             sortMechs();
         }
-        else if (ie.getSource() == m_chWeightClass || ie.getSource() == m_chType || ie.getSource() == m_chUnitType) {
-			clearMechPreview();
+        else if (ie.getSource() == m_chWeightClass
+                 || ie.getSource() == m_chType
+                 || ie.getSource() == m_chUnitType) {
+            clearMechPreview();
             filterMechs();
         } else if (ie.getSource() == m_mechList) {
             int selected = m_mechList.getSelectedIndex();

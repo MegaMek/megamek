@@ -27,22 +27,22 @@ public class Tank
     private boolean m_bHasTurret = false;
     private boolean m_bTurretLocked = false;
     private int m_nTurretOffset = 0;
+    private int m_nStunnedTurns = 0;
+    private Mounted m_jammedGun = null;
     
     // locations
-    public static final int        LOC_FRONT              = 0;
-    public static final int        LOC_RIGHT              = 1;
-    public static final int        LOC_LEFT               = 2;
-    public static final int        LOC_REAR               = 3;
-    public static final int        LOC_TURRET             = 4;
-    
-    // only used to store body equipment
-    public static final int        LOC_BODY               = -1;
+    public static final int        LOC_BODY               = 0;
+    public static final int        LOC_FRONT              = 1;
+    public static final int        LOC_RIGHT              = 2;
+    public static final int        LOC_LEFT               = 3;
+    public static final int        LOC_REAR               = 4;
+    public static final int        LOC_TURRET             = 5;
     
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS = {0, 0, 0, 0, 0};
+    private static final int[] NUM_OF_SLOTS = {0, 0, 0, 0, 0, 0};
     
-    private static final String[] LOCATION_ABBRS = { "FR", "RT", "LT", "RR", "TU" };
-    private static final String[] LOCATION_NAMES = { "Front", "Right", "Left", "Rear", "Turret" };
+    private static final String[] LOCATION_ABBRS = { "BD", "FR", "RT", "LT", "RR", "TU" };
+    private static final String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Turret" };
     
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
@@ -63,7 +63,7 @@ public class Tank
      */
     public int locations() {
         //return m_bHasTurret ? 5 : 4;
-        return 5;
+        return 6;
     }
     
     public boolean canChangeSecondaryFacing() {
@@ -77,6 +77,80 @@ public class Tank
     public int clipSecondaryFacing(int n) {
         return n;
     }
+
+    public void setSecondaryFacing(int sec_facing) {
+        super.setSecondaryFacing(sec_facing);
+        m_nTurretOffset = sec_facing - getFacing();
+    }
+    
+    public void setFacing(int facing) {
+        super.setFacing(facing);
+        if (m_bTurretLocked) {
+            int nTurretFacing = facing + m_nTurretOffset;
+            if (nTurretFacing < 0) nTurretFacing += 6;
+            super.setSecondaryFacing(nTurretFacing);
+        }
+    }
+    
+    public void lockTurret()
+    {
+        m_bTurretLocked = true;
+    }
+    
+    public void stunCrew()
+    {
+        m_nStunnedTurns = 3;
+        this.crew.setUnconcious(true);
+    }
+    
+    public void setJammedWeapon(Mounted m)
+    {
+        m_jammedGun = m;
+        m_jammedGun.setHit(true);
+    }
+    
+    public void newRound()
+    {
+        super.newRound();
+        
+        // check for crew stun
+        if (m_nStunnedTurns > 0) {
+            m_nStunnedTurns--;
+            if (m_nStunnedTurns == 0) {
+                this.crew.setUnconcious(false);
+            }
+        }
+        
+        // check for weapon jam
+        if (m_jammedGun != null) {
+            m_jammedGun.setHit(false);
+            m_jammedGun = null;
+        }
+    }
+    
+    /*
+     * This is only used for the 'main weapon' vehicle critical result.
+     * No standard for 'mainness' is given (although it's also described
+     * as the 'largest', so maybe it's tonnage).  I'm going with the highest 
+     * BV non-disabled weapon (even if it's out of ammo)
+     */
+    public Mounted getMainWeapon()
+    {
+        float fBestBV = -1;
+        Mounted mBest = null;
+        for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.isDestroyed()) continue;
+            
+            float fValue = m.getType().getBV(this);
+            if (fValue > fBestBV) {
+                fBestBV = fValue;
+                mBest = m;
+            }
+        }
+        return mBest;
+    }
+        
 
     /**
      * Returns the name of the type of movement used.
@@ -178,19 +252,24 @@ public class Tank
         switch (Compute.d6(2)) {
             case 2:
                 return new HitData(nArmorLoc, false, HitData.EFFECT_CRITICAL);
-            // yay for vehicles being dumb
-            // this is obviously for axles, lift fans, and what not. Implemented later
             case 3:
+                return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
             case 4:
+                return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 5:
-                return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLES_ARE_DUMB);
+                if (bSide || getMovementType() == Entity.MovementType.HOVER) {
+                    return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                }
+                else {
+                    return new HitData(nArmorLoc);
+                }
             case 6:
             case 7:
             case 8:
                 return new HitData(nArmorLoc);
             case 9:
-                if (bSide) {
-                    return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLES_ARE_DUMB);
+                if (bSide && getMovementType() == Entity.MovementType.HOVER) {
+                    return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 else {
                     return new HitData(nArmorLoc);
@@ -207,7 +286,7 @@ public class Tank
                     return new HitData(nArmorLoc);
                 }
                 else {
-                    return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLES_ARE_DUMB);
+                    return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLE_TURRETLOCK);
                 }
             case 12:
                 if (!m_bHasTurret || bSide) {
@@ -356,7 +435,7 @@ public class Tank
     {
         int nInternal = (int)Math.round(weight / 10.0);
         
-        for (int x = 0; x < locations(); x++) {
+        for (int x = 1; x < locations(); x++) {
             initializeInternal(nInternal, x);
         }
     }

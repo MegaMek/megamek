@@ -21,7 +21,9 @@ public class HitData
 {
     public static final int        EFFECT_NONE = 0;
     public static final int        EFFECT_CRITICAL = 1;
-    public static final int        EFFECT_VEHICLES_ARE_DUMB = 2;
+    public static final int        EFFECT_VEHICLE_MOVE_DESTROYED = 2;
+    public static final int        EFFECT_VEHICLE_MOVE_DAMAGED = 3;
+    public static final int        EFFECT_VEHICLE_TURRETLOCK = 4;
     
     private int location;
     private boolean rear;

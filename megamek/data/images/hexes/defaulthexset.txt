@@ -73,6 +73,7 @@ super * "road:1:63" "" "boring/road63.gif"
 
 super * "smoke:1" "" "boring/smoke.gif"
 super * "fire:1" "" "boring/fire.gif"
+super * "fire:2" "" "boring/fire.gif"
 
 base 0 "" "" "boring/beige_plains_0.gif"
 base 1 "" "" "boring/beige_plains_1.gif"

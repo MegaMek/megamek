@@ -168,7 +168,14 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     	
         statusR.setString(en.isProne() ? "prone" : "normal");
         playerR.setString(en.getOwner().getName());
-        teamR.setString(en.getOwner().getTeam() == 0 ? "No Team" : "Team " + en.getOwner().getTeam());
+        if (en.getOwner().getTeam() == 0) {
+            teamL.setVisible(false);
+            teamR.setVisible(false);
+        } else {
+            teamL.setVisible(true);
+            teamR.setString("Team " + en.getOwner().getTeam());
+            teamR.setVisible(true);
+        }
         weightR.setString(Integer.toString((int)en.getWeight()));
         
         pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")" );

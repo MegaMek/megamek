@@ -27,6 +27,7 @@ public class MechSummaryCache {
     private static final MechSummaryCache m_instance = new MechSummaryCache();
             
     private static boolean initialized = false;
+    private static boolean initializing = false;
 
     public static MechSummaryCache getInstance() {
         return getInstance(null);
@@ -34,7 +35,8 @@ public class MechSummaryCache {
     
     public static synchronized MechSummaryCache getInstance(UnitLoadingDialog uld) {
         m_instance.setUnitLoadingDialog(uld);
-        if (!initialized) {
+        if (!initialized && !initializing) {
+            initializing = true;
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     m_instance.loadMechData();
@@ -44,6 +46,10 @@ public class MechSummaryCache {
             t.start();
         }
         return m_instance;
+    }
+    
+    public static boolean isInitialized() {
+        return initialized;
     }
     
     private MechSummary[] m_data;

@@ -36,6 +36,8 @@ mechs:
 - allow split criticals for large weapons in MEP files (or in general)
 - any more .mep parsing problems?
 - parse XML files (from BTTC, even)
+-- handle template XML files
+-- handle "slottless" equipment
 
 initiative:
 ? ineligible units should maybe count in the action queue, but be skipped
@@ -82,6 +84,9 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
+v 0.28.9 (CVS)
++ Added XML parsing to MegaMek.
+
 v 0.28.8 (03-07-03, 7:20pm)
 + Added ability to go prone
 + Added movement path sprites for getting up and dropping prone

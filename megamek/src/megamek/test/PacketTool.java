@@ -245,7 +245,10 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
     public void send() {
         long start = conn.bytesSent();
         Packet packet = new Packet(Packet.COMMAND_SENDING_BOARD, board);
+        /* 2003-12-21 : prove connectivity first, then add refinements 
+        **              like data compression.
         packet.zipData();
+        */
         conn.send( packet );
         System.out.print( "Bytes sent: " );
         System.out.print( conn.bytesSent() - start );

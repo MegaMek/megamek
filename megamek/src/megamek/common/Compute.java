@@ -25,12 +25,12 @@ import megamek.client.*;
  */
 public class Compute
 {
-  public static final int        RANGE_MINIMUM    = 0;
-  public static final int        RANGE_SHORT      = 1;
-  public static final int        RANGE_MEDIUM     = 2;
-  public static final int        RANGE_LONG       = 3;
-  public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
-    
+    public static final int        RANGE_MINIMUM    = 0;
+    public static final int        RANGE_SHORT      = 1;
+    public static final int        RANGE_MEDIUM     = 2;
+    public static final int        RANGE_LONG       = 3;
+    public static final int        RANGE_OUT_OF     = Integer.MAX_VALUE;
+
     public static final int        ARC_360          = 0;
     public static final int        ARC_FORWARD      = 1;
     public static final int        ARC_LEFTARM      = 2;
@@ -38,6 +38,7 @@ public class Compute
     public static final int        ARC_REAR         = 4;
     public static final int        ARC_LEFTSIDE     = 5;
     public static final int        ARC_RIGHTSIDE    = 6;
+    public static final int        ARC_MAINGUN      = 7;
     
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -1281,26 +1282,34 @@ public class Compute
         // determine which range we're using
         int usingRange = Math.min(range, c3range);
 
-    // add range modifier
-    if (usingRange == range) {
-      // no c3 adjustment
-      if (range == RANGE_MEDIUM) {
-        mods.addModifier(2, "medium range");
-      }
-      else if (range == RANGE_LONG) {
-        mods.addModifier(4, "long range");
-      }
-    }
-    else {
-      // report c3 adjustment
-      if (c3range == RANGE_SHORT) {
-        mods.addModifier(0, "short range due to C3 spotter");
-      }
-      else if (c3range == RANGE_MEDIUM) {
-        mods.addModifier(2, "medium range due to C3 spotter");
-      }
-    }
-        
+        // add range modifier
+        if (usingRange == range) {
+            // no c3 adjustment
+            if (range == RANGE_MEDIUM) {
+                mods.addModifier(2, "medium range");
+            }
+            else if (range == RANGE_LONG) {
+                // Protos that loose head sensors can't shoot long range.
+                if( (ae instanceof Protomech) && 
+                    (2 == ((Protomech)ae).getCritsHit(Protomech.LOC_HEAD)) ) {
+                    mods.addModifier
+                        ( ToHitData.IMPOSSIBLE,
+                          "No long range attacks with destroyed head sensors." );
+                } else {
+                    mods.addModifier(4, "long range");
+                }
+            }
+        }
+        else {
+            // report c3 adjustment
+            if (c3range == RANGE_SHORT) {
+                mods.addModifier(0, "short range due to C3 spotter");
+            }
+            else if (c3range == RANGE_MEDIUM) {
+                mods.addModifier(2, "medium range due to C3 spotter");
+            }
+        }
+
     // add infantry LRM maximum range penalty
     if (isLRMInfantry && distance == weaponRanges[RANGE_LONG]) {
       mods.addModifier(1, "infantry LRM maximum range");
@@ -1522,32 +1531,77 @@ public class Compute
      * Adds any damage modifiers from arm critical hits or sensor damage.
    * @return Any applicable damage modifiers
    */
-  private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
-    ToHitData mods = new ToHitData();
+  private static ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon)
+  {
+      ToHitData mods = new ToHitData();
     
-    if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, weapon.getLocation()) > 0) {
-            mods.addModifier(4, "shoulder actuator destroyed");
-        } else {
+      if ( attacker instanceof Protomech ) {
+
+          // Head criticals add to target number of all weapons.
+          int hits = ((Protomech)attacker).getCritsHit(Protomech.LOC_HEAD);
+          if( hits > 0 ) {
+              mods.addModifier( hits, hits + " head critical(s)" );
+          }
+
+          // Arm mounted (and main gun) weapons get DRMs from arm crits.
+          switch ( weapon.getLocation() ) {
+          case Protomech.LOC_LARM:
+          case Protomech.LOC_RARM:
+              hits = ((Protomech)attacker).getCritsHit( weapon.getLocation() );
+              if ( hits > 0 ) {
+                  mods.addModifier( hits, hits + " arm critical(s)" );
+              }
+              break;
+          case Protomech.LOC_MAINGUN:
+              // Main gun is affected by crits in *both* arms.
+              hits = ((Protomech)attacker).getCritsHit( Protomech.LOC_LARM );
+              hits += ((Protomech)attacker).getCritsHit( Protomech.LOC_RARM );
+              if ( 4 == hits ) {
+                  mods.addModifier( ToHitData.IMPOSSIBLE,
+                                    "Cannot fire main gun with no arms." );
+              }
+              else if ( hits > 0 ) {
+                  mods.addModifier( hits, hits + " arm critical(s)" );
+              }
+              break;
+          }
+
+      } // End attacker-is-Protomech
+
+      // Is the shoulder destroyed?
+      else if ( attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+                                              Mech.ACTUATOR_SHOULDER,
+                                              weapon.getLocation() ) > 0 ) {
+          mods.addModifier(4, "shoulder actuator destroyed");
+      }
+      else {
           // no shoulder hits, add other arm hits
           int actuatorHits = 0;
-          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, weapon.getLocation()) > 0) {
+          if ( attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+                                               Mech.ACTUATOR_UPPER_ARM,
+                                               weapon.getLocation() ) > 0 ) {
               actuatorHits++;
           }
-          if (attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, weapon.getLocation()) > 0) {
+          if ( attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM,
+                                              Mech.ACTUATOR_LOWER_ARM,
+                                              weapon.getLocation() ) > 0 ) {
               actuatorHits++;
           }
           if (actuatorHits > 0) {
-        mods.addModifier(actuatorHits, actuatorHits + " destroyed arm actuators");
+              mods.addModifier( actuatorHits,
+                                actuatorHits + " destroyed arm actuators" );
           }
     }
         
     // sensors critical hit to attacker
-    int sensorHits = attacker.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+    int sensorHits = attacker.getDestroyedCriticals( CriticalSlot.TYPE_SYSTEM,
+                                                     Mech.SYSTEM_SENSORS,
+                                                     Mech.LOC_HEAD );
     if (sensorHits > 0) {
-      mods.addModifier(2, "attacker sensors damaged");
+        mods.addModifier(2, "attacker sensors damaged");
     }
     
-        return mods;
+    return mods;
   }
 
   /**
@@ -3527,6 +3581,8 @@ public class Compute
             return fa > 60 && fa <= 120;
         case ARC_LEFTSIDE :
             return fa < 300 && fa >= 240;
+        case ARC_MAINGUN:
+            return fa >= 240 || fa <= 120;
         case ARC_360 :
             return true;
         default:
@@ -3951,7 +4007,9 @@ public class Compute
             }
         }
 
-        return 0;
+        // Recursively increases size to next largest
+        // standard size (for Protomech LRM 7, etc).
+        return Math.min( missiles, missilesHit(missiles+1,nMod) );
     }
     
     /**

@@ -7455,7 +7455,7 @@ implements Runnable, ConnectionHandler {
         sbDesc.append("        Engine safety systems remain in place.\n");
       } else {
         sbDesc.append("        ***The safety systems on the engine fail catastrophically resulting in a cascading engine failure!\n");
-        sbDesc.append( destroyEntity(en, "engine explosion", false, false));
+        sbDesc.append( destroyEntity(en, "engine explosion", false, false) );
         
         //This is a hack so MM.NET marks the mech as not salvageable
           if ( en instanceof Mech )
@@ -7529,43 +7529,58 @@ implements Runnable, ConnectionHandler {
      * Rolls and resolves critical hits on mechs or vehicles.
      */
     private String criticalEntity(Entity en, int loc) {
-        String desc = "        Critical hit on " + en.getLocationAbbr(loc) + ". ";
+        StringBuffer desc = new StringBuffer();
+        desc.append( "        Critical hit on " )
+            .append( en.getLocationAbbr(loc) )
+            .append( ". " );
         int hits = 0;
         int roll = Compute.d6(2);
-        desc += "Roll = " + roll + ";";
+        desc.append( "Roll = " ).append( roll ).append( ";" );
         if (roll <= 7) {
-            desc += " no effect.";
-            return desc;
+            desc.append( " no effect." );
+            return desc.toString();
         } else if (roll >= 8 && roll <= 9) {
             hits = 1;
-            desc += " 1 location.";
+            desc.append( " 1 location." );
         } else if (roll >= 10 && roll <= 11) {
             hits = 2;
-            desc += " 2 locations.";
+            desc.append( " 2 locations." );
         } else if (roll == 12) {
             if (en instanceof Tank) {
                 hits = 3;
-                desc += " 3 locations.";
+                desc.append( " 3 locations." );
+            } else if (en instanceof Protomech) {
+            	hits=3;
+            	desc.append( " 3 locations" );
+
             } else if (en.locationIsLeg(loc)) {
-                desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                desc.append( "<<<LIMB BLOWN OFF>>> " )
+                    .append( en.getLocationName(loc) )
+                    .append( " blown off." );
                 if (en.getInternal(loc) > 0) {
                     destroyLocation(en, loc);
                 }
-                return desc;
+                return desc.toString();
             } else if (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) {
-                desc += "<<<LIMB BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                desc.append( "<<<LIMB BLOWN OFF>>> " )
+                    .append( en.getLocationName(loc) )
+                    .append( " blown off." );
                 destroyLocation(en, loc);
-                return desc;
+                return desc.toString();
             } else if (loc == Mech.LOC_HEAD) {
-                desc += "<<<HEAD BLOWN OFF>>> " + en.getLocationName(loc) + " blown off.";
+                desc.append( "<<<HEAD BLOWN OFF>>> " )
+                    .append( en.getLocationName(loc) )
+                    .append( " blown off." );
                 destroyLocation(en, loc);
                 en.crew.setDoomed(true);
-                desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
-                return desc;
+                desc.append( "\n*** " )
+                    .append( en.getDisplayName() )
+                    .append( " PILOT KILLED! ***" );
+                return desc.toString();
             } else {
                 // torso hit
                 hits = 3;
-                desc += " 3 locations.";
+                desc.append( " 3 locations." );
             }
         }
         
@@ -7574,63 +7589,66 @@ implements Runnable, ConnectionHandler {
             Tank tank = (Tank)en;
             for (int x = 0; x < hits && !tank.isDoomed(); x++) {
                 switch (Compute.d6(1)) {
-                    case 1 :
-                        desc += "\n            <<<CRITICAL HIT>>> Crew stunned for 3 turns";
-                        // Carried units can't unload from a stunned transport.
-                        // Units that escape a transport don't need to un-stun.
-                        tank.stunCrew();
-                        break;
-                    case 2 :
-                        // this one's ridiculous.  the 'main weapon' jams.
-                        Mounted mWeap = tank.getMainWeapon();
-                        if (mWeap == null) {
-                            desc += "\n            No main weapon crit, because no main weapon!";
-                        }
-                        else {
-                            desc += "\n            <<<CRITICAL HIT>>> " + mWeap.getName() +
-                            " jams for 1 turn.";
-                            tank.setJammedWeapon(mWeap);
-                        }
-                        break;
-                    case 3 :
-                        desc += "\n            <<<CRITICAL HIT>>> Engine destroyed.  Immobile.";
-                        tank.immobilize();
-                        // Does the hovercraft sink?
-                        Hex te_hex = game.board.getHex( en.getPosition() );
-                        if ( en.getMovementType() == Entity.MovementType.HOVER &&
-                             te_hex.levelOf(Terrain.WATER) > 0 ) {
-                            desc += destroyEntity(en, "a watery grave", false);
-                        }
-                        break;
-                    case 4 :
-                        desc += "\n            <<<CRITICAL HIT>>> Crew killed";
-                        desc += destroyEntity(en, "crew death", true);
-                        en.getCrew().setDoomed(true);
-                        break;
-                    case 5 :
-                        desc += "\n            <<<CRITICAL HIT>>> Fuel Tank / Engine Shielding Hit (Vehicle Explodes)";
-                        desc += destroyEntity(en, "fuel tank explosion", false, false);
-                        en.getCrew().setDoomed(true);
-                       break;
-                    case 6 :
-                        desc += "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!";
-                        desc += destroyEntity(en, "power plant destruction", false, false);
-                        en.getCrew().setDoomed(true);
-                        break;
+                case 1 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> Crew stunned for 3 turns" );
+                    // Carried units can't unload from a stunned transport.
+                    // Units that escape a transport don't need to un-stun.
+                    tank.stunCrew();
+                    break;
+                case 2 :
+                    // this one's ridiculous.  the 'main weapon' jams.
+                    Mounted mWeap = tank.getMainWeapon();
+                    if (mWeap == null) {
+                        desc.append( "\n            No main weapon crit, because no main weapon!" );
+                    }
+                    else {
+                        desc.append( "\n            <<<CRITICAL HIT>>> " )
+                            .append( mWeap.getName() )
+                            .append( " jams for 1 turn." );
+                        tank.setJammedWeapon(mWeap);
+                    }
+                    break;
+                case 3 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> Engine destroyed.  Immobile." );
+                    tank.immobilize();
+                    // Does the hovercraft sink?
+                    Hex te_hex = game.board.getHex( en.getPosition() );
+                    if ( en.getMovementType() == Entity.MovementType.HOVER &&
+                         te_hex.levelOf(Terrain.WATER) > 0 ) {
+                        desc.append( destroyEntity(en, "a watery grave", false) );
+                    }
+                    break;
+                case 4 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> Crew killed" );
+                    desc.append( destroyEntity(en, "crew death", true) );
+                    en.getCrew().setDoomed(true);
+                    break;
+                case 5 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> Fuel Tank / Engine Shielding Hit (Vehicle Explodes)" );
+                    desc.append( destroyEntity(en, "fuel tank explosion", false, false) );
+                    en.getCrew().setDoomed(true);
+                    break;
+                case 6 :
+                    desc.append( "\n            <<<CRITICAL HIT>>> Power plant hit.  BOOM!" );
+                    desc.append( destroyEntity(en, "power plant destruction", false, false) );
+                    en.getCrew().setDoomed(true);
+                    break;
                 }
             }
         }
         else {
             // transfer criticals, if needed
             while (hits > 0 && en.canTransferCriticals(loc)
-            && en.getTransferLocation(loc) != Entity.LOC_DESTROYED) {
+                   && en.getTransferLocation(loc) != Entity.LOC_DESTROYED) {
                 loc = en.getTransferLocation(loc);
-                desc += "\n            Location is empty, so criticals transfer to " + en.getLocationAbbr(loc) +".";
+                desc.append( "\n            Location is empty, so criticals transfer to " )
+                    .append( en.getLocationAbbr(loc) )
+                    .append( "." );
             }
             // roll criticals
             while (hits > 0) {
                 if (en.getHittableCriticals(loc) <= 0) {
-                    desc += "\n            Location has no more hittable critical slots.";
+                    desc.append( "\n            Location has no more hittable critical slots." );
                     break;
                 }
                 int slot = Compute.randomInt(en.getNumberOfCriticals(loc));
@@ -7639,119 +7657,195 @@ implements Runnable, ConnectionHandler {
                     continue;
                 }
                 cs.setHit(true);
-                switch(cs.getType()) {
-                    case CriticalSlot.TYPE_SYSTEM :
-                        desc += "\n            <<<CRITICAL HIT>>> on " + Mech.systemNames[cs.getIndex()] + ".";
+                switch( cs.getType() ) {
+                case CriticalSlot.TYPE_SYSTEM :
+                    if(en instanceof Protomech) {
+                        int numHit=((Protomech)en).getCritsHit(loc);
+                        desc.append( "\n            <<<CRITICAL HIT>>> on " )
+                            .append( Protomech.systemNames[cs.getIndex()] )
+                            .append( "." );
+                        switch (cs.getIndex()) {
+                        case Protomech.SYSTEM_HEADCRIT:
+                            if (2==numHit) {
+                                desc.append( "\n <<<HEAD DESTROYED>>>" );
+                                destroyLocation(en, loc);
+                            }
+                            break;
+                        case Protomech.SYSTEM_ARMCRIT:
+                            if (2==numHit) {
+                                desc.append( "\n <<<ARM DESTROYED>>>" );
+                                destroyLocation(en,loc);
+                            }
+                            break;
+                        case Protomech.SYSTEM_LEGCRIT:
+                            if (3==numHit) {
+                                desc.append( "\n <<<LEGS DESTROYED>>>" );
+                                destroyLocation(en,loc);
+                            }
+                            break;
+                        case Protomech.SYSTEM_TORSOCRIT:
+                            if (3==numHit) {
+                                desc.append( destroyEntity(en, "torso destruction") );
+                            }
+                            else {
+                                int tweapRoll=Compute.d6(1);
+                                switch (tweapRoll) {
+                                case 1:
+                                case 2:
+                                case 3:
+                                    if ( ((Protomech)en).bHasTorsoAGun ) {
+                                        Mounted weapon = en.getEquipment
+                                            ( ((Protomech)en).TorsoAGunNum );
+                                        weapon.setHit(true);
+                                    }
+                                    break;
+                                case 4:
+                                case 5:
+                                case 6:
+                                    if ( ((Protomech)en).bHasTorsoBGun ) {
+                                        Mounted weapon = en.getEquipment
+                                            ( ((Protomech)en).TorsoBGunNum);
+                                        weapon.setHit(true);
+                                                    }
+                                    break;
+                                }
+                            }
+
+                        } // End switch( cs.getType() )
+
+                    } // End have-protomech
+                    else {
+                        desc.append( "\n            <<<CRITICAL HIT>>> on " )
+                            .append( Mech.systemNames[cs.getIndex()] )
+                            .append( "." );
                         switch(cs.getIndex()) {
-                            case Mech.SYSTEM_COCKPIT :
-                                // boink!
-                                en.crew.setDoomed(true);
-                                desc += "\n*** " + en.getDisplayName() + " PILOT KILLED! ***";
-                                break;
-                            case Mech.SYSTEM_ENGINE :
-                                en.engineHitsThisRound++;
+                        case Mech.SYSTEM_COCKPIT :
+                            // boink!
+                            en.crew.setDoomed(true);
+                            desc.append( "\n*** " )
+                                .append( en.getDisplayName() )
+                                .append( " PILOT KILLED! ***" );
+                            break;
+                        case Mech.SYSTEM_ENGINE :
+                            en.engineHitsThisRound++;
                                 
-                                boolean engineExploded = false;
-                                StringBuffer descBuffer = new StringBuffer();
+                            boolean engineExploded = false;
+                            StringBuffer descBuffer = new StringBuffer();
                                 
-                                if ( en.engineHitsThisRound >= 2 ) {
-                                  engineExploded = checkEngineExplosion(en, descBuffer);
-                                }
+                            if ( en.engineHitsThisRound >= 2 ) {
+                                engineExploded = checkEngineExplosion
+                                    (en, descBuffer);
+                            }
                                 
-                                desc += descBuffer.toString();
+                            desc.append( descBuffer.toString() );
 
-                                if ( !engineExploded ) {
-                                  int numEngineHits = 0;
-                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                                  numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+                            if ( !engineExploded ) {
+                                int numEngineHits = 0;
+                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+                                numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
   
-                                  if ( numEngineHits > 2 ) {
-                                      // third engine hit
-                                      desc += destroyEntity(en, "engine destruction");
-                                  }
+                                if ( numEngineHits > 2 ) {
+                                    // third engine hit
+                                    desc.append( destroyEntity(en, "engine destruction") );
                                 }
-                                break;
-                            case Mech.SYSTEM_GYRO :
-                                if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
-                                    // gyro destroyed
-                                    game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
-                                } else {
-                                    // first gyro hit
-                                    game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
-                                }
-                                break;
-                            case Mech.ACTUATOR_UPPER_LEG :
-                            case Mech.ACTUATOR_LOWER_LEG :
-                            case Mech.ACTUATOR_FOOT :
-                                // leg/foot actuator piloting roll
-                                game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
-                                break;
-                            case Mech.ACTUATOR_HIP :
-                                // hip piloting roll
-                                game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
-                                break;
+                            }
+                            break;
+                        case Mech.SYSTEM_GYRO :
+                            if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 1) {
+                                // gyro destroyed
+                                game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 3, "gyro destroyed"));
+                            } else {
+                                // first gyro hit
+                                game.addPSR(new PilotingRollData(en.getId(), 3, "gyro hit"));
+                            }
+                            break;
+                        case Mech.ACTUATOR_UPPER_LEG :
+                        case Mech.ACTUATOR_LOWER_LEG :
+                        case Mech.ACTUATOR_FOOT :
+                            // leg/foot actuator piloting roll
+                            game.addPSR(new PilotingRollData(en.getId(), 1, "leg/foot actuator hit"));
+                            break;
+                        case Mech.ACTUATOR_HIP :
+                            // hip piloting roll
+                            game.addPSR(new PilotingRollData(en.getId(), 2, "hip actuator hit"));
+                            break;
                         }
-                        break;
-                    case CriticalSlot.TYPE_EQUIPMENT :
-                        Mounted mounted = en.getEquipment(cs.getIndex());
-                        EquipmentType eqType = mounted.getType();
-                        boolean hitBefore = mounted.isHit();
-                        desc += "\n            <<<CRITICAL HIT>>> on " + mounted.getDesc() + ".";
-                        mounted.setHit(true);
+                    }
+                    break;
+                case CriticalSlot.TYPE_EQUIPMENT :
+                    Mounted mounted = en.getEquipment(cs.getIndex());
+                    EquipmentType eqType = mounted.getType();
+                    boolean hitBefore = mounted.isHit();
+                    desc.append( "\n            <<<CRITICAL HIT>>> on " )
+                        .append( mounted.getDesc() )
+                        .append( "." );
+                    mounted.setHit(true);
 
-                        // If the item is the ECM suite of a Mek Stealth system
-                        // then it's destruction turns off the stealth.
-                        if ( !hitBefore && eqType instanceof MiscType &&
-                             eqType.hasFlag(MiscType.F_ECM) &&
-                             mounted.getLinkedBy() != null ) {
-                            Mounted stealth = mounted.getLinkedBy();
-                            desc += "\n       " + stealth.getType().getName() +
-                               " will stop functioning at end of turn.";
-                            stealth.setMode( "Off" );
-                        }
+                    // If the item is the ECM suite of a Mek Stealth system
+                    // then it's destruction turns off the stealth.
+                    if ( !hitBefore && eqType instanceof MiscType &&
+                         eqType.hasFlag(MiscType.F_ECM) &&
+                         mounted.getLinkedBy() != null ) {
+                        Mounted stealth = mounted.getLinkedBy();
+                        desc.append( "\n       " )
+                            .append( stealth.getType().getName() )
+                            .append( " will stop functioning at end of turn." );
+                        stealth.setMode( "Off" );
+                    }
 
-                        // Handle equipment explosions.
-                        if (eqType.isExplosive() && !hitBefore) {
-                            desc += explodeEquipment(en, loc, slot);
-                        }
-                        break;
+                    // Handle equipment explosions.
+                    if (eqType.isExplosive() && !hitBefore) {
+                        desc.append( explodeEquipment(en, loc, slot) );
+                    }
+                    break;
                 }
                 hits--;
 
             }
         }
         
-        return desc;
+        return desc.toString();
     }
     
     /**
      * Checks for location breach and returns phase logging
      */
     private String breachCheck(Entity entity, int loc, int hitflag, boolean isMoving) {
-        String desc = new String();
+        StringBuffer desc = new StringBuffer();
         if (entity.getLocationStatus(loc) > Entity.LOC_NORMAL) { //covers both water and vacuum
             int breachroll = hitflag;
             if (entity.getArmor(loc) > 0 && (entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true) && breachroll == 1) { //if has armor and took damage ...
                 breachroll = Compute.d6(2);
-                desc += "\n            Possible breach on " + entity.getLocationAbbr(loc) + ". Roll = " + breachroll +".";
+                desc.append( "\n            Possible breach on " )
+                    .append( entity.getLocationAbbr(loc) )
+                    .append( ". Roll = " )
+                    .append( breachroll )
+                    .append( "." );
             }
-            if (breachroll >= 10 || !(entity.getArmor(loc) > 0) || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) : true) ) {//breach by damage or no armor
-                desc += breachLocation(entity, loc, isMoving);
+            if ( breachroll >= 10
+                 || !(entity.getArmor(loc) > 0)
+                 || !(entity instanceof Mech ? (entity.getArmor(loc,true)>0) :
+                      true) ) {//breach by damage or no armor
+                desc.append( breachLocation(entity, loc, isMoving) );
             }
         }
-        return desc;
+        return desc.toString();
     }
 
     /**
      * Marks all equipment in a location on an entity as useless.
      */
     private String breachLocation(Entity en, int loc, boolean isMoving) {
-        String desc = new String();
-        if (en.getInternal(loc) < 0 || en.getLocationStatus(loc) < Entity.LOC_NORMAL) { //already destroyed or breached? don't bother
-            return desc;
+        StringBuffer desc = new StringBuffer();
+        if (en.getInternal(loc) < 0 ||
+            en.getLocationStatus(loc) < Entity.LOC_NORMAL) {
+            //already destroyed or breached? don't bother
+            return desc.toString();
         }
-        desc += "<<<" + en.getLocationAbbr(loc) + " BREACHED>>>";
+        desc.append( "<<<" )
+            .append( en.getLocationAbbr(loc) )
+            .append( " BREACHED>>>" );
         //equipment and crits will be marked in applyDamage?
         // equipment marked missing
         for (Enumeration i = en.getEquipment(); i.hasMoreElements();) {
@@ -7774,13 +7868,15 @@ implements Runnable, ConnectionHandler {
             doSkillCheckInPlace(en, rollTarget);
         }
         //Check location for engine/cockpit breach and report accordingly
-       if (loc == Mech.LOC_CT) {
-            desc += destroyEntity(en, "hull breach");
+        if (loc == Mech.LOC_CT) {
+            desc.append( destroyEntity(en, "hull breach") );
         }
         if (loc == Mech.LOC_HEAD) {
             en.crew.setDoomed(true);
-            desc += destroyEntity(en, "hull breach");
-            desc += "\n*** " + en.getDisplayName() + " Pilot Drowned! ***";
+            desc.append( destroyEntity(en, "hull breach") );
+            desc.append( "\n*** " )
+                .append( en.getDisplayName() )
+                .append( " Pilot Drowned! ***" );
         }
         //// dependent locations ARE NOT considered breached
         //if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
@@ -7788,7 +7884,7 @@ implements Runnable, ConnectionHandler {
         //}
         en.setLocationStatus(loc, Entity.LOC_BREACHED);
 
-        return desc;
+        return desc.toString();
     }
 
     /**

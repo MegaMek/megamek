@@ -96,14 +96,13 @@ public class XmlConnection extends Connection {
                 // Write the character to the test file.
                 test.write( inChar );
             }
-            while ( in.ready() ); // do we keep this line?
 
             // Finish off the file.
             test.flush();
             test.close();
             /*  END  Debug code  END  */
 
-            // Now decode the packet from the XML.            
+            // Now decode the packet from the XML.
             ParsedXML root = TinyParser.parseXML 
                 ( new ByteArrayInputStream(buf.toString().getBytes()) );
             Enumeration rootChildren = root.elements();

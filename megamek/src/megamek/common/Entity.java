@@ -997,20 +997,21 @@ public abstract class Entity
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public void addEquipment(EquipmentType etype, int loc) 
+    public Mounted addEquipment(EquipmentType etype, int loc) 
         throws LocationFullException 
     {
-        addEquipment(etype, loc, false);
+        return addEquipment(etype, loc, false);
     }
     
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public void addEquipment(EquipmentType etype, int loc, boolean rearMounted) 
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted) 
         throws LocationFullException 
     {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted);
+        return mounted;
     }
     
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) 

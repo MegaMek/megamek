@@ -36,6 +36,7 @@ public class MiscType extends EquipmentType {
     public static final int     F_TREE_CLUB         = 0x0020;
     public static final int     F_CASE              = 0x0040;
     public static final int     F_MASC              = 0x0080;
+    public static final int     F_TSM               = 0x0100;
     
     /** Creates new MiscType */
     public MiscType() {
@@ -126,6 +127,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLCASE());
         EquipmentType.addType(createISMASC());
         EquipmentType.addType(createCLMASC());
+        EquipmentType.addType(createTSM());
     }
     
     public static MiscType createHeatSink() {
@@ -308,6 +310,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
+        misc.spreadable = true;
         misc.flags |= F_MASC;
         misc.bv = 0;
         
@@ -327,11 +330,29 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
+        misc.spreadable = true;
         misc.flags |= F_MASC;
         misc.bv = 0;
         
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
+        
+        return misc;
+    }
+    
+    public static MiscType createTSM() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "TSM";
+        misc.internalName = misc.name;
+        misc.mepName = misc.name;
+        misc.mtfName = "Triple Strength Myomer";
+        misc.tonnage = 0;
+        misc.criticals = 6;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_TSM;
+        misc.bv = 0;
         
         return misc;
     }

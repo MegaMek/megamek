@@ -279,6 +279,19 @@ public abstract class Mech
     }
     
     /**
+     * Same
+     */
+    public boolean hasTSM() {
+        for (Enumeration e = getEquipment(); e.hasMoreElements(); ) {
+            Mounted m = (Mounted)e.nextElement();
+            if (m.getType().hasFlag(MiscType.F_TSM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Potentially adjust runMP for MASC
      */
     public int getRunMP() {
@@ -846,6 +859,7 @@ public abstract class Mech
             return new HitData(location, rear, HitData.EFFECT_CRITICAL);
         }
     }
+
     
     /**
      * Gets the location that excess damage transfers to
@@ -953,8 +967,15 @@ public abstract class Mech
             return;
         }
         
+        // spreadable or split equipment only gets added to 1 crit at a time, 
+        // since we don't know how many are in this location
+        int crits = mounted.getType().getCriticals(this);
+        if (mounted.getType().isSpreadable() || mounted.isSplit()) {
+            crits = 1;
+        }
+        
         // check criticals for space
-        if(getEmptyCriticals(loc) < mounted.getType().getCriticals(this)) {
+        if(getEmptyCriticals(loc) < crits) {
             throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName());
         }
         
@@ -962,8 +983,9 @@ public abstract class Mech
         super.addEquipment(mounted, loc, rearMounted);
 
         // add criticals
-        int num = getEquipmentNum(mounted);
-        for(int i = 0; i < mounted.getType().getCriticals(this); i++) {
+        int num = getEquipmentNum(mounted);        
+        
+        for(int i = 0; i < crits; i++) {
             addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable()));
         }        
     }    

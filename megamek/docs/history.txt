@@ -16,6 +16,8 @@ v0.29.48 (CVS)
 + Bug 1018791: Hover charge against mech in depth 1 water, wrong hit table
 + Add undocumented "feature": megamek.client.ClientGUI.hideScrollBars setting.
 + Fixed Settings#get(String, String) where defaults weren't appling correctly.
++ RFE 1022891, Patch 1023125: Altered Energy Weapons Damage, MaxTech revised page 22.
+
 
 v0.29.47 (2004-08-29 7:45pm)
 + Bug 1015776: Display bug with the jump MP of burdened Battle Armor.

@@ -526,7 +526,7 @@ scan:
                         st.nextToken();
                         defaultAutoejectDisabled = Boolean.valueOf(st.sval).booleanValue();
                     }
-                    else if (key.equals("showUnitId")) {
+                    else if (key.equals("showunitid")) {
                         st.nextToken();
                         showUnitId = Boolean.valueOf(st.sval).booleanValue();
                     }
@@ -654,7 +654,7 @@ scan:
             cw.write("chatloungetabs " + chatLoungeTabs + "\r\n");
             cw.write("chatloungetabfontsize " + chatLoungeTabFontSize + "\r\n");
             cw.write("defaultautoejectdisabled " + defaultAutoejectDisabled + "\r\n");
-            cw.write("showUnitId" + showUnitId + "\r\n");
+            cw.write("showunitid" + showUnitId + "\r\n");
             
             // Store all of our "saved" settings.
             // Need to enclose "/" and "." in quotes

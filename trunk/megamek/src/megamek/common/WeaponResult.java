@@ -24,5 +24,6 @@ public class WeaponResult {
     public ToHitData toHit = null; // stored before ammo depletion, jams
     public int roll = -1;
     public boolean revertsToSingleShot = false;
-    public int amsShotDown = 0;
+    public int[] amsShotDown;
+    public int amsShotDownTotal = 0;
 }

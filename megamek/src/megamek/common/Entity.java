@@ -57,7 +57,7 @@ public abstract class Entity
     protected float             weight;
     protected String            model;
     protected String            name;
-	protected String			tech;
+    protected String		tech;
 
     protected transient Player  owner;
     protected int               ownerId;

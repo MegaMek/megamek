@@ -602,7 +602,9 @@ public class BoardView1
     }
     
     /**
-     * Clears the old movement data and draws the new
+     * Clears the old movement data and draws the new.  Since it's less
+     * expensive to check for and reuse old step sprites than to make a whole
+     * new one, we do that.
      */
     public void drawMovementData(Entity entity, MovementData md) {
         Vector temp = pathSprites;
@@ -1273,7 +1275,7 @@ public class BoardView1
         private MovementData.Step step;
         
         public StepSprite(MovementData.Step step) {
-            this.step = step;
+            this.step = (MovementData.Step)step.clone();
             
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);

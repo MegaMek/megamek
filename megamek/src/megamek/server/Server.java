@@ -1881,6 +1881,7 @@ implements Runnable {
             
             // check to see if we've moved OUT of fire
             if (!lastPos.equals(curPos)
+            && step.getMovementType() != Entity.MOVE_JUMP
             && game.board.getHex(lastPos).contains(Terrain.FIRE)) {
                 if (entity instanceof Tank) {
                     doFlamingDeath(entity);

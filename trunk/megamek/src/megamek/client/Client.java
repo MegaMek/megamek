@@ -473,10 +473,10 @@ public class Client extends Panel
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
         Player newPlayer = (Player)c.getObject(1);
-        if (getPlayer(newPlayer.getId()) != null) {
-            game.setPlayer(pindex, newPlayer);
-        } else {
+        if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
+        } else {
+            game.setPlayer(pindex, newPlayer);
         }
         processGameEvent(new GameEvent(this, GameEvent.GAME_PLAYER_STATUSCHANGE, newPlayer, ""));
     }

@@ -883,68 +883,45 @@ public class Server
         // roll the dice for each player
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            player.clearInitiative();
-            player.setInitiative(Compute.d6(2), 0);
+            player.getInitiative().clear();
         }
         
-        // roll off initiative ties, up to 5 times
-        // TODO: infinite rerolls
-        for (int i = 0; i < 5; i++) {
-            for (int j = 2; j <= 12; j++) {
-                for (Enumeration k = game.getPlayers(); k.hasMoreElements();) {
-                    final Player player = (Player)k.nextElement();
-                    if (player.getInitiativeSize() > i && player.getInitiative(i) == j && isInitTie(j, i)) {
-                        player.setInitiative(Compute.d6(2), i + 1);
-                    }
-                }
-            }
-        }
+        // roll off all ties
+        resolveInitTies(game.getPlayersVector());
         
         transmitAllPlayerUpdates();
     }
     
     /**
-     * Returns true if there is a tie at this initiative level
+     * This goes thru and adds a roll on to the end of the intiative "stack"
+     * for all players involved.  Then it checks the list again for ties, and
+     * recursively resolves all further ties.
      */
-    private boolean isInitTie(int init, int level) {
-        int playersAt = 0;
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+    private void resolveInitTies(Vector players) {
+        // add a roll for all players
+        for (Enumeration i = players.elements(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            if (player.getInitiativeSize() > level && player.getInitiative(level) == init) {
-                playersAt++;
-            }
+            player.getInitiative().addRoll();
         }
-        return playersAt > 1;
-    }
-    
-    /**
-     * Recursively places players into order by initiative
-     */
-    private int orderByInit(int previousInit, int init, int level, int[] order, int oi) {
-        if (isInitTie(init, level)) {
-            for (int j = 2; j <= 12; j++) {
-               oi = orderByInit(init, j, level + 1, order, oi); 
-            }
-            return oi;
-        }
-        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+        // check for further ties
+        Vector ties = new Vector();
+        for (Enumeration i = players.elements(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
-            // check previous initiative and that the player is on this level
-            if (player.getInitiativeSize() <= level || (level > 0 && player.getInitiative(level - 1) != previousInit)) {
-                continue;
-            }
-            // catch errors?
-            try {
-                if (player.getInitiative(level) == init) {
-                    order[oi++] = player.getId();
+            ties.removeAllElements();
+            ties.addElement(player);
+            for (Enumeration j = game.getPlayers(); j.hasMoreElements();) {
+                final Player other = (Player)j.nextElement();
+                if (player != other && player.getInitiative().equals(other.getInitiative())) {
+                    ties.addElement(other);
                 }
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                // uh, how'd this happen?
-                System.err.println("Server: ArrayIndexOutOfBoundsException ordering initiative.  oi=" + oi + ", order.length = " + order.length);
+            }
+            if (ties.size() > 1) {
+                resolveInitTies(ties);
             }
         }
-        return oi;
+        
     }
+
     
     /**
      * Determine turn order by number of entities that are selectable this phase
@@ -952,11 +929,24 @@ public class Server
      * TODO: this is a real mess
      */
     private void determineTurnOrder() {
+        // sort players
+        com.sun.java.util.collections.ArrayList plist = new com.sun.java.util.collections.ArrayList(game.getNoOfPlayers());
+        for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
+            final Player player = (Player)i.nextElement();
+            plist.add(player);
+        }
+        com.sun.java.util.collections.Collections.sort(plist, new com.sun.java.util.collections.Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Player)o1).getInitiative().compareTo(((Player)o2).getInitiative());
+            }
+        });
+        
         // determine turn order
         int[] order = new int[game.getNoOfPlayers()];
         int oi = 0;
-        for (int i = 2; i <= 12; i++) {
-            oi = orderByInit(0, i, 0, order, oi);
+        for (com.sun.java.util.collections.Iterator i = plist.iterator(); i.hasNext();) {
+            final Player player = (Player)i.next();
+            order[oi++] = player.getId();
         }
         
         // count how many entities each player controls, and how many turns we have to assign
@@ -1017,15 +1007,11 @@ public class Server
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             roundReport.append(player.getName() + " rolls a ");
-            boolean first = true;
-            for (Enumeration j = player.getInitiatives(); j.hasMoreElements();) {
-                Integer init = (Integer)j.nextElement();
-                if (first) {
-                    first = false;
-                } else {
+            for (int j = 0; j < player.getInitiative().size(); j++) {
+                if (j != 0) {
                     roundReport.append(" / ");
                 }
-                roundReport.append(init.toString());
+                roundReport.append(player.getInitiative().getRoll(j));
             }
             roundReport.append(".\n");
         }

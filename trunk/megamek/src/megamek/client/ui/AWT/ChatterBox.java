@@ -1,14 +1,14 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,14 +26,13 @@ import megamek.common.*;
  * one that it will gladly supply.
  */
 public class ChatterBox
-    implements GameListener, KeyListener
-{
+implements GameListener, KeyListener {
     public Client client;
-        
+    
     public String[]            chatBuffer;
-        
+    
     // AWT components
-    public Panel chatPanel;  
+    public Panel chatPanel;
     private TextArea            chatArea;
     private List                playerList;
     private TextField        inputField;
@@ -47,22 +46,22 @@ public class ChatterBox
         playerList = new List();
         inputField = new TextField();
         inputField.addKeyListener(this);
-    
-    chatPanel = new Panel(new BorderLayout());
-    
-    chatPanel.add(chatArea, BorderLayout.CENTER);
-    chatPanel.add(playerList, BorderLayout.WEST);
-    chatPanel.add(inputField, BorderLayout.SOUTH);
-
+        
+        chatPanel = new Panel(new BorderLayout());
+        
+        chatPanel.add(chatArea, BorderLayout.CENTER);
+        chatPanel.add(playerList, BorderLayout.WEST);
+        chatPanel.add(inputField, BorderLayout.SOUTH);
+        
     }
     
-  /**
-   * Tries to scroll down to the end of the box
-   */
-  public void moveToEnd() {
-    int last = chatArea.getText().length() - 1;
-    chatArea.select(last, last);
-  }
+    /**
+     * Tries to scroll down to the end of the box
+     */
+    public void moveToEnd() {
+        int last = chatArea.getText().length() - 1;
+        chatArea.select(last, last);
+    }
     
     /**
      * Refreshes the player list component with information
@@ -85,19 +84,12 @@ public class ChatterBox
     }
     
     /**
-     * Outputs information about the server to the chat area.
+     * Returns the "box" component with all teh stuff
      */
-    public void displayServerInfo() {
-        chatArea.append("You are connected to '" + client.serverName + "' on " + client.socket.getInetAddress().getHostName() + ".  There are " + client.getNoOfPlayers() + "/" + client.getMaxPlayers() + " players connected." + "\n\n");
+    public Component getComponent() {
+        return chatPanel;
     }
     
-  /**
-   * Returns the "box" component with all teh stuff
-   */
-  public Component getComponent() {
-    return chatPanel;
-  }
-  
     //
     // GameListener
     //
@@ -118,10 +110,10 @@ public class ChatterBox
         refreshPlayerList();
     }
     public void gameNewSettings(GameEvent ev) {
-    ;
+        ;
     }
-
-
+    
+    
     //
     // KeyListener
     //
@@ -137,5 +129,5 @@ public class ChatterBox
     public void keyTyped(KeyEvent ev) {
         ;
     }
-
+    
 }

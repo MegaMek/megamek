@@ -40,19 +40,33 @@ public class HelpCommand extends ServerCommand {
     }
     
     public void run(int connId, String[] args) {
-        // no args...
-        StringBuffer commandList = new StringBuffer();
-        
-        for (Enumeration i = server.getAllCommandNames(); i.hasMoreElements();) {
-            ServerCommand command = server.getCommand((String)i.nextElement());
-            if (commandList.length() > 0) {
-                commandList.append(", ");
+        if (args.length == 1) {
+            // no args
+            server.sendServerChat(connId, "Type /help [command] for help on a specific command.  Commands available: " + commandList());
+        } else {
+            // argument
+            ServerCommand command = server.getCommand(args[1]);
+            if (command == null) {
+                server.sendServerChat(connId, "Command \"" + args[1] + "\" not recognized.  Commands available: " + commandList());
+            } else {
+                server.sendServerChat(connId, "/" + command.getName() + " : " + command.getHelp());
             }
-            commandList.append(command.getName());
         }
-        
-        server.sendServerChat(connId, "Commands available: " + commandList.toString());
-    }    
+    }
+    
+    private String commandList() {
+            StringBuffer commandList = new StringBuffer();
+
+            for (Enumeration i = server.getAllCommandNames(); i.hasMoreElements();) {
+                ServerCommand command = server.getCommand((String)i.nextElement());
+                if (commandList.length() > 0) {
+                    commandList.append(", ");
+                }
+                commandList.append(command.getName());
+            }
+
+            return commandList.toString();
+    }
     
     
 }

@@ -18,10 +18,19 @@ players connect.  The connecting players can connect from anywhere with a
 TCP/IP connection to the host, including the same computer (see hotseat, below.)
 
 To host a game, press the "Host a New Game..." button in the main menu.  Fill
-in your name and click "Okay".  Once the lobby screen comes up, other players
-can connect and the game can begin.  The other players will need to know the IP
-address of the host computer.  If you do not know your current IP address, there
-are some web pages, such as www.whatismyip.com that will tell you.
+in your name and click "Okay".  The password field allows you to specify a
+password for certain server commands.  (Type /help in the chat line to get a
+list of server commands.)  If you don't specify a password, anybody is allowed
+to reset the server or kick players, so be careful.
+
+Once the lobby screen comes up, other players can connect and the game can 
+begin.  The other players will need to know the IP address of the host computer.
+There are several ways to determine your IP address.  If you are on 
+Windows 9x/ME, you can use the Run command on the start menu and enter 
+"winipcfg".  On Windows 2000/NT/XP, you will need to open a command prompt and 
+type "ipconfig".  As a last resort, there are some web pages, such as 
+www.whatismyip.com that will try to detect your IP address, but if your internet
+service uses a proxy or firewall, these pages cannot accurately detect it.
 
 To connect to a game, press the connect button on the main menu and fill in your
 player name and the host's IP address.

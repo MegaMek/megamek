@@ -32,7 +32,7 @@ public class Server
     public final static String  DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
     
     // server setup
-    private String              name;
+    private String              password;
     private ServerSocket        serverSocket;
     private ServerLog           log = new ServerLog();
 
@@ -72,8 +72,8 @@ public class Server
      * Construct a new GameHost and begin listening for
      * incoming clients.
      */
-    public Server(String name, int port) {
-        this.name = name;
+    public Server(String password, int port) {
+        this.password = password.length() > 0 ? password : null;
         // initialize server socket
         try {
             serverSocket = new ServerSocket(port);
@@ -86,17 +86,14 @@ public class Server
         // display server start text
         System.out.println("s: starting a new server...");
         System.out.println("s: address = " + serverSocket.getInetAddress().getHostAddress() + " port = " + serverSocket.getLocalPort());
-        InetAddress inet = serverSocket.getInetAddress();
-        try {
-            System.out.println("s: address = " + InetAddress.getAllByName("127.0.0.1").length);
-        } catch (UnknownHostException ex) {
-        }
+        System.out.println("s: password = " + this.password);
 
         connector = new Thread(this);
         connector.start();
         
         // register commands
         registerCommand(new HelpCommand(this));
+        registerCommand(new KickCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new WhoCommand(this));
         
@@ -118,6 +115,20 @@ public class Server
 //        for (int i = 0; i < sides; i++) {
 //            System.out.println("hits on " + i + " : " + hits[i] + "; probability = " + ((double)hits[i] / (double)rolls));
 //        }
+    }
+    
+    /**
+     * @returns true if the server has a password
+     */
+    public boolean isPassworded() {
+        return password != null;
+    }
+    
+    /**
+     * @returns true if the password matches
+     */
+    public boolean isPassword(Object guess) {
+        return password.equals(guess);
     }
     
     /**
@@ -145,8 +156,8 @@ public class Server
      * Sent when a clients attempts to connect.
      */
     private void greeting(int cn) {
-        // send server info -- client should reply with client info.
-        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_NAME, name));
+        // send server greeting -- client should reply with client info.
+        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_GREETING));
     }
 
     /**
@@ -275,7 +286,7 @@ public class Server
     /**
      * Called when it is sensed that a connection has terminated.
      */
-    void disconnected(int connId) {
+    public void disconnected(int connId) {
         final Connection conn = getClient(connId);
         final Player player = getPlayer(connId);
 
@@ -3095,18 +3106,22 @@ public class Server
      * Process an in-game command
      */
     private void processCommand(int connId, String commandString) {
-        // figure out which command this is
+        String[] args;
         String commandName;
-        if (commandString.indexOf(' ') != -1) {
-            commandName = commandString.substring(1, commandString.indexOf(' '));
-        } else {
-            commandName = commandString.substring(1);
+        // all tokens are read as strings; if they're numbers, string-ize 'em.
+        StringTokenizer st = new StringTokenizer(commandString);
+        args = new String[st.countTokens()];
+        for (int i = 0; i < args.length; i++) {
+            args[i] = st.nextToken();
         }
+        
+        // figure out which command this is
+        commandName = args[0].substring(1);
         
         // process it
         ServerCommand command = getCommand(commandName);
         if (command != null) {
-            command.run(connId, new String[0]);
+            command.run(connId, args);
         } else {
             sendServerChat(connId, "Command not recognized.  Type /help for a list of commands.");
         }

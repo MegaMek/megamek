@@ -127,6 +127,7 @@ v 0.28.23-dev (CVS)
 + Bug 754610: Revert fix for bug 702735.
 + Bug 720322: Apply defensive systems, targ comp, and C3 BV logic to Tanks.
 + Added "Unit Loading Failures" dialog.
++ Bug 755088: PARTIAL FIX - Tanks should initialize their body section.
 
 v 0.28.22 (06-08-03, 9:30pm)
 + Bug 745922: jumping into water washes off infernos properly
@@ -372,7 +373,7 @@ v 0.28.8 (03-07-03, 7:20pm)
 + 678434: Moved the transport fields to the Extras panel.
 + 698398: Dead pilots are *dead*, not *unconcious*.
 
-v 0.28.7 (02-28-02, 9:00 pm)
+v 0.28.7 (02-28-03, 9:00 pm)
 + Roads exit into Pavement hexes.
 + Updates to cityruins.txt; are the road exits still right?
 + echo version, java info to console log on startup
@@ -397,7 +398,7 @@ v 0.28.7 (02-28-02, 9:00 pm)
 + 694174: possible fix for null exception in toHitThrash
 + new "save any time" technology (/save)
 
-v 0.28.6 (02-22-02, 12:00 am)
+v 0.28.6 (02-22-03, 12:00 am)
 + Allow tanks and infantry in the preview pane.
 + 683267: correctly allocate spaces for Endo Steel and Ferro-Fibrous.
 + Allow scenarios to define a rotated board.

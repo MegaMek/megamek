@@ -31,8 +31,8 @@ public class GeneralInfoMapSet implements DisplayMapSet{
     private PMSimpleLabel statusR, playerR, teamR, weightR, pilotR, mpR0, mpR1, mpR2, mpR3, curMoveR, heatR;
     private PMSimpleLabel[] advantagesR;
     private Vector    bgDrawers = new Vector();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);	
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, 12);	
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, Settings.mechDisplayLargeFontSize);
     private final static int MAX_STR_LENGTH = 18;
 
 

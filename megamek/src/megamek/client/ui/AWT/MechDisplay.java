@@ -322,7 +322,7 @@ class WeaponPanel extends BufferedPanel
     private Entity entity;
     private ClientGUI client;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 10);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayMediumFontSize);
 
     public WeaponPanel(ClientGUI client) {
         super(new GridBagLayout());
@@ -965,7 +965,7 @@ class SystemPanel
     //public Label modeLabel;
     private ClientGUI clientgui;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
 
     Entity en;
 
@@ -1316,7 +1316,7 @@ class ExtraPanel
     //public Label    unusedL, carrysL;
     public TextArea unusedR, carrysR;
     public java.awt.List narcList;
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, 12);
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, Settings.mechDisplayLargeFontSize);
 
     private ClientGUI clientgui;
 

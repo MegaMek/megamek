@@ -82,7 +82,7 @@ FUTURE VERSION PLANS:
 
 VERSION HISTORY:
 ----------------
-v 0.28.8-dev
+v 0.28.8 (03-07-03, 7:20pm)
 + Added ability to go prone
 + Added movement path sprites for getting up and dropping prone
 + 694497: ability to view turn report in popup window during other phases

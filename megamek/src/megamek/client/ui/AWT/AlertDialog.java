@@ -56,6 +56,7 @@ public class AlertDialog
 	});
         
         pack();
+        setResizable(false);
         setLocation(parent.getLocation().x + parent.getSize().width/2 - getSize().width/2,
                     parent.getLocation().y + parent.getSize().height/2 - getSize().height/2);
     }

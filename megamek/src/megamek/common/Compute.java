@@ -1629,11 +1629,9 @@ public class Compute
         }
         
         // check if attacker has fired arm-mounted weapons
-        for (Enumeration i = ae.getWeapons(); i.hasMoreElements();) {
-            Mounted mounted = (Mounted)i.nextElement();
-            if (mounted.isUsedThisRound() && (mounted.getLocation() == Mech.LOC_RARM && mounted.getLocation() == Mech.LOC_LARM)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
-            }
+        if (ae.weaponFiredFrom(Mech.LOC_RARM) 
+        || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
         
         // check range

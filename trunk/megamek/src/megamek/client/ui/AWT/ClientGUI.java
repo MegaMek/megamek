@@ -128,7 +128,6 @@ public class ClientGUI
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         this.add(panDisplay, BorderLayout.CENTER);
-        loadSoundClip();
     }
 
     /*

@@ -35,10 +35,11 @@ v0.29.58 (CVS)
 + Corrected description of MaxTech Missile Hit Penalty rule -- it now states,
   as it should always have, that reducing the roll below 2 reduces the number
   of missiles to 1.
-+ RFE 1022884, Patch 1061868: MaxTech Glancing Blows rule. Hits that roll exactly the required to-hit-number
-  do less damage.
++ RFE 1022884, Patch 1061868: MaxTech Glancing Blows rule. Hits that roll
+  exactly the required to-hit-number do less damage.
 + Data 1083453: Pictures for Akuma and Bloodkite
 + Data 870515: MTF Equipment List
++ Bug 1089323: entity may be dead when resolving arty attack; don't check it
   
 v0.29.57 (2004-12-19 11:15am)
 + Client window does not grab focus if it belongs to a bot.

@@ -577,10 +577,10 @@ implements Runnable, ConnectionHandler {
 
     public void autoSave()
     {
-        saveGame("autosave");
+        saveGame("autosave",game.getOptions().booleanOption("autosave_msg"));
     }
 
-    public void saveGame(String sFile) {
+    public void saveGame(String sFile, boolean sendChat) {
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
@@ -596,7 +596,11 @@ implements Runnable, ConnectionHandler {
             e.printStackTrace();
         }
 
-        sendChat("MegaMek", "Game saved to " + sFinalFile);
+        if (sendChat) sendChat("MegaMek", "Game saved to " + sFinalFile);
+    }
+
+    public void saveGame(String sFile) {
+        saveGame(sFile,true);
     }
 
     public boolean loadGame(File f) {

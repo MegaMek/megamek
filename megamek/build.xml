@@ -21,7 +21,7 @@
   </target>
 
   <target depends="init" description="Compile java sources into class files" name="compile">
-    <javac classpath="${basedir}" destdir="${build}" srcdir="${src}" target="1.1"/>
+    <javac classpath="${basedir}" debug="true" destdir="${build}" srcdir="${src}" target="1.1"/>
     <touch file="${timestampfile}"/>
   </target>
 

@@ -106,7 +106,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         md.compile(game, ae);
         for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
-            if (step.getMovementType() == Entity.MOVE_ILLEGAL) {
+            if (!step.isLegal()) {
                 break;
             } else {
                 if (step.getType() == MovePath.STEP_DFA) {
@@ -256,12 +256,6 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // target prone
         if (te.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");
-        }
-
-        // water partial cover?
-        Hex targHex = game.board.getHex(te.getPosition());
-        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
-            toHit.addModifier(3, "target has partial cover");
         }
 
         // target immobile

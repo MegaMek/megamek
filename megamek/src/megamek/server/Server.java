@@ -3853,6 +3853,23 @@ implements Runnable {
     }
     
     /**
+     * Creates a packet containing a hex, and the coordinates it goes at.
+     */
+    private Packet createHexChangePacket(Coords coords, Hex hex) {
+        final Object[] data = new Object[2];
+        data[0] = coords;
+        data[1] = hex;
+        return new Packet(Packet.COMMAND_CHANGE_HEX, data);
+    }
+    
+    /**
+     * Sends notification to clients that the specified hex has changed.
+     */
+    public void sendChangedHex(Coords coords) {
+        send(createHexChangePacket(coords, game.board.getHex(coords)));
+    }
+    
+    /**
      * Creates a packet for an attack
      */
     private Packet createAttackPacket(EntityAction ea) {

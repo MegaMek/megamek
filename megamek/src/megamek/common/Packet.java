@@ -43,6 +43,8 @@ implements Serializable {
     public static final int        COMMAND_ENTITY_READY         = 13;
     public static final int        COMMAND_ENTITY_UPDATE        = 14;
     
+    public static final int        COMMAND_CHANGE_HEX           = 25;  // reorder me
+    
     public static final int        COMMAND_PHASE_CHANGE         = 15;
     public static final int        COMMAND_TURN                 = 16;
     

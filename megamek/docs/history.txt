@@ -8,6 +8,8 @@ v 0.29.29 (CVS)
         while moving the mouse.
 + Java 1.1 bug with Arrow IV implementation fixed.
 + Attempt to fix sometimes botched logo that occurs on MS JVM.
++ If an ignition report is needed, then don't return without one.
++ Bug 912143: fix infinite loop in getFirstDeployableEntityNum.
 
 v 0.29.28 (2004-03-14 3:30pm)
 + Bug 911899: TEMPORARY solution - treat special Arrow IV ammo as normal ammo.

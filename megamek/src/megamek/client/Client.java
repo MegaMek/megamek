@@ -1703,6 +1703,7 @@ public class Client extends Panel
                 continue;
             }
             // obey command
+//             System.out.println( "Received a " + c.getCommand() + " packet." ); //commentme
             switch(c.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION :
                 disconnected();

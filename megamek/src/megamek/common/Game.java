@@ -1135,16 +1135,19 @@ public class Game implements Serializable
     }
 
     public int getFirstDeployableEntityNum(GameTurn turn) {
-      int num = getFirstEntityNum(turn);
-      Entity en = getEntity(num);
+        // Repeat the logic from getFirstEntityNum.
+        if (turn == null) {
+            return -1;
+        }
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
 
-      while ( (null == en) || ((null != en) && !en.shouldDeploy(getRoundCount())) ) {
-        num = getNextEntityNum(turn, num);
-        en = getEntity(num);
-      }
-
-      //Sanity check
-      return ((null != en) && en.shouldDeploy(getRoundCount())) ? num : -1;
+            if ( turn.isValidEntity(entity, this) &&
+                 entity.shouldDeploy(getRoundCount()) ) {
+                return entity.getId();
+            }
+        }
+        return -1;
     }
 
     /**
@@ -1154,17 +1157,19 @@ public class Game implements Serializable
       return getNextDeployableEntityNum(getTurn(), entityId);
     }
 
-    public int getNextDeployableEntityNum(GameTurn turn, int entityId) {
-      int num = getNextEntityNum(turn, entityId);
-      Entity en = getEntity(num);
-
-      while ( (null == en) || ((null != en) && !en.shouldDeploy(getRoundCount())) ) {
-        num = getNextDeployableEntityNum(turn, num);
-        en = getEntity(num);
-      }
-
-      //Sanity check
-      return ((null != en) && en.shouldDeploy(getRoundCount())) ? num : -1;
+    public int getNextDeployableEntityNum(GameTurn turn, int start) {
+        // Repeat the logic from getNextEntityNum.
+        boolean startPassed = false;
+        for (Enumeration i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (entity.getId() == start) {
+                startPassed = true;
+            } else if ( startPassed && turn.isValidEntity(entity, this) &&
+                        entity.shouldDeploy(getRoundCount()) ) {
+                return entity.getId();
+            }
+        }
+        return getFirstDeployableEntityNum(turn);
     }
 
 

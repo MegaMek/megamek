@@ -4996,6 +4996,9 @@ implements Runnable, ConnectionHandler {
 
         // The hex may already be on fire.
         if ( hex.contains( Terrain.FIRE ) ) {
+            if ( bReportAttempt ) {
+                phaseReport.append("           The hex is already on fire.\n");
+            }
             return true;
         }
         else if ( ignite(hex, nTargetRoll, bAnyTerrain, bReportAttempt) ) {

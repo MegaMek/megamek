@@ -216,7 +216,7 @@ public class BoardView1
      */
     public void update(Graphics g) {
         final Dimension size = getSize();
-//        final long start = System.currentTimeMillis();
+//         final long startTime = System.currentTimeMillis(); // commentme
 
         // update view, offset
         view.setLocation(scroll);
@@ -319,8 +319,8 @@ public class BoardView1
         g.drawImage(backImage, offset.x, offset.y, this);
 
 
-//        final long finish = System.currentTimeMillis();
-//        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
+//         final long finishTime = System.currentTimeMillis();//commentme
+//         System.out.println("BoardView1: updated screen in " + (finishTime - startTime) + " ms."); //commentme
     }
     
     /**

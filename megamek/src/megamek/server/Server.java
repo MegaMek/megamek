@@ -1797,6 +1797,12 @@ public boolean isPassworded() {
             } else if (o instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction)o;
                 game.getEntity(faa.getEntityId()).setArmsFlipped(faa.getIsFlipped());
+	    } else if (o instanceof FiringModeChangeAction) {
+		// Fire Mode - Handles pulling the FireModeChangeActions out of the attack Vector
+		FiringModeChangeAction fmc = (FiringModeChangeAction)o;
+		final Entity fe = game.getEntity(fmc.getEntityId());
+	        final Mounted fmcweapon = fe.getEquipment(fmc.getWeaponId());
+		fmcweapon.setFiringMode(fmc.getFiringMode());
             } else if (o instanceof FindClubAction) {
                 FindClubAction fca = (FindClubAction)o;
                 entity.setFindingClub(true);
@@ -1879,20 +1885,50 @@ public boolean isPassworded() {
             phaseReport.append("; needs " + toHit.getValue() + ", ");
         }
         
-        // build up some heat
-        ae.heatBuildup += wtype.getHeat();
 
-        // set the weapon as having fired
-        weapon.setUsedThisRound(true);
-        
         // use up ammo (if weapon is out of ammo, we shouldn't be here)
         if (usesAmmo) {
             ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+                /*
+                Fire Mode - Takes 2 shots of ammo away if we are firing uAC Double Rate.
+                If you don't have enough ammo for a Double Rate shot, you can't do it!
+                Rasia
+                */
+                if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && ammo != null && weapon.getFiringMode() == 2) {
+                        if (ammo.getShotsLeft() <= 0) {
+      				ae.loadWeapon(weapon);
+      				ammo = weapon.getLinked();                              
+				if (ammo.getShotsLeft() <= 0) {
+					weapon.setFiringMode(1);
+			                phaseReport.append("(Out of Ammo, Single Rate Only):");
+			         } else {
+			         	ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+			         	}
+			         
+                        } else {
+                            ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+                        }       
+                }
         }
+
+        // build up some heat
+        ae.heatBuildup += wtype.getHeat();
+	if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) // Fire Mode - If we are shooting an Ultra AC twice
+		ae.heatBuildup += wtype.getHeat();
+		
+        // set the weapon as having fired
+        weapon.setUsedThisRound(true);
+
 
         // roll
         int roll = Compute.d6(2);
         phaseReport.append("rolls " + roll + " : ");
+
+        if (roll == 2 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) {
+        	phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+    	        weapon.setHit(true);
+    	        return;
+    	}
 
         // do we hit?
         if (roll < toHit.getValue()) {
@@ -1905,8 +1941,15 @@ public boolean isPassworded() {
             }
             return;
         }
-        // are we attacks normal weapons or missiles?
-        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
+        
+                // Fire Mode - If we roll 2 and shooting uAC twice, it Jams
+        if (roll < 3 && ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) {
+        	phaseReport.append("misses AND THE AUTOCANNON JAMS.\n");
+    	        weapon.setHit(true);
+    	        return;
+    	}
+        
+        if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE || (ammo != null && wtype.getAmmoType() == AmmoType.T_AC_ULTRA && weapon.getFiringMode() == 2) || (ammo != null && atype.hasFlag(AmmoType.F_CLUSTER))) {
             if (ammo != null) {
                 // missiles; determine number of missiles hitting
                 int hits;
@@ -1915,6 +1958,8 @@ public boolean isPassworded() {
                 } else if (wtype.getRackSize() == 30 || wtype.getRackSize() == 40) {
                     // I'm going to assume these are MRMs
                     hits = Compute.missilesHit(wtype.getRackSize() / 2) + Compute.missilesHit(wtype.getRackSize() / 2);
+		} else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+			hits = Compute.missilesHit(2);
                 } else {
                     hits = Compute.missilesHit(wtype.getRackSize());
                 }
@@ -1930,6 +1975,13 @@ public boolean isPassworded() {
                     for (int j = 0; j < hits; j++) {
                         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                         phaseReport.append(damageEntity(te, hit, 1));
+                    }
+		} else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+			// Fire Mode - uAC ammo
+                    for (int j = 0; j < hits; j++) {
+                        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        phaseReport.append(damageEntity(te, hit, wtype.getDamage()));
+
                     }
                 } else if (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MRM) {
                     // LRMs, MRMs do salvos of 5
@@ -1953,7 +2005,7 @@ public boolean isPassworded() {
 
         phaseReport.append("\n");
     }
-
+    
     /**
      * Handle all physical attacks for the round
      */
@@ -2014,13 +2066,15 @@ public boolean isPassworded() {
     
     /**
      * Cleans up the attack declarations for the physical phase by removing
-     * all attacks past the first for any one mech
+     * all attacks past the first for any one mech.  Also clears out attacks
+     * by dead or disabled mechs.
      */
     private void cleanupPhysicalAttacks() {
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
             removeDuplicateAttacks(entity.getId());
         }
+        removeDeadAttacks();
     }
     
     /**
@@ -2040,6 +2094,23 @@ public boolean isPassworded() {
                 attacked = true;
             } else {
                 System.err.println("server: removing duplicate phys attack for id#" + entityId);
+            }
+        }
+        
+        attacks = toKeep;
+    }
+    
+    /**
+     * Removes all attacks by any dead entities.  It does this by going through
+     * all the attacks and only keeping ones from active entities.
+     */
+    private void removeDeadAttacks() {
+        Vector toKeep = new Vector(attacks.size());
+        
+        for (Enumeration i = attacks.elements(); i.hasMoreElements();) {
+            EntityAction action = (EntityAction)i.nextElement();
+            if (game.getEntity(action.getEntityId()).isActive()) {
+                toKeep.addElement(action);
             }
         }
         

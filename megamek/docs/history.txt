@@ -94,6 +94,8 @@ v CVS
 + 672181: DFAing units do not violate stacking during movement
 + 678789: starting position in scenarios made case-insensitive
 + 678789: wind direction set properly (randomly) in scenarios
++ players may enter the game as an observer
++ message indicates game data transmission
 
 v 0.28.3 (02-01-03, 12:13am)
 + Allow clients to define unique entity IDs.

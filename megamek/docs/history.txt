@@ -88,6 +88,9 @@ v 0.27
 
 VERSION HISTORY:
 ----------------
+v next
++ 575448: critical hits on ammo make explosions again
+
 v 0.26.4 (06-28-02, 4pm)
 + minor bot tweaks
 + 574145: gauss rifle explosion makes all critical slots count as "hit"

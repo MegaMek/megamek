@@ -99,6 +99,7 @@ v 0.28.10-dev
 + Handle chassis-only vehicles correctly in the XML unit file parser.
 + Internal structure for tanks should round all fractions up.
 + prefer attacker partial cover slightly in split LOS situations
++ 704999: actuator hits on other leg count with one hip hit
 
 v 0.28.9 (03-15-03, 5pm)
 + Added XML parsing to MegaMek.

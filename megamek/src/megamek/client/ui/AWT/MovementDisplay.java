@@ -316,7 +316,7 @@ public class MovementDisplay
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
         client.game.board.cursor(null);
-        client.mechD.displayMech(ce());
+        client.mechD.displayEntity(ce());
         client.mechD.showPanel("movement");
         client.bv.centerOnHex(ce().getPosition());
     }
@@ -454,7 +454,7 @@ public class MovementDisplay
                 client.bv.drawMovementData(ce(), cmd);
             }
         } else if (b.getType() == b.BOARD_HEX_CLICKED) {
-            final Entity target = client.game.getEntity(b.getCoords());
+            final Entity target = client.game.getFirstEntity(b.getCoords());
 
             Coords moveto = b.getCoords();
             client.bv.drawMovementData(ce(), cmd);

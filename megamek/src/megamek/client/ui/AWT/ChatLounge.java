@@ -25,7 +25,7 @@ import megamek.common.*;
 public class ChatLounge extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardListener, GameListener
 {
-    private static final String startNames[] = {"NW", "N", "NE", "E", "SE", "S", "SW", "W"};
+    private static final String startNames[] = {"Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W"};
     
     // parent Client
     private Client client;
@@ -317,14 +317,12 @@ public class ChatLounge extends AbstractPhaseDisplay
     private void setupStarts() {
         labStarts = new Label("Starting Positions", Label.CENTER);
         
-        butPos = new Button[8];
-        for (int i = 0; i < 8; i++) {
+        butPos = new Button[9];
+        for (int i = 0; i < 9; i++) {
             butPos[i] = new Button(startNames[i]);
             butPos[i].setActionCommand("starting_pos_" + i);
             butPos[i].addActionListener(this);
         }
-        
-        labMiddlePosition = new Label("", Label.CENTER);
             
         panStartButtons = new Panel();
 
@@ -334,15 +332,15 @@ public class ChatLounge extends AbstractPhaseDisplay
             
         // layout
         panStartButtons.setLayout(new GridLayout(3, 3));
-        panStartButtons.add(butPos[0]);
         panStartButtons.add(butPos[1]);
         panStartButtons.add(butPos[2]);
-        panStartButtons.add(butPos[7]);
-        panStartButtons.add(labMiddlePosition);
         panStartButtons.add(butPos[3]);
+        panStartButtons.add(butPos[8]);
+        panStartButtons.add(butPos[0]);
+        panStartButtons.add(butPos[4]);
+        panStartButtons.add(butPos[7]);
         panStartButtons.add(butPos[6]);
         panStartButtons.add(butPos[5]);
-        panStartButtons.add(butPos[4]);
         
         panStarts.setLayout(new BorderLayout());
         panStarts.add(labStarts, BorderLayout.NORTH);

@@ -348,6 +348,9 @@ public class Client extends Panel
         case Game.PHASE_EXCHANGE :
             sendReady(true);
             break;
+        case Game.PHASE_DEPLOYMENT :
+            switchPanel(new DeploymentDisplay(this));
+            break;
         case Game.PHASE_MOVEMENT :
             switchPanel(new MovementDisplay(this));
             break;
@@ -536,6 +539,12 @@ public class Client extends Panel
         data[1] = md;
     
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
+    }
+    
+    public void deploy(int enum, Coords c, int nFacing) {
+        Object[] data = { new Integer(enum), c, new Integer(nFacing) };
+        
+        send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
     }
     
     /**
@@ -925,7 +934,7 @@ public class Client extends Panel
         }
         
         public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
-            mechD.displayMech(entity);
+            mechD.displayEntity(entity);
         }        
     }
     

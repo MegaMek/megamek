@@ -77,6 +77,7 @@ v CVS
 + Add error-checking to Entity#elevation().
 + Workaround for 630144: Bot "Beginning of Turn" Race Condition
 + added TigerWraith's patch, changing the mech selector slightly
++ Added a Deployment Phase
 
 v 0.27.4 (10-27-02, 12:12pm)
 + 625838: only infantry shoot in the same hex

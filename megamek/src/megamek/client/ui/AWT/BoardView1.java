@@ -88,6 +88,9 @@ public class BoardView1
     private Polygon[]            facingPolys;
     private Polygon[]            movementPolys;
     
+    // should we mark deployment hexes for a player?
+    private Player               m_plDeployer = null;
+    
     /**
      * Construct a new board view for the specified game
      */
@@ -173,8 +176,14 @@ public class BoardView1
         drawSprite(cursorSprite);
         drawSprite(selectedSprite);
         
+        // draw deployment indicators
+        if (m_plDeployer != null) {
+            drawDeployment();
+        }
+        
         // draw the back buffer onto the screen
         g.drawImage(backImage, offset.x, offset.y, this);
+        
         
 //        final long finish = System.currentTimeMillis();
 //        System.out.println("BoardView1: updated screen in " + (finish - start) + " ms.");
@@ -234,6 +243,35 @@ public class BoardView1
                 sprite.prepare();
             }
             sprite.drawOnto(backGraph, drawX, drawY, this);
+        }
+    }
+    
+    /**
+     * Draw an outline around legal deployment hexes
+     */
+    private void drawDeployment() {
+        // only update visible hexes
+        int drawX = view.x / 63 - 1;
+        int drawY = view.y / 72 - 1;
+        
+        int drawWidth = view.width / 63 + 3;
+        int drawHeight = view.height / 72 + 3;
+        
+        // loop through the hexes
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {                        
+                Coords c = new Coords(j + drawX, i + drawY);
+                Point p = getHexLocation(c);
+                p.translate(-(view.x), -(view.y));
+                if (game.board.isLegalDeployment(c, m_plDeployer)) {
+                    backGraph.setColor(Color.yellow);
+                    int[] xcoords = { p.x + 21, p.x + 62, p.x + 83, p.x + 83, 
+                            p.x + 62, p.x + 21, p.x, p.x };
+                    int[] ycoords = { p.y, p.y, p.y + 35, p.y + 36, p.y + 71, 
+                            p.y + 71, p.y + 36, p.y + 35 };
+                    backGraph.drawPolygon(xcoords, ycoords, 8);
+                }
+            }
         }
     }
     
@@ -402,6 +440,7 @@ public class BoardView1
         if (drawElevationLine(c, 5)) {
             boardGraph.drawLine(drawX, drawY + 35, drawX + 21, drawY);
         }
+
     }
     
     /**
@@ -592,9 +631,11 @@ public class BoardView1
             newSprites.removeElement(sprite);
         }
         
-        sprite = new EntitySprite(entity);
-        newSprites.addElement(sprite);
-        newSpriteIds.put(new Integer(entity.getId()), sprite);
+        if (entity.getPosition() != null) {
+            sprite = new EntitySprite(entity);
+            newSprites.addElement(sprite);
+            newSpriteIds.put(new Integer(entity.getId()), sprite);
+        }
         
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
@@ -611,6 +652,7 @@ public class BoardView1
         
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
+            if (entity.getPosition() == null) continue;
             
             EntitySprite sprite = new EntitySprite(entity);
             newSprites.add(sprite);
@@ -688,6 +730,11 @@ public class BoardView1
             final Sprite sprite = (Sprite)i.next();
             repaintBounds(sprite.getBounds());
         }
+    }
+    
+    public void markDeploymentHexesFor(Player p)
+    {
+        m_plDeployer = p;
     }
     
     /**

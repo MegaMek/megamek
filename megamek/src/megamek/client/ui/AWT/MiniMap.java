@@ -103,6 +103,7 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         
         for (Enumeration enum = m_game.getEntities(); enum.hasMoreElements(); ) {
             Entity e = (Entity)enum.nextElement();
+            if (e.getPosition() == null) continue;
             g.setColor(e.getOwner().getColor());
             paintCoord(g, e.getPosition().x, e.getPosition().y, true);
         }

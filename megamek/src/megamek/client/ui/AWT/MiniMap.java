@@ -72,7 +72,6 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         m_game = g;
         m_bview = bview;
         m_dialog = d;
-        initializeColors();
         m_game.board.addBoardListener(this);
         addMouseListener(this);
         addComponentListener(this);
@@ -82,6 +81,12 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
     
     public MiniMap(Dialog d, Client c, BoardView1 bview) {
         this (d, c.game, bview);
+        try {
+            initializeColors();
+        } catch (IOException e) {
+            c.doAlertDialog("Fatal Error", "Could not initialise minimap:\n"+e);
+            c.die();
+        };
         
         c.addGameListener(this);
         c.minimapW.addKeyListener(c.menuBar);
@@ -98,78 +103,93 @@ implements BoardListener, MouseListener, ComponentListener, GameListener {
         }
     }
 
+    /*
+    * Initialize default colours and override with config file if there is one.
+    */
+    private void initializeColors() throws IOException {
 
-    private void initializeColors() {
+        // set up defaults -- this might go away later...
+        BACKGROUND                        = Color.black;
+        HEAVY_WOODS                       = new Color(160,200,100);
+        m_terrainColors[0]                = new Color(218,215,170);
+        m_terrainColors[Terrain.WOODS]    = new Color(180,230,130);
+        m_terrainColors[Terrain.ROUGH]    = new Color(215,181,0);
+        m_terrainColors[Terrain.RUBBLE]   = new Color(200,200,200);
+        m_terrainColors[Terrain.WATER]    = new Color(200,247,253);
+        m_terrainColors[Terrain.PAVEMENT] = new Color(204,204,204);
+        m_terrainColors[Terrain.ROAD]     = new Color(71,79,107);
+        m_terrainColors[Terrain.FIRE]     = Color.red;
+        m_terrainColors[Terrain.SMOKE]    = new Color(204,204,204);
+        m_terrainColors[Terrain.SWAMP]    = new Color(49,136,74);
+        m_terrainColors[Terrain.BUILDING] = new Color(204,204,204);
+        m_terrainColors[Terrain.BRIDGE]   = new Color(109,55,25);
+
+        // now try to read in the config file
         int red;
         int green;
         int blue;
 
-        try {
-            File coloursFile = new File("data/hexes/" + Settings.minimapColours);
-            if(!coloursFile.exists()) {
-                return;
-            }
-            Reader cr = new FileReader(coloursFile);
-            StreamTokenizer st = new StreamTokenizer(cr);
+        File coloursFile = new File("data/hexes/" + Settings.minimapColours);
 
-            st.lowerCaseMode(true);
-            st.quoteChar('"');
-            st.commentChar('#');
+        // only while the defaults are hard-coded!
+        if(!coloursFile.exists()) { return; }
+
+        Reader cr = new FileReader(coloursFile);
+        StreamTokenizer st = new StreamTokenizer(cr);
+
+        st.lowerCaseMode(true);
+        st.quoteChar('"');
+        st.commentChar('#');
 
 scan:
-            while(true) {
-                // undefined colours will be black
-                red=0;
-                green=0;
-                blue=0;
+        while (true) {
+            red=0;
+            green=0;
+            blue=0;
 
-                switch(st.nextToken()) {
-                case StreamTokenizer.TT_EOF:
-                    break scan;
-                case StreamTokenizer.TT_EOL:
-                    break scan;
-                case StreamTokenizer.TT_WORD:
-                    // read in 
-                    String key = st.sval;
-                    if (key.equals("background")) {
-                        st.nextToken();
-                        red = (int)st.nval;
-                        st.nextToken();
-                        green = (int)st.nval;
-                        st.nextToken();
-                        blue = (int)st.nval;
-                        
-                        BACKGROUND = new Color(red,green,blue);
-                   } else if (key.equals("unitsize")) {
-                        st.nextToken();
-                        unitSize = (int)st.nval;
-                   } else if (key.equals("heavywoods")) {
-                        st.nextToken();
-                        red = (int)st.nval;
-                        st.nextToken();
-                        green = (int)st.nval;
-                        st.nextToken();
-                        blue = (int)st.nval;
-                        
-                        HEAVY_WOODS = new Color(red,green,blue);
-                    } else {
-                        st.nextToken();
-                        red = (int)st.nval;
-                        st.nextToken();
-                        green = (int)st.nval;
-                        st.nextToken();
-                        blue = (int)st.nval;
-                        
-                        m_terrainColors[Terrain.parse(key)]=new Color(red,green,blue);
-                   }
+            switch(st.nextToken()) {
+            case StreamTokenizer.TT_EOF:
+                break scan;
+            case StreamTokenizer.TT_EOL:
+                break scan;
+            case StreamTokenizer.TT_WORD:
+                // read in 
+                String key = st.sval;
+                if (key.equals("unitsize")) {
+                    st.nextToken();
+                    unitSize = (int)st.nval;
+                } else if (key.equals("background")) {
+                    st.nextToken();
+                    red = (int)st.nval;
+                    st.nextToken();
+                    green = (int)st.nval;
+                    st.nextToken();
+                    blue = (int)st.nval;
+
+                    BACKGROUND = new Color(red,green,blue);
+                } else if (key.equals("heavywoods")) {
+                    st.nextToken();
+                    red = (int)st.nval;
+                    st.nextToken();
+                    green = (int)st.nval;
+                    st.nextToken();
+                    blue = (int)st.nval;
+
+                    HEAVY_WOODS = new Color(red,green,blue);
+                } else {
+                    st.nextToken();
+                    red = (int)st.nval;
+                    st.nextToken();
+                    green = (int)st.nval;
+                    st.nextToken();
+                    blue = (int)st.nval;
+
+                    m_terrainColors[Terrain.parse(key)]=new Color(red,green,blue);
                 }
             }
-
-            cr.close();
-        } catch(Exception e) {
-            System.err.println("error reading MiniMap colours file:");
-            System.err.println(e.getMessage());
         }
+
+        cr.close();
     }
 
     private void initializeMap() {

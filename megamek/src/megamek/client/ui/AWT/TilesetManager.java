@@ -66,12 +66,11 @@ public class TilesetManager {
 	private Image minefieldSign;    
 
     /** Creates new TilesetManager */
-    public TilesetManager(Component comp) {
+    public TilesetManager(Component comp) throws java.io.IOException {
         this.comp = comp;
         this.tracker = new MediaTracker(comp);
         camos = new DirectoryItems( new File("data/camo"), "",
                                     ImageFileFactory.getInstance() );
-
         mechTileset.loadFromFile("mechset.txt");
         wreckTileset.loadFromFile("wreckset.txt");
         hexTileset.loadFromFile(Settings.mapTileset);

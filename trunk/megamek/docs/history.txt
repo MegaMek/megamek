@@ -125,6 +125,9 @@ v 0.28.19-dev (CVS)
 + Prettier confirmation dialogs
 + Feature 722106: Automatic MASC engagement
 + No longer possible to change the mode of destroyed equipment
++ "test-msjdk" target in ant build.xml works again
++ bug 710329: secondary target modifier now appears properly during fire phase
++ firing player sees his attack arrows as attacks are made
 
 v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.

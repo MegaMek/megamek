@@ -115,6 +115,7 @@ VERSION HISTORY:
 ----------------
 v 0.29.10-dev
 + Bug 799275: Gauss ammo defensive BV correctly calculated.--LDE
++ Fixed problem with turning and backwards movement
 
 v 0.29.9 (08-31-03, 10pm)
 + Fixed bug 781250 and cleaned up MASC code a bit

@@ -23,6 +23,7 @@ Lot of people have contributed to the MegaMek project.
      Jason "Ensign" Bush <ensign@users.sourceforge.net>
      Tim Mead
      Ryan "Oscar" McConnell  <oscarmm@users.sourceforge.net>
+     Slava Zipunov <zipp32@users.sourceforge.net>
 
   Map Conversion:
      Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>

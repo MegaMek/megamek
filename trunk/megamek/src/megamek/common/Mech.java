@@ -1236,16 +1236,24 @@ public abstract class Mech
             maximumHeat += 2;
         }
 
+        // Add in Mek Stealth Armor effects.
+        if ( bHasStealthArmor ) {
+            maximumHeat += 10;
+        }
+
         // adjust for heat efficiency
         if (maximumHeat > getHeatCapacity()) {
             double heatPenalty = ((maximumHeat - getHeatCapacity()) * 5);
             dbv = Math.max(1, dbv - heatPenalty);
         }
 
+        /*
+        ** The way the BMRr handles Mek Stealth Armor has been superceded.
         // Add in Mek Stealth Armor effects to the OFFENSIVE Battle Rating.
         if ( bHasStealthArmor ) {
             maximumHeat += 10;
         }
+        */
 
         // adjust for target movement modifier
         int runMP = getRunMP();
@@ -1268,7 +1276,12 @@ public abstract class Mech
             targetMovementModidifer = 5;
         }
         double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 };
-        dbv *= tmmFactors[targetMovementModidifer];
+        double tmmFactor = tmmFactors[targetMovementModidifer];
+        // Adjust for Steath Armor on Mek.
+        if ( bHasStealthArmor ) {
+            tmmFactor += 0.2;
+        }
+        dbv *= tmmFactor;
         
         double weaponBV = 0;
 
@@ -1364,10 +1377,13 @@ public abstract class Mech
         speedFactor = Math.pow(speedFactor, 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
+        /*
+        ** The way the BMRr handles Mek Stealth Armor has been superceded.
         // Adjust for Steath Armor on Mek.
         if ( bHasStealthArmor ) {
             speedFactor += 0.2;
         }
+        */
 
         obv = weaponBV * speedFactor;
         

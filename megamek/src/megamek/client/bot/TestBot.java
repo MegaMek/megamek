@@ -101,6 +101,12 @@ public class TestBot extends BotClient {
 
             while (e.hasMoreElements()) {
                 Entity entity = (Entity) e.nextElement();
+                
+                // ignore loaded units
+                if (entity.getPosition() == null) {
+                    continue;
+                }
+                
                 CEntity cen = centities.get(entity);
                 cen.refresh();
                 firstPass(cen);
@@ -111,12 +117,20 @@ public class TestBot extends BotClient {
 
             while (i.hasNext() && !short_circuit) {
                 Entity entity = (Entity) i.next();
-                CEntity cen = centities.get(entity);
+
+                // ignore loaded units 
+                // (not really necessary unless bot manages to load units)
+                if (entity.getPosition() == null) {
+                    continue;
+                }
 
                 // if we can't move this entity right now, ignore it
                 if (!game.getTurn().isValidEntity(entity, game)) {
                     continue;
                 }
+
+                CEntity cen = centities.get(entity);
+
                 System.out.println("Contemplating movement of " + entity.getShortName() + " " + entity.getId());
 
                 MoveOption[] result = calculateMove(entity);
@@ -152,6 +166,12 @@ public class TestBot extends BotClient {
         }
         for (int d = 0; d < enemy_array.length; d++) {
             Entity en = (Entity) enemy_array[d];
+            
+            // ignore loaded units
+            if (en.getPosition() == null) {
+                continue;
+            }
+            
             CEntity enemy = centities.get(en);
             int enemy_hit_arc =
                 CEntity.getThreatHitArc(
@@ -196,6 +216,12 @@ public class TestBot extends BotClient {
             option.setState();
             for (int e = 0; e < enemies.size(); e++) { // for each enemy
                 Entity en = (Entity) enemies.get(e);
+                
+                // ignore loaded units
+                if (en.getPosition() == null) {
+                    continue;
+                }
+                
                 CEntity enemy = centities.get(en);
                 int[] modifiers = option.getModifiers(enemy.getEntity());
                 if (modifiers[MoveOption.DEFENCE_MOD] == ToHitData.IMPOSSIBLE

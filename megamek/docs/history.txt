@@ -12,6 +12,7 @@ v 0.29.23 (CVS)
 + Read images from directories or ZIP files; separate them into categories.
 + Data 777032, 778903, 779051, 786208, 786400, 786787, 787080, 788382, 788439, 
         792441, 855114: Released all submitted camos as separate files.
++ Bug 883975: When there is no AMS, set the WeaponResult#amsShotDown to int[0].
 
 v 0.29.22 (2004-01-17 2:25pm)
 + In ChatLounge.java, s/Mech/Unit/ in buttons and dialogs.

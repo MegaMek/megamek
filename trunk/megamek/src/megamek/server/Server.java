@@ -7469,11 +7469,15 @@ implements Runnable, ConnectionHandler {
             if ( entity instanceof Mech && game.getTemperatureDifference() != 0) {
                 if (game.getOptions().intOption("temperature") > 50) {
                     entity.heatBuildup += game.getTemperatureDifference();
-                    roundReport.append("Added "+ game.getTemperatureDifference() +" heat due to extreme temperatures...\n");
+                    roundReport.append( "Added " )
+                        .append( game.getTemperatureDifference() )
+                        .append( " heat due to extreme temperatures...\n" );
                 }
                 else {
                     entity.heatBuildup -= game.getTemperatureDifference();
-                    roundReport.append("Substracted "+ game.getTemperatureDifference() +" heat due to extreme temperatures...\n");
+                    roundReport.append( "Substracted " )
+                        .append( game.getTemperatureDifference() )
+                        .append( " heat due to extreme temperatures...\n" );
                 }
             }
             

@@ -3629,7 +3629,7 @@ public class Compute
         
         hexes.addElement(current);
         while(!dest.equals(current)) {
-            current = nextHex(current, src, iSrc, iDest, directions);
+            current = nextHex(current, iSrc, iDest, directions);
             hexes.addElement(current);
         }
         
@@ -3647,7 +3647,7 @@ public class Compute
      *
      * Not the most elegant solution, but it works.
      */
-    public static Coords nextHex(Coords current, Coords src, IdealHex iSrc, IdealHex iDest, int[] directions) {
+    public static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
         for (int i = 0; i < directions.length; i++) {
             Coords testing = current.translated(directions[i]);
             if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {

@@ -910,8 +910,15 @@ public boolean isPassworded() {
      * Changes it to make it the specified player's turn.
      */
     private void changeTurn(int turn) {
+        //not sure where else to put this, it prevents the server from hanging
+        for (int i = 0; getPlayer(game.getTurn()) == null && i < 100; i++) {
+          try {
+            wait(50);
+          } catch (Exception e) {
+            System.out.println("Error Waiting For Player");
+          }
+        }
         final Player player = getPlayer(game.getTurn());
-        
         game.setTurn(turn);
         player.setReady(false);
         send(new Packet(Packet.COMMAND_TURN, new Integer(turn)));

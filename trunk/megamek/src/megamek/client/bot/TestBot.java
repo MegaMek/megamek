@@ -298,6 +298,8 @@ public class TestBot extends BotClientWrapper {
     long enter = System.currentTimeMillis();
     int initiative = 0;
     EntityState min = null;
+    
+    System.out.println("beginning movement calculations...");
 
     // if we're ordered to move a specific entity, assume that's because it
     // fell and reset it so that we recalculate its movement
@@ -308,7 +310,7 @@ public class TestBot extends BotClientWrapper {
         // do some resetting
         centity.refresh = true;
         centity.moved = false;
-        centity.refresh();
+        centity.reset();
         // clear old moves
         this.old_moves = null;
         System.out.println("reset entity " + mustMove.getId());
@@ -325,8 +327,8 @@ public class TestBot extends BotClientWrapper {
       min = this.old_moves.getResult();
       if (min == null || !min.isMoveLegal() || (min.isPhysical && min.PhysicalTarget.isPhysicalTarget)) {
         this.old_moves = null;
-        this.calculateMoveTurn();
         System.out.println("recalculating moves since the old move was invalid");
+        this.calculateMoveTurn();
         return;
       }
     } else {
@@ -362,6 +364,7 @@ public class TestBot extends BotClientWrapper {
 
         if (cen.entity.isImmobile() && !cen.moved) {
           cen.moved = true;
+          System.out.println("recalculating moves since the unit is immobile");
           this.calculateMoveTurn();
           return;
         } else if (!cen.moved && mt.result.length < 6) {

@@ -121,6 +121,7 @@ v 0.29.8-dev
 + Fixed bug where locked turrets wouldn't show a direction
 + Bug 780962: tree clubs work again
 + Bug 760256: mechs dumping ammo try to reload weapons using that ammo
++ RFE 675994: "I.S. Equipment Limits" option allows TL2 ammo in TL1 units
 
 v 0.29.7 (08-08-03, 6pm)
 + Data 779006: Added BH-21's resized mech images

@@ -128,6 +128,8 @@ v 0.28.19-dev (CVS)
 + "test-msjdk" target in ant build.xml works again
 + bug 710329: secondary target modifier now appears properly during fire phase
 + firing player sees his attack arrows as attacks are made
++ Bug 740276: reverted fix for bug 732188
++ buildings need all three parameters (building, bldg_elev, and bldg_cf)
 
 v 0.28.18 (05-18-03, 11:35pm)
 + Bug 732188: Poor terrain matches shouldn't throw out the base image.

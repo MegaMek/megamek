@@ -126,6 +126,9 @@ public class BoardView1
     private Polygon[]            facingPolys;
     private Polygon[]            movementPolys;
 
+    // the player who owns this BoardView's client
+    private Player               localPlayer = null;
+
     // should we mark deployment hexes for a player?
     private Player               m_plDeployer = null;
 
@@ -1338,6 +1341,14 @@ public class BoardView1
         }
     }
 
+    public void setLocalPlayer(Player p) {
+        localPlayer = p;
+    }
+
+    private Player getLocalPlayer() {
+        return localPlayer;
+    }
+
     /**
      * Specifies that this should mark the deployment hexes for a player.  If
      * the player is set to null, no hexes will be marked.
@@ -2201,16 +2212,27 @@ public class BoardView1
          * Draws this sprite onto the specified graphics context.
          */
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            drawOnto(g, x, y, observer, false);
+        }
+
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
             if (isReady()) {
             	Image tmpImage;
-            	if ( zoomIndex == BASE_ZOOM_INDEX ){
-            		tmpImage = image;
+            	if (zoomIndex == BASE_ZOOM_INDEX ){
+    	            tmpImage = image;
             	} else {
-            		tmpImage = getScaledImage( image, scale );
+                    tmpImage = getScaledImage( image, scale );
             	}
-            	g.drawImage(tmpImage, x, y, observer);
+                if (makeTranslucent && isJ2RE) {
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                    g2.drawImage(tmpImage, x, y, observer);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                } else {
+                    g.drawImage(tmpImage, x, y, observer);
+                }
             } else {
-                // grrr... well be ready next time!
+                // grrr... we'll be ready next time!
                 prepare();
             }
         }
@@ -2356,27 +2378,8 @@ public class BoardView1
         }
         
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            if (isReady()) {
-            	Image tmpImage;
-            	if (zoomIndex == BASE_ZOOM_INDEX ){
-    	            tmpImage = image;
-            	} else {
-            		tmpImage = getScaledImage( image, scale );
-            	}
-            	try {
-                    Graphics2D g2 = (Graphics2D) g;
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                    g2.drawImage(tmpImage, x, y, observer);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-                } catch (Throwable e) {
-                    g.drawImage(tmpImage, x, y, observer);
-                }
-            } else {
-                // grrr... well be ready next time!
-                prepare();
-            }
+            drawOnto(g, x, y, observer, true);
         }
-
 
     }
 
@@ -2585,6 +2588,16 @@ public class BoardView1
         	return bounds;
         }
         
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+            if (trackThisEntitiesVisibilityInfo(this.entity)
+                && !this.entity.isVisibleToEnemy()) {
+                // create final image with translucency
+                drawOnto(g, x, y, observer, true);
+            } else {
+                drawOnto(g, x, y, observer, false);
+            }
+        }
+
         /**
          * Creates the sprite for this entity.  It is an extra pain to
          * create transparent images in AWT.
@@ -2723,6 +2736,24 @@ public class BoardView1
                 graph.drawString("T", 19, 70);
             }
 
+            // If this unit is currently unknown to the enemy, say so.
+            if (trackThisEntitiesVisibilityInfo(entity)) {
+                if (!entity.isSeenByEnemy()) {
+                    // draw "U"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString("U", 30, 71);
+                    graph.setColor(Color.black);
+                    graph.drawString("U", 29, 70);
+                } else if (!entity.isVisibleToEnemy() && !isJ2RE) {
+                    // If this unit is currently hidden from the enemy, say so.
+                    // draw "H"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString("H", 30, 71);
+                    graph.setColor(Color.black);
+                    graph.drawString("H", 29, 70);
+                }
+            }
+
             //Lets draw our armor and internal status bars
             int baseBarLength = 23;
             int barLength = 0;
@@ -2751,6 +2782,21 @@ public class BoardView1
             // create final image
             this.image = createImage(new FilteredImageSource(tempImage.getSource(),
                                                              new KeyAlphaFilter(TRANSPARENT)));
+        }
+
+        /*
+         * We only want to show double-blind visibility indicators on
+         * our own mechs and teammates mechs (assuming team vision option).
+         */
+        private boolean trackThisEntitiesVisibilityInfo(Entity e) {
+            if (game.getOptions().booleanOption("double_blind")
+                && (e.getOwner().getId() == getLocalPlayer().getId()
+                    || (game.getOptions().booleanOption("team_vision")
+                        && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         private Color getStatusBarColor(double percentRemaining) {

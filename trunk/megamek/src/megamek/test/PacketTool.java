@@ -329,6 +329,8 @@ public class PacketTool extends Frame implements Runnable, ConnectionHandler {
                 System.out.print( "COMMAND_ENTITY_MODECHANGE" ); break;
             case Packet.COMMAND_ENTITY_AMMOCHANGE:
                 System.out.print( "COMMAND_ENTITY_AMMOCHANGE" ); break;
+            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
+                System.out.print( "COMMAND_ENTITY_VISIBILITY_INDICATOR" ); break;
             case Packet.COMMAND_CHANGE_HEX:
                 System.out.print( "COMMAND_CHANGE_HEX" ); break;
             case Packet.COMMAND_BLDG_ADD:

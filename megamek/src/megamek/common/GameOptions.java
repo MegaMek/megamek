@@ -46,14 +46,15 @@ public class GameOptions extends Options implements Serializable {
         addOption(base, new GameOption("rng_type", "RNG Type", "Note: any type other than 0 or 1 is completely unofficial.\n\nValid types:\n0 - SunRandom: Sun regular RNG\n1 - CryptoRandom: Java crypto-strength RNG\n2 - Pool36Random: Pool of 36 values, randomly shuffled\n\nDefaults to 1.", 1));
         addOption(base, new GameOption("team_initiative", "Teams roll initiative", "When checked, teams roll initiative as one group.  This team initative is used to order the units according to the normal method.  Player order on a team is determined by their own initiative.\n\nChecked by default", true)); 
         addOption(base, new GameOption("is_eq_limits", "Ammo & Equipment Limits", "If checked, Inner Sphere units will be limited to ammo & equipment available at their build year.  Turning this option off will not remove invalid equipment.\n\nChecked by default", true)); 
+        addOption(base, new GameOption("autosave_msg", "Remind on Autosave", "If checked, the server will send a message each time an auto-save is performed.\n\nChecked by default", true)); 
         addOption(base, new GameOption("paranoid_autosave", "Paranoid Autosave", "If checked, the game will auto-save every phase.\n\nUnchecked by default", false)); 
         
         OptionGroup level2 = new OptionGroup("Optional Rules (Level 2)");
         addGroup(level2);
         addOption(level2, new GameOption("flamer_heat", "Flamers can deal heat instead of damage", "If checked, flamers can increase the heat of their target by 2 instead of dealing 2 damage.\n\nChecked by default.", true));
-		addOption(level2, new GameOption("fire", "Fire and smoke", "If checked, fires may be set accidentally or intentionally.\n\nChecked by default.", true));
-		addOption(level2, new GameOption("indirect_fire", "Indirect fire", "If checked, LRMs may be fire indirectly, and players may choose to spot for indirect fire instead of attacking.\n\nChecked by default.", true));
-		addOption(level2, new GameOption("minefields", "Minefields", "If checked, minefields can be used.\n\nChecked by default.", true));
+        addOption(level2, new GameOption("fire", "Fire and smoke", "If checked, fires may be set accidentally or intentionally.\n\nChecked by default.", true));
+        addOption(level2, new GameOption("indirect_fire", "Indirect fire", "If checked, LRMs may be fire indirectly, and players may choose to spot for indirect fire instead of attacking.\n\nChecked by default.", true));
+        addOption(level2, new GameOption("minefields", "Minefields", "If checked, minefields can be used.\n\nChecked by default.", true));
         addOption(level2, new GameOption("temperature", "Temperature", "The temperature the game takes place at, for use with the Extreme Temperatures rule.\n\nDefaults to 25 degrees Celsius, thus having no effect.", 25));
         addOption(level2, new GameOption("gravity", "Gravity", "The gravity of the world the game takes place at, for use with the High/Low Gravity rule.\n\nDefaults to 1 G, thus having no effect.", (float)1.0));
 

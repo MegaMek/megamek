@@ -1384,7 +1384,8 @@ public class Compute
                                        int targetId, int arm) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation();
+        final int attackerHeight = ae.absHeight();
+        final int targetHeight = te.absHeight();
         final int targetElevation = te.elevation();
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
@@ -1430,9 +1431,8 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
-        // check elevation (target must be same or one level higher only)
-        if (attackerElevation != targetElevation 
-            && attackerElevation != (targetElevation - 1)) {
+        // check elevation
+        if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
         
@@ -1450,11 +1450,6 @@ public class Compute
         // can't punch while prone (except vehicles, but they're not in the game yet)
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
-        
-        // can't punch prone mechs (unless they're one level higher)
-        if (te.isProne() && attackerElevation != (targetElevation - 1)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
         }
         
         // okay, modifiers...
@@ -1494,8 +1489,8 @@ public class Compute
         }
         
         // elevation
-        if (attackerElevation == (targetElevation - 1)) {
-            if (te.isProne()) {
+        if (attackerHeight == targetElevation) {
+            if (te.height() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -1546,6 +1541,7 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         final int attackerElevation = ae.elevation();
+        final int targetHeight = te.absHeight();
         final int targetElevation = te.elevation();
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
@@ -1593,9 +1589,8 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
-        // check elevation (target must be same or one level lower only)
-        if (attackerElevation != targetElevation 
-            && attackerElevation != (targetElevation + 1)) {
+        // check elevation 
+        if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
         
@@ -1613,11 +1608,6 @@ public class Compute
         // can't kick while prone
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
-        
-        // can't kick a prone mech one level lower
-        if (te.isProne() && attackerElevation == (targetElevation + 1)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone and lower");
         }
         
         // okay, modifiers...
@@ -1657,14 +1647,12 @@ public class Compute
         }
         
         // elevation
-        if (attackerElevation == (targetElevation + 1)) {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
+        if (attackerElevation < targetHeight) {
+            toHit.setHitTable(ToHitData.HIT_KICK);
+        } else if (te.height() > 0) {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else {
-            if (te.isProne()) {
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
-            } else {
-                toHit.setHitTable(ToHitData.HIT_KICK);
-            }
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
         
         // factor in target side
@@ -1717,6 +1705,8 @@ public class Compute
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
         final int attackerElevation = ae.elevation();
+        final int attackerHeight = ae.absHeight();
+        final int targetHeight = te.absHeight();
         final int targetElevation = te.elevation();
         final boolean bothArms = club.getType().hasFlag(MiscType.F_CLUB);
         ToHitData toHit;
@@ -1780,7 +1770,7 @@ public class Compute
         }
         
         // check elevation (target must be within one level)
-        if (Math.abs(attackerElevation - targetElevation) > 1) {
+        if (targetHeight < attackerElevation || targetElevation > attackerHeight) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
         
@@ -1798,11 +1788,6 @@ public class Compute
         // can't club while prone
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
-        
-        // can't club a prone mech unless one level higher
-        if (te.isProne() && attackerElevation != (targetElevation - 1)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
         }
         
         // okay, modifiers...
@@ -1854,16 +1839,16 @@ public class Compute
         }
         
         // elevation
-        if (attackerElevation == (targetElevation + 1)) {
-                toHit.setHitTable(ToHitData.HIT_PUNCH);
-        } else if (attackerElevation == (targetElevation - 1)) {
-            if (te.isProne()) {
+        if (attackerElevation == targetElevation) {
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        } else if (attackerElevation < targetElevation) {
+            if (te.height() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
             }
         } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         
         // factor in target side
@@ -1903,6 +1888,11 @@ public class Compute
         //Quads can't push
         if ( ae.entityIsQuad() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+        }
+        
+        //Can only push mechs
+        if (! (te instanceof Mech)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
         }
 
         //Can't push with flipped arms
@@ -2087,8 +2077,10 @@ public class Compute
     public static ToHitData toHitCharge(Game game, int attackerId, int targetId, Coords src, int movement) {
         final Entity ae = game.getEntity(attackerId);
         final Entity te = game.getEntity(targetId);
-        final int attackerElevation = ae.elevation();
+        final int attackerElevation = game.board.getHex(src).floor();
+        final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = te.elevation();
+        final int targetHeight = te.absHeight();
         ToHitData toHit = null;
         
         // arguments legal?
@@ -2101,20 +2093,26 @@ public class Compute
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
         }
         
+        // mechs can only charge standing mechs
+        if (ae instanceof Mech) {
+            if (! (te instanceof Mech)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
+            }
+            if (te.isProne()) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+            }
+        }
+            
+        
         // target must be within 1 elevation level
-        if (Math.abs(attackerElevation - targetElevation) > 1) {
+        if (attackerElevation > targetHeight || attackerElevation > targetHeight) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
         
         // can't charge while prone
         if (ae.isProne()) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
-        }
-        
-        // can't charge prone mechs
-        if (te.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
-        }
+        }        
         
         // can't attack mech making a different displacement attack
         if (te.hasDisplacementAttack()) {
@@ -2159,6 +2157,19 @@ public class Compute
         // determine hit direction
         toHit.setSideTable(targetSideTable(src, te.getPosition(),
                                             te.getFacing()));
+                                            
+        // elevation
+        if (attackerElevation < targetElevation) {
+            toHit.setHitTable(ToHitData.HIT_KICK);
+        } else if (attackerElevation == targetElevation) {
+            if (te.height() == 0) {
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            } else {
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            }
+        } else {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        }
 
         // done!
         return toHit;
@@ -2296,19 +2307,20 @@ public class Compute
             toHit.addModifier(-4, "target immobile");
         }
         
-        // determine hit direction
-        toHit.setSideTable(targetSideTable(src, te.getPosition(),
-                                            te.getFacing()));
-        
-        // should hit the punch table
-        toHit.setHitTable(ToHitData.HIT_PUNCH);
-        
-        // unless the target is prone, in which case rear normal is used
-        if (te.isProne()) {
+        if (te instanceof Tank) {
+            toHit.setSideTable(ToHitData.SIDE_FRONT);
+            toHit.setHitTable(ToHitData.HIT_NORMAL);
+        }
+        else if (te.isProne()) {
             toHit.setSideTable(ToHitData.SIDE_REAR);
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
-
+        else {
+            toHit.setSideTable(targetSideTable(src, te.getPosition(),
+                                            te.getFacing()));
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+        }
+        
         // done!
         return toHit;
     }

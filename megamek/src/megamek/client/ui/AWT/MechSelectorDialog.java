@@ -179,7 +179,8 @@ public class MechSelectorDialog
                 e.setOwner(m_client.getLocalPlayer());
                 m_client.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
-                // some sort of error?
+                System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                ex.printStackTrace();
                 return;
             }
             this.setVisible(false);

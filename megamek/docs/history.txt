@@ -89,6 +89,9 @@ v (next)
 + fixed crashbug when no ammo was available to a weapon
 + mech selector now additionally looks inside .zip files
 + fixed crash bug with new ammo selector under MS Java
++ made physical code more flexible for vehicles
++ fixed mechcache load bug with zipfile entries
++ non-mechs never make PSRs that could result in falls
 
 v 0.26.11 (08-30-02, 10pm)
 + 598824: a few more hovercraft movement fixes

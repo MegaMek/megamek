@@ -67,6 +67,10 @@ public class MechSummaryCache
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
+                    // have to translate "null" to null
+                    if (ms.getEntryName().equals("null")) {
+                        ms.setEntryName(null);
+                    }
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));

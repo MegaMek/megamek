@@ -1502,7 +1502,12 @@ public boolean isPassworded() {
      * We have a special case for getting up because quads need not roll to stand
      * if they have no damaged legs.  If a quad is short a gyro, however....
      */
-    private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {
+    private void doSkillCheckInPlace(Entity entity, PilotingRollData reason, boolean gettingUp) {        
+        // non-mechs should never get here
+        if (! (entity instanceof Mech)) {
+            return;
+        }
+        
         if (gettingUp && !entity.needsRollToStand() && (entity.getDestroyedCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,Mech.LOC_CT) < 2)) {
             phaseReport.append("\n" + entity.getDisplayName() + " does not need to make "
             + "a piloting skill check to stand up because it has all four of its legs.");
@@ -1536,6 +1541,11 @@ public boolean isPassworded() {
      */
     private void doSkillCheckWhileMoving(Entity entity, Coords src, Coords dest,
                                          PilotingRollData reason) {
+        // non mechs should never get here
+        if (! (entity instanceof Mech)) {
+            return;
+        }
+        
         final PilotingRollData roll = Compute.getBasePilotingRoll(game, entity.getId());
         final Hex srcHex = game.board.getHex(src);
         final Hex destHex = game.board.getHex(dest);

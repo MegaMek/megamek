@@ -8,7 +8,6 @@ package megamek.client.bot;
 
 import megamek.common.*;
 import megamek.client.*;
-import megamek.client.bot.*;
 import megamek.server.*;
 
 /**

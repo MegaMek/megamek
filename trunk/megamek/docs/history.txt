@@ -5,6 +5,7 @@ v0.29.54 (CVS)
 + Bug 1036351: scrolling bug fixed for real
 + Bug 1048960: attack sprites were not being reused
 + Bug 1049929: /reset crashes MS JRE
++ Bug 1050887: Artillery crashes MS JRE
 
 v0.29.53 (2004-10-17 3:00pm)
 + Bug 1044431: Quad 'Mechs should fire only to the front arc (except

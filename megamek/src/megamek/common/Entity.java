@@ -486,8 +486,7 @@ public abstract class Entity
 	public String getInternalString(int loc) {
 		if (getInternal(loc) == ARMOR_NA) {
 			return "N/A";
-		}
-		if (getInternal(loc) == ARMOR_DESTROYED) {
+		} else if (getInternal(loc) == ARMOR_DESTROYED) {
 			return "***";
 		}
 		return Integer.toString(getInternal(loc));

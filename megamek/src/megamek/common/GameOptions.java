@@ -24,15 +24,7 @@ import megamek.common.options.*;
  *
  * @author Ben
  */
-public class GameOptions implements Serializable {
-    
-    private Vector groups = new Vector();
-    private Vector allOptions = new Vector();
-    private Hashtable optionsHash = new Hashtable();
-    
-    public GameOptions() {
-        ;
-    }
+public class GameOptions extends Options implements Serializable {
     
     public void initialize() {
         // set up game options
@@ -56,43 +48,17 @@ public class GameOptions implements Serializable {
         addOption(level3, new GameOption("double_blind", "Double blind", "If checked, enemy units will only be visible if they are in line of sight of one or more of your units.\n\nUnchecked by default.", false));
         addOption(level3, new GameOption("team_vision", "Teams share vision", "If checked, teams will share vision in double-blind mode.  Only valid in double-blind mode.\n\nChecked by default.", true));
         addOption(level3, new GameOption("floating_crits", "Through-armor criticals will 'float'", "If checked, rolls of '2' on hit location will result in a new location being rolled for a critical hit, instead of just hitting the local torso.\n\nUnchecked by default.", false));
+        addOption(level3, new GameOption("engine_explosions", "MaxTech engine explosions", "If checked, any time a mech takes 2 or more engine crits in one round, a roll of '12' will cause a cascading engine explosion.", false));
+        addOption(level3, new GameOption("pilot_advantages", "MaxTech pilot advantages", "If checked, players can add additional advantages to their pilots through the 'configure mech' window.", false));
+        addOption(level3, new GameOption("maxtech_physical_BTH", "MaxTech physical BTHs", "If checked, BTHs for physical attacks will use MaxTech levels. These levels take into account the piloting skill of the attacking unit.", false));
+        addOption(level3, new GameOption("maxtech_round_damage", "MaxTech damage per round", "If checked, units will have +1 to their piloting skill roll for every 20 damage taken, not just the first damage. Also, BTH is altered by weight class. Lights get +1 to BTH where as assaults get -2. Mediums and heavies are in between.", false));
         
         OptionGroup ruleBreakers = new OptionGroup("Optional Rules (unofficial)");
         addGroup(ruleBreakers);
         addOption(ruleBreakers, new GameOption("no_tac", "No through-armor criticals", "If checked, rolls of '2' on hit location will only result in a torso hit, and no critical roll.  Only applies to mechs.  Supercedes the floating criticals option.\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("no_immobile_vehicles", "Vehicles not immobilized by crits", "If checked, vehicles with a drive or engine hit will not be counted as 'immobile' for purposes of determining to-hit numbers.\n\nUnchecked by default.", false));
-	addOption(ruleBreakers, new GameOption("inf_move_last", "Infantry move after Meks and Vehicles", "If checked, all Meks and Vehicles will move before the first Infantry platoon.  The move order of Meks and Vehicles ignores the presence of Infantry.\n\nMutually exclusive with \"" + Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle\".\n\nUnchecked by default.", false));
-	addOption(ruleBreakers, new GameOption("inf_move_multi", Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle", "If checked, " + Game.INF_MOVE_MULTI + " platoons will have to move in place of a single Mek or Vehicle.  If there are less than " + Game.INF_MOVE_MULTI + " platoons remaining, they all must move.  The move order includes the presence of Infantry.\n\nMutually exclusive with \"Infantry move after Meks and Vehicles\".\n\nUnchecked by default.", false));
+  addOption(ruleBreakers, new GameOption("inf_move_last", "Infantry move after Meks and Vehicles", "If checked, all Meks and Vehicles will move before the first Infantry platoon.  The move order of Meks and Vehicles ignores the presence of Infantry.\n\nMutually exclusive with \"" + Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle\".\n\nUnchecked by default.", false));
+  addOption(ruleBreakers, new GameOption("inf_move_multi", Game.INF_MOVE_MULTI + " Infantry for every Mek or Vehicle", "If checked, " + Game.INF_MOVE_MULTI + " platoons will have to move in place of a single Mek or Vehicle.  If there are less than " + Game.INF_MOVE_MULTI + " platoons remaining, they all must move.  The move order includes the presence of Infantry.\n\nMutually exclusive with \"Infantry move after Meks and Vehicles\".\n\nUnchecked by default.", false));
         addOption(ruleBreakers, new GameOption("blind_drop", "Blind Drop", "If checked, the configuration of a Mech won't be shown in the Chatroom to your opponents.", false)); 
-    }
-    
-    private void addGroup(OptionGroup group) {
-        groups.addElement(group);
-    }
-    
-    public Enumeration groups() {
-        return groups.elements();
-    }
-    
-    private void addOption(OptionGroup group, GameOption option) {
-        group.addOption(option);
-        allOptions.addElement(option);
-        optionsHash.put(option.getShortName(), option);
-    }
-    
-    public GameOption getOption(String name) {
-        return (GameOption)optionsHash.get(name);
-    }
-    
-    public boolean booleanOption(String name) {
-        return getOption(name).booleanValue();
-    }
-    
-    public int intOption(String name) {
-        return getOption(name).intValue();
-    }
-    
-    public float floatOption(String name) {
-        return getOption(name).floatValue();
     }
 }

@@ -27,7 +27,7 @@ public class PhysicalDisplay
     implements BoardListener, GameListener, ActionListener,
     KeyListener
 {
-    private static final int    NUM_BUTTON_LAYOUTS = 2;
+    private static final int    NUM_BUTTON_LAYOUTS = 3;
     // parent game
     private Client          client;
         
@@ -46,6 +46,7 @@ public class PhysicalDisplay
     private Button            butClub;
     private Button            butBrush;
     private Button            butThrash;
+    private Button            butDodge;
     
     private Button            butReport;
    
@@ -53,6 +54,8 @@ public class PhysicalDisplay
     private Button            butDone;
     private Button            butMore;
     
+    private Button            butSpace;
+
     private int               buttonLayout;
         
     // let's keep track of what we're shooting and at what, too
@@ -76,6 +79,9 @@ public class PhysicalDisplay
 
         setupStatusBar();
             
+        butSpace = new Button("");
+        butSpace.setEnabled(false);
+
         butPunch = new Button("Punch");
         butPunch.addActionListener(this);
         butPunch.setEnabled(false);
@@ -99,6 +105,10 @@ public class PhysicalDisplay
         butThrash = new Button("Thrash");
         butThrash.addActionListener(this);
         butThrash.setEnabled(false);
+
+        butDodge = new Button("Dodge");
+        butDodge.addActionListener(this);
+        butDodge.setEnabled(false);
 
         butReport = new Button("Report..");
         butReport.addActionListener(this);
@@ -209,6 +219,14 @@ public class PhysicalDisplay
             panButtons.add(butMore);
             panButtons.add(butDone);
             break;
+        case 2 :
+            panButtons.add(butDodge);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace);
+            panButtons.add(butSpace);
+            panButtons.add(butMore);
+            panButtons.add(butDone);
+            break;
         }
         
         validate();
@@ -223,22 +241,29 @@ public class PhysicalDisplay
             return;
         }
         this.cen = en;
+        
+        Entity entity = ce();
+        
         target(null);
         client.game.board.highlight(ce().getPosition());
         client.game.board.select(null);
         client.game.board.cursor(null);
 
-        client.mechD.displayEntity(ce());
+        client.mechD.displayEntity(entity);
         client.mechD.showPanel("movement");
 
-        client.bv.centerOnHex(ce().getPosition());
+        client.bv.centerOnHex(entity.getPosition());
 
         // does it have a club?
-        Mounted club = Compute.clubMechHas(ce());
+        Mounted club = Compute.clubMechHas(entity);
         if (club == null || club.getName().endsWith("Club")) {
             butClub.setLabel("Club");
         } else {
             butClub.setLabel(club.getName());
+        }
+
+        if ( (entity instanceof Mech) && !entity.isProne() && entity.getCrew().getOptions().booleanOption("dodge_maneuver") ) {
+          butDodge.setEnabled(true);
         }
     }
     
@@ -281,6 +306,7 @@ public class PhysicalDisplay
         butClub.setEnabled(false);
         butBrush.setEnabled(false);
         butThrash.setEnabled(false);
+        butDodge.setEnabled(false);
         butDone.setEnabled(false);
         butNext.setEnabled(false);
     }
@@ -304,91 +330,94 @@ public class PhysicalDisplay
         }
         client.mechD.wPan.displayMech(ce());
         updateTarget();
+
+        Entity entity = client.game.getEntity(cen);
+        entity.dodging = true;
     }
     
     /**
      * Punch the target!
      */
     private void punch() {
-	final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
-	final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
+  final ToHitData leftArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.LEFT);
+  final ToHitData rightArm = Compute.toHitPunch(client.game, cen, target, PunchAttackAction.RIGHT);
 
-	if (client.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
-		"To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
-		+ "\nDamage [RA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
-		+ "\n   and/or"
-		+"\nTo Hit [LA]: " + leftArm.getValueAsString() + " (" + Compute.oddsAbove(leftArm.getValue()) + "%)   (" + leftArm.getDesc() + ")"
-		+ "\nDamage [LA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.LEFT)+leftArm.getTableDesc()
-	) ) {
-	        disableButtons();
-      	  if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
-            	&& rightArm.getValue() != ToHitData.IMPOSSIBLE) {
-	            attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
-      	  } else if (leftArm.getValue() < rightArm.getValue()) {
-            	attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
-	        } else {
-      	      attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
-	        }
+  if (client.doYesNoDialog( "Punch " + target.getDisplayName() + "?",
+    "To Hit [RA]: " + rightArm.getValueAsString() + " (" + Compute.oddsAbove(rightArm.getValue()) + "%)   (" + rightArm.getDesc() + ")"
+    + "\nDamage [RA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.RIGHT)+rightArm.getTableDesc()
+    + "\n   and/or"
+    +"\nTo Hit [LA]: " + leftArm.getValueAsString() + " (" + Compute.oddsAbove(leftArm.getValue()) + "%)   (" + leftArm.getDesc() + ")"
+    + "\nDamage [LA]: "+Compute.getPunchDamageFor(ce(),PunchAttackAction.LEFT)+leftArm.getTableDesc()
+  ) ) {
+          disableButtons();
+          if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
+              && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
+              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
+          } else if (leftArm.getValue() < rightArm.getValue()) {
+              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
+          } else {
+              attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.RIGHT));
+          }
 
-      	  ready();
-	};
+          ready();
+  };
     }
     
     /**
      * Kick the target!
      */
     private void kick() {
-	ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
-	ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
-	ToHitData attackLeg;
-	int attackSide;
+  ToHitData leftLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.LEFT);
+  ToHitData rightLeg = Compute.toHitKick(client.game, cen, target, KickAttackAction.RIGHT);
+  ToHitData attackLeg;
+  int attackSide;
 
-	if (leftLeg.getValue() < rightLeg.getValue()) {
-		attackLeg = leftLeg;
-		attackSide = KickAttackAction.LEFT;
-	} else {
-		attackLeg = rightLeg;
-		attackSide = KickAttackAction.RIGHT;
-	};
+  if (leftLeg.getValue() < rightLeg.getValue()) {
+    attackLeg = leftLeg;
+    attackSide = KickAttackAction.LEFT;
+  } else {
+    attackLeg = rightLeg;
+    attackSide = KickAttackAction.RIGHT;
+  };
 
-	if (client.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
-		"To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
-		+ "\nDamage: "+Compute.getKickDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
-	) ) {
-		disableButtons();
-		attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
-		ready();
-	};
+  if (client.doYesNoDialog( "Kick " + target.getDisplayName() + "?",
+    "To Hit: " + attackLeg.getValueAsString() + " (" + Compute.oddsAbove(attackLeg.getValue()) + "%)   (" + attackLeg.getDesc() + ")"
+    + "\nDamage: "+Compute.getKickDamageFor(ce(),attackSide)+attackLeg.getTableDesc()
+  ) ) {
+    disableButtons();
+    attacks.addElement(new KickAttackAction(cen, target.getTargetType(), target.getTargetId(), attackSide));
+    ready();
+  };
     }
     
     /**
      * Push that target!
      */
     private void push() {
-	ToHitData toHit = Compute.toHitPush(client.game, cen, target);
-	if (client.doYesNoDialog( "Push " + target.getDisplayName() + "?",
-		"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-	) ) {
-		disableButtons();
-		attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
-		ready();
-	};
+  ToHitData toHit = Compute.toHitPush(client.game, cen, target);
+  if (client.doYesNoDialog( "Push " + target.getDisplayName() + "?",
+    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
+  ) ) {
+    disableButtons();
+    attacks.addElement(new PushAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()));
+    ready();
+  };
     }
     
     /**
      * Club that target!
      */
     private void club() {
-	Mounted club = Compute.clubMechHas(ce());
-	ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
-	if (client.doYesNoDialog( "Club " + target.getDisplayName() + "?",
-		"To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
-		+ "\nDamage: "+Compute.getClubDamageFor(ce(),club)+toHit.getTableDesc()
-	) ) {
-		disableButtons();
-		attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
-		ready();
-	};
+  Mounted club = Compute.clubMechHas(ce());
+  ToHitData toHit = Compute.toHitClub(client.game, cen, target, club);
+  if (client.doYesNoDialog( "Club " + target.getDisplayName() + "?",
+    "To Hit: " + toHit.getValueAsString() + " (" + Compute.oddsAbove(toHit.getValue()) + "%)   (" + toHit.getDesc() + ")"
+    + "\nDamage: "+Compute.getClubDamageFor(ce(),club)+toHit.getTableDesc()
+  ) ) {
+    disableButtons();
+    attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
+    ready();
+  };
     }
 
     /**
@@ -560,6 +589,23 @@ public class PhysicalDisplay
     }
 
     /**
+     * Dodge like that guy in that movie that I won't name for copywrite reasons!
+     */
+    private void dodge() {
+      if (client.doYesNoDialog("Dodge?", "Enable dodge? You will not be able to do other physical attacks this round.") ) {
+        disableButtons();
+        
+        Entity entity = client.game.getEntity(cen);
+        entity.dodging = true;
+        
+        DodgeAction act = new DodgeAction( cen );
+        attacks.addElement( act );
+        
+        ready();
+      };
+    }
+
+    /**
      * Targets something
      */
     void target(Targetable t) {
@@ -612,7 +658,6 @@ public class PhysicalDisplay
             // Thrash at infantry?
             ToHitData thrash = Compute.toHitThrash( client.game, cen, target );
             butThrash.setEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
-
         } else {
             butPunch.setEnabled(false);
             butPush.setEnabled(false);
@@ -782,11 +827,16 @@ public class PhysicalDisplay
             brush();
         } else if (ev.getSource() == butThrash) {
             thrash();
+        } else if (ev.getSource() == butDodge) {
+            dodge();
         } else if (ev.getSource() == butNext) {
             selectEntity(client.getNextEntityNum(cen));
         } else if (ev.getSource() == butMore) {
             buttonLayout++;
-            buttonLayout %= NUM_BUTTON_LAYOUTS;
+            
+            if ( buttonLayout >= NUM_BUTTON_LAYOUTS )
+              buttonLayout = 0;
+
             setupButtonPanel();
         }
     }

@@ -20,6 +20,7 @@ v0.29.33 (CVS)
 + Bug 938300: Bot is now able to stand
 + Added random minefield support for the bot.
 + Bug 940937: when applying damage, add destruction reports to damage report
++ Mech loading delay reduced, startup is now quicker.
 
 v0.29.32 (2004-04-18 10:00pm)
 + Bug 933545: Mech stacking violation bug fixed.

@@ -1088,9 +1088,8 @@ public class ChatLounge
      * Pop up the dialog to load a mech
      */
     public void loadMech() {
-        if (MechSummaryCache.isInitialized()) {
-            clientgui.getMechSelectorDialog().show();
-        }
+        MechSummaryCache.block(); // wait till it's ready
+        clientgui.getMechSelectorDialog().show();
     }
 
     //

@@ -36,6 +36,10 @@ public class UnitLoadingDialog extends Dialog {
     private int fileCount;
     private int zipCount;
 
+    // Determines how often to update the loading dialog.
+    // Setting this too low causes noticeable loading delays.
+    private static final int UPDATE_FREQUENCY = 32;
+
     public UnitLoadingDialog(Frame frame) {
         super(frame,"Please wait...");
 
@@ -66,16 +70,19 @@ public class UnitLoadingDialog extends Dialog {
     
     public void incrementCacheCount() {
         cacheCount++;
-        lCacheCount.setText(String.valueOf(cacheCount));
+        if ( (cacheCount % UPDATE_FREQUENCY) == 0)
+            lCacheCount.setText(String.valueOf(cacheCount));
     }
 
     public void incrementFileCount() {
         fileCount++;
-        lFileCount.setText(String.valueOf(fileCount));
+        if ( (fileCount % UPDATE_FREQUENCY) == 0)
+            lFileCount.setText(String.valueOf(fileCount));
     }
 
     public void incrementZipCount() {
         zipCount++;
-        lZipCount.setText(String.valueOf(zipCount));
+        if ( (zipCount % UPDATE_FREQUENCY) == 0)
+            lZipCount.setText(String.valueOf(zipCount));
     }
 }

@@ -2431,7 +2431,6 @@ public class Server
                 e.crew.setUnconcious(false);
             } else {
                 roundReport.append("fails.");
-                break;
             }
         }
         if (anyRolls) {

@@ -402,7 +402,7 @@ public class Compute
                 break;
             case MovementData.STEP_GET_UP :
                 // mechs with 1 MP are allowed to get up
-                stepMp = entity.getWalkMP() == 1 ? 1 : 2;
+                stepMp = entity.getRunMP() == 1 ? 1 : 2;
                 hasJustStood = true;
                 break;
             case MovementData.STEP_GO_PRONE :
@@ -531,7 +531,7 @@ public class Compute
             
             // mechs with 1 MP are allowed to get up
             if ( stepType == MovementData.STEP_GET_UP &&
-                 entity.getWalkMP() == 1 ) {
+                 entity.getRunMP() == 1 ) {
                 moveType = Entity.MOVE_RUN;
             }
             

@@ -335,12 +335,22 @@ public abstract class Entity
     }
 
     /**
-     * Returns the elevation of the hex that this entity is standing on.
+     * Returns the elevation of this entity.
      *
-     * By default, the entity is on the floor
+     * By default, the entity is on the floor.
      */
-    public int elevation(Board b) {
-        return b.getHex(getPosition()).floor();
+    public int elevation() {
+        return game.board.getHex(getPosition()).floor();
+    }
+    
+    /**
+     * Returns the height of the unit, that is, how many levels above
+     * it's elevation is it for LOS purposes.
+     *
+     * Default is 0.
+     */
+    public int height() {
+        return 0;
     }
     
     /**

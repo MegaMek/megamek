@@ -1660,7 +1660,7 @@ public class BoardView1
         private MovementData.Step step;
 
         public StepSprite(MovementData.Step step) {
-            this.step = (MovementData.Step)step.clone();
+            this.step = step;//(MovementData.Step)step.clone();
 
             // step is the size of the hex that this step is in
             bounds = new Rectangle(getHexLocation(step.getPosition()), HEX_SIZE);
@@ -1810,7 +1810,7 @@ public class BoardView1
             costStringBuf.append( step.getMpUsed() );
 
             // If the step is using a road bonus, mark it.
-            if ( step.isOnPavement() ) {
+            if ( step.isPavementStep() ) {
                 costStringBuf.append( "+" );
             }
 
@@ -1827,7 +1827,7 @@ public class BoardView1
 
             if (step.isUsingMASC()) {
                 costStringBuf.append("[");
-                costStringBuf.append(step.getMASCNumber());
+                costStringBuf.append(step.getTargetNumberMASC());
                 costStringBuf.append("+]");
             }
 

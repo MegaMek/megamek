@@ -242,8 +242,8 @@ public class EntityState extends MovementData implements com.sun.java.util.colle
       MovementData.Step prevStep = null;
       boolean lastStepOnPavement = false;
       if (this.length() > 1) {
-    prevStep = (MovementData.Step)getStep(length() - 1);
-          lastStepOnPavement = prevStep.isOnPavement();
+	  prevStep = (MovementData.Step)getStep(length() - 1);
+          lastStepOnPavement = prevStep.isPavementStep();
       }
       // check for danger
       isDanger = (Compute.isPilotingSkillNeeded(game, entityId,

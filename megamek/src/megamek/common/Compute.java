@@ -443,7 +443,7 @@ public class Compute
             step.setFacing(curFacing);
             step.setMpUsed(mpUsed);
             step.setDistance(distance);
-            step.setOnPavement( isPavementStep );
+            step.setPavementStep( isPavementStep );
             lastWasBackwards = thisStepBackwards;
         }
         
@@ -499,8 +499,8 @@ public class Compute
             curPos = step.getPosition();
 
             // If all movement is on pavement, say so in all steps.
-            if ( onlyPavement && !step.isOnPavement() ) {
-                step.setOnPavement( true );
+            if ( onlyPavement && !step.isPavementStep() ) {
+                step.setPavementStep( true );
             }
 
             // guilty until proven innocent
@@ -534,7 +534,7 @@ public class Compute
                             !runProhibited ) {
                     step.setUsingMASC(true);
                     Mech m = (Mech)entity;
-                    step.setMASCNumber(m.getMASCTarget());
+                    step.setTargetNumberMASC(m.getMASCTarget());
                     moveType = Entity.MOVE_RUN;
                 } else if ( entity instanceof Tank && onlyPavement &&
                             step.getMpUsed() <= entity.getRunMP() + 
@@ -651,7 +651,7 @@ public class Compute
                                           
             /* Bug 754610: Revert fix for bug 702735. */
             // Record if the step just taken was along pavement or a road.
-            prevStepOnPavement = step.isOnPavement();
+            prevStepOnPavement = step.isPavementStep();
 
             // Infantry can always move one hex in *any* direction.
             if ( isInfantry && step.getMpUsed() == 0 ) {
@@ -697,7 +697,7 @@ public class Compute
             
             // Check again for illegal terrain, in case of jumping.  We're
             // allowed to enter prohibited terrain via a road or bridge.
-            if ( entity.isHexProhibited(destHex) && !step.isOnPavement() ) {
+            if ( entity.isHexProhibited(destHex) && !step.isPavementStep() ) {
                 step.setMovementType(Entity.MOVE_ILLEGAL);
                 continue;
             }

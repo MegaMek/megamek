@@ -1964,7 +1964,7 @@ public abstract class Entity
      * Assign AMS systems to the most dangerous incoming missile attacks.
      * This should only be called once per turn, or AMS will get extra attacks
      */
-    public void assignAMS(Vector vAttacks, Vector vOtherAttacks) {
+    public void assignAMS(Vector vAttacks) {
         
         for (Enumeration e = getWeapons(); e.hasMoreElements(); ) {
             Mounted weapon = (Mounted)e.nextElement();
@@ -1994,7 +1994,7 @@ public abstract class Entity
                     }
                 }
                 // find the most dangerous salvo by expected damage
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc, vOtherAttacks);
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc);
                 if (waa != null) {
                     waa.addCounterEquipment(weapon);
                 }

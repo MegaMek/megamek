@@ -379,6 +379,7 @@ public class MoveStep implements Serializable {
         this.onlyPavement = prev.onlyPavement;
         this.thisStepBackwards = prev.thisStepBackwards;
         this.isProne = prev.isProne;
+        this.isRunProhibited = prev.isRunProhibited;
     }
 
     /**

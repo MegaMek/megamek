@@ -6,6 +6,7 @@ v 0.29.20 (CVS)
 + Fix bugs in encoding Buildings.  Don't compress XML in PacketTool.
 + Patch 863376: added Thunder-Augmented LRM ammo type.
 + Patch 864088: added Fragmentation missiles.
++ Fix bug with turning using running movement after walking backwards
 
 v 0.29.19 (2003-12-16, 10:55pm)
 + Bug 849222: Need to check for clubbing in Server#canPhysicalTarget.

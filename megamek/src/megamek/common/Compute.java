@@ -18,6 +18,7 @@ import java.awt.Polygon;
 import java.util.*;
 
 import megamek.common.actions.*;
+import megamek.common.util.*;
 
 /**
  * The compute class is designed to provide static methods for mechs
@@ -39,7 +40,7 @@ public class Compute
     public static final int        GEAR_CHARGE      = 3;
     public static final int        GEAR_DFA         = 4;
     
-    public static final Random random = new Random();
+    public static final DiceRandom random = new DiceRandom();
     
     /**
      * Simulates six-sided die rolls.
@@ -47,15 +48,7 @@ public class Compute
     public static int d6(int dice) {
         int total = 0;
         for (int i = 0; i < dice; i++) {
-            total += (int)(random.nextDouble() * 6 + 1);
-            /*
-            double roll = random.nextDouble();
-            int side = 1;
-            while ((roll -= (1.0 / 6.0)) >= 0) {
-                side++;
-            }
-            total += side;
-            */
+            total += random.nextD6();
         }
         return total;
     }

@@ -7365,18 +7365,24 @@ implements Runnable, ConnectionHandler {
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
      */
     private String damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion, int bFrag) {
-        String desc = new String();
+        StringBuffer desc = new StringBuffer();
         boolean isBattleArmor = (te instanceof BattleArmor);
         boolean isPlatoon = !isBattleArmor && (te instanceof Infantry);
         Hex te_hex = null;
         
         int crits = hit.getEffect() == HitData.EFFECT_CRITICAL ? 1 : 0;
         int specCrits = 0;
-        //int loc = hit.getLocation();
         HitData nextHit = null;
 
+        // Some "hits" on a Protomech are actually misses.
+        if( te instanceof Protomech && 
+            hit.getLocation() == Protomech.LOC_NMISS ) {
+            desc.append
+                ( "\n        The Protomech takes no damage from a near miss." );
+            return desc.toString();
+        }
+
         // Is the infantry in the open?
-        // TODO : do infantry take double damage in Smoke?
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() ) {
             te_hex = game.board.getHex( te.getPosition() );
             if ( te_hex != null &&
@@ -7386,45 +7392,48 @@ implements Runnable, ConnectionHandler {
                  !te_hex.contains( Terrain.BUILDING ) ) {
                 // PBI.  Damage is doubled.
                 damage = damage * 2;
-                desc += "\n        Infantry platoon caught in the open!!!  Damage doubled." ;
+                desc.append( "\n        Infantry platoon caught in the open!!!  Damage doubled." );
             }
         }
         // If dealing with fragmentation missiles,
         // it does double damage to infantry...
         switch (bFrag)
         {
-        	case 1:
-        		if (isPlatoon)
-        		{
-		            damage *= 2;
-		            desc += "\n        Infantry platoon hit by fragmentation missiles!!!  Damage doubled." ;
-		        }
-		        else if (te != null)
-		        {
-		            damage = 0;
-		            desc += "\n        Hardened unit hit by fragmentation missiles!!!  No damage." ;
-		        }
-		        break;
-        	case 2:
-        		if (isPlatoon)
-        		{
-		            damage *= 2;
-		            desc += "\n        Infantry platoon hit by flechette ammunition!!!  Damage doubled." ;
-		        }
-		        else if ((te != null) && (!isBattleArmor))
-		        {
-		            damage /= 2;
-		            desc += "\n        Hardened unit hit by flechette ammunition!!!  Damage halved." ;
-		        }
-        	default:
-        		// We can ignore this.
-        		break;
+        case 1:
+            if (isPlatoon) {
+                damage *= 2;
+                desc.append( "\n        Infantry platoon hit by fragmentation missiles!!!  Damage doubled." );
+            }
+            else if (te != null) {
+                damage = 0;
+                desc.append( "\n        Hardened unit hit by fragmentation missiles!!!  No damage." );
+            }
+            break;
+        case 2:
+            if (isPlatoon) {
+                damage *= 2;
+                desc.append( "\n        Infantry platoon hit by flechette ammunition!!!  Damage doubled." );
+            }
+            else if ((te != null) && (!isBattleArmor)) {
+                damage /= 2;
+                desc.append( "\n        Hardened unit hit by flechette ammunition!!!  Damage halved." );
+            }
+        default:
+            // We can ignore this.
+            break;
         }
 
         // Allocate the damage
         while (damage > 0) {
+
             // let's resolve some damage!
-            desc += "\n        " + te.getDisplayName() + " takes " + damage + " damage to " + te.getLocationAbbr(hit) + ".";
+            desc.append( "\n        " )
+                .append( te.getDisplayName() )
+                .append( " takes " )
+                .append( damage )
+                .append( " damage to " )
+                .append(te.getLocationAbbr(hit) )
+                .append( "." );
             
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == Entity.ARMOR_DOOMED) {
@@ -7439,8 +7448,9 @@ implements Runnable, ConnectionHandler {
                  null != passenger && !passenger.isDoomed() ) {
 
                 // Yup.  Roll up some hit data for that passenger.
-                desc += "\n            The passenger, " +
-                    passenger.getDisplayName() + ", gets in the way.";
+                desc.append( "\n            The passenger, " )
+                    .append( passenger.getDisplayName() )
+                    .append( ", gets in the way." );
                 HitData passHit = passenger.rollHitLocation
                     ( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
 
@@ -7458,30 +7468,35 @@ implements Runnable, ConnectionHandler {
                 } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
 
                 // Damage the passenger.
-                desc += damageEntity( passenger, passHit, damage );
+                desc.append( damageEntity( passenger, passHit, damage ) );
 
                 // Did some damage pass on?
                 if ( damage > absorb ) {
                     // Yup.  Remove the absorbed damage.
                     damage -= absorb;
-                    desc += "\n    " + damage +
-                        " damage point(s) passes on to " +
-                        te.getDisplayName() + ".";
+                    desc.append( "\n    " )
+                        .append( damage )
+                        .append( " damage point(s) passes on to " )
+                        .append( te.getDisplayName() )
+                        .append( "." );
                 } else {
                     // Nope.  Return our description.
-                    return desc;
+                    return desc.toString();
                 }
 
             } // End nLoc-has-exterior-passenger
 
             // is this a mech dumping ammo being hit in the rear torso?
-            boolean bTorso = (nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT || nLoc == Mech.LOC_LT);
+            boolean bTorso = (nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT ||
+                              nLoc == Mech.LOC_LT);
             if (te instanceof Mech && hit.isRear() && bTorso) {
                 for (Enumeration e = te.getAmmo(); e.hasMoreElements(); ) {
                     Mounted mAmmo = (Mounted)e.nextElement();
-                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() && !mAmmo.isHit()) {
+                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() && 
+                        !mAmmo.isHit()) {
                         // doh.  explode it
-                        desc += explodeEquipment(te, mAmmo.getLocation(), mAmmo);
+                        desc.append( explodeEquipment(te, mAmmo.getLocation(),
+                                                      mAmmo) );
                         mAmmo.setHit(true);
                     }
                 }
@@ -7494,16 +7509,20 @@ implements Runnable, ConnectionHandler {
                     te.setArmor(te.getArmor(hit) - damage, hit);
                     te.damageThisPhase += damage;
                     damage = 0;
-                    desc += " " + te.getArmor(hit) + " Armor remaining";
-                    desc += breachCheck(te, hit.getLocation(), 1, false);
+                    desc.append( " " )
+                        .append( te.getArmor(hit) )
+                        .append( " Armor remaining" )
+                        .append( breachCheck(te, hit.getLocation(),
+                                             1, false) );
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
                     te.setArmor(Entity.ARMOR_DESTROYED, hit);
                     te.damageThisPhase += absorbed;
                     damage -= absorbed;
-                    desc += " Armor destroyed,";
-                    desc += breachCheck(te, hit.getLocation(), 1, false);
+                    desc.append( " Armor destroyed," );
+                    desc.append( breachCheck(te, hit.getLocation(),
+                                             1, false) );
                 }
             }
             
@@ -7513,7 +7532,7 @@ implements Runnable, ConnectionHandler {
                 if (te.getInternal(hit) > 0) {
                     // Triggers a critical hit on Vehicles and Mechs.
                     if ( !isPlatoon && !isBattleArmor ) {
-                    crits++;
+                        crits++;
                     }
                     if (te.getInternal(hit) > damage) {
                         // internal structure absorbs all damage
@@ -7522,9 +7541,13 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                         // Infantry platoons have men not "Internals".
                         if ( isPlatoon ) {
-                            desc += " " + te.getInternal(hit) + " men alive.";
+                            desc.append( " " )
+                                .append( te.getInternal(hit))
+                                .append(" men alive" );
                         } else {
-                        desc += " " + te.getInternal(hit) + " Internal Structure remaining";
+                            desc.append( " " )
+                                .append( te.getInternal(hit))
+                                .append(" Internal Structure remaining" );
                         }
                     } else {
                         // damage transfers, maybe
@@ -7534,35 +7557,45 @@ implements Runnable, ConnectionHandler {
                         damage -= absorbed;
                         // Infantry have only one section.
                         if ( isPlatoon ) {
-                            desc += " <<<PLATOON KILLED>>>,";
+                            desc.append( " <<<PLATOON KILLED>>>," );
                         } else if ( isBattleArmor ) {
-                            desc += " <<<TROOPER KILLED>>>,";
+                            desc.append( " <<<TROOPER KILLED>>>," );
                         } else {
-                        desc += " <<<SECTION DESTROYED>>>,";
+                            desc.append( " <<<SECTION DESTROYED>>>," );
                         }
-                        if (hit.getLocation() == Mech.LOC_RT || hit.getLocation() == Mech.LOC_LT) {
-                            te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
+                        if (hit.getLocation() == Mech.LOC_RT ||
+                            hit.getLocation() == Mech.LOC_LT) {
+                            te.engineHitsThisRound +=
+                                te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                    Mech.SYSTEM_ENGINE,
+                                                    hit.getLocation());
                             
                             boolean engineExploded = false;
-                            StringBuffer descBuffer = new StringBuffer();
                             
                             if ( te.engineHitsThisRound >= 2 ) {
-                              engineExploded = checkEngineExplosion(te, descBuffer);
+                              engineExploded = checkEngineExplosion(te, desc);
                             }
-                            
-                            desc += descBuffer.toString();
                             
                             if ( !engineExploded ) {
                               int numEngineHits = 0;
-                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                              numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+                              numEngineHits +=
+                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                     Mech.SYSTEM_ENGINE,
+                                                     Mech.LOC_CT);
+                              numEngineHits +=
+                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                     Mech.SYSTEM_ENGINE,
+                                                     Mech.LOC_RT);
+                              numEngineHits +=
+                                  te.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                     Mech.SYSTEM_ENGINE,
+                                                      Mech.LOC_LT);
                               
                               if ( numEngineHits > 2  ) {
                                   // third engine hit
                                   phaseReport.append(destroyEntity(te, "engine destruction"));
                               }
-                            }
+                           }
                         }
                     }
                 }
@@ -7574,22 +7607,20 @@ implements Runnable, ConnectionHandler {
                         te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, hit.getLocation());
                         
                         boolean engineExploded = false;
-                        StringBuffer descBuffer = new StringBuffer();
                         
                         if ( te.engineHitsThisRound >= 2 ) {
-                          engineExploded = checkEngineExplosion(te, descBuffer);
+                          engineExploded = checkEngineExplosion(te, desc);
                         }
-                        
-                        desc += descBuffer.toString();
                         
                         if ( !engineExploded ) {
                           // Entity destroyed.  Ammo explosions are
                           // neither survivable nor salvagable.
                           // Only ammo explosions in the CT are devastating.
-                          desc += destroyEntity( te, "damage", !ammoExplosion,
-                                                 !( ammoExplosion &&
-                                                    hit.getLocation() ==
-                                                    Mech.LOC_CT ) );
+                          desc.append( destroyEntity( te, "damage",
+                                                      !ammoExplosion,
+                                                      !( ammoExplosion &&
+                                                         hit.getLocation() ==
+                                                         Mech.LOC_CT ) ) );
                         }
                         
                         // nowhere for further damage to go
@@ -7599,12 +7630,17 @@ implements Runnable, ConnectionHandler {
                         damage = 0;
                     } else if (ammoExplosion && te.locationHasCase(hit.getLocation())) {
                         // remaining damage prevented
-                        desc += " remaining " + damage + " damage prevented by CASE.";
+                        desc.append( " remaining " )
+                            .append( damage )
+                            .append( " damage prevented by CASE." );
                         damage = 0;
                     } else if (damage > 0) {
                         // remaining damage transfers
-                        desc += " " + damage + " damage transfers to "
-                        + te.getLocationAbbr(nextHit) + ".";
+                        desc.append( " " )
+                            .append( damage )
+                            .append( " damage transfers to " )
+                            .append( te.getLocationAbbr(nextHit) )
+                            .append( "." );
                     }
                 }
             }
@@ -7615,7 +7651,7 @@ implements Runnable, ConnectionHandler {
 
             // resolve special results
             if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
-                desc += "\n            Movement system damaged!";
+                desc.append( "\n            Movement system damaged!" );
                 int nMP = te.getOriginalWalkMP();
                 if (nMP <= 1) {
                     ((Tank)te).immobilize();
@@ -7623,7 +7659,8 @@ implements Runnable, ConnectionHandler {
                     te_hex = game.board.getHex( te.getPosition() );
                     if ( te.getMovementType() == Entity.MovementType.HOVER &&
                          te_hex.levelOf(Terrain.WATER) > 0 ) {
-                        desc += destroyEntity(te, "a watery grave", false);
+                        desc.append( destroyEntity(te, "a watery grave",
+                                                   false) );
                     }
                 }
                 else {
@@ -7631,40 +7668,43 @@ implements Runnable, ConnectionHandler {
                 }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
-                desc += "\n            Movement system destroyed!";
+                desc.append( "\n            Movement system destroyed!" );
                 ((Tank)te).immobilize();
                 // Does the hovercraft sink?
                 te_hex = game.board.getHex( te.getPosition() );
                 if ( te.getMovementType() == Entity.MovementType.HOVER &&
                      te_hex.levelOf(Terrain.WATER) > 0 ) {
-                    desc += destroyEntity(te, "a watery grave", false);
+                    desc.append( destroyEntity(te, "a watery grave", false) );
                 }
             }
             else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
-                desc += "\n            Turret locked!";
+                desc.append( "\n            Turret locked!" );
                 ((Tank)te).lockTurret();
             }
             
             // roll all critical hits against this location
             for (int i = 0; i < crits; i++) {
-                desc += "\n" + criticalEntity(te, hit.getLocation());
+                desc.append( "\n" )
+                    .append( criticalEntity(te, hit.getLocation()) );
             }
             crits = 0;
             
             for (int i = 0; i < specCrits; i++) {
-                desc += "\n" + criticalEntity(te, hit.getLocation(), hit.getSpecCritMod());
+                desc.append( "\n" )
+                    .append( criticalEntity(te, hit.getLocation(),
+                                            hit.getSpecCritMod()) );
             }
             specCrits = 0;
             
             if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD) {
-                desc += "\n" + damageCrew(te, 1);
+                desc.append( "\n" ).append( damageCrew(te, 1) );
             }
             
             // loop to next location
             hit = nextHit;
         }
         
-        return desc;
+        return desc.toString();
     }
     
     /**

@@ -63,7 +63,8 @@ public class BoardSelectionDialog
 
     private Panel panBoardsAvailable = new Panel();
     private Label labBoardsAvailable = new Label("Maps Available :", Label.CENTER);
-    private java.awt.List lisBoardsAvailable = new java.awt.List(12);
+    private java.awt.List lisBoardsAvailable = new java.awt.List(10);
+    private Checkbox chkRotateBoard = new Checkbox("Rotate Board");
     
     private Panel panButtons = new Panel();
     private Button butUpdate = new Button("Update Size Settings");
@@ -194,6 +195,7 @@ public class BoardSelectionDialog
         
         panBoardsAvailable.add(labBoardsAvailable, BorderLayout.NORTH);
         panBoardsAvailable.add(lisBoardsAvailable, BorderLayout.CENTER);
+        panBoardsAvailable.add(chkRotateBoard, BorderLayout.SOUTH);
     }
     
     
@@ -282,8 +284,12 @@ public class BoardSelectionDialog
     private void change(String board) {
         int[] selected = lisBoardsSelected.getSelectedIndexes();
         for (int i = 0; i < selected.length; i++) {
-            lisBoardsSelected.replaceItem(selected[i] + ": " + board, selected[i]);
-            mapSettings.getBoardsSelectedVector().setElementAt(board, selected[i]);
+            String name = board;
+            if ( chkRotateBoard.getState() ) {
+                name = Board.BOARD_REQUEST_ROTATION + name;
+            }
+            lisBoardsSelected.replaceItem(selected[i] + ": " + name, selected[i]);
+            mapSettings.getBoardsSelectedVector().setElementAt(name, selected[i]);
             lisBoardsSelected.select(selected[i]);
         }
     }

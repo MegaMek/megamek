@@ -121,7 +121,7 @@ public class MapSettings implements Serializable {
     public void replaceBoardWithRandom(String board) {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.elementAt(i).equals(board)) {
-                int rindex = Compute.random.nextInt(boardsAvailable.size() - 2) + 2;
+                int rindex = Compute.randomInt(boardsAvailable.size() - 2) + 2;
                 boardsSelected.setElementAt(boardsAvailable.elementAt(rindex), i);
             }
         }

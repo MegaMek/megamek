@@ -22,6 +22,7 @@ implements Serializable {
     public static final int     BOARD_HEX_CLICK         = 1;
     public static final int     BOARD_HEX_DOUBLECLICK   = 2;
     public static final int     BOARD_HEX_DRAG          = 3;
+    public static final String  BOARD_REQUEST_ROTATION  = "rotate:";
     
     public int                  width;
     public int                  height;
@@ -511,7 +512,93 @@ implements Serializable {
         
     }
     
-    
+    /**
+     * Flips the board around the vertical axis (North-for-South) and/or
+     * the horizontal axis (East-for-West).  The dimensions of the board
+     * will remain the same, but the terrain of the hexes will be swiched.
+     *
+     * @param   horiz - a <code>boolean</code> value that, if <code>true</code>,
+     *          indicates that the board is being flipped North-for-South.
+     * @param   vert - a <code>boolean</code> value that, if <code>true</code>,
+     *          indicates that the board is being flipped East-for-West.
+     */
+    public void flip( boolean horiz, boolean vert ) {
+        // If we're not flipping around *some* axis, do nothing.
+        if ( !vert && !horiz ) {
+            return;
+        }
+
+        // We only walk through half the board, but *which* half?
+        int stopX;
+        int stopY;
+        if ( horiz ) {
+            // West half of board.
+            stopX = this.width / 2;
+            stopY = this.height;
+        } else {
+            // North half of board.
+            stopX = this.width;
+            stopY = this.height / 2;
+        }
+
+        // Walk through the current data array and build a new one.
+        int newX;
+        int newY;
+        int newIndex;
+        int oldIndex;
+        Hex tempHex;
+        Terrain terr;
+        for ( int oldX = 0; oldX < stopX; oldX++ ) {
+            // Calculate the new X position of the flipped hex.
+            if ( horiz ) {
+                newX = this.width - oldX - 1;
+            } else {
+                newX = oldX;
+            }
+            for ( int oldY = 0; oldY < stopY; oldY++ ) {
+                // Calculate the new Y position of the flipped hex.
+                if ( vert ) {
+                    newY = this.height - oldY - 1;
+                } else {
+                    newY = oldY;
+                }
+
+                // Swap the old hex for the new hex.
+                newIndex = newX + newY * this.width;
+                oldIndex = oldX + oldY * this.width;
+                tempHex = this.data[ oldIndex ];
+                this.data[ oldIndex ] = this.data[ newIndex ];
+                this.data[ newIndex ] = tempHex;
+
+                // Update the road exits in the swapped hexes.
+                terr = this.data[ newIndex ].getTerrain( Terrain.ROAD );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+                terr = this.data[ oldIndex ].getTerrain( Terrain.ROAD );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+
+                // Update the bridge exits in the swapped hexes.
+                terr = this.data[ newIndex ].getTerrain( Terrain.BRIDGE );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+                terr = this.data[ oldIndex ].getTerrain( Terrain.BRIDGE );
+                if ( null != terr ) {
+                    terr.flipExits( horiz, vert );
+                }
+
+            } // Handle the next row
+
+        } // Handle the next column
+
+        // Make certain all board listeners know.
+        processBoardEvent(new BoardEvent(this, new Coords(), null, BoardEvent.BOARD_NEW_BOARD, 0));
+
+    } // End public void flip( boolean, boolean )
+
     /**
      * Loads this board from a filename in data/boards
      */

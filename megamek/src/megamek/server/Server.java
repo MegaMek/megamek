@@ -764,7 +764,14 @@ implements Runnable {
                 Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
                 for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
                     sheetBoards[i] = new Board();
-                    sheetBoards[i].load((String)mapSettings.getBoardsSelectedVector().elementAt(i) + ".board");
+                    String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
+                    boolean isRotated = false;
+                    if ( name.startsWith( Board.BOARD_REQUEST_ROTATION ) ) {
+                        isRotated = true;
+                        name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
+                    }
+                    sheetBoards[i].load( name + ".board");
+                    sheetBoards[i].flip( isRotated, isRotated );
                 }
                 game.board.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
                 mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
@@ -897,7 +904,6 @@ implements Runnable {
                 break;
             case Game.PHASE_MOVEMENT :
                 roundReport.append("\nMovement Phase\n-------------------\n");
-                addMovementHeat();
                 resolveCrewDamage();
 		resolvePilotingRolls(); // Skids cause damage in movement phase
 		resolveCrewDamage(); // again, I guess
@@ -1619,7 +1625,7 @@ implements Runnable {
             moveType = step.getMovementType();
             distance = step.getDistance();
             mpUsed = step.getMpUsed();
-            
+
             // check for charge
             if (step.getType() == MovementData.STEP_CHARGE) {
                 Entity target = step.getTarget( game );
@@ -2100,6 +2106,15 @@ implements Runnable {
             }
         }
         
+        // build up heat from movement
+        if (moveType == Entity.MOVE_WALK) {
+            entity.heatBuildup += 1;
+        } else if (moveType == Entity.MOVE_RUN) {
+            entity.heatBuildup += 2;
+        } else if (moveType == Entity.MOVE_JUMP) {
+            entity.heatBuildup += Math.max(3, distance);
+        }
+        
         // should we give another turn to the entity to keep moving?
         if (fellDuringMovement && entity.mpUsed < entity.getRunMP() && entity.isSelectable()) {
             entity.applyDamage();
@@ -2145,23 +2160,6 @@ implements Runnable {
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
             send(entity.getOwner().getId(), createFilteredEntitiesPacket(entity.getOwner()));
-        }
-    }
-    
-    /**
-     * Add heat from the movement phase
-     */
-    public void addMovementHeat() {
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity)i.nextElement();
-            // build up heat from movement
-            if (entity.moved == Entity.MOVE_WALK) {
-                entity.heatBuildup += 1;
-            } else if (entity.moved == Entity.MOVE_RUN) {
-                entity.heatBuildup += 2;
-            } else if (entity.moved == Entity.MOVE_JUMP) {
-                entity.heatBuildup += Math.max(3, entity.delta_distance);
-            }
         }
     }
     
@@ -2693,7 +2691,6 @@ implements Runnable {
                 ammo = weapon.getLinked();
             }
         }
-        boolean streakMiss;
         
         WeaponResult wr = new WeaponResult();
         wr.waa = waa;
@@ -2727,18 +2724,16 @@ implements Runnable {
         wr.roll = Compute.d6(2);
         
         // if the shot is possible and not a streak miss, add heat and use ammo
-        streakMiss = (wtype.getAmmoType() == AmmoType.T_SRM_STREAK && wr.roll < wr.toHit.getValue());
-        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE && !streakMiss) {
+        if (wr.toHit.getValue() != TargetRoll.IMPOSSIBLE
+        && (wtype.getAmmoType() != AmmoType.T_SRM_STREAK || wr.roll >= wr.toHit.getValue())) {
             wr = addHeatUseAmmoFor(waa, wr);
         }
         
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
         
-        // if not streak miss, resolve any AMS attacks on this attack
-        if (!streakMiss) {
-            wr = resolveAmsFor(waa, wr);
-        }
+        // resolve any AMS attacks on this attack
+        wr = resolveAmsFor(waa, wr);
         
         return wr;
     }
@@ -2759,6 +2754,8 @@ implements Runnable {
             wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
             !wtype.hasFlag(WeaponType.F_INFANTRY);
         Mounted ammo = weapon.getLinked();
+        
+        boolean revertsToSingleShot = false;
         
         // how many shots are we firing?
         int nShots = howManyShots(weapon, ammo);
@@ -2819,7 +2816,7 @@ implements Runnable {
             te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
 
             // decrement the ammo
-            mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
+            mAmmo.setShotsLeft(mAmmo.getShotsLeft() - amsHits);
 
             // set the ams as having fired
             counter.setUsedThisRound(true);
@@ -3765,7 +3762,7 @@ implements Runnable {
         
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append("    Death from above deals no damage as the target has been destroyed.\n");
+            phaseReport.append("    Death from above cancelled as the target has been destroyed.\n");
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 doEntityFall(ae, daa.getTargetPos(), 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));
@@ -3876,11 +3873,6 @@ implements Runnable {
             }
             Hex entityHex = game.getBoard().getHex(entity.getPosition());
             
-            // heat doesn't matter for non-mechs
-            if (!(entity instanceof Mech)) {
-                entity.heatBuildup = 0;
-                continue;
-            }
             // should we even bother?
             if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDead()) {
                 continue;
@@ -4549,7 +4541,7 @@ implements Runnable {
                     desc += "\n            Location has no more hittable critical slots.";
                     break;
                 }
-                int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));
+                int slot = Compute.randomInt(en.getNumberOfCriticals(loc));
                 CriticalSlot cs = en.getCritical(loc, slot);
                 if (cs == null || !cs.isHittable()) {
                     continue;

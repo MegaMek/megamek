@@ -120,7 +120,7 @@ public class Compute extends megamek.common.Compute {
   
   public static void randomize(Object[] A) {
     for (int i = 0; i < A.length; ++i) {
-      int j = Compute.random.nextInt(A.length);
+      int j = Compute.randomInt(A.length);
       Object temp = A[i];
       A[i] = A[j];
       A[j] = temp;

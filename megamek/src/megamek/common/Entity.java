@@ -26,7 +26,6 @@ import megamek.common.actions.*;
 public abstract class Entity 
     implements Serializable, Transporter
 {
-    public static final com.sun.java.util.collections.Random random = new com.sun.java.util.collections.Random();
     public interface MovementType {
       public static final int NONE    = 0; //Future expansion. Turrets?
       public static final int BIPED   = 1;
@@ -545,6 +544,8 @@ public abstract class Entity
      * Generate the short name for a unit
      * <p/>
      * Sub-classes are allowed to override this method.
+     * 
+     * The display name is in the format [Chassis] [Model].
      */
     protected void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
@@ -1626,7 +1627,7 @@ public abstract class Entity
     }
 
     public String getC3NetID() {
-        if(C3NetIDString == null) C3NetIDString = "C3." + getId() + "." + random.nextInt(1000);
+        if(C3NetIDString == null) C3NetIDString = "C3." + getId() + "." + Compute.randomInt(1000);
         return C3NetIDString;
     }
 
@@ -1728,11 +1729,11 @@ public abstract class Entity
         }
         if(hasC3()) C3Master = entityId;
         if(hasC3() && entityId == NONE) {
-            C3NetIDString = "C3." + id + "." +  random.nextInt(1000);
+            C3NetIDString = "C3." + id + "." +  Compute.randomInt(1000);
         }
         else if(hasC3i() && entityId == NONE) 
         {
-            C3NetIDString = "C3i." + id + "." +  random.nextInt(1000);
+            C3NetIDString = "C3i." + id + "." +  Compute.randomInt(1000);
         }
         else if((hasC3() || hasC3i())) 
             C3NetIDString = game.getEntity(entityId).getC3NetID();

@@ -4234,7 +4234,9 @@ implements Runnable, ConnectionHandler {
             Entity entity = game.getEntity(ea.getEntityId());
             if (ea instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)ea;
-                entity.setSecondaryFacing(tta.getFacing());
+                if ( entity.canChangeSecondaryFacing() ) {
+                    entity.setSecondaryFacing(tta.getFacing());
+                }
             }
             else if (ea instanceof FlipArmsAction) {
                 FlipArmsAction faa = (FlipArmsAction)ea;

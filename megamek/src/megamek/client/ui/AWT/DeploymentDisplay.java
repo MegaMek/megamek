@@ -272,7 +272,18 @@ public class DeploymentDisplay
             client.bv.redrawEntity(ce());
             turnMode = false;
         }
-        else if (!client.game.board.isLegalDeployment(moveto, ce().getOwner())) {
+        else if ( !client.game.board.isLegalDeployment
+                  (moveto, ce().getOwner()) ||
+                  ce().isHexProhibited(client.game.board.getHex(moveto)) ) {
+            StringBuffer buff = new StringBuffer();
+            buff.append( ce().getShortName() )
+                .append( " can not deploy into " )
+                .append( moveto.getBoardNum() )
+                .append( "." );
+            AlertDialog dlg = new AlertDialog( client.frame,
+                                               "Invalid deployment",
+                                               buff.toString() );
+            dlg.show();
             return;
         }
         else if (client.game.getFirstEntity(moveto) != null) {

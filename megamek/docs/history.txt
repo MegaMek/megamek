@@ -114,6 +114,7 @@ v next
 + "immobile" centered on mech icon, when displayed
 + falling accounts for elevation
 + falling while moving handled more correctly
++ new intervening formula from (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
 
 v 0.22.3 (02-21-02, 12pm)
 + connections handled differently on the server

@@ -15,8 +15,7 @@
 package megamek.common;
 
 import java.awt.Polygon;
-import java.util.Random;
-import java.util.Enumeration;
+import java.util.*;
 
 import megamek.common.actions.*;
 
@@ -37,10 +36,9 @@ public class Compute
 	public static final int		GEAR_LAND   	= 0;
 	public static final int		GEAR_BACKUP   	= 1;
 	public static final int		GEAR_JUMP   	= 2;
-    
 	
     public static final Random random = new Random();
-  
+    
 	/**
 	 * Simulates six-sided die rolls.
 	 */
@@ -1259,14 +1257,81 @@ public class Compute
 			return false;
 		}
 	}
-	
+    
+    /**
+     * Returns the next coords or two after cur along the line
+     * 
+     * @return an array of either 1 or 2 coords
+     */
+    private static Coords[] getNextCoords(Coords cur, Coords cur1,
+                                          Coords last0, Coords last1,
+                                          int x0, int y0, int x1, int y1) {
+        Coords next0 = null;
+        Coords next1 = null;
+        
+        
+        
+        if (next1 == null) {
+            Coords[] next = new Coords[1];
+            next[0] = next0;
+            return next;
+        } else {
+            Coords[] next = new Coords[2];
+            next[0] = next0;
+            next[1] = next1;
+            return next;
+        }
+    }
+    
 	/**
-	 * This returns the Coordss that are crossed by a straight
-	 * line from Coords a to Coords b.
+	 * This returns the Coords of hexes that are crossed by a straight line 
+	 * from the middle of the hex at Coords a to the middle of the hex at 
+	 * Coords b.
 	 * 
-	 * OMG, this is a mess.  Got anything better?
+	 * This is the brute force, integer version based off of some of the 
+	 * formulas at Amit's game programming site 
+	 * (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
 	 */
 	public static Coords[] intervening(Coords a, Coords b) {
+        IdealHex aHex = new IdealHex(a);
+        IdealHex bHex = new IdealHex(b);
+        
+		// test any hexes that we think might be in the way
+		int rangeWidth = Math.abs(a.x - b.x) + 1;
+		int rangeHeight = Math.abs(a.y - b.y) + 1;
+		int rangeArea = rangeWidth * rangeHeight; // hexes to test
+        Vector trueCoords = new Vector();
+		
+		for (int i = 0; i < rangeArea; i++) {
+			Coords c = new Coords(i % rangeWidth + Math.min(a.x, b.x), i / rangeWidth + Math.min(a.y, b.y));
+            IdealHex cHex = new IdealHex(c);
+            // test the polygon
+            if (cHex.isIntersectedBy(aHex.cx, aHex.cy, bHex.cx, bHex.cy)) {
+				trueCoords.addElement(c);
+            }
+        }
+        
+        // make a nice array to return
+        Coords[] trueArray = new Coords[trueCoords.size()];
+        trueCoords.copyInto(trueArray);
+        
+		System.out.print("compute: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
+        for (Enumeration i = trueCoords.elements(); i.hasMoreElements();) {
+            final Coords coords = (Coords)i.nextElement();
+            System.out.print(coords.getBoardNum() + " ");
+        }
+        System.out.print("]\n");
+        
+        return trueArray;
+    }
+
+    /**
+	 * This returns the Coords that are crossed by a straight
+	 * line from Coords a to Coords b.
+	 * 
+	 * Old version.  Brute force and tests every point on the line.  Ick, ick.
+	 */
+	public static Coords[] intervening1(Coords a, Coords b) {
 		//System.err.print("r: intervening from " + a.getBoardNum() + " to " + b.getBoardNum() + " [ ");
 		
 		// set up hexagon poly

@@ -169,10 +169,10 @@ public class ScenarioLoader
             StringTokenizer st = new StringTokenizer(s, ",");
             String sRef = st.nextToken();
             MechSummary ms = MechSummaryCache.getInstance().getMech(sRef);
-            System.out.println("Loading " + ms.getRef());
             if (ms == null) {
                 throw new Exception("Scenario requires missing entity: " + sRef);
             }
+            System.out.println("Loading " + ms.getRef());
             Entity e = new MechFileParser(ms.getSourceFile()).getEntity();
             e.crew = new Pilot(st.nextToken(), Integer.parseInt(st.nextToken()), 
                     Integer.parseInt(st.nextToken()));
@@ -325,7 +325,7 @@ public class ScenarioLoader
         StringTokenizer st = new StringTokenizer(p.getProperty("Maps"), ",");
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
-                int n = x * nWidth + y;
+                int n = y * nWidth + x;
                 String sBoard = "RANDOM";
                 if (st.hasMoreTokens()) {
                     sBoard = st.nextToken();

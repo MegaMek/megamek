@@ -3319,7 +3319,7 @@ implements Runnable {
             // roll criticals
             while (hits > 0) {
                 if (en.getHittableCriticals(loc) <= 0) {
-                    desc += "\n            Location empty.";
+                    desc += "\n            Location has no more hittable critical slots.";
                     break;
                 }
                 int slot = Compute.random.nextInt(en.getNumberOfCriticals(loc));

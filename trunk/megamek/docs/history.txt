@@ -84,6 +84,9 @@ v (next)
 + crash in board loading fixed
 + 649303: charging movement distance for weapon hit fixed
 + a few mech pics fixed
++ water partial cover added to physical attacks 
+    (is this correct?  it's certainly dumb)
++ 647272: smoke rises above the surface of water
 
 v 0.27.10 (12-06-02, 11:25pm)
 + new naming system for mechset.txt, allowing omnimechs, etc

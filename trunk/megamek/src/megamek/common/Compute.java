@@ -1586,7 +1586,7 @@ public class Compute
         int attEl = ae.elevation() + ae.height();
         int targEl = te.elevation() + te.height();
         Hex hex = game.board.getHex(coords);
-        int hexEl = hex.floor();
+        int hexEl = hex.surface();
         
         
         // check for block by terrain
@@ -1744,6 +1744,12 @@ public class Compute
             toHit.addModifier(-2, "target prone and adjacent");
         }
         
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -1918,6 +1924,12 @@ public class Compute
             toHit.addModifier(-2, "target prone and adjacent");
         }
         
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -2118,6 +2130,12 @@ public class Compute
             toHit.addModifier(-2, "target prone and adjacent");
         }
         
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -2273,6 +2291,12 @@ public class Compute
         }
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
+        }
+
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
         }
 
         // target immobile
@@ -2454,6 +2478,12 @@ public class Compute
             toHit.addModifier(-2, "target prone and adjacent");
         }
         
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");
@@ -2613,6 +2643,12 @@ public class Compute
             toHit.addModifier(-2, "target prone and adjacent");
         }
         
+        // water partial cover?
+        Hex targHex = game.board.getHex(te.getPosition());
+        if (te.height() > 0 && targHex.levelOf(Terrain.WATER) == te.height()) {
+            toHit.addModifier(3, "target has partial cover");
+        }
+
         // target immobile
         if (te.isImmobile()) {
             toHit.addModifier(-4, "target immobile");

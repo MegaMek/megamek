@@ -396,6 +396,13 @@ public class Client extends Panel
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println( "Attempting to close the InputContext in java.client.Client#die()..." );
+            try {
+                curPanel.getInputContext().endComposition();
+            }
+            catch ( Throwable thr ) {
+                thr.printStackTrace();
+            }
         } catch (NullPointerException e) {
             // not a big deal, just never connected
         }

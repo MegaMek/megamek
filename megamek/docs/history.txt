@@ -6,6 +6,7 @@ v 0.29.15 (CVS)
 + Added physical attack menu.
 + Modified MegaMek.bat to be more friendly for Sun JRE.
 + Some menu work.
++ Bug 825739: Attempt to squash InputContext exception in Client#die().
 
 v 0.29.14 (10-13-03, 5pm)
 + Fixed NPE in menu bar.

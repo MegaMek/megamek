@@ -3463,7 +3463,7 @@ implements Runnable {
         
         // should we even bother?
         if (te == null || te.isDestroyed() || te.isDoomed() || te.crew.isDead()) {
-            phaseReport.append("    Death from above cancelled as the target has been destroyed.\n");
+            phaseReport.append("    Death from above deals no damage as the target has been destroyed.\n");
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 doEntityFall(ae, daa.getTargetPos(), 2, 3, Compute.getBasePilotingRoll(game, ae.getId()));

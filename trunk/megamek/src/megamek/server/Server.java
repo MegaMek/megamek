@@ -7818,14 +7818,12 @@ implements Runnable, ConnectionHandler {
                 continue;
             }
             Hex entityHex = game.getBoard().getHex(entity.getPosition());
-            if (entity instanceof Infantry && !(entity instanceof BattleArmor)) {
-               if (game.getTemperatureDifference() > 0) {
-                  if (!(entityHex.contains(Terrain.BUILDING))) {
-                       phaseReport.append(entity.getDisplayName() )
+            if (entity instanceof Infantry &&
+                    game.getTemperatureDifference() > 0 &&
+                    !(entityHex.contains(Terrain.BUILDING))) {
+                phaseReport.append(entity.getDisplayName() )
                            .append( " is in extreme temperatures and dies.\n" );
-                       phaseReport.append(destroyEntity(entity, "heat/cold", false, false));                     
-                  }
-               }
+                phaseReport.append(destroyEntity(entity, "heat/cold", false, false));                     
             }
         }
     }

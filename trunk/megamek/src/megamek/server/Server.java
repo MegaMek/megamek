@@ -6224,7 +6224,7 @@ implements Runnable, ConnectionHandler {
                         h.addTerrain(new Terrain(Terrain.FIRE, 1));
                     }
                     game.board.addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
+                        ( c, InfernoTracker.STANDARD_ROUND, 1 );
                     sendChangedHex(c);
 
                     return;

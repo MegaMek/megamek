@@ -99,6 +99,10 @@ v 0.28.8-dev
           may not have reached the destination hex yet.
 + 699057: possible fix for deployment hexes highlighted during the game
 + fixed vehicles going prone
++ Added an "Extras" panel to the Mech Display.
++ 660040: Added a "NARCed by" field to the Extras panel.
++ 678434: Moved the transport fields to the Extras panel.
++ 698398: Dead pilots are *dead*, not *unconcious*.
 
 v 0.28.7 (02-28-02, 9:00 pm)
 + Roads exit into Pavement hexes.

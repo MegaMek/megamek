@@ -29,13 +29,14 @@ public class MechDisplay extends Panel
     implements ActionListener
 {
     // buttons & gizmos for top level
-    public Button                movBut, armBut, weaBut, criBut;
+    public Button                movBut, armBut, weaBut, criBut, extBut;
     
     public Panel                displayP;
     public MovementPanel        mPan;
-    public ArmorPanel            aPan;
-    public WeaponPanel            wPan;
-    public SystemPanel            sPan;
+    public ArmorPanel           aPan;
+    public WeaponPanel          wPan;
+    public SystemPanel          sPan;
+    public ExtraPanel           ePan;
     private Client              client;
     
     private Entity              currentlyDisplaying = null;
@@ -55,6 +56,8 @@ public class MechDisplay extends Panel
         weaBut.addActionListener(this);
         criBut = new Button("Systems");
         criBut.addActionListener(this);
+        extBut = new Button("Extras");
+        extBut.addActionListener(this);
         
         displayP = new Panel(new CardLayout());
         mPan = new MovementPanel();
@@ -65,6 +68,8 @@ public class MechDisplay extends Panel
         displayP.add("weapons", wPan);
         sPan = new SystemPanel(client);
         displayP.add("systems", sPan);
+        ePan = new ExtraPanel(client);
+        displayP.add("extras", ePan);
         
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -78,8 +83,10 @@ public class MechDisplay extends Panel
         
         addBag(weaBut, c);
         
-        c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(criBut, c);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        addBag(extBut, c);
         
         c.weightx = 1.0;    c.weighty = 1.0;
         addBag(displayP, c);
@@ -110,6 +117,7 @@ public class MechDisplay extends Panel
         aPan.displayMech(en);
         wPan.displayMech(en);
         sPan.displayMech(en);
+        ePan.displayMech(en);
     }
     
     /**
@@ -144,6 +152,9 @@ public class MechDisplay extends Panel
         if(e.getActionCommand().equalsIgnoreCase("systems")) {
             showPanel("systems");
         }
+        if(e.getActionCommand().equalsIgnoreCase("extras")) {
+            showPanel("extras");
+        }
     }
     
 }
@@ -159,8 +170,6 @@ class MovementPanel
     public Label    mechTypeL;
     public Label    statusL, statusR, playerL, playerR, teamL, teamR, weightL, weightR, pilotL, pilotR;
     public Label    mpL, mpR, curMoveL, curMoveR, heatL, heatR;
-    public Label    unusedL, carrysL;
-    public TextArea unusedR, carrysR;
         
     public MovementPanel() {
         super();
@@ -188,14 +197,6 @@ class MovementPanel
         curMoveL = new Label("Currently:", Label.RIGHT);
         heatL = new Label("Heat:", Label.RIGHT);
 
-        // transport stuff
-        unusedL = new Label( "Unused Space:", Label.RIGHT );
-        unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
-        unusedR.setEditable(false);
-        carrysL = new Label( "Carrying:", Label.RIGHT );
-        carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
-        carrysR.setEditable(false);
-
         mpR = new Label("8/12/0", Label.LEFT);
         curMoveR = new Label("No Movement", Label.LEFT);
         heatR = new Label("2 (10 capacity)", Label.LEFT);
@@ -207,7 +208,7 @@ class MovementPanel
         
         c.insets = new Insets(1, 1, 1, 1);
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;    c.weighty = 1.0;
         
         c.gridwidth = 1;
         c.weightx = 0.5;
@@ -305,31 +306,6 @@ class MovementPanel
         gridbag.setConstraints(heatR, c);
         statusP.add(heatR);
 
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(unusedL, c);
-        statusP.add(unusedL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(unusedR, c);
-        statusP.add(unusedR);
-
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(carrysL, c);
-        statusP.add(carrysL);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(carrysR, c);
-        statusP.add(carrysR);
-
         // layout main panel
         gridbag = new GridBagLayout();
         c = new GridBagConstraints();
@@ -382,19 +358,6 @@ class MovementPanel
         }
         
         this.heatR.setText(Integer.toString(en.heat) + " (" + heatCapacityStr + " capacity)");
-
-        // transport values
-        String unused = en.getUnusedString();
-        if ( unused.equals("") ) unused = "None";
-        this.unusedR.setText( unused );
-        Enumeration iter = en.getLoadedUnits().elements();
-        carrysR.setText( null );
-        while ( iter.hasMoreElements() ) {
-            carrysR.append( ((Entity)iter.nextElement()).getShortName() );
-            if ( iter.hasMoreElements() ) {
-                carrysR.append( "\n" );
-            }
-        }
 
         validate();
     }
@@ -1144,4 +1107,115 @@ class SystemPanel
         }
     }
 }
+
+
+/**
+ * This class shows information about a unit that doesn't belong elsewhere.
+ */
+class ExtraPanel 
+    extends Panel
+{
+    private static Object SYSTEM = new Object();
+    
+    public Label    unusedL, carrysL;
+    public TextArea unusedR, carrysR;
+    public Label narcLabel;
+    public java.awt.List narcList;
+
+    private Client client;
+    
+    public ExtraPanel(Client client) {
+        super();
+        
+        this.client = client;
+        
+        narcLabel = new Label("NARCed By:", Label.CENTER);
+        
+        narcList = new List(3, false);
+
+        // transport stuff
+        unusedL = new Label( "Unused Space:", Label.CENTER );
+        unusedR = new TextArea("", 2, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        unusedR.setEditable(false);
+        carrysL = new Label( "Carrying:", Label.CENTER );
+        carrysR = new TextArea("", 4, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        carrysR.setEditable(false);
+
+        // layout choice panel
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+
+        gridbag = new GridBagLayout();
+        c = new GridBagConstraints();
+        setLayout(gridbag);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.CENTER;
+        c.weightx = 1.0;
+
+        c.weighty = 0.0;
+        gridbag.setConstraints(narcLabel, c);
+        add(narcLabel);
+        
+        c.weighty = 1.0;
+        gridbag.setConstraints(narcList, c);
+        add(narcList);
+        
+        c.weighty = 0.0;
+        gridbag.setConstraints(unusedL, c);
+        add(unusedL);
+        
+        c.weighty = 1.0;
+        gridbag.setConstraints(unusedR, c);
+        add(unusedR);
+
+        c.weighty = 0.0;
+        gridbag.setConstraints(carrysL, c);
+        add(carrysL);
+        
+        c.weighty = 1.0;
+        gridbag.setConstraints(carrysR, c);
+        add(carrysR);
+
+    }
+
+    /**
+     * updates fields for the specified mech
+     */
+    public void displayMech(Entity en) {
+
+        // Walk through the list of teams.  There
+        // can't be more teams than players.
+        Enumeration loop = client.game.getPlayers();
+        while ( loop.hasMoreElements() ) {
+            Player player = (Player) loop.nextElement();
+            int team = player.getTeam();
+            if ( !player.equals(client.getLocalPlayer()) &&
+                 en.isNarcedBy( team ) ) {
+                StringBuffer buff = new StringBuffer( player.getName() );
+                buff.append( " [" )
+                    .append( Player.teamNames[team] )
+                    .append( "]" );
+                narcList.add( buff.toString() );
+            }
+        }
+
+        // transport values
+        String unused = en.getUnusedString();
+        if ( unused.equals("") ) unused = "None";
+        this.unusedR.setText( unused );
+        Enumeration iter = en.getLoadedUnits().elements();
+        carrysR.setText( null );
+        while ( iter.hasMoreElements() ) {
+            carrysR.append( ((Entity)iter.nextElement()).getShortName() );
+            if ( iter.hasMoreElements() ) {
+                carrysR.append( "\n" );
+            }
+        }
+
+    } // End public void displayMech( Entity )
+
+} // End class ExtraPanel extends Panel
 
